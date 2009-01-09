@@ -437,7 +437,7 @@ public class MainHelperTest extends TestCase {
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_",
-                "org.intermine.objectstore.query.QueryClass cannot be cast to org.intermine.objectstore.query.QueryField|org.intermine.objectstore.query.QueryClass");
+                "org.intermine .objectstore.query.QueryClass cannot be cast to org.intermine.objectstore.query.QueryField|org.intermine.objectstore.query.QueryClass");
     }
 
     public void test2() throws Exception {
