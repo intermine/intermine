@@ -9,7 +9,6 @@
     <property name="resources.dir" location="resources/main"/>
   </target>
   
-  <available file="${model.name}.zargo" property="have.zargo"/>
 
   <target name="-pre-init" depends="library.-pre-init">
     <property name="dist.war" location="${dist.dir}/${ant.project.name}.war"/>
