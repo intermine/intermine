@@ -27,7 +27,6 @@
     <merge-additions file="bio/sources/interpro/interpro_additions.xml"/>
     <merge-additions file="bio/sources/bdgp-clone/bdgp-clone_additions.xml"/>
     <merge-additions file="bio/sources/drosdel-gff/drosdel-gff_additions.xml"/>
-    <merge-additions file="bio/sources/mage/mage_additions.xml"/>
     <merge-additions file="bio/sources/redfly/redfly_additions.xml"/>
     <merge-additions file="bio/sources/diseaseregion/diseaseregion_additions.xml"/>
     <merge-additions file="bio/sources/affy-probes/affy-probes_additions.xml"/>
