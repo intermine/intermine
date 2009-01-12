@@ -5,6 +5,11 @@
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="CDSs"/>
   </class>
+
+  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="protein"/>
+  </class>
+
   <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
