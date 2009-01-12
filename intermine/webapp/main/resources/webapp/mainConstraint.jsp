@@ -291,7 +291,7 @@ options displayConstraint.optionsList
             </p>
             <p>
               <c:if test="${editingNode.reference}">
-                <H3>Warning</H3>Outer joins are not compatible with References. The outer join will be reversed to inner join for this node.
+                <H3>Warning</H3>Outer joins are not compatible with References. The outer join will be reverted to an inner join for this node.
               </c:if>
             </p>
             <c:choose>
@@ -365,7 +365,7 @@ options displayConstraint.optionsList
               </a>
             </h4>
             <c:if test="${loopQueryOJ == true}">
-               <span class="smallnote"><b>Warning:</b> outer joins are not compatible with loop constraints. The outer join will be reversed to inner join for this node</span>
+               <span class="smallnote"><b>Warning:</b> outer joins are not compatible with loop constraints. The outer join will be reverted to an inner join for this node</span>
             </c:if>
             <p style="text-align: left;">
               <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>
