@@ -104,7 +104,7 @@ public class NavigationBarTag extends SimpleTagSupport
      * @return link to the page of provided index
      */
     public String getPageLink(int pageIndex) {
-        return baseLink + "&start=" + (pageIndex * pageSize + 1) + "&size=" + pageSize;
+        return baseLink + "&start=" + (pageIndex * pageSize) + "&size=" + pageSize;
     }
 
     /**

@@ -84,17 +84,20 @@ public class PathQueryExecutor
      * @return results
      */
     public Iterator<List<ResultElement>> execute(PathQuery pathQuery) {
-        return execute(pathQuery, INFINITE_RESULTS_SIZE);
+        return execute(pathQuery, 0, INFINITE_RESULTS_SIZE);
     }
 
     /**
      * Executes object store query and returns results as iterator over rows. Every row is a list 
-     * of result elements.
+     * of result elements. 
      * @param pathQuery path query to be executed
+     * @param start index of first result which will be retrieved. It can be very slow, 
+     * it fetches results from database from index 0 and just throws away all before start index.
      * @param limit maximum number of results 
      * @return results
      */
-    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int limit) {
+    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int start, 
+            final int limit) {
         final ExportResultsIterator resultIt;
         try {
             resultIt = new ExportResultsIterator(os, pathQuery, allBags, runner);
@@ -105,9 +108,19 @@ public class PathQueryExecutor
         Iterator<List<ResultElement>> ret = new Iterator<List<ResultElement>>() {
 
             private int counter = 0;
-            
+
             public boolean hasNext() {
-                if (counter >= limit) {
+
+                // throw away results before start index
+                while (counter < start) {
+                    if (resultIt.hasNext()) {
+                        next();    
+                    } else {
+                        return false;
+                    }
+                }
+                
+                if (counter >= (limit + start)) {
                     return false;
                 } else {
                     return resultIt.hasNext();    
