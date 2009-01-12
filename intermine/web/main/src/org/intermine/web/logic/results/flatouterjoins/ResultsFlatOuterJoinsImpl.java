@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
-import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -39,8 +38,6 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
     private List<ResultsRow> orig;
     private Query query;
     private int columnWidth[];
-    private List columnTypes;
-    private int columnCount = 0;
 
     /**
      * Constructor for this object.
@@ -61,14 +58,13 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
                 columnWidth[i] = 1;
             }
         }
-        columnTypes = convertColumnTypes(query.getSelect());
     }
 
     /**
      * {@inheritDoc}
      */
     public MultiRow<ResultsRow<MultiRowValue>> get(int index) {
-        return translateRow2(orig.get(index));
+        return translateRow(orig.get(index));
     }
 
     /**
@@ -109,7 +105,7 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
         }
 
         public MultiRow<ResultsRow<MultiRowValue>> next() {
-            return translateRow2(origIter.next());
+            return translateRow(origIter.next());
         }
 
         public void remove() {
@@ -183,106 +179,6 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
             multiRow.add(subRow);
         }
         return multiRow;
-    }
-
-    private List convertColumnTypes(List<? extends QuerySelectable> select) {
-        List retval = new ArrayList();
-        for (QuerySelectable qs : select) {
-            boolean notFinished = true;
-            while (notFinished) {
-                if (qs instanceof QueryObjectPathExpression) {
-                    QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
-                    List<QuerySelectable> subSelect = qope.getSelect();
-                    if (!subSelect.isEmpty()) {
-                        qs = subSelect.get(0);
-                    } else {
-                        notFinished = false;
-                    }
-                } else {
-                    notFinished = false;
-                }
-            }
-            if (qs instanceof QueryCollectionPathExpression) {
-                QueryCollectionPathExpression qc = (QueryCollectionPathExpression) qs;
-                List<QuerySelectable> subSelect = qc.getSelect();
-                if (qc.isSingleton()) {
-                    if (subSelect.isEmpty()) {
-                        retval.add(new ResultsRow(convertColumnTypes(Collections.singletonList(
-                                            qc.getDefaultClass()))));
-                    } else {
-                        retval.add(new ResultsRow(convertColumnTypes(subSelect)));
-                    }
-                } else {
-                    if (subSelect.isEmpty()) {
-                        retval.add(convertColumnTypes(Collections.singletonList(
-                                        qc.getDefaultClass())));
-                    } else {
-                        retval.add(convertColumnTypes(subSelect));
-                    }
-                }
-            } else {
-                retval.add(new Integer(columnCount++));
-            }
-        }
-        return retval;
-    }
-
-    private MultiRow<ResultsRow<MultiRowValue>> translateRow2(ResultsRow origRow) {
-        ResultsRow<MultiRowValue> template = new ResultsRow<MultiRowValue>();
-        for (int i = 0; i < columnCount; i++) {
-            template.add(null);
-        }
-        MultiRow<ResultsRow<MultiRowValue>> retval = new MultiRow<ResultsRow<MultiRowValue>>();
-        expandCollections(origRow, retval, template, columnTypes, 0);
-        return retval;
-    }
-
-    private int expandCollections(List row, MultiRow<ResultsRow<MultiRowValue>> retval,
-            ResultsRow<MultiRowValue> template, List columns, int startRow) {
-        if (row.size() != columns.size()) {
-            throw new IllegalArgumentException("Column description (size " + columns.size()
-                    + ") does not match input data (size " + row.size() + "), for query "
-                    + query + " and data row " + row);
-        }
-        int columnNo = 0;
-        int maxRowNo = startRow + 1;
-        for (Object column : columns) {
-            int rowNo = startRow;
-            if (column instanceof ResultsRow) {
-                List collection = (List) row.get(columnNo);
-                for (Object subRow : collection) {
-                    rowNo = expandCollections(Collections.singletonList(subRow), retval, template,
-                            (List) column, rowNo);
-                }
-            } else if (column instanceof List) {
-                List<ResultsRow> collection = (List<ResultsRow>) row.get(columnNo);
-                for (ResultsRow subRow : collection) {
-                    rowNo = expandCollections(subRow, retval, template, (List) column, rowNo);
-                }
-            }
-            maxRowNo = Math.max(maxRowNo, rowNo);
-            columnNo++;
-        }
-        
-        if (retval.size() < maxRowNo) {
-            retval.add(new ResultsRow<MultiRowValue>(template));
-        }
-        columnNo = 0;
-        for (Object column : columns) {
-            if (column instanceof Integer) {
-                int outColumnNo = ((Integer) column).intValue();
-                MultiRowFirstValue firstValue = new MultiRowFirstValue(row.get(columnNo),
-                        maxRowNo - startRow);
-                retval.get(startRow).set(outColumnNo, firstValue);
-                MultiRowLaterValue laterValue = firstValue.getMrlv();
-                for (int i = startRow + 1; i < maxRowNo; i++) {
-                    ResultsRow<MultiRowValue> subRow = retval.get(i);
-                    subRow.set(outColumnNo, laterValue);
-                }
-            }
-            columnNo++;
-        }
-        return maxRowNo;
     }
 
     /**
