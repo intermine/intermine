@@ -1,0 +1,238 @@
+package org.intermine.bio.dataconversion;
+
+/*
+ * Copyright (C) 2002-2009 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author julie sullivan
+ *
+ */
+public class UniprotConfig
+{
+    private static final Logger LOG = Logger.getLogger(UniprotConfig.class);
+    private static final String PROP_FILE = "uniprot_config.properties";
+    private List<String> featureTypes = new ArrayList();
+    private Map<String, ConfigEntry> entries = new HashMap();
+
+    /**
+     * read configuration file
+     */
+    public UniprotConfig() {
+        readConfig();
+    }
+
+    /**
+     * @return list of feature types.  will return null if "feature.types" attribute
+     * not set in property file.
+     */
+    public List<String> getFeatureTypes() {
+        return featureTypes;
+    }
+
+    /**
+     * @param taxonId taxonid
+     * @return the unique identifier for this organism
+     */
+    public String getUniqueIdentifier(String taxonId) {
+        ConfigEntry entry = entries.get(taxonId);
+        return entry.getUniqueIdentifier();
+    }
+
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                                           + key);
+            }
+            String taxonId = attributes[0];
+
+            if (taxonId.equals("feature")) {
+                String[] types = value.split("[, ]+");
+                featureTypes.addAll(Arrays.asList(types));
+                continue;
+            }
+
+            ConfigEntry configEntry = getConfig(taxonId);
+
+            if (attributes[1].equals("key")) {
+                configEntry.setUniqueIdentifier(value);
+//            } else if (attributes[1].equals("synonym")) {
+//                configEntry.setSource(value);
+            } else if (attributes.length == 3) {
+                configEntry.addIdentifier(attributes[1], attributes[2], value);
+            } else {
+                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
+                + ".  This line has not been processed.";
+                LOG.error(msg);
+            }
+        }
+    }
+
+    private ConfigEntry getConfig(String taxonId) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            configEntry = new ConfigEntry();
+            entries.put(taxonId, configEntry);
+        }
+        return configEntry;
+    }
+
+    /**
+     * @param taxonId organism for this gene
+     * @return list of fields to be set for genes from this organism
+     */
+    public Set<String> getGeneIdentifierFields(String taxonId) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        return configEntry.getIdentifierFields();
+    }
+
+    /**
+     * @param taxonId organism for this gene
+     * @param identifier eg primaryIdentifier or secondaryIdentifier
+     * @return how to set this identifier, eg datasource or variable
+     */
+    protected String getIdentifierMethod(String taxonId, String identifier) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        return configEntry.getIdentifierMethod(identifier);
+    }
+
+    /**
+     * @param taxonId organism for this gene
+     * @param identifier eg primaryIdentifier or secondaryIdentifier
+     * @return what value to use with method, eg "FlyBase" or "ORF"
+     */
+    protected String getIdentifierValue(String taxonId, String identifier) {
+        ConfigEntry configEntry = entries.get(taxonId);
+        return configEntry.getIdentifierValue(identifier);
+    }
+
+    /**
+     * class representing an organism in the uniprot config file
+     * @author julie sullivan
+     */
+    public class ConfigEntry
+    {
+
+        private String uniqueIdentifier;
+
+        private Map<String, IdentifierConfig> identifiers = new HashMap();
+
+        /**
+         * @return the uniqueIdentifier
+         */
+        protected String getUniqueIdentifier() {
+            return uniqueIdentifier;
+        }
+        /**
+         * @param uniqueIdentifier the uniqueIdentifier to set
+         */
+        protected void setUniqueIdentifier(String uniqueIdentifier) {
+            this.uniqueIdentifier = uniqueIdentifier;
+        }
+
+        /**
+         * example:
+         *
+         * 6239.primaryIdentifier.datasource = WormBase
+         * 6239.secondaryIdentifier.name = ORF
+         *
+         * [taxonId].[identifier].[type] = [value]
+         *
+         * @param identifier which identifier to use, eg primaryIdentifier or secondaryIdentifier
+         * @param method how to get the identifier value, eg datasource or variable
+         * @param value name of datasource or variable to use
+         */
+        protected void addIdentifier(String identifier, String method, String value) {
+            IdentifierConfig identifierConfig = new IdentifierConfig(method, value);
+            identifiers.put(identifier, identifierConfig);
+        }
+
+        /**
+         * which fields in gene object we are setting, eg. primaryIdentifier or secondaryIdentifier
+         * @return list of gene identifier fields to be set
+         */
+        protected Set<String> getIdentifierFields() {
+            return identifiers.keySet();
+        }
+
+        /**
+         * @param identifier eg primaryIdentifier or secondaryIdentifier
+         * @return how to set this identifier, eg datasource or variable
+         */
+        protected String getIdentifierMethod(String identifier) {
+            return identifiers.get(identifier).getMethod();
+        }
+
+        /**
+        * @param identifier eg primaryIdentifier or secondaryIdentifier
+        * @return what value to use with method, eg "FlyBase" or "ORF"
+        */
+        protected String getIdentifierValue(String identifier) {
+            return identifiers.get(identifier).getValue();
+        }
+    }
+
+    /**
+     * class representing a line in the uniprot config file
+     * @author julie sullivan
+     */
+    public class IdentifierConfig
+    {
+
+        private String method;
+        private String value;
+
+        /**
+         * @param method method used to obtain gene identifiers, eg. datasource/variable
+         * @param value which value to use with listed method, eg. "FlyBase", "ORF"
+         */
+        public IdentifierConfig(String method, String value) {
+            this.method = method;
+            this.value = value;
+        }
+
+        /**
+         * @return the method
+         */
+        public String getMethod() {
+            return method;
+        }
+
+        /**
+         * @return the value
+         */
+        public String getValue() {
+            return value;
+        }
+    }
+}

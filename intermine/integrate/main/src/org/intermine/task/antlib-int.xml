@@ -5,6 +5,9 @@
     <typedef
         name="convert-file"
         classname="org.intermine.task.FileConverterTask"/>
+   <typedef
+        name="convert-dir"
+        classname="org.intermine.task.DirectoryConverterTask"/>
     <typedef
         name="convert-db"
         classname="org.intermine.task.DBConverterTask"/>

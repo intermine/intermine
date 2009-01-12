@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,6 +40,7 @@ public abstract class DataConverter
     private Map ids = new HashMap();
     private Model model;
     private ItemFactory itemFactory;
+    private MultiKeyMap itemsMap = new MultiKeyMap();
 
     private DataConverterStoreHook storeHook = null;
 
@@ -177,4 +180,58 @@ public abstract class DataConverter
             store(item);
         }
     }
+
+    /**
+     * Get an item and if it doesn't already exist create it and store it if the store argument is
+     * true.
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @param store if true, store after creating
+     * @return an Item
+     */
+    private Item getItemInternal(String className, String attributeName, String identifier,
+                                 boolean store) {
+        MultiKey key = new MultiKey(className, identifier);
+        Item item = (Item) itemsMap.get(key);
+        if (itemsMap.get(key) == null) {
+            item = (Item) itemsMap.get(key);
+            item = createItem(className);
+            item.setAttribute(attributeName, identifier);
+            itemsMap.put(key, item);
+            if (store) {
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("error while storing: " + identifier, e);
+                }
+            }
+        }
+        return item;
+    }
+
+    /**
+     * Get an item, if it doesn't already exist create it.  If it does exist just return it.
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @return an Item
+     */
+    public Item getItemCreateOnce(String className, String attributeName, String identifier) {
+        return getItemInternal(className, attributeName, identifier, false);
+    }
+
+    /**
+     * Get an item and if it doesn't already exist create it and store it
+     * @param className the name of the class
+     * @param attributeName the name of the attribute to set
+     * @param identifier the identifier
+     * @return an Item
+     */
+    public Item getAndStoreItemOnce(String className, String attributeName, String identifier) {
+        return getItemInternal(className, attributeName, identifier, true);
+    }
+
+
+
 }

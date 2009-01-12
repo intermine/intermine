@@ -72,15 +72,15 @@ public class UniprotFilterTask extends Task
     public void execute() throws BuildException {
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
-        } else {
-            System.err.print("Fileset: " + fileSet.toString() + "\n");
         }
+        System.err.print("Fileset: " + fileSet.toString() + "\n");
+
 
         if (tgtDir == null) {
             throw new BuildException("tgtDir must be specified");
-        } else {
-            System.err.print("TGT Dir: " + tgtDir.toString() + "\n");
         }
+        System.err.print("TGT Dir: " + tgtDir.toString() + "\n");
+
 
         if (organisms.isEmpty()) {
             System.err.print("No Organisms to Filter on - doing everything!" + "\n");
