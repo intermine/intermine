@@ -143,7 +143,7 @@ jQuery(document).ready(function(){
         </c:choose>
       </c:set>
 
-      <im:instanceof instanceofObject="${row}" instanceofClass="org.intermine.objectstore.flatouterjoins.MultiRow" instanceofVariable="isMultiRow"/>
+      <im:instanceof instanceofObject="${row}" instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRow" instanceofVariable="isMultiRow"/>
       <c:choose>
         <c:when test="${isMultiRow == 'true'}">
           <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
@@ -152,7 +152,7 @@ jQuery(document).ready(function(){
 
                 <c:choose>
                   <c:when test="${column.visible}">
-                    <im:instanceof instanceofObject="${subRow[column.index]}" instanceofClass="org.intermine.objectstore.flatouterjoins.MultiRowFirstValue" instanceofVariable="isFirstValue"/>
+                    <im:instanceof instanceofObject="${subRow[column.index]}" instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue" instanceofVariable="isFirstValue"/>
                     <c:if test="${isFirstValue == 'true'}">
                       <c:set var="resultElement" value="${subRow[column.index].value}" scope="request"/>
                       <c:set var="highlightObjectClass" value="noHighlightObject"/>
