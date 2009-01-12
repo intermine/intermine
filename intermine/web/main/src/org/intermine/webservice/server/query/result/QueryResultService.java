@@ -85,7 +85,7 @@ public class QueryResultService extends WebService
             request.setAttribute("rows", mout.getResults());
             request.setAttribute("title", title);
             request.setAttribute("description", description);
-            request.setAttribute("currentPage", (input.getStart() - 1) / input.getMaxCount());
+            request.setAttribute("currentPage", (input.getStart()) / input.getMaxCount());
             request.setAttribute("baseLink", createBaseLink());
             request.setAttribute("pageSize", input.getMaxCount());
             request.setAttribute("layout", layout);
@@ -158,9 +158,8 @@ public class QueryResultService extends WebService
             WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
-        // TODO: first result is not used, it is needed to implement it, but outer join object store
-        //implementation cannot work with it now
-        Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, maxResults);
+        Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, firstResult, 
+                maxResults);
 
         // displayTotalCount now without effect because information about results size
         // is not available because of the implementation of the object store outer join 

@@ -23,12 +23,12 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public class WebServiceRequestParser
 {
     /**
-     * Name of start parameter that determinates index of first returned result.  
+     * Name of start parameter that determines index of first returned result.  
      */
     public static final String START_PARAMETER = "start";
     
     /**
-     * Name of size parameter that determinates number of returned results. 
+     * Name of size parameter that determines number of returned results. 
      */
     public static final String LIMIT_PARAMETER = "size";
     
