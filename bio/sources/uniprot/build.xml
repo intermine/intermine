@@ -14,9 +14,9 @@
     </filter-uniprot>
   </target>
 
-  <target name="-retrieve-tgt-from-custom-file" depends="-retrieve-tgt-from-custom-file-filtered,-retrieve-tgt-from-custom-file-whole"/>
+  <target name="-retrieve-tgt-from-custom-dir" depends="-retrieve-tgt-from-custom-dir-filtered,-retrieve-tgt-from-custom-dir-whole"/>
 
-  <target name="-retrieve-tgt-from-custom-file-whole" unless="use.filter">
+  <target name="-retrieve-tgt-from-custom-dir-whole" unless="use.filter">
     <convert-file
        modelName="${target.model}"
        clsName="${converter.class}"
@@ -25,7 +25,7 @@
     </convert-file>
   </target>
 
-  <target name="-retrieve-tgt-from-custom-file-filtered" if="use.filter">
+  <target name="-retrieve-tgt-from-custom-dir-filtered" if="use.filter">
     <convert-file
        modelName="${target.model}"
        clsName="${converter.class}"
