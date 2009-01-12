@@ -10,8 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -41,10 +40,10 @@ public class UniprotConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                              .getResourceAsStream("UniprotConverterTest_src.xml"));
+        File datadir = new File ("./test/resources/datadir");
         converter.setCreateinterpro("true");
-        converter.process(reader);
+        converter.setUniprotOrganisms("7227");
+        converter.process(datadir);
         converter.close();
 
         // uncomment to write out a new target items file

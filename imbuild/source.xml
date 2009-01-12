@@ -122,6 +122,20 @@
   </propertyset>
 
 
+
+
+
+  <!--
+    Retrieve files from a custom directory and process them with the supplied converter class
+  - ->
+  <target name="-retrieve-src-from-custom-dir" if="custom.src.dir">
+    <convert-file clsName="${converter.class}"
+                  osName="osw.${common.os.prefix}-src-items"
+                  modelName="${target.model}">
+      <fileset dir="${custom.src.data.dir}"/>
+    </convert-file>
+  </target -->
+
   <target name="-set-custom-file-includes" unless="src.data.dir.includes">
     <!-- include everything by default --> 
     <property name="src.data.dir.includes" value="**/*"/>
@@ -148,6 +162,19 @@
       </fileset>
     </convert-file>
   </target>
+
+  <!--
+    Retrieve files from a directory in a tgt items db with the directory converter specified via the property
+    converter.class
+  -->
+  <target name="-retrieve-tgt-from-custom-dir"
+          if="have.dir.custom.tgt">
+    <convert-dir clsName="${converter.class}"
+                 osName="osw.${common.os.prefix}-tgt-items"
+                 modelName="${target.model}"
+                 dataDir="${src.data.dir}"/>
+  </target>
+
 
   <!--
     Retrieve from a database in a tgt items db with the converter specified via the property
