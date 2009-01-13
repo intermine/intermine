@@ -20,6 +20,7 @@
 # see after argument parsing for all envs related to the release
 
 FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
+EXDIRS=/pub/dcc/for_modmine/old   #comma separated, i.e. a,b,c
 MODIR=/shared/data/modmine
 REPORTS=$MODIR/subs/reports
 DATADIR=$MODIR/subs/chado
@@ -30,6 +31,7 @@ RECIPIENTS=contrino@flymine.org,kmr@flymine.org,rns@flymine.org
 SOURCES=modmine-static,modencode-metadata,entrez-organism
 
 MINEDIR=$HOME/svn/dev/modmine
+#MINEDIR=$HOME/svn/modmine-pre-outer-joins/modmine
 
 # for running from trunk directory (as modmine)
 if [ ! -d $MINEDIR ]
@@ -71,8 +73,8 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [-s] [-t] [-w] [-v
 	-F: full (modmine) rebuild
 	-M: test build (metadata only)
 	-R: restart full build after failure
-	-V: validation mode: all entries
-	-1: validation mode: one entry only
+	-V: validation mode: all entries (one at the time)
+	-u: validation mode: one entry only
 	-a: append to chado
 	-b: build a back-up of modchado-$REL
 	-f file_name: using a given list of submissions
@@ -103,7 +105,7 @@ EOF
 	exit 0
 }
 
-while getopts ":FIMRVabf:gnstvwx" opt; do
+while getopts ":FIMRVabf:gnstuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -111,16 +113,16 @@ while getopts ":FIMRVabf:gnstvwx" opt; do
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; INCR=n; STAG=n;;
 	V )  echo; echo "Validating all submission (1 by 1)"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	1 )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
+	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
 	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files:"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
-	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n;;
+	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
 	t )  echo; echo "No acceptance test run" ; TEST=n;;
 	v )  echo; echo "Verbose mode" ; V=-v;;
 	w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
-	x )  echo; echo "modMine will NOT be built" ; BUILD=n;;
+	x )  echo; echo "modMine will NOT be built" ; BUILD=n; STAG=n; WGET=n;;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
@@ -213,7 +215,7 @@ then
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
 		#wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
-		wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
 		#r recursive
 		#nd the directories structure is NOT recreated locally
@@ -221,7 +223,8 @@ then
 		#np no parents: only files below a certain directory are retrieved
 		#P destination dir
 		#a append to log
-
+		#-X list of directories to exclude
+    #-N timestamping
 		echo $TIMESTAMP
 		echo "press return to continue.."
 		read
@@ -277,7 +280,7 @@ fi
 
 # build new?
 
-if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ]
+if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ] && [ "$VALIDATING" = "n" ]
 then
 # rebuild skeleton chado db
 	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
@@ -305,20 +308,44 @@ do
 if [ -L $sub ] #is a symbolic link
 then
 continue
-else
+fi
+
+echo "================"
+echo "$sub..."
+echo "================"
+
+if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
+then
+cd $DATADIR
+# rebuild skeleton chado db
+	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
+	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+
+	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
+	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+#echo "press return to continue.."
+#read
+
+cd $NEWDIR
+fi
+
 
 echo
 echo "filling $CHADODB db with $sub..."
 echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 
-stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password\
+stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
 || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
 >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; exit 1 ; }
 # >> `date "+%y%m%d.$REL.log"`; $F ; }
 
+#if we are not validating we move away the file
+if [ $VALIDATING = "n" ]
+then
 mv $sub $DATADIR
 ln -s ../$sub $sub
+fi
 
 if [ $VALIDATING = "y" ] #if we are validating an entry at a time
 then
@@ -376,6 +403,9 @@ break;
 fi
 
 fi #VAL=y
+
+#go back to the chado directory
+cd $NEWDIR
 done
 
 else
