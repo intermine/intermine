@@ -646,8 +646,6 @@ public class MainHelper
         QueryClass defaultClass = null;
         if (q instanceof QueryObjectPathExpression) {
             defaultClass = ((QueryObjectPathExpression) q).getDefaultClass();
-        } else if (q instanceof QueryCollectionPathExpression) {
-            defaultClass = ((QueryCollectionPathExpression) q).getDefaultClass();
         }
         if ((added.size() == 1) && added.get(0).equals(defaultClass)) {
             // Don't add anything to SELECT list - default is fine
