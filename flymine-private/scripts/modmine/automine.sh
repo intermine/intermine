@@ -54,7 +54,7 @@ FOUND=n        #          y if new files downloaded
 INFILE=not_defined #      not using a given list of submissions
 TIMESTAMP=`date "+%y%m%d.%H%M"`  # used in the log
 NAMESTAMP=not_defined     #          used to name the acceptance tests
-
+INTERACT=n     #          off: step by step interaction
 WGET=y         #          use wget to get files from ftp
 
 
@@ -79,7 +79,8 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [-s] [-t] [-w] [-v
 	-b: build a back-up of modchado-$REL
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
-	-s: no new loading of chado (stag is not run)
+  -i: interactive mode
+  -s: no new loading of chado (stag is not run)
 	-t: no acceptance test run
 	-w: no new webapp will be built
 	-v: verbode mode
@@ -105,7 +106,7 @@ EOF
 	exit 0
 }
 
-while getopts ":FIMRVabf:gnstuvwx" opt; do
+while getopts ":FIMRVabf:ginstuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -118,6 +119,7 @@ while getopts ":FIMRVabf:gnstuvwx" opt; do
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
 	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files:"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
+	i )  echo; echo "Interactive mode" ; INTERACT=y;;
 	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
 	t )  echo; echo "No acceptance test run" ; TEST=n;;
 	v )  echo; echo "Verbose mode" ; V=-v;;
@@ -138,14 +140,6 @@ then
 	else
 		REL=$1
 	fi
-fi
-
-#*******
-# if we are using the same chado, no chado back up will be created
-if [ $STAG = "n" ]
-then
-	BUP=n
-	WGET=n
 fi
 
 
@@ -189,10 +183,13 @@ echo OK
 #     echo
 fi
 
+if [ $INTERACT = "y" ]
+then
 echo
 echo "Press return to continue.."
 echo -n "->"
 read
+fi
 
 #---------------------------------------
 # getting the chadoxml from ftp site
@@ -226,9 +223,12 @@ then
 		#-X list of directories to exclude
     #-N timestamping
 		echo $TIMESTAMP
+
+if [ $INTERACT = "y" ]
+then
 		echo "press return to continue.."
 		read
-
+fi
 		#---------------------------------------
 		# check if any new file, exit if not
 		#---------------------------------------
@@ -414,8 +414,11 @@ echo "Using previously loaded chado."
 echo
 fi # if $STAG=y
 
+if [ $INTERACT = "y" ]
+then
 echo "press return to continue.."
 read
+fi
 
 #---------------------------------------
 # build modmine
@@ -457,9 +460,13 @@ echo
 echo "Using previously built modMine."
 echo
 fi #BUILD=y
+
+if [ $INTERACT = "y" ]
+then
 echo
 echo "press return to continue.."
 read
+fi
 
 #---------------------------------------
 # building webapp
@@ -470,9 +477,12 @@ cd $MINEDIR/webapp
 ant -Drelease=$REL $V default remove-webapp release-webapp
 fi
 
+if [ $INTERACT = "y" ]
+then
 echo
 echo "press return to continue.."
 read
+fi
 
 #---------------------------------------
 # and run acceptance tests
