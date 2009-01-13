@@ -162,14 +162,19 @@ jQuery(document).ready(function(){
 
                       <%-- test whether already selected and highlight if needed --%>
                       <c:set var="cellClass" value="${resultElement.id}"/>
+                      
                       <c:if test="${(!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1) && empty bagName}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
                       </c:if>
 
                       <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" rowspan="${subRow[column.index].rowspan}">
+                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
                       <%-- the checkbox to select this object --%>
-                      <c:if test="${column.selectable}">
+                      <c:set var="disabled" value="false"/>
+                      <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
+                    <c:set var="disabled" value="true"/>
+                  </c:if>
+                    <c:if test="${column.selectable}">
                         <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
                         <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
                           <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
@@ -221,6 +226,8 @@ jQuery(document).ready(function(){
                       </c:if>
                     </c:forEach>
                   <c:set var="disabled" value="false"/>
+                 
+                  
                   <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
                     <c:set var="disabled" value="true"/>
                   </c:if>
@@ -271,7 +278,7 @@ jQuery(document).ready(function(){
   </c:set>
   <b>Selected:</b><span id="selectedIdFields">
   <c:choose>
-   <c:when test="${pagedResults.allSelected}">All selected on all pages</c:when>
+   <c:when test="${pagedResults.allSelected != -1}">All selected on all pages</c:when>
    <c:otherwise>${selectedIdFields}</c:otherwise>
   </c:choose>
   </span>

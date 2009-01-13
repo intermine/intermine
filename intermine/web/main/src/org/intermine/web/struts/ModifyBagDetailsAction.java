@@ -76,7 +76,7 @@ public class ModifyBagDetailsAction extends InterMineAction
             PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
             String msg = "";
 
-            if (pc.isAllSelected()) {
+            if (pc.isAllRowsSelected()) {
                 // TODO these messages need to be moved to properties file
                 msg = "You can't remove all items from your list.  Try deleting your list instead.";
             } else {

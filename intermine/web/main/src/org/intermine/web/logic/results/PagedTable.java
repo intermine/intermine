@@ -815,15 +815,16 @@ public class PagedTable
     }
 
     /**
-     * Return true iff a whole column is selected.
+     * Return true if a whole column is selected either by selecting the whole column checkbox or
+     * by selecting each row individually.
      * @return if a column is selected
      */
-    public boolean isAllSelected() {
+    public boolean isAllRowsSelected() {
         if (allSelected == -1) {
             int selectedCount = selectionIds.size();
             if (selectedCount > 0) {
                 // If there is at least one more row than there are selected elements, it's not
-                // all selected.  We use get()/try/catch to avoid callin size() which can be slow
+                // all selected.  We use get()/try/catch to avoid calling size() which can be slow
                 try {
                     getAllRows().get(selectedCount);
                     // success
