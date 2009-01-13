@@ -76,21 +76,6 @@ public class PagedTable
     // the index of the column the has all checkbox checked
     private int allSelected = -1;
 
-    /**
-     * @return the allSelected
-     */
-    public int getAllSelected() {
-        return allSelected;
-    }
-
-    /**
-     * @param allSelected the allSelected to set
-     */
-    public void setAllSelected(int allSelected) {
-        this.allSelected = allSelected;
-    }
-
-
     private String selectedClass;
     private int selectedColumn;
 
@@ -114,7 +99,13 @@ public class PagedTable
         this.pageSize = pageSize;
     }
 
-
+    /**
+     * @return the allSelected
+     */
+    public int getAllSelected() {
+        return allSelected;
+    }
+    
     /**
      * Get the list of column configurations
      *
@@ -984,8 +975,8 @@ public class PagedTable
             return i;
         }
 
-        Map savedBags = profile.getSavedBags();
-        InterMineBag interMineBag = (InterMineBag) savedBags.get(bagName);
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        InterMineBag interMineBag = savedBags.get(bagName);
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
