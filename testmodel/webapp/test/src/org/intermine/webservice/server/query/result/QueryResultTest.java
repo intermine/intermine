@@ -15,7 +15,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -83,6 +85,23 @@ public class QueryResultTest extends TestCase
     public void testErrorXMLResponseCode() throws Exception {
         String req = getRequestString("query=a" + getQuery());
         assertEquals(Output.SC_BAD_REQUEST, TestUtil.getResponseCode(req));        
+    }
+    
+    /**
+     * Tests if there is correct number of outer join results and if outer join works at least
+     * for this simple query.
+     * @throws Exception
+     */
+    public void testOuterJoinQuery() throws Exception {
+        String query = "<query name=\"\" model=\"testmodel\" view=\"Company.name " +
+        		"Company:departments.name\" sortOrder=\"Company.name asc\"></query>";
+        query = URLEncoder.encode(query, "UTF-8");
+        String xmlResult = getResultForQueryString("format=xml&query=" + query);
+        List<List<String>> results = TestUtil.parseXMLResult(xmlResult);
+        assertEquals("Invalid number of outer join results", 3, results.size());
+        assertEquals(Arrays.asList("CompanyA", "DepartmentA1"), results.get(0));
+        assertEquals(Arrays.asList("CompanyB", "DepartmentB1"), results.get(1));
+        assertEquals(Arrays.asList("CompanyB", "DepartmentB2"), results.get(2));
     }
     
     public String getServiceUrl() {
