@@ -213,6 +213,7 @@ public class WebResultsTest extends TestCase
         List view = new ArrayList() {{ // see: http://www.c2.com/cgi/wiki?DoubleBraceInitialization
             add(new Path(model, "Department.name"));
             add(new Path(model, "Department.company.name"));
+            add(new Path(model, "Department.manager.name"));
         }};
         pq.setViewPaths(view);
         Map<String, QuerySelectable> pathToQueryNode = new HashMap();
@@ -231,9 +232,16 @@ public class WebResultsTest extends TestCase
         c1.setName("Company1");
         ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);
         
+        Manager m1 = new Manager();
+        m1.setId(new Integer(1));
+        m1.setSeniority(new Integer(100));
+        m1.setName("Manager1");
+        ResultElement res3 = new ResultElement(m1, new Path(model, "Department.manager.name"), false);
+
         ResultsRow expected = new ResultsRow();
         expected.add(new MultiRowFirstValue(res1, 1));
         expected.add(new MultiRowFirstValue(res2, 1));
+        expected.add(new MultiRowFirstValue(res3, 1));
         assertEquals(new MultiRow(Collections.singletonList(expected)), row1);
     }
 
