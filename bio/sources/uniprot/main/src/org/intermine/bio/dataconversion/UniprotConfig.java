@@ -53,6 +53,9 @@ public class UniprotConfig
      */
     public String getUniqueIdentifier(String taxonId) {
         ConfigEntry entry = entries.get(taxonId);
+        if (entry == null) {
+            return null;
+        }
         return entry.getUniqueIdentifier();
     }
 
@@ -143,7 +146,7 @@ public class UniprotConfig
     public class ConfigEntry
     {
 
-        private String uniqueIdentifier;
+        private String uniqueIdentifier = null;
 
         private Map<String, IdentifierConfig> identifiers = new HashMap();
 

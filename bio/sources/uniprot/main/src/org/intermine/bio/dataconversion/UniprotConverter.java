@@ -200,7 +200,8 @@ public class UniprotConverter extends DirectoryConverter
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
-    private void processEntries() {
+    private void processEntries()
+    throws SAXException{
         UniprotEntry entry = null;
         Iterator it = entries.iterator();
         while (it.hasNext()) {
@@ -268,11 +269,8 @@ public class UniprotConverter extends DirectoryConverter
                     protein.setCollection("synonyms", synonymRefIds);
 
                     store(protein);
-
-                } catch (Exception e) {
-                    throw new RuntimeException("store failed for protein "
-                                               + entry.getPrimaryAccession()
-                                               + " with exception " + e);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
                 }
 
             }
@@ -329,7 +327,7 @@ public class UniprotConverter extends DirectoryConverter
     throws SAXException {
         Map<String, String> dbrefs = entry.getDbrefs();
         if (dbrefs.containsKey("EC")) {
-               protein.setAttribute("ecnumber", dbrefs.get("EC"));
+               protein.setAttribute("ecNumber", dbrefs.get("EC"));
         }
         if (dbrefs.containsKey("RefSeq")) {
                String synonym = dbrefs.get("RefSeq");
@@ -352,11 +350,17 @@ public class UniprotConverter extends DirectoryConverter
         Set<String> geneFields = CONFIG.getGeneIdentifierFields(taxonId);
 
         if (geneFields == null) {
-            LOG.error("Couldn't processing genes for " + taxonId + ", configuration missing");
+            LOG.error("Couldn't process genes for " + taxonId + ", configuration missing");
             return;
         }
 
         String uniqueIdentifier = getGeneIdentifier(entry, uniqueIdentifierField);
+
+        if (uniqueIdentifier == null) {
+            LOG.error("Couldn't process gene for protein " + entry.getPrimaryAccession()
+                      + ", no " + uniqueIdentifierField);
+            return;
+        }
 
         String geneRefId = genes.get(uniqueIdentifier);
         if (geneRefId == null) {
@@ -366,6 +370,12 @@ public class UniprotConverter extends DirectoryConverter
 
             for (String geneField : geneFields) {
                 String identifier = getGeneIdentifier(entry, geneField);
+                if (identifier == null) {
+                    LOG.error("Couldn't process genes for " + entry.getPrimaryAccession()
+                              + ", no " + geneField);
+                    return;
+                }
+
                 gene.setAttribute(geneField, identifier);
             }
 
@@ -395,7 +405,7 @@ public class UniprotConverter extends DirectoryConverter
             return null;
         }
 
-        if (method.equals("variable")) {
+        if (method.equals("name")) {
             identifierValue = entry.getGenes().get(value);
         } else if (method.equals("datasource")) {
             // TODO there may be two
@@ -478,9 +488,10 @@ public class UniprotConverter extends DirectoryConverter
                                             attrs.getValue("status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
-                            && entry.processingFeature()) {
+                            && entry.processingFeature() && attrs.getValue("position") != null) {
                 entry.addFeatureLocation(qName, attrs.getValue("position"));
-            } else if (qName.equals("position") && entry.processingFeature()) {
+            } else if (qName.equals("position") && entry.processingFeature()
+                            && attrs.getValue("position") != null) {
                 entry.addFeatureLocation("begin", attrs.getValue("position"));
                 entry.addFeatureLocation("end", attrs.getValue("position"));
             } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
