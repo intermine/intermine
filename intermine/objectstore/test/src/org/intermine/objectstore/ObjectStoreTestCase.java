@@ -515,6 +515,10 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("CompanyA"), Collections.singletonList(data.get("DepartmentA1")) },
                              { data.get("CompanyB"), Collections.singletonList(data.get("DepartmentB1")) } };
         results.put("CollectionPathExpression5", toList(r));
+        r = new Object[][] { { data.get("DepartmentA1"), data.get("CompanyA"), Arrays.asList(data.get("DepartmentA1")) },
+                             { data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2")) },
+                             { data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2")) } };
+        results.put("CollectionPathExpression6", toList(r));
 
         r = new Object[][] { { data.get("CompanyA") },
                              { data.get("CompanyB") },

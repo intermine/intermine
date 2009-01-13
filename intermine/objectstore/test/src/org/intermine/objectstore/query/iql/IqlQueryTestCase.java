@@ -261,6 +261,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("CollectionPathExpression3", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, default.employees) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("CollectionPathExpression4", new IqlQuery("SELECT a1_, a1_.departments(SELECT SINGLETON a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE default.employees CONTAINS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
         results.put("CollectionPathExpression5", new IqlQuery("SELECT a1_, a1_.departments(WHERE default.name LIKE '%1') AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
+        results.put("CollectionPathExpression6", new IqlQuery("SELECT a1_, a2_.0 AS a3_, a2_.1 AS a4_ FROM org.intermine.model.testmodel.Department AS a1_ PATH a1_.company(SELECT default, default.departments) AS a2_", null));
         results.put("OrSubquery", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE (a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Company AS a1_) OR a1_ IN (SELECT a1_ FROM org.intermine.model.testmodel.Broke AS a1_))", null));
         results.put("ScientificNumber", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Types AS a1_ WHERE (a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32)", null));
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE LOWER(a1_.name) IN ?", null);

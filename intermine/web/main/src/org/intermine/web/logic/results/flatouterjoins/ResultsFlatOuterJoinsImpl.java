@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
@@ -198,6 +199,9 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
                     } else {
                         notFinished = false;
                     }
+                } else if (qs instanceof PathExpressionField) {
+                    PathExpressionField pef = (PathExpressionField) qs;
+                    qs = pef.getQope().getSelect().get(pef.getFieldNumber());
                 } else {
                     notFinished = false;
                 }

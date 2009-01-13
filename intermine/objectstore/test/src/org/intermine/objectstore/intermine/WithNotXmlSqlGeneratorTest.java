@@ -228,6 +228,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("Company", "Department", "Employee")));
         results.put("CollectionPathExpression5", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("Company", "Department")));
+        results.put("CollectionPathExpression6", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression6", new HashSet(Arrays.asList("Company", "Department")));
         results.put("ScientificNumber", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", Collections.singleton("Types"));
         results.put("LowerBag", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
