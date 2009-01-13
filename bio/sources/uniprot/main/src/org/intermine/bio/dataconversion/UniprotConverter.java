@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -201,7 +200,7 @@ public class UniprotConverter extends DirectoryConverter
     }
 
     private void processEntries()
-    throws SAXException{
+    throws SAXException {
         UniprotEntry entry = null;
         Iterator it = entries.iterator();
         while (it.hasNext()) {
