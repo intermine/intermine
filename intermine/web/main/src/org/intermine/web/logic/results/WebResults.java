@@ -358,7 +358,9 @@ implements WebTable
                     MultiRowValue origO = initialList.get(columnIndex);
                     Object o = (origO == null ? null : origO.getValue());
                     int rowspan = -1;
-                    if (origO instanceof MultiRowFirstValue) {
+                    if (origO == null) {
+                        rowspan = 1;
+                    } else if (origO instanceof MultiRowFirstValue) {
                         rowspan = ((MultiRowFirstValue) origO).getRowspan();
                     }
                     String lastCd;
