@@ -356,7 +356,7 @@ implements WebTable
                     }
                     int columnIndex = columnIndexInteger.intValue();
                     MultiRowValue origO = initialList.get(columnIndex);
-                    Object o = origO.getValue();
+                    Object o = (origO == null ? null : origO.getValue());
                     int rowspan = -1;
                     if (origO instanceof MultiRowFirstValue) {
                         rowspan = ((MultiRowFirstValue) origO).getRowspan();
