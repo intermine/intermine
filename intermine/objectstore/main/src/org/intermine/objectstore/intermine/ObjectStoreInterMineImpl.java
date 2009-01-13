@@ -90,6 +90,9 @@ import org.intermine.util.TypeUtil;
 public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
+    
+    private static final Logger SQLLOGGER = Logger.getLogger("sqllogger");
+
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
     protected static Map instances = new HashMap();
     protected Database db;
@@ -894,7 +897,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             if (getLogBeforeExecute()) {
-                LOG.info("(BEFORE EXECUTE) iql: " + q + "\n"
+                SQLLOGGER.info("(BEFORE EXECUTE) iql: " + q + "\n"
                         + "generated sql: " + generatedSql + "\n"
                         + "optimised sql: " + sql);
             }
@@ -915,7 +918,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
             boolean doneExplainLog = false;
             if (postExecute - preExecute > permittedTime) {
-                LOG.info(getModel().getName() + ": Executed SQL (time = "
+                LOG.debug(getModel().getName() + ": Executed SQL (time = "
                         + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
                         + objResults.size() + "): " + sql);
                 if (logExplains) {
@@ -924,7 +927,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         explainResult = ExplainResult.getInstance(sql, c);
                     }
                     if (explainResult instanceof PostgresExplainResult) {
-                        LOG.info("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
+                        LOG.debug("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
                                 .getExplainText());
                     }
                 }
@@ -960,7 +963,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long conTime = postConvert - postExecute;
             statsConTime += conTime;
             if (verboseQueryLog) {
-                LOG.info("(VERBOSE) iql: " + q + "\n"
+                SQLLOGGER.info("(VERBOSE) iql: " + q + "\n"
                         + "generated sql: " + generatedSql + "\n"
                         + "optimised sql: " + sql + "\n"
                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime
@@ -974,7 +977,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         explainResult = ExplainResult.getInstance(sql, c);
                     }
                     if (explainResult instanceof PostgresExplainResult) {
-                        LOG.info("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
+                        SQLLOGGER.info("EXPLAIN result: " + ((PostgresExplainResult) explainResult)
                                 .getExplainText());
                     }
                 }
