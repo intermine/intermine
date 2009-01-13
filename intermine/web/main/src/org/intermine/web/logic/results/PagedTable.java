@@ -419,7 +419,8 @@ public class PagedTable
 
     /**
      * Return the fields for the first selected objects.  Return the first
-     * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "..."
+     * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "...".  If a whole
+     * column is selected return an empty list, the jsp will display and 'All selected' message.
      * @param os the ObjectStore
      * @param classKeysMap map of key field for a given class name
      * @return the list
@@ -427,43 +428,47 @@ public class PagedTable
     public List<String> getFirstSelectedFields(ObjectStore os,
                                                Map<String, List<FieldDescriptor>> classKeysMap) {
         Set<String> retList = new LinkedHashSet<String>();
-        Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
-        boolean seenNullField = false;
-        while (selectedEntryIter.hasNext()) {
-            if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
-                SelectionEntry entry = selectedEntryIter.next();
-                String fieldValue = entry.fieldValue;
-                if (fieldValue == null) {
-                    // the select column doesn't have a value for this object; use class keys to
-                    // find a value
-                    InterMineObject object;
-                    try {
-                        Integer id = entry.id;
-                        object = os.getObjectById(id);
-                        if (object == null) {
-                            throw new RuntimeException("internal error - unknown object id: " + id);
-                        }
-                        String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
-                        if (classKeyFieldValue == null) {
+        // only find values if individual elements selected, not if whole column selected
+        if (allSelected == -1) {
+            Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+            boolean seenNullField = false;
+            while (selectedEntryIter.hasNext()) {
+                if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
+                    SelectionEntry entry = selectedEntryIter.next();
+                    String fieldValue = entry.fieldValue;
+                    if (fieldValue == null) {
+                        // the select column doesn't have a value for this object; use class keys to
+                        // find a value
+                        InterMineObject object;
+                        try {
+                            Integer id = entry.id;
+                            object = os.getObjectById(id);
+                            if (object == null) {
+                                throw new RuntimeException("internal error - unknown object id: "
+                                        + id);
+                            }
+                            String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
+                            if (classKeyFieldValue == null) {
+                                seenNullField = true;
+                            } else {
+                                retList.add(classKeyFieldValue);
+                            }
+                        } catch (ObjectStoreException e) {
                             seenNullField = true;
-                        } else {
-                            retList.add(classKeyFieldValue);
                         }
-                    } catch (ObjectStoreException e) {
-                        seenNullField = true;
+                    } else {
+                        retList.add(fieldValue);
                     }
                 } else {
-                    retList.add(fieldValue);
+                    retList.add("...");
+                    return new ArrayList<String>(retList);
                 }
-            } else {
-                retList.add("...");
-                return new ArrayList<String>(retList);
             }
-        }
-        if (seenNullField) {
-            // if there are null that we can't find a field value for, just append "..." because
-            // showing "[no value]" in the webapp is of no value
-            retList.add("...");
+            if (seenNullField) {
+                // if there are null that we can't find a field value for, just append "..." because
+                // showing "[no value]" in the webapp is of no value
+                retList.add("...");
+            }
         }
         return new ArrayList<String>(retList);
     }
