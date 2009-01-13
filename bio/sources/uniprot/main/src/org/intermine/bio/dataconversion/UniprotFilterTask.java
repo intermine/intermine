@@ -40,10 +40,10 @@ public class UniprotFilterTask extends Task
 
     /**
      * Set the source fileset.
-     * @param fileSet the fileset
+     * @param files the fileset
      */
-    public void addFileSet(FileSet fileSet) {
-        this.fileSet = fileSet;
+    public void addFileSet(FileSet files) {
+        this.fileSet = files;
     }
 
     /**
