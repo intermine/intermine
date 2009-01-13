@@ -17,21 +17,19 @@
   <target name="-retrieve-tgt-from-custom-dir" depends="-retrieve-tgt-from-custom-dir-filtered,-retrieve-tgt-from-custom-dir-whole"/>
 
   <target name="-retrieve-tgt-from-custom-dir-whole" unless="use.filter">
-    <convert-file
+    <convert-dir
        modelName="${target.model}"
        clsName="${converter.class}"
-       osName="osw.${common.os.prefix}-tgt-items">
-      <fileset dir="${src.data.dir}" includes="*.xml"/>
-    </convert-file>
+       osName="osw.${common.os.prefix}-tgt-items"
+       dataDir="${src.data.dir}" />    
   </target>
 
   <target name="-retrieve-tgt-from-custom-dir-filtered" if="use.filter">
-    <convert-file
+    <convert-dir
        modelName="${target.model}"
        clsName="${converter.class}"
-       osName="osw.${common.os.prefix}-tgt-items">
-      <fileset dir="${build.data.dir}" includes="*.xml"/>
-    </convert-file>
+       osName="osw.${common.os.prefix}-tgt-items"
+       dataDir="${build.data.dir}" />  
   </target>
 </project>
 

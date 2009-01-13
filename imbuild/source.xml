@@ -122,20 +122,6 @@
   </propertyset>
 
 
-
-
-
-  <!--
-    Retrieve files from a custom directory and process them with the supplied converter class
-  - ->
-  <target name="-retrieve-src-from-custom-dir" if="custom.src.dir">
-    <convert-file clsName="${converter.class}"
-                  osName="osw.${common.os.prefix}-src-items"
-                  modelName="${target.model}">
-      <fileset dir="${custom.src.data.dir}"/>
-    </convert-file>
-  </target -->
-
   <target name="-set-custom-file-includes" unless="src.data.dir.includes">
     <!-- include everything by default --> 
     <property name="src.data.dir.includes" value="**/*"/>
@@ -299,7 +285,8 @@
                                        -retrieve-from-dag,
                                        -retrieve-tgt-from-xml-file,
                                        -retrieve-tgt-from-large-xml-file,
-                                       -index-analyse-tgt-items" if="do.tgt.retrieve"/>
+                                       -index-analyse-tgt-items,
+                                       -retrieve-tgt-from-custom-dir" if="do.tgt.retrieve"/>
 
   <target name="retrieve" depends="tgt-retrieve"/>
 
