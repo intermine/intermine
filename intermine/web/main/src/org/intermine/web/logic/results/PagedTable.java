@@ -380,7 +380,14 @@ public class PagedTable
             }
        } else {
            // add because the all checkbox is on
-           selectionIds.put(objectId, null);
+           ResultElement resultElement = findIdInVisible(objectId);
+           if (resultElement != null) {
+               if (resultElement.getField() == null) {
+                   selectionIds.put(objectId, null);
+               } else {
+                   selectionIds.put(objectId, resultElement.getField().toString());
+               }
+           }
            if (isEmptySelection()) {
                clearSelectIds();
            }
@@ -407,7 +414,7 @@ public class PagedTable
         }
         return null;
     }
-
+    
     /**
      * Return the fields for the first selected objects.  Return the first
      * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "...".  If a whole
