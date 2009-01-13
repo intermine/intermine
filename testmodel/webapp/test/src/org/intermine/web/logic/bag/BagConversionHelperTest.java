@@ -19,8 +19,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.flatouterjoins.MultiRow;
-import org.intermine.objectstore.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -38,6 +36,8 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
