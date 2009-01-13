@@ -20,8 +20,10 @@ import java.util.Map;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -109,6 +111,23 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
             Map<String, QuerySelectable> pathToQueryNode) {
         List retval = new ArrayList();
         for (QuerySelectable qs : select) {
+            boolean notFinished = true;
+            while (notFinished) {
+                if (qs instanceof QueryObjectPathExpression) {
+                    QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                    List<QuerySelectable> subSelect = qope.getSelect();
+                    if (!subSelect.isEmpty()) {
+                        qs = subSelect.get(0);
+                    } else {
+                        notFinished = false;
+                    }
+                } else if (qs instanceof PathExpressionField) {
+                    PathExpressionField pef = (PathExpressionField) qs;
+                    qs = pef.getQope().getSelect().get(pef.getFieldNumber());
+                } else {
+                    notFinished = false;
+                }
+            }
             if (qs instanceof QueryCollectionPathExpression) {
                 QueryCollectionPathExpression qc = (QueryCollectionPathExpression) qs;
                 List<QuerySelectable> subSelect = qc.getSelect();

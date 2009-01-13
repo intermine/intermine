@@ -139,6 +139,18 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
                         Arrays.asList(new MultiRowFirstValue(data.get("CompanyA"), 1), new MultiRowFirstValue(data.get("DepartmentA1"), 1))),
                     Arrays.asList(
                         Arrays.asList(new MultiRowFirstValue(data.get("CompanyB"), 1), new MultiRowFirstValue(data.get("DepartmentB1"), 1)))));
+        v1 = new MultiRowFirstValue(data.get("DepartmentB1"), 2);
+        v2 = new MultiRowFirstValue(data.get("DepartmentB2"), 2);
+        v3 = new MultiRowFirstValue(data.get("CompanyB"), 2);
+        results.put("CollectionPathExpression6", Arrays.asList(
+                    Arrays.asList(
+                        Arrays.asList(new MultiRowFirstValue(data.get("DepartmentA1"), 1), new MultiRowFirstValue(data.get("CompanyA"), 1), new MultiRowFirstValue(data.get("DepartmentA1"), 1))),
+                    Arrays.asList(
+                        Arrays.asList(v1, v3, new MultiRowFirstValue(data.get("DepartmentB1"), 1)),
+                        Arrays.asList(v1.getMrlv(), v3.getMrlv(), new MultiRowFirstValue(data.get("DepartmentB2"), 1))),
+                    Arrays.asList(
+                        Arrays.asList(v2, v3, new MultiRowFirstValue(data.get("DepartmentB1"), 1)),
+                        Arrays.asList(v2.getMrlv(), v3.getMrlv(), new MultiRowFirstValue(data.get("DepartmentB2"), 1)))));
         results.put("SubclassCollection", Arrays.asList(
                     Arrays.asList(
                         Arrays.asList(new MultiRowFirstValue(data.get("DepartmentA1"), 1), new MultiRowFirstValue(data.get("EmployeeA1"), 1))),

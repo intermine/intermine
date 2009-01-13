@@ -227,6 +227,8 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression4", new HashSet(Arrays.asList("Company", "Department", "Employee")));
         results.put("CollectionPathExpression5", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("Company", "Department")));
+        results.put("CollectionPathExpression6", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression6", new HashSet(Arrays.asList("Company", "Department")));
         results.put("OrSubquery", NO_RESULT);
         results2.put("OrSubquery", NO_RESULT);
         results.put("ScientificNumber", "SELECT a1_.bigDecimalObjType AS a1_bigDecimalObjType, a1_.booleanObjType AS a1_booleanObjType, a1_.booleanType AS a1_booleanType, a1_.dateObjType AS a1_dateObjType, a1_.doubleObjType AS a1_doubleObjType, a1_.doubleType AS a1_doubleType, a1_.floatObjType AS a1_floatObjType, a1_.floatType AS a1_floatType, a1_.id AS a1_id, a1_.intObjType AS a1_intObjType, a1_.intType AS a1_intType, a1_.longObjType AS a1_longObjType, a1_.longType AS a1_longType, a1_.name AS a1_name, a1_.shortObjType AS a1_shortObjType, a1_.shortType AS a1_shortType, a1_.stringObjType AS a1_stringObjType FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");

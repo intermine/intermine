@@ -96,6 +96,12 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
         results.put("CollectionPathExpression5", Arrays.asList(
                     Arrays.asList(data.get("CompanyA"), data.get("DepartmentA1")),
                     Arrays.asList(data.get("CompanyB"), data.get("DepartmentB1"))));
+        results.put("CollectionPathExpression6", Arrays.asList(
+                    Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA"), data.get("DepartmentA1")),
+                    Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), data.get("DepartmentB1")),
+                    Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), data.get("DepartmentB2")),
+                    Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), data.get("DepartmentB1")),
+                    Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), data.get("DepartmentB2"))));
         results.put("SubclassCollection", Arrays.asList(
                     Arrays.asList(data.get("DepartmentA1"), data.get("EmployeeA1")),
                     Arrays.asList(data.get("DepartmentB1"), data.get("EmployeeB1")),
