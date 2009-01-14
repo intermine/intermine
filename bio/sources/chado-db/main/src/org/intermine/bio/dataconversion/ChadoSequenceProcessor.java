@@ -60,33 +60,41 @@ import org.apache.log4j.Logger;
 public class ChadoSequenceProcessor extends ChadoProcessor
 {
     // incremented each time we make a new ChadoSequenceProcessor to make sure we have a unique
-    // name for the temporary table
+    // name for temporary tables
     private static int tempTableCount = 0;
 
     private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
 
+    // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
+    // and used to get object types, Item IDs etc. (see FeatureData)
     private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
-    private Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
+
+    // we don't configure anything by default, so the process methods do their default actions
+    private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
+
+    // A map from chromosome uniqueName to chado feature_ids, populated by processFeatureTable()
     private Map<Integer, Map<String, Integer>> chromosomeMaps =
-            new HashMap<Integer, Map<String, Integer>>();
+        new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
     private Map<Integer, String> publications = new HashMap<Integer, String>();
 
-    private String tempTableName = null;
+    // the name of the temporary table we create from the feature table to speed up processing
+    private String tempFeatureTableName = null;
 
+    // a list of the possible names for the part_of relation
     private static final List<String> PARTOF_RELATIONS = Arrays.asList("partof", "part_of");
 
-    // feature type to query from the feature table
+    // default feature types to query from the feature table
     private static final List<String> DEFAULT_FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript",
-            "CDS", "intron", "exon", "EST",
-            "five_prime_untranslated_region",
-            "five_prime_UTR", "three_prime_untranslated_region",
-            "three_prime_UTR", "origin_of_replication"
+       "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
+       "five_prime_untranslated_region", "five_prime_UTR", "three_prime_untranslated_region",
+       "three_prime_UTR", "origin_of_replication"
     );
 
-    private static final List<String> CHROMOSOME_FEATURES =
+    // default chromosome-like feature types - ie those types of features that occur in the
+    // srcfeature column of the featureloc table
+    private static final List<String> DEFAULT_CHROMOSOME_FEATURES =
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     /**
@@ -100,8 +108,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static final ConfigAction DO_NOTHING_ACTION = new DoNothingAction();
 
+    // the prefix to use when making a temporary table, the tempTableCount will be added to make it
+    // unique
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
+    // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
+    // class "SequenceOntologyTerm") are only crerted once
     private final MultiKeyMap singletonMap = new MultiKeyMap();
 
     /**
@@ -112,46 +124,51 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         super(chadoDBConverter);
         synchronized (this) {
             tempTableCount++;
-            tempTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
+            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
         }
     }
 
     /**
      * Return the config Map.
      * @param taxonId return the configuration for this organism
-     * @return the Map
+     * @return the Map from configuration key to a list of actions
      */
     @SuppressWarnings("unchecked")
     protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
-        MultiKeyMap map = config.get(taxonId);
-        if (map == null) {
-            map = new MultiKeyMap();
-            config.put(taxonId, map);
-        }
-        return map;
+        return DEFAULT_CONFIG;
     }
 
     /**
      * {@inheritDoc}
+     * We process the chado database by reading each table in turn (feature, pub, featureloc, etc.)
+     * Each row of each table is read and stored if appropriate.
      */
     @Override
-
     public void process(Connection connection) throws Exception {
+        // overridden by subclasses if necessary
         earlyExtraProcessing(connection);
+
         createFeatureTempTable(connection);
+
         processFeatureTable(connection);
         processFeatureCVTermTable(connection);
         processPubTable(connection);
 
         // process direct locations
         ResultSet directLocRes = getFeatureLocResultSet(connection);
+
+        // we don't call getFeatureLocResultSet() in the processLocationTable() method because
+        // processLocationTable() is called by subclasses to create locations
         processLocationTable(connection, directLocRes);
 
         processRelationTable(connection);
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
+
+        // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);
+        // overridden by subclasses if necessary
         finishedProcessing(connection, featureMap);
     }
 
@@ -376,7 +393,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
     /**
      * Get a list of the chado/so types of the LocatedSequenceFeatures we wish to load.  The list
-     * will not include chromosome-like features (eg. "chromosome" and "chromosome_arm").
+     * will not include chromosome-like features (eg. "chromosome" and "chromosome_arm").  The
+     * process methods will ignore features that are not in this list.
      * @return the list of features
      */
     protected List<String> getFeatures() {
@@ -389,7 +407,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the list of features
      */
     protected List<String> getChromosomeFeatureTypes() {
-        return CHROMOSOME_FEATURES;
+        return DEFAULT_CHROMOSOME_FEATURES;
     }
 
     /**
@@ -636,7 +654,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         FeatureData subjectFeatureData = featureMap.get(subjectId);
 
                         // XXX FIXME TODO Hacky special case: count the exons so we can set
-                        // exonCount later
+                        // exonCount later.  Perhaps this should be configurable.
                         if (subjectFeatureData.interMineType.equals("Exon")) {
                             if (!countMap.containsKey(objectFeatureData.intermineObjectId)) {
                                 countMap.put(objectFeatureData.intermineObjectId, new Integer(1));
@@ -1044,7 +1062,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     /**
      * Read the feature, feature_cvterm and cvterm tables, then set fields, create synonyms or
      * create objects based on the cvterms.
-     * @param connection
+     * @param connection the Connection
      */
     private void processFeatureCVTermTable(Connection connection)
         throws SQLException, ObjectStoreException {
@@ -1392,7 +1410,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getFeatureResultSet(Connection connection)
         throws SQLException {
-        String query = "SELECT * FROM " + tempTableName;
+        String query = "SELECT * FROM " + tempFeatureTableName;
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1425,7 +1443,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Create a temporary table containing only the feature_ids of the feature that interest us.
+     * Create a temporary table containing only the features that interest us.  Also create indexes
+     * for the type and feature_id columns.
      * The table is used in later queries.  This is a protected method so that it can be overriden
      * for testing.
      * @param connection the Connection
@@ -1442,7 +1461,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         }
 
         String query =
-            "CREATE TEMPORARY TABLE " + tempTableName + " AS"
+            "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
             + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
             + "        is_analysis, residues, organism_id"
             + "    FROM feature, cvterm"
@@ -1456,15 +1475,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
         stmt.execute(query);
-        String idIndexQuery = "CREATE INDEX " + tempTableName + "_feature_index ON "
-            + tempTableName + "(feature_id)";
+        String idIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_feature_index ON "
+            + tempFeatureTableName + "(feature_id)";
         LOG.info("executing: " + idIndexQuery);
         stmt.execute(idIndexQuery);
-        String typeIndexQuery = "CREATE INDEX " + tempTableName + "_type_index ON "
-            + tempTableName + "(type)";
+        String typeIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_type_index ON "
+            + tempFeatureTableName + "(type)";
         LOG.info("executing: " + typeIndexQuery);
         stmt.execute(typeIndexQuery);
-        String analyze = "ANALYZE " + tempTableName;
+        String analyze = "ANALYZE " + tempFeatureTableName;
         LOG.info("executing: " + analyze);
         stmt.execute(analyze);
     }
@@ -1501,7 +1520,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the SQL string
      */
     protected String getFeatureIdQuery() {
-        return "SELECT feature_id FROM " + tempTableName;
+        return "SELECT feature_id FROM " + tempFeatureTableName;
     }
 
 
