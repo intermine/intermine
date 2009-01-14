@@ -581,7 +581,11 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
 
-            // feature_cvterm example:
+            // feature_cvterm example for Transposition: we create a featureTerms collection in the
+            // Transposition objects containing SequenceOntologyTerm objects.  For the current
+            // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
+            // We set the "name" field of the SequenceOntologyTerm to be the name from the cvterm
+            // table.
             List<String> chromosomeStructureVariationClassNames =
                 Arrays.asList("ChromosomeStructureVariation", "ChromosomalDeletion",
                               "ChromosomalDuplication", "ChromosomalInversion",
@@ -592,7 +596,6 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                                                                  "featureTerms",
                                                                  "name", true)));
             }
-
 
             // feature configuration example: for features of class "Exon", from "FlyBase",
             // set the Gene.symbol to be the "name" field from the chado feature
@@ -608,8 +611,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
             map.put(new MultiKey("feature", "TransposableElementInsertionSite", FLYBASE_DB_NAME,
                                  "name"),
-                    Arrays.asList(new SetFieldConfigAction("symbol",
-                                                           PB_INSERTION_PATTERN),
+                    Arrays.asList(new SetFieldConfigAction("symbol", PB_INSERTION_PATTERN),
                                   new CreateSynonymAction(PB_INSERTION_PATTERN),
                                   new SetFieldConfigAction("secondaryIdentifier"),
                                   new CreateSynonymAction()));
