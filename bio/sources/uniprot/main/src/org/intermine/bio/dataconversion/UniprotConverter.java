@@ -101,7 +101,7 @@ public class UniprotConverter extends DirectoryConverter
      */
     @Override
     public void process(File dataDir) throws Exception {
-        Map<String, List<File>> taxonIdToFiles = parseFileNames(dataDir.listFiles());
+        Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
         if (taxonIdToFiles.isEmpty()) {
             throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
         }
@@ -111,8 +111,13 @@ public class UniprotConverter extends DirectoryConverter
             if (taxonIdToFiles.get(taxonId) == null) {
                 throw new RuntimeException("no files found for " + taxonId);
             }
-            List<File> files = taxonIdToFiles.get(taxonId);
-            for (File file : files) {
+            File[] files = taxonIdToFiles.get(taxonId);
+            for (int i = 0; i <= 1; i++) {
+                // organism might not have sprot and trembl files
+                File file = files[i];
+                if (file == null) {
+                    continue;
+                }
                 UniprotHandler handler = new UniprotHandler();
                 try {
                     Reader reader = new FileReader(file);
@@ -131,9 +136,8 @@ public class UniprotConverter extends DirectoryConverter
     }
 
     /*
-     * trembl data files need to be processed immediately after sprot ones
-     * we parse all the file names and (for each organism) process the sprot file then the trembl
-     * file.  not all organisms are going to have both files
+     * sprot data files need to be processed immediately before trembl ones
+     * not all organisms are going to have both files
      *
      * UniProtFilterTask has already been run so all files are assumed to be valid.
      *
@@ -141,8 +145,8 @@ public class UniprotConverter extends DirectoryConverter
      *  [TAXONID]_uniprot_[SOURCE].xml
      *  SOURCE: sprot or trembl
      */
-    private Map<String, List<File>> parseFileNames(File[] fileList) {
-        Map<String, List<File>> files = new HashMap();
+    private Map<String, File[]> parseFileNames(File[] fileList) {
+        Map<String, File[]> files = new HashMap();
         if (fileList == null) {
             throw new RuntimeException("no files found to parse");
         }
@@ -156,19 +160,19 @@ public class UniprotConverter extends DirectoryConverter
             }
             String source = bits[2].replace(".xml", "");
 
-            // process trembl first because trembl has duplicates of sprot proteins
+            // process trembl last because trembl has duplicates of sprot proteins
             if (!source.equals("sprot") && !source.equals("trembl")) {
                 LOG.info("Bad file found:  "  + file.getName()
                                            +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
-
+            int i = (source.equals("sprot") ? 0 : 1);
             if (!files.containsValue(taxonId)) {
-                List<File> sourceFiles = new ArrayList();
-                sourceFiles.add(file);
+                File[] sourceFiles = new File[2];
+                sourceFiles[i] = file;
                 files.put(taxonId, sourceFiles);
             } else {
-                files.get(taxonId).add(file);
+                files.get(taxonId)[i] = file;
             }
         }
         return files;
