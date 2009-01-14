@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,7 +62,7 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> synonyms = new HashMap();
     private Map<String, String> datasets = new HashMap();
     private Map<String, String> domains = new HashMap();
-    private Map<String, String> sequences = new HashMap();
+    private Map<String, List<String>> sequences = new HashMap();
     private Map<String, String> datasources = new HashMap();
     private Map<String, String> ontologies = new HashMap();
     private Map<String, String> keywords = new HashMap();
@@ -100,20 +101,18 @@ public class UniprotConverter extends DirectoryConverter
      */
     @Override
     public void process(File dataDir) throws Exception {
-        Map<String, File[]> files = parseFileNames(dataDir.listFiles());
-        if (files.isEmpty()) {
+        Map<String, List<File>> taxonIdToFiles = parseFileNames(dataDir.listFiles());
+        if (taxonIdToFiles.isEmpty()) {
             throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
         }
-        Iterator iter = files.keySet().iterator();
+        Iterator iter = taxonIds.iterator();
         while (iter.hasNext()) {
-            String taxonId = (String) iter.next();
-            if (files.get(taxonId) == null) {
+            String taxonId = iter.next().toString();
+            if (taxonIdToFiles.get(taxonId) == null) {
                 throw new RuntimeException("no files found for " + taxonId);
             }
-            for (File file : files.get(taxonId)) {
-                if (file == null) {
-                    break;
-                }
+            List<File> files = taxonIdToFiles.get(taxonId);
+            for (File file : files) {
                 UniprotHandler handler = new UniprotHandler();
                 try {
                     Reader reader = new FileReader(file);
@@ -125,8 +124,9 @@ public class UniprotConverter extends DirectoryConverter
                 processEntries();
             }
 
-            // TODO reset all variables here, new organism!
+            // reset all variables here, new organism
             synonyms = new HashMap();
+            sequences = new HashMap();
         }
     }
 
@@ -141,8 +141,8 @@ public class UniprotConverter extends DirectoryConverter
      *  [TAXONID]_uniprot_[SOURCE].xml
      *  SOURCE: sprot or trembl
      */
-    private Map<String, File[]> parseFileNames(File[] fileList) {
-        Map files = new HashMap<String, File[]>();
+    private Map<String, List<File>> parseFileNames(File[] fileList) {
+        Map<String, List<File>> files = new HashMap();
         if (fileList == null) {
             throw new RuntimeException("no files found to parse");
         }
@@ -155,24 +155,21 @@ public class UniprotConverter extends DirectoryConverter
                 continue;
             }
             String source = bits[2].replace(".xml", "");
-            int i;
-            if (source.equals("sprot")) {
-                i = 0;
-            } else if (source.equals("trembl")) {
-                i = 1;
-            } else {
+
+            // process trembl first because trembl has duplicates of sprot proteins
+            if (!source.equals("sprot") && !source.equals("trembl")) {
                 LOG.info("Bad file found:  "  + file.getName()
                                            +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
-            if (!files.containsValue(taxonId)) {
-                File[] sources = new File[2];
-                sources[i] = file;
-                files.put(taxonId, sources);
-            } else {
-                ((File[]) files.get(taxonId))[i] = file;
-            }
 
+            if (!files.containsValue(taxonId)) {
+                List<File> sourceFiles = new ArrayList();
+                sourceFiles.add(file);
+                files.put(taxonId, sourceFiles);
+            } else {
+                files.get(taxonId).add(file);
+            }
         }
         return files;
     }
@@ -206,10 +203,8 @@ public class UniprotConverter extends DirectoryConverter
         while (it.hasNext()) {
             entry = (UniprotEntry) it.next();
 
-            /* TODO there are uniparc entries so check for swissprot-trembl datasets */
-            if (entry.hasDatasetRefId() && entry.hasPrimaryAccession()) {
-
-                // TODO handle duplicate sequences - see #1863
+            // TODO there are uniparc entries so check for swissprot-trembl datasets
+            if (entry.hasDatasetRefId() && entry.hasPrimaryAccession() && !entry.isDuplicate()) {
 
                 Item protein = createItem("Protein");
                 protein.setAttribute("isFragment", entry.isFragment());
@@ -318,6 +313,12 @@ public class UniprotConverter extends DirectoryConverter
         // name
         for (String name : entry.getDescriptions()) {
             refId = getSynonym(proteinRefId, "name", name, "false");
+            proteinSynonyms.add(refId);
+        }
+
+        // duplicate trembl entries
+        for (String synonym : sequences.get(entry.getMd5checksum())) {
+            refId = getSynonym(proteinRefId, "accession", synonym, "false");
             proteinSynonyms.add(refId);
         }
     }
@@ -601,26 +602,27 @@ public class UniprotConverter extends DirectoryConverter
         }
     }
 
-
-
     private void setSequence(UniprotEntry entry, String sequence)
     throws SAXException {
         String md5checksum = encodeSequence(sequence);
-        entry.setMd5checksum(md5checksum);
-        String refId = sequences.get(md5checksum);
-        if (refId == null) {
+        if (!sequences.containsKey(md5checksum)) {
+            entry.setDuplicate(false);
+            entry.setMd5checksum(md5checksum);
+            sequences.put(md5checksum, new ArrayList());
             Item item = createItem("Sequence");
             item.setAttribute("residues", sequence);
             item.setAttribute("length", entry.getLength());
-            refId = item.getIdentifier();
-            sequences.put(md5checksum, refId);
+            entry.setSeqRefId(item.getIdentifier());
             try {
                 store(item);
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
+        } else {
+            // duplicate trembl protein
+            entry.setDuplicate(true);
+            sequences.get(md5checksum).addAll(entry.getSynonyms());
         }
-        entry.setSeqRefId(refId);
     }
 
     private String encodeSequence(String sequence) {

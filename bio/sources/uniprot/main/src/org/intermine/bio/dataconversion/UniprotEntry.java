@@ -38,6 +38,7 @@ public class UniprotEntry
     private List<String> descriptions = new ArrayList();
     private Map<String, String> genes = new HashMap();
 
+    private boolean isDuplicate = false;
     private String taxonId, name, isFragment;
     private String primaryIdentifier, primaryaccession;
     private String seqRefId, md5checksum;
@@ -400,5 +401,30 @@ public class UniprotEntry
         this.primaryIdentifier = primaryIdentifier;
     }
 
+    /**
+     * @return list of all the synonyms for this entry, including name and accessions
+     */
+    public List getSynonyms() {
+        List<String> synonyms = new ArrayList();
+        synonyms.addAll(accessions);
+        synonyms.add(primaryaccession);
+        synonyms.add(name);
+        return synonyms;
+    }
+
+    /**
+     * if duplicate, the protein will not be processed
+     * @return isDuplicate - whether or not this trembl protein has a duplicate swissprot entry
+     */
+    public boolean isDuplicate() {
+        return isDuplicate;
+    }
+
+    /**
+     * @param isDuplicate the isDuplicate to set
+     */
+    public void setDuplicate(boolean isDuplicate) {
+        this.isDuplicate = isDuplicate;
+    }
 
 }
