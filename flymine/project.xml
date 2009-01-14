@@ -68,7 +68,7 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="ensembl" type="ensembl"> 
+    <source name="ensembl" type="intermine-items-large-xml-file"> 
      <property name="src.data.dir" location="/shared/data/ensembl/current"/> 
     </source> 
     <source name="flyreg" type="flyreg">
