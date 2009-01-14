@@ -29,7 +29,7 @@ CP=$CP:$INTERMINE/objectstore/main/lib/torque-3.2-dev.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/torque-gen-3.2-dev.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/commons-lang-2.0.jar
 CP=$CP:$INTERMINE/objectstore/main/lib/commons-logging-1.0.jar
-CP=$CP:$INTERMINE/objectstore/test/resources:$INTERMINE/resources/runtime:~:$INTERMINE/flymine_stuff:$INTERMINE/flymine_stuff/resources
+CP=$CP:$INTERMINE/objectstore/test/resources:$INTERMINE/resources/runtime:~/.intermine:$INTERMINE/flymine_stuff:$INTERMINE/flymine_stuff/resources
 
 if test -z "$LD_LIBRARY_PATH" ; then
     export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni

@@ -241,9 +241,13 @@ public class IqlShell
                 ObjectStoreInterMineImpl osii = (ObjectStoreInterMineImpl) os;
                 out.println("Query to precompute: " + q.toString());
                 long startTime = System.currentTimeMillis();
-                String precompName = osii.precompute(q, "IqlShell");
-                out.println("Precomputed query as table " + precompName + " in "
-                        + (System.currentTimeMillis() - startTime) + " ms");
+                List<String> precompNames = osii.precompute(q, "IqlShell");
+                if (precompNames.isEmpty()) {
+                    out.println("No precomputed tables created");
+                } else {
+                    out.println("Created precomputed tables: " + precompNames + " in "
+                            + (System.currentTimeMillis() - startTime) + " ms");
+                }
             }
             return;
         }

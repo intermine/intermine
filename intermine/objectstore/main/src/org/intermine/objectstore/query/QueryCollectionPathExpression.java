@@ -250,42 +250,76 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      * Returns the Query that will fetch the data represented by this object, given a Collection
      * of objects to fetch it for.
      *
-     * @param bag a Collection of objects to fetch data for
+     * @param bag a Collection of objects to fetch data for, or null to not constrain
      * @return a Query
      */
     public Query getQuery(Collection<InterMineObject> bag) {
         if (isCollection) {
-            Query q = new Query();
-            QueryClassBag qcb = new QueryClassBag(qc.getType(), bag);
-            q.addFrom(qcb, "bag");
-            q.addFrom(defaultClass, "default");
-            for (FromElement node : additionalFromList) {
-                if (aliases.containsKey(node)) {
-                    q.addFrom(node, aliases.get(node));
+            if (bag == null) {
+                Query q = new Query();
+                QueryClass qcb = new QueryClass(qc.getType());
+                q.addFrom(qcb, "bag");
+                q.addFrom(defaultClass, "default");
+                for (FromElement node : additionalFromList) {
+                    if (aliases.containsKey(node)) {
+                        q.addFrom(node, aliases.get(node));
+                    } else {
+                        q.addFrom(node);
+                    }
+                }
+                q.addToSelect(new QueryField(qcb, "id"), "bagId");
+                if (selectList.isEmpty()) {
+                    q.addToSelect(defaultClass);
                 } else {
-                    q.addFrom(node);
+                    for (QuerySelectable selectable : selectList) {
+                        q.addToSelect(selectable);
+                    }
                 }
-            }
-            q.addToSelect(new QueryField(qcb), "bagId");
-            if (selectList.isEmpty()) {
-                q.addToSelect(defaultClass);
-            } else {
-                for (QuerySelectable selectable : selectList) {
-                    q.addToSelect(selectable);
+                if (constraint == null) {
+                    q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                    fieldName), ConstraintOp.CONTAINS, defaultClass));
+                } else {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(constraint);
+                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                    fieldName), ConstraintOp.CONTAINS, defaultClass));
+                    q.setConstraint(cs);
                 }
-            }
-            if (constraint == null) {
-                q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
-                                fieldName), ConstraintOp.CONTAINS, defaultClass));
+                q.setDistinct(false);
+                return q;
             } else {
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                cs.addConstraint(constraint);
-                cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
-                                fieldName), ConstraintOp.CONTAINS, defaultClass));
-                q.setConstraint(cs);
+                Query q = new Query();
+                QueryClassBag qcb = new QueryClassBag(qc.getType(), bag);
+                q.addFrom(qcb, "bag");
+                q.addFrom(defaultClass, "default");
+                for (FromElement node : additionalFromList) {
+                    if (aliases.containsKey(node)) {
+                        q.addFrom(node, aliases.get(node));
+                    } else {
+                        q.addFrom(node);
+                    }
+                }
+                q.addToSelect(new QueryField(qcb), "bagId");
+                if (selectList.isEmpty()) {
+                    q.addToSelect(defaultClass);
+                } else {
+                    for (QuerySelectable selectable : selectList) {
+                        q.addToSelect(selectable);
+                    }
+                }
+                if (constraint == null) {
+                    q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                    fieldName), ConstraintOp.CONTAINS, defaultClass));
+                } else {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(constraint);
+                    cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(qcb,
+                                    fieldName), ConstraintOp.CONTAINS, defaultClass));
+                    q.setConstraint(cs);
+                }
+                q.setDistinct(false);
+                return q;
             }
-            q.setDistinct(false);
-            return q;
         } else {
             Query q = new Query();
             q.addFrom(defaultClass, "default");
@@ -303,13 +337,15 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
                     q.addToSelect(selectable);
                 }
             }
-            if (constraint == null) {
-                q.setConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
-            } else {
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                cs.addConstraint(constraint);
-                cs.addConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
-                q.setConstraint(cs);
+            if (bag != null) {
+                if (constraint == null) {
+                    q.setConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
+                } else {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(constraint);
+                    cs.addConstraint(new BagConstraint(defaultClass, ConstraintOp.IN, bag));
+                    q.setConstraint(cs);
+                }
             }
             q.setDistinct(false);
             return q;
