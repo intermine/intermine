@@ -143,142 +143,79 @@ jQuery(document).ready(function(){
         </c:choose>
       </c:set>
 
-      <im:instanceof instanceofObject="${row}" instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRow" instanceofVariable="isMultiRow"/>
-      <c:choose>
-        <c:when test="${isMultiRow == 'true'}">
-          <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
-            <tr class="<c:out value="${rowClass}"/>">
+      <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
+        <tr class="<c:out value="${rowClass}"/>">
 
-              <%-- If a whole column is selected, find the ResultElement.id from the selected column, other columns with the same ResultElement.id may also need to be highlighted --%>
-              <c:if test="${pagedResults.allSelected != -1}">
-                <c:set var="selectedColumnResultElementId" value="${subRow[pagedResults.allSelected].value.id}"/>
-              </c:if>
+        <%-- If a whole column is selected, find the ResultElement.id from the selected column, other columns with the same ResultElement.id may also need to be highlighted --%>
+        <c:if test="${pagedResults.allSelected != -1}">
+          <c:set var="selectedColumnResultElementId" value="${subRow[pagedResults.allSelected].value.id}"/>
+        </c:if>
           
-              <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
+        <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
 
-                <c:choose>
-                  <c:when test="${column.visible}">
-                    <im:instanceof instanceofObject="${subRow[column.index]}" instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue" instanceofVariable="isFirstValue"/>
-                    <c:if test="${isFirstValue == 'true'}">
-                      <c:set var="resultElement" value="${subRow[column.index].value}" scope="request"/>
-                      <c:set var="highlightObjectClass" value="noHighlightObject"/>
-                      <c:if test="${!empty highlightId && resultElement.id == highlightId}">
-                        <c:set var="highlightObjectClass" value="highlightObject"/>
-                      </c:if>
-
-                      <%-- test whether already selected and highlight if needed --%>
-                      <c:set var="cellClass" value="${resultElement.id}"/>
-                      
-
-                      <%-- highlight cell if selected or if whole column selected and element isn't de-selected --%>
-                      <c:choose>
-                       <c:when test="${pagedResults.allSelected == -1}">
-                         <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1 && empty bagName}">
-                           <c:set var="cellClass" value="${cellClass} highlightCell"/>
-                         </c:if>
-                       </c:when>
-                       <c:otherwise>
-                         <c:if test="${resultElement.id == selectedColumnResultElementId && empty pagedResults.selectionIds[resultElement.id] && empty bagName}">
-                           <c:set var="cellClass" value="${cellClass} highlightCell"/>
-                         </c:if>
-                       </c:otherwise> 
-                      </c:choose>
-                      
-                      <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
-                      <%-- the checkbox to select this object --%>
-                      <c:set var="disabled" value="false"/>
-                      <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
-                    <c:set var="disabled" value="true"/>
-                  </c:if>
-                    <c:if test="${column.selectable}">
-                        <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
-                        <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
-                          <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
-                        </c:if>
-                        <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.type}" rowspan="${subRow[column.index].rowspan}">--%>
-                          <c:if test="${resultElement.id != null}">
-                            <html:multibox property="currentSelectedIdStrings" name="pagedResults"
-                                 styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}"
-                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.type} class_${column.typeClsString}"
-                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
-                                 disabled="${disabled}">
-                              <c:out value="${resultElement.id}"/>
-                            </html:multibox>
-                          </c:if>
-                        <%--</td>--%>
-                      </c:if>
-                        <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
-                          <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
-                      </td>
-                    </c:if>
-                  </c:when>
-                  <c:otherwise>
-                    <%-- add a space so that IE renders the borders --%>
-                    <td style="background:#eee;">&nbsp;</td>
-                  </c:otherwise>
-                </c:choose>
-              </c:forEach>
-            </tr>
-          </c:forEach>
-        </c:when>
-        <c:otherwise>
-          <tr class="<c:out value="${rowClass}"/>">
-            <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
-
-              <c:choose>
-                <c:when test="${column.visible}">
-                  <c:set var="resultElement" value="${row[column.index]}" scope="request"/>
+          <c:choose>
+            <c:when test="${column.visible}">
+              <im:instanceof instanceofObject="${subRow[column.index]}" instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue" instanceofVariable="isFirstValue"/>
+                <c:if test="${isFirstValue == 'true'}">
+                  <c:set var="resultElement" value="${subRow[column.index].value}" scope="request"/>
                   <c:set var="highlightObjectClass" value="noHighlightObject"/>
                   <c:if test="${!empty highlightId && resultElement.id == highlightId}">
                     <c:set var="highlightObjectClass" value="highlightObject"/>
                   </c:if>
 
-                  <%-- the checkbox to select this object --%>
-                  <c:set var="ischecked" value=""/>
-                    <fmt:formatNumber value="${resultElement.id}" var="resultElementIdString" scope="page" />
-                    <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selectedId">
-                      <c:if test="${(! empty resultElement.type) && (fn:replace(resultElementIdString,',','') == selectedId)}">
-                        <c:set var="ischecked" value="highlightCell"/>
-                      </c:if>
-                    </c:forEach>
-                  <c:set var="disabled" value="false"/>
-                 
-                  
-                  <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
-                    <c:set var="disabled" value="true"/>
-                  </c:if>
                   <%-- test whether already selected and highlight if needed --%>
-                  <td id="cell,${status2.index},${status.index},${row[column.index].type}"
-                       class="${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}">
-                    <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
-                    <div>
-                  <c:if test="${column.selectable}">
-                    <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${row[column.index].type} ${ischecked}" id="cell_checkbox,${status2.index},${status.index},${row[column.index].type}">--%>
+                  <c:set var="cellClass" value="${resultElement.id}"/>
+                      
+                  <%-- highlight cell if selected or if whole column selected and element isn't de-selected --%>
+                  <c:choose>
+                    <c:when test="${pagedResults.allSelected == -1}">
+                      <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1 && empty bagName}">
+                        <c:set var="cellClass" value="${cellClass} highlightCell"/>
+                      </c:if>
+                    </c:when>
+                    <c:otherwise>
+                      <c:if test="${resultElement.id == selectedColumnResultElementId && empty pagedResults.selectionIds[resultElement.id] && empty bagName}">
+                        <c:set var="cellClass" value="${cellClass} highlightCell"/>
+                      </c:if>
+                    </c:otherwise> 
+                  </c:choose>
+                      
+                  <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
+                      class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
+                    <%-- the checkbox to select this object --%>
+                    <c:set var="disabled" value="false"/>
+                    <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
+                      <c:set var="disabled" value="true"/>
+                    </c:if>
+                    <c:if test="${column.selectable}">
+                      <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
+                      <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
+                        <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
+                      </c:if>
+                      <%--<td align="center" class="checkbox ${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${ischecked}" id="cell_checkbox,${status2.index},${(status.index + 1) * 1000 + multiRowStatus.index},${subRow[column.index].value.type}" rowspan="${subRow[column.index].rowspan}">--%>
                       <c:if test="${resultElement.id != null}">
                         <html:multibox property="currentSelectedIdStrings" name="pagedResults"
-                                 styleId="selectedObjects_${status2.index}_${status.index}_${row[column.index].type}"
-                                 styleClass="selectable id_${resultElement.id} index_${column.index} class_${row[column.index].type} class_${column.typeClsString}"
-                                 onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
-                                 disabled="${disabled}">
+                           styleId="selectedObjects_${status2.index}_${status.index}_${subRow[column.index].value.type}"
+                           styleClass="selectable id_${resultElement.id} index_${column.index} class_${subRow[column.index].value.type} class_${column.typeClsString}"
+                           onclick="itemChecked(${status.index},${status2.index}, '${pagedResults.tableid}', this)"
+                           disabled="${disabled}">
                           <c:out value="${resultElement.id}"/>
                         </html:multibox>
                       </c:if>
-                    <%--</td>--%>
-                  </c:if>
-                       <tiles:insert name="objectView.tile"/>
-                    </div>
+                    </c:if>
+                    <c:set var="columnType" value="${column.typeClsString}" scope="request"/>
+                    <tiles:insert name="objectView.tile" /> <%-- uses resultElement? --%>
                   </td>
-                </c:when>
-                <c:otherwise>
-                  <%-- add a space so that IE renders the borders --%>
-                  <td style="background:#eee;">&nbsp;</td>
-                </c:otherwise>
-              </c:choose>
-            </c:forEach>
+                </c:if>
+              </c:when>
+              <c:otherwise>
+                <%-- add a space so that IE renders the borders --%>
+                <td style="background:#eee;">&nbsp;</td>
+              </c:otherwise>
+            </c:choose>
+          </c:forEach>
           </tr>
-        </c:otherwise>
-      </c:choose>
+        </c:forEach>
     </c:forEach>
     </tbody>
   </c:if>
