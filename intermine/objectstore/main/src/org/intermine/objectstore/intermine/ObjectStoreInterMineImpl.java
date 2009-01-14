@@ -55,10 +55,13 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.iql.IqlQuery;
@@ -1446,58 +1449,58 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Creates a precomputed table for the given query.
+     * Creates precomputed tables for the given query.
      *
-     * @param q the Query for which to create the precomputed table
-     * @param category a String describing the category of the precomputed table
-     * @return the name of the new precomputed table
+     * @param q the Query for which to create the precomputed tables
+     * @param category a String describing the category of the precomputed tables
+     * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precompute(Query q, String category) throws ObjectStoreException {
+    public List<String> precompute(Query q, String category) throws ObjectStoreException {
         return precompute(q, null, false, category);
     }
 
     /**
-     * Creates a precomputed table for the given query.
+     * Creates precomputed tables for the given query.
      *
-     * @param q the Query for which to create the precomputed table
+     * @param q the Query for which to create the precomputed tables
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
      * the precomputed table's SELECT list.
-     * @param category a String describing the category of the precomputed table
-     * @return the name of the new precomputed table
+     * @param category a String describing the category of the precomputed tables
+     * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precompute(Query q, boolean allFields,
+    public List<String> precompute(Query q, boolean allFields,
             String category) throws ObjectStoreException {
         return precompute(q, null, allFields, category);
     }
 
     /**
-     * Creates a precomputed table for the given query.
+     * Creates precomputed tables for the given query.
      *
-     * @param q the Query for which to create the precomputed table
+     * @param q the Query for which to create the precomputed tables
      * @param indexes a Collection of QueryOrderables for which to create indexes
-     * @return the name of the new precomputed table
-     * @param category a String describing the category of the precomputed table
+     * @return the names of the new precomputed tables
+     * @param category a String describing the category of the precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precompute(Query q, Collection indexes,
+    public List<String> precompute(Query q, Collection indexes,
             String category) throws ObjectStoreException {
         return precompute(q, indexes, false, category);
     }
 
     /**
-     * Creates a precomputed table for the given query.
+     * Creates precomputed tables for the given query.
      *
-     * @param q the Query for which to create the precomputed table
+     * @param q the Query for which to create the precomputed tables
      * @param indexes a Collection of QueryOrderables for which to create indexes
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
      * the precomputed table's SELECT list.
-     * @param category a String describing the category of the precomputed table
-     * @return the name of the new precomputed table
+     * @param category a String describing the category of the precomputed tables
+     * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precompute(Query q, Collection indexes,
+    public List<String> precompute(Query q, Collection indexes,
             boolean allFields, String category) throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1511,7 +1514,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Creates a precomputed table with the given query and connection.
+     * Creates precomputed tables with the given query and connection.
      *
      * @param c the Connection
      * @param q the Query
@@ -1519,11 +1522,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * in the SELECT list of the query
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
      * the precomputed table's SELECT list.
-     * @param category a String describing the category of the precomputed table
-     * @return the name of the new precomputed table
+     * @param category a String describing the category of the precomputed tables
+     * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
      */
-    public String precomputeWithConnection(Connection c, Query q, Collection indexes,
+    public List<String> precomputeWithConnection(Connection c, Query q, Collection indexes,
             boolean allFields, String category) throws ObjectStoreException {
         QueryNode qn = null;
         String sql = null;
@@ -1570,11 +1573,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         + stringIndexes);
             }
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-            ptm.add(pt, stringIndexes);
-            return pt.getName();
+            List<String> retval = new ArrayList<String>();
+            try {
+                ptm.add(pt, stringIndexes);
+                retval.add(pt.getName());
+            } catch (IllegalArgumentException e) {
+                LOG.info("Precomputed table for " + sql + " already exists");
+            }
+            for (QuerySelectable qs : q.getSelect()) {
+                if (qs instanceof QueryCollectionPathExpression) {
+                    retval.addAll(precomputeWithConnection(c,
+                                ((QueryCollectionPathExpression) qs).getQuery(null), null,
+                                allFields, category));
+                } else if (qs instanceof QueryObjectPathExpression) {
+                    retval.addAll(precomputeWithConnection(c,
+                                ((QueryObjectPathExpression) qs).getQuery(null,
+                                    getSchema().isMissingNotXml()), null, allFields, category));
+                }
+            }
+            return retval;
         } catch (NullPointerException e) {
             throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not present in"
-                                           + " the SELECT list of query " + q, e);
+                    + " the SELECT list of query " + q, e);
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         } catch (RuntimeException e) {
@@ -1610,8 +1630,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param query the query
      * @param type the type
      * @return true if and only if the given query is (already) precomputed
-     * @throws ObjectStoreException if the is a database problem
-     * @throws SQLException if the is a database problem
+     * @throws ObjectStoreException if there is a database problem
+     * @throws SQLException if there is a database problem
      */
     public boolean isPrecomputedWithConnection(Connection c, Query query, String type)
             throws ObjectStoreException, SQLException {

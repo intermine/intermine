@@ -144,6 +144,7 @@ public class PrecomputedTableManager
      * specified in the PrecomputedTable
      * @throws SQLException if an error occurs in the underlying database
      * @throws NullPointerException if pt is null
+     * @throws IllegalArgumentException if the precomputed table already exists
      */
     public void add(PrecomputedTable pt, Collection indexes) throws SQLException {
         if (pt == null) {
@@ -155,7 +156,9 @@ public class PrecomputedTableManager
             queryStrings = new HashMap();
             types.put(pt.getCategory(), queryStrings);
         }
-        if (!queryStrings.containsKey(queryString)) {
+        if (queryStrings.containsKey(queryString)) {
+            throw new IllegalArgumentException("Precomputed table already exists");
+        } else {
             addTableToDatabase(pt, indexes, true);
             precomputedTables.add(pt);
             queryStrings.put(queryString, pt);

@@ -282,7 +282,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         indexes.add(qc1);
         indexes.add(f1);
         indexes.add(f2);
-        String tableName = ((ObjectStoreInterMineImpl) os).precompute(q, indexes, "test");
+        String tableName = ((ObjectStoreInterMineImpl) os).precompute(q, indexes, "test").get(0);
         Connection con = null;
         Map indexMap = new HashMap();
         try {

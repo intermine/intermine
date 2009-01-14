@@ -257,7 +257,11 @@ public class PrecomputedTableManagerTest extends TestCase
                 assertTrue(ptm.getPrecomputedTables().contains(pt1));
                 assertTrue(DatabaseUtil.tableExists(con, "precomp1"));
                 PrecomputedTable pt2 = new PrecomputedTable(pt1.getQuery(), pt1.getQuery().getSQLString(), "precomp2", "test", con);
-                ptm.add(pt2);
+                try {
+                    ptm.add(pt2);
+                    fail("Should have received an exception");
+                } catch (IllegalArgumentException e) {
+                }
                 assertFalse(ptm.getPrecomputedTables().contains(pt2));
                 assertFalse(DatabaseUtil.tableExists(con, "precomp2"));
                 ptm.delete(pt1);

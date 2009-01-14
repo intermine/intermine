@@ -212,7 +212,7 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      * Returns the Query that will fetch the data represented by this object, given a Collection
      * of objects to fetch it for.
      *
-     * @param bag a Collection of objects to fetch data for
+     * @param bag a Collection of objects to fetch data for, or null to not constrain
      * @param isNoNotXml true if the database is in missingNotXml mode
      * @return a Query
      */
@@ -223,7 +223,9 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
             q.addFrom(qc);
             q.addToSelect(new QueryField(qc, "id"));
             q.addToSelect(qc);
-            q.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN, bag));
+            if (bag != null) {
+                q.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN, bag));
+            }
             q.setDistinct(false);
             return q;
         } else {
@@ -241,13 +243,15 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
             if (!q.getSelect().contains(defaultClass)) {
                 q.addToSelect(defaultClass);
             }
-            if (constraint == null) {
-                q.setConstraint(new BagConstraint(defaultId, ConstraintOp.IN, bag));
-            } else {
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-                cs.addConstraint(constraint);
-                cs.addConstraint(new BagConstraint(defaultId, ConstraintOp.IN, bag));
-                q.setConstraint(cs);
+            if (bag != null) {
+                if (constraint == null) {
+                    q.setConstraint(new BagConstraint(defaultId, ConstraintOp.IN, bag));
+                } else {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                    cs.addConstraint(constraint);
+                    cs.addConstraint(new BagConstraint(defaultId, ConstraintOp.IN, bag));
+                    q.setConstraint(cs);
+                }
             }
             q.setDistinct(false);
             return q;
