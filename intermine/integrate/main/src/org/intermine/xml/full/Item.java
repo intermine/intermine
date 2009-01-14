@@ -43,7 +43,9 @@ public class Item implements Comparable
     /**
      * Construct an item.
      */
-    protected Item() { }
+    protected Item() {
+        // nothing to do
+    }
 
     /**
      * Construct an item.
@@ -161,12 +163,12 @@ public class Item implements Comparable
         if (attribute.getValue() == null) {
             throw new RuntimeException("value cannot be null for attribute "
                                        + className + "."  + name);
-        } else {
-            if (attribute.getValue().equals("")) {
-                throw new RuntimeException("value cannot be an empty string for attribute "
-                                           + className + "."  + name);
-            }
         }
+        if (attribute.getValue().equals("")) {
+            throw new RuntimeException("value cannot be an empty string for attribute "
+                                       + className + "."  + name);
+        }
+
         attributes.put(name, attribute);
     }
 
@@ -246,7 +248,7 @@ public class Item implements Comparable
      */
     public Reference getReference(String referenceName) {
         checkReference(referenceName);
-        return (Reference) references.get(referenceName);
+        return references.get(referenceName);
     }
 
     /**
@@ -302,7 +304,7 @@ public class Item implements Comparable
      */
     public ReferenceList getCollection(String collectionName) {
         checkCollection(collectionName);
-        return (ReferenceList) collections.get(collectionName);
+        return collections.get(collectionName);
     }
 
     /**
@@ -323,11 +325,10 @@ public class Item implements Comparable
         if (value == null) {
             throw new RuntimeException("value cannot be null for attribute "
                                        + className + "."  + name);
-        } else {
-            if (value.equals("")) {
-                throw new RuntimeException("value cannot be an empty string for attribute "
-                                           + className + "."  + name);
-            }
+        }
+        if (value.equals("")) {
+            throw new RuntimeException("value cannot be an empty string for attribute "
+                                       + className + "."  + name);
         }
         addAttribute(new Attribute(name, value));
     }
@@ -577,7 +578,6 @@ public class Item implements Comparable
 
         return implementationClassDescriptors;
     }
-
 
     /**
      * {@inheritDoc}
