@@ -163,9 +163,10 @@ foreach my $taxon_id(keys %organisms) {
     }
     my $end_time = time();
     my $action_time = $end_time - $start_time;
-    print "loading for $taxon_id took $action_time seconds\n";
+    print "processing the files for $taxon_id took $action_time seconds.  now creating the XML file... \n";
     
 #write xml file
+    $start_time = time();
     my $output = new IO::File(">$data_destination/$taxon_id.xml");
     my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
     $writer->startTag('items');
@@ -174,6 +175,9 @@ foreach my $taxon_id(keys %organisms) {
     }
     $writer->endTag('items');
     $writer->end();
+    $end_time = time();
+    $action_time = $end_time - $start_time;
+    print "creating the XML file for $taxon_id took $action_time seconds.\n";
 }
 
 # helper method that makes a new object of a particular class and saves it in 
