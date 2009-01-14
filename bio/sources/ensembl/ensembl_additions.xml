@@ -9,15 +9,15 @@
 
   <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="proteins" />
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="protein" />
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="protein" />
   </class>
 
    <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
      <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts" />
      <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence" />
-     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts" />
-     <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcripts" />
+     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="transcripts" />
+     <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts" />     
    </class>
 
    <class name="org.flymine.model.genomic.Exon" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
@@ -31,8 +31,8 @@
    </class>
 
   <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true">
-    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="MRNA"/>
-    <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcripts" />
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="transcripts" />
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="MRNA"/>    
   </class>
 
 </classes>
