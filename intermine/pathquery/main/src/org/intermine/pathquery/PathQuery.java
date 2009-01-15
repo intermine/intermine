@@ -1182,7 +1182,7 @@ public class PathQuery
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
-            subClassConstraintMap.put(viewPathName.replace(':', '.'), pathNode.getType());
+            subClassConstraintMap.put(viewPathName, pathNode.getType());
         }
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
