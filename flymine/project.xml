@@ -32,6 +32,12 @@
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
+    <!-- uniprot must be processed immediately after chado -->
+    <source name="uniprot" type="uniprot" dump="true">
+      <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
+      <property name="createinterpro" value="true"/>
+    </source>
     <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/homology"/>
       <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
@@ -42,11 +48,6 @@
     <source name="anopheles-identifiers" type="anopheles-identifiers">
       <property name="src.data.dir" location="/shared/data/anopheles/mappings"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
-    </source>
-    <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 7237 6239 180454 7460 4932 9606 10090"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
-      <property name="createinterpro" value="true"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
