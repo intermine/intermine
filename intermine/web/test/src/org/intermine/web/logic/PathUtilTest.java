@@ -91,4 +91,12 @@ public class PathUtilTest extends TestCase {
         assertEquals("company name", resCompany.getName());
     }
 
+    public void testResolvePathOneElement() {
+        Path path = new Path(model, "Department");
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        department.setId(10);
+        assertEquals(department.getId(), ((Department) PathUtil.resolvePath(path, department)).getId());
+    }
+    
 }
