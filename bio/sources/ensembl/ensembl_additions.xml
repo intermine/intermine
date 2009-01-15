@@ -9,12 +9,13 @@
 
   <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="MRNAs" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="protein" />
+    <collection name="transcripts" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="protein" />
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="protein" />
   </class>
 
    <class name="org.flymine.model.genomic.Transcript" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
      <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="transcripts" />
+     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="transcripts" />
      <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence" />
      <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" ordered="true" reverse-reference="transcripts" />     
    </class>
@@ -30,7 +31,7 @@
    </class>
 
   <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.ProcessedTranscript" is-interface="true">
-    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="MRNAs" />
+    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="transcripts" />
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="MRNA"/>    
   </class>
 
