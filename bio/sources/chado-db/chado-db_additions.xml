@@ -5,17 +5,17 @@
     <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="CDSs"/>
     <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="CDSs"/>
   </class>
-
-  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="protein"/>
-  </class>
-
   <class name="org.flymine.model.genomic.Gene" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
     <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
     <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele" reverse-reference="gene" ordered="true"/>
     <collection name="clones" referenced-type="org.flymine.model.genomic.CDNAClone" reverse-reference="gene"/>
+  </class>
+  <class name="org.flymine.model.genomic.Protein" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="genbankIdentifier" type="java.lang.String"/>
+    <attribute name="md5checksum" type="java.lang.String"/>
+    <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="protein"/>
   </class>
   <class name="org.flymine.model.genomic.InsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
