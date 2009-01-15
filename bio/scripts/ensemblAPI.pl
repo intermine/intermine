@@ -134,6 +134,7 @@ foreach my $taxon_id(keys %organisms) {
                     $protein_item->set('genes', [$gene_item]);
                     $protein_item->set('transcripts', [$transcript_item]);
 
+                    # returns lowercase value.  uniprot's converter returns uppercase value which is changed to match this one.
                     my $ctx = Digest::MD5->new;
                     $ctx->add($protein_seq);
                     my $digest = $ctx->hexdigest;
