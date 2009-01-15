@@ -5,7 +5,6 @@
         <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"
                    reverse-reference="CDSs"/>
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
-        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
     </class>
 
     <class name="org.flymine.model.genomic.Exon" is-interface="true">
@@ -23,50 +22,32 @@
 
     <class name="org.flymine.model.genomic.Gene" is-interface="true">
        <attribute name="ncbiGeneNumber" type="java.lang.String"/>
-       <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR"
-                    reverse-reference="gene" ordered="true"/>
-        <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
-                    reverse-reference="gene" ordered="true"/>
+       <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="gene" ordered="true"/>
+        <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="gene" ordered="true"/>
         <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
     </class>
 
     <class name="org.flymine.model.genomic.Intron" is-interface="true">
-        <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript"
-                    reverse-reference="introns" ordered="true"/>
+        <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="introns" ordered="true"/>
     </class>
 
     <class name="org.flymine.model.genomic.UTR" is-interface="true">
-        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"
-                   reverse-reference="UTRs"/>
-        <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA"
-                   reverse-reference="UTRs"/>
+        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="UTRs"/>
+        <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs"/>
     </class>
 
     <class name="org.flymine.model.genomic.Transcript" is-interface="true">
         <attribute name="exonCount" type="java.lang.Integer"/>
-        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
-        <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" ordered="true"
-                    reverse-reference="transcripts"/>
-        <collection name="exons" referenced-type="org.flymine.model.genomic.Exon"
-                    reverse-reference="transcripts" ordered="true"/>
+        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="transcripts"/>
+        <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" ordered="true" reverse-reference="transcripts"/>
+        <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" reverse-reference="transcripts" ordered="true"/>
+
     </class>
 
     <class name="org.flymine.model.genomic.NcRNA" is-interface="true"/>
 
     <class name="org.flymine.model.genomic.Protein" is-interface="true">
-        <collection name="translations" referenced-type="org.flymine.model.genomic.Translation"
-                    reverse-reference="protein" ordered="true"/>
-    </class>
-
-    <class name="org.flymine.model.genomic.Translation"  extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-        <attribute name="symbol" type="java.lang.String"/>
-        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
-        <reference name="sequence" referenced-type="org.flymine.model.genomic.Sequence"/>
-        <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"
-                   reverse-reference="translations"/>
-        <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="translation"/>
-        <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS"
-                    reverse-reference="translation" ordered="true"/>
+        <collection name="transcripts" referenced-type="org.flymine.model.genomic.Transcript" reverse-reference="protein" ordered="true"/>
     </class>
 
     <class name="org.flymine.model.genomic.ProteinBindingSite" is-interface="true"/>
@@ -79,12 +60,10 @@
         <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" ordered="true"/>
     </class>
 
-    <class name="org.flymine.model.genomic.MRNA" is-interface="true">
+    <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.Transcript"  is-interface="true">
         <reference name="fivePrimeUTR" referenced-type="org.flymine.model.genomic.FivePrimeUTR"/>
         <reference name="threePrimeUTR" referenced-type="org.flymine.model.genomic.ThreePrimeUTR"/>
-        <reference name="translation" referenced-type="org.flymine.model.genomic.Translation" reverse-reference="MRNA"/>
-        <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR"
-                    reverse-reference="MRNA" ordered="true"/>
+        <collection name="UTRs" referenced-type="org.flymine.model.genomic.UTR" reverse-reference="MRNA" ordered="true"/>
     </class>
 
     <class name="org.flymine.model.genomic.SequenceVariant" is-interface="true">
