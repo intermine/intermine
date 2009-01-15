@@ -47,6 +47,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -162,7 +163,13 @@ public class AjaxServices
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
             List<QuerySelectable> indexes = new ArrayList<QuerySelectable>();
-            Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+            List<QueryNode> indexNodes = new ArrayList<QueryNode>();
+            for (QuerySelectable qs : indexes) {
+                if (qs instanceof QueryNode) {
+                    indexNodes.add((QueryNode) qs);
+                }
+            }
+            Query query = TemplateHelper.getPrecomputeQuery(template, indexNodes, null);
 
             try {
                 if (!os.isPrecomputed(query, "template")) {
@@ -170,7 +177,7 @@ public class AjaxServices
                     os.precompute(query, indexes, "template");
                 }
             } catch (ObjectStoreException e) {
-                LOG.error(e);
+                LOG.error("Error while precomputing", e);
             } finally {
                 session.removeAttribute("precomputing_" + templateName);
             }

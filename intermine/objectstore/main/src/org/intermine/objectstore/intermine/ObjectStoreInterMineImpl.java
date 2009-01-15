@@ -915,7 +915,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             long postExecute = System.currentTimeMillis();
             List<ResultsRow>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
-                    sequence);
+                    sequence, optimise);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
@@ -1582,13 +1582,16 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             for (QuerySelectable qs : q.getSelect()) {
                 if (qs instanceof QueryCollectionPathExpression) {
-                    retval.addAll(precomputeWithConnection(c,
-                                ((QueryCollectionPathExpression) qs).getQuery(null), null,
+                    Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
+                    retval.addAll(precomputeWithConnection(c, subQ,
+                                Collections.singleton(subQ.getSelect().get(0)),
                                 allFields, category));
                 } else if (qs instanceof QueryObjectPathExpression) {
-                    retval.addAll(precomputeWithConnection(c,
-                                ((QueryObjectPathExpression) qs).getQuery(null,
-                                    getSchema().isMissingNotXml()), null, allFields, category));
+                    Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
+                            getSchema().isMissingNotXml());
+                    retval.addAll(precomputeWithConnection(c, subQ,
+                                Collections.singleton(subQ.getSelect().get(0)),
+                                allFields, category));
                 }
             }
             return retval;
@@ -1598,8 +1601,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         } catch (RuntimeException e) {
+            LOG.error("Error", e);
             throw new ObjectStoreException("Query SQL cannot be parsed, so cannot be precomputed: "
-                    + sql + ", IQL: " + q);
+                    + sql + ", IQL: " + q, e);
         }
     }
 

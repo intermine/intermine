@@ -406,7 +406,8 @@ public class PrecomputedTableManager
         }
         String sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
             .replace(' ', '_').replace('(', '_').replace(')', '_') + " ON "
-            + table + " (" + field + ")";
+            + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
+            + ")";
         try {
             Statement stmt = con.createStatement();
             stmt.execute(sql);
@@ -419,7 +420,8 @@ public class PrecomputedTableManager
         if (nulls) {
             sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
                 .replace(' ', '_').replace('(', '_').replace(')', '_') + "_nulls"
-                + " ON " + table + " ((" + field + " IS NULL))";
+                + " ON " + table + " ((" + (field.equals(field.toLowerCase()) ? field : "\"" + field
+                                + "\"") + " IS NULL))";
             try {
                 Statement stmt = con.createStatement();
                 stmt.execute(sql);

@@ -1478,30 +1478,32 @@ public class SqlGenerator
                     if (arg1Qc != null) {
                         queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
-                                + arg2Alias);
+                                + arg2Alias + " AND ");
                     } else if (arg1Qcb != null) {
                         if (fieldToAlias.containsKey("id")) {
-                            buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
+                            buffer.append(arg2Alias + " = " + fieldToAlias.get("id") + " AND ");
                         } else {
                             fieldToAlias.put("id", arg2Alias);
-                            if (arg1Qcb.getIds() == null) {
+                            if (arg1Qcb.getOsb() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(new
                                             QueryField(arg1Qcb), ConstraintOp.IN,
                                             arg1Qcb.getOsb()), q,
                                         schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
-                            } else {
+                                buffer.append(" AND ");
+                            } else if (arg1Qcb.getIds() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(
                                             new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
                                                 .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
                                             arg1Qcb.getIds()), q, schema,
                                         SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                buffer.append(" AND ");
                             }
                         }
                     } else {
                         buffer.append(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
                                     ? " = " : " != ") + arg2Alias);
                     }
-                    buffer.append(" AND " + indirectTableAlias + ".id = " + arg2Obj.getId());
+                    buffer.append(indirectTableAlias + ".id = " + arg2Obj.getId());
                     buffer.append(loseBrackets ? "" : ")");
                 } else {
                     String arg2Alias = (String) state.getFieldToAlias(arg2)
@@ -1516,12 +1518,12 @@ public class SqlGenerator
                             buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                         } else {
                             fieldToAlias.put("id", arg2Alias);
-                            if (arg1Qcb.getIds() == null) {
+                            if (arg1Qcb.getOsb() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(
                                             new QueryField(arg1Qcb), ConstraintOp.IN,
                                             arg1Qcb.getOsb()), q, schema,
                                         SAFENESS_UNSAFE); // TODO: Not really unsafe
-                            } else {
+                            } else if (arg1Qcb.getIds() != null) {
                                 bagConstraintToString(state, buffer, new BagConstraint(
                                             new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
                                                 .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
@@ -1553,29 +1555,34 @@ public class SqlGenerator
                 if (arg1Qc != null) {
                     queryClassToString(buffer, arg1Qc, q, schema, ID_ONLY, state);
                     buffer.append(" = " + arg2Alias);
+                    buffer.append(" AND ");
                 } else if (arg1Qcb != null) {
                     Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
                     if (fieldToAlias.containsKey("id")) {
                         buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
+                        buffer.append(" AND ");
                     } else {
                         fieldToAlias.put("id", arg2Alias);
-                        if (arg1Qcb.getIds() == null) {
+                        if (arg1Qcb.getOsb() != null) {
                             bagConstraintToString(state, buffer, new BagConstraint(
                                         new QueryField(arg1Qcb), ConstraintOp.IN, arg1Qcb
                                         .getOsb()), q, schema,
                                     SAFENESS_UNSAFE); // TODO: Not really unsafe
-                        } else {
+                            buffer.append(" AND ");
+                        } else if (arg1Qcb.getIds() != null) {
                             bagConstraintToString(state, buffer, new BagConstraint(
                                         new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
                                             .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
                                         arg1Qcb.getIds()), q, schema,
                                     SAFENESS_UNSAFE); // TODO: Not really unsafe
+                            buffer.append(" AND ");
                         }
                     }
                 } else {
                     buffer.append(arg1Obj.getId() + " = " + arg2Alias);
+                    buffer.append(" AND ");
                 }
-                buffer.append(" AND " + indirectTableAlias + "."
+                buffer.append(indirectTableAlias + "."
                         + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
                 if (arg2 == null) {
                     buffer.append("" + arg2Obj.getId());
