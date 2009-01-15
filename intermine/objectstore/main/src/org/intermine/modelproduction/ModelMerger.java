@@ -144,22 +144,44 @@ public class ModelMerger
                 // Check references
                 for (Iterator<ReferenceDescriptor> riter = rdescs.iterator(); riter.hasNext();) {
                     ReferenceDescriptor rd = riter.next();
-                    if (scd.getReferenceDescriptorByName(rd.getName()) != null) {
+                    ReferenceDescriptor scdDescriptor =
+                        scd.getReferenceDescriptorByName(rd.getName());
+                    if (scdDescriptor != null) {
                         LOG.info("removing reference " + rd.getName()
                                 + " redefinition in " + cd.getName() + " (is now defined in "
                                 + scd.getName() + ")");
-                        riter.remove();
+                        String revName = rd.getReverseReferenceFieldName();
+                        String scdRevFieldName = scdDescriptor.getReverseReferenceFieldName();
+                        if (StringUtils.equals(revName, scdRevFieldName)) {
+                            riter.remove();
+                        } else {
+                            String message = "replacing the \"" + sup + "." + rd.getName()
+                                + "\" reference with " + cd.getName() + "."
+                                + rd.getName() + " failed because the reverse references differ";
+                            throw new ModelMergerException(message);
+                        }
                     }
                 }
 
                 // Check collections
                 for (Iterator<CollectionDescriptor> citer = cdescs.iterator(); citer.hasNext();) {
                     CollectionDescriptor cold = citer.next();
+                    CollectionDescriptor scdDescriptor =
+                        scd.getCollectionDescriptorByName(cold.getName());
                     if (scd.getCollectionDescriptorByName(cold.getName()) != null) {
                         LOG.info("removing collection " + cold.getName()
                                 + " redefinition in " + cd.getName() + " (is now defined in "
                                 + scd.getName() + ")");
-                        citer.remove();
+                        String revName = cold.getReverseReferenceFieldName();
+                        String scdRevFieldName = scdDescriptor.getReverseReferenceFieldName();
+                        if (StringUtils.equals(revName, scdRevFieldName)) {
+                            citer.remove();
+                        } else {
+                            String message = "replacing the \"" + sup + "." + cold.getName()
+                            + "\" collection with " + cd.getName() + "."
+                            + cold.getName() + " failed because the reverse references differ";
+                            throw new ModelMergerException(message);
+                        }
                     }
                 }
             }
