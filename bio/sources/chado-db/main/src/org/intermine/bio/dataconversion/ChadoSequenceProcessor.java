@@ -172,6 +172,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         finishedProcessing(connection, featureMap);
     }
 
+    /**
+     * Query the feature table and store features as object of the appropriate type in the
+     * object store.
+     * @param connection
+     * @throws SQLException
+     * @throws ObjectStoreException
+     */
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
