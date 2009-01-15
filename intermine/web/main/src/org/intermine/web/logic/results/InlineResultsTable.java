@@ -27,6 +27,7 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
@@ -321,14 +322,7 @@ public class InlineResultsTable
                     retList.add(null);
                     continue;
                 }
-                String endTypeName = path.getStartClassDescriptor().getName();
-                String lastFieldName = path.getEndFieldDescriptor().getName();
-                boolean isKeyField =
-                    ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
-                ResultElement resultElement = new ResultElement(
-                                (o instanceof InterMineObject ? ((InterMineObject) o) : null),
-                                path, isKeyField);
-                retList.add(resultElement);
+                retList.add(createResultElement(path, o));
             } catch (PathError e) {
                 // if the field can't be resolved then this Path doesn't make sense for this object
                 retList.add(null);
@@ -337,6 +331,31 @@ public class InlineResultsTable
         return retList;
     }
 
+    /**
+     * Creates result element for the end of the path.
+     * Example: 
+     * For Department.name creates result element for Department object and name field
+     * For Department.company.name creates result element for Company object and name field  
+     * @param path
+     * @param o
+     * @return
+     */
+    private ResultElement createResultElement(Path path, Object o) {
+        String endTypeName = path.getLastClassDescriptor().getName();
+        String lastFieldName = path.getEndFieldDescriptor().getName();
+        boolean isKeyField =
+            ClassKeyHelper.isKeyField(classKeys, endTypeName, lastFieldName);
+        // object = Organism, path = Organism.shortName
+        InterMineObject finalObject = null;
+        if (o != null) {
+            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);    
+        }
+        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." + path.getLastElement();
+        ResultElement resultElement = new ResultElement(finalObject, new Path(path.getModel(), finalPath), 
+                isKeyField);
+        return resultElement;
+    }
+    
     /**
      * @return the rowFieldValues
      */
