@@ -74,13 +74,14 @@ public class ResultsConverter
      * @param os the ObjectStoreInterMineImpl with which to associate any new lazy objects
      * @param c a Connection with which to make extra requests
      * @param sequence an object representing the state of the database
+     * @param optimise whether to use optimisation on path expression queries
      * @return a List of ResultsRow objects
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
     public static List<ResultsRow> convert(ResultSet sqlResults, Query q,
-            ObjectStoreInterMineImpl os, Connection c,
-            Map<Object, Integer> sequence) throws ObjectStoreException {
+            ObjectStoreInterMineImpl os, Connection c, Map<Object, Integer> sequence,
+            boolean optimise) throws ObjectStoreException {
         Object currentColumn = null;
         HashSet noObjectColumns = new HashSet();
         HashSet noObjectClassColumns = new HashSet();
@@ -201,16 +202,16 @@ public class ResultsConverter
                         // TODO: Fetch the objects
                         if (!done.contains(node)) {
                             fetchObjectPathExpression(os, c, sequence, q,
-                                    (QueryObjectPathExpression) node, retval);
+                                    (QueryObjectPathExpression) node, retval, optimise);
                             done.add(node);
                         }
                     } else if (node instanceof QueryCollectionPathExpression) {
                         fetchCollectionPathExpression(os, c, sequence, q,
-                                (QueryCollectionPathExpression) node, retval);
+                                (QueryCollectionPathExpression) node, retval, optimise);
                     } else if (node instanceof PathExpressionField) {
                         if (!done.contains(((PathExpressionField) node).getQope())) {
                             fetchObjectPathExpression(os, c, sequence, q,
-                                    ((PathExpressionField) node).getQope(), retval);
+                                    ((PathExpressionField) node).getQope(), retval, optimise);
                             done.add(((PathExpressionField) node).getQope());
                         }
                     }
@@ -327,11 +328,12 @@ public class ResultsConverter
      * @param q the Query
      * @param qope the QueryObjectPathExpression to fetch data for
      * @param retval the array of results that will be returned
+     * @param optimise whether to optimise the query
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchObjectPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryObjectPathExpression qope,
-            List<ResultsRow> retval) throws ObjectStoreException {
+            List<ResultsRow> retval, boolean optimise) throws ObjectStoreException {
         int startingPoint;
         // This is a Map from the starting point ID to the ID of the referenced object
         Map<Integer, Integer> objectIds = new HashMap();
@@ -360,7 +362,7 @@ public class ResultsConverter
         }
         Query qopeQuery = qope.getQuery(idsToFetch, os.getSchema().isMissingNotXml());
         List<ResultsRow> res = os.executeWithConnection(c, qopeQuery, 0,
-                Integer.MAX_VALUE, false, false, sequence);
+                Integer.MAX_VALUE, optimise, false, sequence);
         Map<Integer, ResultsRow> fetched = new HashMap<Integer, ResultsRow>();
         for (ResultsRow row : res) {
             fetched.put((Integer) row.get(0), row);
@@ -401,11 +403,12 @@ public class ResultsConverter
      * @param q the Query
      * @param qcpe the QueryCollectionPathExpression to fetch data for
      * @param retval the array of results that will be returned
+     * @param optimise whether to optimise the query
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchCollectionPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryCollectionPathExpression qcpe,
-            List<ResultsRow> retval) throws ObjectStoreException {
+            List<ResultsRow> retval, boolean optimise) throws ObjectStoreException {
         int startingPoint;
         Map<Integer, List> idsToFetch = new HashMap();
         Set<InterMineObject> objectsToFetch = new HashSet();
@@ -425,7 +428,7 @@ public class ResultsConverter
         }
         Query subQ = qcpe.getQuery(objectsToFetch);
         List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
-                false, false, sequence);
+                optimise, false, sequence);
         boolean singleton = qcpe.isSingleton();
         for (ResultsRow row : results) {
             Integer id = (Integer) row.get(0);

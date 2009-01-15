@@ -91,6 +91,9 @@ public class QueryClassBag implements FromElement
     }
 
     private static Set convertToIds(Collection bag, Class type) {
+        if (bag == null) {
+            return null;
+        }
         Set ids = new HashSet();
         Iterator iter = bag.iterator();
         while (iter.hasNext()) {
@@ -147,10 +150,12 @@ public class QueryClassBag implements FromElement
     public String toString() {
         Set classes = DynamicUtil.decomposeClass(type);
         StringBuffer retval = new StringBuffer();
-        if (bag == null) {
+        if (osb != null) {
             retval.append("BAG(" + osb.getBagId() + ")::");
-        } else {
+        } else if (bag != null) {
             retval.append("?::");
+        } else {
+            retval.append("!::");
         }
         if (classes.size() == 1) {
             retval.append(type.getName());
