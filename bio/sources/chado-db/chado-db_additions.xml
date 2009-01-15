@@ -48,13 +48,10 @@
     <reference name="MRNA" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="UTRs"/>
   </class>
   <class name="org.flymine.model.genomic.ThreePrimeUTR" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.FivePrimeUTR" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.Enhancer" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
   </class>
   <class name="org.flymine.model.genomic.TransposableElementInsertionSite" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
