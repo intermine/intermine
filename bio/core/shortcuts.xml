@@ -25,7 +25,6 @@
 <class name="org.flymine.model.genomic.CrossGenomeMatch" is-interface="true">
   <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
   <reference name="chromosomeLocation" referenced-type="org.flymine.model.genomic.Location"/>
-  <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome" reverse-reference="crossGenomeMatches"/>
   <reference name="targetOrganism" referenced-type="org.flymine.model.genomic.Organism"/>
   <reference name="targetLocatedSequenceFeatureLocation" referenced-type="org.flymine.model.genomic.Location"/>
   <reference name="targetLocatedSequenceFeature" referenced-type="org.flymine.model.genomic.LocatedSequenceFeature" />

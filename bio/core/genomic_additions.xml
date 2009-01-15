@@ -13,11 +13,9 @@
     </class>
 
     <class name="org.flymine.model.genomic.Enhancer" is-interface="true">
-        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     </class>
 
     <class name="org.flymine.model.genomic.FivePrimeUTR" extends="org.flymine.model.genomic.UTR" is-interface="true">
-        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     </class>
 
     <class name="org.flymine.model.genomic.Gene" is-interface="true">
@@ -74,7 +72,6 @@
     </class>
 
     <class name="org.flymine.model.genomic.ThreePrimeUTR"  extends="org.flymine.model.genomic.UTR" is-interface="true">
-        <reference name="gene" referenced-type="org.flymine.model.genomic.Gene"/>
     </class>
 
     <class name="org.flymine.model.genomic.Region" is-interface="true"/>
@@ -84,7 +81,6 @@
 
     <class name="org.flymine.model.genomic.Assembly" is-interface="true"
            extends="org.flymine.model.genomic.GenomeRegion">
-      <reference name="chromosome" referenced-type="org.flymine.model.genomic.Chromosome"/>
     </class>
 
     <class name="org.flymine.model.genomic.Chromosome" is-interface="true"
