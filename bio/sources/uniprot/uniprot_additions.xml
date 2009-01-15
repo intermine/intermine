@@ -20,4 +20,7 @@
     <collection name="keywords" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
     <collection name="features" referenced-type="org.flymine.model.genomic.UniProtFeature" ordered="true"/>
   </class>
+  <class name="org.flymine.model.genomic.Sequence" is-interface="true">
+    <attribute name="md5checksum" type="java.lang.String"/>
+  </class>
 </classes>
