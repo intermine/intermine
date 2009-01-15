@@ -21,9 +21,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQueryExecutor;
 import org.intermine.web.logic.results.ResultElement;
@@ -66,7 +68,9 @@ public class QueryResultService extends WebService
 
         QueryResultInput input = getInput();
         
-        savedBags = new HashMap<String, InterMineBag>();
+        HttpSession session = request.getSession();
+        savedBags = WebUtil.getAllBags(SessionMethods.getProfile(session).getSavedBags(), 
+                SessionMethods.getSearchRepository(session.getServletContext()));
 
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),
                 request.getSession().getServletContext(), savedBags);
