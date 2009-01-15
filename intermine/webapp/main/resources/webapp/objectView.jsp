@@ -42,8 +42,13 @@
              [<c:out value="${resultElement.type}" />]
           </c:if>
         </c:when>
-        <c:when test="${empty object}">
+        <c:when test="${empty resultElement}">
+          <%-- an outer join where no InterMineObject returned --%>
           &nbsp;
+        </c:when>
+        <c:when test="${empty object}">
+          <%-- InterMineObject present but no value for this field --%>
+          <c:out value="${nullFieldText}"/>
         </c:when>
         <c:otherwise>
             <c:out escapeXml="false" value="${object}" default="${nullFieldText}"/>
