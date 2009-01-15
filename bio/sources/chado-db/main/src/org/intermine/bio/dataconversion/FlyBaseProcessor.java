@@ -71,8 +71,8 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     protected static final String FLYBASE_SO_CV_NAME = "SO";
 
     /**
-     * A ConfigAction that changes FlyBase attribute tags (like "@FBcv0000289:hypomorph") to text
-     * like: "hypomorph"
+     * A ConfigAction that overrides processValue() to change FlyBase attribute tags
+     * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
      * @author Kim Rutherford
      */
     private class AlleleClassSetFieldAction extends SetFieldConfigAction
@@ -110,21 +110,29 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
     }
 
+    // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
     private static final String FYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
+    // the configuration for this processor, set when getConfig() is called the first time
     private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
-    private final IntPresentSet locatedGeneIds = new IntPresentSet();
 
-    private Map<String, Item> alleleIdMap = new HashMap<String, Item>();
+    // a set of feature_ids for those genes that have a location in the featureloc table, set by
+    // the constructor
+    private final IntPresentSet locatedGeneIds;
+
+    // a map from the uniquename of each allele to its item identifier
+    private Map<String, String> alleleIdMap = new HashMap<String, String>();
 
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
 
+    // an object representing the sequence ontology, as stored in the FlyBase chado database
     private ChadoCV sequenceOntologyCV = null;
 
-    private Map<String, Item> mutagensMap = new HashMap<String, Item>();
+    // a map from mutagen description to Mutagen Item identifier
+    private Map<String, String> mutagensMap = new HashMap<String, String>();
 
     private Map<Integer, Integer> chromosomeStructureVariationTypes =
         new HashMap<Integer, Integer>();
@@ -189,13 +197,13 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             throw new RuntimeException("can't execute query for located genes", e);
         }
 
-        getLocatedGeneIds(connection);
+        locatedGeneIds = getLocatedGeneIds(connection);
 
         getChromosomeStructureVariationTypes(connection);
     }
 
     /**
-     * @param connection
+     *
      */
     private void getChromosomeStructureVariationTypes(Connection connection) {
         ResultSet res;
@@ -257,9 +265,10 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * @param connection
+     * Return a set of ids of those genes that have a location in the featureloc table.
      */
-    private void getLocatedGeneIds(Connection connection) {
+    private IntPresentSet getLocatedGeneIds(Connection connection) {
+        IntPresentSet retVal = new IntPresentSet();
         ResultSet res;
         try {
             res = getLocatedGenesResultSet(connection);
@@ -270,11 +279,13 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         try {
             while (res.next()) {
                 int featureId = res.getInt("feature_id");
-                locatedGeneIds.set(featureId, true);
+                retVal.set(featureId, true);
             }
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading located genes", e);
         }
+
+        return retVal;
     }
 
 
@@ -791,7 +802,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         Item feature = getChadoDBConverter().createItem(realInterMineType);
 
         if (realInterMineType.equals("Allele")) {
-            alleleIdMap.put(uniqueName, feature);
+            alleleIdMap.put(uniqueName, feature.getIdentifier());
         }
 
         return feature;
@@ -860,8 +871,8 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             FeatureData alleleDat = features.get(alleleFeatureId);
             List<String> mutagenRefIds = new ArrayList<String>();
             for (String mutagenDescription: mutagenMap.get(alleleFeatureId)) {
-                Item mutagen = getMutagen(mutagenDescription);
-                mutagenRefIds.add(mutagen.getIdentifier());
+                String mutagenIdentifier = getMutagen(mutagenDescription);
+                mutagenRefIds.add(mutagenIdentifier);
             }
             ReferenceList referenceList = new ReferenceList();
             referenceList.setName("mutagens");
@@ -1056,15 +1067,15 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         }
     }
 
-    private Item getMutagen(String description) throws ObjectStoreException {
+    private String getMutagen(String description) throws ObjectStoreException {
         if (mutagensMap.containsKey(description)) {
             return mutagensMap.get(description);
         } else {
             Item mutagen = getChadoDBConverter().createItem("Mutagen");
             mutagen.setAttribute("description", description);
-            mutagensMap.put(description, mutagen);
+            mutagensMap.put(description, mutagen.getIdentifier());
             store(mutagen);
-            return mutagen;
+            return mutagen.getIdentifier();
         }
     }
 
@@ -1358,7 +1369,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
         for (String foundIdentifier: foundIdentifiers) {
             if (alleleIdMap.containsKey(foundIdentifier)) {
-                alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier).getIdentifier());
+                alleleItemIdentifiers.add(alleleIdMap.get(foundIdentifier));
             } else {
                 // this allele wasn't stored so probably it didn't have the right organism - some
                 // GAL4 alleles have cerevisiae as organism, eg. FBal0060667:Scer\GAL4[sd-SG29.1]
