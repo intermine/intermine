@@ -10,9 +10,7 @@
 <html:xhtml/>
 
 <link rel="stylesheet" href="css/exportOptions.css" type="text/css" />
-<script src="js/jquery-1.2.6.js" type="text/javascript" ></script>
 <script src="js/exportoptions.js" type="text/javascript" ></script>
-<script src="js/jquery-ui-personalized-1.5.2.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
   jQuery.noConflict();
