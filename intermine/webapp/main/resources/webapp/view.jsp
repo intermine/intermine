@@ -31,6 +31,14 @@
 
       <fmt:message key="view.instructions"/>
 
+      <c:if test="${fn:length(viewStrings) == 1 && iePre7 != 'true'}">
+        <script type="text/javascript">
+          <!--
+            document.write('<fmt:message key="view.sort.instructions.onebox"/>');
+          // -->
+        </script>
+      </c:if>
+
       <c:if test="${fn:length(viewStrings) > 1 && iePre7 != 'true'}">
         <noscript>
           <fmt:message key="view.intro"/>
@@ -38,6 +46,7 @@
         <script type="text/javascript">
           <!--
             document.write('<fmt:message key="view.intro.jscript"/>');
+            document.write('<fmt:message key="view.sort.instructions"/>');
           // -->
         </script>
       </c:if>
