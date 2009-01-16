@@ -36,16 +36,32 @@ public class UniprotEntry
     // TODO demote this to regular list.  linked list only to make tests pass.
     private LinkedList<String> accessions = new LinkedList();
     private List<String> descriptions = new ArrayList();
+    private List<String> isoforms = new ArrayList();
     private Map<String, String> genes = new HashMap();
 
-    private boolean isDuplicate = false;
+    private boolean isDuplicate = false, isIsoform = false;
     private String taxonId, name, isFragment;
-    private String primaryIdentifier, primaryaccession;
+    private String primaryAccession, uniprotAccession;
     private String seqRefId, md5checksum;
 
     // temporary object that holds attribute value until the item is stored on the next line of XML
     private String temp = null;
     private Item feature = null;
+
+    /**
+     * constructor used for non-isoform entries
+     */
+    public UniprotEntry() {
+        // constructor used for non-isoform entries
+    }
+
+
+    /**
+     * @param primaryAccession for this entry
+     */
+    public UniprotEntry(String primaryAccession) {
+        this.primaryAccession = primaryAccession;
+    }
 
     /**
      * holds the value until the item is processed/stored on the next line
@@ -61,7 +77,9 @@ public class UniprotEntry
      * @return variable
      */
     public String getAttribute() {
-        return temp;
+        String attribute = temp;
+        temp = null;
+        return attribute;
     }
 
     /**
@@ -223,17 +241,18 @@ public class UniprotEntry
      * @return true if protein has primary accession
      */
     public boolean hasPrimaryAccession() {
-        return (primaryaccession != null);
+        return (primaryAccession != null);
     }
 
     /**
      * @param accession value
      */
     public void addAccession(String accession) {
-        if (primaryaccession != null) {
+        if (primaryAccession != null) {
             accessions.add(accession);
         } else {
-            primaryaccession = accession;
+            primaryAccession = accession;
+            uniprotAccession = accession;
         }
     }
 
@@ -370,7 +389,18 @@ public class UniprotEntry
      * @return the primaryaccession
      */
     public String getPrimaryAccession() {
-        return primaryaccession;
+        return primaryAccession;
+    }
+
+    /**
+     * @return the uniprotAccession
+     */
+    public String getUniprotAccession() {
+        return uniprotAccession;
+    }
+
+    private void setUniprotAccession(String accession) {
+        uniprotAccession = accession;
     }
 
     /**
@@ -387,19 +417,7 @@ public class UniprotEntry
         return descriptions;
     }
 
-    /**
-     * @return the primaryIdentifier
-     */
-    public String getPrimaryIdentifier() {
-        return primaryIdentifier;
-    }
 
-    /**
-     * @param primaryIdentifier the primaryIdentifier to set
-     */
-    public void setPrimaryIdentifier(String primaryIdentifier) {
-        this.primaryIdentifier = primaryIdentifier;
-    }
 
     /**
      * @return list of all the synonyms for this entry, including name and accessions
@@ -407,7 +425,7 @@ public class UniprotEntry
     public List getSynonyms() {
         List<String> synonyms = new ArrayList();
         synonyms.addAll(accessions);
-        synonyms.add(primaryaccession);
+        synonyms.add(primaryAccession);
         synonyms.add(name);
         return synonyms;
     }
@@ -427,4 +445,125 @@ public class UniprotEntry
         this.isDuplicate = isDuplicate;
     }
 
+    /**
+     * @return the isIsoform
+     */
+    public boolean isIsoform() {
+        return isIsoform;
+    }
+
+    /**
+     * sets isIsoform to be true.  moves current primary accession to accessions list and uses
+     * new isoform accession as primary accession.
+     * synonyms are made for all accessions.
+     * @param accession for this isoform
+     */
+    public void setCanonicalIsoform(String accession) {
+       isIsoform = true;
+       accessions.add(primaryAccession);
+       primaryAccession = accession;
+    }
+
+    /**
+     * @param isIsoform whether or not this protein an isoform
+     */
+    public void setIsoform(boolean isIsoform) {
+       this.isIsoform = isIsoform;
+    }
+
+    /**
+     * @param accession of the isoform
+     */
+    public void addIsoform(String accession) {
+        isoforms.add(accession);
+    }
+
+    /**
+     * @return list of isoform accessions for this uniprot entry
+     */
+    public List<String> getIsoforms() {
+        return isoforms;
+    }
+
+
+
+    /**
+     * @param dbrefs the dbrefs to set
+     */
+    public void setDbrefs(Map<String, String> dbrefs) {
+        this.dbrefs = dbrefs;
+    }
+
+    /**
+     * @param domains the domains to set
+     */
+    public void setDomains(List<String> domains) {
+        this.domains = domains;
+    }
+
+    /**
+     * @param pubs the pubs to set
+     */
+    public void setPubs(List<String> pubs) {
+        this.pubs = pubs;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @param keywords the keywords to set
+     */
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
+    }
+
+    /**
+     * @param accessions the accessions to set
+     */
+    public void setAccessions(LinkedList<String> accessions) {
+        this.accessions = accessions;
+    }
+
+    /**
+     * @param descriptions the descriptions to set
+     */
+    public void setDescriptions(List<String> descriptions) {
+        this.descriptions = descriptions;
+    }
+
+    /**
+     * no:
+     *  features
+     *  genes
+     *  sequence
+     *
+     * @param accession for isoform
+     * @return cloned uniprot entry, an isoform of original entry
+     */
+    public UniprotEntry clone(String accession) {
+        UniprotEntry entry = new UniprotEntry(accession);
+        entry.setIsoform(true);
+        entry.setDatasetRefId(datasetRefId);
+        entry.setLength(length);
+        entry.setMolecularWeight(molecularWeight);
+        entry.setDuplicate(false);
+        entry.setTaxonId(taxonId);
+        entry.setName(name);
+        entry.setFragment(isFragment);
+        entry.setUniprotAccession(primaryAccession);
+        entry.setMd5checksum(md5checksum);
+        entry.setDbrefs(dbrefs);
+        entry.setAccessions(accessions);
+        entry.setComments(comments);
+        entry.setDescriptions(descriptions);
+        entry.setDomains(domains);
+        entry.setPubs(pubs);
+        entry.setKeywords(keywords);
+        return entry;
+    }
 }
