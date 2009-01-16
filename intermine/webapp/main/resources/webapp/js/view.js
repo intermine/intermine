@@ -22,21 +22,6 @@ function reorderOnServer() {
     recordCurrentOrder();
 }
 
-// change from ascending to descending sort, or vice versa
-function reverseSortDirection() {
-    var img = document.getElementById('sortImg').src;
-    var newDirection;
-    if (img.match('desc.gif')) {
-      newDirection = 'asc';
-    } else {
-      newDirection = 'desc';
-    }
-     new Ajax.Request('<html:rewrite action="/sortOrderChange"/>', {
-       parameters:'method=changeDirection&direction='+newDirection,
-       asynchronous:true
-     });
-     document.getElementById('sortImg').src = 'images/' + newDirection + '.gif';
-}
 
 // called from viewElement.jsp
 function updateSortOrder(pathString) {
@@ -67,19 +52,4 @@ function reDrawSorters(sortMap) {
 	for(name in sortMap) {
  	   jQuery('#btn_' + name.replace(/[\.:]/g,'_')).attr('src','images/sort_'+sortMap[name]+'.png');
 	}
-}
-
-   // enable all imgs, disable the one the user just selected
-function updateSortImgs(index) {
-       for (i=0;true;i++) {
-           if (!document.getElementById("btn_" + i)) return;
-           var b = document.getElementById("btn_" + i);
-           if(i==index) {
-               b.src = "images/sort_down.gif";
-               b.disabled = true;
-           } else {
-               b.src = "images/sort.png";
-               b.disabled = false;
-           }
-       }
 }

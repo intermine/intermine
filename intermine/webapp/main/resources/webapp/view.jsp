@@ -66,24 +66,6 @@
     </c:otherwise>
   </c:choose>
 
-
-  <c:if test="${fn:length(viewStrings) > 0}">
-<%--    <div>
-      <h3><fmt:message key="sortOrder.heading"/></h3>
-      <fmt:message key="sortOrder.instructions"/>
-    </div>
-
-    <br/>
-
-    <!-- sort by -->
-    <c:if test="${!empty viewStrings}">
-      <tiles:insert page="/sortOrderLine.jsp"/>
-    </c:if>
-
-    <br/>
-    <br/>
---%>
-  </c:if>
 </div>
 
 <!-- /view.jsp -->
