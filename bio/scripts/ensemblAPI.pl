@@ -53,6 +53,7 @@ foreach my $taxon_id(keys %organisms) {
     
     my %proteins = ();
     my %exons = ();
+    my %sequences = ();
 
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -119,7 +120,7 @@ foreach my $taxon_id(keys %organisms) {
                     $transcript_item = make_item("Transcript");
                 }
                 $transcript_item->set('gene', $gene_item);
-                $transcript_item->set('sequence', make_seq($transcript->seq->seq));
+                $transcript_item->set('sequence', make_seq(\%sequences, $transcript->seq->seq));
                 parseFeature($transcript, $transcript_item, $chromosome_item);
           
                 if ($gene_type eq "protein_coding") {
@@ -129,24 +130,16 @@ foreach my $taxon_id(keys %organisms) {
                         die "bad translation\n";
                     }
                     my $protein_seq = $translation->seq();
-                    my $protein_item = make_protein(\%proteins, $protein_seq);
+                    my $protein_item = make_protein(\%proteins, \%sequences, $protein_seq);
                 
                     $protein_item->set('genes', [$gene_item]);
                     $protein_item->set('transcripts', [$transcript_item]);
-
-                    # returns lowercase value.  uniprot's converter returns uppercase value which is changed to match this one.
-                    my $ctx = Digest::MD5->new;
-                    $ctx->add($protein_seq);
-                    my $digest = $ctx->hexdigest;
-                    
-                    $protein_item->set('md5checksum', $digest);
-
+    
                     my $cds_item = make_item("CDS");
                     my $cds_primaryIdentifier = $transcript->stable_id() . "_CDS";
-                    my $cds_seq = make_seq($transcript->translateable_seq());
 
                     $cds_item->set('primaryIdentifier',$cds_primaryIdentifier);                    
-                    $cds_item->set('sequence', $cds_seq);
+                    $cds_item->set('sequence', make_seq(\%sequences, $transcript->translateable_seq()));
                     $cds_item->set('MRNA', $transcript_item);
                     $cds_item->set('protein', $protein_item);
                 }
@@ -156,7 +149,7 @@ foreach my $taxon_id(keys %organisms) {
                     my $exon_item = make_exon(\%exons, $exon->stable_id());
                     $exon_item->set('transcripts', [$transcript_item]);
                     $exon_item->set('gene', $gene_item);                    
-                    $exon_item->set('sequence', make_seq($exon->seq->seq));
+                    $exon_item->set('sequence', make_seq(\%sequences, $exon->seq->seq));
                     parseFeature($exon, $exon_item, $chromosome_item);                   
                 }
             }
@@ -310,15 +303,17 @@ sub make_chromosome {
 
 sub make_protein {
 
-    my ($proteins, $seq) = @_;
+    my ($proteins, $sequences, $seq) = @_;
     my $protein_item;
+    my $md5checksum = encodeSeq($seq);
 
-    if (defined $proteins->{$seq}) {
-        $protein_item = $proteins->{$seq};
+    if (defined $proteins->{$md5checksum}) {
+        $protein_item = $proteins->{$md5checksum};
     } else {
         $protein_item = make_item("Protein"); 
-        $protein_item->set('sequence', make_seq($seq));
-        $proteins->{$seq} = $protein_item;
+        $protein_item->set('sequence', make_seq($sequences, $seq));
+        $proteins->{$md5checksum} = $protein_item;
+        $protein_item->set('md5checksum', $md5checksum);
     }
     return $protein_item;
 }
@@ -341,14 +336,32 @@ sub make_exon {
 
 sub make_seq {
 
-    my $seq = shift;
+    my ($sequences, $seq) = @_;
+    my $seq_item;
 
-    my $seq_item = make_item("Sequence");
-    $seq_item->set('residues', $seq);
-    $seq_item->set('length', length($seq));
+    my $md5checksum = encodeSeq($seq);
 
+    if (defined $sequences->{$md5checksum}) {
+        $seq_item = $sequences->{$md5checksum};
+    } else {
+        $seq_item = make_item("Sequence");
+        $seq_item->set('residues', $seq);
+        $seq_item->set('length', length($seq));
+        $seq_item->set('md5checksum', $md5checksum);
+        $sequences->{$md5checksum} = $seq_item;
+    }
     return $seq_item;
 }   
+
+sub encodeSeq {
+
+    my $seq = shift;
+
+    my $ctx = Digest::MD5->new;
+    $ctx->add($seq);
+    return $ctx->hexdigest;
+    
+}
 
 
 sub parse_orgs {
