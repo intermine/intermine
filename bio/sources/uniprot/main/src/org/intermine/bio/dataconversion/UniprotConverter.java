@@ -52,7 +52,6 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
  */
 public class UniprotConverter extends DirectoryConverter
 {
-
     // TODO set up default using primary name
     private static final UniprotConfig CONFIG = new UniprotConfig();
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
@@ -69,6 +68,7 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> genes = new HashMap();
 
     private Set<UniprotEntry> entries = new HashSet();
+    private Set<UniprotEntry> isoforms = new HashSet();
 
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
@@ -76,7 +76,6 @@ public class UniprotConverter extends DirectoryConverter
     protected IdResolverFactory resolverFactory;
     private IdResolver resolver;
     private String datasourceRefId = null;
-
 
     /**
      * Constructor
@@ -113,7 +112,6 @@ public class UniprotConverter extends DirectoryConverter
             }
             File[] files = taxonIdToFiles.get(taxonId);
             for (int i = 0; i <= 1; i++) {
-                // organism might not have sprot and trembl files
                 File file = files[i];
                 if (file == null) {
                     continue;
@@ -127,11 +125,15 @@ public class UniprotConverter extends DirectoryConverter
                     throw new RuntimeException(e);
                 }
                 processEntries();
+                entries.addAll(isoforms);
+                processEntries();
             }
 
             // reset all variables here, new organism
             synonyms = new HashMap();
             sequences = new HashMap();
+            genes = new HashMap();
+            isoforms = new HashSet();
         }
     }
 
@@ -210,10 +212,14 @@ public class UniprotConverter extends DirectoryConverter
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession() && !entry.isDuplicate()) {
 
+                processIsoforms(entry);
+
                 Item protein = createItem("Protein");
                 protein.setAttribute("isFragment", entry.isFragment());
-                protein.setAttribute("isUniprotCanonical", "true");
-                protein.setAttribute("uniprotAccession", entry.getPrimaryAccession());
+                String isCanonical = (entry.getUniprotAccession()
+                                .equals(entry.getPrimaryAccession())) ? "true" : "false";
+                protein.setAttribute("isUniprotCanonical", isCanonical);
+                protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
                 protein.setAttribute("primaryAccession", entry.getPrimaryAccession());
                 protein.setAttribute("primaryIdentifier", entry.getName());
 
@@ -224,7 +230,9 @@ public class UniprotConverter extends DirectoryConverter
                 processName(protein, entry);
 
                 /* sequence */
-                processSequence(protein, entry);
+                if (!entry.isIsoform()) {
+                    processSequence(protein, entry);
+                }
 
                 /* interpro */
                 if (createInterpro && !entry.getDomains().isEmpty()) {
@@ -248,11 +256,11 @@ public class UniprotConverter extends DirectoryConverter
                 protein.setCollection("keywords", entry.getKeywords());
 
                 /* features */
-                if (!entry.getFeatures().isEmpty()) {
+                if (!entry.getFeatures().isEmpty() && !entry.isIsoform()) {
                     protein.setCollection("features", entry.getFeatures());
                 }
 
-                // TODO demote this to list.  this is just used so tests pass.
+                // linked so tests pass
                 LinkedList<String> synonymRefIds = new LinkedList();
 
                 try {
@@ -275,6 +283,13 @@ public class UniprotConverter extends DirectoryConverter
             // TODO remove the entry from map to free up memory?
         }
         entries = new HashSet();
+    }
+
+    private void processIsoforms(UniprotEntry entry) {
+        for (String isoformAccession: entry.getIsoforms()) {
+            UniprotEntry isoform = entry.clone(isoformAccession);
+            isoforms.add(isoform);
+        }
     }
 
     private void processSequence(Item protein, UniprotEntry entry) {
@@ -321,9 +336,12 @@ public class UniprotConverter extends DirectoryConverter
         }
 
         // duplicate trembl entries
-        for (String synonym : sequences.get(entry.getMd5checksum())) {
-            refId = getSynonym(proteinRefId, "accession", synonym, "false");
-            proteinSynonyms.add(refId);
+        if (!entry.isIsoform() && entry.getMd5checksum() != null
+                        && !sequences.get(entry.getMd5checksum()).isEmpty()) {
+            for (String synonym : sequences.get(entry.getMd5checksum())) {
+                refId = getSynonym(proteinRefId, "accession", synonym, "false");
+                proteinSynonyms.add(refId);
+            }
         }
     }
 
@@ -371,24 +389,20 @@ public class UniprotConverter extends DirectoryConverter
             Item gene = createItem("Gene");
             gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
             geneFields.remove(uniqueIdentifier);
-
             for (String geneField : geneFields) {
                 String identifier = getGeneIdentifier(entry, geneField);
                 if (identifier == null) {
-                    LOG.error("Couldn't process genes for " + entry.getPrimaryAccession()
+                    LOG.error("Couldn't process gene for " + entry.getPrimaryAccession()
                               + ", no " + geneField);
-                    return;
+                    continue;
                 }
-
                 gene.setAttribute(geneField, identifier);
             }
-
             try {
                 store(gene);
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
             geneRefId = gene.getIdentifier();
             genes.put(uniqueIdentifier, geneRefId);
         }
@@ -414,6 +428,9 @@ public class UniprotConverter extends DirectoryConverter
         } else if (method.equals("datasource")) {
             // TODO there may be two
             identifierValue = entry.getDbrefs().get(value);
+        } else {
+            LOG.error("error processing line in config file for organism " + taxonId);
+            return null;
         }
         if (taxonId.equals("7227")) {
             identifierValue = resolveGene(taxonId, identifierValue);
@@ -456,7 +473,6 @@ public class UniprotConverter extends DirectoryConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
             attName = null;
-
             if (qName.equals("entry")) {
                 entry = new UniprotEntry();
                 entries.add(entry);
@@ -477,6 +493,16 @@ public class UniprotConverter extends DirectoryConverter
                 attName = "value";
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
                 entry.setTaxonId(attrs.getValue("id"));
+            } else if (qName.equals("id")  && stack.peek().equals("isoform")) {
+                attName = "isoform";
+            } else if (qName.equals("sequence")  && stack.peek().equals("isoform")) {
+                String sequenceType = attrs.getValue("type");
+                // ignore "external" types
+                if (sequenceType.equals("displayed")) {
+                    entry.setCanonicalIsoform(entry.getAttribute());
+                } else if (sequenceType.equals("described")) {
+                    entry.addIsoform(entry.getAttribute());
+                }
             } else if (qName.equals("sequence")) {
                 String strLength = attrs.getValue("length");
                 String strMass = attrs.getValue("mass");
@@ -498,15 +524,13 @@ public class UniprotConverter extends DirectoryConverter
                             && attrs.getValue("position") != null) {
                 entry.addFeatureLocation("begin", attrs.getValue("position"));
                 entry.addFeatureLocation("end", attrs.getValue("position"));
-            } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
-                entry.addDbref(attrs.getValue("type"), attrs.getValue("id"));
-            } else if (createInterpro && qName.equals("property")
-                            && attrs.getValue("type").equals("InterPro")
-                            && stack.peek().equals("dbReference")) {
+
+            } else if (createInterpro && qName.equals("dbReference")
+                            && attrs.getValue("type").equals("InterPro")) {
                 entry.addAttribute(attrs.getValue("id"));
-            } else if (createInterpro && qName.equals("property")
-                            && attrs.getValue("type").equals("entry name")
-                            && stack.peek().equals("dbReference") && entry.processing()) {
+            } else if (createInterpro && qName.equals("property") && entry.processing()
+                            && stack.peek().equals("dbReference")
+                            && attrs.getValue("type").equals("entry name")) {
                 String domain = entry.getAttribute();
                 entry.addDomainRefId(getInterpro(domain, attrs.getValue("value")));
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
@@ -521,6 +545,8 @@ public class UniprotConverter extends DirectoryConverter
                 attName = "text";
             } else if (qName.equals("keyword")) {
                 attName = "keyword";
+            } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
+                entry.addDbref(attrs.getValue("type"), attrs.getValue("id"));
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 attName = attrs.getValue("type");
             }
@@ -559,8 +585,10 @@ public class UniprotConverter extends DirectoryConverter
                 entry.setName(attValue.toString());
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
+            } else if (qName.equals("id") && stack.peek().equals("isoform")) {
+                entry.addAttribute(attValue.toString());
             } else if (qName.equals("dbreference") || qName.equals("comment")
-                            || qName.equals("feature")) {
+                            || qName.equals("feature") || qName.equals("isoform")) {
                 // set temporary holder variables to null
                 entry.reset();
             }
@@ -616,6 +644,7 @@ public class UniprotConverter extends DirectoryConverter
             Item item = createItem("Sequence");
             item.setAttribute("residues", sequence);
             item.setAttribute("length", entry.getLength());
+            item.setAttribute("md5checksum", md5checksum);
             entry.setSeqRefId(item.getIdentifier());
             try {
                 store(item);
@@ -639,7 +668,9 @@ public class UniprotConverter extends DirectoryConverter
         byte[] buffer = sequence.getBytes();
         md5.update(buffer);
         byte[] array = md5.digest();
-        return HexBin.encode(array);
+        String checksum = HexBin.encode(array);
+        // perl checksum returns lowercase, this has to match it
+        return checksum.toLowerCase();
     }
 
     private String getDataSource(String title)
