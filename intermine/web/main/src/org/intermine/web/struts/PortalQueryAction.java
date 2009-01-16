@@ -39,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -56,6 +57,8 @@ import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -211,26 +214,22 @@ public class PortalQueryAction extends InterMineAction
                 String [] paramArray = additionalConverters.get(converterClassName);
                 String [] urlFields = paramArray[0].split(",");
                 String addparameter = null;
-                //String urlField = null;
                 for (int i = 0; i < urlFields.length; i++) {
                     if (request.getParameter(urlFields[i]) != null) {
                         addparameter = request.getParameter(urlFields[i]);
-                        //urlField = urlFields[i];
                         break;
                     }
                 }
                 if (addparameter != null && addparameter.length() != 0) {
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    //ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                    //                          .getAttribute(Constants.OBJECT_STORE_SUMMARY);
-
                     WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
                         addparameter, bagList, className);
                     imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                              profile.getUserId(), uosw);
                     List<Integer> converted = new ArrayList<Integer>();
-                    for (List resRow : convertedWebResult) {
-                        ResultElement resElement = (ResultElement) resRow.get(0);
+                    for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow 
+                            : convertedWebResult) {
+                        ResultElement resElement = resRow.get(0).get(0).getValue();
                         Object obj = resElement.getObject();
                         if (obj instanceof InterMineObject) {
                             converted.add(((InterMineObject) obj).getId());
