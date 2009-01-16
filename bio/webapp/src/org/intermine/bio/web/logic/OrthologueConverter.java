@@ -63,6 +63,7 @@ public class OrthologueConverter implements BagConverter
         PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);
+        view = getFixedView(view);
         pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
@@ -73,18 +74,39 @@ public class OrthologueConverter implements BagConverter
         code = pathQuery.getUnusedConstraintCode();
         Constraint c2 = new Constraint(ConstraintOp.LOOKUP, organism,
                                         false, label, code, id, null);
-        pathQuery.addNode("Gene.homologues.homologue.organism")
-                                .getConstraints().add(c2);
+        
+        pathQuery.addNode("Gene.homologues.homologue.organism").getConstraints().add(c2);
 
         Constraint c3 = new Constraint(ConstraintOp.EQUALS, "orthologue",
                                         false, label, code, id , null);
-        pathQuery.addNode("Gene.homologues.type").getConstraints().add(c3);
+        pathQuery.addNode(pathQuery.getCorrectJoinStyle("Gene.homologues.type"))
+            .getConstraints().add(c3);
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
         
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         return executor.execute(pathQuery);
+    }
+
+    /**
+     * If view contains joined organism, this will make sure, that 
+     * organism is joined as a inner join. Else constraint on organism doesn't work.
+     * @param pathQuery
+     * @param joinPath
+     */
+    private List<Path> getFixedView(List<Path> view) {
+        String invalidPath = "Gene.homologues.homologue:organism";
+        String validPath = "Gene.homologues.homologue.organism";
+        List<Path> ret = new ArrayList<Path>();
+        for (Path path : view) {
+            if (path.toString().contains(invalidPath)) {
+                String newPathString = path.toString().replace(invalidPath, validPath);
+                path = new Path(path.getModel(), newPathString);
+            }
+            ret.add(path);
+        }
+        return ret;
     }
 
     /**
