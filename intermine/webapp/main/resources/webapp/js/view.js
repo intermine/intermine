@@ -53,11 +53,11 @@ function updateSortOrder(pathString) {
         	})
         });
 	 } else if(jQuery('#btn_' + pathString.replace(/[\.:]/g,'_')).attr('src').match('desc')) {
-        AjaxServices.clearSortOrder(function() {
-        	AjaxServices.getSortOrderMap(function(sortMap) {
-        		reDrawSorters(sortMap);
-        	})
-        });
+	    AjaxServices.addToSortOrder(pathString, 'asc', function() {
+	    	AjaxServices.getSortOrderMap(function(sortMap) {
+	    		reDrawSorters(sortMap);
+	    	})
+	    });	
 	 } else {
 	 	return;
 	 }
