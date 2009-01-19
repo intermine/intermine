@@ -21,3 +21,4 @@ lib/InterMine/PathQuery.pm
 t/00-load.t
 t/model.t
 t/item.t
+t/webservice_query.t
