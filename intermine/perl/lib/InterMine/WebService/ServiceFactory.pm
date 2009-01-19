@@ -8,7 +8,6 @@ implementations
 =head1 SYNOPSIS
 
   my $factory = new InterMine::WebService::ServiceFactory($root, "AppName");
-
   my $service = $factory->get_query_service();
 
 =head1 AUTHOR
@@ -50,8 +49,8 @@ use strict;
 use warnings;
 
 =head2 new
- Title   : new
- Usage   : $item = $factory->new($service_root, "AppName");
+
+ Usage   : $factory = new InterMine::WebService::ServiceFactory($service_root, "AppName");
  Function: create a new ServiceFactory
  Args    : $service_root - base URL of all services, it is prefix common for
                            all services
@@ -74,8 +73,9 @@ sub new {
 }
 
 =head2 get_query_service
- Title: get_query_service
- Function: returns query service
+
+ Function: return a QueryService object
+ Args    : none
 =cut
 sub get_query_service {
   return new InterMine::WebService::Service::QueryService($self->{_root_url},
@@ -83,8 +83,9 @@ sub get_query_service {
 }
 
 =head2 get_template_service
- Title: get_template_service
- Function: template service
+
+ Function: return a TemplateService object
+ Args    : none
 =cut
 sub get_template_service {
   return new InterMine::WebService::Service::TemplateService($self->{_root_url},
@@ -92,8 +93,9 @@ sub get_template_service {
 }
 
 =head2 get_list_service
- Title: get_list_service
- Function: list service
+
+ Function: return a ListService object
+ Args    : none
 =cut
 sub get_list_service {
   return new InterMine::WebService::Service::ListService($self->{_root_url},
@@ -101,8 +103,9 @@ sub get_list_service {
 }
 
 =head2 get_model_service
- Title: get_model_service
- Function: model service
+
+ Function: return a ModelService object
+ Args    : none
 =cut
 sub get_model_service {
   return new InterMine::WebService::Service::ModelService($self->{_root_url},
@@ -110,7 +113,7 @@ sub get_model_service {
 }
 
 =head2 get_service
- Title:
+
  Function: Creates new service for general use
  Args    : $service_relative_url - part of url specific for this service
                                    eg. query/results

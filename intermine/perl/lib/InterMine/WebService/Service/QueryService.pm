@@ -7,8 +7,7 @@ queries using the web service
 
 =head1 SYNOPSIS
 
-  my $factory = new InterMine::ItemFactory(serviceroot => $root, "QueryClient");
-
+  my $factory = new InterMine::WebService::ServiceFactory($root, "AppName");
   my $query_service = $factory->get_query_service();
 
 =head1 AUTHOR
@@ -37,7 +36,7 @@ L<http://www.flymine.org>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
+Copyright 2009 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -56,9 +55,9 @@ use InterMine::WebService::Core::Request;
 my $SERVICE_RELATIVE_URL = "query/results";
 
 =head2 new
- Title   : new
- Usage   : $item = InterMine::WebService::Service::QueryService($service_root,
-                                                                "AppName");
+
+ Usage   : $sevice = InterMine::WebService::Service::QueryService($service_root,
+                                                                  "AppName");
  Function: create a new QueryService object
  Args    : $service_root - base URL of the web service
            $app_name - application name, tells the server which application uses
@@ -84,7 +83,7 @@ sub new {
 }
 
 =head2 get_relative_path
- Title   : get_relative_path
+
  Usage   : my $rel_path = $service->get_relative_path();
  Function: return the path of this service relative to the base url of the
            webapp
@@ -95,7 +94,7 @@ sub get_relative_path
 }
 
 =head2 get_result
- Title   : get_result
+
  Usage   : my $results = $service->get_result($query, $start, $max_count, $count_only);
  Function: return the path of this service relative to the base url of the
            webapp
@@ -104,7 +103,7 @@ sub get_relative_path
            $max_count - the maximum number of rows to return
            $count_only - if true, ignore $start and $max_count and instead
                          return only the number of rows as a scalar
- Returns : HTTP::Response containing the results, or a scalar count if
+ Returns : HTTP::Response containing the results, or a count as a scalar if
            $count_only is true
 =cut
 sub get_result
