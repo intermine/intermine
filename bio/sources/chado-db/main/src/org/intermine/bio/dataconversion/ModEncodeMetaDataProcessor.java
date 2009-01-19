@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
@@ -905,16 +906,38 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
        Iterator <Integer> i  = exp.iterator();
        while (i.hasNext()) {
            Integer thisExp = i.next();
+           LOG.info("ORGA " + thisExp + " organisms");
            String thisOrganism = submissionOrganismMap.get(thisExp);  
-
+           
            if (organismIdMap.containsKey(thisOrganism)) {
+               LOG.info("ORGA continue: " + thisOrganism);
+               
                continue;
            }
-           LOG.info("SPECIES: " + thisOrganism);            
-           Item organism = getChadoDBConverter().createItem("Organism");
-           organism.setAttribute("name", thisOrganism);
-           Integer intermineObjectId = getChadoDBConverter().store(organism);
-           storeInOrganismMaps(organism, thisOrganism, intermineObjectId);
+
+           int divPos = thisOrganism.indexOf(' ');
+           String genus = thisOrganism.substring(0, divPos);
+           String species = thisOrganism.substring(divPos + 1);
+           
+           OrganismRepository or = OrganismRepository.getOrganismRepository();
+           
+           Integer taxId = Integer.valueOf
+           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
+           
+           LOG.info("SPECIES: " + thisOrganism + "|" + taxId);            
+
+           Item organism = getChadoDBConverter().getOrganismItem
+           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
+           
+//           Item organism = BioDBConverter.this.getOrganismItem
+//           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
+ 
+           //           Item organism = getChadoDBConverter().createItem("Organism");
+//           organism.setAttribute("name", thisOrganism);
+//           organism.setAttribute("taxonId", taxId.toString());
+           
+//           Integer intermineObjectId = getChadoDBConverter().store(organism);
+//           storeInOrganismMaps(organism, thisOrganism, intermineObjectId);
        }
        LOG.info("created " + organismIdMap.size() + " organisms");
    }
@@ -976,8 +999,31 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labItemIdentifier = labIdRefMap.get(labName);
             submission.setReference("lab", labItemIdentifier);
 
+            
+            
+            
+            
             String organismName = submissionOrganismMap.get(submissionId);
-            String organismItemIdentifier = organismIdRefMap.get(organismName);
+
+            
+            int divPos = organismName.indexOf(' ');
+            String genus = organismName.substring(0, divPos);
+            String species = organismName.substring(divPos + 1);
+            
+            OrganismRepository or = OrganismRepository.getOrganismRepository();
+            
+            Integer taxId = Integer.valueOf
+            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
+            
+            LOG.info("SPECIES2: " + organismName + "|" + taxId);            
+
+//            Item organism = getChadoDBConverter().getOrganismItem
+//            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
+
+            String organismItemIdentifier = getChadoDBConverter().getOrganismItem
+            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId()).getIdentifier();
+ 
+//            String organismItemIdentifier = organismIdRefMap.get(organismName);
             submission.setReference("organism", organismItemIdentifier);
             
             // ..store all

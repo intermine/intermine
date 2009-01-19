@@ -119,8 +119,49 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         // process indirect locations via match features and featureloc feature<->match<->feature
         ResultSet matchLocRes = getMatchLocResultSet(connection);
         processLocationTable(connection, matchLocRes);
+        
+
+        
+        LOG.info("EST: before");
+
+        ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
+        processLocationTable(connection, matchESTLocRes);
+        
     }
 
+    
+    /**
+     * Return the interesting EST matches from the featureloc and feature tables.
+     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getESTMatchLocResultSet(Connection connection) throws SQLException {
+        String query =       
+            "SELECT -1 AS featureloc_id, est.feature_id, chrloc.fmin, " 
+            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, " 
+            + " estloc.strand "
+            + " FROM feature est, featureloc estloc, cvterm estcv, feature mf, "
+            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+            + " WHERE est.type_id = estcv.cvterm_id "
+            + " AND estcv.name = 'EST' " 
+            + " AND est.feature_id = estloc.srcfeature_id "
+            + " AND estloc.feature_id = mf.feature_id "
+            + " AND mf.feature_id = chrloc.feature_id "
+            + " AND chrloc.srcfeature_id = chr.feature_id "
+            + " AND chr.type_id = chrcv.cvterm_id "
+            + " AND chrcv.name = 'chromosome' "
+            + " AND mf.type_id = mfcv.cvterm_id "
+            + " AND mfcv.name = 'EST_match'";
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    
     /**
      * {@inheritDoc}
      */
@@ -227,8 +268,7 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
     }
 
     /**
-     * Create a temporary table of all feature_ids.  The table will only have features
-     * with locations.
+     * Create a temporary table of all feature_ids for a given submission.
      * @param connection the connection
      * @throws SQLException if there is a database problem
      */
