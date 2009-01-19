@@ -38,6 +38,8 @@ use strict;
 
  Title   : new
  Usage   : $model = new InterMine::Model(file => $model_file);
+             or
+           $model = new InterMine::Model(string => $model_string);
  Function: return a Model object for the given file
  Args    : file - the InterMine model XML file
 
@@ -49,14 +51,18 @@ sub new
   my %opts = @_;
   my $self = {%opts};
 
-  if (!defined $opts{file}) {
-    die "$class\::new() needs a file argument\n";
+  if (!defined $opts{file} && !defined $opts{string}) {
+    die "$class\::new() needs a file or string argument\n";
   }
 
   $self->{class_hash} = {};
 
   bless $self, $class;
-  $self->_process($opts{file});
+  if (defined $opts{file}) {
+    $self->_process($opts{file}, 0);
+  } else {
+    $self->_process($opts{string}, 1);
+  }
 
   $self->_fix_class_descriptors();
 
@@ -163,11 +169,21 @@ use XML::Parser::PerlSAX;
 sub _process
 {
   my $self = shift;
-  my $file = shift;
+  my $source_arg = shift;
+  my $source_is_string = shift;
+
   my $handler = new InterMine::Model::Handler(model => $self);
   my $parser = XML::Parser::PerlSAX->new(Handler => $handler);
 
-  $parser->parse(Source => { SystemId => $file });
+  my $source;
+
+  if ($source_is_string) {
+    $source = {String => $source_arg}; 
+  } else {
+    $source = {SystemId => $source_arg}; 
+  }
+
+  $parser->parse(Source => $source);
 
   $self->{classes} = $handler->{classes};
 
