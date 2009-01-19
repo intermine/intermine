@@ -4,7 +4,6 @@ META.yml # Will be created by "make dist"
 Makefile.PL
 README
 lib/InterMine/WebService/Service/QueryService.pm
-lib/InterMine/WebService/Service/Request.pm
 lib/InterMine/WebService/Core/Service.pm
 lib/InterMine/WebService/Core/Request.pm
 lib/InterMine/WebService/ServiceFactory.pm
