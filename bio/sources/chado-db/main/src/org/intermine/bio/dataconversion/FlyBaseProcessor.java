@@ -134,8 +134,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     // a map from mutagen description to Mutagen Item identifier
     private Map<String, String> mutagensMap = new HashMap<String, String>();
 
-    private Map<Integer, Integer> chromosomeStructureVariationTypes =
-        new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
     private Map<String, String> interactionExperiments = new HashMap<String, String>();
 
@@ -199,13 +198,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
 
         locatedGeneIds = getLocatedGeneIds(connection);
 
-        getChromosomeStructureVariationTypes(connection);
+        chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
     }
 
     /**
-     *
+     * Return a map from chromosome_structure_variation feature_ids to the cvterm_id of the
+     * associated cvtermprop.  This is needed because the exact type of the
+     * chromosome_structure_variation objects is not used as the type_id of the feature, instead
+     * it's stored in the cvtermprop table.
      */
-    private void getChromosomeStructureVariationTypes(Connection connection) {
+    private  Map<Integer, Integer> getChromosomeStructureVariationTypes(Connection connection) {
+        Map<Integer, Integer> retVal = new HashMap<Integer, Integer>();
         ResultSet res;
         try {
             res = getChromosomeStructureVariationResultSet(connection);
@@ -218,14 +221,20 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             while (res.next()) {
                 int featureId = res.getInt("feature_id");
                 int cvtermId = res.getInt("cvterm_id");
-                chromosomeStructureVariationTypes.put(featureId, cvtermId);
+                retVal.put(featureId, cvtermId);
             }
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading chromosome_structure_variation "
                                        + "types", e);
         }
+
+        return retVal;
     }
 
+    /**
+     * Add the typeId to the List that is the value in the map for the featureId, creating the
+     * List if necessary.
+     */
     private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
         List<Integer> list;
         if (map.containsKey(featureId)) {
@@ -1586,6 +1595,9 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         return XmlUtil.fixEntityNames(identifier);
     }
 
+    /**
+     * Return a query that gets the feature_ids of the allele in the feature table.
+     */
     private String getAlleleFeaturesSql() {
         return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME;
     }
