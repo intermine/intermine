@@ -60,14 +60,16 @@ use LWP::UserAgent;
 sub new
 {
   my $class = shift;
-  my $root_url = shift;
-  my $service_relative_url = shift;
+  my $service_root = shift;
   my $app_name = shift;
 
   my $self = {};
 
-  $self->{_root_url} = $root_url;
-  $self->{_service_relative_url} = $service_relative_url;
+  if ($service_root !~ m:/$:) {
+    $service_root .= '/';
+  }
+
+  $self->{_service_root} = $service_root;
   $self->{_app_name} = $app_name;
 
   bless $self, $class;
@@ -84,7 +86,7 @@ sub get_url
 {
   my $self = shift;
 
-  return $self->{_root_url} . $self->get_relative_path();
+  return $self->{_service_root} . $self->get_relative_path();
 }
 
 =head2 get_count

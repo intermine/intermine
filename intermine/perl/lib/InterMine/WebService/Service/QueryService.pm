@@ -65,17 +65,10 @@ my $SERVICE_RELATIVE_URL = "query/results";
 =cut
 sub new {
   my $class = shift;
-  my $root_url = shift;
+  my $service_root = shift;
   my $app_name = shift;
 
-  my $self = {};
-
-  if ($root_url !~ m:/$:) {
-    $root_url .= '/';
-  }
-
-  $self->{_root_url} = $root_url;
-  $self->{_app_name} = $app_name;
+  my $self = $class->SUPER::new($service_root, $app_name);
 
   bless $self, $class;
 
