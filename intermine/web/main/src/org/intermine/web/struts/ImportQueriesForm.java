@@ -52,17 +52,19 @@ public class ImportQueriesForm extends ValidatorForm
      * Return a Map from query name to Query object.
      * @param savedBags map from bag name to bag
      * @return the Map
+     * @throws Exception if a problem parsing query XML
      */
-    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags) {
+    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags) 
+    throws Exception {
         if (map == null) {
-            try {
-                map = PathQueryBinding.unmarshal(new StringReader(getXml()));
-                MainHelper.checkPathQueries(map, savedBags);
-            } catch (Exception e) {
-                map = PathQueryBinding.unmarshal(new StringReader("<queries>" + getXml()
-                         + "</queries>"));
-                MainHelper.checkPathQueries(map, savedBags);
+            // multiple queries must be wrapped by <queries> element, add it if not already there
+            String xml = getXml().trim();
+            if (!xml.startsWith("<queries>")) {
+                xml = "<queries>" + xml + "</queries>";
             }
+            
+            map = PathQueryBinding.unmarshal(new StringReader(xml));
+            MainHelper.checkPathQueries(map, savedBags);
         }
         return map;
     }
@@ -146,7 +148,7 @@ public class ImportQueriesForm extends ValidatorForm
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
-                        new ActionMessage(err.getCause().getMessage()));
+                    new ActionMessage("errors.importFailed", err.getCause().getMessage()));
         }
         return errors;
     }
