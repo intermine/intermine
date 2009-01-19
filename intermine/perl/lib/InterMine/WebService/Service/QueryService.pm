@@ -95,7 +95,17 @@ sub get_relative_path
 }
 
 =head2 get_result
-
+ Title   : get_result
+ Usage   : my $results = $service->get_result($query, $start, $max_count, $count_only);
+ Function: return the path of this service relative to the base url of the
+           webapp
+ Args    : $query - the query as an XML string or as a PathQuery object
+           $start - the start row to return, the first row is 1 which is the default
+           $max_count - the maximum number of rows to return
+           $count_only - if true, ignore $start and $max_count and instead
+                         return only the number of rows as a scalar
+ Returns : HTTP::Response containing the results, or a scalar count if
+           $count_only is true
 =cut
 sub get_result
 {
@@ -104,6 +114,10 @@ sub get_result
   my $start = shift;
   my $max_count = shift;
   my $count_only = shift;
+
+  if (ref $query) {
+    $query = $query->to_string();
+  }
 
   $count_only //= 0;
 
