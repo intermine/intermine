@@ -166,9 +166,6 @@ public class TagManager
      */
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
-        if (userName != null) {
-            checkUserExists(userName);
-        }
         if (type != null) {
             checkTagType(type);
         }
@@ -178,8 +175,14 @@ public class TagManager
 
         if (cache.containsKey(key)) {
             return cache.get(key);
+        } else {
+            // if there isn't a cache for user, than check if user exists
+            // for performance reasons don't put this check at the method beginning
+            if (userName != null) {
+                checkUserExists(userName);    
+            }
         }
-
+        
         Query q = new Query();
         QueryClass qc = new QueryClass(Tag.class);
 
