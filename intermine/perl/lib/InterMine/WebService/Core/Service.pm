@@ -75,6 +75,11 @@ sub new
   return $self;
 }
 
+=head2 get_url
+ Title   : get_url
+ Usage   : my $service_url = $service->get_url();
+ Function: return the full URL for this service
+=cut
 sub get_url
 {
   my $self = shift;
@@ -82,6 +87,11 @@ sub get_url
   return $self->{_root_url} . $self->get_relative_path();
 }
 
+=head2 get_count
+ Title   : get_count
+ Usage   : my $count = $service->get_count($query);
+ Function: return the number of result rows for the query
+=cut
 sub get_count
 {
   my $self = shift;
@@ -90,6 +100,16 @@ sub get_count
   return $self->get_result($query, undef, undef, 1)->content();
 }
 
+=head2 
+ Title   : execute_request
+ Usage   : my $request =
+             new InterMine::WebService::Core::Request('POST', $self->get_url(), 'TAB');
+           $service->execute_request($request)
+ Function: create a new Service object
+
+ Args    : $request - a InterMine::WebService::Core::Request object
+ Returns : a HTTP::Response object
+=cut
 sub execute_request
 {
   my $self = shift;
@@ -97,6 +117,8 @@ sub execute_request
 
   my $ua = LWP::UserAgent->new();
   $ua->env_proxy();
+
+#  $request->user_agent($self->{_app_name} . ' InterMine/Perl');
 
   if ($request->get_request_type() eq 'GET') {
     my $url = URI->new($request->get_url());
