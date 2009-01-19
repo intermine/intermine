@@ -183,7 +183,7 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
                 Map<Path, Integer> desc = (Map<Path, Integer>) column;
                 for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
                     template.set(descEntry.getValue().intValue(),
-                            new ResultElement((InterMineObject) row.get(columnNo),
+                            new ResultElement(row.get(columnNo),
                                 descEntry.getKey(), false));
                 }
             }
@@ -193,9 +193,9 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         columnNo = 0;
         for (Object column : columns) {
             if (column instanceof List) {
-                hasCollections = true;
                 List<ResultsRow> collection = (List<ResultsRow>) row.get(columnNo);
                 for (ResultsRow subRow : collection) {
+                    hasCollections = true;
                     expandCollections(subRow, retval, template, (List) column);
                 }
             }
