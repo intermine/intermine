@@ -127,13 +127,14 @@ public class UniprotConverter extends DirectoryConverter
                 processEntries();
                 entries.addAll(isoforms);
                 processEntries();
+                isoforms = new HashSet();
             }
 
             // reset all variables here, new organism
             synonyms = new HashMap();
             sequences = new HashMap();
             genes = new HashMap();
-            isoforms = new HashSet();
+
         }
     }
 
@@ -161,7 +162,6 @@ public class UniprotConverter extends DirectoryConverter
                 continue;
             }
             String source = bits[2].replace(".xml", "");
-
             // process trembl last because trembl has duplicates of sprot proteins
             if (!source.equals("sprot") && !source.equals("trembl")) {
                 LOG.info("Bad file found:  "  + file.getName()
@@ -169,7 +169,7 @@ public class UniprotConverter extends DirectoryConverter
                 continue;
             }
             int i = (source.equals("sprot") ? 0 : 1);
-            if (!files.containsValue(taxonId)) {
+            if (!files.containsKey(taxonId)) {
                 File[] sourceFiles = new File[2];
                 sourceFiles[i] = file;
                 files.put(taxonId, sourceFiles);
@@ -204,11 +204,7 @@ public class UniprotConverter extends DirectoryConverter
 
     private void processEntries()
     throws SAXException {
-        UniprotEntry entry = null;
-        Iterator it = entries.iterator();
-        while (it.hasNext()) {
-            entry = (UniprotEntry) it.next();
-
+        for (UniprotEntry entry : entries) {
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession() && !entry.isDuplicate()) {
 
@@ -379,8 +375,8 @@ public class UniprotConverter extends DirectoryConverter
         String uniqueIdentifier = getGeneIdentifier(entry, uniqueIdentifierField);
 
         if (uniqueIdentifier == null) {
-            LOG.error("Couldn't process gene for protein " + entry.getPrimaryAccession()
-                      + ", no " + uniqueIdentifierField);
+//            LOG.error("Couldn't process gene for protein " + entry.getPrimaryAccession()
+//                      + ", no " + uniqueIdentifierField);
             return;
         }
 
@@ -524,7 +520,6 @@ public class UniprotConverter extends DirectoryConverter
                             && attrs.getValue("position") != null) {
                 entry.addFeatureLocation("begin", attrs.getValue("position"));
                 entry.addFeatureLocation("end", attrs.getValue("position"));
-
             } else if (createInterpro && qName.equals("dbReference")
                             && attrs.getValue("type").equals("InterPro")) {
                 entry.addAttribute(attrs.getValue("id"));
@@ -764,7 +759,7 @@ public class UniprotConverter extends DirectoryConverter
 
     private String getSynonym(String subjectId, String type, String value, String isPrimary)
     throws SAXException {
-        String key = subjectId + type + value;
+        String key = type + subjectId + value;
         if (StringUtils.isEmpty(value)) {
             return null;
         }
