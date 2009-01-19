@@ -639,7 +639,6 @@ public class UniprotConverter extends DirectoryConverter
             Item item = createItem("Sequence");
             item.setAttribute("residues", sequence);
             item.setAttribute("length", entry.getLength());
-            item.setAttribute("md5checksum", md5checksum);
             entry.setSeqRefId(item.getIdentifier());
             try {
                 store(item);
