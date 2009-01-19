@@ -459,16 +459,16 @@ public class UniprotEntry
      * @param accession for this isoform
      */
     public void setCanonicalIsoform(String accession) {
-       isIsoform = true;
-       accessions.add(primaryAccession);
-       primaryAccession = accession;
+        isIsoform = false;
+        accessions.add(primaryAccession);
+        primaryAccession = accession;
     }
 
     /**
      * @param isIsoform whether or not this protein an isoform
      */
     public void setIsoform(boolean isIsoform) {
-       this.isIsoform = isIsoform;
+        this.isIsoform = isIsoform;
     }
 
     /**
