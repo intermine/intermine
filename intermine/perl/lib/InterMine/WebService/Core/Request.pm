@@ -2,9 +2,8 @@ package InterMine::WebService::Core::Request;
 
 =head1 NAME
 
-InterMine::WebService::Core::Request - a web service request object
-wrapping a LWP::UserAgent object, which encapsulates the server url and
-request parameters
+InterMine::WebService::Core::Request - an object encapsulates the
+server url and request parameters for an InterMine webservice client
 
 =head1 SYNOPSIS
 
@@ -46,7 +45,7 @@ under the same terms as Perl itself.
 use strict;
 
 =head2 new
- Title   : new
+
  Usage   : $req = InterMine::WebService::Core::Request($service_root,
                                                        "AppName");
  Function: create a new QueryService object
@@ -57,13 +56,13 @@ use strict;
 sub new {
   my $class = shift;
   my $request_type = shift;
-  my $url = shift;
+  my $service_root = shift;
   my $content_type = shift // 'TAB';
 
   my $self = {};
 
   $self->{_request_type} = $request_type;
-  $self->{_url} = $url;
+  $self->{_service_root} = $service_root;
   $self->{_content_type} = $content_type;
   $self->{_parameters} = {};
 
@@ -72,31 +71,53 @@ sub new {
   return $self;
 }
 
+=head2 get_url
+
+ Function: return the service_root url for the service root that was passed to
+           the constructor
+=cut
 sub get_url
 {
   my $self = shift;
 
-  return $self->{_url};
+  return $self->{_service_root};
 }
 
+=head2 get_request_type
+
+ Function: return the request type that was passed to the constructor
+=cut
 sub get_request_type
 {
   my $self = shift;
   return $self->{_request_type};
 }
 
+=head2 get_content_type
+
+ Function: return the content type that was passed to the constructor
+=cut
 sub get_content_type
 {
   my $self = shift;
   return $self->{_content_type};
 }
 
+=head2 get_parameters
+
+ Function: return the current parameters for this request
+=cut
 sub get_parameters
 {
   my $self = shift;
   return %{$self->{_parameters}};
 }
 
+=head2 add_parameters
+
+ Usage   : $req->add_parameters(query => $query, $size => 200);
+ Function: add parameters to this request
+=cut
 sub add_parameters
 {
   my $self = shift;

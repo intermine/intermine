@@ -3,8 +3,22 @@ MANIFEST
 META.yml # Will be created by "make dist"
 Makefile.PL
 README
-lib/InterMine/Model.pm
+lib/InterMine/WebService/Service/QueryService.pm
+lib/InterMine/WebService/Service/Request.pm
+lib/InterMine/WebService/Core/Service.pm
+lib/InterMine/WebService/Core/Request.pm
+lib/InterMine/WebService/ServiceFactory.pm
+lib/InterMine/Item.pm
 lib/InterMine/ItemFactory.pm
+lib/InterMine/Model/Attribute.pm
+lib/InterMine/Model/Reference.pm
+lib/InterMine/Model/Collection.pm
+lib/InterMine/Model/Field.pm
+lib/InterMine/Model/ClassDescriptor.pm
+lib/InterMine/Model.pm
+lib/InterMine/DataDownloader.pm
+lib/InterMine/Util.pm
+lib/InterMine/PathQuery.pm
 t/00-load.t
 t/model.t
 t/item.t
