@@ -110,7 +110,13 @@ sub get_content_type
 sub get_parameters
 {
   my $self = shift;
-  return %{$self->{_parameters}};
+  my $format;
+
+  my %params = %{$self->{_parameters}};
+
+  $params{format} = lc $self->get_content_type();
+
+  return %params;
 }
 
 =head2 add_parameters
