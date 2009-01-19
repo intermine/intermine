@@ -29,15 +29,15 @@ import org.intermine.webservice.client.util.URLParser;
  **/
 public class RequestImpl implements Request
 {
-    
+
     private RequestType type;
-    
+
     private String serviceUrl;
-    
+
     private ContentType contentType;
 
     private Map<String, List<String>> parameters = new HashMap<String, List<String>>();
-    
+
     private Map<String, String> headers = new HashMap<String, String>();
 
     /**
@@ -59,7 +59,7 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void addParameter(String name, String value) {
         List<String> values = getParameterValues(name);
@@ -71,14 +71,14 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public List<String> getParameterValues(String name) {
         return parameters.get(name);
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public String getParameter(String name) {
         List<String>  pars = getParameterValues(name);
@@ -90,14 +90,14 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Set<String> getParameterNames() {
         return parameters.keySet();
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setParameter(String name, String value) {
         List<String> values = parameters.get(name);
@@ -110,35 +110,35 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public RequestType getType() {
         return type;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setType(RequestType type) {
         this.type = type;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public String getServiceUrl() {
         return serviceUrl;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setServiceUrl(String url) {
         this.serviceUrl = url;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setUrl(String url) {
         try {
@@ -150,34 +150,30 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public ContentType getContentType() {
         return contentType;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public Map<String, List<String>> getParameterMap() {
         return parameters;
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     public String getUrl(boolean encode) {
-        return getUrlInternal(encode);
-    }
-
-    private String getUrlInternal(boolean encode) {
         StringBuilder sb = new StringBuilder();
         sb.append(serviceUrl);
         String separator = "?";
@@ -208,25 +204,25 @@ public class RequestImpl implements Request
             return str;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void setHeader(String name, String value) {
         headers.put(name, value);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Map<String, String> getHeaders() {
         return headers;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getHeader(String name) {
         return headers.get(name);
     }
-}    
+}
