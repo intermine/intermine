@@ -246,12 +246,11 @@ public class SessionMethods
             session.setAttribute(Constants.QUERY, query.clone());
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
         }
+
+        // TODO unclear why we need to put this path on the session
         Path path = query.getView().iterator().next();
-        String pathString = path.toStringNoConstraints();
-        if (pathString.indexOf(".") != -1) {
-            pathString = pathString.substring(0, pathString.indexOf("."));
-        }
-        session.setAttribute("path", pathString);
+        session.setAttribute("path", path.getStartClassDescriptor().getUnqualifiedName());
+        
         // it's possible to not have a sort order
         if (query.getSortOrder() != null && !query.getSortOrder().isEmpty()) {
             Path sortPath = query.getSortOrder().keySet().iterator().next();
