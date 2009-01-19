@@ -117,8 +117,7 @@ sub execute_request
 
   my $ua = LWP::UserAgent->new();
   $ua->env_proxy();
-
-#  $request->user_agent($self->{_app_name} . ' InterMine/Perl');
+  $ua->agent($self->{_app_name} . ' InterMine/Perl');
 
   if ($request->get_request_type() eq 'GET') {
     my $url = URI->new($request->get_url());
