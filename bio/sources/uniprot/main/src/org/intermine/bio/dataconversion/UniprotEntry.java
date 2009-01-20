@@ -555,7 +555,7 @@ public class UniprotEntry
         entry.setTaxonId(taxonId);
         entry.setName(name);
         entry.setFragment(isFragment);
-        entry.setUniprotAccession(primaryAccession);
+        entry.setUniprotAccession(uniprotAccession);
         entry.setMd5checksum(md5checksum);
         entry.setDbrefs(dbrefs);
         entry.setAccessions(accessions);

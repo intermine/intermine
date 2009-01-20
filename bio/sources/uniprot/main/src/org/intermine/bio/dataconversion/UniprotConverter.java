@@ -212,12 +212,11 @@ public class UniprotConverter extends DirectoryConverter
 
                 Item protein = createItem("Protein");
                 protein.setAttribute("isFragment", entry.isFragment());
-                String isCanonical = (entry.getUniprotAccession()
-                                .equals(entry.getPrimaryAccession())) ? "true" : "false";
-                protein.setAttribute("isUniprotCanonical", isCanonical);
                 protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
                 protein.setAttribute("primaryAccession", entry.getPrimaryAccession());
                 protein.setAttribute("primaryIdentifier", entry.getName());
+                String isCanonical = (entry.isIsoform() ? "false" : "true");
+                protein.setAttribute("isUniprotCanonical", isCanonical);
 
                 /* dataset */
                 protein.addToCollection("dataSets", entry.getDatasetRefId());
