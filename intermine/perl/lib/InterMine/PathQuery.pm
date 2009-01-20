@@ -149,6 +149,42 @@ sub sort_order
   }
 }
 
+=head2 add_constraint
+
+ Usage   : $path_query->add_constraint("Department.name = '$dep_name'");
+ Function: add a constraint to this query
+
+=cut
+sub add_constraint
+{
+  my $self = shift;
+  my $constraint_string = shift;
+
+  if (!defined $constraint_string) {
+    die "no constraint string specified for PathQuery->add_constraint()\n";
+  }
+
+  my @bits = split /\s+/, $constraint_string;
+
+  if (@bits < 2) {
+    die "can't parse constraint: $constraint_string\n";
+  }
+
+  my $path = $bits[0];
+  my $op = $bits[1];
+  my $value = $bits[2];
+
+  InterMine::Path->validate($self->{model}, $path);
+
+  my %details = (op => $op);
+
+  if (defined $value) {
+    $details{value} = $value;
+  }
+
+  push @{$self->{constraints}->{$path}}, \%details;
+}
+
 =head2
 
  Usage   : $path_query->to_xml_string()
@@ -166,6 +202,25 @@ sub to_xml_string
   $writer->startTag('query', name => '', model => $self->{model}->model_name(),
                     view => (join ' ', $self->view()), 
                     sortOrder => $self->sort_order());
+
+  for my $path_string (sort keys %{$self->{constraints}}) {
+    my $details = $self->{constraints}->{$path_string};
+
+    $writer->startTag('node', path => $path_string);
+
+    for my $detail (@$details) {
+      my $op = $detail->{op};
+
+      if (defined $detail->{value}) {
+        $writer->startTag('constraint', op => $op, value => $detail->{value});
+      } else {
+        $writer->startTag('constraint', op => $op);
+      }
+      $writer->endTag();
+    }
+
+    $writer->endTag();
+  }
 
   $writer->endTag();
 
