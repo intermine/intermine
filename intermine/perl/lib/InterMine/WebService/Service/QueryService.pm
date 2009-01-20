@@ -63,7 +63,8 @@ my $SERVICE_RELATIVE_URL = "query/results";
            $app_name - application name, tells the server which application uses
                        the service
 =cut
-sub new {
+sub new
+{
   my $class = shift;
   my $service_root = shift;
   my $app_name = shift;

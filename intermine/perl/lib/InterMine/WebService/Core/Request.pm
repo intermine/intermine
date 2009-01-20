@@ -53,7 +53,8 @@ use strict;
            $service_root - base URL of the web service
            $content_type - the format for the response, 'TAB' or 'XML'
 =cut
-sub new {
+sub new
+{
   my $class = shift;
   my $request_type = shift;
   my $service_root = shift;

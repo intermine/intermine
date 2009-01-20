@@ -57,7 +57,8 @@ use warnings;
            $app_name - application name, tells the server which application uses
                        the service
 =cut
-sub new {
+sub new
+{
   my $class = shift;
   my $root_url = shift;
   my $app_name = shift;
@@ -77,7 +78,8 @@ sub new {
  Function: return a QueryService object
  Args    : none
 =cut
-sub get_query_service {
+sub get_query_service
+{
   return new InterMine::WebService::Service::QueryService($self->{_root_url},
                                                           $self->{_app_name});
 }
@@ -87,7 +89,8 @@ sub get_query_service {
  Function: return a TemplateService object
  Args    : none
 =cut
-sub get_template_service {
+sub get_template_service
+{
   return new InterMine::WebService::Service::TemplateService($self->{_root_url},
                                                              $self->{_app_name});
 }
@@ -97,7 +100,8 @@ sub get_template_service {
  Function: return a ListService object
  Args    : none
 =cut
-sub get_list_service {
+sub get_list_service
+{
   return new InterMine::WebService::Service::ListService($self->{_root_url},
                                                          $self->{_app_name});
 }
@@ -107,7 +111,8 @@ sub get_list_service {
  Function: return a ModelService object
  Args    : none
 =cut
-sub get_model_service {
+sub get_model_service
+{
   return new InterMine::WebService::Service::ModelService($self->{_root_url},
                                                           $self->{_app_name});
 }
@@ -120,7 +125,8 @@ sub get_model_service {
            $app_name - application name, tells the server which application uses
                        the service
 =cut
-sub get_service {
+sub get_service
+{
   my $service_relative_url = shift;
   return new InterMine::Service($self->{_root_url}, $service_relative_url, $self->{_app_name});
 }
