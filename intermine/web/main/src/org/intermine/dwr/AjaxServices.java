@@ -1120,26 +1120,17 @@ public class AjaxServices
         // create a map of fields to direction
         Map<String, String> sortOrderMap = new HashMap<String, String>();
         Map<Path, String> currentSortOrder = query.getSortOrder();
-        boolean sorting = false;
         for (Path viewPath: pathView) {
             String viewPathString = viewPath.toStringNoConstraints();
             String sortState = new String();
             // outer joins not allowed
-            if (!query.isValidOrderPath(viewPathString) && currentSortOrder.containsKey(viewPath)) {
-                query.resetOrderBy();
-                currentSortOrder = new LinkedHashMap<Path, String >();
+            if (!query.isValidOrderPath(viewPathString)) {
                 sortState = "disabled";
-            } else if (!query.isValidOrderPath(viewPathString)) {
-                sortState = "disabled";
-            //if already sorted get the direction
+            // if already sorted get the direction
             } else if (currentSortOrder.containsKey(viewPath)) {
                 sortState = currentSortOrder.get(viewPath);
-            //default
-            } else if (currentSortOrder.size() <= 0 && !sorting) {
-                sortState = "asc";
-                sorting = true;
-            }
-            else {
+            // default
+            } else {
                 sortState = "none";
             }
             sortOrderMap.put(viewPathString, sortState);
