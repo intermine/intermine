@@ -12,6 +12,7 @@ package org.intermine.web.logic.results;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,16 +30,24 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -601,16 +610,18 @@ public class PagedTable
                             MultiRowValue<ResultElement> value = row.get(allSelected);
                             if (value instanceof MultiRowFirstValue) {
                                 ResultElement element = value.getValue();
-                                Integer elementId = element.getId();
-                                if (!selectionIds.containsKey(elementId)) {
-                                    nextEntry = new SelectionEntry();
-                                    nextEntry.id = elementId;
-                                    if (element.getField() == null) {
-                                        nextEntry.fieldValue = null;
-                                    } else {
-                                        nextEntry.fieldValue = element.getField().toString();
+                                if (element != null) {
+                                    Integer elementId = element.getId();
+                                    if (!selectionIds.containsKey(elementId)) {
+                                        nextEntry = new SelectionEntry();
+                                        nextEntry.id = elementId;
+                                        if (element.getField() == null) {
+                                            nextEntry.fieldValue = null;
+                                        } else {
+                                            nextEntry.fieldValue = element.getField().toString();
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                             multiRowIndex++;
@@ -851,62 +862,140 @@ public class PagedTable
             QueryClass qc = new QueryClass(InterMineObject.class);
             query.addFrom(qc);
             query.addToSelect(qc);
-
-            BagConstraint bc = new BagConstraint(new QueryField(qc, "id"),
-                                                 ConstraintOp.IN, selectionIds.keySet());
-
-            query.setConstraint(bc);
-
+            query.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
+                        selectionIds.keySet()));
             return query;
         }
         WebResults webResults = (WebResults) getAllRows();
         Results results = webResults.getInterMineResults();
-        Query origQuery = results.getQuery();
-        Query newQuery = QueryCloner.cloneQuery(origQuery);
-
-        Map<String, QuerySelectable> pathToQueryNodeMap = webResults.getPathToQueryNode();
-        Path path = columns.get(allSelected).getPath().getPrefix();
-        QuerySelectable qn = pathToQueryNodeMap.get(path.toStringNoConstraints());
-
-        int nodeIndex = origQuery.getSelect().indexOf(qn);
-
-        QuerySelectable newSelectable = newQuery.getSelect().get(nodeIndex);
+        Query oldQuery = results.getQuery();
+        Query newQuery = QueryCloner.cloneQuery(oldQuery);
+        PathQuery pathQuery = webTable.getPathQuery();
+        newQuery.clearOrderBy();
+        Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>(oldQuery.getSelect());
         newQuery.clearSelect();
-        QueryClass newNode;
-        //if (newSelectable instanceof QueryClass) {
-            newNode = (QueryClass) newSelectable;
-        /*} else {
-            QueryObjectPathExpression qope = (QueryObjectPathExpression) newSelectable;
-            // We need to morph the query from an outer join to an inner join. This will not
-            // affect the results, which are ids from the path expression, except by removing
-            // "null".
-            newNode = new QueryClass(qope.getType());
-            newQuery.addFrom(newNode);
-            QueryClass lastQc = newNode;
-            QueryObjectPathExpression nextQope = qope.getQope();
-            while (nextQope != null) {
-                QueryClass newQc = new QueryClass(nextQope.getType());
-                newQuery.addFrom(newQc);
+        Path summaryPath = columns.get(allSelected).getPath().getPrefix();
+        QuerySelectable summarySelectable = ((WebResults) webTable).getPathToQueryNode().get(
+                summaryPath.toStringNoConstraints());
+        if (summarySelectable == null) {
+            throw new NullPointerException("Error - path " + summaryPath.toStringNoConstraints()
+                    + " is not in map " + ((WebResults) webTable).getPathToQueryNode());
+        }
+        return recursiveGetBagCreationQuery(summarySelectable, newQuery, oldSelect);
+    }
+
+    private static Query recursiveGetBagCreationQuery(QuerySelectable summary, Query newQuery,
+            Set<QuerySelectable> oldSelect) {
+        if (summary instanceof QueryObjectPathExpression) {
+            QueryObjectPathExpression qope = (QueryObjectPathExpression) summary;
+            if (oldSelect.contains(qope) || oldSelect.contains(new PathExpressionField(qope, 0))) {
+                // We need to add QueryClasses to the query for this outer join. This will make it
+                // an inner join, so the "no object" results will disappear.
+                QueryClass lastQc = qope.getDefaultClass();
+                newQuery.addFrom(lastQc);
+                newQuery.addToSelect(lastQc);
+                QueryClass rootQc = qope.getQueryClass();
                 QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-                            new QueryObjectReference(newQc, qope.getFieldName()),
+                            new QueryObjectReference(rootQc, qope.getFieldName()),
                             ConstraintOp.CONTAINS, lastQc));
-                qope = nextQope;
-                lastQc = newQc;
-                nextQope = qope.getQope();
+                if (qope.getConstraint() != null) {
+                    QueryHelper.addAndConstraint(newQuery, qope.getConstraint());
+                }
+                newQuery.setDistinct(true);
+                return newQuery;
             }
-            QueryClass rootQc = qope.getQueryClass();
-            QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
-                        new QueryObjectReference(rootQc, qope.getFieldName()),
-                        ConstraintOp.CONTAINS, lastQc));
-        }*/
-
-        newQuery.addToSelect(newNode);
-        BagConstraint bc =
-            new BagConstraint(new QueryField(newNode, "id"),
-                              ConstraintOp.NOT_IN, selectionIds.keySet());
-        QueryHelper.addAndConstraint(newQuery, bc);
-        return newQuery;
-
+        } else if (summary instanceof QueryCollectionPathExpression) {
+            QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) summary;
+            if (oldSelect.contains(qcpe)) {
+                QueryClass lastQc = qcpe.getDefaultClass();
+                newQuery.addFrom(lastQc);
+                newQuery.addToSelect(lastQc);
+                QueryClass rootQc = qcpe.getQueryClass();
+                try {
+                    QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+                                new QueryCollectionReference(rootQc, qcpe.getFieldName()),
+                                ConstraintOp.CONTAINS, lastQc));
+                } catch (IllegalArgumentException e) {
+                    QueryHelper.addAndConstraint(newQuery, new ContainsConstraint(
+                                new QueryObjectReference(rootQc, qcpe.getFieldName()),
+                                ConstraintOp.CONTAINS, lastQc));
+                }
+                for (FromElement extraQc : qcpe.getFrom()) {
+                    if (extraQc instanceof QueryClass) {
+                        newQuery.addFrom(extraQc);
+                    } else {
+                        throw new IllegalArgumentException("FromElement is not a QueryClass: "
+                                + extraQc);
+                    }
+                }
+                if (qcpe.getConstraint() != null) {
+                    QueryHelper.addAndConstraint(newQuery, qcpe.getConstraint());
+                }
+                newQuery.setDistinct(true);
+                return newQuery;
+            }
+        } else if (summary instanceof QueryClass) {
+            QueryClass qc = (QueryClass) summary;
+            if (oldSelect.contains(qc)) {
+                newQuery.addToSelect(qc);
+                newQuery.setDistinct(true);
+                return newQuery;
+            }
+        } else {
+            throw new IllegalArgumentException("Error - path resolves to unknown object "
+                    + summary);
+        }
+        for (QuerySelectable qs : oldSelect) {
+            try {
+                if ((qs instanceof PathExpressionField)
+                        && (((PathExpressionField) qs).getFieldNumber() == 0)) {
+                    QueryObjectPathExpression qope = ((PathExpressionField) qs).getQope();
+                    Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
+                    QueryClass lastQc = qope.getDefaultClass();
+                    tempNewQuery.addFrom(lastQc);
+                    QueryClass rootQc = qope.getQueryClass();
+                    QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
+                                new QueryObjectReference(rootQc, qope.getFieldName()),
+                                ConstraintOp.CONTAINS, lastQc));
+                    if (qope.getConstraint() != null) {
+                        QueryHelper.addAndConstraint(tempNewQuery, qope.getConstraint());
+                    }
+                    return recursiveGetBagCreationQuery(summary, tempNewQuery,
+                            new HashSet<QuerySelectable>(qope.getSelect()));
+                } else if (qs instanceof QueryCollectionPathExpression) {
+                    QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
+                    QueryClass lastQc = qcpe.getDefaultClass();
+                    Query tempNewQuery = QueryCloner.cloneQuery(newQuery);
+                    tempNewQuery.addFrom(lastQc);
+                    QueryClass rootQc = qcpe.getQueryClass();
+                    try {
+                        QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
+                                    new QueryCollectionReference(rootQc, qcpe.getFieldName()),
+                                    ConstraintOp.CONTAINS, lastQc));
+                    } catch (IllegalArgumentException e) {
+                        QueryHelper.addAndConstraint(tempNewQuery, new ContainsConstraint(
+                                    new QueryObjectReference(rootQc, qcpe.getFieldName()),
+                                    ConstraintOp.CONTAINS, lastQc));
+                    }
+                    for (FromElement extraQc : qcpe.getFrom()) {
+                        if (extraQc instanceof QueryClass) {
+                            tempNewQuery.addFrom(extraQc);
+                        } else {
+                            throw new IllegalArgumentException("FromElement is not a QueryClass: "
+                                    + extraQc);
+                        }
+                    }
+                    if (qcpe.getConstraint() != null) {
+                        QueryHelper.addAndConstraint(tempNewQuery, qcpe.getConstraint());
+                    }
+                    return recursiveGetBagCreationQuery(summary, tempNewQuery,
+                            new HashSet<QuerySelectable>(qcpe.getSelect()));
+                }
+            } catch (IllegalArgumentException e) {
+                // Ignore it - we are searching for a working branch of the query
+            }
+        }
+        throw new IllegalArgumentException("Could not find summary in query.");
     }
 
     /**
