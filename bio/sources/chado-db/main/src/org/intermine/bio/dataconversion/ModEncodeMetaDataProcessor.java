@@ -286,6 +286,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labItemIdentifier = submissionDetails.labItemIdentifier;
 
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+
+            LOG.info("FEATMAPA: submission " + chadoExperimentId + "|"    
+                    + thisSubmissionDataIds);
+            LOG.info("FEATMAPA: submissionIt " + submissionItemIdentifier + "| labIt "    
+                    + labItemIdentifier);
+
             
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
@@ -356,20 +362,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // could use > (order by apid, apdataid, direction)
             // NB: using isLast() is expensive
             if (!appliedProtocolId.equals(previousAppliedProtocolId) || res.isLast()) {
-                // last one: fill the list (should be an output)
-                if (res.isLast()) {
-                    if (direction.equalsIgnoreCase("output")) {
-                        node.outputs.add(dataId);
-                    }
-                }
-                // if it is not the first iteration, let's store it
-                if (previousAppliedProtocolId > 0) {
-                    appliedProtocolMap.put(previousAppliedProtocolId, node);
-                }
 
                 // the submissionId != null for the first applied protocol
                 if (submissionId > 0) {
-
                     firstAppliedProtocols.add(appliedProtocolId);
                     if (direction.startsWith("in")) {
                         // .. the map of initial data for the submission
@@ -382,6 +377,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 } else {
                     // ..or already down the dag, and we use the stored id. 
                     submissionId = actualSubmissionId;
+                }
+
+                // last one: fill the list of outputs 
+                // and the general list of data ids for the submission, used to fetch features
+                if (res.isLast()) {
+                    if (direction.equalsIgnoreCase("output")) {
+                        node.outputs.add(dataId);
+                        addToMap (submissionDataMap, submissionId, dataId);
+                    }
+                }
+                
+                // if it is not the first iteration, let's store it
+                if (previousAppliedProtocolId > 0) {
+                    appliedProtocolMap.put(previousAppliedProtocolId, node);
                 }
 
                 // new node
