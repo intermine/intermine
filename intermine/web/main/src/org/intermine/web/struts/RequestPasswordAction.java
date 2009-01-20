@@ -70,7 +70,7 @@ public class RequestPasswordAction extends InterMineAction
                 recordMessage(new ActionMessage("login.emailed", username), request);
             } catch (Exception e) {
                 RequestPasswordAction.LOG.warn(e);
-                recordError(new ActionMessage("login.invalidemail"), request);
+                recordError(new ActionMessage("login.mailnotsent", e), request);
             }
         }
 
