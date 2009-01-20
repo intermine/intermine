@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 13;
 use Test::Exception;
 
 use InterMine::Model;
@@ -30,6 +30,9 @@ is(ref $parts[1], 'InterMine::Model::Reference',
    'middle of path is a reference descriptor');
 is($parts[2]->field_name(), 'name', 'attribute name of end of path');
 is(ref $parts[2], 'InterMine::Model::Attribute',
+   'end of path is a reference descriptor');
+is($path->end->field_name(), 'name', 'attribute name of end of path');
+is(ref $path->end, 'InterMine::Model::Attribute',
    'end of path is a reference descriptor');
 
 dies_ok {InterMine::Path->validate($model, '')} 'invalid path';
