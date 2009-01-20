@@ -11,6 +11,7 @@ WriteMakefile(
                   'Test::XML' => 0,
                   'XML::Parser::PerlSAX' => 0,
                   'XML::Writer' => 0,
+                  'IO::String' => 0,
                   'Test::More' => 0,
                   'Config::Properties' => 0,
                  },
