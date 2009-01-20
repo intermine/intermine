@@ -858,13 +858,8 @@ public class PagedTable
      */
     public Query getBagCreationQuery() {
         if (allSelected == -1) {
-            Query query = new Query();
-            QueryClass qc = new QueryClass(InterMineObject.class);
-            query.addFrom(qc);
-            query.addToSelect(qc);
-            query.setConstraint(new BagConstraint(new QueryField(qc, "id"), ConstraintOp.IN,
-                        selectionIds.keySet()));
-            return query;
+            throw new IllegalArgumentException("Don't use a query, when a whole column is not "
+                    + "selected");
         }
         WebResults webResults = (WebResults) getAllRows();
         Results results = webResults.getInterMineResults();
@@ -884,7 +879,7 @@ public class PagedTable
         return recursiveGetBagCreationQuery(summarySelectable, newQuery, oldSelect);
     }
 
-    private static Query recursiveGetBagCreationQuery(QuerySelectable summary, Query newQuery,
+    private Query recursiveGetBagCreationQuery(QuerySelectable summary, Query newQuery,
             Set<QuerySelectable> oldSelect) {
         if (summary instanceof QueryObjectPathExpression) {
             QueryObjectPathExpression qope = (QueryObjectPathExpression) summary;
@@ -900,6 +895,10 @@ public class PagedTable
                             ConstraintOp.CONTAINS, lastQc));
                 if (qope.getConstraint() != null) {
                     QueryHelper.addAndConstraint(newQuery, qope.getConstraint());
+                }
+                if (!selectionIds.isEmpty()) {
+                    QueryHelper.addAndConstraint(newQuery, new BagConstraint(new QueryField(lastQc,
+                                    "id"), ConstraintOp.NOT_IN, selectionIds.keySet()));
                 }
                 newQuery.setDistinct(true);
                 return newQuery;
@@ -932,6 +931,10 @@ public class PagedTable
                     QueryHelper.addAndConstraint(newQuery, qcpe.getConstraint());
                 }
                 newQuery.setDistinct(true);
+                if (!selectionIds.isEmpty()) {
+                    QueryHelper.addAndConstraint(newQuery, new BagConstraint(new QueryField(lastQc,
+                                    "id"), ConstraintOp.NOT_IN, selectionIds.keySet()));
+                }
                 return newQuery;
             }
         } else if (summary instanceof QueryClass) {
@@ -939,6 +942,10 @@ public class PagedTable
             if (oldSelect.contains(qc)) {
                 newQuery.addToSelect(qc);
                 newQuery.setDistinct(true);
+                if (!selectionIds.isEmpty()) {
+                    QueryHelper.addAndConstraint(newQuery, new BagConstraint(new QueryField(qc,
+                                    "id"), ConstraintOp.NOT_IN, selectionIds.keySet()));
+                }
                 return newQuery;
             }
         } else {
