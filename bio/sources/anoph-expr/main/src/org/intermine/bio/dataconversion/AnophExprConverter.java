@@ -58,7 +58,7 @@ public class AnophExprConverter extends BioFileConverter
         super(writer, model, "ArrayExpress", "Anoph-Expr data set");
 
         org = createItem("Organism");
-        org.setAttribute("taxonId", "180454");
+        org.setAttribute("taxonId", "7165");
         store(org);
 
         pub = createItem("Publication");

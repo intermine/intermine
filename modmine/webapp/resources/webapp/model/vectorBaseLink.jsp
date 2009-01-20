@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
-<c:if test="${object.organism.taxonId == '180454'}">
+<c:if test="${object.organism.taxonId == '7165'}">
   <p>
     <html:link href="http://agambiae.vectorbase.org/Genome/GeneView/?gene=${object.primaryIdentifier}" target="_new">
       <html:img src="model/images/VectorBase_logo_small.png" title="Click here to visit the VectorBase website" />${object.primaryIdentifier}

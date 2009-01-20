@@ -59,7 +59,7 @@ public class KeggPathwayConverter extends BioFileConverter
         // Drosophila pseudoobscura
 //        keggOrganismToTaxonId.put("dpo", "7237");
         // Anopheles gambiae
-//        keggOrganismToTaxonId.put("aga", "180454");
+//        keggOrganismToTaxonId.put("aga", "7165");
         // Apis mellifera
 //        keggOrganismToTaxonId.put("dame", "7460");
 
