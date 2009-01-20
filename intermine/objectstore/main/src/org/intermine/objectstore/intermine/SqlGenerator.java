@@ -1501,7 +1501,7 @@ public class SqlGenerator
                         }
                     } else {
                         buffer.append(arg1Obj.getId() + (c.getOp() == ConstraintOp.CONTAINS
-                                    ? " = " : " != ") + arg2Alias);
+                                    ? " = " : " != ") + arg2Alias + " AND ");
                     }
                     buffer.append(indirectTableAlias + ".id = " + arg2Obj.getId());
                     buffer.append(loseBrackets ? "" : ")");
