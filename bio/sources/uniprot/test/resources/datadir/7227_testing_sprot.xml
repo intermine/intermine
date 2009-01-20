@@ -33,7 +33,7 @@
 <comment type="similarity">
   <text>Contains 1 homeobox DNA-binding domain.</text>
 </comment>
-<dbReference type="FlyBase" id="FBgn0000001" key="40">
+<dbReference type="FlyBase" id="FBgn0000002" key="40">
   <property type="gene designation" value="eve"/>
 </dbReference>
 <dbReference type="GO" id="GO:0000001" key="44">
@@ -102,7 +102,7 @@ IAEPKPKLFKPYKTEA
 <comment type="similarity">
   <text>I'm a duplicate!</text>
 </comment>
-<dbReference type="FlyBase" id="FBgn0000002" key="40">
+<dbReference type="FlyBase" id="FBgn0000001" key="40">
   <property type="gene designation" value="julie jeans"/>
 </dbReference>
 <dbReference type="GO" id="GO:0001" key="44">
