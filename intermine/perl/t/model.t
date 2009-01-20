@@ -3,11 +3,13 @@
 use strict;
 use warnings;
 
-use Test::More tests => 30;
+use Test::More tests => 31;
 
 use InterMine::Model;
 
 my $model = new InterMine::Model(file => '../objectstore/model/testmodel/testmodel_model.xml');
+
+ok($model->model_name() eq 'testmodel');
 
 ok(scalar($model->get_all_classdescriptors()) == 18);
 
