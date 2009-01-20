@@ -126,9 +126,7 @@ public class TableWidgetLdr
                 columns.add(newColumnName);
             }
         } else {
-            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-            for (Iterator<FieldConfig> iter = cldFieldConfigs.iterator(); iter.hasNext();) {
-                FieldConfig fc = iter.next();
+            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                 if (!fc.getShowInResults()) {
                     continue;
                 }

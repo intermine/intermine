@@ -27,7 +27,6 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
@@ -45,7 +44,7 @@ public class InlineResultsTable
     protected List resultsAsList;
     // just those objects that we will display
     protected List subList;
-    private List fieldConfigs = null;
+    private List<FieldConfig> fieldConfigs = null;
     protected List columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
@@ -102,10 +101,8 @@ public class InlineResultsTable
 
         List columnNames = new ArrayList();
 
-        Iterator columnIter = fieldConfigs.iterator();
-
-        while (columnIter.hasNext()) {
-            columnNames.add(((FieldConfig) columnIter.next()).getFieldExpr());
+        for (FieldConfig fc : fieldConfigs) {
+            columnNames.add(fc.getFieldExpr());
         }
         return Collections.unmodifiableList(columnNames);
     }
@@ -179,7 +176,7 @@ public class InlineResultsTable
      * fieldConfigs List.
      */
     protected void initialise() {
-        fieldConfigs = new ArrayList();
+        fieldConfigs = new ArrayList<FieldConfig>();
         columnFullNames = new ArrayList();
         subList = new ArrayList();
         rowFieldValues = new HashMap();
@@ -207,13 +204,10 @@ public class InlineResultsTable
             // TODO this doesn't cope properly with dynamic classes
             ClassDescriptor theClass = (ClassDescriptor) clds.iterator().next();
 
-            List objectFieldConfigs = getRowFieldConfigs(o);
-            Iterator objectFieldConfigIter = objectFieldConfigs.iterator();
             fieldValues = new HashMap();
 
             // loop through each column
-            while (objectFieldConfigIter.hasNext()) {
-                FieldConfig fc = (FieldConfig) objectFieldConfigIter.next();
+           for (FieldConfig fc : getRowFieldConfigs(o)) {
                 // if ignoreDisplayers we don't want any columns with a displayer defined
                 if (ignoreDisplayers && fc.getDisplayer() != null) {
                     continue;
@@ -249,8 +243,8 @@ public class InlineResultsTable
      * @param rowObject an Object
      * @return the FieldConfig objects for the the given Object.
      */
-    protected List getRowFieldConfigs(Object rowObject) {
-        List returnFieldConfigs = new ArrayList();
+    protected List<FieldConfig> getRowFieldConfigs(Object rowObject) {
+        List<FieldConfig> returnFieldConfigs = new ArrayList<FieldConfig>();
 
         Set objectClassDescriptors = DisplayObject.getLeafClds(rowObject.getClass(), model);
 
@@ -259,13 +253,7 @@ public class InlineResultsTable
         while (classDescriptorsIter.hasNext()) {
             ClassDescriptor thisClassDescriptor = (ClassDescriptor) classDescriptorsIter.next();
 
-            List rowFieldConfigs = getClassFieldConfigs(thisClassDescriptor);
-
-            Iterator fieldConfigIterator = rowFieldConfigs.iterator();
-
-            while (fieldConfigIterator.hasNext()) {
-                FieldConfig fc = (FieldConfig) fieldConfigIterator.next();
-
+            for (FieldConfig fc : getClassFieldConfigs(thisClassDescriptor)) {
                 if (fc.getShowInInlineCollection()) {
                     returnFieldConfigs.add(fc);
                 }
@@ -280,7 +268,7 @@ public class InlineResultsTable
      * @param cd a ClassDescriptor
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
-    protected List getClassFieldConfigs(ClassDescriptor cd) {
+    protected List<FieldConfig> getClassFieldConfigs(ClassDescriptor cd) {
         return FieldConfigHelper.getClassFieldConfigs(webConfig, cd);
     }
 
@@ -295,7 +283,7 @@ public class InlineResultsTable
      * Return a List of FieldConfig objects - one per column.
      * @return the FieldConfigs
      */
-    public List getFieldConfigs() {
+    public List<FieldConfig> getFieldConfigs() {
         if (fieldConfigs == null) {
             initialise();
         }
@@ -350,8 +338,10 @@ public class InlineResultsTable
         if (o != null) {
             finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);    
         }
-        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." + path.getLastElement();
-        ResultElement resultElement = new ResultElement(finalObject, new Path(path.getModel(), finalPath), 
+        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." 
+            + path.getLastElement();
+        ResultElement resultElement = 
+            new ResultElement(finalObject, new Path(path.getModel(), finalPath), 
                 isKeyField);
         return resultElement;
     }

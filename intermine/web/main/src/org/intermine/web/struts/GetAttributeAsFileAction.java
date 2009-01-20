@@ -68,7 +68,7 @@ public class GetAttributeAsFileAction extends Action
 
             Type thisTypeConfig = (Type) webConfig.getTypes().get(c.getName());
 
-            FieldConfig fc = (FieldConfig) thisTypeConfig.getFieldConfigMap().get(fieldName);
+            FieldConfig fc = thisTypeConfig.getFieldConfigMap().get(fieldName);
 
             if (fc != null) {
                 String fieldExporterClassName = fc.getFieldExporter();

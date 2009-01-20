@@ -554,10 +554,7 @@ public class QueryBuilderChange extends DispatchAction
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
             || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
-            List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-            Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
-            while (cldFieldConfigIter.hasNext()) {
-                FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                 Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
                 if (pathToAdd.getEndClassDescriptor() == null
                                 && !view.contains(pathToAdd)
