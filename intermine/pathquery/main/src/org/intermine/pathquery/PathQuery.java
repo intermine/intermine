@@ -158,7 +158,7 @@ public class PathQuery
             for (Map.Entry<String, String> entry
                             : path.getSubClassConstraintPaths().entrySet()) {
                 String stringPath = entry.getKey();
-                PathNode node = addNode(stringPath);
+                PathNode node = addNode(getCorrectJoinStyle(stringPath));
                 node.setType(entry.getValue());
             }
         }
@@ -391,13 +391,6 @@ public class PathQuery
             }
         }
         removeOrderBy(pathString);
-    }
-
-    private Path getFirstPathFromView() {
-        if (!view.isEmpty()) {
-            return view.get(0);
-        }
-        return null;
     }
 
     /**
@@ -959,7 +952,6 @@ public class PathQuery
             }
         } else {
             String prefix = path.substring(0, lastIndex);
-            String pathFromDots = getPathsFromDots().get(path.replace(':', '.'));
             if (nodes.containsKey(prefix)) {
                 Iterator<String> pathsIter = nodes.keySet().iterator();
 
@@ -1163,7 +1155,7 @@ public class PathQuery
         while (viewPathNameIter.hasNext()) {
             String viewPathName = (String) viewPathNameIter.next();
             PathNode pathNode = query.getNode(viewPathName);
-            subClassConstraintMap.put(viewPathName, pathNode.getType());
+            subClassConstraintMap.put(viewPathName.replace(":", "."), pathNode.getType());
         }
         Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;

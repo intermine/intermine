@@ -117,7 +117,14 @@ public class Path
         this.model = model;
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
-
+//        validatePath(constraintMap, stringPath);
+        
+        for (String constaintPath: subClassConstraintPaths.keySet()) {
+            if (constaintPath.indexOf(':') != -1) {
+                throw new IllegalArgumentException("illegal character (':') in constraint map");
+            }
+        } 
+        
         if (path.indexOf("[") != -1) {
             throw new IllegalArgumentException("path: " + stringPath
                                                + " contains illegal character '['");
@@ -142,6 +149,31 @@ public class Path
         this.outers = newPathOuters;
         initialise();
     }
+
+//    /**
+//     * Method checks if there isn't incompatible join, when for example department is once joined
+//     * in constraint as inner join and in other constraint as outer join.
+//     * @param constraintMap
+//     * @param stringPath 
+//     */
+//    private void validatePath(Map<String, String> constraintMap, String stringPath) {
+//        Set<String> paths = new HashSet<String>(constraintMap.keySet());
+//        paths.add(stringPath);
+//        for (String constraint : paths) {
+//            String[] parts = constraint.split(":");
+//            String prefix = "";
+//            for (int i = 0; i < parts.length - 1; i++) {
+//                String part = parts[i];
+//                prefix += part + ".";
+//                for (String checkedString : paths) {
+//                    if (checkedString.startsWith(prefix)) {
+//                        throw new IllegalArgumentException("Incompatible paths, different joins: " + constraint + ", " + 
+//                        		checkedString);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private void initialise() throws PathError {
         elements = new ArrayList();
