@@ -837,15 +837,12 @@ public class PathQuery
      * path in the order by clause.
      * @param viewString The string being removed from the view list
      */
-    private void removeOrderBy(String viewString) {
-        Path pathToRemove = null;
+    private void removeOrderBy(String pathString) {
         for (Path path : sortOrder.keySet()) {
-            if (path.toStringNoConstraints().equals(viewString)) {
-                pathToRemove = path;
-                return;
+            if (path.toStringNoConstraints().equals(pathString)) {
+                sortOrder.remove(path);
             }
         }
-        sortOrder.remove(pathToRemove);
     }
 
     /**

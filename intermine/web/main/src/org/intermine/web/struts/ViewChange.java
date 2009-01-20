@@ -12,7 +12,9 @@ package org.intermine.web.struts;
 
 import java.util.List;
 
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -50,8 +52,12 @@ public class ViewChange extends DispatchAction
         String path = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
+        // remove from view and from order by if present
         query.removeFromView(path);
-
+        
+        // if sort order is now empty update with first valid view field
+        PathQueryHelper.setDefaultSortOrder(query);
+        
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }
@@ -73,10 +79,10 @@ public class ViewChange extends DispatchAction
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List view = SessionMethods.getEditingView(session);
-        Object o = view.get(index - 1);
+        List<Path> view = SessionMethods.getEditingView(session);
+        Path path = view.get(index - 1);
         view.set(index - 1, view.get(index));
-        view.set(index, o);
+        view.set(index, path);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
@@ -99,10 +105,10 @@ public class ViewChange extends DispatchAction
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
 
-        List view = SessionMethods.getEditingView(session);
-        Object o = view.get(index + 1);
+        List<Path> view = SessionMethods.getEditingView(session);
+        Path path = view.get(index + 1);
         view.set(index + 1, view.get(index));
-        view.set(index, o);
+        view.set(index, path);
 
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
