@@ -109,6 +109,19 @@ sub parts
   return @{$self->{parts}};
 }
 
+=head2 end
+
+ Usage   : my $end_descriptor = $path->end();
+ Function: return the field descriptor of the last part of the path, eg. for
+           "Department.company.name" return the Company.name Attribute object.
+           If the path consists only of a class (eg. "Department"), its
+           ClassDescriptor is returned.
+=cut
+sub end
+{
+  my $self = shift;
+  return @{$self->{parts}}[-1];
+}
 
 sub _get_parts
 {
