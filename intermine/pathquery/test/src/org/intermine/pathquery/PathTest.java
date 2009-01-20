@@ -95,11 +95,9 @@ public class PathTest extends TestCase
 
         }
     }
-
     public void testNotValidConstraintMapColon() {
         Map constraintMap = new HashMap();
         constraintMap.put("Department:manager", "CEO");
-
         String stringPath = "Department.manager.name";
 
         try {
