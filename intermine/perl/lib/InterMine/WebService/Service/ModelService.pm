@@ -64,7 +64,8 @@ my $SERVICE_RELATIVE_URL = "model";
            $app_name - application name, tells the server which application uses
                        the service
 =cut
-sub new {
+sub new
+{
   my $class = shift;
   my $root_url = shift;
   my $app_name = shift;
