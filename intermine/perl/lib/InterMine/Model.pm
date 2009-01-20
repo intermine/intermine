@@ -96,7 +96,7 @@ sub start_element
   my $nameattr = $args->{Attributes}{name};
 
   if ($args->{Name} eq "model") {
-    $self->{model}{modelname} = $nameattr;
+    $self->{model}{model_name} = $nameattr;
     $self->{model}{name_space} = $args->{Attributes}{namespace};
     my $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
     $self->{model}{package_name} = $package_name;
