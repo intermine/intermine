@@ -13,7 +13,6 @@ package org.intermine.web.logic.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -153,8 +152,7 @@ public class WebConfig
                 continue;
             }
             Type type = types.get(typeName);
-            Collection<FieldConfig> fieldConfigs = type.getFieldConfigs();
-            for (FieldConfig fieldConfig : fieldConfigs) {
+            for (FieldConfig fieldConfig : type.getFieldConfigs()) {
                 String pathString;
                 try {
                     pathString = Class.forName(typeName).getSimpleName()
@@ -302,11 +300,7 @@ public class WebConfig
                 if (superClassType != null) {
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
-                        Iterator fieldConfigIter = superClassType.getFieldConfigs().iterator();
-
-                        while (fieldConfigIter.hasNext()) {
-                            FieldConfig fc = (FieldConfig) fieldConfigIter.next();
-
+                        for (FieldConfig fc : superClassType.getFieldConfigs()) {
                             thisClassType.addFieldConfig(fc);
                         }
                     }

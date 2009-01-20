@@ -208,12 +208,8 @@ public class DisplayObject
 
             for (Iterator<ClassDescriptor> i = clds.iterator(); i.hasNext();) {
                 ClassDescriptor cld = i.next();
-                List cldFieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-                Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
 
-                while (cldFieldConfigIter.hasNext()) {
-                    FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
-
+                for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                     fieldConfigMap.put(fc.getFieldExpr(), fc);
                 }
             }

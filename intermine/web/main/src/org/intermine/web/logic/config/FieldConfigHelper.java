@@ -30,11 +30,11 @@ public class FieldConfigHelper
      * @param cd a ClassDescriptor
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
-    public static List getClassFieldConfigs(WebConfig webConfig, ClassDescriptor cd) {
+    public static List<FieldConfig> getClassFieldConfigs(WebConfig webConfig, ClassDescriptor cd) {
         Type type = (Type) webConfig.getTypes().get(cd.getName());
 
         if (type != null) {
-            List fieldConfigs = new ArrayList(type.getFieldConfigs());
+            List<FieldConfig> fieldConfigs = new ArrayList<FieldConfig>(type.getFieldConfigs());
 
             if (fieldConfigs.size() > 0) {
                 return fieldConfigs;

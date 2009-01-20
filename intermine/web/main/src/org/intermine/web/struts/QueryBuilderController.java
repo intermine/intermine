@@ -161,11 +161,8 @@ public class QueryBuilderController extends TilesAction
                     || path.endIsCollection()) {
                     if (viewStrings.keySet().contains(path)) {
                         ClassDescriptor cld = path.getEndClassDescriptor();
-                        List cldFieldConfigs =
-                            FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-                        Iterator cldFieldConfigIter = cldFieldConfigs.iterator();
-                        while (cldFieldConfigIter.hasNext()) {
-                            FieldConfig fc = (FieldConfig) cldFieldConfigIter.next();
+                        for (FieldConfig fc 
+                                : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                             String pathFromField = pathName + "." + fc.getFieldExpr();
                             if (viewStrings.keySet().contains(pathFromField)) {
                                 node.setSelected(true);

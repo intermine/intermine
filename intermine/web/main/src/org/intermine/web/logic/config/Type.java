@@ -37,7 +37,8 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private LinkedHashMap fieldConfigMap = new LinkedHashMap();
+    private LinkedHashMap<String, FieldConfig> fieldConfigMap = 
+        new LinkedHashMap<String, FieldConfig>();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
@@ -73,7 +74,7 @@ public class Type
      * Get the List of FieldConfig objects
      * @return the List of FieldConfig objects
      */
-    public Collection getFieldConfigs() {
+    public Collection<FieldConfig> getFieldConfigs() {
         return Collections.unmodifiableCollection(fieldConfigMap.values());
     }
 
@@ -81,7 +82,7 @@ public class Type
      * Return a Map from FieldConfig.fieldName to FieldConfig objects.
      * @return the FieldConfig Map
      */
-    public Map getFieldConfigMap() {
+    public Map<String, FieldConfig> getFieldConfigMap() {
         return Collections.unmodifiableMap(fieldConfigMap);
     }
 
@@ -211,16 +212,15 @@ public class Type
         }
         sb.append(">");
         sb.append("<fieldconfigs>");
-        Iterator iter = getFieldConfigs().iterator();
-        while (iter.hasNext()) {
-            sb.append(iter.next().toString());
+        for (FieldConfig fc : getFieldConfigs()) {
+            sb.append(fc.toString());
         }
         sb.append("</fieldconfigs>");
         if (tableDisplayer != null) {
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
         sb.append("<longdisplayers>");
-        iter = longDisplayers.iterator();
+        Iterator iter = longDisplayers.iterator();
         while (iter.hasNext()) {
             sb.append(iter.next().toString());
         }
