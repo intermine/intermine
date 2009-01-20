@@ -164,7 +164,7 @@ sub add_constraint
     die "no constraint string specified for PathQuery->add_constraint()\n";
   }
 
-  my @bits = split /\s+/, $constraint_string;
+  my @bits = split /\s+/, $constraint_string, 3;
 
   if (@bits < 2) {
     die "can't parse constraint: $constraint_string\n";
@@ -173,6 +173,9 @@ sub add_constraint
   my $path = $bits[0];
   my $op = $bits[1];
   my $value = $bits[2];
+
+  $value =~ s/^'(.*)'$/$1/;
+  $value =~ s/^"(.*)"$/$1/;
 
   InterMine::Path->validate($self->{model}, $path);
 
