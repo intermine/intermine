@@ -265,6 +265,10 @@ sub get_classdescriptor_by_name
   my $self = shift;
   my $classname = shift;
 
+  if (!defined $classname) {
+    die "no classname passed to get_classdescriptor_by_name()\n";
+  }
+
   if (exists $self->{class_hash}{$classname}) {
     return $self->{class_hash}{$classname};
   } else {

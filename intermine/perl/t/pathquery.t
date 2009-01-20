@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More tests => 12;
 use Test::Exception;
 
 use InterMine::Model;
@@ -33,8 +33,6 @@ dies_ok {$path_query->add_view('Department.wrong')} 'expected failure - illegal 
 dies_ok {$path_query->add_view('Department.company.wrong')} 'expected failure - illegal field';
 
 $path_query->add_view('Department.company.name');
-
-warn $path_query->to_xml_string();
 
 @view = $path_query->view();
 ok(@view == 2, 'view length == 2');
