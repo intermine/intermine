@@ -109,7 +109,7 @@ sub get_result
   my $count_only = shift;
 
   if (ref $query) {
-    $query = $query->to_string();
+    $query = $query->to_xml_string();
   }
 
   $count_only //= 0;
