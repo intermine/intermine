@@ -543,7 +543,6 @@ public class PathQueryTest extends TestCase
         e = (PathQuery) expected.get("noOrderBy");
         q = new PathQuery(model);
         q.setView("Employee.name,Employee.department.name");
-        q.setOrderBy("Employee.name");
         assertEquals(e.getSortOrder(), q.getSortOrder());
 
         // ASC
