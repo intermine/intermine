@@ -40,6 +40,7 @@ import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -544,15 +545,10 @@ public class QueryBuilderChange extends DispatchAction
         
         // This call will work out the default join style between prefix and path
         String fullPathName = MainHelper.toPathDefaultJoinStyle(model, prefix, pathName);
+        
         // Now correct the join style deferring to any existing information in the query
         fullPathName = query.getCorrectJoinStyle(fullPathName);
         Path path = PathQuery.makePath(model, query, fullPathName);
-
-        /* this test can't just rely on the sort order being empty
-           because sort order may have been populated by javascript by default
-           especially if it's a template
-         */
-        boolean newQuery = (view.isEmpty() && sortOrder.isEmpty());
 
         // If an object has been selected, select its fields instead
         if (path.getEndFieldDescriptor() == null || path.endIsReference()
@@ -567,25 +563,19 @@ public class QueryBuilderChange extends DispatchAction
                                 && !view.contains(pathToAdd)
                                 && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addViewPaths(Collections.singletonList(pathToAdd));
-                    newQuery = false;
-                }
-                // if sort order is empty, then add first element to sort order
-                if (newQuery) {
-                    sortOrder.put(pathToAdd, PathQuery.ASCENDING);
                 }
             }
         } else {
             query.addViewPaths(Collections.singletonList(path));
-            // if sort order is empty, then add first element to sort order
-            if (newQuery) {
-                sortOrder.put(path, PathQuery.ASCENDING);
-            }
         }
+        
+        // if the sort order is empty, sort by the first view element valid for sorting (if any)
+        PathQueryHelper.setDefaultSortOrder(query);
 
-        ForwardParameters fp = new ForwardParameters(mapping.findForward("query"));
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-
+    
+    
     /**
      * AJAX request - expand
      *

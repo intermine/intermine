@@ -995,6 +995,7 @@ public class PathQueryTest extends TestCase
         pq.addNode("Company.departments.manager");
         pq.addNode("Company.departments.manager.name");
         pq.addView("Company.departments.manager.name");
+        pq.setOrderBy("Company.departments.manager.name");
         
         assertEquals("Company.departments:manager", pq.flipJoinStyle("Company.departments.manager"));
         // child node should have been updated
@@ -1012,8 +1013,10 @@ public class PathQueryTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
         
+        // the new path isn't a valid order by field so should have been removed
+        assertTrue(pq.getSortOrder().isEmpty());
         
-        // test opposite flip for completenes
+        // test opposite flip for completeness
         assertEquals("Company.departments.manager", pq.flipJoinStyle("Company.departments:manager"));
     }
     
