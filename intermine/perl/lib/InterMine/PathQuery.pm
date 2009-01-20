@@ -174,14 +174,14 @@ sub add_constraint
   my $op = $bits[1];
   my $value = $bits[2];
 
-  $value =~ s/^'(.*)'$/$1/;
-  $value =~ s/^"(.*)"$/$1/;
-
   InterMine::Path->validate($self->{model}, $path);
 
   my %details = (op => $op);
 
   if (defined $value) {
+    $value =~ s/^'(.*)'$/$1/;
+    $value =~ s/^"(.*)"$/$1/;
+
     $details{value} = $value;
   }
 
