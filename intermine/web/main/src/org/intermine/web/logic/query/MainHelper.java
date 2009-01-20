@@ -1473,7 +1473,7 @@ public class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qope.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet(qope.getSelect()), pathToQueryNode);
+                                new HashSet<QuerySelectable>(qope.getSelect()), pathToQueryNode);
                     } else if (qs instanceof QueryCollectionPathExpression) {
                         QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
                         QueryClass firstQc = qcpe.getDefaultClass();
@@ -1503,7 +1503,7 @@ public class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qcpe.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet(qcpe.getSelect()), pathToQueryNode);
+                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode);
                     }
                 } catch (IllegalArgumentException e2) {
                     // Ignore it - we are searching for a working branch of the query
