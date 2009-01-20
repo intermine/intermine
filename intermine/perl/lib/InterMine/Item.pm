@@ -65,6 +65,7 @@ my $ID_PREFIX = '0_';
  Function: create a new Item
  Args    : model - the InterMine::Model object to use to check field validity
  Note    : use this method indirectly using an ItemFactory
+
 =cut
 
 sub new {
