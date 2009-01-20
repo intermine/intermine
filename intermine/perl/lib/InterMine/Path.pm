@@ -119,12 +119,14 @@ sub _get_parts
 
   my @bits = split /[\.:]/, $path_string;
 
-  my $top_class = $model->get_classdescriptor_by_name(shift @bits);
+  my $top_class_name = shift @bits;
+
+  my $top_class = $model->get_classdescriptor_by_name($top_class_name);
 
   if (defined $top_class) {
     push @parts, $top_class;
   } else {
-    die qq[illegal path ($path_string), "$top_class" is not in the model]
+    die qq[illegal path ($path_string), "$top_class_name" is not in the model]
   }
 
   my $current_class = $top_class;
