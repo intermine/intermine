@@ -53,6 +53,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryHelper;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -1082,8 +1083,8 @@ public class AjaxServices
         List<String> oldOrderList =
             new LinkedList<String>(StringUtil.serializedSortOrderToMap(oldOrder).values());
 
-        List view = SessionMethods.getEditingView(session);
-        ArrayList newView = new ArrayList();
+        List<Path> view = SessionMethods.getEditingView(session);
+        ArrayList<Path> newView = new ArrayList<Path>();
 
         for (int i = 0; i < view.size(); i++) {
             String newi = newOrderList.get(i);
@@ -1164,18 +1165,16 @@ public class AjaxServices
     public String setOuterJoin(String pathName)
     throws Exception {
         HttpSession session = WebContextFactory.get().getSession();
-        // ServletContext servletContext = session.getServletContext();
-        // ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        // Model model = os.getModel();
-        // WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        // List<Path> view = SessionMethods.getEditingView(session);
-        // Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
         query = query.clone();
 
+        // this should remove any invalid order by elements
         String newPathString = query.flipJoinStyle(pathName);
-
+        
+        // this call sets a default order (if possible) if the order by is now empty
+        PathQueryHelper.setDefaultSortOrder(query);
+        
         session.setAttribute(Constants.QUERY, query);
 
         return newPathString;

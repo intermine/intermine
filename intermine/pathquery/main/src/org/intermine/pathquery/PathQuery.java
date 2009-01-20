@@ -194,7 +194,7 @@ public class PathQuery
             newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
         }
         view = newView;
-
+        
         PathNode node = getNode(path);
         if (node != null) {
             node.setOuterJoin(!node.isOuterJoin());
@@ -206,10 +206,22 @@ public class PathQuery
         for (PathNode transferNode : nodes) {
             origNodes.put(transferNode.getPathString(), transferNode);
         }
+        
+        // remove any invalid paths from sort order - outer join paths aren't valid for soring
+        validateSortOrder();
+        
         return newPathString;
     }
 
-
+    private void validateSortOrder() {
+        for (Path orderPath : sortOrder.keySet()) {
+            if (!isValidOrderPath(orderPath.toStringNoConstraints())) {
+                sortOrder.remove(orderPath);
+            }
+        }    
+    }
+    
+    
     /**
      * Set the joins style of an entire given path to outer/normal.  This changes all joins in the
      * path, updating all the relevant nodes and view elements.
