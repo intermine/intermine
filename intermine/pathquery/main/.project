@@ -24,11 +24,4 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>test</name>
-			<type>2</type>
-			<location>/Users/rns/svn/ticket-1939/intermine/pathquery/test</location>
-		</link>
-	</linkedResources>
 </projectDescription>

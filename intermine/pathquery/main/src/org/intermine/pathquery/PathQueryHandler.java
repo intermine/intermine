@@ -182,12 +182,9 @@ public class PathQueryHandler extends DefaultHandler
                 query.addProblem(e);
                 return;
             }
-            if (sortOrder.isEmpty()) {
-                query.setOrderBy(viewStrings.get(0));
-            } else {
-                setSortOrder();
-            }
-
+            
+            setSortOrder();
+        
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
             }

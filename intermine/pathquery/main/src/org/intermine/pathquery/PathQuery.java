@@ -153,7 +153,6 @@ public class PathQuery
     public void setViewPaths(List<Path> view) {
         validateView(view);
         this.view = view;
-        validateOrderBy();  // QueryBuilder can't have empty order by clause
         // sets subclasses nodes
         for (Path path : view) {
             for (Map.Entry<String, String> entry
@@ -327,7 +326,6 @@ public class PathQuery
                         + viewString + " and " + getCorrectJoinStyle(viewString));
             }
             view.add(PathQuery.makePath(model, this, viewString));
-            validateOrderBy();
         } catch (PathError e) {
             logPathError(e);
         }
@@ -601,21 +599,6 @@ public class PathQuery
 
     /*****************************************************************************************/
 
-
-    /**
-     * If order by clause is empty, adds first path in the view.
-     * The querybuilder currently (stupidly) assumes there is at least one path in the order by
-     * list, so we need to check this.
-     */
-    public void validateOrderBy() {
-        if (sortOrder.isEmpty()) {
-            Path p = getFirstPathFromView();
-            if (p != null) {
-                sortOrder.put(p, ASCENDING);
-            }
-        }
-    }
-
     /**
      * Returns whether the given path can be used in the Order By list of this query.
      * Outer joined paths cannot be used.
@@ -858,7 +841,6 @@ public class PathQuery
             }
         }
         sortOrder.remove(pathToRemove);
-        validateOrderBy();
     }
 
     /**
@@ -866,7 +848,6 @@ public class PathQuery
      */
     public void resetOrderBy() {
         sortOrder = new LinkedHashMap<Path, String >();
-        validateOrderBy();
     }
 
 

@@ -10,7 +10,6 @@ package org.intermine.pathquery;
  *
  */
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import junit.framework.TestCase;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Tests for the Path class.
@@ -97,6 +95,7 @@ public class PathTest extends TestCase
 
         }
     }
+
     public void testNotValidConstraintMapColon() {
         Map constraintMap = new HashMap();
         constraintMap.put("Department:manager", "CEO");
