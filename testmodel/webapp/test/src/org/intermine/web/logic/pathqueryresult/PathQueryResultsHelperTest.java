@@ -12,39 +12,27 @@ package org.intermine.web.logic.pathqueryresult;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
 
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.search.SearchRepository;
 
-import servletunit.ServletContextSimulator;
 import servletunit.struts.MockStrutsTestCase;
 
 /**
@@ -53,7 +41,6 @@ import servletunit.struts.MockStrutsTestCase;
  */
 public class PathQueryResultsHelperTest extends MockStrutsTestCase
 {
-    private Map<String,List<FieldDescriptor>> classKeys;
     private WebConfig webConfig;
     ObjectStoreWriter uosw;
     
@@ -63,11 +50,6 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
 
     protected void setUp() throws Exception {
         super.setUp();
-        Properties classKeyProps = new Properties();
-        classKeyProps.load(getClass().getClassLoader()
-                           .getResourceAsStream("class_keys.properties"));
-        Model model = Model.getInstanceByName("testmodel");
-        classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         webConfig = new WebConfig();
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         
@@ -95,36 +77,13 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
     public void testGetDefaultview() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         getSession().getServletContext().setAttribute(Constants.WEBCONFIG, webConfig);
-        PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView("Employee", model, webConfig, null, false);
         assertTrue(view.size() == 5);
 
-        PathQuery pathQuery2 = new PathQuery(model);
         List<Path> view2 = PathQueryResultHelper.getDefaultView("Employee", model, webConfig, null, true);
         assertTrue(view2.size() == 3);
     }
 
-//    public void testRunPathQueryGetResults() throws Exception {
-//        Model model = Model.getInstanceByName("testmodel");
-//        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-//        BagQueryConfig bagQueryConfig = null;
-//        ServletContext servletContext = new ServletContextSimulator();
-//        ObjectStoreWriter userProfileOSW =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
-//        ProfileManager profileManager = new ProfileManager(os, userProfileOSW);
-//        servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
-//        int userId = 0;
-//        Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
-//                                      new HashMap(), new HashMap(), new HashMap());
-//        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, new SearchRepository(null));
-//        
-//        PathQuery pathQuery = new PathQuery(model);
-//        List<Path> view = new ArrayList<Path>(pathQuery.getView());
-//        view.add(PathQuery.makePath(model, pathQuery, "Employee.age"));
-//        view.add(PathQuery.makePath(model, pathQuery, "Employee.name"));
-//        pathQuery.setViewPaths(view);
-//        WebResults webResults = PathQueryResultHelper.createPathQueryGetResults(pathQuery, profile, os, classKeys, bagQueryConfig, servletContext);
-//        assertEquals(6, webResults.size());
-//    }
     
     public void testMakePathQueryForBag() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
@@ -132,13 +91,13 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
-        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\" sortOrder=\"Employee.name asc\">"
+        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
         + "<node path=\"Employee\" type=\"Employee\">"
         + "<constraint op=\"IN\" value=\"Fred\" description=\"\" identifier=\"\" code=\"A\">"
         + "</constraint>"
         + "</node>"
         + "</query>";
-        assertEquals(pathQuery.toXml(), expectedXml);
+        assertEquals(expectedXml, pathQuery.toXml());
     }
 
     public void testMakePathQueryForCollection() throws Exception {
@@ -154,7 +113,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         List<Class> sr = new ArrayList<Class>();
         sr.add(Employee.class);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os, (InterMineObject)d1, "employees",sr);
-        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\" sortOrder=\"Department.employees.name asc\">" +
+        String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\">" +
         		"<node path=\"Department\" type=\"Department\"></node>" +
         		"<node path=\"Department.employees\" type=\"Employee\"></node>" +
         		"<node path=\"Department.id\" type=\"Integer\">" +
