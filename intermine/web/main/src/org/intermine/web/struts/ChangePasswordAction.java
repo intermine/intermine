@@ -57,8 +57,14 @@ public class ChangePasswordAction extends InterMineAction
         String password = ((ChangePasswordForm) form).getNewpassword();
         pm.setPassword(username, password);
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        MailUtils.email(username, password, webProperties);
-        recordMessage(new ActionMessage("password.changed", username), request);
+
+        try {
+            MailUtils.email(username, password, webProperties);
+            recordMessage(new ActionMessage("password.changed", username), request);
+        } catch (Exception e) {
+            RequestPasswordAction.LOG.warn(e);
+            recordError(new ActionMessage("login.invalidemail"), request);
+        }
         return mapping.findForward("mymine");
     }
 }

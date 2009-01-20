@@ -61,10 +61,11 @@ public class CreateAccountAction extends LoginHandler
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         try {
             MailUtils.email(username, password, webProperties);
+            recordError(new ActionMessage("createAccount.success"), request);
         } catch (Exception e) {
-            // TODO I don't think this displays the error msg to the user
-            recordMessage(new ActionMessage("createAccount.badmail"), request);
+            recordError(new ActionMessage("createAccount.badmail"), request);
         }
+
 
         /*
          * This code generates an MD5 key for the given username which is then
