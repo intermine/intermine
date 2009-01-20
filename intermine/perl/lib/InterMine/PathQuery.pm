@@ -125,18 +125,16 @@ sub sort_order
 
   if (@_ == 0) {
     my $sort_order = $self->{sort_order};
-    if (defined $sort_order) {
-      if ($self->_has_view_path($sort_order)) {
-        return $sort_order;
+    if (defined $sort_order && $self->_has_view_path($sort_order)) {
+      return $sort_order;
+    } else {
+      # the sort path has gone from the view or was never set, find another
+      my @view = $self->view();
+      if (@view) {
+        $self->{sort_order} = $view[0];
+        return $view[0];
       } else {
-        # the sort path has gone from the view, find another
-        my @view = $self->view();
-        if (@view) {
-          $self->{sort_order} = $view[0];
-          return $view[0];
-        } else {
-          die "can't get the sort order because the view is not set\n";
-        }
+        die "can't get the sort order because the view is not set\n";
       }
     }
   } else {
