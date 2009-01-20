@@ -497,7 +497,7 @@
 	</item>
 	<item id="1065" class="" implements="http://www.flymine.org/model/genomic#Lab">
 		<attribute name="surname" value="Green"/>
-		<attribute name="name" value="Philip Green"/>
+		<attribute name="name" value="Phil Green"/>
 		<attribute name="affiliation" value="University of Washington"/>
 		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
 		<reference name="project" ref_id="1010"/>
