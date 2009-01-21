@@ -44,8 +44,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
@@ -134,10 +132,8 @@ public class InitialiserPlugin implements PlugIn
             // load custom bag queries
             loadBagQueries(servletContext, os);
 
-            final ProfileManager pm = createProfileManager(servletContext, os);
-
             // index global webSearchables
-            SearchRepository searchRepository = 
+            SearchRepository searchRepository =
                 new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
             servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
 
@@ -149,8 +145,8 @@ public class InitialiserPlugin implements PlugIn
                     @Override
                     public Set<Map.Entry<String, TemplateQuery>> entrySet() {
                         return new SearchFilterEngine()
-                        .filterByTags(superProfile.getSavedTemplates(), 
-                                PUBLIC_TAG_LIST, TagTypes.TEMPLATE, superProfile.getUsername(), 
+                        .filterByTags(superProfile.getSavedTemplates(),
+                                PUBLIC_TAG_LIST, TagTypes.TEMPLATE, superProfile.getUsername(),
                                 tagManager).entrySet();
                     }
                 };
@@ -160,8 +156,8 @@ public class InitialiserPlugin implements PlugIn
                 new AbstractMap<String, InterMineBag>() {
                     @Override
                     public Set<Map.Entry<String, InterMineBag>> entrySet() {
-                        return new SearchFilterEngine().filterByTags(superProfile.getSavedBags(), 
-                                PUBLIC_TAG_LIST, TagTypes.BAG, superProfile.getUsername(), 
+                        return new SearchFilterEngine().filterByTags(superProfile.getSavedBags(),
+                                PUBLIC_TAG_LIST, TagTypes.BAG, superProfile.getUsername(),
                                 tagManager).entrySet();
                     }
                 };
@@ -429,30 +425,6 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Create the profile manager and place it into to the servlet context.
-     */
-    private ProfileManager createProfileManager(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        if (profileManager == null) {
-            try {
-                Properties props = 
-                    (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-                String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
-                ObjectStoreWriter userProfileOS =
-                    ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-                profileManager = new ProfileManager(os, userProfileOS);
-            } catch (ObjectStoreException e) {
-                LOG.error("Unable to create profile manager - please check that the "
-                        + "userprofile database is available", e);
-                throw new ServletException("Unable to create profile manager - please check that "
-                        + "the userprofile database is available", e);
-            }
-        }
-        servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
-        return profileManager;
-    }
-
-    /**
      * Destroy method called at Servlet destroy
      */
     public void destroy() {
@@ -487,7 +459,7 @@ public class InitialiserPlugin implements PlugIn
             }
         }
     }
-    
+
     /**
      * Get the names of the type of this ClassDescriptor and all its descendants
      * @param cld the ClassDescriptor
