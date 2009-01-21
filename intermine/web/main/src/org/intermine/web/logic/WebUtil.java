@@ -415,7 +415,7 @@ public abstract class WebUtil
 
                 Long countBag = countMap.get(id);
                 Long countAll = (java.lang.Long) rrAll.get(1);
-                
+
                 // (k,n,M,N)
                 double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
                                                      countAll.intValue(), populationTotal);
@@ -507,6 +507,10 @@ public abstract class WebUtil
             q = ldr.getSampleQuery(true);
         }
         Object[] o = os.executeSingleton(q).toArray();
+        if (o.length == 0) {
+            // no results
+            return  0;
+        }
         return  ((java.lang.Long) o[0]).intValue();
     }
 
@@ -519,15 +523,15 @@ public abstract class WebUtil
         Properties props = InterMineAction.getWebProperties(request);
         return props.getProperty("webapp.defaultContext");
     }
-    
+
     /**
-     * Formats column name. Replaces all dots and colons in path with '>'. 
+     * Formats column name. Replaces all dots and colons in path with '>'.
      * @param original original column name
      * @return modified string
      */
     public static String formatColumnName(String original) {
         // replaces all dots and colons but not dots with following space - they are probably
-        // part of name, e.g. 'D. melanogaster' 
+        // part of name, e.g. 'D. melanogaster'
         return original.replaceAll("[:.](?!\\s)", "&nbsp;> ");
     }
 }
