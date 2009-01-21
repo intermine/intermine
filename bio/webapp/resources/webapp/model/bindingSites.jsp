@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
@@ -13,14 +12,14 @@
         <DL>
           <DT>DNase I footprints: <I>D. melanogaster</I></DT>
           <DD>
-            DNase I footprints for <I>D. melanogaster</I> from the 
+            DNase I footprints for <I>D. melanogaster</I> from the
             <A HREF="http://www.flyreg.org" target="_new"> DNase I footprint database (V2.0)</A>.
             This data has been reported in Bergman, Carlson and Celniker (2005)
-            Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</A>). 
+            Bioinformatics 21:1747-1749 (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15572468" target="_new">PubMed: 15572468</A>).
           </DD>
           <DT>Protein binding sites: <I>D. melanogaster</I></DT>
           <DD>
-            Protein binding sites for <I>D. melanogaster</I> annotated by 
+            Protein binding sites for <I>D. melanogaster</I> annotated by
             <A HREF="http://flybase.bio.indiana.edu" target="_new">FlyBase</A>.
           </DD>
         </DL>
@@ -31,7 +30,7 @@
         Bulk download
       </div>
       <div class="body">
-        
+
         <ul>
           <li>
             <im:querylink text="FlyReg binding site data" skipBuilder="true">
@@ -75,7 +74,7 @@
             </im:querylink>
           </li>
           <li>
-            <im:querylink text="FlyBase binding site data for export" 
+            <im:querylink text="FlyBase binding site data for export"
                           skipBuilder="true">
               <query name="" model="genomic" view="BindingSite.identifier BindingSite.length BindingSite.chromosome.identifier BindingSite.chromosomeLocation.start BindingSite.chromosomeLocation.end">
                 <node path="BindingSite" type="BindingSite">

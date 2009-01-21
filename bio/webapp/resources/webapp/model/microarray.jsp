@@ -1,7 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-
 <div class="heading2">
 Current data
 </div>
@@ -20,7 +16,7 @@ Arbeitman et al, 2002 reported gene expression patterns for nearly one third of 
 <P>
 
 In addition, we have imported three experiments that were performed in the <a href="http://www.flychip.org.uk/" target="_new">FlyChip</a> facility and submitted to ArrayExpress.
-<BR> 
+<BR>
 <DT><B>Whitfield W:</B> - ArrayExpress: <a href="http://www.ebi.ac.uk/arrayexpress/query/result?queryFor=Experiment&eAccession=E-FLYC-1" target="_new">E-FLYC-1</a></DT>
 <DD>
 Identification of aberrant gene expression in the presence of mutant CP190 protein.

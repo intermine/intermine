@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -45,7 +42,7 @@
           <ul><li><dt>
              Transcription factor binding sites from the <a href="http://redfly.ccr.buffalo.edu" target="_new"> REDfly database </a>.
           </dt></li></ul>
-  
+
        <ul><li><dt>
             Predicted regulatory motifs and functional sites ("motif instances") on genome sequences from the <a href="http://servlet.sanger.ac.uk/tiffin/" target="_new">Tiffin database</a>.
        </dt></li></ul>
