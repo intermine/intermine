@@ -518,7 +518,14 @@ public class PathQuery
             Set<String> codes = getConstraintCodes();
             if (constraintLogic != null) {
                 // limit to the actual variables
-                constraintLogic.removeAllVariablesExcept(getConstraintCodes());
+                try {
+                    constraintLogic.removeAllVariablesExcept(getConstraintCodes());
+                } catch (IllegalArgumentException e) {
+                    // The constraint logic is now empty
+                    constraintLogic = null;
+                }
+            }
+            if (constraintLogic != null) {
                 // add anything that isn't there
                 codes.removeAll(constraintLogic.getVariableNames());
             }

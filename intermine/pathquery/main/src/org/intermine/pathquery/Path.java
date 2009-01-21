@@ -167,8 +167,8 @@ public class Path
 //                prefix += part + ".";
 //                for (String checkedString : paths) {
 //                    if (checkedString.startsWith(prefix)) {
-//                        throw new IllegalArgumentException("Incompatible paths, different joins: " + constraint + ", " + 
-//                        		checkedString);
+//                      throw new IllegalArgumentException("Incompatible paths, different joins: "
+//                              + constraint + ", " + checkedString);
 //                    }
 //                }
 //            }

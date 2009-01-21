@@ -151,7 +151,12 @@ public class TemplateQuery extends PathQuery implements WebSearchable
                 Constraint c = (Constraint) citer.next();
                 if (c.isEditable()) {
                     if (clone.constraintLogic != null) {
-                        clone.constraintLogic.removeVariable(c.getCode());
+                        try {
+                            clone.constraintLogic.removeVariable(c.getCode());
+                        } catch (IllegalArgumentException e) {
+                            // Logic expression is now empty
+                            clone.constraintLogic = null;
+                        }
                     }
                     citer.remove();
                 }
