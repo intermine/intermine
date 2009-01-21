@@ -43,9 +43,30 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @param baseUrl base url that doesn't terminate with '/' , 
      * e.g. http://www.flymine.org/release-12.0
      * @param template template for which the link generate
+     * @param highlighted 
      * @return generated link
      */
-    public String getLink(String baseUrl, TemplateQuery template) {
+    public String getHtmlLink(String baseUrl, TemplateQuery template) {
+        return getHtmlLinkInternal(baseUrl, template, false);
+    }
+    
+    private String getHtmlLinkInternal(String baseUrl, TemplateQuery template, 
+            boolean highlighted) {
+        String ret = getLink(baseUrl, template, highlighted);
+        ret += "&size=";
+        ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
+        ret += "&" + QueryResultRequestParser.LAYOUT_PARAMETER + "=minelink|paging";
+        return ret;        
+    }
+
+    /**
+     * Returns link which gives results as lines, where values are tab separated.
+      @see #getLink(String, TemplateQuery) 
+     * @param baseUrl base url 
+     * @param template template
+     * @return highlighted link
+     */
+    public String getTabLink(String baseUrl, TemplateQuery template) {
         return getLink(baseUrl, template, false);
     }
     
@@ -57,7 +78,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @return highlighted link
      */
     public String getHighlightedLink(String baseUrl, TemplateQuery template) {
-        return getLink(baseUrl, template, true);
+        return getHtmlLinkInternal(baseUrl, template, true);
     }
     
     private String getLink(String baseUrl, TemplateQuery template, 
@@ -88,9 +109,6 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                 ret += "&" + extraToString(cs.getExtraValue(), index, highlighted);
             }
         }
-        ret += "&size=";
-        ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
-        ret += "&" + QueryResultRequestParser.LAYOUT_PARAMETER + "=minelink";
         return ret;
     }
 

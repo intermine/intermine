@@ -222,6 +222,8 @@ public abstract class WebService
     private void initOutput(HttpServletResponse response) {
         PrintWriter out;
         try {
+            // set reasonable buffer size
+            response.setBufferSize(8 * 1024);
             out = response.getWriter();
         } catch (IOException e) {
             throw new InternalErrorException(e);

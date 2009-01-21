@@ -15,15 +15,11 @@ import org.intermine.webservice.server.WebServiceConstants;
 
 /**
  * Class that implements generating links for QueryResultService web service.
+ * 
  * @author Jakub Kulaviak
  **/
 public class QueryResultLinkGenerator extends LinkGeneratorBase 
 {
-
-    /**
-     * Default value of size parameter 
-     */
-    private static final int DEFAULT_RESULT_SIZE = 10;
 
     /**
      * Generates QueryResultService web service link.
@@ -38,8 +34,7 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
             baseUrl += "/";
         } 
         return baseUrl + WebServiceConstants.MODULE_NAME + "/query/results" 
-            + "?" + WebServiceRequestParser.LIMIT_PARAMETER + "=" + DEFAULT_RESULT_SIZE 
-            + "&" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&" 
+            + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&" 
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
     }
     
