@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Organism;
 import org.intermine.bio.web.logic.BioUtil;
@@ -48,6 +49,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
+    private static final Logger LOG = Logger.getLogger(ChromosomeDistributionDataSetLdr.class);
     private DefaultCategoryDataset dataSet;
     private ObjectStore os;
     private Model model;
@@ -74,6 +76,11 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         bagType = bag.getType();
 
         LinkedHashMap<String, int[]> resultsTable = new LinkedHashMap<String, int[]>();
+
+        if (organismName == null) {
+            LOG.warn("can't render graph widgets without organism name");
+            return;
+        }
 
         chromosomeList = BioUtil.getChromosomes(os, Arrays.asList(organismName.toLowerCase()),
                                                 false);
