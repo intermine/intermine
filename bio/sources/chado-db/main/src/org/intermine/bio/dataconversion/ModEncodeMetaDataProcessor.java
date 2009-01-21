@@ -58,8 +58,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // ...we need a further map to link to submission 
     private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
 
-    private Map<String, Integer> organismIdMap = new HashMap<String, Integer>();
-    private Map<String, String> organismIdRefMap = new HashMap<String, String>();
+//    private Map<String, Integer> organismIdMap = new HashMap<String, Integer>();
+//    private Map<String, String> organismIdRefMap = new HashMap<String, String>();
     private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
 
     // maps from chado identifier to specific objects
@@ -131,6 +131,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer intermineObjectId;
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
+        // the list of applied protocols for which this data item is an output
         private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
     }
 
@@ -179,15 +180,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDag(connection);
 
         LOG.info("ICI:  features");
-        // process features and keep a map from chado feature_id to info
-//        Map<Integer, FeatureData> featureMap = processFeatures(connection, submissionMap);
         processFeatures(connection, submissionMap);
-//        LOG.info("ICI:  featureTableS");
-//        processDataFeatureTable(connection, featureMap);
 
         LOG.info("ICI:  InOut");
         // links submission inputs with their respective submission outputs
         // also set the references
+        // TODO: check if working
         linksInOut(connection);
 
         // set references
@@ -211,10 +209,53 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * ==============
      *
      * @param connection
-     * @param featureMap
-     * @throws SQLException
-     * @throws ObjectStoreException
+     * @param submissionMap
+     * @throws Exception
      */
+    private void processFeatures(Connection connection,
+            Map<Integer, SubmissionDetails> submissionMap)
+            throws Exception {
+        for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
+
+            Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
+            Integer chadoExperimentId = entry.getKey();
+            SubmissionDetails submissionDetails = entry.getValue();
+            String submissionItemIdentifier = submissionDetails.itemIdentifier;
+            String labItemIdentifier = submissionDetails.labItemIdentifier;
+
+            List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+//            LOG.info("FEATMAPA: submission " + chadoExperimentId + "|"    
+//                    + thisSubmissionDataIds);
+
+            ModEncodeFeatureProcessor processor =
+                new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
+                        labItemIdentifier, thisSubmissionDataIds);
+
+            processor.process(connection);
+            subFeatureMap.putAll(processor.getFeatureMap());
+
+            if (subFeatureMap.keySet().size() == 0) {
+                LOG.error("FEATMAP: submission " + chadoExperimentId     
+                        + " has no featureMap keys.");
+                continue;
+            } 
+            
+            LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
+                    + "featureMap keys: " + subFeatureMap.keySet().size()
+                    + " values: " + subFeatureMap.values().size());
+
+            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
+            processDataFeatureTable(connection, subFeatureMap, queryList);
+        }
+    }
+
+    
+    /**    
+    * @param connection
+    * @param featureMap
+    * @throws SQLException
+    * @throws ObjectStoreException
+    */
     private void processDataFeatureTable(Connection connection, Map<Integer,
             FeatureData> featureMap, String queryList)
     throws SQLException, ObjectStoreException {
@@ -240,7 +281,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("dataId " + id + " FD " + fd.getInterMineType() + ": " 
                     + fd.getChadoFeatureName());
 
-            // old ref setting. should we consider one collection per different dataId?
+            // old ref setting
 //            Reference featureRef = new Reference("feature", featureItemId);
 //            getChadoDBConverter().store(featureRef,
 //                    appliedDataMap.get(dataId).intermineObjectId);
@@ -271,52 +312,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-//    private Map<Integer, FeatureData> processFeatures(Connection connection,
-    private void processFeatures(Connection connection,
-            Map<Integer, SubmissionDetails> submissionMap)
-            throws Exception {
-//        Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
-        for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
-
-            Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
-            
-            Integer chadoExperimentId = entry.getKey();
-            SubmissionDetails submissionDetails = entry.getValue();
-            String submissionItemIdentifier = submissionDetails.itemIdentifier;
-            String labItemIdentifier = submissionDetails.labItemIdentifier;
-
-            List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
-
-            LOG.info("FEATMAPA: submission " + chadoExperimentId + "|"    
-                    + thisSubmissionDataIds);
-            LOG.info("FEATMAPA: submissionIt " + submissionItemIdentifier + "| labIt "    
-                    + labItemIdentifier);
-
-            
-            ModEncodeFeatureProcessor processor =
-                new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
-                        labItemIdentifier, thisSubmissionDataIds);
-
-            processor.process(connection);
-//            featureMap.putAll(processor.getFeatureMap());
-            subFeatureMap.putAll(processor.getFeatureMap());
-//            featureMap.putAll(subFeatureMap);
-
-            if (subFeatureMap.keySet().size() == 0) {
-                LOG.error("FEATMAP: submission " + chadoExperimentId     
-                        + " has no featureMap keys.");
-                continue;
-            } 
-            
-            LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
-                    + "featureMap keys: " + subFeatureMap.keySet().size()
-                    + " values: " + subFeatureMap.values().size());
-
-            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable(connection, subFeatureMap, queryList);
-        }
-//        return subFeatureMap;
-    }
 
 
     /**
@@ -380,7 +375,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
 
                 // last one: fill the list of outputs 
-                // and the general list of data ids for the submission, used to fetch features
+                // and add to the general list of data ids for the submission, used to fetch features
                 if (res.isLast()) {
                     if (direction.equalsIgnoreCase("output")) {
                         node.outputs.add(dataId);
@@ -910,47 +905,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
            count++;
        }
        res.close();
-
-       Set <Integer> exp = submissionOrganismMap.keySet();
-       Iterator <Integer> i  = exp.iterator();
-       while (i.hasNext()) {
-           Integer thisExp = i.next();
-           LOG.info("ORGA " + thisExp + " organisms");
-           String thisOrganism = submissionOrganismMap.get(thisExp);  
-           
-           if (organismIdMap.containsKey(thisOrganism)) {
-               LOG.info("ORGA continue: " + thisOrganism);
-               
-               continue;
-           }
-
-           int divPos = thisOrganism.indexOf(' ');
-           String genus = thisOrganism.substring(0, divPos);
-           String species = thisOrganism.substring(divPos + 1);
-           
-           OrganismRepository or = OrganismRepository.getOrganismRepository();
-           
-           Integer taxId = Integer.valueOf
-           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
-           
-           LOG.info("SPECIES: " + thisOrganism + "|" + taxId);            
-
-           Item organism = getChadoDBConverter().getOrganismItem
-           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
-           
-//           Item organism = BioDBConverter.this.getOrganismItem
-//           (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
- 
-           //           Item organism = getChadoDBConverter().createItem("Organism");
-//           organism.setAttribute("name", thisOrganism);
-//           organism.setAttribute("taxonId", taxId.toString());
-           
-//           Integer intermineObjectId = getChadoDBConverter().store(organism);
-//           storeInOrganismMaps(organism, thisOrganism, intermineObjectId);
-       }
-       LOG.info("created " + organismIdMap.size() + " organisms");
+       LOG.info("created " + submissionOrganismMap.size() + " organisms");
    }
-
+   
+       
    /**
     * Return the rows needed from the lab table.
     * We use the surname of the Principal Investigator (person ranked 0)
@@ -998,22 +956,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Item submission = getChadoDBConverter().createItem("Submission");
             // submission.setAttribute("name", name);
 
-            
             String project = submissionProjectMap.get(submissionId);
             String projectItemIdentifier = projectIdRefMap.get(project);
             submission.setReference("project", projectItemIdentifier);
 
-            
             String labName = submissionLabMap.get(submissionId);
             String labItemIdentifier = labIdRefMap.get(labName);
             submission.setReference("lab", labItemIdentifier);
 
-            
-            
-            
-            
             String organismName = submissionOrganismMap.get(submissionId);
-
             
             int divPos = organismName.indexOf(' ');
             String genus = organismName.substring(0, divPos);
@@ -1024,7 +975,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer taxId = Integer.valueOf
             (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
             
-            LOG.info("SPECIES2: " + organismName + "|" + taxId);            
+            LOG.info("SPECIES: " + organismName + "|" + taxId);            
 
 //            Item organism = getChadoDBConverter().getOrganismItem
 //            (or.getOrganismDataByGenusSpecies(genus, species).getTaxonId());
@@ -1853,26 +1804,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         debugMap .put(i.getIdentifier(), i.getClassName());
     }
 
-    /**
-     * to store identifiers in organism maps.
-     * @param i
-     * @param chadoId
-     * @param intermineObjectId
-     * @throws ObjectStoreException
-     */
-    private void storeInOrganismMaps(Item i, String organism, Integer intermineObjectId)
-    throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Organism")) {
-            organismIdMap .put(organism, intermineObjectId);
-            organismIdRefMap .put(organism, i.getIdentifier());
-        } else {
-            throw new IllegalArgumentException(
-                    "Type mismatch: expecting Organism, getting "
-                    + i.getClassName().substring(37) + " with intermineObjectId = "
-                    + intermineObjectId + ", organism = " + organism);
-        }
-        debugMap .put(i.getIdentifier(), i.getClassName());
-    }
 
     // utilities for debugging
     // to be removed
