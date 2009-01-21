@@ -45,19 +45,21 @@
 	
 	    <div  style="margin-top: 10px;">
 	       <%-- Replacing & with unique string with almost 0 probability that it will be in url --%>
-           <c:set var="encodedLink" value="${fn:replace(link, '&', 'qwertyui')}"></c:set> 
+           <c:set var="encodedHtmlLink" value="${fn:replace(htmlLink, '&', 'qwertyui')}"></c:set>
+           <c:set var="tmpLink" value="${tabLink}&size=10"></c:set> 
+           <c:set var="encodedTabLink" value="${fn:replace(tmpLink, '&', 'qwertyui')}"></c:set> 
 	       <table style="width:100%;">
 	           <tr>
 	               <td style="font-size:14px;">
 	                   Add following HTML to embed the results of this template in your web page. 
 	               </td>
 	               <td valign="bottom" style="font-size:14px;" align="right">
-                       <a href="javascript:openPopWindow('linkPreview.do?link=${encodedLink}', 800, 800)" >See results</a>  in the example page.
+                       <a href="javascript:openPopWindow('linkPreview.do?link=${encodedHtmlLink}', 800, 800)" >See results</a>  in the example page.
                    </td>
 	       </table>
 	    </div>
 	    <%-- Don't split following line --%>
-	    <textarea style="width:100%;height:100px;"><iframe width=&quot;700&quot; height=&quot;500&quot; frameborder=&quot;1&quot; scrolling=&quot;yes&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;${link}&amp;format=html&quot;></iframe></textarea>
+	    <textarea style="width:100%;height:100px;"><iframe width=&quot;700&quot; height=&quot;500&quot; frameborder=&quot;1&quot; scrolling=&quot;yes&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;${htmlLink}&amp;format=html&quot;></iframe></textarea>
 	
 	   <c:if test="${highlightedLink != null}">
 	        <div style="margin-top:10px;">
@@ -76,13 +78,13 @@
 	                   Web service link to this template. Use following URL to fetch tab delimited results for this template in your own program. 
 	               </td>
                     <td valign="bottom" style="font-size:14px;" align="right">
-                       <a href="javascript:openPopWindow('tabLinkPreview.do?link=${encodedLink}', 800, 1000)">See results</a>
+                       <a href="javascript:openPopWindow('tabLinkPreview.do?link=${encodedTabLink}', 800, 1000)">See first 10 results</a>
                    </td>
 	           </tr>
 	       </table>
 	    </div>
 	    <%-- Don't split following line --%>
-	    <textarea style="width:100%;height:100px;">${link}&amp;format=tab</textarea>
+	    <textarea style="width:100%;height:100px;">${tabLink}&amp;format=tab</textarea>
 	    
 	</form>
 		
