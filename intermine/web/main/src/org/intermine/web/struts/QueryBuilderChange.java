@@ -113,7 +113,7 @@ public class QueryBuilderChange extends DispatchAction
      */
     protected static void removeNode(PathQuery pathQuery, String path) {
         // copy because we will be remove paths from the Map as we go
-        Set<String> keys = new HashSet(pathQuery.getNodes().keySet());
+        Set<String> keys = new HashSet<String>(pathQuery.getNodes().keySet());
 
         // remove the node and it's children
         for (Iterator<String> i = keys.iterator(); i.hasNext();) {
@@ -140,6 +140,8 @@ public class QueryBuilderChange extends DispatchAction
         // eg. Department.employees.salary where salary is only defined in a subclass of Employee
         // note that we first have to find out what type Department thinks the employees field is
         // and then check if any of the view nodes assume the field is constrained to a subclass
+        
+        
         String parentType = pathQuery.getNodes().get(path).getParentType();
 
         Model model = pathQuery.getModel();
@@ -151,7 +153,8 @@ public class QueryBuilderChange extends DispatchAction
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("unexpected exception", e);
             }
-            String pathLastField = path.substring(path.lastIndexOf(".") + 1);
+            String pathLastField = path.substring(MainHelper.getLastJoinIndex(path) + 1);
+            
             if (parentCld == null) {
                 // if the field doesn't exist it means we are editing a PathQuery with errors
             } else {
@@ -162,15 +165,14 @@ public class QueryBuilderChange extends DispatchAction
                     ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
 
                     List<String> newView = new ArrayList<String>(pathQuery.getViewStrings());
-                    Iterator<Path> viewPathIter = pathQuery.getView().iterator();
-
-                    while (viewPathIter.hasNext()) {
-                        String viewPath = viewPathIter.next().toStringNoConstraints();
-
+                    List<String> newSortOrder = 
+                        new ArrayList<String>(pathQuery.getSortOrderStrings());
+                    
+                    for (String viewPath : pathQuery.getViewStrings()) {
                         if (viewPath.startsWith(path) && !viewPath.equals(path)) {
                             String fieldName = viewPath.substring(path.length() + 1);
 
-                            if (fieldName.indexOf(".") != -1) {
+                            if (MainHelper.containsJoin(fieldName)) {
                                 fieldName = fieldName.substring(0, fieldName.indexOf("."));
                             }
 
@@ -178,21 +180,22 @@ public class QueryBuilderChange extends DispatchAction
                                 // the field must be in a sub-class rather than the base class so
                                 // remove the viewPath
                                 newView.remove(viewPath);
+                                newSortOrder.remove(viewPath);
                             }
                         }
                     }
                     pathQuery.setView(newView);
+                    //pathQuery.setOrderBy(newSortOrder);
                     
                     if (pathQuery.getSortOrder() != null) {
                         Path removeSortPath = null;
                         for (Path sortPath : pathQuery.getSortOrder().keySet()) {
-                            String sortOrderPath
-                            = sortPath.toStringNoConstraints();
+                            String sortOrderPath = sortPath.toStringNoConstraints();
 
                             if (sortOrderPath.startsWith(path) && !sortOrderPath.equals(path)) {
                                 String fieldName = sortOrderPath.substring(path.length() + 1);
 
-                                if (fieldName.indexOf(".") != -1) {
+                                if (MainHelper.containsJoin(fieldName)) {
                                     fieldName = fieldName.substring(0, fieldName.indexOf("."));
                                 }
 

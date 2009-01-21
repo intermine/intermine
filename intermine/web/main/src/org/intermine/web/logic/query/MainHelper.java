@@ -1286,6 +1286,16 @@ public class MainHelper
     
     
     /**
+     * Return true if the given path string contains a join - denoted by '.' or ':' for normal
+     * or outer join respectively.
+     * @param path the path string to check
+     * @return true if path contains a join
+     */
+    public static boolean containsJoin(String path) {
+        return (path.indexOf(".") >= 0) || (path.indexOf(":") >= 0);
+    }
+    
+    /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
      * @param pathQuery the PathQuery

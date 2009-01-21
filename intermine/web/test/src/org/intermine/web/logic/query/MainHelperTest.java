@@ -109,6 +109,13 @@ public class MainHelperTest extends TestCase {
         assertEquals(-1, MainHelper.getFirstJoinIndex("CEO"));
     }
     
+    public void testContainsPath() {
+        assertTrue(MainHelper.containsJoin("Company.department"));
+        assertTrue(MainHelper.containsJoin("Company:department"));
+        assertTrue(MainHelper.containsJoin("Company:department.name"));
+        assertFalse(MainHelper.containsJoin("Company"));        
+    }
+    
     
     public void testGetTypeForPath() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
