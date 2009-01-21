@@ -220,7 +220,7 @@
   <item id="1010" class="" implements="http://www.flymine.org/model/genomic#Project">
     <attribute name="name" value="The C. elegans Transcriptome"/>
     <attribute name="title" value="Global Identification of Transcribed Regions of the C. elegans Genome"/>
-    <attribute name="surnamePI" value="Waterstone"/>
+    <attribute name="surnamePI" value="Waterston"/>
     <attribute name="namePI" value="Robert"/>
     <attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
 <collection name="labs">
