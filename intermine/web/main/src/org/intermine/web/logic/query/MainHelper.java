@@ -996,10 +996,10 @@ public class MainHelper
         ConstraintSet root;
         if (node instanceof LogicExpression.And) {
             root = andcs;
-            makeConstraintSets(node, root, codeToConstraintSet);
+            makeConstraintSets((LogicExpression.And) node, root, codeToConstraintSet);
         } else if (node instanceof LogicExpression.Or) {
             root = new ConstraintSet(ConstraintOp.OR);
-            makeConstraintSets(node, root, codeToConstraintSet);
+            makeConstraintSets((LogicExpression.Or) node, root, codeToConstraintSet);
         } else {
             throw new IllegalArgumentException("logic expression must contain a root operator");
         }
@@ -1015,26 +1015,26 @@ public class MainHelper
      * @param set the constraints under this node
      * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
      */
-    public static void makeConstraintSets(LogicExpression.Node node, ConstraintSet set,
+    public static void makeConstraintSets(LogicExpression.Operator node, ConstraintSet set,
                                           Map<String, ConstraintSet> codeToConstraintSet) {
         Iterator iter = node.getChildren().iterator();
         while (iter.hasNext()) {
             LogicExpression.Node child = (LogicExpression.Node) iter.next();
             if (child instanceof LogicExpression.And) {
                 if (set.getOp() == ConstraintOp.AND) {
-                    makeConstraintSets(child, set, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.And) child, set, codeToConstraintSet);
                 } else {
                     ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
                     set.addConstraint(childSet);
-                    makeConstraintSets(child, childSet, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.And) child, childSet, codeToConstraintSet);
                 }
             } else if (child instanceof LogicExpression.Or) {
                 if (set.getOp() == ConstraintOp.OR) {
-                    makeConstraintSets(child, set, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.Or) child, set, codeToConstraintSet);
                 } else {
                     ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
                     set.addConstraint(childSet);
-                    makeConstraintSets(child, childSet, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.Or) child, childSet, codeToConstraintSet);
                 }
             } else {
                 // variable

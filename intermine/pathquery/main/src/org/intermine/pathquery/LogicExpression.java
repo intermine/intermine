@@ -11,10 +11,12 @@ package org.intermine.pathquery;
  */
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import antlr.collections.AST;
@@ -30,8 +32,6 @@ import antlr.collections.AST;
  */
 public class LogicExpression
 {
-    /** The abstract syntax tree produced by the parser. */
-    private AST ast;
     /** Root node - always an operator. */
     private Node root;
 
@@ -50,6 +50,7 @@ public class LogicExpression
      * @param expression logic expression
      */
     private Node parse(String expression) {
+        AST ast = null;
         try {
             LogicLexer lexer = new LogicLexer(new StringReader(expression));
             LogicParser parser = new LogicParser(lexer);
@@ -59,9 +60,9 @@ public class LogicExpression
             ast = parser.getAST();
             //new antlr.DumpASTVisitor().visit(ast);
             if (ast.getText().toLowerCase().equals("or")) {
-                rootNode = new Or(ast, true);
+                rootNode = new Or(ast);
             } else if (ast.getText().toLowerCase().equals("and")) {
-                rootNode = new And(ast, true);
+                rootNode = new And(ast);
             } else {
                 rootNode = new Variable(ast.getText());
             }
@@ -104,7 +105,11 @@ public class LogicExpression
      * @param name variable to remove
      */
     public void removeVariable(String name) {
-        removeVariable(name, root);
+        if (root instanceof Operator) {
+            removeVariable(name, (Operator) root);
+        } else if (root instanceof Variable && ((Variable) root).getName().equals(name)) {
+            throw new IllegalArgumentException("Removing root node");
+        }
         String logic = toString();
         root = parse(logic);
     }
@@ -114,13 +119,12 @@ public class LogicExpression
      * @param name variable name
      * @param node root of subtree
      */
-    private void removeVariable(String name, Node node) {
-        for (Iterator iter = new LinkedHashSet(node.getChildren()).iterator(); iter.hasNext(); ) {
-            Node child = (Node) iter.next();
-            if (child instanceof Variable && ((Variable) child).getName().equals(name)) {
+    private void removeVariable(String name, Operator node) {
+        for (Node child : new ArrayList<Node>(node.getChildren())) {
+            if (child instanceof Operator) {
+                removeVariable(name, (Operator) child);
+            } else if (child instanceof Variable && ((Variable) child).getName().equals(name)) {
                 node.removeChild(child);
-            } else {
-                removeVariable(name, child);
             }
         }
     }
@@ -130,23 +134,28 @@ public class LogicExpression
      * @param variables set of variable names
      */
     public void removeAllVariablesExcept(Set variables) {
-        removeAllVariablesExcept(variables, root);
+        if (root instanceof Operator) {
+            removeAllVariablesExcept(variables, (Operator) root);
+        } else if (root instanceof Variable && !variables.contains(((Variable) root).getName())) {
+            throw new IllegalArgumentException("Removing root node");
+        }
         String logic = toString();
         root = parse(logic);
     }
 
     /**
      * Remove any variables that aren't in the given set.
+     *
      * @param variables set of variable names
      * @param node root of subtree
      */
-    private void removeAllVariablesExcept(Set variables, Node node) {
-        for (Iterator iter = new LinkedHashSet(node.getChildren()).iterator(); iter.hasNext(); ) {
-            Node child = (Node) iter.next();
-            if (child instanceof Variable && !variables.contains(((Variable) child).getName())) {
+    private void removeAllVariablesExcept(Set variables, Operator node) {
+        for (Node child : new ArrayList<Node>(node.getChildren())) {
+            if (child instanceof Operator) {
+                removeAllVariablesExcept(variables, (Operator) child);
+            } else if (child instanceof Variable
+                    && !variables.contains(((Variable) child).getName())) {
                 node.removeChild(child);
-            } else {
-                removeAllVariablesExcept(variables, child);
             }
         }
     }
@@ -155,21 +164,112 @@ public class LogicExpression
      * Get the Set of variable names.
      * @return set of variable names in this expression
      */
-    public Set getVariableNames() {
-        Set variables = new HashSet();
+    public Set<String> getVariableNames() {
+        Set<String> variables = new HashSet<String>();
         getVariableNames(variables, root);
         return variables;
     }
 
-    private void getVariableNames(Set variables, Node node) {
-        for (Iterator iter = new LinkedHashSet(node.getChildren()).iterator(); iter.hasNext(); ) {
-            Node child = (Node) iter.next();
-            if (child instanceof Variable) {
-                variables.add(((Variable) child).getName());
-            } else {
+    private void getVariableNames(Set<String> variables, Node node) {
+        if (node instanceof Operator) {
+            for (Node child : ((Operator) node).getChildren()) {
                 getVariableNames(variables, child);
             }
+        } else {
+            variables.add(((Variable) node).getName());
         }
+    }
+
+    /**
+     * Takes a List of collections of String variables and returns a List of the same length,
+     * containing sections of the LogicExpression with those variables in.
+     *
+     * @param variables a List of Collections of String variable names
+     * @return a List of LogicExpression objects
+     * @throws IllegalArgumentException if the LogicExpression cannot be split up in this way,
+     * or if there is an overlap in variables, or if there is an unrepresented variable, or if
+     * there is an extra variable
+     */
+    public List<LogicExpression> split(List<? extends Collection<String>> variables) {
+        Set<String> presentVariables = new HashSet<String>();
+        for (Collection<String> v : variables) {
+            for (String var : v) {
+                if (presentVariables.contains(var)) {
+                    throw new IllegalArgumentException("There is an overlap in variables");
+                }
+                presentVariables.add(var);
+            }
+        }
+        if (!presentVariables.equals(getVariableNames())) {
+            throw new IllegalArgumentException("Variables in argument (" + presentVariables
+                    + ") do not match variables in expression (" + getVariableNames() + ")");
+        }
+        if (root instanceof Variable) {
+            return Collections.singletonList(this);
+        } else if (root instanceof Or) {
+            if (variables.size() == 1) {
+                return Collections.singletonList(this);
+            } else {
+                throw new IllegalArgumentException("Cannot split OR constraint " + toString());
+            }
+        } else {
+            And and = (And) root;
+            List<List<String>> buckets = new ArrayList<List<String>>();
+            for (int i = 0; i < variables.size(); i++) {
+                buckets.add(new ArrayList<String>());
+            }
+            for (Node node : and.getChildren()) {
+                Set<String> hasVariables = new HashSet<String>();
+                getVariableNames(hasVariables, node);
+                int bucketNo = -1;
+                for (int i = 0; i < variables.size(); i++) {
+                    Collection<String> bucketVariables = variables.get(i);
+                    if (bucketVariables.containsAll(hasVariables)) {
+                        buckets.get(i).add(node.toString());
+                        bucketNo = i;
+                        break;
+                    }
+                }
+                if (bucketNo == -1) {
+                    throw new IllegalArgumentException("Cannot split node " + node.toString());
+                }
+            }
+            List<LogicExpression> retval = new ArrayList<LogicExpression>();
+            for (List<String> bucket : buckets) {
+                if (bucket.isEmpty()) {
+                    retval.add(null);
+                } else {
+                    StringBuffer newExpression = new StringBuffer();
+                    boolean needComma = false;
+                    for (String part : bucket) {
+                        if (needComma) {
+                            newExpression.append(" and ");
+                        }
+                        needComma = true;
+                        newExpression.append(part);
+                    }
+                    retval.add(new LogicExpression(newExpression.toString()));
+                }
+            }
+            return retval;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object o) {
+        if (o instanceof LogicExpression) {
+            return toString().equals(o.toString());
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return toString().hashCode();
     }
 
     /**
@@ -177,35 +277,6 @@ public class LogicExpression
      */
     public abstract class Node
     {
-        private Set children = new LinkedHashSet();
-
-        private Node(AST ast) {
-            if (ast != null) {
-                AST child = ast.getFirstChild();
-                while (child != null) {
-                    if (child.getText().equals("or")) {
-                        children.add(new Or(child));
-                    } else if (child.getText().equals("and")) {
-                        children.add(new And(child));
-                    } else {
-                        children.add(new Variable(child.getText()));
-                    }
-                    child = child.getNextSibling();
-                }
-            }
-        }
-
-        /**
-         * Get an unmodifiable copy of the node's children.
-         * @return unmodifiable set of node children
-         */
-        public Set getChildren() {
-            return Collections.unmodifiableSet(children);
-        }
-
-        private void removeChild(Node child) {
-            children.remove(child);
-        }
     }
 
     /**
@@ -213,11 +284,24 @@ public class LogicExpression
      */
     public abstract class Operator extends Node
     {
-        boolean root = false;
+        private Set<Node> children = new LinkedHashSet<Node>();
 
-        private Operator(AST ast, boolean root) {
-            super(ast);
-            this.root = root;
+        private Operator(AST ast) {
+            if (ast != null) {
+                AST child = ast.getFirstChild();
+                while (child != null) {
+                    Node childNode = null;
+                    if (child.getText().equals("or")) {
+                        childNode = new Or(child);
+                    } else if (child.getText().equals("and")) {
+                        childNode = new And(child);
+                    } else {
+                        childNode = new Variable(child.getText());
+                    }
+                    addChild(childNode);
+                    child = child.getNextSibling();
+                }
+            }
         }
 
         /**
@@ -232,23 +316,41 @@ public class LogicExpression
          */
         @Override
         public String toString() {
-            String expr = "";
-            Iterator iter = getChildren().iterator();
-            while (iter.hasNext()) {
-                if (expr.length() > 0) {
-                    expr += " " + getOperator() + " ";
+            StringBuffer expr = new StringBuffer();
+            boolean needComma = false;
+            for (Node child : getChildren()) {
+                if (needComma) {
+                    expr.append(" " + getOperator() + " ");
                 }
-                Node child = (Node) iter.next();
+                needComma = true;
                 String subexpr = child.toString();
                 if (child instanceof Or && this instanceof And) {
                     subexpr = "(" + subexpr + ")";
                 }
-                expr += subexpr;
+                expr.append(subexpr);
             }
-            //if (!root && !getOperator().equals("and")) {
-            //    expr = "(" + expr + ")";
-            //}
-            return expr;
+            return expr.toString();
+        }
+
+        /**
+         * Get an unmodifiable copy of the node's children.
+         * @return unmodifiable set of node children
+         */
+        public Set<Node> getChildren() {
+            return Collections.unmodifiableSet(children);
+        }
+
+        private void removeChild(Node child) {
+            children.remove(child);
+        }
+
+        /**
+         * Adds a node to the collection of children.
+         *
+         * @param child the new Node
+         */
+        protected void addChild(Node child) {
+            children.add(child);
         }
     }
 
@@ -257,12 +359,8 @@ public class LogicExpression
      */
     public class And extends Operator
     {
-        private And(AST ast, boolean root) {
-            super(ast, root);
-        }
-
         private And(AST ast) {
-            this(ast, false);
+            super(ast);
         }
 
         /**
@@ -272,6 +370,20 @@ public class LogicExpression
         protected String getOperator() {
             return "and";
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void addChild(Node child) {
+            if (child instanceof And) {
+                for (Node subChild : ((And) child).getChildren()) {
+                    addChild(subChild);
+                }
+            } else {
+                super.addChild(child);
+            }
+        }
     }
 
     /**
@@ -279,12 +391,8 @@ public class LogicExpression
      */
     public class Or extends Operator
     {
-        private Or(AST ast, boolean root) {
-            super(ast, root);
-        }
-
         private Or(AST ast) {
-            this(ast, false);
+            super(ast);
         }
 
         /**
@@ -293,6 +401,20 @@ public class LogicExpression
         @Override
         protected String getOperator() {
             return "or";
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void addChild(Node child) {
+            if (child instanceof Or) {
+                for (Node subChild : ((Or) child).getChildren()) {
+                    addChild(subChild);
+                }
+            } else {
+                super.addChild(child);
+            }
         }
     }
 
@@ -304,7 +426,6 @@ public class LogicExpression
         private String name;
 
         private Variable(String name) {
-            super(null);
             this.name = name;
         }
 
