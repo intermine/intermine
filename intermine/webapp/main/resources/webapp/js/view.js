@@ -50,6 +50,12 @@ function updateSortOrder(pathString) {
 
 function reDrawSorters(sortMap) {
 	for(name in sortMap) {
- 	   jQuery('#btn_' + name.replace(/[\.:]/g,'_')).attr('src','images/sort_'+sortMap[name]+'.png');
+		jQuery('#btn_' + name.replace(/[\.:]/g,'_')).attr('src','images/sort_'+sortMap[name]+'.png');
+		
+		if (sortMap[name] == 'disabled') {
+			jQuery('#btn_' + name.replace(/[\.:]/g,'_')).unbind('click').click(function() {new Boxy("<p>Sorting is disabled on outer join columns.</p>", {title: "Sorting disabled", draggable: false}); });
+		} else {
+			jQuery('#btn_' + name.replace(/[\.:]/g,'_')).unbind('click').click(function() { updateSortOrder(name); });
+		}
 	}
 }
