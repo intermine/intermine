@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
@@ -84,7 +83,7 @@
         </ul>
         <ul>
           <li>
-            All gene/GO annotation pairs from <i>A. gambiae</i> 
+            All gene/GO annotation pairs from <i>A. gambiae</i>
             <im:querylink text="(browse)" skipBuilder="true">
 <query name="" model="genomic" view="Gene Gene.annotations">
   <node path="Gene" type="Gene">

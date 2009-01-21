@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -12,7 +9,7 @@
       <div class="body">
 
         <dt>The pathway data in the KEGG database have been manually
-        entered from published materials. Current KEGG data in FlyMine only 
+        entered from published materials. Current KEGG data in FlyMine only
         include Drosophila KEGG pathway names with their IDs and
         the genes involved.</dt>
 
@@ -25,7 +22,7 @@
       </div>
       <div class="body">
          <ul>
-      
+
           <li>
             <im:querylink text="All KEGG pathways with associated genes " skipBuilder="true">
 

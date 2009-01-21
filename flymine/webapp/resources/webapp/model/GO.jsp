@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -20,17 +17,17 @@
 
 <div id="hiddenDiv1" class="dataSetDescription">
       <p>
-      The Gene Ontology project provides a controlled vocabulary to describe 
-      gene and gene product attributes in any organism.  The GO collaborators 
-      are developing three structured, controlled vocabularies (ontologies) 
-      that describe gene products in terms of their associated biological 
+      The Gene Ontology project provides a controlled vocabulary to describe
+      gene and gene product attributes in any organism.  The GO collaborators
+      are developing three structured, controlled vocabularies (ontologies)
+      that describe gene products in terms of their associated biological
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
       FlyMine has GO annotations for <i>Drosophila</i>,
       <i>C. elegans</i> and <i>A. gambiae</i>.  GO annotation for
       other organisms is also included and is accessible via orthologues.
-      </p>      
+      </p>
         <ul>
          <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.flybase.org" target="_new">FlyBase</a></li><br/>
          <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
@@ -54,24 +51,24 @@
       supports it; these evidence codes correspond to broad categories
       of experimental or other support. The codes are listed below. For more
       information, go to <a href="http://www.geneontology.org/GO.evidence.shtml" target="_new">Guide to GO Evidence Codes</a>. </p>
-    <p> EXP = Inferred from Experiment </p> 
-    <p> IDA = Inferred from Direct Assay </p> 
-    <p> IPI = Inferred from Physical Interaction </p> 
-    <p> IMP = Inferred from Mutant Phenotype </p> 
-    <p> IGI = Inferred from Genetic Interaction </p> 
-    <p> IEP = Inferred from Expression Pattern </p> 
-    <p> ISS = Inferred from Sequence or Structural Similarity </p> 
-    <p> ISO = Inferred from Sequence Orthology </p> 
-    <p> ISA = Inferred from Sequence Alignment </p> 
-    <p> ISM = Inferred from Sequence Model </p> 
-    <p> IGC = Inferred from Genomic Context </p> 
-    <p> RCA = inferred from Reviewed Computational Analysis </p> 
-    <p> TAS = Traceable Author Statement </p> 
-    <p> NAS = Non-traceable Author Statement </p> 
-    <p> IC = Inferred by Curator </p> 
-    <p> ND = No biological Data available </p> 
-    <p> IEA = Inferred from Electronic Annotation </p> 
-    <p> NR = Not Recorded </p> 
+    <p> EXP = Inferred from Experiment </p>
+    <p> IDA = Inferred from Direct Assay </p>
+    <p> IPI = Inferred from Physical Interaction </p>
+    <p> IMP = Inferred from Mutant Phenotype </p>
+    <p> IGI = Inferred from Genetic Interaction </p>
+    <p> IEP = Inferred from Expression Pattern </p>
+    <p> ISS = Inferred from Sequence or Structural Similarity </p>
+    <p> ISO = Inferred from Sequence Orthology </p>
+    <p> ISA = Inferred from Sequence Alignment </p>
+    <p> ISM = Inferred from Sequence Model </p>
+    <p> IGC = Inferred from Genomic Context </p>
+    <p> RCA = inferred from Reviewed Computational Analysis </p>
+    <p> TAS = Traceable Author Statement </p>
+    <p> NAS = Non-traceable Author Statement </p>
+    <p> IC = Inferred by Curator </p>
+    <p> ND = No biological Data available </p>
+    <p> IEA = Inferred from Electronic Annotation </p>
+    <p> NR = Not Recorded </p>
      <br/>
     </div>
 
@@ -89,7 +86,7 @@
       <p> The Qualifier column is used for flags that modify the
       interpretation of an annotation. Allowable values are
       'contributes_to', 'colocalizes_with' and 'NOT'.
-      'colocalizes_with' is used only with cellular component terms. 
+      'colocalizes_with' is used only with cellular component terms.
       'contributes_to' is used only with molecular function terms.
       'NOT' is used with terms from any of the three ontologies. </p>
      </div>

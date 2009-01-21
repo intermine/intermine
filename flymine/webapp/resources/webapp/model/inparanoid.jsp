@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
@@ -12,7 +9,7 @@
       </div>
       <div class="body">
 
- <h4>  
+ <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
       Homology data from inparanoid ...
@@ -43,7 +40,7 @@
           </im:querylink></p>
 
 
-	<p>The inparanoid program calculates orthologue and
+  <p>The inparanoid program calculates orthologue and
 inparalogue clusters, pairwise between two organisms, by first finding
 the best recipricol blast match for each gene. This becomes the
 seed-orthologue to which inparalogues are clustered (outparalogues are
@@ -60,7 +57,7 @@ sampling how often the pair is found as recipricolly best matches by a
 bootstrapping procedure applied to the original Blast alignment). </p>
 
    <p>   Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=12446146" target="_new">PubMed: 12446146</a>) ...</p>
- 
+
 
 
 
@@ -69,15 +66,15 @@ bootstrapping procedure applied to the original Blast alignment). </p>
        <li>Orthologous genes: genes in two species that have directly evolved from a single gene in the last common ancestor and are likely to be functionally related.</li>
        <li>Paralogous genes: homologous genes related by a duplication event. Might be in the same or in a different genome.</li>
        <li>Inparalogous genes: genes that derive from a duplication event after a speciation of interest. Inparalogs are together orthologs to the corresponding orthologous gene/genes in the other species.</li>
-       <li>Outparalogous genes: genes that derive from a duplication event before a speciation event of interest, thus not orthologs according to definition.</li> 
+       <li>Outparalogous genes: genes that derive from a duplication event before a speciation event of interest, thus not orthologs according to definition.</li>
       </ul>
-   
-  
-  
+
+
+
 
 </div>
 
-   <h4>  
+   <h4>
     <a href="javascript:toggleDiv('hiddenDiv2');">
      <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
       Homology data from the <i>Drosophila</i> 12 genomes consortium ...
@@ -88,7 +85,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <p>
             Orthologue and paralogue predictions between the 12 <i>Drosophila</i> genomes from the <i>Drosophila</i> 12 genomes consortium </a> (<a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17994087" target="_new">PubMed: 17994087</a>)</p>
-          </ul> 
+          </ul>
       </div>
     </td>
 
@@ -124,7 +121,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
             </im:querylink>
           </li>
 
-          <li>            
+          <li>
             <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>C. elegans</i> " skipBuilder="true">
 <query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
@@ -174,7 +171,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
             </im:querylink>
            </li>
 
-          <li>            
+          <li>
            <im:querylink text="Homologues: <i>D. melanogaster</i> vs <i>M. musculus</i> " skipBuilder="true">
 <query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
@@ -197,7 +194,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
   </node>
 </query>
            </im:querylink>
-          </li>   
+          </li>
 
 
           <li>
@@ -255,5 +252,5 @@ bootstrapping procedure applied to the original Blast alignment). </p>
     </td>
   </tr>
 </TABLE>
- 
+
 

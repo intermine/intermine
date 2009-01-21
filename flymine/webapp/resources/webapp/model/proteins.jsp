@@ -1,7 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -12,7 +8,7 @@
       </div>
       <div class="body">
 
- <h4>  
+ <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
       Data from the UniProt Knowledgebase (UniProtKB) ...
@@ -26,7 +22,7 @@
             Knowledgebase</a> for the following organisms have
             been loaded:</p>
 
-          <ul>             
+          <ul>
               <li><i>D. melanogaster</i></li>
               <li><i>A. gambiae</i></li>
               <li><i>C. elegans</i></li>
@@ -36,10 +32,10 @@
               <li><i>S. cerevisiae</i></li>
               <li><i>A. mellifera</i></li>
           </ul>
-          <p>           
+          <p>
             For each protein record in UniProt for each species the following
             information is extracted and loaded into FlyMine:</p>
-         <ul>             
+         <ul>
               <li>Entry name</li>
               <li>Primary accession number</li>
               <li>Secondary accession number</li>
@@ -51,11 +47,11 @@
               <li>Protein domain assignments from Interpro - see below</li>
               <li>Publications</li>
               <li>Sequence</li>
-          </ul>     
+          </ul>
 
   </div>
-     
-   <h4>  
+
+   <h4>
     <a href="javascript:toggleDiv('hiddenDiv2');">
      <img id='hiddenDiv2Toggle' src="images/disclosed.gif"/>
       Data from InterPro ...
@@ -69,7 +65,7 @@
             loaded from Uniprot (see above).  Details for each family or domain
             are loaded from <a
             href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a></p>
-          </ul> 
+          </ul>
 </div>
 
 <%--  // add later:
@@ -86,7 +82,7 @@
       </div>
       <div class="body">
         <ul>
-          <li>            
+          <li>
               <im:querylink text="<i>D. melanogaster</i> proteins and corresponding genes " skipBuilder="true">
 <query name="" model="genomic" view="Protein.name Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol" sortOrder="Protein.name Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol">
   <node path="Protein" type="Protein">
@@ -119,7 +115,7 @@
           </li>
 
 
-          <li>              
+          <li>
               <im:querylink text="<i>D. melanogaster</i> proteins with corresponding protein domains " skipBuilder="true">
 <query name="" model="genomic" view="ProteinDomain.proteins.primaryAccession ProteinDomain.proteins.primaryIdentifier ProteinDomain.proteins.name ProteinDomain.primaryIdentifier ProteinDomain.name ProteinDomain.shortName ProteinDomain.type" sortOrder="ProteinDomain.proteins.name asc">
   <node path="ProteinDomain" type="ProteinDomain">

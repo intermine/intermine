@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -84,7 +81,7 @@
 
         <div id="hiddenDiv3" class="dataSetDescription">
           <dl>
-            <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the 
+            <ul><li><i>Anopheles gambiae</i> - Clustered EST data set version 8.0 from the
               <a href="http://web.bioinformatics.ic.ac.uk/vectorbase/AnoEST.v8/index.php/" target="_new">Imperial College London Centre for Bioinformatics</a>.
             </dt>
           </li></ul>
@@ -141,7 +138,7 @@
             </im:querylink>
           </li>
 
-      
+
           <li>
             <im:querylink text="All <i>Anopheles gambiae</i> EST clusters and chromosomal positions" skipBuilder="true">
               <query name="" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.length ESTCluster.chromosome.primaryIdentifier ESTCluster.chromosomeLocation.start ESTCluster.chromosomeLocation.end">
