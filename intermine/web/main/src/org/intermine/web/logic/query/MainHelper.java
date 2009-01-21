@@ -324,20 +324,22 @@ public class MainHelper
         ConstraintSet rootcs = null;
         ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
 
-        if (pathQuery.getAllConstraints().size() == 1) {
-            Constraint c = pathQuery.getAllConstraints().get(0);
-            codeToCS.put(c.getCode(), andcs);
-        } else if (pathQuery.getAllConstraints().size() > 1) {
-            rootcs = makeConstraintSets(pathQuery.getLogic(), codeToCS, andcs);
+        // Work out which bits of the query are not outer joins - we construct the query with only
+        // those nodes to begin with.
+
+        Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
+        Set<String> relevantCodes = findRelevantCodes(nonOuterNodes);
+        LogicExpression logic = pathQuery.getLogic().getSection(relevantCodes);
+
+        if (relevantCodes.size() == 1) {
+            codeToCS.put(relevantCodes.iterator().next(), andcs);
+        } else if (relevantCodes.size() > 1) {
+            rootcs = makeConstraintSets(logic, codeToCS, andcs);
         }
         q.setConstraint(andcs);
         if ((rootcs != null) && (rootcs != andcs)) {
             andcs.addConstraint(rootcs);
         }
-        // Work out which bits of the query are not outer joins - we construct the query with only
-        // those nodes to begin with.
-
-        Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
 
         Map<String, String> loops = makeLoopsMap(pathQuery, codeToCS, andcs, true, nonOuterNodes,
                 root);
@@ -746,6 +748,16 @@ public class MainHelper
                 done.add(node);
                 deferralReasons.remove(node);
                 queueDeferred = 0;
+            }
+        }
+        return retval;
+    }
+
+    private static Set<String> findRelevantCodes(Set<PathNode> nonOuterNodes) {
+        Set<String> retval = new HashSet<String>();
+        for (PathNode node : nonOuterNodes) {
+            for (Constraint c : node.getConstraints()) {
+                retval.add(c.getCode());
             }
         }
         return retval;

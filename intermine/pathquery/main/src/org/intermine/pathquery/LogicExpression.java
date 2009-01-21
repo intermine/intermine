@@ -246,12 +246,67 @@ public class LogicExpression
                             newExpression.append(" and ");
                         }
                         needComma = true;
-                        newExpression.append(part);
+                        newExpression.append("(" + part + ")");
                     }
                     retval.add(new LogicExpression(newExpression.toString()));
                 }
             }
             return retval;
+        }
+    }
+
+    /**
+     * Take a Collection of String variable names, and return the part of the Logic Expression that
+     * contains those variables.
+     *
+     * @param variables a Collection of variable names
+     * @return a section of the LogicExpression
+     * @throws IllegalArgumentException if there are unrecognised variables, or if the expression
+     * cannot be split up in that way
+     */
+    public LogicExpression getSection(Collection<String> variables) {
+        if (variables.isEmpty()) {
+            return null;
+        }
+        if (!getVariableNames().containsAll(variables)) {
+            throw new IllegalArgumentException("Unrecognised variables in request");
+        }
+        if (root instanceof Variable) {
+            return this;
+        } else if (root instanceof Or) {
+            if (variables.containsAll(getVariableNames())) {
+                return this;
+            } else {
+                throw new IllegalArgumentException("Expression " + toString() + " cannot be split");
+            }
+        } else {
+            And and = (And) root;
+            StringBuffer retval = new StringBuffer();
+            boolean needComma = false;
+            for (Node node : and.getChildren()) {
+                Set<String> hasVariables = new HashSet<String>();
+                getVariableNames(hasVariables, node);
+                boolean containsAll = true;
+                boolean containsNone = true;
+                for (String var : hasVariables) {
+                    if (variables.contains(var)) {
+                        containsNone = false;
+                    } else {
+                        containsAll = false;
+                    }
+                }
+                if ((!containsNone) && (!containsAll)) {
+                    throw new IllegalArgumentException("Expression " + node + " cannot be split");
+                }
+                if (containsAll) {
+                    if (needComma) {
+                        retval.append(" and ");
+                    }
+                    needComma = true;
+                    retval.append("(" + node.toString() + ")");
+                }
+            }
+            return new LogicExpression(retval.toString());
         }
     }
 
