@@ -34,9 +34,12 @@ public class WebServiceRequestParser
     
     private static final int DEFAULT_START = 0;
     
-    private static final int DEFAULT_MAX_COUNT = 10;
+    /**
+     * 10 000 000 default size actually means that web service will return all results 
+     */
+    private static final int DEFAULT_MAX_COUNT = 10000000;
     
-    private static final int MAX_COUNT_LIMIT = 1000000;
+    private static final int MAX_COUNT_LIMIT = 10000000;
     
     /** Value of parameter when user wants xml output to be returned. **/
     public static final String FORMAT_PARAMETER_XML = "xml";

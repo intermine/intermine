@@ -102,14 +102,17 @@ public class TemplateAction extends InterMineAction
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
                     savedBags);
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String link = gen.getLink(new URLGenerator(request).getPermanentBaseURL(),
+            String htmlLink = gen.getHtmlLink(new URLGenerator(request).getPermanentBaseURL(),
+                    configuredTmpl);
+            String tabLink = gen.getTabLink(new URLGenerator(request).getPermanentBaseURL(),
                     configuredTmpl);
             if (gen.getError() != null) {
                 recordError(new ActionMessage("errors.linkGenerationFailed",
                         gen.getError()), request);
                 return mapping.findForward("template");
             }
-            session.setAttribute("link", link);
+            session.setAttribute("htmlLink", htmlLink);
+            session.setAttribute("tabLink", tabLink);
             String url = new URLGenerator(request).getPermanentBaseURL();
             session.setAttribute("highlightedLink", gen.getHighlightedLink(url, configuredTmpl));
             String title = configuredTmpl.getTitle();
