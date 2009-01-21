@@ -24,6 +24,7 @@ import junit.framework.TestCase;
  */
 public class LogicExpressionTest extends TestCase
 {
+    public List<String> empty = Collections.emptyList();
 
     public LogicExpressionTest(String arg) {
         super(arg);
@@ -34,6 +35,13 @@ public class LogicExpressionTest extends TestCase
         assertEquals(Collections.singleton("A"), l.getVariableNames());
         assertEquals("A", l.toString());
         assertEquals(Collections.singletonList(new LogicExpression("A")), l.split(Collections.singletonList(Collections.singletonList("A"))));
+        assertEquals(new LogicExpression("A"), l.getSection(Arrays.asList("A")));
+        assertEquals(null, l.getSection(empty));
+        try {
+            l.getSection(Arrays.asList("B"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     public void test2() {
@@ -56,6 +64,8 @@ public class LogicExpressionTest extends TestCase
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
         }
+        assertEquals(new LogicExpression("A"), l.getSection(Arrays.asList("A")));
+        assertEquals(new LogicExpression("A and B"), l.getSection(Arrays.asList("A", "B")));
     }
 
     public void test3() {
@@ -68,6 +78,12 @@ public class LogicExpressionTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
         assertEquals(Arrays.asList(new LogicExpression("A or B")), l.split(Arrays.asList(Arrays.asList("A", "B"))));
+        assertEquals(new LogicExpression("A or B"), l.getSection(Arrays.asList("A", "B")));
+        try {
+            l.getSection(Arrays.asList("A"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     public void test4() {
@@ -81,8 +97,9 @@ public class LogicExpressionTest extends TestCase
         LogicExpression l = new LogicExpression("A and (B or C)");
         assertEquals(new HashSet(Arrays.asList("A", "B", "C")), l.getVariableNames());
         assertEquals("A and (B or C)", l.toString());
-        List<String> empty = Collections.emptyList();
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B or C"), null), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C"), empty)));
+        assertEquals(new LogicExpression("A and (B or C)"), l.getSection(Arrays.asList("A", "B", "C")));
+        assertEquals(Arrays.asList(new LogicExpression("A and (B or C)")), l.split(Arrays.asList(Arrays.asList("A", "B", "C"))));
     }
 
     public void test6() {
