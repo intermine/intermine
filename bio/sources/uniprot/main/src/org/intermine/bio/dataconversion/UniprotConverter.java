@@ -533,9 +533,11 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("dbReference") && stack.peek().equals("citation")
                             && attrs.getValue("type").equals("PubMed")) {
                 entry.addPub(getPub(attrs.getValue("id")));
-            } else if (qName.equals("comment") && attrs.getValue("type") != null) {
-                entry.addAttribute(attrs.getValue("type"));
-            } else if (qName.equals("text") && stack.peek().equals("comment")) {
+            } else if (qName.equals("comment") && attrs.getValue("type") != null
+                            && !attrs.getValue("type").equals("")) {
+                    entry.addAttribute(attrs.getValue("type"));
+            } else if (qName.equals("text") && stack.peek().equals("comment")
+                            && entry.processing()) {
                 attName = "text";
             } else if (qName.equals("keyword")) {
                 attName = "keyword";
@@ -566,7 +568,10 @@ public class UniprotConverter extends DirectoryConverter
                                                  || stack.peek().equals("submittedName"))) {
                 entry.addDescription(attValue.toString());
             } else if (qName.equals("text") && stack.peek().equals("comment")) {
-                entry.addCommentRefId(getComment(entry.getAttribute(), attValue.toString()));
+                String commentText = attValue.toString();
+                if (commentText != null  & !commentText.equals("")) {
+                    entry.addCommentRefId(getComment(entry.getAttribute(), commentText));
+                }
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 String type = attName;
                 String name = attValue.toString();
