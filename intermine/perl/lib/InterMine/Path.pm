@@ -101,12 +101,26 @@ sub validate
  Example : the path "Department.company.name" has three parts, the "Department"
            ClassDescriptor, the "Department.company" Reference object and the
            "Company.name" Attribute object
+
 =cut
 sub parts
 {
   my $self = shift;
 
   return @{$self->{parts}};
+}
+
+=head2 to_string
+
+ Usage   : my $txt = $path->to_string();
+ Function: return a text version of this path
+
+=cut
+sub to_string
+{
+  my $self = shift;
+
+  $self->{string};
 }
 
 =head2 end
@@ -116,6 +130,7 @@ sub parts
            "Department.company.name" return the Company.name Attribute object.
            If the path consists only of a class (eg. "Department"), its
            ClassDescriptor is returned.
+
 =cut
 sub end
 {
