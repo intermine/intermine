@@ -16,7 +16,6 @@ import org.biojava.bio.symbol.IllegalSymbolException;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Translation;
 
 /**
  * A factory for creating BioSequence objects.
@@ -47,23 +46,6 @@ public abstract class BioSequenceFactory
     }
 
     /**
-     * Create a new BioSequence from a Translation
-     * @param translation the Translation
-     * @return a new BioSequence object or null if the Translation doesn't have a Sequence
-     * @throws IllegalSymbolException if any of the residues of the Translation can't be
-     * turned into amino acid symbols.
-     */
-    public static BioSequence make(Translation translation)
-        throws IllegalSymbolException {
-        if (translation.getSequence() == null) {
-            return null;
-        } else {
-            String residues = translation.getSequence().getResidues();
-            return new BioSequence(ProteinTools.createProtein(residues), translation);
-        }
-    }
-
-    /**
      * Create a new BioSequence from a Protein
      * @param protein the Protein
      * @return a new BioSequence object or null if the Protein doesn't have a Sequence
@@ -83,7 +65,7 @@ public abstract class BioSequenceFactory
     /**
      * Create a new BioSequence from a Protein
      * @param bioEnt the bio entity
-     * @param type the SequenceType 
+     * @param type the SequenceType
      * @return a new BioSequence object or null if the Protein doesn't have a Sequence
      * @throws IllegalSymbolException if any of the residues of the Protein can't be
      * turned into amino acid symbols.
@@ -94,10 +76,6 @@ public abstract class BioSequenceFactory
             Protein protein = (Protein) bioEnt;
             String residues = protein.getSequence().getResidues();
             return new BioSequence(ProteinTools.createProtein(residues), protein);
-        } else if (bioEnt instanceof Translation) {
-            Translation translation = (Translation) bioEnt;
-            String residues = translation.getSequence().getResidues();
-            return new BioSequence(ProteinTools.createProtein(residues), translation);
         } else if (bioEnt instanceof LocatedSequenceFeature) {
             LocatedSequenceFeature feature = (LocatedSequenceFeature) bioEnt;
             String residues = feature.getSequence().getResidues();

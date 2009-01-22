@@ -116,6 +116,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     // class "SequenceOntologyTerm") are only created once
     private final MultiKeyMap singletonMap = new MultiKeyMap();
 
+    private static final String PRIMARY_IDENTIFIER_STRING = "primaryIdentifier";
+    private static final String SECONDARY_IDENTIFIER_STRING = "secondaryIdentifier";
+    private static final String SYMBOL_STRING = "symbol";
+    private static final String NAME_STRING = "name";
+    private static final String SEQUENCE_STRING = "sequence";
+    private static final String LENGTH_STRING = "length";
+
     /**
      * Create a new ChadoSequenceProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
@@ -161,7 +168,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         // processLocationTable() is called by subclasses to create locations
         processLocationTable(connection, directLocRes);
 
-        processRelationTable(connection);
+        processRelationTable(connection, true);
+        processRelationTable(connection, false);
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
@@ -179,83 +187,35 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-//    private void processFeatureTable(Connection connection)
-//        throws SQLException, ObjectStoreException {
-//        Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
-//        ResultSet res = getFeatureResultSet(connection);
-//        int count = 0;
-//        while (res.next()) {
-//            Integer featureId = new Integer(res.getInt("feature_id"));
-//            String name = res.getString("name");
-//            String uniqueName = res.getString("uniquename");
-//            String type = res.getString("type");
-//            String residues = res.getString("residues");
-//            Integer organismId = new Integer(res.getInt("organism_id"));
-//            if (chromosomeFeatureTypesSet.contains(type)) {
-//                addToChromosomeMaps(organismId, uniqueName, featureId);
-//            }
-//            int seqlen = 0;
-//            if (res.getObject("seqlen") != null) {
-//                seqlen = res.getInt("seqlen");
-//            }
-//            
-//            List<String> primaryIds = new ArrayList<String>();
-//            primaryIds.add(uniqueName);
-//            String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
-//            uniqueName = fixIdentifier(interMineType, uniqueName);
-//            OrganismData organismData =
-//                getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-//            Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
-//                                       organismData.getTaxonId());
-//            
-//            
-//            if (feature != null) {
-//                processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
-//                                       interMineType, organismId);
-//                count++;
-//            }
-//        }
-//        LOG.info("created " + count + " features");
-//        res.close();
-//    }
-
-
     private void processFeatureTable(Connection connection)
-    throws SQLException, ObjectStoreException {
-    Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
-    ResultSet res = getFeatureResultSet(connection);
-    int count = 0;
-    while (res.next()) {
-        Integer featureId = new Integer(res.getInt("feature_id"));
-        String name = res.getString("name");
-        String uniqueName = res.getString("uniquename");
-        String type = res.getString("type");
-        String residues = res.getString("residues");
-        Integer organismId = new Integer(res.getInt("organism_id"));
-        if (chromosomeFeatureTypesSet.contains(type)) {
-            addToChromosomeMaps(organismId, uniqueName, featureId);
-        }
-        int seqlen = 0;
-        if (res.getObject("seqlen") != null) {
-            seqlen = res.getInt("seqlen");
-        }
-        
-        List<String> primaryIds = new ArrayList<String>();
-        primaryIds.add(uniqueName);
+        throws SQLException, ObjectStoreException {
+        Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
+        ResultSet res = getFeatureResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String name = res.getString("name");
+            String uniqueName = res.getString("uniquename");
+            String type = res.getString("type");
+            String residues = res.getString("residues");
+            String checksum = res.getString("md5checksum");
+            Integer organismId = new Integer(res.getInt("organism_id"));
+            if (chromosomeFeatureTypesSet.contains(type)) {
+                addToChromosomeMaps(organismId, uniqueName, featureId);
+            }
+            int seqlen = 0;
+            if (res.getObject("seqlen") != null) {
+                seqlen = res.getInt("seqlen");
+            }
 
-        
-        
-//        if (feature != null) {
-//            processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
-//                                   interMineType, organismId);
-            processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
-                    type, organismId);
-            count++;
-//        }
+            if (processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
+                                       checksum, type, organismId)) {
+                count++;
+            }
+        }
+        LOG.info("created " + count + " features");
+        res.close();
     }
-    LOG.info("created " + count + " features");
-    res.close();
-}
 
     
     /**
@@ -275,65 +235,53 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     /**
      * Create and store a new InterMineObject given data from a row of the feature table in a
      * Chado database.
+     * @param featureId the chado id from the feature table
      * @param uniqueName the uniquename from Chado
      * @param name the name from Chado
      * @param seqlen the sequence length from Chado
      * @param residues the residues from Chado
-     * @param interMineType the genomic model class name to use for the new feature
+     * @param md5checksum the MD5 checksum of the residues
+     * @param chadoType the type of the feature from the feature + cvterm tables
      * @param organismId the chado organism id
      * @throws ObjectStoreException if there is a problem while storing
      */
-//    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
-//                                        String name, int seqlen, String residues,
-//                                        String interMineType, Integer organismId)
-    private void processAndStoreFeature(Integer featureId, String uniqueName,
-            String name, int seqlen, String residues,
-            String type, Integer organismId)
+    private boolean processAndStoreFeature(Integer featureId, String uniqueName,
+                                           String name, int seqlen, String residues,
+                                           String md5checksum, String chadoType,
+                                           Integer organismId)
     throws ObjectStoreException {
-       
-        String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
-        uniqueName = fixIdentifier(interMineType, uniqueName);
-        OrganismData organismData =
-            getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-        Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
-                                   organismData.getTaxonId());
-        
-        organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-        int taxonId = organismData.getTaxonId();
-        Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
-        FeatureData fdat = new FeatureData();
-        fdat.itemIdentifier = feature.getIdentifier();
-        fdat.uniqueName = uniqueName;
-        fdat.chadoFeatureName = name;
-        fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
-        fdat.organismData = organismData;
-        feature.setReference("organism", organismItem);
+
+        FeatureData fdat =
+            makeFeatureData(featureId, chadoType, uniqueName, name, md5checksum, seqlen,
+                            organismId);
+
+        if (fdat == null) {
+            return false;
+        }
+
+        String fixedUniqueName = fixIdentifier(fdat.getInterMineType(), uniqueName);
+
         if (seqlen > 0) {
-            feature.setAttribute("length", String.valueOf(seqlen));
-            fdat.setFlag(FeatureData.LENGTH_SET, true);
+            setAttributeIfNotSet(fdat, "length", String.valueOf(seqlen));
         }
         ChadoDBConverter chadoDBConverter = getChadoDBConverter();
 
         String dataSourceName = chadoDBConverter.getDataSourceName();
         MultiKey nameKey = new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
-        List<ConfigAction> nameActionList = getConfig(taxonId).get(nameKey);
+        OrganismData orgData = fdat.getOrganismData();
+        List<ConfigAction> nameActionList = getConfig(orgData.getTaxonId()).get(nameKey);
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
         if (!StringUtils.isBlank(name)) {
-            String fixedName = fixIdentifier(interMineType, name);
+            String fixedName = fixIdentifier(fdat.getInterMineType(), name);
             if (nameActionList == null || nameActionList.size() == 0) {
-                if (feature.checkAttribute("symbol")) {
+                if (fdat.checkField(SYMBOL_STRING)) {
                     fieldValuesSet.add(fixedName);
-                    feature.setAttribute("symbol", fixedName);
+                    setAttributeIfNotSet(fdat, SYMBOL_STRING, fixedName);
                 } else {
-                    if (feature.checkAttribute("secondaryIdentifier")) {
-                        fieldValuesSet.add(fixedName);
-                        feature.setAttribute("secondaryIdentifier", fixedName);
-                    } else {
-                        // do nothing, if the name needs to go in a different attribute
-                        // it will need to be configured
-                    }
+                    fieldValuesSet.add(fixedName);
+                    setAttributeIfNotSet(fdat, SECONDARY_IDENTIFIER_STRING, fixedName);
                 }
             } else {
                 for (ConfigAction action: nameActionList) {
@@ -342,11 +290,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             (SetFieldConfigAction) action;
                         if (attrAction.isValidValue(fixedName)) {
                             String newFieldValue = attrAction.processValue(fixedName);
-                            feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+                            setAttributeIfNotSet(fdat, attrAction.getFieldName(), newFieldValue);
                             fieldValuesSet.add(newFieldValue);
-                            if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
-                            }
                         }
                     }
                 }
@@ -357,48 +302,50 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             new MultiKey("feature", fdat.interMineType, dataSourceName,
                          "uniquename");
         List<ConfigAction> uniqueNameActionList =
-            getConfig(taxonId).get(uniqueNameKey);
+            getConfig(fdat.getOrganismData().getTaxonId()).get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
-            feature.setAttribute("primaryIdentifier", uniqueName);
-            fieldValuesSet.add(uniqueName);
+            setAttributeIfNotSet(fdat, "primaryIdentifier", fixedUniqueName);
+            fieldValuesSet.add(fixedUniqueName);
         } else {
             for (ConfigAction action: uniqueNameActionList) {
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
-                    if (attrAction.isValidValue(uniqueName)) {
-                        String newFieldValue = attrAction.processValue(uniqueName);
-                        feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+                    if (attrAction.isValidValue(fixedUniqueName)) {
+                        String newFieldValue =
+                            attrAction.processValue(fixedUniqueName);
+                        setAttributeIfNotSet(fdat, attrAction.getFieldName(), newFieldValue);
                         fieldValuesSet.add(newFieldValue);
-                        if (attrAction.getFieldName().equals("primaryIdentifier")) {
-                            fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
-                        }
                     }
                 }
             }
         }
 
-        if (feature.canHaveReference("sequence") && residues != null && residues.length() > 0) {
-            Item sequence = getChadoDBConverter().createItem("Sequence");
-            sequence.setAttribute("residues", residues);
-            sequence.setAttribute("length", String.valueOf(seqlen));
-            feature.setReference("sequence", sequence);
-            getChadoDBConverter().store(sequence);
+        if (fdat.checkField(SEQUENCE_STRING)
+            && residues != null && residues.length() > 0) {
+            if (!fdat.getFlag(SEQUENCE_STRING)) {
+                Item sequence = getChadoDBConverter().createItem("Sequence");
+                sequence.setAttribute("residues", residues);
+                sequence.setAttribute("length", String.valueOf(seqlen));
+                Reference chrReference = new Reference();
+                chrReference.setName(SEQUENCE_STRING);
+                chrReference.setRefId(sequence.getIdentifier());
+                getChadoDBConverter().store(chrReference, fdat.getIntermineObjectId());
+                getChadoDBConverter().store(sequence);
+                fdat.setFlag(SEQUENCE_STRING, true);
+            }
         }
-
-        // don't set the evidence collection - that's done by processPubTable()
-        fdat.intermineObjectId = store(feature, taxonId); // Stores Feature
 
         // always create a synonym for the uniquename
         boolean uniqueNameSet = false;
-        if (fieldValuesSet.contains(uniqueName)) {
+        if (fieldValuesSet.contains(fixedUniqueName)) {
             uniqueNameSet = true;
         }
-        Item uniqueNameSynonym =
-            createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, null);
+        Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName,
+                                               uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
         if (!StringUtils.isBlank(name)) {
-            String fixedName = fixIdentifier(interMineType, name);
+            String fixedName = fixIdentifier(fdat.getInterMineType(), name);
 
             if (nameActionList == null || nameActionList.size() == 0) {
                 nameActionList = new ArrayList<ConfigAction>();
@@ -421,6 +368,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             }
         }
         featureMap.put(featureId, fdat);
+
+        return true;
     }
 
 
@@ -557,6 +506,63 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     
     
     
+    /**
+     * Set the given attribute if the FeatureData says it's not set, then set the flag in
+     * FeatureData to say it's set.
+     */
+    private void setAttributeIfNotSet(FeatureData fdat, final String attributeName,
+                                      final String value) throws ObjectStoreException {
+        if (!fdat.getFlag(attributeName)) {
+            setAttribute(fdat.getIntermineObjectId(), attributeName, value);
+            fdat.setFlag(attributeName, true);
+        }
+    }
+
+    /**
+     * Create and store a new Item, returning a FeatureData object for the feature.
+     * @param featureId the chado id from the feature table
+     * @param chadoType the type of the feature from the feature + cvterm tables
+     * @param uniqueName the uniquename from chado
+     * @param name the name from chado
+     * @param md5checksum the checksum from the chado feature able
+     * @param seqlen the length from the feature table
+     * @param organismId the organism id of the feature from chado
+     * @return a FeatureData object
+     * @throws ObjectStoreException if there is a problem while storing
+     */
+    protected FeatureData makeFeatureData(int featureId, String chadoType,
+                                          String uniqueName, String name,
+                                          String md5checksum, int seqlen,
+                                          int organismId) throws ObjectStoreException {
+        String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
+        String fixedUniqueName = fixIdentifier(interMineType, uniqueName);
+        OrganismData organismData =
+            getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+
+        Item feature = makeFeature(featureId, chadoType, interMineType, name, fixedUniqueName,
+                                   seqlen, organismData.getTaxonId());
+        if (feature == null) {
+            return null;
+        }
+
+        int taxonId = organismData.getTaxonId();
+        FeatureData fdat;
+        fdat = new FeatureData();
+        Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
+        feature.setReference("organism", organismItem);
+
+        fdat.setFieldExistenceFlags(feature);
+
+        fdat.intermineObjectId = store(feature, taxonId); // Stores Feature
+        fdat.itemIdentifier = feature.getIdentifier();
+        fdat.uniqueName = fixedUniqueName;
+        fdat.chadoFeatureName = name;
+        fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
+        fdat.organismData = organismData;
+        fdat.md5checksum = md5checksum;
+        return fdat;
+    }
+
     /**
      * Store the feature Item.
      * @param feature the Item
@@ -778,9 +784,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * Use the feature_relationship table to set relations (references and collections) between
      * features.
      */
-    private void processRelationTable(Connection connection)
+    private void processRelationTable(Connection connection, boolean subjectFirst)
         throws SQLException, ObjectStoreException {
-        ResultSet res = getFeatureRelationshipResultSet(connection);
+        ResultSet res = getFeatureRelationshipResultSet(connection, subjectFirst);
         Integer lastSubjectId = null;
 
         // a Map from transcript object id to count of exons
@@ -796,12 +802,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         int collectionTotal = 0;
         while (res.next()) {
             Integer featRelationshipId = new Integer(res.getInt("feature_relationship_id"));
-            Integer subjectId = new Integer(res.getInt("subject_id"));
-            Integer objectId = new Integer(res.getInt("object_id"));
+            Integer firstFeature1Id = new Integer(res.getInt("feature1_id"));
+            Integer secondFeatureId = new Integer(res.getInt("feature2_id"));
             String relationTypeName = res.getString("type_name");
 
-            if (lastSubjectId != null && !subjectId.equals(lastSubjectId)) {
-                if (!processCollectionData(lastSubjectId, relTypeMap, collectionWarnings)) {
+            if (lastSubjectId != null && !firstFeature1Id.equals(lastSubjectId)) {
+                if (!processCollectionData(lastSubjectId, relTypeMap, collectionWarnings,
+                                           subjectFirst)) {
                     collectionWarnings++;
                     if (collectionWarnings == 20) {
                         LOG.warn("ignoring further unknown feature warnings from "
@@ -811,9 +818,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 collectionTotal += relTypeMap.size();
                 relTypeMap = new HashMap<String, Map<String, List<FeatureData>>>();
             }
-            if (featureMap.containsKey(subjectId)) {
-                if (featureMap.containsKey(objectId)) {
-                    FeatureData objectFeatureData = featureMap.get(objectId);
+
+            if (PARTOF_RELATIONS.contains(relationTypeName) && !subjectFirst) {
+                // special case for part_of relations - they are directional
+                continue;
+            }
+
+            if (featureMap.containsKey(firstFeature1Id)) {
+                if (featureMap.containsKey(secondFeatureId)) {
+                    FeatureData objectFeatureData = featureMap.get(secondFeatureId);
                     Map<String, List<FeatureData>> objectClassFeatureDataMap;
                     if (relTypeMap.containsKey(relationTypeName)) {
                         objectClassFeatureDataMap = relTypeMap.get(relationTypeName);
@@ -845,7 +858,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                         throw new RuntimeException(message);
                     }
                     if (Transcript.class.isAssignableFrom(objectClass)) {
-                        FeatureData subjectFeatureData = featureMap.get(subjectId);
+                        FeatureData subjectFeatureData = featureMap.get(firstFeature1Id);
 
                         // XXX FIXME TODO Hacky special case: count the exons so we can set
                         // exonCount later.  Perhaps this should be configurable.
@@ -863,7 +876,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
-                            LOG.warn("object_id " + objectId + " from feature_relationship "
+                            LOG.warn("object_id " + secondFeatureId + " from feature_relationship "
                                      + featRelationshipId + " was not found in the feature table");
                         } else {
                             LOG.warn("further feature_relationship warnings ignored");
@@ -874,7 +887,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             } else {
                 if (featureWarnings <= 20) {
                     if (featureWarnings < 20) {
-                        LOG.warn("subject_id " + subjectId + " from feature_relationship "
+                        LOG.warn("subject_id " + firstFeature1Id + " from feature_relationship "
                                  + featRelationshipId
                                  + " was not found in the feature table");
                     } else {
@@ -884,10 +897,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 }
             }
             count++;
-            lastSubjectId = subjectId;
+            lastSubjectId = firstFeature1Id;
         }
         if (lastSubjectId != null) {
-            processCollectionData(lastSubjectId, relTypeMap, collectionWarnings); // Stores stuff
+            processCollectionData(lastSubjectId, relTypeMap, collectionWarnings, subjectFirst);
             collectionTotal += relTypeMap.size();
         }
         LOG.info("processed " + count + " relations");
@@ -908,7 +921,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     private boolean processCollectionData(Integer chadoSubjectId,
                                        Map<String, Map<String, List<FeatureData>>> relTypeMap,
-                                       int collectionWarnings)
+                                       int collectionWarnings, boolean subjectIsFirst)
         throws ObjectStoreException {
         FeatureData subjectData = featureMap.get(chadoSubjectId);
         if (subjectData == null) {
@@ -936,8 +949,14 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                 List<FieldDescriptor> fds = null;
 
                 FeatureData subjectFeatureData = featureMap.get(chadoSubjectId);
-                // key example: ("relationship", "Translation", "producedby", "MRNA")
-                MultiKey key = new MultiKey("relationship", subjectFeatureData.interMineType,
+                // key example: ("relationship", "Protein", "producedby", "MRNA")
+                String relType;
+                if (subjectIsFirst) {
+                    relType = "relationship";
+                } else {
+                    relType = "rev_relationship";
+                }
+                MultiKey key = new MultiKey(relType, subjectFeatureData.interMineType,
                                             relationType, objectClass);
                 List<ConfigAction> actionList =
                     getConfig(subjectData.organismData.getTaxonId()).get(key);
@@ -1657,7 +1676,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         String query =
             "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
             + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
-            + "        is_analysis, residues, organism_id"
+            + "        is_analysis, residues, md5checksum, organism_id"
             + "    FROM feature, cvterm"
             + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
             + orgConstraintForQuery
@@ -1729,24 +1748,82 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
     /**
-     * Return the interesting rows from the feature_relationship table.
+     * Return the interesting rows from the feature_relationship table.  The feature pairs are
+     * returned in both subject, object and object, subject orientations so that the relationship
+     * processing can be configured in a natural way.
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
+     * @param subjectFirst if true the subject_id column from the relationship table will be before
+     *   the object_id in the results, otherwise it will be after.  ie.
+     *   "feature_relationship_id, subject_id as feature1_id, object_id as feature2_id, ..."
+     *   vs "feature_relationship_id, object_id as feature1_id, subject_id as feature2_id, ..."
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getFeatureRelationshipResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT feature_relationship_id, subject_id, object_id, cvterm.name AS type_name"
-            + "  FROM feature_relationship, cvterm"
-            + "  WHERE cvterm.cvterm_id = type_id"
-            + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
-            + "      AND object_id IN (" + getFeatureIdQuery() + ")"
-            + "  ORDER BY subject_id";
+    protected ResultSet getFeatureRelationshipResultSet(Connection connection,
+                                                        boolean subjectFirst) throws SQLException {
+        String subObjString;
+        if (subjectFirst) {
+            subObjString = "subject_id as feature1_id, object_id as feature2_id";
+        } else {
+            subObjString = "object_id as feature1_id, subject_id as feature2_id";
+        }
+        String extraQueryBits = "";
+        if (subjectFirst) {
+            extraQueryBits = getGenesProteinsQuery();
+        }
+        String query = "SELECT feature_relationship_id, " + subObjString
+                        + ", cvterm.name AS type_name"
+                        + "  FROM feature_relationship, cvterm"
+                        + "  WHERE cvterm.cvterm_id = type_id"
+                        + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
+                        + "      AND object_id IN (" + getFeatureIdQuery() + ")"
+                        + extraQueryBits
+                        + " ORDER BY feature1_id";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
+    }
+
+    /**
+     * Return extra SQL that will be added to the feature_relationships table query.  It will add
+     * fake relationships to the query to make it look like there are gene <-> protein relations
+     * with type 'producedby'.
+     */
+    private String getGenesProteinsQuery() {
+        String partOfConstraints = makePartOfConstraints("fr1type.name");
+        return " UNION SELECT 0, f1.feature_id AS feature1_id, f3.feature_id AS  feature2_id, "
+            + "               'producedby' "
+            + "   FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
+            + "        feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
+            + "        feature f3, cvterm f3type "
+            + "  WHERE fr1.subject_id = fr2.object_id "
+            + "    AND fr1.type_id = fr1type.cvterm_id "
+            + "    AND (" + partOfConstraints  + ") "
+            + "    AND fr2.type_id = fr2type.cvterm_id "
+            + "    AND fr2type.name = 'producedby' "
+            + "    AND f1.feature_id = fr1.object_id "
+            + "    AND f2.feature_id = fr1.subject_id "
+            + "    AND f3.feature_id = fr2.subject_id "
+            + "    AND f1.type_id = f1type.cvterm_id "
+            + "    AND f2.type_id = f2type.cvterm_id "
+            + "    AND f3.type_id = f3type.cvterm_id "
+            + "    AND f1type.name = 'gene' "
+            + "    AND f2type.name = 'mRNA' "
+            + "    AND f3type.name = 'protein'";
+    }
+
+    /**
+     * @param string
+     * @return
+     */
+    private String makePartOfConstraints(String fieldName) {
+        List<String> bits = new ArrayList<String>();
+        for (String partOf: PARTOF_RELATIONS) {
+            bits.add(fieldName + " = '" + partOf + "'");
+        }
+        return StringUtil.join(bits, " OR ");
     }
 
     /**
@@ -1964,6 +2041,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      */
     protected static class FeatureData
     {
+        private String md5checksum;
         private OrganismData organismData;
         private String uniqueName;
         private String chadoFeatureName;
@@ -1974,11 +2052,27 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         private String interMineType;
         private Integer intermineObjectId;
 
-        private short flagss = 0;
+        private short flags = 0;
         static final short EVIDENCE_CREATED = 0;
         static final short IDENTIFIER_SET = 1;
         static final short LENGTH_SET = 2;
         static final short DATASET_SET = 3;
+        static final short SYMBOL_SET = 4;
+        static final short SECONDARY_IDENTIFIER_SET = 5;
+        static final short NAME_SET = 6;
+        static final short SEQUENCE_SET = 7;
+        static final short CAN_HAVE_SEQUENCE = 8;
+        static final short CAN_HAVE_SYMBOL = 9;
+        private static final Map<String, Short> NAME_MAP = new HashMap<String, Short>();
+
+        static {
+            NAME_MAP.put(PRIMARY_IDENTIFIER_STRING, IDENTIFIER_SET);
+            NAME_MAP.put(SECONDARY_IDENTIFIER_STRING, SECONDARY_IDENTIFIER_SET);
+            NAME_MAP.put(SYMBOL_STRING, SYMBOL_SET);
+            NAME_MAP.put(NAME_STRING, NAME_SET);
+            NAME_MAP.put(SEQUENCE_STRING, SEQUENCE_SET);
+            NAME_MAP.put(LENGTH_STRING, LENGTH_SET);
+        }
 
         /**
          * Return the id of the Item representing this feature.
@@ -1986,6 +2080,62 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public Integer getIntermineObjectId() {
             return intermineObjectId;
+        }
+
+        /**
+         * Set flags needed by canHaveReference() and checkAttribute().
+         * @param item the Item to test
+         */
+        public void setFieldExistenceFlags(Item item) {
+            if (item.canHaveReference(SEQUENCE_STRING)) {
+                setFlag(CAN_HAVE_SEQUENCE, true);
+            }
+            if (item.checkAttribute(SYMBOL_STRING)) {
+                setFlag(CAN_HAVE_SYMBOL, true);
+            }
+        }
+
+        /**
+         * Return true if the Item for this FeatureData has a field with the given name.
+         * @param fieldName the field name
+         * @return true if the field name is valid
+         */
+        public boolean checkField(String fieldName) {
+            if (fieldName.equals(SEQUENCE_STRING)) {
+                return getFlag(CAN_HAVE_SEQUENCE);
+            } else {
+                if (fieldName.equals(SYMBOL_STRING)) {
+                    return getFlag(CAN_HAVE_SYMBOL);
+                } else {
+                    throw new RuntimeException("unknown field name: " + fieldName);
+                }
+            }
+        }
+
+        /**
+         * Return the value of the flag corresponding to the given attribute name.
+         * @param attributeName the attribute name
+         * @return the flag value
+         */
+        public boolean getFlag(String attributeName) {
+            return getFlag(getFlagId(attributeName));
+        }
+
+        /**
+         * Set the flag corresponding to the given attribute name.
+         * @param attributeName the attribute name
+         * @param value the new flag value
+         */
+        public void setFlag(String attributeName, boolean value) {
+            setFlag(getFlagId(attributeName), value);
+        }
+
+        private short getFlagId(String attributeName) {
+            if (NAME_MAP.containsKey(attributeName)) {
+                return NAME_MAP.get(attributeName);
+            } else {
+                throw new RuntimeException("unknown attribute name: " + attributeName);
+            }
         }
 
         /**
@@ -2038,7 +2188,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          * @return true if the flag is set
          */
         public boolean getFlag(short flag) {
-            return (flagss & shift(flag)) != 0;
+            return (flags & shift(flag)) != 0;
         }
 
         /**
@@ -2048,10 +2198,18 @@ public class ChadoSequenceProcessor extends ChadoProcessor
          */
         public void setFlag(short flag, boolean value) {
             if (value) {
-                flagss |= shift(flag);
+                flags |= shift(flag);
             } else {
-                flagss &= ~shift(flag);
+                flags &= ~shift(flag);
             }
+        }
+
+        /**
+         * Return the MD5 checksum of the residues of this feature.
+         * @return the checksum
+         */
+        public String getChecksum() {
+            return md5checksum;
         }
     }
 }

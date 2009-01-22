@@ -154,6 +154,9 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP =
         new HashMap<String, String>();
 
+    private final Map<String, FeatureData> proteinFeatureDataMap =
+        new HashMap<String, FeatureData>();
+
     static {
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
                                                   "ChromosomalDeletion");
@@ -577,12 +580,21 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("dbxref", "MRNA", FLYBASE_DB_NAME, null),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
 
+            // set the Allele.gene when there is an alleleof relationship between Allele and Gene
             map.put(new MultiKey("relationship", "Allele", "alleleof", "Gene"),
                     Arrays.asList(new SetFieldConfigAction("gene")));
-            map.put(new MultiKey("relationship", "Translation", "producedby", "MRNA"),
-                    Arrays.asList(new SetFieldConfigAction("MRNA")));
+
+            // Set the protein reference in the MRNA - "rev_relationship" means that the
+            // relationship table actually has Protein, producedby, MRNA.  We configure like
+            // this so we can set a reference in MRNA rather than protein
+            map.put(new MultiKey("rev_relationship", "MRNA", "producedby", "Protein"),
+                    Arrays.asList(new SetFieldConfigAction("protein")));
+
             map.put(new MultiKey("relationship", "CDNAClone", "derived_assoc_cdna_clone", "Gene"),
                     Arrays.asList(new SetFieldConfigAction("gene")));
+
+            map.put(new MultiKey("relationship", "Gene", "producedby", "Protein"),
+                    Arrays.asList(new SetFieldConfigAction("proteins")));
 
             // featureprop configuration example: for features of class "Gene", if the type name
             // of the prop is "cyto_range", set the "cytoLocation" attribute of the
@@ -641,7 +653,8 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "Gene", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            map.put(new MultiKey("feature", "ChromosomeStructureVariation", FLYBASE_DB_NAME, "name"),
+            map.put(new MultiKey("feature", "ChromosomeStructureVariation", FLYBASE_DB_NAME,
+                                 "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
 
@@ -656,26 +669,17 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(DO_NOTHING_ACTION));
 
-            if (taxonId == 7227) {
-                map.put(new MultiKey("dbxref", "Translation", FLYBASE_DB_NAME + " Annotation IDs",
-                                     Boolean.TRUE),
-                                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                                   CREATE_SYNONYM_ACTION));
-                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "name"),
-                        Arrays.asList(new SetFieldConfigAction("symbol"),
-                                      CREATE_SYNONYM_ACTION));
-                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "uniquename"),
-                        Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
-            } else {
-                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "uniquename"),
-                        Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
-                map.put(new MultiKey("feature", "Translation", FLYBASE_DB_NAME, "name"),
-                        Arrays.asList(new SetFieldConfigAction("symbol"),
-                                      CREATE_SYNONYM_ACTION));
-                map.put(new MultiKey("dbxref", "Translation", "GB_protein", null),
-                        Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
-                                      CREATE_SYNONYM_ACTION));
-            }
+            map.put(new MultiKey("dbxref", "Protein", FLYBASE_DB_NAME + " Annotation IDs",
+                                 Boolean.TRUE),
+                                 Arrays.asList(new SetFieldConfigAction("name"),
+                                               CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("feature", "Protein", FLYBASE_DB_NAME, "name"),
+                    Arrays.asList(CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("feature", "Protein", FLYBASE_DB_NAME, "uniquename"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier")));
+            map.put(new MultiKey("dbxref", "Protein", "GB_protein", Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("genbankIdentifier"),
+                                  CREATE_SYNONYM_ACTION));
         }
 
         return map;
@@ -784,9 +788,7 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
         }
 
         if (chadoFeatureType.equals("protein")) {
-            if (uniqueName.startsWith("FBpp")) {
-                realInterMineType = "Translation";
-            } else {
+            if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }
         }
@@ -1593,6 +1595,29 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
     @Override
     protected String fixIdentifier(@SuppressWarnings("unused") String type, String identifier) {
         return XmlUtil.fixEntityNames(identifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
+                                          String name, String md5checksum, int seqlen,
+                                          int organismId) throws ObjectStoreException {
+        if (type.equals("protein")) {
+            if (proteinFeatureDataMap.containsKey(md5checksum)) {
+                return proteinFeatureDataMap.get(md5checksum);
+            } else {
+                FeatureData fdat =
+                    super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
+                                          organismId);
+                proteinFeatureDataMap.put(md5checksum, fdat);
+                return fdat;
+            }
+        } else {
+            return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
+                                         organismId);
+        }
     }
 
     /**

@@ -1,8 +1,5 @@
+<project name="ensembl" default="default" basedir=".">
+  <description>build, test, package ensembl</description>
 
-<project name="flymine-static" default="default" basedir=".">
-  <description>build, test, package flymine-static</description>
-  
   <import file="../../../imbuild/source.xml"/>
-  
 </project>
-
