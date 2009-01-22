@@ -1,0 +1,124 @@
+package InterMine::PathQuery::Constraint;
+
+=head1 NAME
+
+InterMine::PathQuery::Constraint - a constraint on a path in a PathQuery
+
+=head1 SYNOPSIS
+
+=head1 AUTHOR
+
+FlyMine C<< <support@flymine.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<support@flymine.org>.
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc InterMine::PathQuery::Constraint
+
+You can also look for information at:
+
+=over 4
+
+=item * FlyMine
+
+L<http://www.flymine.org>
+
+=back
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009 FlyMine, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 FUNCTIONS
+
+=cut
+
+use strict;
+
+# value is 0 for unary operators and 1 for binary operators
+my %OPS = ('IS NOT NULL' => 1,
+           'IS NULL' => 1,
+           'CONTAINS' => 2,
+           '=' => 2,
+           '!=' => 2,
+           '<' => 2,
+           '>' => 2);
+
+=head2 new
+
+ Usage   : my $con = InterMine::PathQuery::Constraint("= '$department_name'")
+ Function: create a new Constraint object
+
+=cut
+
+sub new
+{
+  my $class = shift;
+  my $constraint_string = shift;
+  my @bits = $constraint_string =~ m/^(IS NOT NULL|IS NULL|\S+)(?:\s+(.*))?/;
+
+  if (@bits < 1) {
+    die "can't parse constraint: $constraint_string\n";
+  }
+
+  my $op = $bits[0];
+
+  if (!exists $OPS{$op}) {
+    die qq[unknown operation "$op" in constraint: $constraint_string\n];
+  }
+
+  my $value = $bits[1];
+
+  my $self = {op => $op};
+
+  if (defined $value) {
+    if ($OPS{$op} == 1) {
+      die qq[operator "$op" should not have a value ($value)];
+    }
+    $value =~ s/^'(.*)'$/$1/;
+    $value =~ s/^"(.*)"$/$1/;
+
+    $self->{value} = $value;
+  } else {
+    if ($OPS{$op} == 2) {
+      die qq[operator "$op" needs a value];
+    }
+  }
+
+  return bless $self, $class;
+}
+
+=head2 op
+
+ Usage   : my $op = $con->op();
+ Function: return the operation of this constraint (eg. "=", "CONTAINS",
+           "IS NULL")
+
+=cut
+sub op
+{
+  my $self = shift;
+  return $self->{op};
+}
+
+=head2 value
+
+ Usage   : my $val = $con->value();
+ Function: return the value of this constraint if the operator is binary
+
+=cut
+sub value
+{
+  my $self = shift;
+  return $self->{value};
+}
+
+1;
