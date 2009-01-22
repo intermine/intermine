@@ -13,9 +13,20 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.util.MessageResources;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathNode;
-
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
@@ -23,24 +34,13 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.Globals;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
-
 /**
  * @author Xavier Watkins
  *
  */
 public class QuickSearchAction extends InterMineAction
 {
-
+    private static final Logger LOG = Logger.getLogger(QuickSearchAction.class);
     /**
      * Method called when user has submitted search form.
      *
@@ -58,6 +58,7 @@ public class QuickSearchAction extends InterMineAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+
         HttpSession session = request.getSession();
         ServletContext context = session.getServletContext();
         QuickSearchForm qsf = (QuickSearchForm) form;
@@ -73,11 +74,24 @@ public class QuickSearchAction extends InterMineAction
             String templateName = (String) webPropertiesMap.get("begin.browse.template");
             String templateType = "global";
 
+            if (templateName == null) {
+                LOG.error("'begin.browse.template' not configured correctly in properties file.");
+                recordError(new ActionMessage("quicksearch.fail"), request);
+                return mapping.findForward("error");
+            }
+
             SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
             String userName = profile.getUsername();
             TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
                                                                  templateName, templateType);
+
+            if (template == null) {
+                LOG.error("'begin.browse.template' not configured correctly in properties file.");
+                recordError(new ActionMessage("quicksearch.fail"), request);
+                return mapping.findForward("error");
+            }
+
             QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.
                                                                       QUERY_TIMEOUT_SECONDS * 1000);
             MessageResources messages =
