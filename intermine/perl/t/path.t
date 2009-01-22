@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 use Test::Exception;
 
 use InterMine::Model;
@@ -39,3 +39,5 @@ dies_ok {InterMine::Path->validate($model, '')} 'invalid path';
 dies_ok {InterMine::Path->validate($model, 'Foo')} 'invalid path';
 dies_ok {InterMine::Path->validate($model, 'Department.foo')} 'invalid path';
 dies_ok {InterMine::Path->validate($model, 'Department.company.foo')} 'invalid path';
+
+is($path_string, $path->to_string());
