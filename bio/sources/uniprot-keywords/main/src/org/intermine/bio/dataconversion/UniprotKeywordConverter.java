@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +19,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -34,13 +31,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotKeywordConverter extends FileConverter
 {
-
-    //TODO: This should come from props files
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    private Map ontoMaster = new HashMap();
-    private Map keyMaster = new HashMap();
-    private Map synMaster = new HashMap();
-    private Map mapMaster = new HashMap();  // map of maps
+    private Map<String, String> ontologies = new HashMap();
+    private Map<String, String> keywords = new HashMap();
+    private Map<String, String> synonyms = new HashMap();
 
     /**
      * Constructor
@@ -55,9 +48,7 @@ public class UniprotKeywordConverter extends FileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        mapMaps();
-        UniprotHandler handler = new UniprotHandler(getItemWriter(), mapMaster);
-
+        UniprotKeywordHandler handler = new UniprotKeywordHandler();
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -66,76 +57,109 @@ public class UniprotKeywordConverter extends FileConverter
         }
     }
 
-
-    private void mapMaps() {
-
-        mapMaster.put("ontoMaster", ontoMaster);    // ontology - only one
-        mapMaster.put("keyMaster", keyMaster);      // keyword names
-        mapMaster.put("synMaster", synMaster);      // synonyms
-
-    }
-
     /**
      * An implementation of DefaultHandler for parsing UniProt XML.
      */
-    static class UniprotHandler extends DefaultHandler
+    private class UniprotKeywordHandler extends DefaultHandler
     {
-        private int nextClsId = 0;
-        private ItemFactory itemFactory;
-        private ItemWriter writer;
-        private Map ids = new HashMap();
-        private Map aliases = new HashMap();
-        private String name = null;
         private String attName = null;
         private StringBuffer attValue = null;
-        private Map ontoMaster;
-        private Map keyMaster;
-        private Map synMaster;
-        private Item ontology;
-        private ReferenceList synCollection;
+        private String ontologyRefId = null;
+        private ReferenceList synRefIds = new ReferenceList("synonyms");
+        private String name = null;
 
         /**
          * Constructor
          * @param writer the ItemWriter used to handle the resultant items
          * @param mapMaster Map of all of the maps
          */
-        public UniprotHandler(ItemWriter writer, Map mapMaster) {
-
-            this.ontoMaster = (Map) mapMaster.get("ontoMaster");
-            this.keyMaster = (Map) mapMaster.get("keyMaster");
-            this.synMaster = (Map) mapMaster.get("synMaster");
-            itemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-            this.writer = writer;
-
+        public UniprotKeywordHandler() {
+            try {
+                ontologyRefId = getItem(ontologies, "Ontology", "title", "UniProtKeyword");
+            } catch (SAXException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
-
 
         /**
          * {@inheritDoc}
          */
         public void startElement(String uri, String localName, String qName, Attributes attrs)
-            throws SAXException {
-            try {
-                if (qName.equals("name")) {
-
-                    attName = "name";
-
-                } else if (qName.equals("description")) {
-
-                    attName = "description";
-
-                } else if (qName.equals("keywordList")) {
-
-                    ontology = getItem(ontoMaster, "Ontology", "title", "UniProtKeyword");
-                    writer.store(ItemHelper.convert(ontology));
-                }
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
+        throws SAXException {
+            if (qName.equals("name")) {
+                attName = "name";
+            } else if (qName.equals("description")) {
+                attName = "description";
             }
-
             super.startElement(uri, localName, qName, attrs);
-
             attValue = new StringBuffer();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void endElement(String uri, String localName, String qName)
+        throws SAXException {
+            super.endElement(uri, localName, qName);
+            if (qName.equals("name")  && attValue != null && !attValue.toString().equals("")) {
+                String synonym = attValue.toString();
+                if (name == null) {
+                    name = synonym;
+                } else {
+                    String refId = getItem(synonyms, "OntologyTermSynonym", "name", synonym);
+                    synRefIds.addRefId(refId);
+                }
+            } else if (qName.equals("description")) {
+                String descr = attValue.toString();
+                Item keyword = getKeyword(name);
+                if (keyword != null) {
+                    if (!synRefIds.getRefIds().isEmpty()) {
+                        keyword.addCollection(synRefIds);
+                    }
+                    keyword.setAttribute("description", descr);
+                    keyword.setReference("ontology", ontologyRefId);
+                    try {
+                        System.out.println("storign");
+                        store(keyword);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException("failed storing", e);
+                    }
+                }
+            } else if (qName.equals("keyword")) {
+                // new keyword, reset
+                synRefIds = new ReferenceList("synonyms");
+                name = null;
+            }
+        }
+
+        private String getItem(Map<String, String> map, String itemType, String titleType,
+                               String title)
+        throws SAXException {
+            String refId = map.get(title);
+            if (refId == null) {
+                Item item = createItem(itemType);
+                item.setAttribute(titleType, title);
+                refId = item.getIdentifier();
+                map.put(title, refId);
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException("failed storing", e);
+                }
+            }
+            return refId;
+        }
+
+        private Item getKeyword(String keyword) {
+            String refId = keywords.get(keyword);
+            if (refId == null) {
+                Item item = createItem("OntologyTerm");
+                item.setAttribute("name", keyword);
+                keywords.put(keyword, item.getIdentifier());
+                return item;
+            }
+            return null;
         }
 
         /**
@@ -173,109 +197,6 @@ public class UniprotKeywordConverter extends FileConverter
                     attValue.append(s);
                 }
             }
-        }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-            super.endElement(uri, localName, qName);
-
-            try {
-
-                if (qName.equals("name")) {
-
-                    if (name == null) {
-                        name = attValue.toString();
-                        synCollection = new ReferenceList("synonyms", new ArrayList());
-                    }  else {
-                        boolean store = false;
-                        if (!synMaster.containsKey(attValue.toString())) {
-                            store = true;
-                        }
-                        Item syn = getItem(synMaster, "OntologyTermSynonym",
-                                           "name", attValue.toString());
-                        if (store) {
-                            writer.store(ItemHelper.convert(syn));
-                        }
-
-                        synCollection.addRefId(syn.getIdentifier());
-                    }
-                } else if (qName.equals("description")) {
-
-                    // there are category keywords which don't have a name, we will
-                    // have to ignore these.
-                    if (name != null) {
-                        String descr = attValue.toString();
-
-                        Item keyword = getItem(keyMaster, "OntologyTerm", "name", name);
-                        if (keyword != null) {
-                            if (!synCollection.getRefIds().isEmpty()) {
-                                keyword.addCollection(synCollection);
-                            }
-                            keyword.setAttribute("description", descr);
-                            keyword.setReference("ontology", ontology.getIdentifier());
-                            writer.store(ItemHelper.convert(keyword));
-                        }
-                        name = null;
-                    }
-                }
-
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-
-        private Item getItem(Map map, String itemType, String titleType, String title) {
-
-            Item item = (Item) map.get(title);
-            if (item == null) {
-                item = createItem(itemType);
-                item.setAttribute(titleType, title);
-                map.put(title, item);
-
-            }
-            return item;
-        }
-
-
-        /**
-         * Convenience method for creating a new Item
-         * @param className the name of the class
-         * @return a new Item
-         */
-        protected Item createItem(String className) {
-
-            return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                                                  GENOMIC_NS + className, "");
-        }
-
-        private String newId(String className) {
-            Integer id = (Integer) ids.get(className);
-            if (id == null) {
-                id = new Integer(0);
-                ids.put(className, id);
-            }
-            id = new Integer(id.intValue() + 1);
-            ids.put(className, id);
-            return id.toString();
-        }
-
-        /**
-         * Uniquely alias a className
-         * @param className the class name
-         * @return the alias
-         */
-        protected String alias(String className) {
-            String alias = (String) aliases.get(className);
-            if (alias != null) {
-                return alias;
-            }
-            String nextIndex = "" + (nextClsId++);
-            aliases.put(className, nextIndex);
-            return nextIndex;
         }
     }
 }
