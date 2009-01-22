@@ -268,6 +268,7 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="templates" path="templates.page"/>
       <forward name="bags" path="/bag.do"/>
+      <forward name="error" redirect="true" path="/begin.do"/>
     </action>
     <action path="/contactAction" name="contactForm" type="org.intermine.web.struts.ContactAction" scope="request" input="contact">
       <forward name="contact" path="contact.page"/>
