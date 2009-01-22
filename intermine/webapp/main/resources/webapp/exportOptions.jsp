@@ -98,7 +98,7 @@
      <tiles:put name="table" value="${table}" />
   </tiles:insert>
   &nbsp;
-  <button type="button" onclick="javascript:addSelectedPath()">Add</button></li>
+  <button type="button" onclick="javascript:addSelectedPath()" id="columnAddButton">Add</button></li>
 
   <li><label>${exportReorderMessage}:</label>
   <ul id="pathsList">
@@ -110,6 +110,11 @@
     <c:forEach var="path" items="${pathsMap}">
        addPathElement("${path.key}", "${path.value}");
     </c:forEach>
+
+    if (document.getElementById('columnToAdd')[0].value == '') {
+        document.getElementById("columnAddButton").disabled = true;
+        document.getElementById("columnToAdd").disabled = true;
+    }       
   </script></li>
 </ol>
 </fieldset>

@@ -22,8 +22,15 @@ which id is saved in table parameter --%>
 	        </tiles:insert>        
 	    </td>
 	    <td>
-	        &nbsp;<html:submit value="Add"></html:submit>
+	        &nbsp;<html:submit value="Add" styleId="columnAddSubmit"></html:submit>
 	    </td>
     </tr></table>
 </html:form>
 <!-- /addColumns.jsp -->
+
+<script type="text/javascript">
+	    if (document.getElementById('columnToAdd')[0].value == '') {
+	        document.getElementById("columnAddSubmit").disabled = true;
+	        document.getElementById("columnToAdd").disabled = true;
+		}		
+</script>
