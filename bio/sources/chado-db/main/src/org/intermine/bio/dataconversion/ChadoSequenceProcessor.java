@@ -113,7 +113,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     private static final String TEMP_FEATURE_TABLE_NAME_PREFIX = "intermine_chado_features_temp";
 
     // map used by processFeatureCVTermTable() to make sure the singletons objects (eg. those of
-    // class "SequenceOntologyTerm") are only crerted once
+    // class "SequenceOntologyTerm") are only created once
     private final MultiKeyMap singletonMap = new MultiKeyMap();
 
     /**
@@ -179,43 +179,85 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processFeatureTable(Connection connection)
-        throws SQLException, ObjectStoreException {
-        Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
-        ResultSet res = getFeatureResultSet(connection);
-        int count = 0;
-        while (res.next()) {
-            Integer featureId = new Integer(res.getInt("feature_id"));
-            String name = res.getString("name");
-            String uniqueName = res.getString("uniquename");
-            String type = res.getString("type");
-            String residues = res.getString("residues");
-            Integer organismId = new Integer(res.getInt("organism_id"));
-            if (chromosomeFeatureTypesSet.contains(type)) {
-                addToChromosomeMaps(organismId, uniqueName, featureId);
-            }
-            int seqlen = 0;
-            if (res.getObject("seqlen") != null) {
-                seqlen = res.getInt("seqlen");
-            }
-            List<String> primaryIds = new ArrayList<String>();
-            primaryIds.add(uniqueName);
-            String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
-            uniqueName = fixIdentifier(interMineType, uniqueName);
-            OrganismData organismData =
-                getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-            Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
-                                       organismData.getTaxonId());
-            if (feature != null) {
-                processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
-                                       interMineType, organismId);
-                count++;
-            }
-        }
-        LOG.info("created " + count + " features");
-        res.close();
-    }
+//    private void processFeatureTable(Connection connection)
+//        throws SQLException, ObjectStoreException {
+//        Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
+//        ResultSet res = getFeatureResultSet(connection);
+//        int count = 0;
+//        while (res.next()) {
+//            Integer featureId = new Integer(res.getInt("feature_id"));
+//            String name = res.getString("name");
+//            String uniqueName = res.getString("uniquename");
+//            String type = res.getString("type");
+//            String residues = res.getString("residues");
+//            Integer organismId = new Integer(res.getInt("organism_id"));
+//            if (chromosomeFeatureTypesSet.contains(type)) {
+//                addToChromosomeMaps(organismId, uniqueName, featureId);
+//            }
+//            int seqlen = 0;
+//            if (res.getObject("seqlen") != null) {
+//                seqlen = res.getInt("seqlen");
+//            }
+//            
+//            List<String> primaryIds = new ArrayList<String>();
+//            primaryIds.add(uniqueName);
+//            String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
+//            uniqueName = fixIdentifier(interMineType, uniqueName);
+//            OrganismData organismData =
+//                getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+//            Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
+//                                       organismData.getTaxonId());
+//            
+//            
+//            if (feature != null) {
+//                processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
+//                                       interMineType, organismId);
+//                count++;
+//            }
+//        }
+//        LOG.info("created " + count + " features");
+//        res.close();
+//    }
 
+
+    private void processFeatureTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+    Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
+    ResultSet res = getFeatureResultSet(connection);
+    int count = 0;
+    while (res.next()) {
+        Integer featureId = new Integer(res.getInt("feature_id"));
+        String name = res.getString("name");
+        String uniqueName = res.getString("uniquename");
+        String type = res.getString("type");
+        String residues = res.getString("residues");
+        Integer organismId = new Integer(res.getInt("organism_id"));
+        if (chromosomeFeatureTypesSet.contains(type)) {
+            addToChromosomeMaps(organismId, uniqueName, featureId);
+        }
+        int seqlen = 0;
+        if (res.getObject("seqlen") != null) {
+            seqlen = res.getInt("seqlen");
+        }
+        
+        List<String> primaryIds = new ArrayList<String>();
+        primaryIds.add(uniqueName);
+
+        
+        
+//        if (feature != null) {
+//            processAndStoreFeature(feature, featureId, uniqueName, name, seqlen, residues,
+//                                   interMineType, organismId);
+            processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
+                    type, organismId);
+            count++;
+//        }
+    }
+    LOG.info("created " + count + " features");
+    res.close();
+}
+
+    
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
      */
@@ -241,11 +283,22 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param organismId the chado organism id
      * @throws ObjectStoreException if there is a problem while storing
      */
-    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
-                                        String name, int seqlen, String residues,
-                                        String interMineType, Integer organismId)
+//    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
+//                                        String name, int seqlen, String residues,
+//                                        String interMineType, Integer organismId)
+    private void processAndStoreFeature(Integer featureId, String uniqueName,
+            String name, int seqlen, String residues,
+            String type, Integer organismId)
     throws ObjectStoreException {
-        OrganismData organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+       
+        String interMineType = TypeUtil.javaiseClassName(fixFeatureType(type));
+        uniqueName = fixIdentifier(interMineType, uniqueName);
+        OrganismData organismData =
+            getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+        Item feature = makeFeature(featureId, type, interMineType, name, uniqueName, seqlen,
+                                   organismData.getTaxonId());
+        
+        organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
         int taxonId = organismData.getTaxonId();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         FeatureData fdat = new FeatureData();
@@ -370,6 +423,140 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         featureMap.put(featureId, fdat);
     }
 
+
+    
+//    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
+//            String name, int seqlen, String residues,
+//            String interMineType, Integer organismId)
+//throws ObjectStoreException {
+//OrganismData organismData = getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+//int taxonId = organismData.getTaxonId();
+//Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
+//FeatureData fdat = new FeatureData();
+//fdat.itemIdentifier = feature.getIdentifier();
+//fdat.uniqueName = uniqueName;
+//fdat.chadoFeatureName = name;
+//fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
+//fdat.organismData = organismData;
+//feature.setReference("organism", organismItem);
+//if (seqlen > 0) {
+//feature.setAttribute("length", String.valueOf(seqlen));
+//fdat.setFlag(FeatureData.LENGTH_SET, true);
+//}
+//ChadoDBConverter chadoDBConverter = getChadoDBConverter();
+//
+//String dataSourceName = chadoDBConverter.getDataSourceName();
+//MultiKey nameKey = new MultiKey("feature", fdat.interMineType, dataSourceName, "name");
+//List<ConfigAction> nameActionList = getConfig(taxonId).get(nameKey);
+//
+//Set<String> fieldValuesSet = new HashSet<String>();
+//
+//if (!StringUtils.isBlank(name)) {
+//String fixedName = fixIdentifier(interMineType, name);
+//if (nameActionList == null || nameActionList.size() == 0) {
+//if (feature.checkAttribute("symbol")) {
+//fieldValuesSet.add(fixedName);
+//feature.setAttribute("symbol", fixedName);
+//} else {
+//if (feature.checkAttribute("secondaryIdentifier")) {
+//fieldValuesSet.add(fixedName);
+//feature.setAttribute("secondaryIdentifier", fixedName);
+//} else {
+//// do nothing, if the name needs to go in a different attribute
+//// it will need to be configured
+//}
+//}
+//} else {
+//for (ConfigAction action: nameActionList) {
+//if (action instanceof SetFieldConfigAction) {
+//SetFieldConfigAction attrAction =
+//(SetFieldConfigAction) action;
+//if (attrAction.isValidValue(fixedName)) {
+//String newFieldValue = attrAction.processValue(fixedName);
+//feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+//fieldValuesSet.add(newFieldValue);
+//if (attrAction.getFieldName().equals("primaryIdentifier")) {
+//    fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+//}
+//}
+//}
+//}
+//}
+//}
+//
+//MultiKey uniqueNameKey =
+//new MultiKey("feature", fdat.interMineType, dataSourceName,
+//"uniquename");
+//List<ConfigAction> uniqueNameActionList =
+//getConfig(taxonId).get(uniqueNameKey);
+//if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
+//feature.setAttribute("primaryIdentifier", uniqueName);
+//fieldValuesSet.add(uniqueName);
+//} else {
+//for (ConfigAction action: uniqueNameActionList) {
+//if (action instanceof SetFieldConfigAction) {
+//SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
+//if (attrAction.isValidValue(uniqueName)) {
+//String newFieldValue = attrAction.processValue(uniqueName);
+//feature.setAttribute(attrAction.getFieldName(), newFieldValue);
+//fieldValuesSet.add(newFieldValue);
+//if (attrAction.getFieldName().equals("primaryIdentifier")) {
+//fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+//}
+//}
+//}
+//}
+//}
+//
+//if (feature.canHaveReference("sequence") && residues != null && residues.length() > 0) {
+//Item sequence = getChadoDBConverter().createItem("Sequence");
+//sequence.setAttribute("residues", residues);
+//sequence.setAttribute("length", String.valueOf(seqlen));
+//feature.setReference("sequence", sequence);
+//getChadoDBConverter().store(sequence);
+//}
+//
+//// don't set the evidence collection - that's done by processPubTable()
+//fdat.intermineObjectId = store(feature, taxonId); // Stores Feature
+//
+//// always create a synonym for the uniquename
+//boolean uniqueNameSet = false;
+//if (fieldValuesSet.contains(uniqueName)) {
+//uniqueNameSet = true;
+//}
+//Item uniqueNameSynonym =
+//createSynonym(fdat, "identifier", uniqueName, uniqueNameSet, null);
+//getChadoDBConverter().store(uniqueNameSynonym);
+//
+//if (!StringUtils.isBlank(name)) {
+//String fixedName = fixIdentifier(interMineType, name);
+//
+//if (nameActionList == null || nameActionList.size() == 0) {
+//nameActionList = new ArrayList<ConfigAction>();
+//nameActionList.add(new CreateSynonymAction());
+//}
+//
+//for (ConfigAction action : nameActionList) {
+//if (action instanceof CreateSynonymAction) {
+//CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
+//if (createSynonymAction.isValidValue(fixedName)) {
+//String processedName = createSynonymAction.processValue(fixedName);
+//if (!fdat.existingSynonyms.contains(processedName)) {
+//boolean nameSet = fieldValuesSet.contains(processedName);
+//Item nameSynonym =
+//    createSynonym(fdat, "name", processedName, nameSet, null);
+//getChadoDBConverter().store(nameSynonym);
+//}
+//}
+//}
+//}
+//}
+//featureMap.put(featureId, fdat);
+//}
+
+    
+    
+    
     /**
      * Store the feature Item.
      * @param feature the Item
