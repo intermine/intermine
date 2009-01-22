@@ -14,16 +14,28 @@ my $model_service = new InterMine::WebService::Service::ModelService(@service_ar
 
 my $path_query = new InterMine::PathQuery($model_service->get_model());
 
-$path_query->add_view("Organism.name Organism.taxonId");
-$path_query->sort_order("Organism.name");
+$path_query->add_view('Organism.name Organism.taxonId');
+$path_query->sort_order('Organism.name');
 
 warn 'xml: ', $path_query->to_xml_string(), "\n";
 
+## get the number of result rows
 my $count = $query_service->get_count($path_query);
-
 print "result count: $count\n";
 
+## print the result table
 my $res = $query_service->get_result($path_query);
-
 print $res->content();
+
+
+## now constraint the genus
+$path_query->add_constraint('Organism.genus = "Drosophila"');
+
+warn $path_query->to_xml_string();
+
+my $drosophila_count = $query_service->get_count($path_query);
+print "Drosophila count: $drosophila_count\n";
+
+my $drosophila_res = $query_service->get_result($path_query);
+print $drosophila_res->content();
 
