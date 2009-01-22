@@ -21,12 +21,12 @@ $path_query->add_constraint('Department.name IS NOT NULL');
 $path_query->add_constraint('Department.company.name = Woolworths');
 
 my $expected_xml = q[<query name="" model="testmodel" view="Department.name Department.company.name" sortOrder="Department.name">
-   <node path="Department.company.name">
-      <constraint op="=" value="Woolworths"></constraint>
+   <node path="Department.company.name" type="String">
+      <constraint op="=" value="Woolworths" code="A"></constraint>
    </node>
-   <node path="Department.name">
-      <constraint op="!=" value="Music department"></constraint>
-      <constraint op="IS NOT NULL"></constraint>
+   <node path="Department.name" type="String">
+      <constraint op="!=" value="Music department" code="B"></constraint>
+      <constraint op="IS NOT NULL" code="C"></constraint>
    </node>
 </query>];
 

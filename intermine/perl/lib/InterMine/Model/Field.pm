@@ -43,14 +43,6 @@ under the same terms as Perl itself.
 
 use strict;
 
-my %type_map = (
-                'java.lang.String' => 'text',
-                'java.lang.Boolean' => 'boolean',
-                'java.lang.Float' => 'float',
-                'java.lang.Double' => 'float',
-                'java.lang.Integer' => 'int'
-               );
-
 =head2 new
 
  Usage   : this is an abstract class, construct an Attribute, Collection or
@@ -68,8 +60,11 @@ sub new
 
   if (exists $opts{type}) {
     my $type = $opts{type};
-    if (exists $type_map{$type}) {
-      $self->{type} = $type_map{$type};
+    $type =~ s/.*\.//;
+    $self->{type} = $type;
+  } else {
+    if ($class eq 'InterMine::Model::Attribute') {
+      die "no type specified for ", $self->{field_name}, "\n";
     }
   }
 

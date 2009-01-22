@@ -206,18 +206,27 @@ sub to_xml_string
                     view => (join ' ', $self->view()), 
                     sortOrder => $self->sort_order());
 
-  for my $path_string (sort keys %{$self->{constraints}}) {
+  my $current_code = 'A';
+
+  my @constraint_paths = sort keys %{$self->{constraints}};
+
+  for my $path_string (@constraint_paths) {
     my $details = $self->{constraints}->{$path_string};
 
-    $writer->startTag('node', path => $path_string);
+    my $path = new InterMine::Path($self->{model}, $path_string);
 
-    for my $detail (@$details) {
-      my $op = $detail->{op};
+    my $type = $path->end_type();
 
-      if (defined $detail->{value}) {
-        $writer->startTag('constraint', op => $op, value => $detail->{value});
+    $writer->startTag('node', path => $path_string, type => $type);
+
+    for my $constraint (@$details) {
+      my $op = $constraint->{op};
+
+      if (defined $constraint->{value}) {
+        $writer->startTag('constraint', op => $op, value => $constraint->{value},
+                          code => $current_code++);
       } else {
-        $writer->startTag('constraint', op => $op);
+        $writer->startTag('constraint', op => $op, code => $current_code++);
       }
       $writer->endTag();
     }
