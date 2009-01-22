@@ -329,7 +329,8 @@ public class MainHelper
 
         Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
         Set<String> relevantCodes = findRelevantCodes(nonOuterNodes);
-        LogicExpression logic = pathQuery.getLogic().getSection(relevantCodes);
+        LogicExpression logic = pathQuery.getLogic();
+        logic = logic == null ? null : pathQuery.getLogic().getSection(relevantCodes);
 
         if (relevantCodes.size() == 1) {
             codeToCS.put(relevantCodes.iterator().next(), andcs);
