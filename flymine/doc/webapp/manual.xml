@@ -80,8 +80,8 @@
 
     <para>The FlyMine object model is made up of a number of classes which are
     linked together through various relationships. For example, the gene class
-    is directly linked to the transcripts class, which has a link to a
-    translation class. A number of classes are subdivided into more
+    is directly linked to the Protein class. A number of classes are
+    subdivided into more 
     specialised sub-classes. E.g. the Transcript class is subdivided into
     Primary Transcripts, Processed Transcripts etc. The Exon class is
     subdivided into 5' exon, 3' exon etc.</para>

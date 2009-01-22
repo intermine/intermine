@@ -31,4 +31,18 @@ public class ChadoSequenceProcessorTest extends ItemsTestCase
         assertEquals(false, fdat.getFlag(FeatureData.DATASET_SET));
         assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
     }
+
+    public void testFeatureDataFlagsStrings() {
+        FeatureData fdat = new FeatureData();
+
+        assertEquals(false, fdat.getFlag(FeatureData.SECONDARY_IDENTIFIER_SET));
+        assertEquals(false, fdat.getFlag("secondaryIdentifier"));
+        assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
+        fdat.setFlag("secondaryIdentifier", true);
+        assertEquals(true, fdat.getFlag("secondaryIdentifier"));
+        assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
+        fdat.setFlag("secondaryIdentifier", false);
+        assertEquals(false, fdat.getFlag("secondaryIdentifier"));
+        assertEquals(false, fdat.getFlag(FeatureData.EVIDENCE_CREATED));
+    }
 }

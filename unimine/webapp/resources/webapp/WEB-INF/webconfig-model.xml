@@ -188,13 +188,6 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Translation">
-    <fields>
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
-      <fieldconfig fieldExpr="symbol"/>
-    </fields>
-  </class>
-
   <class className="org.flymine.model.genomic.Relation">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>

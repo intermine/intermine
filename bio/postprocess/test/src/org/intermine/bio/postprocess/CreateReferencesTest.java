@@ -72,9 +72,9 @@ public class CreateReferencesTest extends TestCase {
     private Gene storedGene1 = null;
     private Gene storedGene2 = null;
     private Transcript storedTranscript = null;
-    private Transcript storedTranscript1 = null;
-    private Transcript storedTranscript2 = null;
-    private Transcript storedTranscript3 = null;
+    private MRNA storedTranscript1 = null;
+    private MRNA storedTranscript2 = null;
+    private MRNA storedTranscript3 = null;
     private Exon storedExon = null;
     private Location storedExonLocation = null;
     private Location storedGeneLocation = null;
@@ -155,7 +155,7 @@ public class CreateReferencesTest extends TestCase {
         cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
 
-        cr.insertCollectionField(Gene.class, "transcripts", Transcript.class, "protein",
+        cr.insertCollectionField(Gene.class, "transcripts", MRNA.class, "protein",
                                  Protein.class, "genes", false);
 
         compareCollectionField1ResultsToExpected();
@@ -884,19 +884,19 @@ public class CreateReferencesTest extends TestCase {
         storedTranscript.setGene(storedGene);
 
         storedTranscript1 =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript1.setPrimaryIdentifier("trans1");
         // currently the gene reference in Transcript is set before post-processing but the
         // transcripts reference in Gene isn't set
 
         storedTranscript2 =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript2.setPrimaryIdentifier("trans2");
         // currently the gene reference in Transcript is set before post-processing but the
         // transcripts reference in Gene isn't set
 
         storedTranscript3 =
-            (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript3.setPrimaryIdentifier("trans3");
         // currently the gene reference in Transcript is set before post-processing but the
         // transcripts reference in Gene isn't set

@@ -31,7 +31,6 @@ import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
 
 import java.io.OutputStream;
 
@@ -83,8 +82,7 @@ public class SequenceExportAction extends InterMineAction
         Integer objectId = new Integer(request.getParameter("object"));
         InterMineObject obj = getObject(os, webProps, objectId);
 
-        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein
-                        || obj instanceof Translation) {
+        if (obj instanceof LocatedSequenceFeature || obj instanceof Protein) {
             bioSequence = createBioSequence(obj);
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
@@ -138,9 +136,10 @@ public class SequenceExportAction extends InterMineAction
                                                    + classArray[i]));
             }
         } else {
-            classList.addAll(Arrays.asList(new Class<?>[] {Protein.class,
-                LocatedSequenceFeature.class,
-                Translation.class}));
+            classList.addAll(Arrays.asList(new Class<?>[] {
+                Protein.class,
+                LocatedSequenceFeature.class
+            }));
         }
 
         InterMineObject obj = os.getObjectById(objectId);

@@ -10,6 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVTerm;
 
@@ -63,112 +66,138 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     @Override
     protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
-            "feature_id", "name", "uniquename", "type", "seqlen", "residues", "organism_id"
+            "feature_id", "name", "uniquename", "type", "seqlen", "residues", "md5checksum",
+            "organism_id"
         };
         Object[][] resObjects = new Object[][] {
             {
                 23269151, "4.5SRNA", "FBgn0000001", "gene", 1001,
-                "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc", 1
+                "acgacagatcattccacttttgacagctcactcggcagtaccagaaaatcc",
+                "4946c54eee3ca803caac460c6bc68db4", 1
             },
             {
                 10012345, "CG12345", "FBgn012345", "gene", 200,
-                "atatagctagctaggaggattattatta", 1
+                "atatagctagctaggaggattattatta",
+                "b5cd41ab845e765d3c3a899d3c8079df", 1
             },
             {
                 3117509, "CG10006", "FBgn0036461", "gene", 5023,
-                "gtcatgcactactatccagttcaccaggctaaagtcggctcctat", 1
+                "gtcatgcactactatccagttcaccaggctaaagtcggctcctat",
+                "b5489168d1ccb0d60af43fa4a86506dd", 1
             },
             {
                 411, "CG10000-RA", "FBtr0085315", "mRNA", 2528,
-                "tctgcctcccaactacaatcagatgaactccaaccccaccac", 1
+                "tctgcctcccaactacaatcagatgaactccaaccccaccac",
+                "ba86b4c716043e4519f60f367a9d6747", 1
             },
             {
                 412, "CG10000-RB", "FBtr0085316", "mRNA", 3000,
-                "cccgcagcatgtgcatcagcagcatgtgtcatcggacgag", 1
+                "cccgcagcatgtgcatcagcagcatgtgtcatcggacgag",
+                "c6a4e0fc5f06d22c721467d7e5e5c466", 1
+            },
+            {
+                413, "CG10000-RC", "FBtr0085317", "mRNA", 2528,
+                "tctgcctcccaactacaatcagatgaactccaaccccaccac",
+                "ba86b4c716043e4519f60f367a9d6747", 1
             },
             {
                 11494725, "3", "3L", "chromosome_arm", 24543557,
                 "ccacgactcgcagagggtgaagcttaagcgatcacggac"
-                + "tcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg", 1
+                + "tcaatcctggcatcccagttcccaaagtcaggtccccacgagcatg",
+                "d98e073e7d7197e7b761b34c2f157902", 1
             },
             {
                 11494726, "3", "3R", "chromosome_arm", 27905053,
                 "ggtggaacttgagaacgagttcaagagcaacatgtact"
-                + "gatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag", 1
+                + "gatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag",
+                "1333d3694901401350b87065080e82a7", 1
             },
             {
                 3175412, "CG10000:1", "CG10000:1", "exon", 148,
-                "gattgctcagcgcgaacg", 1
+                "gattgctcagcgcgaacg",
+                "d858eb017a9da2b5f832910d381cc6c1", 1
             },
             {
                 3175413, "CG10000:2", "CG10000:2", "exon", 161,
-                "cttgtccctgtg", 1
+                "cttgtccctgtg",
+                "afff961b72f716220e8e69914dbfbb96", 1
             },
             {
-                1000000, "CG10000-RA_prot", "FBpp10000", "protein", 2345,
-                "ccaggtg", 1
+                88888888, "CG88888-RA_prot", "FBpp88888", "protein", 41,
+                "MTRYKQTEFTEDDSSSIGGIQLNEATGHTGMQIRYHTARAT",
+                "824c7d2cbdc711dd49892c63b71832ac", 1
+            },
+            {
+                1000000, "CG10000-RA_prot", "FBpp10000", "protein", 41,
+                "MTRYKQTEFTEDDSSSIGGIQLNEATGHTGMQIRYHTARAT",
+                "824c7d2cbdc711dd49892c63b71832ac", 1
+            },
+            {
+                1000001, "CG99999-RB_prot", "FBpp99999", "protein", 63,
+                "VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW",
+                "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },
             {
                 // this is actually an allele
                 2340000, "CG10006[GD2461]", "FBal0198867", "gene", null,
-                null, 1
+                null, null, 1
             },
             {
                 // this is actually an allele
                 2345000, "Scer\\GAL4[sd-SG29.1]", "FBal0060667", "gene", null,
-                null, 1
+                null, null, 1
             },
             {
                 7000000, null, "&bgr;Tub85D[10g]", "point_mutation", null,
-                null, 1
+                null, null, 1
             },
             {
                 8747247, "P{RS3}CB-5069-3", "FBti0028380",
-                "transposable_element_insertion_site" , null, null, 1
+                "transposable_element_insertion_site" , null, null, null, 1
             },
             {
                 11488812, "Df(2L)ED482", "FBab0032193",
-                "chromosome_structure_variation", null, null, 1
+                "chromosome_structure_variation", null, null, null, 1
             },
             {
                 11488720, "Df(2L)ED1454", "FBab0031842",
-                "chromosome_structure_variation", null, null, 1
+                "chromosome_structure_variation", null, null, null, 1
             },
             {
                 11380181, "T(2;3)V21", "FBab0010281",
-                "chromosome_structure_variation", null, null, 1
+                "chromosome_structure_variation", null, null, null, 1
             },
             {
                 8747905, "P{RS3}CB-0697-3", "FBti0028225",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 11432358, "P{RS5r}5-SZ-4122", "FBti0032815",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 11431518, "P{RS5r}5-HA-1496", "FBti0031976",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 11430370, "P{RS3r}CB-5069-3", "FBti0030830",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 11430215, "P{RS3r}CB-0697-3", "FBti0030675",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 8748527, "P{RS5}5-SZ-4122", "FBti0030367",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 8747724, "P{RS5}5-HA-1496", "FBti0029528",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             },
             {
                 8862364, "PBac{WH}f07990", "FBti0068355",
-                "transposable_element_insertion_site", null, null, 1
+                "transposable_element_insertion_site", null, null, null, 1
             }
 
         };
@@ -178,17 +207,8 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         return res;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ResultSet getFeatureRelationshipResultSet(@SuppressWarnings("unused")
-                                                        Connection connection) {
-        String[] columnNames = new String[] {
-            "feature_relationship_id", "subject_id", "object_id", "type_name"
-        };
-        // results must be ordered by subject_id
-        Object[][] resObjects = new Object[][] {
+    private Object[][] featureRelationshipTestHelper(boolean subjectIsFirst) {
+        Object[][] data = new Object[][] {
             {
                 500 ,    411 ,   3117509 , "partof"
             },
@@ -208,9 +228,60 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 700 ,    1000000 ,   411 , "producedby"
             },
             {
+                701 ,    88888888,   413 , "producedby"
+            },
+            {
                 800 ,    2340000 ,   3117509 , "alleleof"
             }
         };
+
+        Object[][] returnVal;
+
+        if (subjectIsFirst) {
+            returnVal = data;
+        } else {
+            returnVal = new Object[data.length][];
+
+            for (int i = 0; i < data.length; i++) {
+                returnVal[i] = Arrays.copyOf(data[i], data[i].length);
+                int tempVal = (Integer) returnVal[i][1];
+                returnVal[i][1] = returnVal[i][2];
+                returnVal[i][2] = tempVal;
+            }
+        }
+
+        // results must be sorted by the feature1_id
+        Arrays.sort(returnVal, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                final Integer i1 = (Integer) ((Object[]) o1)[1];
+                final Integer i2 = (Integer) ((Object[]) o2)[1];
+                if (i1 < i2) {
+                    return -1;
+                } else {
+                    if (i1 > i2) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+
+        });
+        return returnVal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getFeatureRelationshipResultSet(@SuppressWarnings("unused")
+                                                        Connection connection,
+                                                        boolean subjectIsFirst) {
+        String[] columnNames = new String[] {
+            "feature_relationship_id", "feature1_id", "feature2_id", "type_name"
+        };
+        // results must be ordered by subject_id
+        Object[][] resObjects = featureRelationshipTestHelper(subjectIsFirst);
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
         res.setupColumnNames(columnNames);

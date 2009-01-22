@@ -38,7 +38,6 @@ import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.results.ResultElement;
 
-
 /**
  * Export data in FASTA format. Select cell in each row
  * that can be exported as a sequence and fetch associated sequence.
@@ -106,9 +105,6 @@ public class SequenceExporter implements Exporter
                     bioSequence = createLocatedSequenceFeature(header, object, row);
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row);
-                } else if (object instanceof Translation) {
-                    Model model = os.getModel();
-                    bioSequence = createTranslation(header, object, model, row);
                 } else {
                     // ignore other objects
                     continue;
@@ -144,23 +140,6 @@ public class SequenceExporter implements Exporter
         } catch (Exception e) {
               throw new ExportException("Export failed.", e);
         }
-    }
-
-    private BioSequence createTranslation(StringBuffer header, Object object,
-                                          Model model,
-                                          List<ResultElement> row) throws IllegalSymbolException {
-        BioSequence bioSequence;
-        ClassDescriptor cld = model.getClassDescriptorByName(model.getPackageName()
-                                                             + "." + "Translation");
-        if (cld.getReferenceDescriptorByName("sequence", true) == null) {
-            bioSequence = null;
-        } else {
-            Translation translation = (Translation) object;
-            bioSequence = BioSequenceFactory.make(translation);
-
-            makeHeader(header, row);
-        }
-        return bioSequence;
     }
 
     private BioSequence createProtein(StringBuffer header, Object object, List<ResultElement> row)
@@ -232,7 +211,6 @@ public class SequenceExporter implements Exporter
         return (
                 ExportHelper.getClassIndex(clazzes, LocatedSequenceFeature.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Protein.class) >= 0
-                || ExportHelper.getClassIndex(clazzes, Translation.class) >= 0
                 || ExportHelper.getClassIndex(clazzes, Sequence.class) >= 0);
     }
 }

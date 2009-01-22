@@ -267,7 +267,6 @@
       <fieldconfig fieldExpr="inParanoidScore"/>
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
-      <fieldconfig fieldExpr="homologueTranslation.primaryIdentifier"/>
     </fields>
   </class>
 

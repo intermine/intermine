@@ -39,7 +39,6 @@
         <reference name="protein" referenced-type="org.flymine.model.genomic.Protein" reverse-reference="transcripts"/>
         <collection name="introns" referenced-type="org.flymine.model.genomic.Intron" ordered="true" reverse-reference="transcripts"/>
         <collection name="exons" referenced-type="org.flymine.model.genomic.Exon" reverse-reference="transcripts" ordered="true"/>
-
     </class>
 
     <class name="org.flymine.model.genomic.NcRNA" is-interface="true"/>
