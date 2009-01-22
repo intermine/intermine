@@ -11,7 +11,7 @@ that can be added to results table, which id is saved in table parameter --%>
 <select name="columnToAdd" id="columnToAdd">
     <c:choose>
 	    <c:when test="${fn:length(availableColumns) == 0}">
-	         <option value="" />No available columns to add.
+	         <option value="" />No available columns 
 	    </c:when>
 	    <c:otherwise>
 	        <c:forEach var="column" items="${availableColumns}">
