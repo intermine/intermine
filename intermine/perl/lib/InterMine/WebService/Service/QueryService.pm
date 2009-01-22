@@ -50,6 +50,9 @@ use warnings;
 
 use base qw(InterMine::WebService::Core::Service);
 
+use IO::String;
+use Text::CSV_XS;
+
 use InterMine::WebService::Core::Request;
 
 my $SERVICE_RELATIVE_URL = "query/results";
@@ -62,6 +65,7 @@ my $SERVICE_RELATIVE_URL = "query/results";
  Args    : $service_root - base URL of the web service
            $app_name - application name, tells the server which application uses
                        the service
+
 =cut
 sub new
 {
@@ -81,6 +85,7 @@ sub new
  Usage   : my $rel_path = $service->get_relative_path();
  Function: return the path of this service relative to the base url of the
            webapp
+
 =cut
 sub get_relative_path
 {
@@ -90,15 +95,15 @@ sub get_relative_path
 =head2 get_result
 
  Usage   : my $results = $service->get_result($query, $start, $max_count, $count_only);
- Function: return the path of this service relative to the base url of the
-           webapp
+ Function: get the results of a query
  Args    : $query - the query as an XML string or as a PathQuery object
            $start - the start row to return, the first row is 1 which is the default
-           $max_count - the maximum number of rows to return
+           $max_count - the maximum number of rows to return (undef means get all)
            $count_only - if true, ignore $start and $max_count and instead
                          return only the number of rows as a scalar
  Returns : HTTP::Response containing the results, or a count as a scalar if
            $count_only is true
+
 =cut
 sub get_result
 {
@@ -127,6 +132,45 @@ sub get_result
   }
   $request->add_parameters(query => $query);
   return $self->execute_request($request);
+}
+
+=head2 get_result_table
+
+ Usage   : my $result_table = $service->get_result_table($query, $start, $max_count);
+ Function: return the path of this service relative to the base url of the
+           webapp
+ Args    : $query - the query as an XML string or as a PathQuery object
+           $start - the start row to return, the first row is 1 which is the default
+           $max_count - the maximum number of rows to return
+ Returns : a table of results as a list of list, eg. (["Gene1", 100], [Gene2, 200])
+
+=cut
+
+sub get_result_table
+{
+  my $self = shift;
+  my $query = shift;
+  my $start = shift;
+  my $max_count = shift;
+
+  my $response = $self->get_result($query, $start, $max_count);
+
+  if ($response->is_success()) {
+    my $io = new IO::String($response->content());
+
+    my @retval = ();
+
+    my $csv = new Text::CSV_XS({sep_char => "\t"});
+
+    while (!$io->eof()) {
+      push @retval, $csv->getline ($io);
+    }
+
+    return @retval;
+  } else {
+    die "request failed with error: ", $response->status_line(), "\n",
+        $response->content(), "\n";
+  }
 }
 
 1;

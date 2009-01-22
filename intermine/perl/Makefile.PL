@@ -12,6 +12,7 @@ WriteMakefile(
                   'XML::Parser::PerlSAX' => 0,
                   'XML::Writer' => 0,
                   'IO::String' => 0,
+                  'Text::CSV_XS' => 0,
                   'Test::More' => 0,
                   'Config::Properties' => 0,
                  },
