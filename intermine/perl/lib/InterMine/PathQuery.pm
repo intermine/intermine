@@ -47,6 +47,12 @@ use InterMine::Path;
 use IO::String;
 use XML::Writer;
 
+use InterMine::PathQuery::Constraint;
+
+use Exporter;
+
+our @EXPORT_OK = qw(AND OR);
+
 =head2 new
 
  Usage   : my $path_query = new InterMine::PathQuery($model);
@@ -153,39 +159,33 @@ sub sort_order
 
  Usage   : $path_query->add_constraint("Department.name = '$dep_name'");
  Function: add a constraint to this query
+ Args    : $constraint - the constraint description
 
 =cut
 sub add_constraint
 {
   my $self = shift;
-  my $constraint_string = shift;
+  my $arg = shift;
 
-  if (!defined $constraint_string) {
+  if (!defined $arg) {
     die "no constraint string specified for PathQuery->add_constraint()\n";
   }
 
-  my @bits = split /\s+/, $constraint_string, 3;
+  my @bits = split /\s+/, $arg, 2;
 
   if (@bits < 2) {
-    die "can't parse constraint: $constraint_string\n";
+    die "can't parse constraint: $arg\n";
   }
 
   my $path = $bits[0];
-  my $op = $bits[1];
-  my $value = $bits[2];
 
   InterMine::Path->validate($self->{model}, $path);
 
-  my %details = (op => $op);
+  my $constraint_string = $bits[1];
 
-  if (defined $value) {
-    $value =~ s/^'(.*)'$/$1/;
-    $value =~ s/^"(.*)"$/$1/;
+  my $c = new InterMine::PathQuery::Constraint($constraint_string);
 
-    $details{value} = $value;
-  }
-
-  push @{$self->{constraints}->{$path}}, \%details;
+  push @{$self->{constraints}->{$path}}, $c;
 }
 
 =head2
