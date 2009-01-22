@@ -59,11 +59,13 @@ public class AddColumnAction extends InterMineAction
         HttpSession session = request.getSession();
         String tableId = request.getParameter("table");
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
-        changeView(pt.getWebTable(), columnToAdd, request);
+        if (columnToAdd != null && columnToAdd.length() != 0) {
+            changeView(pt.getWebTable(), columnToAdd, request);
+        }
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("table", tableId)
             .addParameter("page", "" + pt.getPage())
-            .addParameter("trail", request.getParameter("trail")).forward();
+            .addParameter("trail", request.getParameter("trail")).forward();        
     }
 
     private void changeView(WebTable table, String columnToAdd, HttpServletRequest request) {
