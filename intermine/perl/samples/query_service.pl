@@ -17,7 +17,6 @@ my $path_query = new InterMine::PathQuery($model_service->get_model());
 $path_query->add_view('Organism.name Organism.taxonId');
 $path_query->sort_order('Organism.name');
 
-warn 'xml: ', $path_query->to_xml_string(), "\n";
 
 ## print the result table
 my $res = $query_service->get_result($path_query);
