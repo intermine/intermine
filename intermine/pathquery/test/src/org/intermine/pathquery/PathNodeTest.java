@@ -28,4 +28,20 @@ public class PathNodeTest extends TestCase
         Node parent = new PathNode("Employee");
         Node pathNode = new PathNode(parent, "department", false);
     }
+
+    public void testEquals() {
+        Node parent = new PathNode("Employee");
+        Node n1 = new PathNode(parent, "department", false);
+        Node n2 = new PathNode(parent, "department", false);
+        Node n3 = new PathNode(parent, "address", false);
+        Node n4 = new PathNode(n1, "company", false);
+        Node n5 = new PathNode(n4, "address", false);
+        Node parent2 = new PathNode("Manager");
+        Node n6 = new PathNode(parent2, "department", false);
+
+        assertEquals(n1, n2);
+        assertFalse(n1.equals(n3));
+        assertFalse(n3.equals(n5));
+        assertFalse(n1.equals(n6));
+    }
 }

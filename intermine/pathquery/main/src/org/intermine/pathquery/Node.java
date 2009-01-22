@@ -216,7 +216,8 @@ public class Node
     public boolean equals(Object o) {
         return (o instanceof Node)
             && Util.equals(type, ((Node) o).type)
-            && Util.equals(parent, ((Node) o).parent);
+            && Util.equals(parent, ((Node) o).parent)
+            && Util.equals(fieldName, ((Node) o).fieldName);
     }
 
     /**
@@ -224,6 +225,7 @@ public class Node
      */
     public int hashCode() {
         return (type == null ? 0 : 3 * type.hashCode())
-            + (parent == null ? 0 : 5 * parent.hashCode());
+            + (parent == null ? 0 : 5 * parent.hashCode())
+            + (fieldName == null ? 0 : 7 * fieldName.hashCode());
     }
 }
