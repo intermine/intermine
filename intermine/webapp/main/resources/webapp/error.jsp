@@ -1,8 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
-<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <tiles:importAttribute/>
 
@@ -16,7 +14,7 @@
   <div id="errorApology">
     <p>
       There has been an internal error while processing your request.  The
-      problem has been logged and will be investigated.  You may also 
+      problem has been logged and will be investigated.  You may also
       <html:link href="mailto:${rec}?body=${msg}&subject=${subject}">send us an email</html:link>
       describing how you encountered this error.
     </p>

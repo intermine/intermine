@@ -120,7 +120,6 @@ public class UniprotKeywordConverter extends FileConverter
                     keyword.setAttribute("description", descr);
                     keyword.setReference("ontology", ontologyRefId);
                     try {
-                        System.out.println("storign");
                         store(keyword);
                     } catch (ObjectStoreException e) {
                         throw new SAXException("failed storing", e);
