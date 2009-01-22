@@ -123,6 +123,31 @@ sub end
   return @{$self->{parts}}[-1];
 }
 
+=head2 end_type
+
+ Usage   : my $end_type = $path->end_type();
+ Function: return the (Java) type of the last part of the path, eg. "String",
+           "Integer", "Gene"
+
+=cut
+sub end_type
+{
+  my $self = shift;
+
+  my $end = $self->end();
+
+  if (ref $end eq 'InterMine::Model::Reference' ||
+      ref $end eq 'InterMine::Model::Collection') {
+    return $end->referenced_type_name();
+  } else {
+    if (ref $end eq 'InterMine::Model::Attribute') {
+      return $end->attribute_type();
+    } else {
+      return $end->unqualified_name();
+    }
+  }
+}
+
 sub _get_parts
 {
   my $model = shift;
