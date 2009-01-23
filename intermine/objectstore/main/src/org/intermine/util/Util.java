@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
+
 /**
  * Generic utility functions.
  *
@@ -121,19 +122,15 @@ public class Util
     }
 
     /**
-     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression.
-     *
+     * Convert an SQL LIKE/NOT LIKE expression to a * wildcard expression. See
+     * wildcardUserToSql method for more information.
      * @param exp  the wildcard expression
      * @return     the SQL LIKE parameter
      */
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
 
-        // To quote a '%' in PostgreSQL we need to pass \\% because it strips one level of
-        // backslashes when parsing a string and another when parsing a LIKE expression.
-        // Java needs backslashes to be backslashed in strings, hence all the blashslashes below
-        // see. http://www.postgresql.org/docs/7.3/static/functions-matching.html
-
+        // Java needs backslashes to be backslashed in strings. 
         for (int i = 0; i < exp.length(); i++) {
             String substring = exp.substring(i);
             if (substring.startsWith("%")) {
@@ -176,7 +173,9 @@ public class Util
 
     /**
      * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
-     * expression with %'s.
+     * expression with %'s and other special characters. Please note that constraint
+     * value is saved in created java object (constraint) in form with '%' and in 
+     * this form is saved in xml as well.
      *
      * @param exp  the SQL LIKE parameter
      * @return     the equivalent wildcard expression
