@@ -51,6 +51,7 @@ use InterMine::PathQuery::Constraint;
 
 use Exporter;
 
+our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(AND OR);
 
 =head2 new
@@ -71,7 +72,7 @@ sub new
 
   my $model = shift;
 
-  my $self = {model => $model, view => []};
+  my $self = {model => $model, view => [], next_code => 'A'};
 
   return bless $self, $class;
 }
@@ -185,7 +186,96 @@ sub add_constraint
 
   my $c = new InterMine::PathQuery::Constraint($constraint_string);
 
+  $c->code($self->{next_code}++);
+
   push @{$self->{constraints}->{$path}}, $c;
+
+  return $c;
+}
+
+sub _check_logic_arg
+{
+  my $arg = shift;
+  if (not ref $arg or ref $arg !~ /^InterMine::PathQuery::Constraint(?:Set)$/) {
+    my $message = "the argument must be a Constraint or ConstraintSet object";
+    if (ref $arg) {
+      $message .= ", not class: " . ref $arg;
+    }
+    die "$message\n";
+  }
+}
+
+sub _operator_implementation
+{
+  my $op = shift;
+
+  if (@_ < 2) {
+    die "not enough arguments to $op operator\n";
+  }
+
+  map {_check_logic_arg($_)} @_;
+
+  return bless {op => $op, constraints => [@_]}, 'InterMine::PathQuery::ConstraintSet';
+
+}
+
+=head2 AND
+
+=cut
+sub AND
+{
+  return _operator_implementation('and', @_);
+}
+
+=head2 OR
+
+=cut
+sub OR
+{
+  return _operator_implementation('or', @_);
+}
+
+=head2 set_logic
+
+=cut
+sub logic
+{
+  my $self = shift;
+
+  if (@_ != 1) {
+    die "set_logic() needs one argument\n";
+  }
+
+  my $logic = shift;
+
+  _check_logic_arg($logic);
+
+  $self->{logic} = $logic;
+}
+
+sub _logic_string
+{
+  my $arg = shift;
+  my $recursing = shift;
+
+  if (!$recursing) {
+    if (!defined $arg or $arg eq '') {
+      # logic not set
+      return '';
+    }
+  }
+
+  if (ref $arg eq 'InterMine::PathQuery::ConstraintSet') {
+    my @bits = map {_logic_string($_, 1)} @{$arg->{constraints}};
+    my $joined = join ' ' . $arg->{op} . ' ', @bits;
+    if ($arg->{op} eq 'and' or not $recursing) {
+      return $joined;
+    } else {
+      return "($joined)";
+    }
+  } else {
+    return $arg->{code};
+  }
 }
 
 =head2
@@ -202,9 +292,11 @@ sub to_xml_string
 
   my $output = new IO::String();
   my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
+
   $writer->startTag('query', name => '', model => $self->{model}->model_name(),
-                    view => (join ' ', $self->view()), 
-                    sortOrder => $self->sort_order());
+                    view => (join ' ', $self->view()),
+                    sortOrder => $self->sort_order(),
+                    constraintLogic => _logic_string($self->{logic}));
 
   my $current_code = 'A';
 
@@ -212,25 +304,23 @@ sub to_xml_string
 
   for my $path_string (@constraint_paths) {
     my $details = $self->{constraints}->{$path_string};
-
     my $path = new InterMine::Path($self->{model}, $path_string);
-
     my $type = $path->end_type();
 
     $writer->startTag('node', path => $path_string, type => $type);
 
     for my $constraint (@$details) {
       my $op = $constraint->{op};
+      my $code = $constraint->code();
 
       if (defined $constraint->{value}) {
         $writer->startTag('constraint', op => $op, value => $constraint->{value},
-                          code => $current_code++);
+                          code => $code);
       } else {
-        $writer->startTag('constraint', op => $op, code => $current_code++);
+        $writer->startTag('constraint', op => $op, code => $code);
       }
       $writer->endTag();
     }
-
     $writer->endTag();
   }
 
@@ -264,3 +354,11 @@ sub _has_view_path
 }
 
 1;
+
+package InterMine::PathQuery::ConstraintSet;
+
+# dummy package for now, used only so we can bless the result of
+# _operator_implementation()
+
+1;
+
