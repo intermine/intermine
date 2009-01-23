@@ -56,6 +56,7 @@ my %OPS = ('IS NOT NULL' => 1,
 
  Usage   : my $con = InterMine::PathQuery::Constraint("= '$department_name'")
  Function: create a new Constraint object
+ Args    : $constraint_string - the constraint as text
 
 =cut
 
@@ -63,6 +64,7 @@ sub new
 {
   my $class = shift;
   my $constraint_string = shift;
+
   my @bits = $constraint_string =~ m/^(IS NOT NULL|IS NULL|\S+)(?:\s+(.*))?/;
 
   if (@bits < 1) {
@@ -121,4 +123,24 @@ sub value
   return $self->{value};
 }
 
+=head2 code
+
+ Usage   : $con->code('A')
+              or
+           my $code = $con->code();
+ Function: get or set the code for this constraint, used to specify the logic
+           for a PathQuery
+
+=cut
+sub code
+{
+  my $self = shift;
+  my $arg = shift;
+
+  if (defined $arg) {
+    $self->{code} = $arg;
+  }
+
+  return $self->{code};
+}
 1;
