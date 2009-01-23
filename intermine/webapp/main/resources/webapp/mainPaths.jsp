@@ -109,18 +109,9 @@
                 </c:otherwise>
               </c:choose>
             </span>
-            <c:choose>
-              <c:when test="${node.indentation > 0}"> 
-                <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-                  <fmt:param value="${node.fieldName}"/>
-                </fmt:message>
-              </c:when>
-              <c:otherwise>
-                <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
-                  <fmt:param value="${node.type}"/>
-                </fmt:message>
-              </c:otherwise>
-            </c:choose>
+            <fmt:message key="query.addConstraintTitle" var="addConstraintToTitle">
+              <fmt:param value="${node.friendlyName}"/>
+            </fmt:message>
             <%--
             <html:link action="/mainChange?method=addConstraint&amp;path=${node.pathString}"
                        title="${addConstraintToTitle}">
@@ -129,7 +120,7 @@
             --%>
             <c:if test="${!lockedPaths[node.pathString]}">
               <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
-                <fmt:param value="${node.fieldName}"/>
+                <fmt:param value="${node.friendlyName}"/>
               </fmt:message>
              <c:choose>
               <%-- View only --%>
@@ -137,7 +128,7 @@
                 <html:link action="/viewChange?method=removeFromView&amp;path=${node.pathString}"
                            title="${removeNodeTitle}">
                   <img border="0" src="images/cross.gif" width="13" height="13"
-                       title="Remove this constraint"/>
+                       title="${removeNodeTitle}"/>
                 </html:link>
               </c:when>
               <%-- Constraint --%>
@@ -145,7 +136,7 @@
                 <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
                            title="${removeNodeTitle}">
                   <img border="0" src="images/cross.gif" width="13" height="13"
-                       title="Remove this constraint"/>
+                       title="${removeNodeTitle}"/>
                 </html:link>
               </c:otherwise>
              </c:choose>
