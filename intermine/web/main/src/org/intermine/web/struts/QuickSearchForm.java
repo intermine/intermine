@@ -10,20 +10,15 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Locale;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.logic.template.ConstraintValueParser;
-import org.intermine.web.logic.template.ParseValueException;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.ConstraintValueParser;
+import org.intermine.pathquery.ParseValueException;
 /**
  * @author Xavier Watkins
  *
@@ -31,7 +26,10 @@ import org.apache.struts.action.ActionMessage;
 public class QuickSearchForm extends ActionForm
 {
 
+    private static final long serialVersionUID = 1L;
+
     private String value, parsedValue;
+    
     private String quickSearchType;
 
     /**
@@ -86,13 +84,11 @@ public class QuickSearchForm extends ActionForm
      */
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         ActionErrors errors = new ActionErrors();
 
         Object o = null;
         try {
-            o = new ConstraintValueParser().parse(value, String.class, ConstraintOp.EQUALS);
+            o = ConstraintValueParser.parse(value, String.class, ConstraintOp.EQUALS);
         } catch (ParseValueException ex) {
             errors.add(ActionErrors.GLOBAL_MESSAGE, 
                             new ActionMessage("errors.message", ex.getMessage()));

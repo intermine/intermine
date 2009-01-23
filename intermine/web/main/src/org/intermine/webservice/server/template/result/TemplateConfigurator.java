@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.ConstraintValueParser;
+import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.template.ConstraintValueParser;
-import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 

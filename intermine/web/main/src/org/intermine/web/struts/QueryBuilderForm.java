@@ -12,17 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Locale;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.PathNode;
-import org.intermine.pathquery.PathQuery;
-
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.ConstraintValueParser;
-import org.intermine.web.logic.template.ParseValueException;
-
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,6 +21,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.ConstraintValueParser;
+import org.intermine.pathquery.ParseValueException;
+import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * The main form, using for editing constraints
@@ -359,7 +356,7 @@ public class QueryBuilderForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         try {
-            return new ConstraintValueParser().parse(value, type, constraintOp);    
+            return ConstraintValueParser.parse(value, type, constraintOp);    
         } catch (ParseValueException ex) {
             errors.add(ActionErrors.GLOBAL_MESSAGE, 
                     new ActionMessage("errors.message", ex.getMessage()));

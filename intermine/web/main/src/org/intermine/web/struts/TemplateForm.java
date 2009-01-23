@@ -26,12 +26,12 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.ConstraintValueParser;
+import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.template.ConstraintValueParser;
-import org.intermine.web.logic.template.ParseValueException;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -42,6 +42,8 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class TemplateForm extends ActionForm
 {
+
+    private static final long serialVersionUID = 1L;
 
     /** Maps containing form state for each constraint. */
     private Map<String, Object> attributeOps;
@@ -317,13 +319,6 @@ public class TemplateForm extends ActionForm
      */
     public void parseAttributeValues(TemplateQuery template, HttpSession session,
                                      ActionErrors errors, boolean appendWildcard) {
-        Locale locale;
-        if (session == null) {
-            // use default locale
-            locale = null;
-        } else {
-            locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        }
         int j = 0;
         for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
             PathNode node = (PathNode) i.next();
@@ -345,7 +340,7 @@ public class TemplateForm extends ActionForm
                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
                     Object parseVal = null;
                     try {
-                        parseVal = new ConstraintValueParser().parse((String) attributeValues
+                        parseVal = ConstraintValueParser.parse((String) attributeValues
                                         .get(key), fieldClass, constraintOp);
                     } catch (ParseValueException ex) {
                         errors.add(ActionErrors.GLOBAL_MESSAGE, 
