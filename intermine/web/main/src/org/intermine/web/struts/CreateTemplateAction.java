@@ -25,7 +25,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.cache.InterMineCache;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -33,7 +32,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -196,18 +194,8 @@ public class CreateTemplateAction extends InterMineAction
 
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
 
-        cleanCache(servletContext, template);
-
         return new ForwardParameters(mapping.findForward("mymine"))
         .addParameter("subtab", "templates").forward();
     }
 
-    /**
-     * Remove all entries from the cache that mention the given template.
-     */
-    private void cleanCache(ServletContext servletContext, TemplateQuery template) {
-        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
-        cache.flushByKey(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                         new Object[] {template.getName(), null, null});
-    }
 }

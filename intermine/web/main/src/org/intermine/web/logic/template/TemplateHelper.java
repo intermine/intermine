@@ -11,7 +11,6 @@ package org.intermine.web.logic.template;
  */
 
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -27,15 +26,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
-import org.intermine.cache.InterMineCache;
-import org.intermine.cache.ObjectCreator;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
@@ -45,16 +39,11 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.query.WebResultsExecutor;
-import org.intermine.web.logic.results.InlineTemplateTable;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
 
@@ -314,20 +303,7 @@ public class TemplateHelper
         return queryCopy;
     }
 
-    /**
-     * Make a Query from a TemplateQuery and the corresponding TemplateForm.
-     * @param tq the TemplateQuery
-     * @param tf the TemplateForm with values filled in for all editable constraints in tq
-     * @return a Query
-     */
-    /* needs testing:
-    public Query queryFromTemplateAndForm(TemplateQuery tq, TemplateForm tf) {
-        TemplateQuery filledInTemplate =
-            templateFormToTemplateQuery(tf, tq, Collections.EMPTY_MAP);
-        Map pathToQueryNode = new HashMap();
-        return MainHelper.makeQuery(filledInTemplate, Collections.EMPTY_MAP, pathToQueryNode);
-    }
-     */
+
     /**
      * Given a Map of TemplateQuerys (mapping from template name to TemplateQuery)
      * return a string containing each template seriaised as XML. The root element
@@ -485,159 +461,6 @@ public class TemplateHelper
         return false;
     }
 
-
-    /**
-     * Make and return an InlineTemplateTable for the given template and interMineObjectId or
-     * InterMineIdBag
-     * @param servletContext servlet context
-     * @param template template
-     * @param object object
-     * @param bag bag
-     * @param profile the user running the query
-     * @return created template
-     */
-    public static InlineTemplateTable makeInlineTemplateTable(ServletContext servletContext,
-                                                              TemplateQuery template,
-                                                              InterMineObject object,
-                                                              InterMineBag bag,
-                                                              Profile profile) {
-        try {
-            TemplateForm templateForm = new TemplateForm();
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-
-            if (!fillTemplateForm(template, object, bag, templateForm, os.getModel())) {
-                return null;
-            }
-
-            templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
-
-            PathQuery pathQuery = TemplateHelper.templateFormToTemplateQuery(templateForm, template,
-                                                                             new HashMap());
-
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-            
-            WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(servletContext,
-                    profile);
-            WebResults webResults = executor.execute(pathQuery);
-            
-            PagedTable pagedResults = new PagedTable(webResults);
-
-            InlineTemplateTable itt = new InlineTemplateTable(pagedResults, webProperties);
-            return itt;
-        } catch (RuntimeException e) {
-            if (e.getCause() instanceof ObjectStoreQueryDurationException) {
-                // special case: if there is an object store problem it's probably an
-                // ObjectStoreQueryDurationException - returning null will cause the template to
-                // be run again later when, hopefully, the genetic query optimiser will choose a
-                // better plan
-                return null;
-            }
-        } catch (Throwable e) {
-            // probably a template is out of date
-            LOG.error("error while getting inline template information", e);
-        }
-
-        return null;
-    }
-
-
-    /**
-     * The cache tag to use when looking for template tables in the cache.
-     */
-    public static final String TEMPLATE_TABLE_CACHE_TAG = "template_table_tag";
-
-    /**
-     * Register an ObjectCreator for creating inline template tables.
-     * @param cache the InterMineCache
-     * @param servletContext the ServletContext
-     */
-    public static void registerTemplateTableCreator(InterMineCache cache,
-                                                    final ServletContext servletContext) {
-        ObjectCreator templateTableCreator = new ObjectCreator() {
-            final ObjectStore os =
-                (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
-            @SuppressWarnings("unused")
-            public Serializable create(String templateName, InterMineBag interMineIdBag,
-                                       Profile profile) {
-                // profile.getUsername returns null if user is not logged in.  null is the signal
-                // for findTemplate() that the user is not logged in
-                String u = profile.getUsername();
-                TemplateQuery template =
-                    TemplateHelper.findTemplate(servletContext, null, u, templateName,
-                                                TemplateHelper.ALL_TEMPLATE);
-
-                if (template == null) {
-                    throw new IllegalStateException("Could not find template \""
-                                                    + templateName + "\"");
-                }
-                return makeInlineTemplateTable(servletContext, template, null, interMineIdBag,
-                        profile);
-            }
-            @SuppressWarnings("unused")
-            public Serializable create(String templateName, Integer id, Profile profile) {
-                // profile.getUsername returns null if user is not logged in.  null is the signal
-                // for findTemplate() that the user is not logged in
-                String u = profile.getUsername();
-
-                TemplateQuery template =
-                    TemplateHelper.findTemplate(servletContext, null, u,
-                                                templateName, TemplateHelper.ALL_TEMPLATE);
-
-                if (template == null) {
-                    throw new IllegalStateException("Could not find template \""
-                                                    + templateName + "\"");
-                }
-
-                InterMineObject object;
-                try {
-                    object = os.getObjectById(id);
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("cannot find object for ID: " + id);
-                }
-                return makeInlineTemplateTable(servletContext, template, object, null, profile);
-            }
-        };
-
-        cache.register(TEMPLATE_TABLE_CACHE_TAG, templateTableCreator);
-    }
-
-    /**
-     * Make (or find in the global cache) and return an InlineTemplateTable for the given
-     * template, InterMineIdBag and user name.
-     * @param servletContext the ServletContext
-     * @param templateName the template name
-     * @param interMineIdBag the InterMineIdBag
-     * @param profile the user running the query
-     * @return the InlineTemplateTable
-     */
-    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
-                                                             String templateName,
-                                                             InterMineBag interMineIdBag,
-                                                             Profile profile) {
-        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
-        return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, interMineIdBag, profile);
-    }
-
-    /**
-     * Make (or find in the global cache) and return an InlineTemplateTable for the given
-     * template, interMineObjectId and user name.
-     * @param servletContext the ServletContext
-     * @param templateName the template name
-     * @param id the object Id
-     * @param profile the user running the query
-     * @return the InlineTemplateTable
-     */
-    public static InlineTemplateTable getInlineTemplateTable(ServletContext servletContext,
-                                                             String templateName,
-                                                             Integer id,
-                                                             Profile profile) {
-        InterMineCache cache = ServletMethods.getGlobalCache(servletContext);
-        return (InlineTemplateTable) cache.get(TemplateHelper.TEMPLATE_TABLE_CACHE_TAG,
-                                               templateName, id, profile);
-    }
 
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
