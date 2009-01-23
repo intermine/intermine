@@ -131,9 +131,9 @@ public class LogicExpression
 
     /**
      * Remove any variables that aren't in the given set.
-     * @param variables set of variable names
+     * @param variables Collection of variable names
      */
-    public void removeAllVariablesExcept(Set variables) {
+    public void removeAllVariablesExcept(Collection<String> variables) {
         if (root instanceof Operator) {
             removeAllVariablesExcept(variables, (Operator) root);
         } else if (root instanceof Variable && !variables.contains(((Variable) root).getName())) {
@@ -146,10 +146,10 @@ public class LogicExpression
     /**
      * Remove any variables that aren't in the given set.
      *
-     * @param variables set of variable names
+     * @param variables Collection of variable names
      * @param node root of subtree
      */
-    private void removeAllVariablesExcept(Set variables, Operator node) {
+    private void removeAllVariablesExcept(Collection<String> variables, Operator node) {
         for (Node child : new ArrayList<Node>(node.getChildren())) {
             if (child instanceof Operator) {
                 removeAllVariablesExcept(variables, (Operator) child);
@@ -308,6 +308,52 @@ public class LogicExpression
             }
             return new LogicExpression(retval.toString());
         }
+    }
+
+    /**
+     * Validates an expression for the given groups of codes, making sure each group is only
+     * ANDed together. Returns either this or an alternative LogicExpression.
+     *
+     * @param variables a List of Collections of String variable names
+     * @return a new LogicExpression
+     */
+    public LogicExpression validateForGroups(List<? extends Collection<String>> variables) {
+        // First, check whether the expression is already valid
+        try {
+            split(variables);
+            return this;
+        } catch (IllegalArgumentException e) {
+        }
+        // It is not valid, so alter it.
+        Set<String> presentVariables = new HashSet<String>();
+        for (Collection<String> v : variables) {
+            for (String var : v) {
+                if (presentVariables.contains(var)) {
+                    throw new IllegalArgumentException("There is an overlap in variables");
+                }
+                presentVariables.add(var);
+            }
+        }
+        if (!presentVariables.equals(getVariableNames())) {
+            throw new IllegalArgumentException("Variables in argument (" + presentVariables
+                    + ") do not match variables in expression (" + getVariableNames() + ")");
+        }
+        StringBuffer retval = new StringBuffer();
+        boolean needComma = false;
+        for (Collection<String> group : variables) {
+            LogicExpression copy = new LogicExpression(toString());
+            try {
+                copy.removeAllVariablesExcept(group);
+                if (needComma) {
+                    retval.append(" and ");
+                }
+                needComma = true;
+                retval.append("(" + copy + ")");
+            } catch (IllegalArgumentException e) {
+                // Must have removed all variables
+            }
+        }
+        return new LogicExpression(retval.toString());
     }
 
     /**

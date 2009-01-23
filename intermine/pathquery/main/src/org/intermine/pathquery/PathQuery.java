@@ -12,6 +12,7 @@ package org.intermine.pathquery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -207,8 +208,9 @@ public class PathQuery
             origNodes.put(transferNode.getPathString(), transferNode);
         }
         
-        // remove any invalid paths from sort order - outer join paths aren't valid for soring
+        // remove any invalid paths from sort order - outer join paths aren't valid for sorting
         validateSortOrder();
+        syncLogicExpression("and");
         
         return newPathString;
     }
@@ -273,6 +275,7 @@ public class PathQuery
         for (PathNode nextNode : newNodes) {
             nodes.put(nextNode.getPathString(), nextNode);
         }
+        syncLogicExpression("and");
         return node.getPathString();
     }
 
@@ -530,6 +533,9 @@ public class PathQuery
                 codes.removeAll(constraintLogic.getVariableNames());
             }
             addCodesToLogic(codes, defaultOperator);
+            if (constraintLogic != null) {
+                constraintLogic = constraintLogic.validateForGroups(getGroupedCodes());
+            }
         }
     }
 
@@ -539,10 +545,57 @@ public class PathQuery
      */
     private Set<String> getConstraintCodes() {
         Set<String> codes = new HashSet<String>();
-        for (Iterator<Constraint> iter = getAllConstraints().iterator(); iter.hasNext(); ) {
-            codes.add(iter.next().getCode());
+        for (Constraint c : getAllConstraints()) {
+            codes.add(c.getCode());
         }
         return codes;
+    }
+
+    /**
+     * Returns a List of Collections of constraint codes, according to the different outer join
+     * sections of the query.
+     *
+     * @return a List of Collections of Strings
+     */
+    private List<Collection<String>> getGroupedCodes() {
+        List<Collection<String>> retval = new ArrayList<Collection<String>>();
+        Map<String, Collection<String>> joinToCodes = new HashMap<String, Collection<String>>();
+        for (Map.Entry<String, PathNode> entry : getNodes().entrySet()) {
+            int lastColon = entry.getKey().lastIndexOf(':');
+            String join = lastColon == -1 ? "" : entry.getKey().substring(0, lastColon);
+            Collection<String> codesForJoin = joinToCodes.get(join);
+            if (codesForJoin == null) {
+                codesForJoin = new HashSet<String>();
+                joinToCodes.put(join, codesForJoin);
+            }
+            for (Constraint c : entry.getValue().getConstraints()) {
+                codesForJoin.add(c.getCode());
+            }
+        }
+        for (Map.Entry<String, Collection<String>> entry : joinToCodes.entrySet()) {
+            if (!entry.getValue().isEmpty()) {
+                retval.add(entry.getValue());
+            }
+        }
+        return retval;
+    }
+
+    /**
+     * Returns a List of logic Strings according to the different outer join sections of the
+     * query.
+     *
+     * @return a List of String
+     */
+    public List<String> getGroupedConstraintLogic() {
+        if (constraintLogic == null) {
+            return Collections.EMPTY_LIST;
+        }
+        List<LogicExpression> groups = constraintLogic.split(getGroupedCodes());
+        List<String> retval = new ArrayList<String>();
+        for (LogicExpression group : groups) {
+            retval.add(group.toString());
+        }
+        return retval;
     }
 
     /**
