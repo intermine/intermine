@@ -855,7 +855,7 @@ public class PagedTable
                 try {
                     bagCreationResults.get(0);
                     return false;
-                } catch (ArrayIndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     return true;
                 }
             }
