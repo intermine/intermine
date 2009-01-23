@@ -64,7 +64,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      * {@inheritDoc}
      */
     @Override
-    protected ResultSet getFeatureResultSet(@SuppressWarnings("unused") Connection connection) {
+    protected ResultSet getFeatureTableResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "name", "uniquename", "type", "seqlen", "residues", "md5checksum",
             "organism_id"

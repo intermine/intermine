@@ -190,7 +190,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
-        ResultSet res = getFeatureResultSet(connection);
+        ResultSet res = getFeatureTableResultSet(connection);
         int count = 0;
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -1626,7 +1626,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getFeatureResultSet(Connection connection)
+    protected ResultSet getFeatureTableResultSet(Connection connection)
         throws SQLException {
         String query = "SELECT * FROM " + tempFeatureTableName;
         LOG.info("executing: " + query);
