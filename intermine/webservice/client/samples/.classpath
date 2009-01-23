@@ -7,5 +7,7 @@
 	<classpathentry kind="src" path="QueryClient/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
+	<classpathentry kind="src" path="/intermine-pathquery"/>
+	<classpathentry kind="src" path="/intermine-webservice-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
