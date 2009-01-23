@@ -13,8 +13,6 @@ package org.intermine.webservice.server.query.result;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.ServletMethods;
@@ -36,22 +34,19 @@ public class PathQueryBuilder
      * PathQueryBuilder constructor. 
      * @param xml xml string from which will be PathQuery constructed
      * @param schemaUrl url of XML Schema file, validation is performed according this file 
-     * @param servletContext object from which other objects and parameters are obtained
      * @param savedBags previously saved bags  
      */
-    public PathQueryBuilder(String xml, String schemaUrl, ServletContext servletContext, 
-            Map<String, InterMineBag> savedBags) {
-        buildQuery(xml, schemaUrl, servletContext, savedBags);
+    public PathQueryBuilder(String xml, String schemaUrl, Map<String, InterMineBag> savedBags) {
+        buildQuery(xml, schemaUrl, savedBags);
     }
 
-    private void buildQuery(String xml, String schemaUrl, ServletContext servletContext, 
+    private void buildQuery(String xml, String schemaUrl, 
             Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
             try {
-                pathQuery = ServletMethods.fromXml(xml, savedBags,
-                        servletContext);                
+                pathQuery = ServletMethods.fromXml(xml, savedBags);                
             } catch (Exception ex) {
                 String msg = "XML is well formatted but contains invalid model data. "
                         + "Check that your constraints are correct "

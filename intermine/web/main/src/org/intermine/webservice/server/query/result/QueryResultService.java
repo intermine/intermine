@@ -72,7 +72,7 @@ public class QueryResultService extends WebService
                 SessionMethods.getSearchRepository(session.getServletContext()));
 
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),
-                request.getSession().getServletContext(), savedBags);
+                savedBags);
 
         PathQuery query = builder.getQuery();
         runPathQuery(query, input.getStart(), input.getMaxCount(), 
