@@ -187,6 +187,12 @@ sub _get_parts
 
   for my $bit (@bits) {
     $current_field = $current_class->get_field_by_name($bit);
+
+    if (!defined $current_field) {
+      my $current_class_name = $current_class->name();
+      die qq[can't find field "$bit" in class $current_class_name\n];
+    }
+
     push @parts, $current_field;
 
     if ($current_field->field_type() eq 'attribute') {
