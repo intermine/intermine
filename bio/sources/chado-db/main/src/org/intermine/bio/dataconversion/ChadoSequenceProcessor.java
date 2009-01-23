@@ -217,7 +217,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         res.close();
     }
 
-    
+
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
      */
@@ -273,6 +273,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
+        // using the configuration, set a field to be the feature name
         if (!StringUtils.isBlank(name)) {
             String fixedName = fixIdentifier(fdat.getInterMineType(), name);
             if (nameActionList == null || nameActionList.size() == 0) {
@@ -304,9 +305,11 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         List<ConfigAction> uniqueNameActionList =
             getConfig(fdat.getOrganismData().getTaxonId()).get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
+            // default: set primaryIdentifier to be the uniquename
             setAttributeIfNotSet(fdat, "primaryIdentifier", fixedUniqueName);
             fieldValuesSet.add(fixedUniqueName);
         } else {
+            // using the configuration, set a field to be the feature name
             for (ConfigAction action: uniqueNameActionList) {
                 if (action instanceof SetFieldConfigAction) {
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
@@ -320,6 +323,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             }
         }
 
+        // set the BioEntity sequence if there is one
         if (fdat.checkField(SEQUENCE_STRING)
             && residues != null && residues.length() > 0) {
             if (!fdat.getFlag(SEQUENCE_STRING)) {
@@ -344,6 +348,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                                uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
+        // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
             String fixedName = fixIdentifier(fdat.getInterMineType(), name);
 
@@ -373,7 +378,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     }
 
 
-    
+
 //    private void processAndStoreFeature(Item feature, Integer featureId, String uniqueName,
 //            String name, int seqlen, String residues,
 //            String interMineType, Integer organismId)
@@ -503,9 +508,9 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 //featureMap.put(featureId, fdat);
 //}
 
-    
-    
-    
+
+
+
     /**
      * Set the given attribute if the FeatureData says it's not set, then set the flag in
      * FeatureData to say it's set.
