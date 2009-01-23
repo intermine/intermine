@@ -1,6 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -16,7 +13,7 @@
           from different studies may be more easily compared. On behalf of INDAC, the
           <A href="http://www.flychip.org.uk" target="_new">FlyChip group</A> has designed a set
           of 65-69mer long oligonucleotides to release 4.1 of the <I>D. melanogaster</I>
-          genome. Oligos were designed using a modified version of 
+          genome. Oligos were designed using a modified version of
           <A href="http://berry.engin.umich.edu/oligoarray2" target="_new">OligoArray2</A> and other
           post-processing steps (David Kreil, Debashis Rana, Gos Micklem unpublished).
         </p>
@@ -38,7 +35,7 @@
       </div>
       <div class="body">
          <ul>
-      
+
           <li>
             <im:querylink text="All INDAC microarray oligos with their length and tm and the identifier of the associated transcript " skipBuilder="true">
               <query name="" model="genomic" view="MicroarrayOligo.identifier MicroarrayOligo.length MicroarrayOligo.tm MicroarrayOligo.transcript.identifier">
