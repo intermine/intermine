@@ -9,6 +9,7 @@ package org.intermine.bio.chado.config;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 /**
  * An action that creates a collection of objects from value.
  * @author Kim Rutherford
