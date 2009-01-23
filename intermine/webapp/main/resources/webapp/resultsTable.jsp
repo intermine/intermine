@@ -10,6 +10,7 @@
 <tiles:importAttribute name="pagedResults" ignore="false"/>
 <tiles:importAttribute name="currentPage" ignore="false"/>
 <tiles:importAttribute name="bagName" ignore="true"/>
+<tiles:importAttribute name="inlineTable" ignore="true"/>
 <tiles:importAttribute name="highlightId" ignore="true"/>
 
 <script type="text/javascript" src="js/table.js" ></script>
@@ -86,7 +87,7 @@ jQuery(document).ready(function(){
              </c:if>--%>
             <div id="${column.index}" class="th_drag">
           
-          <c:if test="${column.selectable}">
+          <c:if test="${column.selectable && empty inlineTable}">
             <%--<c:set var="colcount" value="${colcount+1}"/>
               <th align="center" class="checkbox">--%>
               <c:set var="disabled" value="false"/>
@@ -105,7 +106,7 @@ jQuery(document).ready(function(){
               ${columnDisplayName}
               <im:typehelp type="${column.path}" fullPath="true"/>
               <%-- summary --%>
-              <c:if test="${!empty column.path.noConstraintsString}">
+              <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
                 <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
                 <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
@@ -187,7 +188,7 @@ jQuery(document).ready(function(){
                     <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
                       <c:set var="disabled" value="true"/>
                     </c:if>
-                    <c:if test="${column.selectable}">
+                    <c:if test="${column.selectable && empty inlineTable}">
                       <c:set var="checkboxClass" value="checkbox ${resultElement.id}"/>
                       <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1}">
                         <c:set var="checkboxClass" value="${checkboxClass} highlightCell"/>
@@ -224,20 +225,43 @@ jQuery(document).ready(function(){
   <tr>
   <td colspan="${colcount}">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
-
-  <b>Selected:</b><span id="selectedIdFields">
-  <c:choose>
-   <c:when test="${pagedResults.allSelected != -1}">All selected on all pages</c:when>
-   <c:otherwise>
-     <c:set var="selectedIds">
-       <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIds}, </c:if><c:out value="${selected}"/></c:forEach>
-     </c:set>
-     <c:set var="selectedIdFields">
-       <c:forEach items="${firstSelectedFields}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields}, </c:if><c:out value="${selected}"/></c:forEach>
-     </c:set>
-     ${selectedIdFields}</c:otherwise>
+  <c:choose>    
+    <c:when test="${empty inlineTable}">
+      <b>Selected:</b><span id="selectedIdFields">
+      <c:choose>
+       <c:when test="${pagedResults.allSelected != -1}">All selected on all pages</c:when>
+       <c:otherwise>
+         <c:set var="selectedIds">
+           <c:forEach items="${pagedResults.currentSelectedIdStrings}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIds}, </c:if><c:out value="${selected}"/></c:forEach>
+         </c:set>
+         <c:set var="selectedIdFields">
+           <c:forEach items="${firstSelectedFields}" var="selected" varStatus="status"><c:if test="${status.count > 1}">${selectedIdFields}, </c:if><c:out value="${selected}"/></c:forEach>
+         </c:set>
+         ${selectedIdFields}</c:otherwise>
+      </c:choose>
+      </span>
+    </c:when>
+    <c:otherwise>
+      <c:set var="numRows" value="${pagedResults.exactSize}"/>
+      
+      <c:choose>
+        <c:when test="${pagedResults.pageSize >= numRows}">
+          <c:choose>
+            <c:when test="${numRows == 1}">
+              <b>Showing all <span><c:out value="${numRows}"/></span> row.</b>
+            </c:when>
+            <c:otherwise>
+              <b>Showing all <span><c:out value="${numRows}"/></span> rows.</b>
+            </c:otherwise>
+          </c:choose>
+        </c:when>
+        <c:otherwise>
+          <b>Showing first <span><c:out value="${pagedResults.pageSize}"/></span> of <span><c:out value="${numRows}"/></span> rows.</b>
+        </c:otherwise>
+      </c:choose>
+    </c:otherwise>
   </c:choose>
-  </span>
+  
   </td>
   </tr>
   </tfoot>
@@ -280,7 +304,7 @@ jQuery(document).ready(function(){
   //]]>-->
 </script>
 
-<c:if test="${empty bagName}">
+<c:if test="${empty bagName && empty inlineTable}">
    <div style="margin-top: 10px;">
    <tiles:insert name="paging.tile">
      <tiles:put name="resultsTable" beanName="resultsTable" />

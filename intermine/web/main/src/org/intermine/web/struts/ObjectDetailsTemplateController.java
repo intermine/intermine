@@ -10,21 +10,27 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.Constants;
+import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.InlineTemplateTable;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -54,26 +60,36 @@ public class ObjectDetailsTemplateController extends TilesAction
         }
 
         TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");
-        String templateName = templateQuery.getName();
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        InlineTemplateTable itt = null;
-
+        TemplateForm templateForm = new TemplateForm();
+        Model model = SessionMethods.getObjectStore(servletContext).getModel();
+        
+        // this is either a report page for an InterMineObject or a list analysis page        
         if (displayObject != null) {
-            Integer objectId = displayObject.getObject().getId();
-            itt =
-                TemplateHelper.getInlineTemplateTable(servletContext, templateName,
-                                                  objectId, profile);
+            InterMineObject object = displayObject.getObject();
+            if (!TemplateHelper.fillTemplateForm(templateQuery, object, null, templateForm,
+                    model)) {
+                return null;
+            }
         } else {
-            itt =
-                TemplateHelper.getInlineTemplateTable(servletContext, templateName,
-                                                  interMineIdBag, profile);
+            if (!TemplateHelper.fillTemplateForm(templateQuery, null, interMineIdBag, templateForm,
+                    model)) {
+                return null;
+            }
         }
+            
+        templateForm.parseAttributeValues(templateQuery, null, new ActionErrors(), false);
 
-        if (itt != null) {
-            context.putAttribute("table", itt);
-        }
-
+        // note that savedBags parameter is an empty set, we are on a report page for an object,
+        // the object/bag we are using is already set in the TemplateForm, we can't use other bags
+        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm, 
+                templateQuery, new HashMap());
+                
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResults webResults = executor.execute(populatedTemplate);
+        PagedTable pagedResults = new PagedTable(webResults, 10);
+        
+        context.putAttribute("resultsTable", pagedResults);
         return null;
     }
 }
