@@ -33,7 +33,7 @@ my $uniprot_full_path = "$uniprot_base_path/knowledgebase/complete";
 my $release_notes_file = "relnotes.txt";
 my $uniprot_main_dir = "$home/uniprot";
 my @files_to_get = qw(
-                      uniprot.xsd uniprot_sprot.xml.gz uniprot_trembl.xml.gz
+                      uniprot.xsd uniprot_sprot.xml.gz uniprot_trembl.xml.gz uniprot_sprot_varsplic.fasta.gz
                      );
 my $keywords_file = "keywlist.xml.gz";
 
