@@ -2,6 +2,7 @@ package org.intermine.pathquery;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1038,6 +1039,14 @@ public class PathQueryTest extends TestCase
         assertNotNull(pq.getNode("Company"));
     }
     
+    public void testFlipJoinLogic() {
+        Map parsed = PathQueryBinding.unmarshal(new StringReader("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.name asc\" constraintLogic=\"A or B\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.name\" type=\"String\"><constraint op=\"=\" value=\"DepartmentA1\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Department.employees\" type=\"Employee\"></node><node path=\"Department.employees.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA1\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>"));
+        PathQuery pq = (PathQuery) parsed.get("test");
+        assertEquals("A or B", pq.getConstraintLogic());
+        pq.flipJoinStyle("Department.employees");
+        assertEquals("B and A", pq.getConstraintLogic());
+    }
+
 //    public void testEqualsObject() {
 //        fail("Not yet implemented");
 //    }

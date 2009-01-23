@@ -42,6 +42,7 @@ public class LogicExpressionTest extends TestCase
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
         }
+        assertEquals(new LogicExpression("A"), l.validateForGroups(Arrays.asList(Arrays.asList("A"))));
     }
 
     public void test2() {
@@ -66,6 +67,8 @@ public class LogicExpressionTest extends TestCase
         }
         assertEquals(new LogicExpression("A"), l.getSection(Arrays.asList("A")));
         assertEquals(new LogicExpression("A and B"), l.getSection(Arrays.asList("A", "B")));
+        assertTrue(l == l.validateForGroups(Arrays.asList(Arrays.asList("A"), Arrays.asList("B"))));
+        assertTrue(l == l.validateForGroups(Arrays.asList(Arrays.asList("A", "B"))));
     }
 
     public void test3() {
@@ -81,6 +84,13 @@ public class LogicExpressionTest extends TestCase
         assertEquals(new LogicExpression("A or B"), l.getSection(Arrays.asList("A", "B")));
         try {
             l.getSection(Arrays.asList("A"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+        }
+        assertEquals(new LogicExpression("A and B"), l.validateForGroups(Arrays.asList(Arrays.asList("A"), Arrays.asList("B"))));
+        assertTrue(l == l.validateForGroups(Arrays.asList(Arrays.asList("A", "B"))));
+        try {
+            l.validateForGroups(Arrays.asList(Arrays.asList("A")));
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
         }
@@ -100,6 +110,9 @@ public class LogicExpressionTest extends TestCase
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B or C"), null), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C"), empty)));
         assertEquals(new LogicExpression("A and (B or C)"), l.getSection(Arrays.asList("A", "B", "C")));
         assertEquals(Arrays.asList(new LogicExpression("A and (B or C)")), l.split(Arrays.asList(Arrays.asList("A", "B", "C"))));
+        assertTrue(l == l.validateForGroups(Arrays.asList(Arrays.asList("A", "B", "C"))));
+        assertTrue(l == l.validateForGroups(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C"))));
+        assertEquals(new LogicExpression("A and B and C"), l.validateForGroups(Arrays.asList(Arrays.asList("A", "B"), Arrays.asList("C"))));
     }
 
     public void test6() {
