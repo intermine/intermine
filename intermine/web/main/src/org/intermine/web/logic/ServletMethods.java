@@ -12,8 +12,6 @@ package org.intermine.web.logic;
 import java.io.StringReader;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -30,10 +28,8 @@ public class ServletMethods
      * @param xml PathQuery XML
      * @return a PathQuery object
      * @param savedBags Map from bag name to bag
-     * @param servletContext global ServletContext object
      */
-    public static PathQuery fromXml(String xml, Map<String, InterMineBag> savedBags, 
-            ServletContext servletContext) {
+    public static PathQuery fromXml(String xml, Map<String, InterMineBag> savedBags) {
         Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(xml));
         MainHelper.checkPathQueries(queries, savedBags);
         return (PathQuery) queries.values().iterator().next();
