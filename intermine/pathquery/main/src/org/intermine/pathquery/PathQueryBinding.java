@@ -86,7 +86,7 @@ public class PathQueryBinding
                     Constraint c = (Constraint) k.next();
                     writer.writeStartElement("constraint");
                     writer.writeAttribute("op", "" + c.getOp());
-                    Object outputValue = c.getDisplayValue();
+                    Object outputValue = c.getValue();
                     writer.writeAttribute("value", "" + outputValue);
                     if (c.getDescription() != null) {
                         writer.writeAttribute("description", "" + c.getDescription());
@@ -116,18 +116,6 @@ public class PathQueryBinding
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Return a String suitable for output to XML for the given node value.
-     */
-    private static String getOutputValue(Object value) {
-        if (value instanceof java.util.Date) {
-            return Constraint.ISO_DATE_FORMAT.format(value);
-        } else {
-            return value.toString();
         }
     }
 
