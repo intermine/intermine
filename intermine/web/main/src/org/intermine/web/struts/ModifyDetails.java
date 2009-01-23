@@ -21,20 +21,24 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.results.InlineTemplateTable;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateListHelper;
@@ -79,32 +83,43 @@ public class ModifyDetails extends DispatchAction
         String userName = (profile).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, scope);
-        String trail = request.getParameter("trail");
-        InlineTemplateTable itt = null;
-
+        
+        TemplateForm templateForm = new TemplateForm();
+        Model model = SessionMethods.getObjectStore(servletContext).getModel();
+        
         if (idForLookup != null && idForLookup.length() != 0) {
             Integer objectId = new Integer(idForLookup);
-            itt =
-                TemplateHelper.getInlineTemplateTable(servletContext, name,
-                                                      objectId, profile);
+            ObjectStore os = SessionMethods.getObjectStore(servletContext);
+            InterMineObject object = os.getObjectById(objectId);
+            TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
             Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                     SessionMethods.getSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
-            itt = TemplateHelper.getInlineTemplateTable(servletContext, name,
-                                                        interMineBag, profile);
+            TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
-        SessionMethods.setResultsTable(session, identifier, itt.getPagedTable());
+              
+        templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
 
-
+        // note that savedBags parameter is an empty set, we are on a report page for an object,
+        // the object/bag we are using is already set in the TemplateForm, we can't use other bags
+        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm, 
+                template, new HashMap());
+                
+        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResults webResults = executor.execute(populatedTemplate);
+        PagedTable pagedResults = new PagedTable(webResults, 10);
+        
+        SessionMethods.setResultsTable(session, identifier, pagedResults);
+        
         // add results table to trail
+        String trail = request.getParameter("trail");
         if (trail != null) {
             trail += "|results." + identifier;
         } else {
             trail = "|results." + identifier;
-        }
-
+        }               
 
         return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("templateQueryTitle", template.getTitle())

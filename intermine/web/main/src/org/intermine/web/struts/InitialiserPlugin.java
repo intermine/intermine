@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
-import org.intermine.cache.InterMineCache;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -171,8 +170,6 @@ public class InitialiserPlugin implements PlugIn
 
             servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
-            makeCache(servletContext, os);
-
             loadAutoCompleter(servletContext, os);
 
             cleanTags(SessionMethods.getTagManager(servletContext));
@@ -189,7 +186,7 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Load the Aspects configuration from aspects.xml
-     * @param servletContext the servlet cnotext
+     * @param servletContext the servlet context
      * @param os the main objectstore
      */
     private void loadAspectsConfig(ServletContext servletContext,
@@ -417,17 +414,7 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
     }
 
-    /**
-     * Load the Aspects configuration from aspects.xml
-     * @param servletContext the servlet cnotext
-     * @param os the main objectstore
-     */
-    private void makeCache(ServletContext servletContext, ObjectStore os) {
-        InterMineCache cache = new InterMineCache();
-        TemplateHelper.registerTemplateTableCreator(cache, servletContext);
-        servletContext.setAttribute(Constants.GLOBAL_CACHE, cache);
-    }
-
+    
     /**
      * Create the profile manager and place it into to the servlet context.
      */

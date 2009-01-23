@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.intermine.cache.InterMineCache;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -26,15 +25,6 @@ import org.intermine.web.logic.query.MainHelper;
  */
 public class ServletMethods
 {
-    /**
-     * Get the Global InterMineCache object.
-     * @param context the ServletContext
-     * @return the InterMineCache
-     */
-    public static InterMineCache getGlobalCache(ServletContext context) {
-        return (InterMineCache) context.getAttribute(Constants.GLOBAL_CACHE);
-    }
-    
     /**
      * Rematerialise single query from XML.
      * @param xml PathQuery XML
