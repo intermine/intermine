@@ -150,6 +150,18 @@ public class Node
     }
 
     /**
+     * Gets a friendly name for display on the web site.
+     *
+     * @return a String
+     */
+    public String getFriendlyName() {
+        if (fieldName == null) {
+            return type;
+        }
+        return fieldName;
+    }
+
+    /**
      * Gets the value of attribute
      *
      * @return the value of attribute
