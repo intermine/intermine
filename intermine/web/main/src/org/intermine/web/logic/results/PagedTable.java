@@ -825,7 +825,42 @@ public class PagedTable
      * @return true if and only if nothing is selected
      */
     public boolean isEmptySelection() {
-        return !selectedIdsIterator().hasNext();
+        if (allSelected == -1) {
+            return selectionIds.isEmpty();
+        }
+        WebResults webResults = (WebResults) getAllRows();
+        Results results = webResults.getInterMineResults();
+        int batchSize = results.getBatchSize();
+        int i = 0;
+        for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getAllRows()) {
+            for (ResultsRow<MultiRowValue<ResultElement>> subRow : multiRow) {
+                MultiRowValue<ResultElement> value = subRow.get(allSelected);
+                if (value instanceof MultiRowFirstValue) {
+                    ResultElement element = value.getValue();
+                    if (element != null) {
+                        Integer elementId = element.getId();
+                        if (!selectionIds.containsKey(elementId)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            i++;
+            if (i >= batchSize) {
+                Query bagCreationQuery = getBagCreationQuery();
+                Results bagCreationResults = results.getObjectStore()
+                    .executeSingleton(bagCreationQuery);
+                bagCreationResults.setBatchSize(1);
+                bagCreationResults.setNoExplain();
+                try {
+                    bagCreationResults.get(0);
+                    return false;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    return true;
+                }
+            }
+        }
+        return true;
     }
 
     /**

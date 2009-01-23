@@ -472,6 +472,15 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
+     * Gets the batch size being used.
+     *
+     * @return an int
+     */
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    /**
      * Gets the batch for a particular row
      *
      * @param row the row to get the batch for
