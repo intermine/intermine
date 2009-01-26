@@ -173,6 +173,7 @@ public class LoadDefaultTemplatesTask extends Task
              }
 
         } catch (Exception e) {
+            LOG.error(e.getMessage());
             throw new BuildException(e);
         } finally {
             if (profileDest != null) {
