@@ -66,7 +66,7 @@ public class GetAttributeAsFileAction extends Action
         while (classIter.hasNext()) {
             Class c = (Class) classIter.next();
 
-            Type thisTypeConfig = (Type) webConfig.getTypes().get(c.getName());
+            Type thisTypeConfig = webConfig.getTypes().get(c.getName());
 
             FieldConfig fc = thisTypeConfig.getFieldConfigMap().get(fieldName);
 

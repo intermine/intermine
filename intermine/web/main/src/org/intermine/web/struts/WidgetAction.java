@@ -112,8 +112,7 @@ public class WidgetAction extends InterMineAction
         String widgetId = wf.getWidgetid();
         String selectedExtraAttribute = wf.getSelectedExtraAttribute();
 
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName()
-                                                    + "." + wf.getBagType());
+        Type type = webConfig.getTypes().get(model.getPackageName() + "." + wf.getBagType());
         List<WidgetConfig> widgets = type.getWidgets();
         for (WidgetConfig widgetConfig : widgets) {
             if (widgetConfig.getId() == widgetId) {
@@ -254,7 +253,7 @@ public class WidgetAction extends InterMineAction
         Model model = os.getModel();
 
         String widgetId = widgetForm.getWidgetid();
-        Type type = (Type) webConfig.getTypes().get(
+        Type type = webConfig.getTypes().get(
                         model.getPackageName() + "." + widgetForm.getBagType());
         List<WidgetConfig> widgets = type.getWidgets();
         for (WidgetConfig widgetConfig : widgets) {

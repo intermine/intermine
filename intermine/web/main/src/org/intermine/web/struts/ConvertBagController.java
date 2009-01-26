@@ -72,7 +72,7 @@ public class ConvertBagController extends TilesAction
         Map fastaMap = new HashMap();
         for (Class clazz : conversionTypesMap.keySet()) {
             conversionTypes.add(TypeUtil.unqualifiedName(clazz.getName()));
-            Type type = (Type) webConfig.getTypes().get(clazz.getName());
+            Type type = webConfig.getTypes().get(clazz.getName());
             FieldConfig fieldConfig = type.getFieldConfigMap().get("length");
             if (fieldConfig != null && fieldConfig.getDisplayer() != null) {
                 fastaMap.put(type, true);
