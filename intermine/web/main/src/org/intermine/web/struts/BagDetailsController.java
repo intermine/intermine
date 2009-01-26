@@ -112,7 +112,7 @@ public class BagDetailsController extends TilesAction
 
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
-        Type type = (Type) webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
+        Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
         Map<String, Map<String, Collection<String>>> widget2extraAttrs

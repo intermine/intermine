@@ -841,7 +841,7 @@ public class AjaxServices
                 SearchRepository.getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
 
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+            Type type = webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
             List<WidgetConfig> widgets = type.getWidgets();
             for (WidgetConfig widget: widgets) {
@@ -880,7 +880,7 @@ public class AjaxServices
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
             Map classKeys = getClassKeys(servletContext);
 
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+            Type type = webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
             List<WidgetConfig> widgets = type.getWidgets();
             for (WidgetConfig widgetConfig: widgets) {
@@ -926,7 +926,7 @@ public class AjaxServices
             SearchRepository searchRepository = SearchRepository
                             .getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-            Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+            Type type = webConfig.getTypes().get(model.getPackageName()
                     + "." + imBag.getType());
             List<WidgetConfig> widgets = type.getWidgets();
             for (WidgetConfig widgetConfig : widgets) {
@@ -976,7 +976,7 @@ public class AjaxServices
            SearchRepository searchRepository = SearchRepository
                            .getGlobalSearchRepository(servletContext);
            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
-           Type type = (Type) webConfig.getTypes().get(model.getPackageName()
+           Type type = webConfig.getTypes().get(model.getPackageName()
                    + "." + imBag.getType());
            List<WidgetConfig> widgets = type.getWidgets();
            for (WidgetConfig widgetConfig : widgets) {

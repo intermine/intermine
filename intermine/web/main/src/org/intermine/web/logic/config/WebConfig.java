@@ -196,7 +196,7 @@ public class WebConfig
      * Get the types (== classes) stored in this WebConfig.
      * @return the types
      */
-    public Map getTypes() {
+    public Map<String, Type> getTypes() {
         return this.types;
     }
 

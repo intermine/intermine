@@ -107,7 +107,7 @@ public class WebConfigTest extends TestCase
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
         displayerAspects.put("Aspect2", Arrays.asList(
                 new Object[]{managerType.getLongDisplayers().iterator().next()}));
-        assertEquals(displayerAspects, ((Type) wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
+        assertEquals(displayerAspects, (wc1.getTypes().get("org.intermine.model.testmodel.Manager"))
                 .getAspectDisplayers());
 
         assertEquals(wc2, wc1);
