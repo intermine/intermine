@@ -62,7 +62,9 @@ use InterMine::Model::Field;
 
 =head2 attribute_type
 
- Usage   : 
+ Usage   : my $type = $field->attribute_type();
+ Function: return the (Java) type of this attribute, eg. "String", "Integer",
+           "Date", "Boolean"
 
 =cut
 
