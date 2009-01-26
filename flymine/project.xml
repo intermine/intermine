@@ -38,7 +38,7 @@
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
-    <source name="drosophila-homology" type="drosophila-homology">
+     <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/homology"/>
       <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
     </source>
@@ -49,7 +49,7 @@
       <property name="src.data.dir" location="/shared/data/anopheles/mappings"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
-    <source name="uniprot-keywords" type="uniprot-keywords">
+    <source name="uniprot-keywords" type="uniprot-keywords" dump="true">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
@@ -69,7 +69,7 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="ensembl" type="ensembl"> 
+    <source name="ensembl" type="ensembl" dump="true"> 
      <property name="src.data.dir" location="/shared/data/ensembl/current"/> 
     </source> 
     <source name="flyreg" type="flyreg">
@@ -81,12 +81,14 @@
     <source name="interpro" type="interpro">      
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
+<!--
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current"/>
       <property name="src.data.dir.includes" value="homophila_matches.txt"/>
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
+-->
     <source name="tiling_path" type="tiling_path">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -99,7 +101,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr">
+    <source name="anoph-expr" type="anoph-expr" dump="true">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
@@ -404,7 +406,7 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
@@ -414,6 +416,29 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+<!--
+    <source name="uniprot-dmel-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set for Drosophila melanogaster"/>
+      <property name="fasta.synonymSource" value="UniProt"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/split/fasta"/>
+      <property name="fasta.includes" value="*.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+    </source>
+
+    <source name="uniprot-anoph-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7165"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set for Anopheles"/>
+      <property name="fasta.synonymSource" value="UniProt"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/split/fasta"/>
+      <property name="fasta.includes" value="*.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+    </source>
+-->
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
@@ -468,11 +493,6 @@
       <property name="src.data.dir.includes" value="*.txt"/>
     </source>
 
-<!-- they won't let us.  See #1801
-    <source name="pim" type="pim">
-      <property name="src.data.dir" location="/shared/data/pim/current"/>
-    </source>
--->
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
