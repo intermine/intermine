@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
 import org.intermine.dataconversion.ItemsTestCase;
 
 public class ChadoSequenceProcessorTest extends ItemsTestCase
