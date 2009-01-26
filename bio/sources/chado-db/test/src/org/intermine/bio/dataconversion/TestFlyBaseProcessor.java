@@ -243,7 +243,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             returnVal = new Object[data.length][];
 
             for (int i = 0; i < data.length; i++) {
-                returnVal[i] = Arrays.copyOf(data[i], data[i].length);
+                returnVal[i] = data[i];
                 int tempVal = (Integer) returnVal[i][1];
                 returnVal[i][1] = returnVal[i][2];
                 returnVal[i][2] = tempVal;
