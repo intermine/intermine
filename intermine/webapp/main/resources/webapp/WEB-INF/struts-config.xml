@@ -162,9 +162,6 @@
     <action path="/viewChange" type="org.intermine.web.struts.ViewChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    <action path="/sortOrderChange" type="org.intermine.web.struts.SortOrderChange" parameter="method">
-      <forward name="query" redirect="true" path="/query.do"/>
-    </action>
     <action path="/csvExportAction" name="csvExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
     <action path="/excelExportAction" name="excelExportForm" type="org.intermine.web.struts.TableExportAction" parameter="method"/>
     <action path="/changeTable" type="org.intermine.web.struts.ChangeTableAction" parameter="method">
