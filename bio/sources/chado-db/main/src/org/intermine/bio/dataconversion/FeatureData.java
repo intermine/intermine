@@ -31,7 +31,7 @@ class FeatureData
     private String uniqueName;
     private String chadoFeatureName;
     // the synonyms that have already been created
-    final Set<String> existingSynonyms
+    private final Set<String> existingSynonyms
         = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     private String itemIdentifier;
     private String interMineType;
@@ -253,5 +253,14 @@ class FeatureData
      */
     public void setMd5checksum(String md5checksum) {
         this.md5checksum = md5checksum;
+    }
+
+
+    /**
+     * Return the set of identifiers for which Synonyms have been created.
+     * @return the existingSynonyms
+     */
+    public final Set<String> getExistingSynonyms() {
+        return existingSynonyms;
     }
 }

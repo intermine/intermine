@@ -26,6 +26,7 @@ import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
+import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
@@ -658,8 +659,10 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                   CREATE_SYNONYM_ACTION));
 
-            map.put(new MultiKey("feature", "MRNA", FLYBASE_DB_NAME, "uniquename"),
-                    Arrays.asList(new SetFieldConfigAction("primaryIdentifier")));
+            // just make a Synonym because the secondaryIdentifier and the symbol are set from the
+            // dbxref and synonym tables
+            map.put(new MultiKey("feature", "MRNA", FLYBASE_DB_NAME, "name"),
+                    Arrays.asList(new CreateSynonymAction()));
 
             map.put(new MultiKey("feature", "PointMutation", FLYBASE_DB_NAME, "uniquename"),
                     Arrays.asList(new SetFieldConfigAction("name"),
