@@ -40,7 +40,7 @@ public class UniprotConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        File datadir = new File ("./test/resources/datadir");
+        File datadir = new File ("./test/resources/");
         converter.setCreateinterpro("true");
         converter.setUniprotOrganisms("7227");
         converter.process(datadir);
