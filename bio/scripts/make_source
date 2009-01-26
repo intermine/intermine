@@ -26,7 +26,7 @@ my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %project_propertie
 
 if (@ARGV != 2) {
   usage (<<USAGE);
-needs two arguments
+Error: needs two arguments.
 USAGE
 }
 
@@ -89,6 +89,8 @@ if ($create_main) {
   $project_dependencies .= ", \\\n           bio/sources/${source_name}/main";
 }
 
+# map of patterns to substitute; for each key we look for ${key} and substitute
+# the value from the map
 my %substitutions = (
                      'source-name' => $source_name,
                      'camel-case-source-name' => $camel_case_source_name,
@@ -109,6 +111,9 @@ need to run in the top level of an intermine checkout (containing
 MESSAGE
 }
 
+# Take a string and substitute all of the keys that appear in the %substitutions
+# map with the values from the map.  eg.  the string "${source-name}" will
+# change to $source_type.
 sub substitute
 {
   my $text = shift;
@@ -134,10 +139,12 @@ if (-e $full_source_dir) {
   usage(<<MESSAGE);
 $full_source_dir already exists
 MESSAGE
-
 }
 
-# substitute ${foo} sequences in file contents and in file names
+# This function is called once for each file and directory in the
+# skeleton source directory.  It will substitute patterns like ${FOO}
+# in file contents and in file names, then write the new files to the
+# new source directory
 sub process
 {
   my $orig_path = "$start_dir/$File::Find::name";
@@ -170,6 +177,7 @@ sub process
   }
 }
 
+# remove subversion directories and backup files from the argument list
 sub preprocess
 {
   return grep {$_ !~ /^(\.svn|.*~)$/} @_;
