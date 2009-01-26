@@ -276,14 +276,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         // using the configuration, set a field to be the feature name
         if (!StringUtils.isBlank(fixedName)) {
             if (nameActionList == null || nameActionList.size() == 0) {
-                if (fdat.checkField(SYMBOL_STRING)) {
-                    fieldValuesSet.add(fixedName);
-                    setAttributeIfNotSet(fdat, SYMBOL_STRING, fixedName);
-//TODO: check!
-                } else {
-                    fieldValuesSet.add(fixedName);
-                    setAttributeIfNotSet(fdat, SECONDARY_IDENTIFIER_STRING, fixedName);
-                }
+                fieldValuesSet.add(fixedName);
+                setAttributeIfNotSet(fdat, SECONDARY_IDENTIFIER_STRING, fixedName);
             } else {
                 for (ConfigAction action: nameActionList) {
                     if (action instanceof SetFieldConfigAction) {
@@ -348,11 +342,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                                uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
-        // TODO: verify is fine
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
-//            String fixedName = fixIdentifier(fdat, name);
-
             if (nameActionList == null || nameActionList.size() == 0) {
                 nameActionList = new ArrayList<ConfigAction>();
                 nameActionList.add(new CreateSynonymAction());
@@ -363,7 +354,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                     CreateSynonymAction createSynonymAction = (CreateSynonymAction) action;
                     if (createSynonymAction.isValidValue(fixedName)) {
                         String processedName = createSynonymAction.processValue(fixedName);
-                        if (!fdat.existingSynonyms.contains(processedName)) {
+                        if (!fdat.getExistingSynonyms().contains(processedName)) {
                             boolean nameSet = fieldValuesSet.contains(processedName);
                             Item nameSynonym =
                                 createSynonym(fdat, "name", processedName, nameSet, null);
@@ -1063,7 +1054,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         String newFieldValue = createSynonymAction.processValue(accession);
-                        if (fdat.existingSynonyms.contains(newFieldValue)) {
+                        if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
                         } else {
                             boolean isPrimary = false;
@@ -1134,7 +1125,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         String newFieldValue = synonymAction.processValue(identifier);
-                        Set<String> existingSynonyms = fdat.existingSynonyms;
+                        Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
@@ -1222,7 +1213,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         String newFieldValue = synonymAction.processValue(cvtermName);
-                        Set<String> existingSynonyms = fdat.existingSynonyms;
+                        Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
                         } else {
@@ -1398,7 +1389,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         String newFieldValue = createSynonymAction.processValue(identifier);
-                        if (fdat.existingSynonyms.contains(newFieldValue)) {
+                        if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
                         } else {
                             Item synonym =
@@ -1893,10 +1884,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     protected Item createSynonym(FeatureData fdat, String type, String identifier,
                                  boolean isPrimary, List<Item> otherEvidence)
         throws ObjectStoreException {
-        if (fdat.existingSynonyms.contains(identifier)) {
+        if (fdat.getExistingSynonyms().contains(identifier)) {
             throw new IllegalArgumentException("feature identifier " + identifier
                                                + " is already a synonym for: "
-                                               + fdat.existingSynonyms);
+                                               + fdat.getExistingSynonyms());
         }
         List<Item> allEvidence = new ArrayList<Item>();
         if (otherEvidence != null) {
@@ -1905,7 +1896,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
         Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
                                                               identifier, isPrimary,
                                                               allEvidence);
-        fdat.existingSynonyms.add(identifier);
+        fdat.getExistingSynonyms().add(identifier);
         return returnItem;
     }
 

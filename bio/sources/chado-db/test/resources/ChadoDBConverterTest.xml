@@ -1,4 +1,16 @@
 <items>
+  <item id="6_1" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="exonCount" value="2"/>
+    <attribute name="length" value="2528"/>
+    <attribute name="primaryIdentifier" value="FBtr0085315"/>
+    <reference name="chromosome" ref_id="7_2"/>
+    <reference name="chromosomeLocation" ref_id="16_3"/>
+    <reference name="gene" ref_id="0_2"/>
+    <reference name="organism" ref_id="1_1"/>
+    <reference name="protein" ref_id="9_1"/>
+    <reference name="sequence" ref_id="4_3"/>
+    <collection name="dataSets"><reference ref_id="3_1"/></collection>
+  </item>
   <item id="13_1" class="http://www.flymine.org/model/genomic#ChromosomeStructureVariation">
     <attribute name="primaryIdentifier" value="FBab0032193"/>
     <attribute name="secondaryIdentifier" value="Df(2L)ED482"/>
@@ -98,15 +110,6 @@
     <reference name="subject" ref_id="10_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
-  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="exonCount" value="2"/>
-    <attribute name="length" value="3000"/>
-    <attribute name="primaryIdentifier" value="FBtr0085316"/>
-    <attribute name="symbol" value="CG10000-RB"/>
-    <reference name="organism" ref_id="1_1"/>
-    <reference name="sequence" ref_id="4_4"/>
-    <collection name="dataSets"><reference ref_id="3_1"/></collection>
-  </item>
   <item id="15_6" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="7772020"/>
   </item>
@@ -122,10 +125,26 @@
     <attribute name="length" value="41"/>
     <attribute name="residues" value="MTRYKQTEFTEDDSSSIGGIQLNEATGHTGMQIRYHTARAT"/>
   </item>
+  <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10000-RA"/>
+    <reference name="source" ref_id="2_1"/>
+    <reference name="subject" ref_id="6_1"/>
+    <collection name="dataSets"><reference ref_id="3_1"/></collection>
+  </item>
   <item id="11_1" class="http://www.flymine.org/model/genomic#PointMutation">
     <attribute name="name" value="&amp;beta;Tub85D[10g]"/>
     <attribute name="primaryIdentifier" value="&amp;beta;Tub85D[10g]"/>
     <reference name="organism" ref_id="1_1"/>
+    <collection name="dataSets"><reference ref_id="3_1"/></collection>
+  </item>
+  <item id="5_6" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10000-RB"/>
+    <reference name="source" ref_id="2_1"/>
+    <reference name="subject" ref_id="6_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
   <item id="13_2" class="http://www.flymine.org/model/genomic#ChromosomeStructureVariation">
@@ -135,14 +154,6 @@
     <reference name="element1" ref_id="12_4"/>
     <reference name="element2" ref_id="12_6"/>
     <reference name="organism" ref_id="1_1"/>
-    <collection name="dataSets"><reference ref_id="3_1"/></collection>
-  </item>
-  <item id="5_8" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="true"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000-RC"/>
-    <reference name="source" ref_id="2_1"/>
-    <reference name="subject" ref_id="6_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
   <item id="4_9" class="http://www.flymine.org/model/genomic#Sequence">
@@ -258,19 +269,6 @@
   <item id="19_3" class="http://www.flymine.org/model/genomic#CVTerm">
     <attribute name="identifier" value="FBcv:0000323"/>
   </item>
-  <item id="6_1" class="http://www.flymine.org/model/genomic#MRNA">
-    <attribute name="exonCount" value="2"/>
-    <attribute name="length" value="2528"/>
-    <attribute name="primaryIdentifier" value="FBtr0085315"/>
-    <attribute name="symbol" value="CG10000-RA"/>
-    <reference name="chromosome" ref_id="7_2"/>
-    <reference name="chromosomeLocation" ref_id="16_3"/>
-    <reference name="gene" ref_id="0_2"/>
-    <reference name="organism" ref_id="1_1"/>
-    <reference name="protein" ref_id="9_1"/>
-    <reference name="sequence" ref_id="4_3"/>
-    <collection name="dataSets"><reference ref_id="3_1"/></collection>
-  </item>
   <item id="4_4" class="http://www.flymine.org/model/genomic#Sequence">
     <attribute name="length" value="3000"/>
     <attribute name="residues" value="cccgcagcatgtgcatcagcagcatgtgtcatcggacgag"/>
@@ -315,6 +313,14 @@
     <reference name="property" ref_id="18_1"/>
     <reference name="subject" ref_id="10_1"/>
     <collection name="cvTerms"><reference ref_id="19_1"/></collection>
+    <collection name="dataSets"><reference ref_id="3_1"/></collection>
+  </item>
+  <item id="5_8" class="http://www.flymine.org/model/genomic#Synonym">
+    <attribute name="isPrimary" value="false"/>
+    <attribute name="type" value="name"/>
+    <attribute name="value" value="CG10000-RC"/>
+    <reference name="source" ref_id="2_1"/>
+    <reference name="subject" ref_id="6_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
   <item id="23_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
@@ -634,14 +640,6 @@
     <reference name="organism" ref_id="1_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
-  <item id="5_4" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="true"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000-RA"/>
-    <reference name="source" ref_id="2_1"/>
-    <reference name="subject" ref_id="6_1"/>
-    <collection name="dataSets"><reference ref_id="3_1"/></collection>
-  </item>
   <item id="5_50" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
@@ -714,6 +712,14 @@
   <item id="15_1" class="http://www.flymine.org/model/genomic#Publication">
     <attribute name="pubMedId" value="8344257"/>
   </item>
+  <item id="6_2" class="http://www.flymine.org/model/genomic#MRNA">
+    <attribute name="exonCount" value="2"/>
+    <attribute name="length" value="3000"/>
+    <attribute name="primaryIdentifier" value="FBtr0085316"/>
+    <reference name="organism" ref_id="1_1"/>
+    <reference name="sequence" ref_id="4_4"/>
+    <collection name="dataSets"><reference ref_id="3_1"/></collection>
+  </item>
   <item id="5_26" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
@@ -726,14 +732,6 @@
     <attribute name="primaryIdentifier" value="FBti0028380"/>
     <attribute name="secondaryIdentifier" value="P{RS3}CB-5069-3"/>
     <reference name="organism" ref_id="1_1"/>
-    <collection name="dataSets"><reference ref_id="3_1"/></collection>
-  </item>
-  <item id="5_6" class="http://www.flymine.org/model/genomic#Synonym">
-    <attribute name="isPrimary" value="true"/>
-    <attribute name="type" value="name"/>
-    <attribute name="value" value="CG10000-RB"/>
-    <reference name="source" ref_id="2_1"/>
-    <reference name="subject" ref_id="6_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
   <item id="0_1" class="http://www.flymine.org/model/genomic#Gene">

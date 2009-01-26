@@ -64,7 +64,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      * {@inheritDoc}
      */
     @Override
-    protected ResultSet getFeatureTableResultSet(@SuppressWarnings("unused") 
+    protected ResultSet getFeatureTableResultSet(@SuppressWarnings("unused")
             Connection connection) {
         String[] columnNames = new String[] {
             "feature_id", "name", "uniquename", "type", "seqlen", "residues", "md5checksum",
@@ -443,6 +443,9 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             },
             {
                 3117509, "FBgn0036461_symbol_3", "other", false
+            },
+            {
+                413, "CG10000-RC", "symbol", true
             },
         };
         res.setupRows(resObjects);
