@@ -1037,6 +1037,16 @@ public class PathQueryTest extends TestCase
         assertNotNull(pq.getNode("Company:departments"));
         assertNotNull(pq.getNode("Company:departments:manager"));
         assertNotNull(pq.getNode("Company"));
+
+        pq.setJoinStyleForPath("Company:departments", false);
+        assertEquals(Arrays.asList("Company.name", "Company.departments", "Company.departments:manager.name"), pq.getViewStrings());
+        pq.setJoinStyleForPath("Company.departments:manager", false);
+        assertEquals(Arrays.asList("Company.name", "Company.departments", "Company.departments.manager.name"), pq.getViewStrings());
+        try {
+            pq.setJoinStyleForPath("Company.departments:manager", false);
+            fail("Expected exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
     
     public void testFlipJoinLogic() {
@@ -1044,7 +1054,7 @@ public class PathQueryTest extends TestCase
         PathQuery pq = (PathQuery) parsed.get("test");
         assertEquals("A or B", pq.getConstraintLogic());
         pq.flipJoinStyle("Department.employees");
-        assertEquals("B and A", pq.getConstraintLogic());
+        assertTrue("B and A".equals(pq.getConstraintLogic()) || "A and B".equals(pq.getConstraintLogic()));
     }
 
 //    public void testEqualsObject() {
