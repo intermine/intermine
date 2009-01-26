@@ -44,8 +44,6 @@ public class HomophilaConverter extends BioFileConverter
 
     protected Map<String, String> diseaseDescriptions = new HashMap<String, String>();
     protected Map<String, String> proteinToGene = new HashMap<String, String>();
-
-    protected Map<String, Item> translations = new HashMap<String, Item>();
     protected Map<String, Item> proteins = new HashMap<String, Item>();
     protected Map<String, Item> diseases = new HashMap<String, Item>();
     protected Map<String, Item> genes = new HashMap<String, Item>();
@@ -62,7 +60,7 @@ public class HomophilaConverter extends BioFileConverter
     protected File proteinGeneFile;
 
     /**
-     * Construct a new instance of HomophilaCnoverter.
+     * Construct a new instance of HomophilaConverter.
      *
      * @param model the Model
      * @param writer the ItemWriter used to handle the resultant items
@@ -214,9 +212,9 @@ public class HomophilaConverter extends BioFileConverter
      */
     protected Item newBlastMatch(String array[]) throws ObjectStoreException {
         Item item = createItem("BlastMatch");
-        item.addReference(new Reference("subject", findProtein(array).getIdentifier()));
-        item.addReference(new Reference("object", findTranslation(array).getIdentifier()));
-        item.addAttribute(new Attribute("EValue", array[E_VALUE]));
+        item.setReference("subject", findProtein(array).getIdentifier());
+        item.setReference("object", findTranslation(array).getIdentifier());
+        item.setAttribute("EValue", array[E_VALUE]);
         store(item);
         matchCount++;
         return item;
@@ -230,12 +228,12 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findTranslation(String array[]) throws ObjectStoreException {
-        Item translation = translations.get(array[TRANSLATION_ID]);
+        Item translation = proteins.get(array[TRANSLATION_ID]);
         if (translation == null) {
-            translation = createItem("Translation");
-            translation.addAttribute(new Attribute("secondaryIdentifier", array[TRANSLATION_ID]));
-            translation.addReference(new Reference("organism", orgDrosophila.getIdentifier()));
-            translations.put(array[TRANSLATION_ID], translation);
+            translation = createItem("Protein");
+            translation.setAttribute("secondaryIdentifier", array[TRANSLATION_ID]);
+            translation.setReference("organism", orgDrosophila.getIdentifier());
+            proteins.put(array[TRANSLATION_ID], translation);
             store(translation);
         }
         return translation;
@@ -316,8 +314,8 @@ public class HomophilaConverter extends BioFileConverter
      */
     protected Item newAnnotation(Item gene, Item disease) throws ObjectStoreException {
         Item annotation = createItem("Annotation");
-        annotation.addReference(new Reference("subject", gene.getIdentifier()));
-        annotation.addReference(new Reference("property", disease.getIdentifier()));
+        annotation.setReference("subject", gene.getIdentifier());
+        annotation.setReference("property", disease.getIdentifier());
         annotation.addToCollection("publications", pub1);
         annotation.addToCollection("publications", pub2);
         store(annotation);
@@ -354,7 +352,6 @@ public class HomophilaConverter extends BioFileConverter
      */
     @Override
     public void close() throws Exception {
-        LOG.info("translations.size() == " + translations.size());
         LOG.info("genes.size() == " + genes.size());
         LOG.info("proteins.size() == " + proteins.size());
         LOG.info("diseases.size() == " + diseases.size());

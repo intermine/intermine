@@ -23,8 +23,6 @@ import org.flymine.model.genomic.Disease;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Publication;
-import org.flymine.model.genomic.Translation;
-
 import org.intermine.bio.util.Constants;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -40,9 +38,9 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.postprocess.PostProcessor;
 
 /**
  * Annotate drosophila genes with diseases related via homophila. The evidence of the annotations
@@ -155,7 +153,7 @@ public class HomophilaPostProcess extends PostProcessor
         throws ObjectStoreException {
         Query q = new Query();
         QueryClass bmc = new QueryClass(BlastMatch.class);
-        QueryClass tc = new QueryClass(Translation.class);
+        QueryClass tc = new QueryClass(Protein.class);
         QueryClass dgc = new QueryClass(Gene.class);
         QueryClass hgc = new QueryClass(Gene.class);
         QueryClass pc = new QueryClass(Protein.class);
@@ -171,7 +169,7 @@ public class HomophilaPostProcess extends PostProcessor
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        // Constraint translation to be on gene
+        // Constraint translation (protein) to be on gene
         QueryObjectReference tg = new QueryObjectReference(tc, "gene");
         ContainsConstraint tgc = new ContainsConstraint(tg, ConstraintOp.CONTAINS, dgc);
         cs.addConstraint(tgc);
