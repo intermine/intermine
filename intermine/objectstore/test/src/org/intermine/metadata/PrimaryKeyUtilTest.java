@@ -39,16 +39,6 @@ public class PrimaryKeyUtilTest extends TestCase
         model = Model.getInstanceByName("testmodel");
     }
 
-    public void testGetPrimaryKeyFields() throws Exception {
-        Model model = Model.getInstanceByName("testmodel");
-        Class c = Class.forName("org.intermine.model.testmodel.Employee");
-        Set fields = PrimaryKeyUtil.getPrimaryKeyFields(model, c);
-        Set testFieldNames = new HashSet();
-        ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
-        FieldDescriptor fd = cld.getFieldDescriptorByName("name");
-        testFieldNames.add(fd);
-        assertEquals(testFieldNames, fields);
-    }
 
     public void testGetPrimaryKeysCld() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");

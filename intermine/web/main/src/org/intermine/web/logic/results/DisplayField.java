@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -39,7 +40,7 @@ public class DisplayField
     Map webProperties = null;
 
     protected static final Logger LOG = Logger.getLogger(DisplayField.class);
-    private final Map classKeys;
+    private final Map<String, List<FieldDescriptor>> classKeys;
 
     /**
      * Create a new DisplayField object.
@@ -52,7 +53,7 @@ public class DisplayField
      */
     public DisplayField(Collection collection, FieldDescriptor fd,
                         WebConfig webConfig, Map webProperties,
-                        Map classKeys) throws Exception {
+                        Map<String, List<FieldDescriptor>> classKeys) throws Exception {
         this.collection = collection;
         this.fd = fd;
         this.webConfig = webConfig;

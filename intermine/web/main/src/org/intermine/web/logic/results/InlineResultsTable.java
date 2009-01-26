@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -51,7 +52,7 @@ public class InlineResultsTable
     protected int size = -1;
     protected WebConfig webConfig;
     protected Map webProperties;
-    private final Map classKeys;
+    private final Map<String, List<FieldDescriptor>> classKeys;
     private List<ResultElement> resultElementRow;
     private Map<String, Object> fieldValues;
     private Map<Object, Map<String, Object>> rowFieldValues;
@@ -70,7 +71,8 @@ public class InlineResultsTable
      */
     public InlineResultsTable(Collection results, Model model,
                               WebConfig webConfig, Map webProperties,
-                              Map classKeys, int size, boolean ignoreDisplayers) {
+                              Map<String, List<FieldDescriptor>> classKeys,
+                              int size, boolean ignoreDisplayers) {
         this.results = results;
         this.classKeys = classKeys;
         if (results instanceof List) {

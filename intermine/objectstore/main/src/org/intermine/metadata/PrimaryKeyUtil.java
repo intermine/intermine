@@ -77,23 +77,4 @@ public abstract class PrimaryKeyUtil
         }
         return keys;
     }
-
-    /**
-     * Retrieve a List of all fields that appear in any primary key for the given class.
-     *
-     * @param model the Model
-     * @param c the Class to fetch primary key fields from
-     * @return a List of all fields that appear in any primary key
-     */
-    public static Set<FieldDescriptor> getPrimaryKeyFields(Model model, Class c) {
-        Set<FieldDescriptor> pkFields = new HashSet<FieldDescriptor>();
-        for (ClassDescriptor cld : model.getClassDescriptorsForClass(c)) {
-            for (PrimaryKey pk : getPrimaryKeys(cld).values()) {
-                for (String fieldName : pk.getFieldNames()) {
-                    pkFields.add(cld.getFieldDescriptorByName(fieldName));
-                }
-            }
-        }
-        return pkFields;
-    }
 }
