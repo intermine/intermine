@@ -1593,8 +1593,12 @@ public class FlyBaseProcessor extends ChadoSequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String fixIdentifier(@SuppressWarnings("unused") String type, String identifier) {
-        return XmlUtil.fixEntityNames(identifier);
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
+        if (StringUtils.isBlank(identifier)){
+            return identifier;
+        } else {
+            return  XmlUtil.fixEntityNames(identifier);
+        }
     }
 
     /**

@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.intermine.util.StringUtil;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -329,6 +330,42 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
         LOG.info("executing: " + query);
         stmt.execute(query);
 
+    }
+
+    /**
+     * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
+     * data problem.
+     * @param type the InterMine type of the feature that this identifier came from
+     * @param identifier the identifier
+     * @return a cleaned identifier
+     */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
+        
+        //do
+        String uniqueName = fdat.getChadoFeatureUniqueName();
+        String name = fdat.getChadoFeatureName();
+//        String type = fdat.getInterMineType();
+
+        if (StringUtil.isEmpty(identifier)) {
+            if (StringUtil.isEmpty(name)) {
+                String fixedName = uniqueName.substring(uniqueName.lastIndexOf('.') + 1);
+                LOG.info("IDI " + fixedName + "|<-" + uniqueName + "|" + name + "|");
+                return fixedName;
+            } else {
+                LOG.info("IDI else " + uniqueName + "|" + name + "|");
+                return name;
+            }
+        } else if (identifier == name) {
+            LOG.info("IDI name | " + uniqueName + "|" + name + "|");
+            return identifier;
+        } else {
+            LOG.info("IDI rest | " + uniqueName + "|" + name + "|");
+            return identifier;
+        }
     }
 
 
