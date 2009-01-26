@@ -8,10 +8,11 @@ InterMine::Model::Reference - represents a reference in an InterMine class
 
  use InterMine::Model::Reference
  ...
- my $field = InterMine::Model::Reference->new(name => 'age', model => $model,
-                                               referenced_type_name => $ref_type,
-                                               reverse_reference_name =>
-                                                          $reverse_reference);
+ my $field = InterMine::Model::Reference->new(name => 'protein',
+                                              model => $model,
+                                              referenced_type_name => $ref_type,
+                                              reverse_reference_name =>
+                                                         $reverse_reference);
  ...
 
 =head1 DESCRIPTION
@@ -32,7 +33,7 @@ Please report any bugs or feature requests to C<support@flymine.org>.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc InterMine::PathQuery::PathQuery
+    perldoc InterMine::Model::Reference
 
 You can also look for information at:
 
