@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.dataconversion.ChadoSequenceProcessor.FeatureData;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
