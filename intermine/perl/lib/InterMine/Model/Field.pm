@@ -32,7 +32,7 @@ L<http://www.flymine.org>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009 FlyMine, all rights reserved.
+Copyright 2006,2007,2008,2009 FlyMine, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -48,8 +48,14 @@ use strict;
  Usage   : this is an abstract class, construct an Attribute, Collection or
            Reference instead
  Function: create a new Field object
- Args    : name - the field name
+ Args    : args are passed in as:  name => "value"
+           name - the field name
            model - the Model
+           type - for attributes, the type of the field (eg. String, Integer)
+           referenced_type_name - for references and collections, the type of
+                                  the referenced object(s)
+           reverse_reference_name - for references and collections, the field
+                                    name of the reverse reference
 
 =cut
 sub new
