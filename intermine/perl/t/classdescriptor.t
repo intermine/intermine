@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 use Test::Exception;
 
 use InterMine::Model;
@@ -32,4 +32,6 @@ is($comp_cd->get_field_by_name('secretarys')->referenced_classdescriptor()->name
 ok($comp_cd->valid_field('departments'));
 
 is($comp_cd->get_field_by_name('departments')->referenced_classdescriptor()->name(),
-   'org.intermine.model.testmodel.Department')
+   'org.intermine.model.testmodel.Department');
+
+is(scalar($comp_cd->fields()), 8);
