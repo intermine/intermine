@@ -11,17 +11,12 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
@@ -31,7 +26,6 @@ import org.intermine.web.logic.config.WebConfig;
 public class DisplayReference extends DisplayField
 {
     ProxyReference proxy;
-    Map keyAttributes;
     ReferenceDescriptor desc;
 
     /**
@@ -44,7 +38,8 @@ public class DisplayReference extends DisplayField
      * @throws Exception if an error occurs
      */
     public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,
-                            WebConfig webConfig, Map webProperties, Map classKeys)
+                            WebConfig webConfig, Map webProperties,
+                            Map<String, List<FieldDescriptor>> classKeys)
         throws Exception {
         super(getProxyList(proxy), ref, webConfig, webProperties, classKeys);
         this.proxy = proxy;
@@ -76,32 +71,10 @@ public class DisplayReference extends DisplayField
     }
 
     /**
-     * Get the identifier fields and values for the object
-     * @return the identifiers
-     * @throws Exception if an error occurs
-     */
-    public Map getKeyAttributes() throws Exception {
-        if (keyAttributes == null) {
-            keyAttributes = new HashMap();
-            Set pks = PrimaryKeyUtil.getPrimaryKeyFields(fd.getClassDescriptor().getModel(),
-                                                         proxy.getObject().getClass());
-            for (Iterator i = pks.iterator(); i.hasNext();) {
-                FieldDescriptor refFieldDescriptor = (FieldDescriptor) i.next();
-                if (refFieldDescriptor.isAttribute()) {
-                    Object fieldValue = TypeUtil.getFieldValue(proxy.getObject(),
-                                                               refFieldDescriptor.getName());
-                    keyAttributes.put(refFieldDescriptor.getName(), fieldValue);
-                }
-            }
-        }
-        return keyAttributes;
-    }
-
-    /**
      * Helper method for the constructor.
      */
-    private static List getProxyList(ProxyReference proxy) {
-        List proxyList = new ArrayList();
+    private static List<ProxyReference> getProxyList(ProxyReference proxy) {
+        List<ProxyReference> proxyList = new ArrayList<ProxyReference>();
         if (proxy != null) {
             proxyList.add(proxy);
         }
