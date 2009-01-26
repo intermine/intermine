@@ -16,7 +16,7 @@ InterMine::Model::Reference - represents a reference in an InterMine class
 
 =head1 DESCRIPTION
 
-Objects of this class describe the references and collections of class
+Objects of this class describe the references and collections of a class
 in an InterMine model.  Reference objects are generally part of
 ClassDescriptor objects.
 
