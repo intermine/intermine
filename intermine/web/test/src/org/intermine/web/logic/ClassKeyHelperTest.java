@@ -71,36 +71,7 @@ public class ClassKeyHelperTest extends TestCase {
         assertTrue(ClassKeyHelper.isKeyField(classKeys, "Company", "vatNumber"));
     }
 
-    public void testIsKeyFieldFromObject() throws Exception {
-        Set classNames = new HashSet();
-        classNames.add(Employee.class);
-        classNames.add(Thing.class);
-        classNames.add(Company.class);
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(classNames);
-        Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map classKeys = ClassKeyHelper.readKeys(model, props);
-        assertTrue(ClassKeyHelper.isKeyField(classKeys, o, "name"));
-        assertFalse(ClassKeyHelper.isKeyField(classKeys, o, "age"));
-        assertTrue(ClassKeyHelper.isKeyField(classKeys, o, "name"));
-        assertFalse(ClassKeyHelper.isKeyField(classKeys, o, "address"));
-        assertTrue(ClassKeyHelper.isKeyField(classKeys, o, "vatNumber"));
-    }
-
-    public void testGetKeyFieldClass() throws Exception {
-        Set classNames = new HashSet();
-        classNames.add(Employee.class);
-        classNames.add(Thing.class);
-        classNames.add(Company.class);
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(classNames);
-        Properties props = new Properties();
-        props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map classKeys = ClassKeyHelper.readKeys(model, props);
-        assertEquals(Company.class, ClassKeyHelper.getKeyFieldClass(classKeys, o, "vatNumber"));
-        assertNull(ClassKeyHelper.getKeyFieldClass(classKeys, o, "age"));
-
-    }
-
+ 
     public void testHasKeyFields() throws Exception {
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
