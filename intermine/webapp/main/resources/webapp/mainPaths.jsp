@@ -78,10 +78,10 @@
             <c:if test="${isClickable == 'true' && !loopPaths[node]}">
               <c:choose>
                 <c:when test="${! node.isOuterJoin}">
-                 <img src="images/join_hollow.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this,'${node.pathString}');"/>
+                 <img src="images/join_hollow.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
                 </c:when>
                 <c:otherwise>
-                 <img src="images/join_full.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this,'${node.pathString}');"/>
+                 <img src="images/join_full.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
                 </c:otherwise>
               </c:choose>
             </c:if>

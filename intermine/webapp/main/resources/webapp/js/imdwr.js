@@ -750,9 +750,16 @@ function validateBagName(formName) {
    });
 }
 
-function switchJoin(element, pathName) {
+function switchJoin(element) {
+   var pathName = element.id.replace('join_arrow_','');
+   var elementid = element.id;
    AjaxServices.setOuterJoin(pathName,function(newPathName){
-   	 jQuery(element).attr('onClick','switchJoin(this,\''+newPathName+'\');');
+   	 // replace all children ids with the updated path
+     jQuery.each(jQuery('.joinLink'), function(index, item) {
+       if(item.id.match("^" + elementid)) {
+         item.id = item.id.replace(pathName, newPathName);
+       }
+     });
    	 AjaxServices.getSortOrderMap(function(sortMap) {
    		reDrawSorters(sortMap);
    	 });
