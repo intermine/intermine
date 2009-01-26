@@ -17,14 +17,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -64,10 +61,8 @@ public class ClassKeyHelper
                     FieldDescriptor fld = cld.getFieldDescriptorByName(keyString);
                     if (fld != null) {
                         ClassKeyHelper.addKey(classKeys, clsName, fld);
-                        Iterator subIter = model.getAllSubs(cld).iterator();
-                        while (subIter.hasNext()) {
-                            ClassKeyHelper.addKey(classKeys, TypeUtil.unqualifiedName(
-                                        ((ClassDescriptor) subIter.next()).getName()), fld);
+                        for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                            ClassKeyHelper.addKey(classKeys, subCld.getUnqualifiedName(), fld);
                         }
                     } else {
                         LOG.warn("problem loading class key: " + keyString
@@ -192,50 +187,5 @@ public class ClassKeyHelper
             }
         }
         return fieldNames;
-    }
-
-    /**
-     * For a given object/field return true if it is an 'identifying' field. An
-     * identifying field is an attribute (not a reference or collection) of the
-     * class that is part of any key defined for that class.
-     *
-     * @param classKeys
-     *            map of classname to set of keys
-     * @param o
-     *            the object to check
-     * @param fieldName
-     *            the field name to look up
-     * @return true if the field is an 'identifying' field for one of the
-     *         classes that the object is
-     */
-    public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys,
-                                     InterMineObject o,
-                                     String fieldName) {
-        return getKeyFieldClass(classKeys, o, fieldName) != null;
-    }
-
-    /**
-     * For a given object/field name combination, if the field is a key field of
-     * one of the Class that the object is, return that Class.
-     *
-     * @param classKeys
-     *            map of classname to set of keys
-     * @param o
-     *            object to check
-     * @param fieldName
-     *            the field name to look up
-     * @return the Class that fieldName is a key field in, otherwise null
-     */
-    public static Class getKeyFieldClass(Map<String, List<FieldDescriptor>> classKeys,
-            InterMineObject o, String fieldName) {
-        Set<Class> classes = DynamicUtil.decomposeClass(o.getClass());
-
-        for (Class c : classes) {
-            if (isKeyField(classKeys, c.getName(), fieldName)) {
-                return c;
-            }
-        }
-
-        return null;
     }
 }
