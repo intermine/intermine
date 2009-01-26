@@ -77,12 +77,15 @@ public class WormBaseProcessor extends ChadoSequenceProcessor
      * Process the identifier and return a "cleaned" version.  For WormBase, remove the class name
      * prefix on identifiers from the uniqueName in the feature table ("Gene:WBGene00023466" ->
      * "WBGene00023466")
-     * @param type the InterMine type of the feature that this identifier came from
+     * @param fdat the FeatureData object
      * @param identifier the identifier
      * @return a cleaned identifier
      */
     @Override
-    protected String fixIdentifier(String type, String identifier) {
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
+        
+        String type = fdat.getInterMineType();
+        
         if (identifier.startsWith(type + ":")) {
             return identifier.substring(type.length() + 1);
         } else {

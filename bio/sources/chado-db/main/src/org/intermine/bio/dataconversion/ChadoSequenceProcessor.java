@@ -259,7 +259,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             return false;
         }
 
-        String fixedUniqueName = fixIdentifier(fdat.getInterMineType(), uniqueName);
+        String fixedUniqueName = fixIdentifier(fdat, uniqueName);
 
         if (seqlen > 0) {
             setAttributeIfNotSet(fdat, "length", String.valueOf(seqlen));
@@ -273,13 +273,15 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         Set<String> fieldValuesSet = new HashSet<String>();
 
+        String fixedName = fixIdentifier(fdat, name);
+
         // using the configuration, set a field to be the feature name
-        if (!StringUtils.isBlank(name)) {
-            String fixedName = fixIdentifier(fdat.getInterMineType(), name);
+        if (!StringUtils.isBlank(fixedName)) {
             if (nameActionList == null || nameActionList.size() == 0) {
                 if (fdat.checkField(SYMBOL_STRING)) {
                     fieldValuesSet.add(fixedName);
                     setAttributeIfNotSet(fdat, SYMBOL_STRING, fixedName);
+//TODO: check!
                 } else {
                     fieldValuesSet.add(fixedName);
                     setAttributeIfNotSet(fdat, SECONDARY_IDENTIFIER_STRING, fixedName);
@@ -295,7 +297,7 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                             fieldValuesSet.add(newFieldValue);
                         }
                     }
-                }
+                }               
             }
         }
 
@@ -348,9 +350,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                                uniqueNameSet, null);
         getChadoDBConverter().store(uniqueNameSynonym);
 
+        // TODO: verify is fine
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
-            String fixedName = fixIdentifier(fdat.getInterMineType(), name);
+//            String fixedName = fixIdentifier(fdat, name);
 
             if (nameActionList == null || nameActionList.size() == 0) {
                 nameActionList = new ArrayList<ConfigAction>();
@@ -406,12 +409,17 @@ public class ChadoSequenceProcessor extends ChadoProcessor
                                           String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
-        String fixedUniqueName = fixIdentifier(interMineType, uniqueName);
+//        String fixedUniqueName = fixIdentifier(interMineType, uniqueName);
         OrganismData organismData =
             getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
 
-        Item feature = makeFeature(featureId, chadoType, interMineType, name, fixedUniqueName,
-                                   seqlen, organismData.getTaxonId());
+//        Item feature = makeFeature(featureId, chadoType, interMineType, name, fixedUniqueName,
+//                                   seqlen, organismData.getTaxonId());
+
+        Item feature = makeFeature(featureId, chadoType, interMineType, name, uniqueName,
+                seqlen, organismData.getTaxonId());
+
+        
         if (feature == null) {
             return null;
         }
@@ -426,7 +434,8 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
         fdat.intermineObjectId = store(feature, taxonId); // Stores Feature
         fdat.itemIdentifier = feature.getIdentifier();
-        fdat.uniqueName = fixedUniqueName;
+        fdat.uniqueName = uniqueName;
+//        fdat.uniqueName = fixedUniqueName;
         fdat.chadoFeatureName = name;
         fdat.interMineType = XmlUtil.getFragmentFromURI(feature.getClassName());
         fdat.organismData = organismData;
@@ -1001,7 +1010,13 @@ public class ChadoSequenceProcessor extends ChadoProcessor
 
             if (featureMap.containsKey(featureId)) {
                 FeatureData fdat = featureMap.get(featureId);
-                accession  = fixIdentifier(fdat.interMineType, accession);
+                if (accession == null){
+                    throw new RuntimeException("found null accession in dbxref table for database "
+                            + dbName + ".");
+                } else {
+                    accession  = fixIdentifier(fdat, accession);
+                }
+//                accession  = fixIdentifier(fdat.interMineType, accession);
                 MultiKey key = new MultiKey("dbxref", fdat.interMineType, dbName, isCurrent);
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
@@ -1324,14 +1339,21 @@ public class ChadoSequenceProcessor extends ChadoProcessor
             String synonymTypeName = res.getString("type_name");
             Boolean isCurrent = res.getBoolean("is_current");
 
-            identifier = fixIdentifier(synonymTypeName, identifier);
+//            identifier = fixIdentifier(synonymTypeName, identifier);
 
+            // it is a not null in db
+            if (identifier == null){
+                throw new RuntimeException("found null synonym name in synonym table.");
+            } 
+            
+            
             if (currentFeatureId != null && currentFeatureId != featureId) {
                 existingAttributes = new HashSet<String>();
             }
 
             if (featureMap.containsKey(featureId)) {
                 FeatureData fdat = featureMap.get(featureId);
+                identifier = fixIdentifier(fdat, identifier);
                 MultiKey key =
                     new MultiKey("synonym", fdat.interMineType, synonymTypeName, isCurrent);
                 int taxonId = fdat.organismData.getTaxonId();
@@ -1402,9 +1424,12 @@ public class ChadoSequenceProcessor extends ChadoProcessor
      * @param identifier the identifier
      * @return a cleaned identifier
      */
-    protected String fixIdentifier(String type, String identifier) {
+    protected String fixIdentifier(FeatureData fdat, String identifier) {
         return identifier;
     }
+//    protected String fixIdentifier(String type, String identifier) {
+//        return identifier;
+//    }
 
     private void processPubTable(Connection connection)
         throws SQLException, ObjectStoreException {

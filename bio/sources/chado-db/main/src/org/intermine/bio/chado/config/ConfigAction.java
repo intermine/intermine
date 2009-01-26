@@ -13,7 +13,7 @@ package org.intermine.bio.chado.config;
  * A class that represents an action while processing synonyms, dbxrefs, etc.
  * @author Kim Rutherford
  */
-public class ConfigAction
+public abstract class ConfigAction
 {
     // empty
 }
