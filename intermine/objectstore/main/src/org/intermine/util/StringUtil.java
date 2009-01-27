@@ -343,10 +343,11 @@ public class StringUtil
     /**
      * Escapes single quotes and backslashes, with backslashes.
      *
-     * @param s the string to format
+     * @param str the string to format
      * @return the modified string
      */
-    public static String escapeWithBackslashes(String s) {
+    public static String escapeWithBackslashes(String str) {
+        String s = str;
         if (s.indexOf('\\') != -1) {
             s = s.replace("\\", "\\\\");
         }
@@ -455,7 +456,7 @@ public class StringUtil
         }
         return str.length() == 0;
     }
-    
+
     /**
      * Make a Map from the serialized String returned
      * by jQuery.sortable("serialize")
