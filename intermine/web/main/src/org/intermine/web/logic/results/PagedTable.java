@@ -436,46 +436,44 @@ public class PagedTable
                                                Map<String, List<FieldDescriptor>> classKeysMap) {
         Set<String> retList = new LinkedHashSet<String>();
         // only find values if individual elements selected, not if whole column selected
-        if (allSelected == -1) {
-            Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
-            boolean seenNullField = false;
-            while (selectedEntryIter.hasNext()) {
-                if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
-                    SelectionEntry entry = selectedEntryIter.next();
-                    String fieldValue = entry.fieldValue;
-                    if (fieldValue == null) {
-                        // the select column doesn't have a value for this object; use class keys to
-                        // find a value
-                        InterMineObject object;
-                        try {
-                            Integer id = entry.id;
-                            object = os.getObjectById(id);
-                            if (object == null) {
-                                throw new RuntimeException("internal error - unknown object id: "
-                                        + id);
-                            }
-                            String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
-                            if (classKeyFieldValue == null) {
-                                seenNullField = true;
-                            } else {
-                                retList.add(classKeyFieldValue);
-                            }
-                        } catch (ObjectStoreException e) {
-                            seenNullField = true;
+        Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
+        boolean seenNullField = false;
+        while (selectedEntryIter.hasNext()) {
+            if (retList.size() < FIRST_SELECTED_FIELDS_COUNT) {
+                SelectionEntry entry = selectedEntryIter.next();
+                String fieldValue = entry.fieldValue;
+                if (fieldValue == null) {
+                    // the select column doesn't have a value for this object; use class keys to
+                    // find a value
+                    InterMineObject object;
+                    try {
+                        Integer id = entry.id;
+                        object = os.getObjectById(id);
+                        if (object == null) {
+                            throw new RuntimeException("internal error - unknown object id: "
+                                    + id);
                         }
-                    } else {
-                        retList.add(fieldValue);
+                        String classKeyFieldValue = findClassKeyValue(classKeysMap, object);
+                        if (classKeyFieldValue == null) {
+                            seenNullField = true;
+                        } else {
+                            retList.add(classKeyFieldValue);
+                        }
+                    } catch (ObjectStoreException e) {
+                        seenNullField = true;
                     }
                 } else {
-                    retList.add("...");
-                    return new ArrayList<String>(retList);
+                    retList.add(fieldValue);
                 }
-            }
-            if (seenNullField) {
-                // if there are null that we can't find a field value for, just append "..." because
-                // showing "[no value]" in the webapp is of no value
+            } else {
                 retList.add("...");
+                return new ArrayList<String>(retList);
             }
+        }
+        if (seenNullField) {
+            // if there are null that we can't find a field value for, just append "..." because
+            // showing "[no value]" in the webapp is of no value
+            retList.add("...");
         }
         return new ArrayList<String>(retList);
     }
@@ -607,6 +605,7 @@ public class PagedTable
                         } else {
                             ResultsRow<MultiRowValue<ResultElement>> row
                                 = multiRow.get(multiRowIndex);
+                            multiRowIndex++;
                             MultiRowValue<ResultElement> value = row.get(allSelected);
                             if (value instanceof MultiRowFirstValue) {
                                 ResultElement element = value.getValue();
@@ -624,7 +623,6 @@ public class PagedTable
                                     }
                                 }
                             }
-                            multiRowIndex++;
                         }
                     } catch (IndexOutOfBoundsException e) {
                         nextEntry = null;
