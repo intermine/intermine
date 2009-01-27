@@ -71,19 +71,6 @@ function disableOtherColumns(index) {
  * when called from other methods in this file (ie. not from an onclick in table.jsp)
  **/
 function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
-    /*if (bagType == null) {
-        var columnsToDisableArray = columnsToDisable[checkedColumn];
-        if (columnsToDisableArray != null) {
-        	columnsToDisableArray.each(function(item) {
-        	  disableColumn(item);
-        	});
-        }
-        bagType = checkedColumn;
-    }*/
-
-    /*if (!internal) {
-        unselectColumnCheckbox(checkedColumn);
-    }*/
     var objectId;
     var objectClass;
     $w(checkbox.className).each(function(className){
@@ -140,41 +127,7 @@ function itemChecked(checkedRow, checkedColumn, tableid, checkbox, internal) {
     if (nothingSelected) {
         unselectColumnCheckbox(checkedColumn);
     }
-
-    /*var columnsToHighlightArray = columnsToHighlight[checkedColumn]
-    $$('td').each(function(item){
-    	var splitter = item.id.split(',');
-    	if(splitter[2] == checkedRow || (checkedRow == null && splitter[0].startsWith('cell'))) {
-    		columnsToHighlightArray.each(function(item2) {
-    		  if(item2 == splitter[1]) {
-    		  	if(checkbox.checked) {
-    		  		item.addClassName('highlightCell');
-    		  		var classes = $w(item.className);
-    		  		for(var i=0; i<classes.length; i++) {
-    		  			var clazz = classes[i];
-    		  			if(!isNaN(parseFloat(clazz))) {
-    		  				AjaxServices.selectId(clazz,tableid);
-    		  			}
-    		  		}
-    		  	} else {
-    		  		item.removeClassName('highlightCell');
-    		  	}
-    		  }
-    		})
-    	}
-    });*/
 }
-
-/**
- * disables all checkboxes in the given column
- **/
-/*function disableColumn(index){
-	$$('.selectable').each(function (item) {
-		if (item.id.split('_')[1] == index) {
-			item.disabled = 'true';
-		}
-	});
-}*/
 
 /**
  * de-selects a whole column of a given number
