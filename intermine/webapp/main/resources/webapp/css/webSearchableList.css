@@ -49,13 +49,15 @@ div.wsLine p.description a{
 	font-style: normal; font-size: small;}
 
 .aspectSelect {
-  float:left; display: inline;
-  padding:0px; margin:0px;
-  font-size: small;}
+  padding:0px; 
+  margin:0px;
+  font-size: small;
+  vertical-align: middle;
+}
 
 div.filterBar {
 	padding: 0px;
-	height:68px;
+	height:78px;
 	margin:10px 0px 10px 0px;
 	font-weight: bold;}
 	
