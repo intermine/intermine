@@ -109,7 +109,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
      */
     private void executeLoaderTask(String className, String cdsFastaFile) throws IOException {
         FastaLoaderTask flt = new FlyBaseCDSFastaLoaderTask();
-        flt.setFastaTaxonId(new Integer(36329));
+        flt.setFastaTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setClassName(className);
         flt.setClassAttribute("primaryIdentifier");

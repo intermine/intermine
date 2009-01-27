@@ -40,71 +40,21 @@ import java.io.InputStreamReader;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-
-public class FastaLoaderTaskTest extends TestCase {
-
+public class UniProtFastaLoaderTaskTest extends TestCase
+{
     private ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(FastaLoaderTaskTest.class);
-    private String dataSetTitle = "fasta test title";
+    private static final Logger LOG = Logger.getLogger(UniProtFastaLoaderTaskTest.class);
+    private String dataSetTitle = "uniprot fasta test title";
 
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
     }
 
+
     public void testFastaLoad() throws Exception {
-        FastaLoaderTask flt = new FastaLoaderTask();
-        flt.setFastaTaxonId("36329");
-        flt.setIgnoreDuplicates(true);
-        flt.setClassName("org.flymine.model.genomic.Gene");
-        flt.setClassAttribute("primaryIdentifier");
-        flt.setIntegrationWriterAlias("integration.bio-test");
-        flt.setSourceName("fasta-test");
-        flt.setDataSetTitle(dataSetTitle);
-        flt.setSynonymSource("test-source");
-
-        File[] files = new File[2];
-        for (int i = 0; i < 2; i++) {
-            files[i] = File.createTempFile("MAL1_trimed.fasta_" + i, "tmp");
-            FileWriter fw = new FileWriter(files[i]);
-            InputStream is =
-                getClass().getClassLoader().getResourceAsStream("MAL" + (i + 1) + "_trimed.fasta");
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                fw.write(line + "\n");
-            }
-
-            fw.close();
-            files[i].deleteOnExit();
-        }
-        flt.setFileArray(files);
-        flt.execute();
-        //Check the results to see if we have some data...
-        ObjectStore os = osw.getObjectStore();
-
-        Query q = new Query();
-        QueryClass lsfQueryClass = new QueryClass(LocatedSequenceFeature.class);
-        QueryClass seqQueryClass = new QueryClass(Sequence.class);
-        q.addToSelect(lsfQueryClass);
-        q.addToSelect(seqQueryClass);
-        q.addFrom(lsfQueryClass);
-        q.addFrom(seqQueryClass);
-
-        QueryObjectReference qor = new QueryObjectReference(lsfQueryClass, "sequence");
-        ContainsConstraint cc = new ContainsConstraint(qor, ConstraintOp.CONTAINS, seqQueryClass);
-
-        q.setConstraint(cc);
-
-        Results r = os.execute(q);
-
-        assertEquals(2, r.size());
-    }
-
-    public void testProteinFastaLoad() throws Exception {
-        FastaLoaderTask flt = new FastaLoaderTask();
-        flt.setFastaTaxonId("36329");
+        UniProtFastaLoaderTask flt = new UniProtFastaLoaderTask();
+        flt.setFastaTaxonId("7227");
         flt.setIgnoreDuplicates(true);
         flt.setSequenceType("protein");
         flt.setClassName("org.flymine.model.genomic.Protein");
@@ -112,12 +62,14 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
         flt.setSynonymSource("test-source");
+        flt.setClassAttribute("primaryAccession");
+
 
         File[] files = new File[1];
-        files[0] = File.createTempFile("pombe_sid2_short.fasta", "tmp");
+        files[0] = File.createTempFile("UniProtFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(files[0]);
         InputStream is =
-            getClass().getClassLoader().getResourceAsStream("pombe_sid2_short.fasta");
+            getClass().getClassLoader().getResourceAsStream("uniprot.fasta");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
         String line = null;
@@ -152,14 +104,30 @@ public class FastaLoaderTaskTest extends TestCase {
 
         Protein protein = (Protein) ((List) r.get(0)).get(0);
 
+        assertEquals("Q9V8R9-2", protein.getPrimaryAccession());
+
+        protein.getOrganism().getTaxonId().equals("7227");
+
         DataSet dataSet = protein.getDataSets().iterator().next();
         assertEquals(dataSetTitle, dataSet.getTitle());
 
-        assertEquals("MNRVNDMSPVEGDLGLQLSSEADKKFDAYMKRHGLFEPGNLSNNDKERNLEDQFNSMKLS"
-                     + "PVASSKENYPDNHMHSKHISKLPIASPIPRGLDRSGELSYKDNNHWSDRSSTGSPRWENG"
-                     + "SMNLSVEEMEKVVQPKVKRMATICQM", protein.getSequence().getResidues());
-        // TODO FIXME XXX - uncomment when Protein has a length field
-        //        assertEquals(new Integer(146), protein.getLength());
+        /*
+        >sp|Q9V8R9-2|41_DROME Isoform 2 of Protein 4.1 homolog OS=Drosophila melanogaster GN=cora
+        */
+        assertEquals("MPAEIKPSAPAEPETPTKSKPKSSSSSHGKPALARVTLLDGSLLDVSIDRKAIGRDVINS"
+                     + "ICAGLNLIEKDYFGLTYETPTDPRTWLDLEKPVSKFFRTDTWPLTFAVKFYPPEPSQLKE"
+                     + "DITRYHLCLQVRNDILEGRLPCTFVTHALLGSYLVQSEMGDYDAEEMPTRAYLKDFKIAP"
+                     + "NQTAELEDKVMDLHKTHKGQSPAEAELHYLENAKKLAMYGVDLHPAKDSEGVDIMLGVCA"
+                     + "SGLLVYRDKLRINRFAWPKILKISYKRHHFYIKIRPGEFEQYESTIGFKLANHRAAKKLW"
+                     + "KSCVEHHTFFRLMTPEPVSKSKMFPVFGSTYRYKGRTQAESTNTPVDRTPPKFNRTLSGA"
+                     + "RLTSRSMDALALAEKEKVARKSSTLDHRGDRNADGDAHSRSPIKNKKEKSSTGTASASSQ"
+                     + "SSLEGDYETNLEIEAIEAEPPVQDADKEAKLREKKQKEKEEKERKEREKRELEEKKKAEK"
+                     + "AAKAALAAGAAAGAAVNGNDELNDSNKSDKSSGRRVDPNDPRFAGARTTVTHTMTLTGEI"
+                     + "DPVTGRIKSEYGDIDPNTGDIDPATAVTDPVTGKLILNYAQIDPSHFGKQAQVQTTTETV"
+                     + "PITRQQFFDGVKHISKGALRRDSEGSSDDDMTAQYGADQVNEILIGSPAGQAGGKLGKPV"
+                     + "STPTVVKTTTKQVLTKNIDGVTHNVEEEVRNLGTGEVTYSTQEHKADATPTDLSGAYVTA"
+                     + "TAVTTRTATTHEDLGKNAKTEQLEEKTVATTRTHDPNKQQQRVVTQEVKTTATVTSGDQK"
+                     + "SPLFTTSATTGPHVESTRVVLGEDTPGFSGHGEIISTQTGGGGGGI", protein.getSequence().getResidues());
     }
 
     public void tearDown() throws Exception {
@@ -185,5 +153,6 @@ public class FastaLoaderTaskTest extends TestCase {
         osw.close();
         LOG.info("closed objectstore");
     }
+
 
 }
