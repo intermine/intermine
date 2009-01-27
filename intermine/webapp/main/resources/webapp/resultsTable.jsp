@@ -27,28 +27,6 @@
     }
     document.location.href=url;
   }
-  /*var columnsToDisable = ${columnsToDisable};
-  var columnsToHighlight = ${columnsToHighlight};
-  var bagType = null;*/
-
-jQuery(document).ready(function(){
-    jQuery('.th_drag').draggable({
-      revert: true, 
-      helper: "clone",
-      opacity: 0.40
-    });
-    jQuery('.th_drop').droppable({ 
-      accept: '.th_drag', 
-      hoverClass: 'droppable-col-hover', 
-      drop: function(ev, ui) {
-        var index1=jQuery(ui.draggable).attr('id');
-        var index2=jQuery(this).attr('id');
-        if(index1 != index2) {
-          top.location='<html:rewrite action="/changeTable.do?currentPage=${currentPage}&bagName=${bagName}&table=${param.table}&method=swapColumns&trail=${param.trail}"/>&index1='+index1+'&index2='+index2;
-        }
-      } 
-    });
-});  
 
 //]]>-->
 </script>
@@ -79,14 +57,7 @@ jQuery(document).ready(function(){
       <c:choose>
         <c:when test="${column.visible}">
           <th align="center" valign="top" >
-            <div id="${column.index}" class="th_drop">
-             <%--<c:if test="${not empty sortOrderMap[column.name] && empty bag}">
-                  <img border="0"
-                       width="17" height="16" src="images/${sortOrderMap[column.name]}_gray.gif"
-                          title="Results are sorted by ${column.name}"/>
-             </c:if>--%>
-            <div id="${column.index}" class="th_drag">
-          
+            <div id="${column.index}" class="columnHeader">          
           <c:if test="${column.selectable && empty inlineTable}">
             <%--<c:set var="colcount" value="${colcount+1}"/>
               <th align="center" class="checkbox">--%>
