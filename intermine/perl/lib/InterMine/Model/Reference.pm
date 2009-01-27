@@ -62,7 +62,7 @@ use InterMine::Model::Field;
 
 @ISA = qw(InterMine::Model::Field);
 
-=head2
+=head2 referenced_type_name
 
  Usage   : $name = $ref->referenced_type_name();
  Function: Returns the name of the type at the other end of this reference
@@ -74,7 +74,7 @@ sub referenced_type_name
   return shift->{referenced_type_name};
 }
 
-=head2
+=head2 referenced_classdescriptor
 
  Usage   : $cd = $ref->referenced_classdescriptor();
  Function: Returns the ClassDescriptor of the other end of this reference
@@ -88,7 +88,7 @@ sub referenced_classdescriptor
   return $self->{model}->get_classdescriptor_by_name($type_name);
 }
 
-=head2
+=head2 reverse_reference_name
 
  Usage   : $name = $ref->reverse_reference_name();
  Function: Return the name of the reverse reference - ie. the name of the field
@@ -101,7 +101,7 @@ sub reverse_reference_name
   return shift->{reverse_reference_name};
 }
 
-=head2
+=head2 reverse_reference
 
  Usage   : $ref = $ref->reverse_reference();
  Function: Return the Reference object of the reverse reference
@@ -117,7 +117,7 @@ sub reverse_reference
   return $referenced_cd->get_field_by_name($reverse_reference_name);
 }
 
-=head2
+=head2 has_reverse_reference
 
  Usage   : if ($ref->has_reverse_reference()) { ... }
  Function: Return true if and only if this reference has a reverse reference in
@@ -131,11 +131,11 @@ sub has_reverse_reference
   return defined $self->reverse_reference();
 }
 
-=head2
+=head2 is_many_to_many
 
  Function: Return true if this reference is one end of a many-to-many relation,
            ie. this end is a collection and the other end is a collection
- Args    :
+ Args    : none
 
 =cut
 sub is_many_to_many
@@ -149,11 +149,11 @@ sub is_many_to_many
           $self->reverse_reference()->field_type() eq 'collection');
 }
 
-=head2
+=head2 is_many_to_one
 
- Usage   :
- Function:
- Args    :
+ Function: Return true if this is the reference end of a one-to-many relation,
+           ie. this end is a reference and the other end is a collection
+ Args    : none
 
 =cut
 sub is_many_to_one
@@ -164,11 +164,10 @@ sub is_many_to_one
           $self->reverse_reference()->field_type() eq 'collection');
 }
 
-=head2
+=head2 is_many_to_0
 
- Usage   :
- Function:
- Args    :
+ Function: Return true if this is a collection and there is no reverse reference
+ Args    : none
 
 =cut
 sub is_many_to_0
@@ -178,11 +177,11 @@ sub is_many_to_0
           !defined $self->reverse_reference());
 }
 
-=head2
+=head2 is_one_to_many
 
- Usage   :
- Function:
- Args    :
+ Function: Return true if this is the collection end of a one-to-many relation,
+           ie. this end is a collection and the other end is a reference
+ Args    : none
 
 =cut
 sub is_one_to_many
@@ -193,11 +192,9 @@ sub is_one_to_many
           $self->reverse_reference()->field_type() eq 'reference');
 }
 
-=head2
+=head2 is_one_to_0
 
- Usage   :
- Function:
- Args    :
+ Function: Return true if this is a reference and the is no reverse reference
 
 =cut
 sub is_one_to_0

@@ -78,7 +78,7 @@ sub new
   return $self;
 }
 
-=head2
+=head2 field_name
 
  Usage   : $name = $field->field_name();
  Function: return the name of this field
@@ -90,7 +90,7 @@ sub field_name
   return $self->{name};
 }
 
-=head2
+=head2 field_type
 
  Usage   : $name = $field->field_type();
  Function: return the type of this field, "Attribute", "Reference" or
@@ -103,7 +103,7 @@ sub field_type
   return lc (((ref $self) =~ /.*::(.*)/)[0]);
 }
 
-=head2
+=head2 field_class
 
  Usage   : my $class = $field->field_class();
  Function: returns the ClassDescriptor of the (base) class that defines this

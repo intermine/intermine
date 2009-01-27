@@ -73,7 +73,6 @@ use strict;
  Args    : file - the InterMine model XML file
 
 =cut
-
 sub new
 {
   my $class = shift;
