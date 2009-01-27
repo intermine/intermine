@@ -102,7 +102,6 @@ use InterMine::Item;
  Args    : model - the InterMine::Model object to use to check field validity
 
 =cut
-
 sub new
 {
   my $class = shift;
@@ -126,7 +125,6 @@ sub new
  Args    : the classname of the new Item
 
 =cut
-
 sub make_item
 {
   my $self = shift;

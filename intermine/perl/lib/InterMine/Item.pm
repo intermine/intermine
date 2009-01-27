@@ -67,7 +67,6 @@ my $ID_PREFIX = '0_';
  Note    : use this method indirectly using an ItemFactory
 
 =cut
-
 sub new {
   my $class = shift;
   my %opts = @_;
@@ -154,7 +153,6 @@ sub _get_object_field_by_name
            $value - the new value (must not be undefined)
 
 =cut
-
 sub set
 {
   my $self = shift;
@@ -243,7 +241,6 @@ sub set
  Return  : the value
 
 =cut
-
 sub get
 {
   my $self = shift;
@@ -313,7 +310,6 @@ sub _add_to_collection
  Function: return the model that this Item obeys
 
 =cut
-
 sub model
 {
   my $self = shift;
@@ -328,7 +324,6 @@ sub model
            used when creating the object in InterMine
 
 =cut
-
 sub classname
 {
   my $self = shift;
@@ -342,7 +337,6 @@ sub classname
  Function: return the ClassDescriptor object from the model for this Item
 
 =cut
-
 sub classdescriptor
 {
   my $self = shift;
@@ -363,7 +357,6 @@ sub _implements_classdescriptors
            Item, including the classdescriptors of all parent objects
 
 =cut
-
 sub all_class_descriptors
 {
   my $self = shift;
@@ -383,7 +376,6 @@ sub all_class_descriptors
            object according to the model
 
 =cut
-
 sub valid_field
 {
   my $self = shift;
@@ -409,8 +401,6 @@ sub valid_field
            the given class, or is a sub-class.
 
 =cut
-
-
 sub instance_of
 {
   my $self = shift;
@@ -431,7 +421,6 @@ sub instance_of
  Function: return a text representation of this Item
 
 =cut
-
 sub to_string
 {
   my $self = shift;
@@ -451,7 +440,6 @@ sub to_string
  Function: return an XML representation of this Item
 
 =cut
-
 sub as_xml
 {
   my $self = shift;

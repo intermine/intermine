@@ -94,7 +94,7 @@ sub new
   return $self;
 }
 
-=head2 
+=head2 add_field
  
  Usage   : $cd->add_field($field); 
  Function: add a Field to this class
@@ -131,7 +131,7 @@ sub add_field
   }
 }
 
-=head2 
+=head2 name
  
  Usage   : $name = $cd->name();
  Function: Return the name of this class, eg. "org.flymine.model.genomic.Gene"
@@ -144,7 +144,7 @@ sub name
   return $self->{name};
 }
 
-=head2 
+=head2 unqualified_name
  
  Usage   : $name = $cd->name();
  Function: Return the unqualified name of this class, eg. "Gene"
@@ -157,7 +157,7 @@ sub unqualified_name
   return ($self->{name} =~ /.*\.(.*)/)[0];
 }
 
-=head2 
+=head2 extends
  
  Usage   : @parent_class_names = $cd->extends();
  Function: return a list of the names of the classes/interfaces that this class
@@ -171,7 +171,7 @@ sub extends
   return @{$self->{extends}};
 }
 
-=head2 
+=head2 extends_class_descriptors
  
  Usage   : @parent_cds = $cd->extends_class_descriptors();
  Function: return a list of the ClassDescriptor objects for the
@@ -179,7 +179,6 @@ sub extends
  Args    : none
 
 =cut
-
 sub extends_class_descriptors
 {
   my $self = shift;
@@ -199,7 +198,7 @@ sub extends_class_descriptors
   return @{$self->{extends_class_descriptors}};
 }
 
-=head2 
+=head2 get_field_by_name
  
  Usage   : $field = $cd->get_field_by_name('company');
  Function: Return a Field object describing the given field, not undef if the
@@ -217,7 +216,7 @@ sub get_field_by_name
   return $self->{field_hash}{$field_name};
 }
 
-=head2 
+=head2 valid_field
  
  Usage   : if ($cd->valid_field('company')) { ... }
  Function: Return true if and only if the named field is a field in this class
@@ -231,7 +230,7 @@ sub valid_field
   return defined $self->get_field_by_name($field);
 }
 
-=head2 
+=head2 attributes
  
  Usage   : @fields = $cd->attributes();
  Function: Return the Attribute objects for the attributes of this class
@@ -244,7 +243,7 @@ sub attributes
   return @{$self->{attributes}}
 }
 
-=head2 
+=head2 fields
  
  Usage   : @fields = $cd->fields();
  Function: Return the Attribute, Reference and Collection objects for all the
@@ -258,7 +257,7 @@ sub fields
   return @{$self->{fields}}
 }
 
-=head2 
+=head2 references
  
  Usage   : @fields = $cd->references();
  Function: Return the Reference objects for the references of this class
@@ -271,7 +270,7 @@ sub references
   return @{$self->{references}}
 }
 
-=head2 
+=head2 collections
  
  Usage   : @fields = $cd->collections();
  Function: Return the Collection objects for the collections of this class
@@ -284,7 +283,7 @@ sub collections
   return @{$self->{collections}}
 }
 
-=head2 
+=head2 sub_class_of
  
  Usage   : if ($class_desc->sub_class_of($other_class_desc)) { ... }
  Function: Returns true if and only if this class is a sub-class of the given

@@ -67,7 +67,6 @@ use InterMine::Model::Field;
            "Date", "Boolean"
 
 =cut
-
 sub attribute_type
 {
   my $self = shift;
