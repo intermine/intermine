@@ -12,9 +12,9 @@ package org.intermine.bio.dataconversion;
 
 import org.intermine.dataconversion.ItemsTestCase;
 
-public class ChadoSequenceProcessorTest extends ItemsTestCase
+public class SequenceProcessorTest extends ItemsTestCase
 {
-    public ChadoSequenceProcessorTest(String arg) {
+    public SequenceProcessorTest(String arg) {
         super(arg);
     }
 

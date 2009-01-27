@@ -51,12 +51,12 @@ class FeatureData
     private static final Map<String, Short> NAME_MAP = new HashMap<String, Short>();
 
     static {
-        NAME_MAP.put(ChadoSequenceProcessor.PRIMARY_IDENTIFIER_STRING, IDENTIFIER_SET);
-        NAME_MAP.put(ChadoSequenceProcessor.SECONDARY_IDENTIFIER_STRING, SECONDARY_IDENTIFIER_SET);
-        NAME_MAP.put(ChadoSequenceProcessor.SYMBOL_STRING, SYMBOL_SET);
-        NAME_MAP.put(ChadoSequenceProcessor.NAME_STRING, NAME_SET);
-        NAME_MAP.put(ChadoSequenceProcessor.SEQUENCE_STRING, SEQUENCE_SET);
-        NAME_MAP.put(ChadoSequenceProcessor.LENGTH_STRING, LENGTH_SET);
+        NAME_MAP.put(SequenceProcessor.PRIMARY_IDENTIFIER_STRING, IDENTIFIER_SET);
+        NAME_MAP.put(SequenceProcessor.SECONDARY_IDENTIFIER_STRING, SECONDARY_IDENTIFIER_SET);
+        NAME_MAP.put(SequenceProcessor.SYMBOL_STRING, SYMBOL_SET);
+        NAME_MAP.put(SequenceProcessor.NAME_STRING, NAME_SET);
+        NAME_MAP.put(SequenceProcessor.SEQUENCE_STRING, SEQUENCE_SET);
+        NAME_MAP.put(SequenceProcessor.LENGTH_STRING, LENGTH_SET);
     }
 
     /**
@@ -82,10 +82,10 @@ class FeatureData
      * @param item the Item to test
      */
     public void setFieldExistenceFlags(Item item) {
-        if (item.canHaveReference(ChadoSequenceProcessor.SEQUENCE_STRING)) {
+        if (item.canHaveReference(SequenceProcessor.SEQUENCE_STRING)) {
             setFlag(CAN_HAVE_SEQUENCE, true);
         }
-        if (item.checkAttribute(ChadoSequenceProcessor.SYMBOL_STRING)) {
+        if (item.checkAttribute(SequenceProcessor.SYMBOL_STRING)) {
             setFlag(CAN_HAVE_SYMBOL, true);
         }
     }
@@ -96,10 +96,10 @@ class FeatureData
      * @return true if the field name is valid
      */
     public boolean checkField(String fieldName) {
-        if (fieldName.equals(ChadoSequenceProcessor.SEQUENCE_STRING)) {
+        if (fieldName.equals(SequenceProcessor.SEQUENCE_STRING)) {
             return getFlag(CAN_HAVE_SEQUENCE);
         } else {
-            if (fieldName.equals(ChadoSequenceProcessor.SYMBOL_STRING)) {
+            if (fieldName.equals(SequenceProcessor.SYMBOL_STRING)) {
                 return getFlag(CAN_HAVE_SYMBOL);
             } else {
                 throw new RuntimeException("unknown field name: " + fieldName);
