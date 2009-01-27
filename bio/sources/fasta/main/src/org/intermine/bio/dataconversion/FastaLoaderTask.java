@@ -273,9 +273,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
 
         String sequence = bioJavaSequence.seqString();
+        String md5checksum = Util.getMd5checksum(sequence);
         flymineSequence.setResidues(sequence);
         flymineSequence.setLength(bioJavaSequence.length());
-
+        if (TypeUtil.getSetter(sequenceClass, "md5checksum") != null) {
+            flymineSequence.setMd5checksum(md5checksum);
+        }
         Class<?> c;
         try {
             c = Class.forName(className);
@@ -300,7 +303,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             TypeUtil.setFieldValue(imo, "length", new Integer(flymineSequence.getLength()));
         }
         if (TypeUtil.getSetter(c, "md5checksum") != null) {
-            TypeUtil.setFieldValue(imo, "md5checksum", Util.getMd5checksum(sequence));
+            TypeUtil.setFieldValue(imo, "md5checksum", md5checksum);
         }
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
