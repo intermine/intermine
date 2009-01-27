@@ -9,7 +9,7 @@
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
 <reference name="homologue" ref_id="3_2"/>
-<reference name="translation" ref_id="6_1"/>
+<reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -32,14 +32,14 @@
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="gene" ref_id="3_2"/>
-<reference name="homologueTranslation" ref_id="6_3"/>
+<reference name="homologueProtein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
 <item id="5_2" class="http://www.flymine.org/model/genomic#DataSource">
 <attribute name="name" value="Ensembl"/>
 </item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#Translation">
+<item id="6_3" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="secondaryIdentifier" value="MOSQUITO_3"/>
 <reference name="organism" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -49,7 +49,7 @@
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="homologue" ref_id="3_2"/>
-<reference name="translation" ref_id="6_3"/>
+<reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -57,8 +57,8 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_1"/>
-<reference name="translation" ref_id="6_3"/>
+<reference name="homologueProtein" ref_id="6_1"/>
+<reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -66,8 +66,8 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_3"/>
-<reference name="translation" ref_id="6_2"/>
+<reference name="homologueProtein" ref_id="6_3"/>
+<reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -77,12 +77,12 @@
 <reference name="source" ref_id="5_1"/>
 <reference name="subject" ref_id="3_2"/>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#Translation">
+<item id="6_2" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="secondaryIdentifier" value="MOSQUITO_2"/>
 <reference name="organism" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Translation">
+<item id="6_1" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="secondaryIdentifier" value="MOSQUITO_1"/>
 <reference name="organism" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -95,7 +95,7 @@
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="homologue" ref_id="3_1"/>
-<reference name="translation" ref_id="6_1"/>
+<reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -115,7 +115,7 @@
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
 <reference name="homologue" ref_id="3_2"/>
-<reference name="translation" ref_id="6_2"/>
+<reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -135,7 +135,7 @@
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="gene" ref_id="3_1"/>
-<reference name="homologueTranslation" ref_id="6_2"/>
+<reference name="homologueProtein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -143,8 +143,8 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_3"/>
-<reference name="translation" ref_id="6_1"/>
+<reference name="homologueProtein" ref_id="6_3"/>
+<reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -155,7 +155,7 @@
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
 <reference name="gene" ref_id="3_2"/>
-<reference name="homologueTranslation" ref_id="6_2"/>
+<reference name="homologueProtein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -166,7 +166,7 @@
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
 <reference name="gene" ref_id="3_2"/>
-<reference name="homologueTranslation" ref_id="6_1"/>
+<reference name="homologueProtein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -175,7 +175,7 @@
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="homologue" ref_id="3_1"/>
-<reference name="translation" ref_id="6_2"/>
+<reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -183,8 +183,8 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_2"/>
-<reference name="translation" ref_id="6_3"/>
+<reference name="homologueProtein" ref_id="6_2"/>
+<reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -208,7 +208,7 @@
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
 <reference name="gene" ref_id="3_1"/>
-<reference name="homologueTranslation" ref_id="6_1"/>
+<reference name="homologueProtein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -216,8 +216,8 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_2"/>
-<reference name="translation" ref_id="6_1"/>
+<reference name="homologueProtein" ref_id="6_2"/>
+<reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>
@@ -225,8 +225,8 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="inParalogue"/>
-<reference name="homologueTranslation" ref_id="6_1"/>
-<reference name="translation" ref_id="6_2"/>
+<reference name="homologueProtein" ref_id="6_1"/>
+<reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="0_1"/></collection>
 </item>

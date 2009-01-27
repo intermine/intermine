@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.BioEntity" is-interface="true"/>
 <class name="org.flymine.model.genomic.Homologue" is-interface="true">
   <attribute name="inParanoidScore" type="java.lang.Double"/>
   <attribute name="bootstrapScore" type="java.lang.Integer"/>
@@ -9,8 +8,8 @@
   <attribute name="clusterName" type="java.lang.String"/>
   <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="homologues"/>
   <reference name="homologue" referenced-type="org.flymine.model.genomic.Gene"/>
-  <reference name="translation" referenced-type="org.flymine.model.genomic.Translation"/>
-  <reference name="homologueTranslation" referenced-type="org.flymine.model.genomic.Translation"/>
+  <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
+  <reference name="homologueProtein" referenced-type="org.flymine.model.genomic.Protein"/>
   <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
   <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
 </class>

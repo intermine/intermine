@@ -154,7 +154,7 @@ public class InparanoidConverter extends FileConverter
                 code = array[2];
             }
 
-            // work out if this is a Gene or Translation and create item
+            // work out if this is a Gene or Protein and create item
             if (createObjects.get(code) != null) {
                 if (createObjects.get(code).equals("Gene")) {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
@@ -162,7 +162,7 @@ public class InparanoidConverter extends FileConverter
                     isGene = true;
                 } else {
                     bio = newBioEntity(array[4], (String) attributes.get(code),
-                                       getOrganism(code), "Translation");
+                                       getOrganism(code), "Protein");
                     isGene = false;
                 }
             } else {
@@ -276,13 +276,13 @@ public class InparanoidConverter extends FileConverter
         if (first.isGene()) {
             homologue.setReference("gene", first.getBio());
         } else {
-            homologue.setReference("translation", first.getBio());
+            homologue.setReference("protein", first.getBio());
         }
 
         if (second.isGene()) {
             homologue.setReference("homologue", second.getBio());
         } else {
-            homologue.setReference("homologueTranslation", second.getBio());
+            homologue.setReference("homologueProtein", second.getBio());
         }
 
         if (type.equals("orthologue") && first.getBootstrap() != null) {
@@ -304,17 +304,17 @@ public class InparanoidConverter extends FileConverter
 
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
-     * @param value identifier for the new Gene/Translation
-     * @param organism the Organism for this Gene/Translation
-     * @param type create either a Gene or Translation
+     * @param value identifier for the new Gene/Protein
+     * @param organism the Organism for this Gene/Protein
+     * @param type create either a Gene or Protein
      * @param attribute the attribute of the BioEntity set, e.g. identifier or primaryIdentifier
-     * @return a new Gene/Translation Item
+     * @return a new Gene/Protein Item
      * @throws ObjectStoreException if an error occurs in storing
      */
     protected Item newBioEntity(String value, String attribute, Item organism, String type)
         throws ObjectStoreException {
 
-        // lookup by identifier and type, sometimes same id for translation and gene
+        // lookup by identifier and type, sometimes same id for protein and gene
         String key = type + value;
         if (bioEntities.containsKey(key)) {
             return (Item) bioEntities.get(key);
