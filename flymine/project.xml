@@ -38,6 +38,18 @@
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
+
+    <source name="uniprot-fasta" type="fasta">
+      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set"/>
+      <property name="fasta.synonymSource" value="UniProt"/>
+      <property name="src.data.dir" location="/shared/data/uniprot/current/fasta"/>
+      <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+    </source>
+
      <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/shared/data/flybase/homology"/>
       <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
@@ -81,14 +93,12 @@
     <source name="interpro" type="interpro">      
       <property name="src.data.dir" location="/shared/data/interpro/current"/>
     </source>
-<!--
     <source name="homophila" type="homophila">
       <property name="src.data.dir" location="/shared/data/homophila/current"/>
       <property name="src.data.dir.includes" value="homophila_matches.txt"/>
       <property name="diseasefile" location="/shared/data/homophila/current/homophila_diseases.txt"/>
       <property name="proteingenefile" location="/shared/data/homophila/current/protein_gene.txt"/>
     </source>
--->
     <source name="tiling_path" type="tiling_path">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
