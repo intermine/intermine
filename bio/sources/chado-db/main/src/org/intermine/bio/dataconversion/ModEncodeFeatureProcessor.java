@@ -31,7 +31,7 @@ import org.intermine.util.StringUtil;
  * metadata.
  * @author Kim Rutherford
  */
-public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
+public class ModEncodeFeatureProcessor extends SequenceProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeFeatureProcessor.class);
 
@@ -309,12 +309,6 @@ public class ModEncodeFeatureProcessor extends ChadoSequenceProcessor
 
 
 
-    /**
-     * Perform any actions needed after all processing is finished.
-     * override ChadoSequenceProcessor
-     * @param connection the Connection
-     * @throws SQLException if there is a problem
-     */
     /**
      * {@inheritDoc}
      */

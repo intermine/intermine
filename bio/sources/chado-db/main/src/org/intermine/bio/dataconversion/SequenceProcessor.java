@@ -56,13 +56,13 @@ import org.apache.log4j.Logger;
  * A processor for the chado sequence module.
  * @author Kim Rutherford
  */
-public class ChadoSequenceProcessor extends ChadoProcessor
+public class SequenceProcessor extends ChadoProcessor
 {
-    // incremented each time we make a new ChadoSequenceProcessor to make sure we have a unique
+    // incremented each time we make a new SequenceProcessor to make sure we have a unique
     // name for temporary tables
     private static int tempTableCount = 0;
 
-    private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
+    private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
     // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
@@ -123,10 +123,10 @@ public class ChadoSequenceProcessor extends ChadoProcessor
     static final String LENGTH_STRING = "length";
 
     /**
-     * Create a new ChadoSequenceProcessor
+     * Create a new SequenceProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
      */
-    public ChadoSequenceProcessor(ChadoDBConverter chadoDBConverter) {
+    public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
         synchronized (this) {
             tempTableCount++;

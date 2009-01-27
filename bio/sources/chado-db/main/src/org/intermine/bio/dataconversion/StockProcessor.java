@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class StockProcessor extends ChadoProcessor
 {
-    private static final Logger LOG = Logger.getLogger(ChadoSequenceProcessor.class);
+    private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
     private Map<String, Item> stockItems = new HashMap<String, Item>();
 
     /**
@@ -102,9 +102,9 @@ public class StockProcessor extends ChadoProcessor
     }
 
     private Map<Integer, FeatureData> getFeatures() {
-        Class<ChadoSequenceProcessor> seqProcessorClass = ChadoSequenceProcessor.class;
-        ChadoSequenceProcessor sequenceProcessor =
-            (ChadoSequenceProcessor) getChadoDBConverter().findProcessor(seqProcessorClass);
+        Class<SequenceProcessor> seqProcessorClass = SequenceProcessor.class;
+        SequenceProcessor sequenceProcessor =
+            (SequenceProcessor) getChadoDBConverter().findProcessor(seqProcessorClass);
 
         Map<Integer, FeatureData> features = sequenceProcessor.getFeatureMap();
         return features;

@@ -26,7 +26,6 @@ import org.intermine.bio.chado.ChadoCVTerm;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
-import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
@@ -50,7 +49,7 @@ import org.apache.log4j.Logger;
  * A converter for chado that handles FlyBase specific configuration.
  * @author Kim Rutherford
  */
-public class FlyBaseProcessor extends ChadoSequenceProcessor
+public class FlyBaseProcessor extends SequenceProcessor
 {
     /**
      * The cv.name for the wild type class term.  For chromosome_structure_variations, used to
