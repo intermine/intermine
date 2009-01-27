@@ -14,20 +14,35 @@ my $model_service = new InterMine::WebService::Service::ModelService(@service_ar
 
 my $path_query = new InterMine::PathQuery($model_service->get_model());
 
+# set the output columns, argument can be a array of paths instead
 $path_query->add_view('Organism.name Organism.taxonId');
-$path_query->sort_order('Organism.name');
+
+# set the sort order, default is the first path in the view
+$path_query->sort_order('Organism.taxonId');
 
 
-## print the result table
+# get the results as one string, containing multiple lines and tab delimited
+# columns
 my $res = $query_service->get_result($path_query);
 print "All organisms:\n";
 print $res->content();
 
 
-## now constrain the genus
+# now constrain the genus
 $path_query->add_constraint('Organism.genus = "Drosophila"');
 
+
+# print the result table again - will be smaller
 my $drosophila_res = $query_service->get_result($path_query);
-print "\n", '-' x 70, "\nOnly drosophilas:\n";
+print "\n", '-' x 70, "\nOnly Drosophilas:\n";
 print $drosophila_res->content();
 
+
+# get the results as a table instead
+print "\n", '-' x 70, "\nDrosophila results as a table:\n";
+my @res = $query_service->get_result_table($path_query);
+for my $row_ref (@res) {
+  my @row = @{$row_ref};
+
+  print join (':', @row), "\n";
+}
