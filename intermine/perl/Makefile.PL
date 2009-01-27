@@ -8,7 +8,6 @@ WriteMakefile(
     VERSION_FROM        => 'lib/InterMine/ItemFactory.pm',
     PL_FILES            => {},
     PREREQ_PM => {
-                  'Config::Properties' => 0,
                   'File::Compare' => 0,
                   'IO::All' => 0,
                   'IO::String' => 0,
