@@ -58,7 +58,11 @@ sub new
   my $class = shift;
   my $request_type = shift;
   my $service_root = shift;
-  my $content_type = shift // 'TAB';
+  my $content_type = shift;
+
+  if (!defined $content_type) {
+    $content_type = 'TAB';
+  }
 
   my $self = {};
 
