@@ -68,8 +68,6 @@ public class AnophelesIdentifiersConverter extends BioFileConverter
             clsName = "Gene";
         } else if (fileName.contains("Transcripts")) {
             clsName = "Transcript";
-        } else if (fileName.contains("Translations")) {
-            clsName = "Translation";
         } else {
             throw new RuntimeException("Could not determine class from filename: "
                                        + fileName);
