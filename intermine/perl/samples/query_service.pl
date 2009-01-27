@@ -24,7 +24,7 @@ print "All organisms:\n";
 print $res->content();
 
 
-## now constraint the genus
+## now constrain the genus
 $path_query->add_constraint('Organism.genus = "Drosophila"');
 
 my $drosophila_res = $query_service->get_result($path_query);
