@@ -31,7 +31,4 @@
   <class name="org.flymine.model.genomic.MRNA" extends="org.flymine.model.genomic.Transcript" is-interface="true">
     <collection name="CDSs" referenced-type="org.flymine.model.genomic.CDS" reverse-reference="MRNA"/>
   </class>
-  <class name="org.flymine.model.genomic.Sequence" is-interface="true">
-    <attribute name="md5checksum" type="java.lang.String"/>
-  </class>
 </classes>
