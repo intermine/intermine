@@ -200,6 +200,7 @@
   </item>
   <item id="9_2" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="length" value="63"/>
+    <attribute name="md5checksum" value="4bdcdd74743c6326f277da6fe9e07f2a"/>
     <attribute name="primaryIdentifier" value="FBpp99999"/>
     <attribute name="secondaryIdentifier" value="FBpp99999"/>
     <reference name="organism" ref_id="1_1"/>
@@ -355,6 +356,7 @@
   </item>
   <item id="9_1" class="http://www.flymine.org/model/genomic#Protein">
     <attribute name="length" value="41"/>
+    <attribute name="md5checksum" value="824c7d2cbdc711dd49892c63b71832ac"/>
     <attribute name="primaryIdentifier" value="FBpp88888"/>
     <attribute name="secondaryIdentifier" value="FBpp88888"/>
     <reference name="organism" ref_id="1_1"/>

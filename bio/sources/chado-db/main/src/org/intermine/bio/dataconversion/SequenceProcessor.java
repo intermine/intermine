@@ -398,12 +398,8 @@ public class SequenceProcessor extends ChadoProcessor
                                           String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
-//        String fixedUniqueName = fixIdentifier(interMineType, uniqueName);
         OrganismData organismData =
             getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
-
-//        Item feature = makeFeature(featureId, chadoType, interMineType, name, fixedUniqueName,
-//                                   seqlen, organismData.getTaxonId());
 
         Item feature = makeFeature(featureId, chadoType, interMineType, name, uniqueName,
                 seqlen, organismData.getTaxonId());
@@ -418,6 +414,10 @@ public class SequenceProcessor extends ChadoProcessor
         fdat = new FeatureData();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         feature.setReference("organism", organismItem);
+
+        if (feature.checkAttribute("md5checksum")) {
+            feature.setAttribute("md5checksum", md5checksum);
+        }
 
         fdat.setFieldExistenceFlags(feature);
 
