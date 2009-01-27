@@ -14,7 +14,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 
 /**
@@ -130,7 +134,7 @@ public class Util
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
 
-        // Java needs backslashes to be backslashed in strings. 
+        // Java needs backslashes to be backslashed in strings.
         for (int i = 0; i < exp.length(); i++) {
             String substring = exp.substring(i);
             if (substring.startsWith("%")) {
@@ -174,7 +178,7 @@ public class Util
     /**
      * Turn a user supplied wildcard expression with * into an SQL LIKE/NOT LIKE
      * expression with %'s and other special characters. Please note that constraint
-     * value is saved in created java object (constraint) in form with '%' and in 
+     * value is saved in created java object (constraint) in form with '%' and in
      * this form is saved in xml as well.
      *
      * @param exp  the SQL LIKE parameter
@@ -207,5 +211,24 @@ public class Util
         }
 
         return sb.toString();
+    }
+
+    /**
+     * @param sequence sequence to be encoded
+     * @return encoded sequence, set to lowercase
+     */
+    public static String getMd5checksum(String sequence) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+        byte[] buffer = sequence.getBytes();
+        md5.update(buffer);
+        byte[] array = md5.digest();
+        String checksum = HexBin.encode(array);
+        // perl checksum returns lowercase, uniprot has to match
+        return checksum.toLowerCase();
     }
 }

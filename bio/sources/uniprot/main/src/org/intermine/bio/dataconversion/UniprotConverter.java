@@ -13,8 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,13 +32,12 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
+import org.intermine.util.Util;
 import org.intermine.xml.full.Item;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 
 /**
@@ -635,7 +632,7 @@ public class UniprotConverter extends DirectoryConverter
 
     private void setSequence(UniprotEntry entry, String sequence)
     throws SAXException {
-        String md5checksum = encodeSequence(sequence);
+        String md5checksum = Util.getMd5checksum(sequence);
         if (!sequences.containsKey(md5checksum)) {
             entry.setDuplicate(false);
             entry.setMd5checksum(md5checksum);
@@ -654,21 +651,6 @@ public class UniprotConverter extends DirectoryConverter
             entry.setDuplicate(true);
             sequences.get(md5checksum).addAll(entry.getSynonyms());
         }
-    }
-
-    private String encodeSequence(String sequence) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-        byte[] buffer = sequence.getBytes();
-        md5.update(buffer);
-        byte[] array = md5.digest();
-        String checksum = HexBin.encode(array);
-        // perl checksum returns lowercase, this has to match it
-        return checksum.toLowerCase();
     }
 
     private String getDataSource(String title)
