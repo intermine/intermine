@@ -126,15 +126,7 @@ table.theadbuttons tr td {
     margin:0;
 }
 
-.droppable-col-hover { 
-   border-left:2px #CCC solid;
-}
-
-.th_drag {
+.columnHeader {
   background: #927F97;
   padding:10px 15px 10px 15px;
-}
-
-.th_drag:hover {
-  cursor:pointer;
 }
