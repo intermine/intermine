@@ -168,8 +168,6 @@ sub set
   my $field = $self->_get_object_field_by_name($name);
 
   if (!defined $field) {
-    my @class_descs = $self->all_class_descriptors();
-    my $classes = join ' ', map { $_->name() } @class_descs;
     die "object ", $self->to_string(), " does not have a field called: $name\n";
   }
 
