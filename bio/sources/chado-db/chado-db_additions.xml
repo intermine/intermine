@@ -67,10 +67,6 @@
   </class>
   <class name="org.flymine.model.genomic.Pseudogene" extends="org.flymine.model.genomic.Gene" is-interface="true">
   </class>
-  <class name="org.flymine.model.genomic.Translation" extends="org.flymine.model.genomic.Polypeptide" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <attribute name="length" type="java.lang.Integer"/>
-  </class>
   <class name="org.flymine.model.genomic.Vector" extends="org.flymine.model.genomic.BioEntity"
          is-interface="true"/>
   <class name="org.flymine.model.genomic.BAC" extends="org.flymine.model.genomic.Vector"

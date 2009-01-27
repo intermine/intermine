@@ -15,7 +15,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Homologue;
-import org.flymine.model.genomic.Translation;
+import org.flymine.model.genomic.Protein;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -25,6 +25,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -32,9 +33,9 @@ import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.TypeUtil;
 
 /**
- * Orthologues from INPARANOID are attched to Translations not Genes, this class
- * finds all Orthologues and Paralogues on Translations and creates references to
- * to corresponding Genes, duplicating the [Orth|Para]logues if the Translation
+ * Orthologues from INPARANOID are attched to Proteins not Genes, this class
+ * finds all Orthologues and Paralogues on Proteins and creates references to
+ * to corresponding Genes, duplicating the [Orth|Para]logues if the Protein
  * references multiple Genes.
  *
  * @author Richard Smith
@@ -55,22 +56,22 @@ public class UpdateOrthologues extends PostProcessor
 
 
     /**
-     * Find orthologues with objectTranslation and subjectTranslation set and, where possible,
+     * Find orthologues with protein and homologueProtein set and, where possible,
      * set object and subject to corresponding genes.
      * @throws ObjectStoreException if anything goes wrong
      */
     public void postProcess() throws ObjectStoreException {
         os.flushObjectById();
         LOG.info("Updating Orthologue objects");
-        update("translation");
+        update("protein");
         os.flushObjectById();
         LOG.info("Updating Orthologue subjects");
-        update("homologueTranslation");
+        update("homologueProtein");
     }
 
     /**
-     * Insert object/subject from Orthologues/Paralogues to Genes where currently objectTranslation
-     * and subjectTranslation references are set and references from Translations to Genes are
+     * Insert object/subject from Orthologues/Paralogues to Genes where currently protein
+     * and homologueProtein references are set and references from Proteins to Genes are
      * available. Treats subject and object of Orthologue/Paralogue as separate, should be called
      * for each.
      * @param relationClass either Orthologue or Paralogue
@@ -78,7 +79,7 @@ public class UpdateOrthologues extends PostProcessor
      */
     private void update(String refType) throws ObjectStoreException {
 
-        // query for [Ortho|Para]logue, subject/object Translation and Translation.genes
+        // query for [Ortho|Para]logue, protein/homologueProtein Protein and Protein.genes
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -86,47 +87,47 @@ public class UpdateOrthologues extends PostProcessor
         q.addFrom(qcRel);
         q.addToSelect(qcRel);
 
-        QueryClass qcTranslation = new QueryClass(Translation.class);
-        q.addFrom(qcTranslation);
-        q.addToSelect(qcTranslation);
-        QueryObjectReference refTranslation = new QueryObjectReference(qcRel, refType);
-        ContainsConstraint cc1 = new ContainsConstraint(refTranslation, ConstraintOp.CONTAINS,
-                                                        qcTranslation);
+        QueryClass qcProtein = new QueryClass(Protein.class);
+        q.addFrom(qcProtein);
+        q.addToSelect(qcProtein);
+        QueryObjectReference refProtein = new QueryObjectReference(qcRel, refType);
+        ContainsConstraint cc1 = new ContainsConstraint(refProtein, ConstraintOp.CONTAINS,
+                                                        qcProtein);
         cs.addConstraint(cc1);
 
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
-        QueryObjectReference refGene = new QueryObjectReference(qcTranslation, "gene");
-        ContainsConstraint cc2 = new ContainsConstraint(refGene, ConstraintOp.CONTAINS, qcGene);
+        QueryCollectionReference colGenes = new QueryCollectionReference(qcProtein, "genes");
+        ContainsConstraint cc2 = new ContainsConstraint(colGenes, ConstraintOp.CONTAINS, qcGene);
         cs.addConstraint(cc2);
         q.setConstraint(cs);
         q.addToOrderBy(qcRel);
-        q.addToOrderBy(qcTranslation);
+        q.addToOrderBy(qcProtein);
         q.addToOrderBy(qcGene);
 
         Results res = os.execute(q);
         res.setBatchSize(500);
 
-        Translation lastTranslation = null;
+        Protein lastProtein = null;
         Gene lastGene = null;
         InterMineObject lastObject = null;
         int updated = 0;
         int created = 0;
 
         // set gene or [orthologue|paralogue]
-        String newRef = refType.equals("translation") ? "gene"
-            : refType.substring(0, refType.indexOf('T'));
+        String newRef = refType.equals("protein") ? "gene"
+            : refType.substring(0, refType.indexOf('P'));
 
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
             InterMineObject o = (InterMineObject) rr.get(0);
-            Translation translation = (Translation) rr.get(1);
+            Protein protein = (Protein) rr.get(1);
             Gene gene = (Gene) rr.get(2);
 
-            if (!(translation.equals(lastTranslation) && o.equals(lastObject))) {
+            if (!(protein.equals(lastProtein) && o.equals(lastObject))) {
                 // clone so we don't change ObjectStore cache
                 try {
                     InterMineObject newO = PostProcessUtil.cloneInterMineObject(o);
@@ -149,10 +150,10 @@ public class UpdateOrthologues extends PostProcessor
                 }
             } else {
                 LOG.info("Found duplicate Genes (" + lastGene.getSecondaryIdentifier() + ", "
-                         + gene.getSecondaryIdentifier() + ") in genes collection of translation: "
-                         + translation.getSecondaryIdentifier());
+                         + gene.getSecondaryIdentifier() + ") in genes collection of protein: "
+                         + protein.getSecondaryIdentifier());
             }
-            lastTranslation = translation;
+            lastProtein = protein;
             lastGene = gene;
             lastObject = o;
 

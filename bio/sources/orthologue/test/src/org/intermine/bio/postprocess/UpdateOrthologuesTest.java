@@ -23,7 +23,7 @@ import java.util.Set;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Homologue;
-import org.flymine.model.genomic.Translation;
+import org.flymine.model.genomic.Protein;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -42,8 +42,8 @@ import org.intermine.util.TypeUtil;
  * Tests for the UpdateOrthologues class.
  */
 public class UpdateOrthologuesTest extends XMLTestCase {
-    private static final Integer OBJ_TRANSLATION_ID = new Integer(100000001);
-    private static final Integer SUB_TRANSLATION_ID = new Integer(100000002);
+    private static final Integer OBJ_PROTEIN_ID = new Integer(100000001);
+    private static final Integer SUB_PROTEIN_ID = new Integer(100000002);
     private static final String PKG = "org.flymine.model.genomic";
 
     private ObjectStoreWriter osw;
@@ -73,7 +73,7 @@ public class UpdateOrthologuesTest extends XMLTestCase {
 
         Set tables = new HashSet();
         tables.addAll(DatabaseUtil.getIndirectionTableNames(model.getClassDescriptorByName(PKG + ".Gene")));
-        tables.addAll(DatabaseUtil.getIndirectionTableNames(model.getClassDescriptorByName(PKG + ".Translation")));
+        tables.addAll(DatabaseUtil.getIndirectionTableNames(model.getClassDescriptorByName(PKG + ".Protein")));
 
         Database db = ((ObjectStoreInterMineImpl) osw.getObjectStore()).getDatabase();
         Connection conn = db.getConnection();
@@ -141,8 +141,8 @@ public class UpdateOrthologuesTest extends XMLTestCase {
 
 
     // in some cases the original orthologue will have one end as a Gene and the
-    // other as a Translation (currently Genes for worm data)
-    public void testOrthologueGeneTranslation() throws Exception {
+    // other as a Protein (currently Genes for worm data)
+    public void testOrthologueGeneProtein() throws Exception {
         Gene objGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         objGene1.setId(new Integer(101));
         Gene subGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
@@ -162,36 +162,39 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         assertEquals(subGene1, resOrth.getHomologue());
     }
 
-    // create an [Ortho|Para]logue with object and subject Translations that have objGenes and subGenes
+    // create an [Ortho|Para]logue with object and subject Proteins that have objGenes and subGenes
     // in their respective genes collections
     private void setUpData(Class relClass, Gene objGene, Gene subGene, boolean startsOnSubGene) throws Exception {
         InterMineObject io = (InterMineObject) DynamicUtil.createObject(Collections.singleton(relClass));
-        Translation objTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
-        objTranslation.setId(OBJ_TRANSLATION_ID);
+        Protein objProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        objProtein.setId(OBJ_PROTEIN_ID);
+        objProtein.addGenes(objGene);
         System.out.println("setUpData: objGenes= " + objGene);
+        
 //        objTranslation.setGene(objGene);
 
-        Translation subTranslation = (Translation) DynamicUtil.createObject(Collections.singleton(Translation.class));
-        subTranslation.setId(SUB_TRANSLATION_ID);
+        Protein subProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        subProtein.setId(SUB_PROTEIN_ID);
         System.out.println("setUpData: subGene = " + subGene);
-//        subTranslation.setGene(subGene);
+        subProtein.addGenes(subGene);
+        //        subTranslation.setGene(subGene);
 
         String clsName = TypeUtil.unqualifiedName(relClass.getName());
         if (clsName.equals("Homologue")) {
             if (startsOnSubGene) {
                 // in this case one end of the orthologue already references a Gene
-                ((Homologue) io).setTranslation(objTranslation);
+                ((Homologue) io).setProtein(objProtein);
                 ((Homologue) io).setHomologue(subGene);
             } else {
-                ((Homologue) io).setTranslation(objTranslation);
-                ((Homologue) io).setHomologueTranslation(subTranslation);
+                ((Homologue) io).setProtein(objProtein);
+                ((Homologue) io).setHomologueProtein(subProtein);
             }
         } else {
-            ((Homologue) io).setTranslation(objTranslation);
-            ((Homologue) io).setHomologueTranslation(subTranslation);
+            ((Homologue) io).setProtein(objProtein);
+            ((Homologue) io).setHomologueProtein(subProtein);
         }
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {io, objTranslation, subTranslation}));
+        List toStore = new ArrayList(Arrays.asList(new Object[] {io, objProtein, subProtein}));
         toStore.add(objGene);
         toStore.add(subGene);
 
