@@ -38,4 +38,23 @@
  <query name="longPath" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc"></query>
  <query name="orderByCompany" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber desc Company.name asc"></query>
  <query name="orderByVat" model="testmodel" view="Company.name Company.vatNumber Company.address.address" sortOrder="Company.vatNumber asc Company.name asc Company.departments.name asc"></query>
+ <query name="departmentManagers" model="testmodel" view="Department.name Department.employees.name">
+  <node path="Department.employees" type="Manager">
+   <constraint op="=" value="DepartmentA1"/>
+  </node>
+ </query>
+ <query name="groupedConstraints" model="testmodel" view="Department.name Department:employees.name" sortOrder="Department.name asc" constraintLogic="A and B">
+  <node path="Department" type="Department">
+  </node>
+  <node path="Department.name" type="String">
+   <constraint op="=" value="DepartmentA1" description="" identifier="" code="A">
+   </constraint>
+  </node>
+  <node path="Department:employees" type="Employee">
+  </node>
+  <node path="Department:employees.name" type="String">
+   <constraint op="=" value="EmployeeA1" description="" identifier="" code="B">
+   </constraint>
+  </node>
+ </query>
 </query-list>
