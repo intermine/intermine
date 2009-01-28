@@ -60,7 +60,7 @@
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
     </source>
     <source name="anopheles-identifiers" type="anopheles-identifiers">
-      <property name="src.data.dir" location="/shared/data/anopheles/mappings"/>
+      <property name="src.data.dir" location="/shared/data/anopheles/mappings/current"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords" dump="true">
