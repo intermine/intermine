@@ -28,7 +28,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Protein;
 import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Translation;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
@@ -94,8 +93,7 @@ public class SequenceExportOptionsController extends TilesAction
             Class<?> prefixClass = prefixClasses.iterator().next();
             if (Protein.class.isAssignableFrom(prefixClass)
                 || LocatedSequenceFeature.class.isAssignableFrom(prefixClass)
-                || Sequence.class.isAssignableFrom(prefixClass)
-                || Translation.class.isAssignableFrom(prefixClass)) {
+                || Sequence.class.isAssignableFrom(prefixClass)) {
                 if (!retPaths.contains(prefix)) {
                     retPaths.add(prefix);
                 }
