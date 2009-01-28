@@ -1394,4 +1394,27 @@ public class AjaxServices
     private static TagManager getTagManager() {
         return SessionMethods.getTagManager(getRequest().getSession());
     }
+    
+    /**
+     * Set the constraint logic on a query to be the given expression
+     * @param expression the constraint logic for the query
+     */
+    public static void setConstraintLogic(String expression) {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        query.setConstraintLogic(expression);
+        query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
+    }
+    
+    /**
+     * Get the grouped constraint logic
+     * @return a list representing the grouped constraint logic
+     */
+    public static String getConstraintLogic() {
+        WebContext ctx = WebContextFactory.get();
+        HttpSession session = ctx.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        return (query.getGroupedConstraintLogic().toString());
+    }
 }

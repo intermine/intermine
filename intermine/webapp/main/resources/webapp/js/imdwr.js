@@ -763,10 +763,26 @@ function switchJoin(element) {
    	 AjaxServices.getSortOrderMap(function(sortMap) {
    		reDrawSorters(sortMap);
    	 });
+   	 reDrawConstraintLogic();
    });
    if(jQuery(element).attr('src').indexOf('hollow')>-1) {
    	 jQuery(element).attr('src','images/join_full.png');
    } else {
    	 jQuery(element).attr('src','images/join_hollow.png');
    }
+}
+
+function setConstraintLogic(expression) {
+  AjaxServices.setConstraintLogic(expression, function() {
+    reDrawConstraintLogic();
+    jQuery('#constraintLogic').toggle();
+    jQuery('#editConstraintLogic').toggle();
+  });
+}
+
+function reDrawConstraintLogic() {
+  AjaxServices.getConstraintLogic(function(expression) {
+  	expression = expression.replace('[','');
+  	jQuery('#constraintLogic').text(expression.replace(']',''));
+  });
 }
