@@ -2,7 +2,7 @@ package InterMine::PathQuery;
 
 =head1 NAME
 
-InterMine::PathQuery - a object representation of a query
+InterMine::PathQuery - an object representation of a query
 
 =head1 SYNOPSIS
 
