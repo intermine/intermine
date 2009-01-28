@@ -2,7 +2,7 @@ package InterMine::PathQuery;
 
 =head1 NAME
 
-InterMine::PathQuery::PathQuery - a object representation of a query
+InterMine::PathQuery - a object representation of a query
 
 =head1 SYNOPSIS
 
@@ -18,7 +18,7 @@ Please report any bugs or feature requests to C<support@flymine.org>.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc InterMine::PathQuery::PathQuery
+    perldoc InterMine::PathQuery
 
 You can also look for information at:
 
