@@ -409,13 +409,18 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * @param genus organism name
+     * @param name eg. Drosophila melanogaster
      * @return the taxonId
      */
-    protected Integer getTaxonId(String genus) {
-        return taxonIds.get(genus);
+    protected Integer getTaxonId(String name) {
+        return taxonIds.get(name);
     }
 
+    /**
+     * some fasta files use organism name instead of taxonId, so we need a lookup map
+     * taxons are taken from project.xml.  any entries in the fasta files from organisms not in
+     * this list will be ignored
+     */
     private void parseTaxonIds() {
         OrganismRepository repo = OrganismRepository.getOrganismRepository();
         String[] fastaTaxonIds = fastaTaxonId.split(" ");
