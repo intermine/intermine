@@ -838,10 +838,6 @@ public class PathQuery
      * @param paths a list of paths to be appended to the end of the order by list
      */
     public void addOrderBy(List<String> paths) {
-        if (paths.size() == 0) {
-            logPathError(MSG);
-            return;
-        }
         addOrderBy(paths, ASCENDING);
     }
 

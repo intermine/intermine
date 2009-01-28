@@ -20,7 +20,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 
 public class PathQueryTest extends TestCase
 {
-    Map expected;
+    Map<String, PathQuery> expected;
     PathQuery e, q;
     Model model;
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
@@ -405,16 +405,14 @@ public class PathQueryTest extends TestCase
     }
 
     public void testAddConstraintSubclass() {
-        e = (PathQuery) expected.get("employeeDepartmentCompany");
+        e = (PathQuery) expected.get("departmentManagers");
         q = new PathQuery(model);
-        List<String> view = new ArrayList<String>() {{
-            add("Employee.name");
-            add("Employee.department.name");
-            add("Employee.department.company.name");
-        }};
+        List<String> view = Arrays.asList("Department.name", "Department.employees.name");
         q.addView(view);
-        q.addConstraint("Employee.department.name", Constraints.eq("DepartmentA1"));
+        q.addConstraint("Department.employees", Constraints.eq("DepartmentA1"), "A", "Manager");
         assertEquals(e.getAllConstraints(), q.getAllConstraints());
+        assertEquals(e.toXml(), q.toXml());
+        assertEquals(e.toXml("test"), q.toXml("test"));
     }
 
     public void testGetAllConstraints() {
@@ -1047,6 +1045,9 @@ public class PathQueryTest extends TestCase
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
         }
+        pq.setJoinStyleForPath("Company.departments", true);
+        assertEquals(Arrays.asList("Company.name", "Company:departments", "Company:departments.manager.name"), pq.getViewStrings());
+        assertEquals(Arrays.asList("Company.name", "Company.departments", "Company.departments.manager.name"), pq.getDottedViewStrings());
     }
     
     public void testFlipJoinLogic() {
@@ -1055,6 +1056,90 @@ public class PathQueryTest extends TestCase
         assertEquals("A or B", pq.getConstraintLogic());
         pq.flipJoinStyle("Department.employees");
         assertTrue("B and A".equals(pq.getConstraintLogic()) || "A and B".equals(pq.getConstraintLogic()));
+    }
+
+    public void testGetGroupedConstraintLogic() {
+        e = expected.get("groupedConstraints");
+        assertTrue(Arrays.asList("A", "B").equals(e.getGroupedConstraintLogic())
+            || Arrays.asList("B", "A").equals(e.getGroupedConstraintLogic()));
+        e = expected.get("employeeDepartmentCompany");
+        assertEquals(Collections.EMPTY_LIST, e.getGroupedConstraintLogic());
+    }
+
+    public void testUnparseableLogic() {
+        e = expected.get("groupedConstraints");
+        e.setConstraintLogic("A flibble B");
+        assertEquals("A and B", e.getConstraintLogic());
+    }
+
+    public void testInvalidSortOrder() {
+        e = expected.get("employeeDepartmentName");
+        e.flipJoinStyle("Employee.department");
+        try {
+            e.setOrderBy("Employee:department.name", "asc");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.setOrderBy("Employee.department.name", "asc");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.setOrderBy(Arrays.asList("Employee:department.name"), "asc");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.setOrderBy(Arrays.asList("Employee.name", "Employee.department.name"), "asc");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        e.setOrderBy(Collections.EMPTY_LIST, "asc");
+        e.setOrderByList(Collections.EMPTY_MAP);
+
+        e.addOrderBy("");
+        try {
+            e.addOrderBy("Employee:department.name");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.addOrderBy("Employee.department.name");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.addOrderBy("Employee.name, Employee.department.name");
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        e.addOrderBy(", Employee.name");
+        e.addOrderBy("flibble");
+
+        e.addOrderBy(Arrays.asList("Employee.name"));
+        e.addOrderBy(Collections.EMPTY_LIST);
+        try {
+            e.addOrderBy(Arrays.asList("Employee:department.name"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.addOrderBy(Arrays.asList("Employee.department.name"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        try {
+            e.addOrderBy(Arrays.asList("Employee.name", "Employee.department.name"));
+            fail("Expected exception");
+        } catch (IllegalArgumentException e2) {
+        }
+        e.addOrderBy(Arrays.asList("", "Employee.name"));
+        e.addOrderBy(Arrays.asList("flibble"));
+        e.setSortOrder(e.getSortOrder());
+
+        e.resetOrderBy();
+        assertTrue(e.getSortOrder().isEmpty());
     }
 
 //    public void testEqualsObject() {
