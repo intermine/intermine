@@ -48,6 +48,8 @@
       <property name="src.data.dir" location="/shared/data/uniprot/current/fasta"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
+      <property name="fasta.loaderClassName" 
+                value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
 
      <source name="drosophila-homology" type="drosophila-homology">
