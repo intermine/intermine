@@ -20,7 +20,7 @@ $path_query->sort_order('Organism.name');
 
 ## now constraint the genus
 my $genus_c = $path_query->add_constraint('Organism.genus = "Drosophila"');
-my $name_c = $path_query->add_constraint('Organism.name != "melano*"');
+my $name_c = $path_query->add_constraint('Organism.species != "melano%"');
 my $taxonid_c = $path_query->add_constraint('Organism.taxonId = 9606');
 
 $path_query->logic(OR(AND($genus_c, $name_c), $taxonid_c));
