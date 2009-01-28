@@ -117,7 +117,9 @@ sub get_result
     $query = $query->to_xml_string();
   }
 
-  $count_only //= 0;
+  if (!defined $count_only) {
+    $count_only = 0;
+  }
 
   my $request =
     new InterMine::WebService::Core::Request('POST', $self->get_url(), 'TAB');
@@ -125,8 +127,12 @@ sub get_result
   if ($count_only) {
     $request->add_parameters(tcount => '');
   } else {
-    $start //= 1;
-    $max_count //= 100;
+    if (!defined $start) {
+      $start = 1;
+    }
+    if (!defined $max_count) {
+      $max_count = 100;
+    }
     $request->add_parameters(start => $start);
     $request->add_parameters(size => $max_count);
   }
