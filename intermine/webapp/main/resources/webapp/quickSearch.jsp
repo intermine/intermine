@@ -12,6 +12,9 @@
 <script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
+  if (isUpdatedByUser($('quickSearchInput').value)) {
+	 return;
+  }
   if (i==0) {
      $('quickSearchInput').value = '${ids}';
   } else if (i==1) {
@@ -22,6 +25,15 @@ function updateExample(i) {
   $('quickSearchInput').style.color = '#666';
   $('quickSearchInput').style.fontStyle = 'italic';
 }
+
+function isUpdatedByUser(value) {
+  if (value == '${ids}' || value == '${tpls}' || value == '${bgs}' || value == '') {
+	  return false;
+  } else {
+	  return true;
+  }
+}
+
 function clearElement(e) {
    var value =document.getElementById('quickSearchInput').value;
    if( value == '${ids}' || value == '${tpls}' || value == '${bgs}') {
