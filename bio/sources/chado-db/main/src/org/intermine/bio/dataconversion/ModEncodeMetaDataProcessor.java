@@ -374,7 +374,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
 
                 // last one: fill the list of outputs 
-                // and add to the general list of data ids for the submission, used to fetch features
+                // and add to the general list of data ids for the submission, 
+                // used to fetch features
                 if (res.isLast()) {
                     if (direction.equalsIgnoreCase("output")) {
                         node.outputs.add(dataId);
@@ -951,9 +952,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
-            // String name = res.getString("name");
+            String name = res.getString("uniquename");
             Item submission = getChadoDBConverter().createItem("Submission");
-            // submission.setAttribute("name", name);
+            submission.setAttribute("title", name);
 
             String project = submissionProjectMap.get(submissionId);
             String projectItemIdentifier = projectIdRefMap.get(project);
@@ -1607,7 +1608,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     static {
         // experiment
-        FIELD_NAME_MAP.put("Investigation Title", "title");
+        // swapping back to uniquename in experiment table
+        // FIELD_NAME_MAP.put("Investigation Title", "title");
+        FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Experiment Description", "description");
         FIELD_NAME_MAP.put("Experimental Design", "design");
         FIELD_NAME_MAP.put("Experimental Factor Type", "factorType");
