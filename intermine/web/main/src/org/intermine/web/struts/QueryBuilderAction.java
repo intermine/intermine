@@ -180,9 +180,6 @@ public class QueryBuilderAction extends InterMineAction
             if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
                 query.flipJoinStyle(referenceNode.getPathString());
             }
-        } else if (request.getParameter("expression") != null) {
-            query.setConstraintLogic(request.getParameter("expr"));
-            query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
         } else {
             throw new IllegalArgumentException("Unrecognised action: " + request.getParameterMap());
         }

@@ -54,19 +54,6 @@ options displayConstraint.optionsList
     </div>
     
     <div class="body">
-      <c:if test="${editingConstraintIndex == null && fn:length(QUERY.allConstraints) > 0}">
-
-        <h3><fmt:message key="query.andorHeading"/></h3><%--1. Choose a logical conjuction--%>
-
-        <div style="width:350px;text-align:justify;"><fmt:message key="query.andor"/></div><%--Select AND below to filter your query to include only records where all constraints are true.  Select OR to filter your query to include records where any of the other constraints are true or this constraint is true.--%>
-        <br/>
-        <br/>
-        <div align="center">
-          <html:radio property="operator" value="and"/>AND&nbsp;&nbsp;
-          <html:radio property="operator" value="or"/>OR
-        </div>
-      </c:if>
-
       <h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
 
       <!-- ATTRIBUTE TOGGLE -->

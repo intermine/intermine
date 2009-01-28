@@ -7,43 +7,41 @@
 
 <!-- mainLogic.jsp -->
 
+<script language="javascript">
+jQuery(document).ready(function(){
+  jQuery('#constraintLogic').click(function() {
+    jQuery('#constraintLogic').toggle();
+    jQuery('#editConstraintLogic').toggle();
+  });
+  jQuery('#editconstraintlogic').click(function() {
+    setConstraintLogic(jQuery('#expr').val());
+  });
+});
+</script>
+
 <html:xhtml/>
-<div id="constraintLogic">
+
+<c:set var="constraintLogicExpr" value="${fn:replace(QUERY.groupedConstraintLogic,'[','')}" />
+<c:set var="constraintLogicExpr" value="${fn:replace(constraintLogicExpr,']','')}" />
+
+<div id="constraintLogicContainer">
 <strong><fmt:message key="query.constraintLogic"/>:</strong>
   <c:choose>
-    <c:when test="${param.editExpression != null}">
-      <html:form action="/mainAction">
-        <input type="test" name="expr" size="30" value="${QUERY.constraintLogic}"/>
-        <html:submit property="expression" style="font-size: 11px">
-          <fmt:message key="query.logicUpdate"/>
-        </html:submit>
-      </html:form>
+    <c:when test="${fn:length(QUERY.allConstraints) == 1}">
+      <div class="smallnote altmessage"><fmt:message key="query.oneConstraint"/></div>
+    </c:when>
+    <c:when test="${fn:length(QUERY.allConstraints) == 0}">
+      <div class="smallnote altmessage"><fmt:message key="query.noConstraints"/></div>
     </c:when>
     <c:otherwise>
-      <c:forEach items="${fn:split(QUERY.constraintLogic, ' ')}" var="item">
-        <c:choose>
-          <c:when test="${item == 'and' || item == 'or'}">
-            <span class="and">${item}</span>
-          </c:when>
-          <c:otherwise>
-            <span class="constraint" style="font-size: 13px;"><b>${item}</b></span>
-          </c:otherwise>
-        </c:choose>
-      </c:forEach>
-      <c:choose>
-        <c:when test="${fn:length(QUERY.allConstraints) == 1}">
-          <div class="smallnote altmessage"><fmt:message key="query.oneConstraint"/></div>
-        </c:when>
-        <c:when test="${fn:length(QUERY.allConstraints) == 0}">
-          <div class="smallnote altmessage"><fmt:message key="query.noConstraints"/></div>
-        </c:when>
-        <c:otherwise>
-          &nbsp;
-          <html:link action="/query?editExpression" style="font-size: 11px">
-            <fmt:message key="query.logicEdit"/>
-          </html:link>
-        </c:otherwise>
-      </c:choose>
+	    <span id="constraintLogic" title="Click to Edit" alt="Click to Edit">${constraintLogicExpr}</span>
+	    <span id="editConstraintLogic" style="display: none">
+	        <%--<html:link action="/query?editExpression" style="font-size: 11px">
+	          <fmt:message key="query.logicEdit"/>
+	        </html:link>--%>
+		    <input type="test" name="expr" id="expr" size="20" value="${constraintLogicExpr}"/>
+		    <button id="editconstraintlogic" type="button" style="font-size: 11px"><fmt:message key="query.logicUpdate"/></button>
+	    </span>
     </c:otherwise>
   </c:choose>
 </div>

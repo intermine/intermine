@@ -119,3 +119,31 @@ form#submitform input, form#submitform {
 .actions p {
   margin-bottom:15px;
 }
+
+
+.and {
+  font-size: 10px;}
+
+.constraint {
+  color: purple;}
+
+.browserline {
+  white-space: nowrap;}
+
+table.noborder, table.noborder td, table.noborder th {
+  border: none;}
+  
+#constraintLogic {
+  border:none;
+  padding: 2px;
+  border:1px solid #CACACA;
+}
+  
+#constraintLogic:hover {
+  background-color:#F0FFB3;
+  border:1px solid #CCC;
+}
+  
+#constraintLogicContainer {
+  margin-top:25px;
+}
