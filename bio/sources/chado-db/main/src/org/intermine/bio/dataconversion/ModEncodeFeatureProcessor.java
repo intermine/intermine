@@ -155,7 +155,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             + " AND chr.type_id = chrcv.cvterm_id "
             + " AND chrcv.name = 'chromosome' "
             + " AND mf.type_id = mfcv.cvterm_id "
-            + " AND mfcv.name = 'EST_match'";
+            + " AND mfcv.name = 'EST_match' "
+            + " AND est.feature_id IN " 
+            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
