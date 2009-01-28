@@ -109,8 +109,6 @@ public class SubmissionDisplayerController extends TilesAction
             Class feat = (Class) row.get(0);
             Long count = (Long) row.get(1);
 
-            Map<String, Long> fc = new LinkedHashMap<String, Long>();
-            fc.put(TypeUtil.unqualifiedName(feat.getName()), count);
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
 
