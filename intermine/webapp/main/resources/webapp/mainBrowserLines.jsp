@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
 <!-- mainBrowserLines.jsp -->
 
@@ -19,7 +20,7 @@
     <div id="${previousNodePath}"><!--open div ${previousNodePath}-->
   </c:if>
   <c:if test="${!noTreeIds && node.indentation < indent}">
-    </div><!--close-->
+    </div><!--close div ${previousNodePath}-->
   </c:if>
   <c:set var="indent" value="${node.indentation}"/>
   <c:set var="node" value="${node}" scope="request"/>
@@ -27,9 +28,11 @@
   <tiles:insert page="/mainBrowserLine.jsp"/>
   <c:set var="previousNodePath" value="${node.pathString}"/>
 </c:forEach>
-  <%-- see above --%>
-  <c:if test="${!noTreeIds}">
-    <!--last close--></div>
-  </c:if>
+<%-- Closes all opened divs --%>
+<c:forEach begin="1" end="${indent}">
+  </div>
+</c:forEach>
 
 <!-- /mainBrowserLines.jsp -->
+
+
