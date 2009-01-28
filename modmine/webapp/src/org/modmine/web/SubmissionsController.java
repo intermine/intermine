@@ -133,14 +133,12 @@ public class SubmissionsController extends TilesAction
             Class feat = (Class) row.get(1);
             Long count = (Long) row.get(2);
 
-            Map<String, Long> featureCountMap = new LinkedHashMap<String, Long>();
-            if (submissions.containsKey(submission)) {
-                (submissions.get(submission)).put(TypeUtil.unqualifiedName(feat.getName()),
-                                                  count);
-            } else {
-                featureCountMap.put(TypeUtil.unqualifiedName(feat.getName()), count);
+            Map<String, Long> featureCountMap = submissions.get(submission);
+            if (featureCountMap == null) {
+                featureCountMap = new LinkedHashMap<String, Long>();
                 submissions.put(submission, featureCountMap);
             }
+            featureCountMap.put(TypeUtil.unqualifiedName(feat.getName()), count);
 
             all.remove(submission); // CHECK
         }
