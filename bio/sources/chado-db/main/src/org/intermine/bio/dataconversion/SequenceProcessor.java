@@ -549,7 +549,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Process a featureloc table and create Location objects.
-     * @param connection the Connectio
+     * @param connection the Connection
      * @param res a ResultSet that has the columns: featureloc_id, feature_id, srcfeature_id,
      *    fmin, fmax, strand
      * @throws SQLException if there is a problem while querying
