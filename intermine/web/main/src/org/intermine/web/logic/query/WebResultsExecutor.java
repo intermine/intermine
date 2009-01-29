@@ -103,9 +103,7 @@ public class WebResultsExecutor
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
                 pathToBagQueryResult, false);
 
-        Results results = os.execute(q);
-        results.setBatchSize(Constants.BATCH_SIZE); 
-        results.setNoPrefetch(); 
+        Results results = os.execute(q, Constants.BATCH_SIZE, true, true, false);
 
         WebResults webResults = new WebResults(pathQuery, results, os.getModel(),
                 pathToQueryNode, classKeys, pathToBagQueryResult);

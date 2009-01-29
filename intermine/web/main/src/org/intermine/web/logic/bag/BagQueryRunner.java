@@ -133,9 +133,7 @@ public class BagQueryRunner
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
-                    Results res = os.execute(q);
-                    res.setNoPrefetch();
-                    res.setBatchSize(10000);
+                    Results res = os.execute(q, 10000, true, true, false);
                     Iterator resIter = res.iterator();
                     while (resIter.hasNext()) {
                         ResultsRow row = (ResultsRow) resIter.next();
@@ -175,8 +173,7 @@ public class BagQueryRunner
                 try {
                     Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                     Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
-                    Results res = os.execute(q);
-                    res.setNoPrefetch();
+                    Results res = os.execute(q, 0, true, true, false);
                     for (ResultsRow row : (List<ResultsRow>) res) {
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {

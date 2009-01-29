@@ -78,9 +78,8 @@ public class PagedResultsTest extends TestCase
 
     private PagedTable getEmptyResults() throws Exception {
         os.setResultsSize(0);
-        Results results = os.execute(fq.toQuery());
+        Results results = os.execute(fq.toQuery(), 20, true, true, true);
         try {
-            results.setBatchSize(20);
             results.get(0);
         } catch (IndexOutOfBoundsException e) {
         }
@@ -89,9 +88,8 @@ public class PagedResultsTest extends TestCase
     }
 
     private PagedTable getExactResults() throws Exception {
-        Results results = os.execute(fq.toQuery());
+        Results results = os.execute(fq.toQuery(), 20, true, true, true);
         // Make sure we definitely know the end
-        results.setBatchSize(20);
         results.get(0);
         WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
@@ -99,16 +97,14 @@ public class PagedResultsTest extends TestCase
 
     private PagedTable getEstimateTooHighResults() throws Exception {
         os.setEstimatedResultsSize(25);
-        Results results = os.execute(fq.toQuery());
-        results.setBatchSize(1);
+        Results results = os.execute(fq.toQuery(), 1, true, true, true);
         WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }
 
     private PagedTable getEstimateTooLowResults() throws Exception {
         os.setEstimatedResultsSize(10);
-        Results results = os.execute(fq.toQuery());
-        results.setBatchSize(1);
+        Results results = os.execute(fq.toQuery(), 1, true, true, true);
         WebResults webResults = new WebResults(pathQuery, results, model, pathToQueryNode, classKeys, null);
         return new PagedTable(webResults);
     }

@@ -194,9 +194,7 @@ public class ProfileManager
                         UserProfile.class)));
         Results bags;
         try {
-            bags = osw.execute(q);
-            bags.setNoOptimise();
-            bags.setNoExplain();
+            bags = osw.execute(q, 0, false, false, true);
             for (Iterator i = bags.iterator(); i.hasNext();) {
                 List row = (List) i.next();
                 Integer bagId = (Integer) row.get(0);

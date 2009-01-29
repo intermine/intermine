@@ -125,10 +125,7 @@ public class ObjectStoreDataLoader extends DataLoader
             long timeSpentCommit = 0;
             long timeSpentLoop = 0;
             getIntegrationWriter().beginTransaction();
-            SingletonResults res = os.executeSingleton(q);
-            res.setNoOptimise();
-            res.setNoExplain();
-            res.setBatchSize(1000);
+            SingletonResults res = os.executeSingleton(q, 1000, false, false, true);
             Iterator iter = res.iterator();
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;

@@ -124,8 +124,7 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
     public void executeTest(String type) throws Exception {
         if (results.get(type) instanceof Failure) {
             try {
-                Results res = os.execute((Query) queries.get(type));
-                res.setBatchSize(2);
+                Results res = os.execute((Query) queries.get(type), 2, true, true, true);
                 Iterator iter = res.iterator();
                 while (iter.hasNext()) {
                     iter.next();
@@ -135,8 +134,7 @@ public class ReallyFlatIteratorTest extends ObjectStoreAbstractImplTestCase
                 assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
             }
         } else {
-            Results res = os.execute((Query)queries.get(type));
-            res.setBatchSize(2);
+            Results res = os.execute((Query)queries.get(type), 2, true, true, true);
             Iterator resIter = new ReallyFlatIterator(new ResultsFlatOuterJoinsImpl((List<ResultsRow>) res, (Query) queries.get(type)).iterator());
             List newRes = new ArrayList();
             while (resIter.hasNext()) {

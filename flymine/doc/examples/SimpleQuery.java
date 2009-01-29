@@ -47,13 +47,10 @@ public class SimpleQuery
 
         System.err. println ("finished precompute()");
         Results r = os.execute(q);
+// or:
+//        Results r = os.execute(q, 5000, true, true, true);
 
-// optional:
-        r.setBatchSize(5000);
-
-        Results res = os.execute(q);
-
-        TextFileUtil.writeTabDelimitedTable(System.out, res, null, null, -1, null);
+        TextFileUtil.writeTabDelimitedTable(System.out, r, null, null, -1, null);
     }
 }
 

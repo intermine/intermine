@@ -145,8 +145,7 @@ public class CreateFlyBaseLinkIns
         // Execute the query and get an iterator over results. batch size controls
         // how results are paged into memory.  High numbers mean better performace
         // but more memory usage.
-        SingletonResults res = os.executeSingleton(q);
-        res.setBatchSize(10000);
+        SingletonResults res = os.executeSingleton(q, 10000, true, true, true);
         return res.iterator();
     }
 }

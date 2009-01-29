@@ -74,9 +74,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             q1.addToSelect(qc2);
             q1.setDistinct(false);
             long time1 = System.currentTimeMillis();
-            Results r1 = os.execute(q1);
-            r1.setBatchSize(1000);
-            r1.setNoExplain();
+            Results r1 = os.execute(q1, 1000, true, false, true);
             int counter = 0;
             Iterator rowIter = r1.iterator();
             while (rowIter.hasNext()) {
@@ -94,9 +92,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             ((ObjectStoreInterMineImpl) os).precompute(q2, "test");
             long time3 = System.currentTimeMillis();
             System.out.println("Precomputing took " + (time3 - time2) + " ms");
-            Results r2 = os.execute(q2);
-            r2.setBatchSize(1000);
-            r2.setNoExplain();
+            Results r2 = os.execute(q2, 1000, true, false, true);
             counter = 0;
             rowIter = r2.iterator();
             while (rowIter.hasNext()) {
@@ -116,9 +112,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             writer.store(newD);
             toRemove.add(newD);
             Query q3 = QueryCloner.cloneQuery(q1);
-            Results r3 = os.execute(q3);
-            r3.setBatchSize(1000);
-            r3.setNoExplain();
+            Results r3 = os.execute(q3, 1000, true, false, true);
             counter = 0;
             rowIter = r3.iterator();
             while (rowIter.hasNext()) {

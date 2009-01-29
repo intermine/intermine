@@ -124,7 +124,15 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         throw new UnsupportedOperationException();
     }
 
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain, boolean prefetch) {
+        throw new UnsupportedOperationException();
+    }
+
     public SingletonResults executeSingleton(Query q) {
+        throw new UnsupportedOperationException();
+    }
+
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise, boolean explain, boolean prefetch) {
         throw new UnsupportedOperationException();
     }
 

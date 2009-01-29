@@ -251,14 +251,8 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                             QueryField qf = new QueryField(qc, "id");
                             subQ.setConstraint(new BagConstraint(qf, ConstraintOp.IN, bag));
 
-                            SingletonResults l = os.executeSingleton(subQ);
-                            if (!optimise) {
-                                l.setNoOptimise();
-                            }
-                            if (!explain) {
-                                l.setNoExplain();
-                            }
-                            l.setBatchSize(limit * 2);
+                            SingletonResults l = os.executeSingleton(subQ, limit * 2, optimise,
+                                    explain, true);
                             Iterator lIter = l.iterator();
                             while (lIter.hasNext()) {
                                 InterMineObject o = (InterMineObject) lIter.next();

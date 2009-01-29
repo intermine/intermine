@@ -100,8 +100,7 @@ public class PathQueryExecutor
             final int limit) {
         final ExportResultsIterator resultIt;
         try {
-            resultIt = new ExportResultsIterator(os, pathQuery, allBags, runner);
-            resultIt.setBatchSize(batchSize);
+            resultIt = new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Creating export results iterator failed", e);
         }

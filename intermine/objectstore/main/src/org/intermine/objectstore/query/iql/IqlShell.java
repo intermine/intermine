@@ -275,11 +275,7 @@ public class IqlShell
 
             if ((optimiseMode == QueryOptimiserContext.MODE_NORMAL)
                     || (optimiseMode == QueryOptimiserContext.MODE_VERBOSE)) {
-                Results res = os.execute(q);
-                res.setBatchSize(5000);
-                if (noExplain) {
-                    res.setNoExplain();
-                }
+                Results res = os.execute(q, 5000, true, !noExplain, true);
                 out.print("Column headings: ");
                 outputList(QueryHelper.getColumnAliases(q));
                 out.print("Column types: ");

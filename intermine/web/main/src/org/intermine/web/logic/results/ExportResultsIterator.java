@@ -58,11 +58,27 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+        this(os, pq, savedBags, bagQueryRunner, 0);
+    }
+
+    /**
+     * Constructor for ExportResultsIterator. This creates a new instance from the given
+     * ObjectStore, PathQuery, and other necessary objects.
+     *
+     * @param os an ObjectStore that the query will be run on
+     * @param pq a PathQuery to run
+     * @param savedBags a Map of the bags that the query may have used
+     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
+     * @param batchSize the batch size for the results
+     * @throws ObjectStoreException if something goes wrong executing the query
+     */
+    public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
+            BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, false);
-        results = os.execute(q);
+        results = os.execute(q, batchSize, true, true, true);
         osIter = results.iterator();
         List<ResultsRow> empty = Collections.emptyList();
         subIter = empty.iterator();
@@ -70,14 +86,6 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         columnCount = pq.getView().size();
     }
 
-    /**
-     * Sets batch size.
-     * @param size size
-     */
-    public void setBatchSize(int  size) {
-        results.setBatchSize(size);
-    }
-        
     /**
      * {@inheritDoc}
      */

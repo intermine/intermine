@@ -597,8 +597,24 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        return osw.execute(q, batchSize, optimise, explain, prefetch);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public SingletonResults executeSingleton(Query q) {
         return osw.executeSingleton(q);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        return osw.executeSingleton(q, batchSize, optimise, explain, prefetch);
     }
 
     /**

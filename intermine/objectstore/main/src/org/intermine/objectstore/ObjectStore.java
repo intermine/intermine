@@ -46,12 +46,38 @@ public interface ObjectStore
     public Results execute(Query q);
 
     /**
+     * Execute a Query on this ObjectStore
+     *
+     * @param q the Query to execute
+     * @param batchSize the batch size to initialise the Results object with
+     * @param optimise whether to optimise queries
+     * @param explain whether to explain queries
+     * @param prefetch whether to use the PrefetchManager
+     * @return the results of the Query
+     */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch);
+
+    /**
      * Execute a Query on this ObjectStore, returning a SingletonResults
      *
      * @param q the Query to execute
      * @return the results of the Query
      */
     public SingletonResults executeSingleton(Query q);
+
+    /**
+     * Execute a Query on this ObjectStore, returning a SingletonResults
+     *
+     * @param q the Query to execute
+     * @param batchSize the batch size to initialise the Results object with
+     * @param optimise whether to optimise queries
+     * @param explain whether to explain queries
+     * @param prefetch whether to use the PrefetchManager
+     * @return the results of the Query
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch);
 
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.

@@ -324,10 +324,7 @@ public class ObjectStoreSummary
                 cs2.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, q));
                 q2.setConstraint(cs2);
 
-                Results results = os.execute(q2);
-                results.setBatchSize(1);
-                results.setNoExplain();
-                results.setNoOptimise();
+                Results results = os.execute(q2, 1, false, false, false);
                 if (results.iterator().hasNext()) {
                     LOG.debug("\t\t" + cld.getName() + "." + desc.getName() + "");
                     Stack<ClassDescriptor> s = new Stack<ClassDescriptor>();

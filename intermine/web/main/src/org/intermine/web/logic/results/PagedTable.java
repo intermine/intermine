@@ -847,9 +847,7 @@ public class PagedTable
             if (i >= batchSize) {
                 Query bagCreationQuery = getBagCreationQuery();
                 Results bagCreationResults = results.getObjectStore()
-                    .executeSingleton(bagCreationQuery);
-                bagCreationResults.setBatchSize(1);
-                bagCreationResults.setNoExplain();
+                    .executeSingleton(bagCreationQuery, 1, true, false, true);
                 try {
                     bagCreationResults.get(0);
                     return false;

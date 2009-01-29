@@ -141,8 +141,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q);
-        res.setNoOptimise();
+        SingletonResults res = os.executeSingleton(q, 0, false, true, true);
         return res;
     }
 
@@ -158,8 +157,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
         q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q);
-        res.setNoOptimise();
+        SingletonResults res = os.executeSingleton(q, 0, false, true, true);
         return res;
     }
 

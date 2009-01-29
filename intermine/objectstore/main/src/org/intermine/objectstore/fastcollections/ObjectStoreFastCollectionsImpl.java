@@ -253,6 +253,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                     }
                                 }
                                 Results l = new Results(subQ, os, sequence);
+                                // TODO: This bypasses the objectstore results cache.
                                 if (!optimise) {
                                     l.setNoOptimise();
                                 }
@@ -288,6 +289,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                                                 bagList.subList(i, (i + 1000 < bagList.size()
                                                         ? i + 1000 : bagList.size()))));
                                     Results l = new Results(subQ, os, sequence);
+                                    // TODO: This bypasses the objectstore results cache.
                                     if (!optimise) {
                                         l.setNoOptimise();
                                     }

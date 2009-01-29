@@ -47,11 +47,12 @@ public abstract class BioQueries
      * objectCls
      * @param hasLength if true, only query locations where the objectCls object has a non-zero
      * length
+     * @param batchSize the batch size for the results object
      * @return a Results object: object.id, location, subject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
-                                                 boolean orderBySubject, boolean hasLength)
+            boolean orderBySubject, boolean hasLength, int batchSize)
         throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
     
@@ -94,7 +95,7 @@ public abstract class BioQueries
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
+        Results res = os.execute(q, batchSize, true, true, true);
     
         return res;
     }

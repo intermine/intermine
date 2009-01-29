@@ -90,14 +90,63 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * {@inheritDoc}
      */
     public Results execute(Query q) {
-        return new Results(q, this, getSequence(getComponentsForQuery(q)));
+        Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+        retval.setImmutable();
+        return retval;
     }
 
     /**
      * {@inheritDoc}
      */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+        if (batchSize != 0) {
+            retval.setBatchSize(batchSize);
+        }
+        if (!optimise) {
+            retval.setNoOptimise();
+        }
+        if (!explain) {
+            retval.setNoExplain();
+        }
+        if (!prefetch) {
+            retval.setNoPrefetch();
+        }
+        retval.setImmutable();
+        return retval;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
+                        q)));
+        if (batchSize != 0) {
+            retval.setBatchSize(batchSize);
+        }
+        if (!optimise) {
+            retval.setNoOptimise();
+        }
+        if (!explain) {
+            retval.setNoExplain();
+        }
+        if (!prefetch) {
+            retval.setNoPrefetch();
+        }
+        retval.setImmutable();
+        return retval;
+    }
+    /**
+     * {@inheritDoc}
+     */
     public SingletonResults executeSingleton(Query q) {
-        return new SingletonResults(q, this, getSequence(getComponentsForQuery(q)));
+        SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
+                        q)));
+        retval.setImmutable();
+        return retval;
     }
 
     /**
@@ -158,9 +207,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
-        Results results = execute(QueryCreator.createQueryForId(id, clazz));
-        results.setNoOptimise();
-        results.setNoExplain();
+        Results results = execute(QueryCreator.createQueryForId(id, clazz), 0, false, false, false);
 
         if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "
@@ -178,9 +225,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public List<InterMineObject> getObjectsByIds(Collection ids) throws ObjectStoreException {
         Results results = executeSingleton(QueryCreator.createQueryForIds(ids,
-                        InterMineObject.class));
-        results.setNoOptimise();
-        results.setNoExplain();
+                        InterMineObject.class), 0, false, false, false);
 
         return (List<InterMineObject>) results;
     }
