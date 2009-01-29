@@ -74,8 +74,7 @@ public class FlyFishDataSetLdr implements DataSetLdr
 
         Query q = createQuery(bag, false);
 
-        results = os.execute(q);
-        results.setBatchSize(100);
+        results = os.execute(q, 100, true, true, true);
         Iterator<ResultsRow> iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = initCallTable();
 

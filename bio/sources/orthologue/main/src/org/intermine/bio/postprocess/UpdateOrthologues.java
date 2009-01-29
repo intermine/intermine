@@ -106,8 +106,7 @@ public class UpdateOrthologues extends PostProcessor
         q.addToOrderBy(qcProtein);
         q.addToOrderBy(qcGene);
 
-        Results res = os.execute(q);
-        res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
 
         Protein lastProtein = null;
         Gene lastGene = null;

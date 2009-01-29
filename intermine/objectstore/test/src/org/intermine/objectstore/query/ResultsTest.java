@@ -81,8 +81,7 @@ public class ResultsTest extends TestCase
     public void testRangeOutOfBounds() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(5);
+        Results res = os.execute(q, 5, true, true, true);
         try {
             res.range(6,11);
             fail("Expected IndexOutOfBoundsException");
@@ -94,8 +93,7 @@ public class ResultsTest extends TestCase
     public void testGetFromTwoBatches() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(5);
+        Results res = os.execute(q, 5, true, true, true);
         ResultsRow row = (ResultsRow) res.get(6);
         assertEquals(1, os.getExecuteCalls());
         assertEquals("6", (String) row.get(0));
@@ -107,8 +105,7 @@ public class ResultsTest extends TestCase
     public void testInvalidRange() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(10);
+        Results res = os.execute(q, 10, true, true, true);
         // Don't let res call the ObjectStore
         res.os = null;
         try {
@@ -121,8 +118,7 @@ public class ResultsTest extends TestCase
     public void testGetAllRowsInOneRange() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(10);
+        Results res = os.execute(q, 10, true, true, true);
         List rows = res.range(0,9);
         assertEquals(10, rows.size());
         for (int i = 0; i < 10; i++) {
@@ -133,8 +129,7 @@ public class ResultsTest extends TestCase
     public void testGetPartialRowsFromTwoBatches() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(5);
+        Results res = os.execute(q, 5, true, true, true);
         List rows = res.range(4,7);
         assertEquals(4, rows.size());
         for (int i = 4; i <= 7; i++) {
@@ -145,8 +140,7 @@ public class ResultsTest extends TestCase
     public void testGetAllRowsInTwoRanges() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(5);
+        Results res = os.execute(q, 5, true, true, true);
         Iterator iter = res.iterator();
         int o = 0;
         while (iter.hasNext()) {
@@ -163,8 +157,7 @@ public class ResultsTest extends TestCase
     public void testGetAllRowsInTwoRangesTwice() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(5);
+        Results res = os.execute(q, 5, true, true, true);
         List rows = res.range(0,9);
         // Call this a second time - the rows should be in the cache
         // Invalidate the os - to check that no further calls can be made to it
@@ -198,20 +191,18 @@ public class ResultsTest extends TestCase
     public void testSetBatchSize() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(10);
+        Results res = os.execute(q, 10, true, true, true);
         assertEquals(10, res.batchSize);
     }
 
     public void testGetBatchNoForRow() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(10);
+        Results res = os.execute(q, 10, true, true, true);
         assertEquals(0, res.getBatchNoForRow(6));
         assertEquals(1, res.getBatchNoForRow(14));
 
-        res.setBatchSize(5);
+        res = os.execute(q, 5, true, true, true);
         assertEquals(1, res.getBatchNoForRow(6));
         assertEquals(2, res.getBatchNoForRow(14));
 
@@ -220,8 +211,7 @@ public class ResultsTest extends TestCase
     public void testFetchBatchFromObjectStore() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
-        res.setBatchSize(7);
+        Results res = os.execute(q, 7, true, true, true);
 
         // Fetch the first batch - will be a full batch
         res.fetchBatchFromObjectStore(0);
@@ -240,7 +230,7 @@ public class ResultsTest extends TestCase
     public void testSetBatchSizeWhenInitialised() throws Exception {
         Query q = new Query();
         q.addFrom(new QueryClass(Department.class));
-        Results res = os.execute(q);
+        Results res = new Results(q, os, ObjectStore.SEQUENCE_IGNORE);
         res.setBatchSize(10);
 
         res.get(0);
@@ -250,7 +240,6 @@ public class ResultsTest extends TestCase
         }
         catch (IllegalStateException e) {
         }
-
     }
 
     public void testWorkingWithRemovals() throws Exception {
@@ -259,8 +248,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(5000);
 
-        Results res = os2.execute(q);
-        res.setBatchSize(200);
+        Results res = os2.execute(q, 200, true, true, true);
         int count = 0;
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
@@ -278,8 +266,7 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(5000);
 
         LOG.info("testSizeUsesFewBatchFetches starting");
-        Results res = os2.execute(q);
-        res.setBatchSize(1);
+        Results res = os2.execute(q, 1, true, true, true);
         res.batches = Collections.synchronizedMap(new HashMap());
         assertEquals(5000, res.size());
         assertTrue("Expected size to fetch one batch, but fetched " + res.batches.size() + ".", res.batches.size() == 1);
@@ -292,8 +279,7 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(5000);
 
         LOG.info("testSizeUsesFewBatchFetches starting");
-        Results res = os2.execute(q);
-        res.setBatchSize(1);
+        Results res = os2.execute(q, 1, true, true, true);
         res.get(3000);
         try {
             res.get(6002);
@@ -312,8 +298,7 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(5000);
 
         LOG.info("testSizeUsesFewBatchFetches2 starting");
-        Results res = os2.execute(q);
-        res.setBatchSize(30);
+        Results res = os2.execute(q, 30, true, true, true);
         res.get(3000);
         try {
             res.get(6031);
@@ -332,8 +317,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(10);
         os2.setPoisonRowNo(7);
-        Results res = os2.execute(q);
-        res.setBatchSize(1);
+        Results res = os2.execute(q, 1, true, true, true);
 
         int count = 0;
         try {
@@ -359,8 +343,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(10);
         os2.setMaxOffset(6);
-        Results res = os2.execute(q);
-        res.setBatchSize(1);
+        Results res = os2.execute(q, 1, true, true, true);
 
         int count = 0;
         try {
@@ -385,8 +368,7 @@ public class ResultsTest extends TestCase
         ObjectStoreDummyImpl os2 = new ObjectStoreDummyImpl();
         os2.setResultsSize(50);
 
-        Results res = os2.execute(q);
-        res.setBatchSize(20);
+        Results res = os2.execute(q, 20, true, true, true);
         int count = 0;
         Iterator iter = res.iterator();
         while (iter.hasNext()) {
@@ -404,8 +386,7 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(50);
         os2.setEstimatedResultsSize(1);
 
-        Results res = os2.execute(q);
-        res.setBatchSize(30);
+        Results res = os2.execute(q, 30, true, true, true);
 
         ResultsInfo i = res.getInfo();
         assertEquals(1, i.getRows());
@@ -437,8 +418,7 @@ public class ResultsTest extends TestCase
         os2.setResultsSize(50);
         os2.setEstimatedResultsSize(1);
 
-        Results res = os2.execute(q);
-        res.setBatchSize(30);
+        Results res = os2.execute(q, 30, true, true, true);
 
         ResultsInfo i = res.getInfo();
         assertEquals(1, i.getRows());

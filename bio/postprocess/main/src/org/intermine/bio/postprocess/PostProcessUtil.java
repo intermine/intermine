@@ -131,8 +131,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
         return res.iterator();
     }
 
@@ -210,8 +209,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
 
         return res.iterator();
     }
@@ -254,8 +252,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
         return res.iterator();
     }
 
@@ -295,8 +292,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
         return res.iterator();
     }
 
@@ -312,8 +308,7 @@ public class PostProcessUtil
         QueryClass qc = new QueryClass(cls);
         q.addToSelect(qc);
         q.addFrom(qc);
-        SingletonResults res = os.executeSingleton(q);
-        res.setBatchSize(500);
+        SingletonResults res = os.executeSingleton(q, 500, true, true, true);
         return res.iterator();
     }
 
@@ -367,12 +362,13 @@ public class PostProcessUtil
      * @param firstClass the first BioEntity of the three (eg. Contig)
      * @param secondClass the second BioEntity (eg. Supercontig)
      * @param thirdClass the third BioEntity (eg. Chromosome)
+     * @param batchSize the batch size for the results object
      * @return a Results object with rows: firstObject, locationFirstToSecond, secondObject,
      * locationSecondToThird, thirdObject
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocationsToTransform(ObjectStore os, Class firstClass,
-                                                   Class secondClass, Class thirdClass)
+            Class secondClass, Class thirdClass, int batchSize)
         throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(false);
@@ -418,7 +414,7 @@ public class PostProcessUtil
         q.setConstraint(cs);
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
+        Results res = os.execute(q, batchSize, true, true, true);
 
         return res;
     }

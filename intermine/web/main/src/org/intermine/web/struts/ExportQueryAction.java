@@ -112,7 +112,10 @@ public class ExportQueryAction extends InterMineAction
             String iql = osQuery.toString();
             response.getWriter().println(iql);
         } else if (format.equals("sql")) {
-            Query osQuery = MainHelper.makeQuery(query, profile.getSavedBags(), servletContext,
+            Map<String, InterMineBag> allBags =
+                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
+                .getSearchRepository(servletContext));
+            Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             if (os instanceof ObjectStoreInterMineImpl) {

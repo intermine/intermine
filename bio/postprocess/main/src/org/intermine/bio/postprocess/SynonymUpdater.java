@@ -114,8 +114,7 @@ public class SynonymUpdater
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(5000);
+        Results res = os.execute(q, 5000, true, true, true);
 
         Iterator resIter = res.iterator();
 

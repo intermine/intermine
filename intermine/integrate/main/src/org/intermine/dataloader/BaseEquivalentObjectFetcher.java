@@ -197,9 +197,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
             throw new ObjectStoreException(e);
         }
         if (q != null) {
-            SingletonResults result = lookupOs.executeSingleton(q);
-            result.setNoOptimise();
-            result.setNoExplain();
+            SingletonResults result = lookupOs.executeSingleton(q, 0, false, false, true);
             long before = System.currentTimeMillis();
             try {
                 result.get(0);

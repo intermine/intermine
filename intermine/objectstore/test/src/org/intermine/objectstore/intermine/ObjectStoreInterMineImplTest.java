@@ -80,18 +80,18 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addFrom(qc);
         q.addToSelect(qc);
         Query q2 = QueryCloner.cloneQuery(q);
-        SingletonResults r = os.executeSingleton(q);
-        r.setBatchSize(2);
+        SingletonResults r = os.executeSingleton(q, 2, true, true, true);
         InterMineObject o = (InterMineObject) r.get(5);
         SqlGenerator.registerOffset(q2, 6, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
-        SingletonResults r2 = os.executeSingleton(q2);
-        r2.setBatchSize(2);
+        SingletonResults r2 = os.executeSingleton(q2, 2, true, true, true);
 
         Query q3 = QueryCloner.cloneQuery(q);
         SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
-        SingletonResults r3 = os.executeSingleton(q3);
-        r3.setBatchSize(2);
+        SingletonResults r3 = os.executeSingleton(q3, 2, true, true, true);
 
+        assertTrue(r != r2);
+        assertTrue(r != r3);
+        assertTrue(r2 != r3);
         assertEquals(r, r2);
         assertTrue(!r.equals(r3));
     }
@@ -108,18 +108,18 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             q.addToSelect(qc);
             q.addToOrderBy(new QueryField(qc, "name"));
             Query q2 = QueryCloner.cloneQuery(q);
-            SingletonResults r = os.executeSingleton(q);
-            r.setBatchSize(2);
+            SingletonResults r = os.executeSingleton(q, 2, true, true, true);
             Employee o = (Employee) r.get(2);
             SqlGenerator.registerOffset(q2, 3, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
-            SingletonResults r2 = os.executeSingleton(q2);
-            r2.setBatchSize(2);
+            SingletonResults r2 = os.executeSingleton(q2, 2, true, true, true);
 
             Query q3 = QueryCloner.cloneQuery(q);
             SqlGenerator.registerOffset(q3, 2, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
-            SingletonResults r3 = os.executeSingleton(q3);
-            r3.setBatchSize(2);
+            SingletonResults r3 = os.executeSingleton(q3, 2, true, true, true);
 
+            assertTrue(r != r2);
+            assertTrue(r != r3);
+            assertTrue(r2 != r3);
             assertEquals(r, r2);
             assertTrue(!r.equals(r3));
         } finally {
@@ -344,8 +344,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.setDistinct(false);
         ((ObjectStoreInterMineImpl) os).precompute(q, "test");
 
-        Results r = os.execute(q);
-        r.setBatchSize(1);
+        Results r = os.execute(q, 1, true, true, true);
         SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(100000), new HashMap());
 
         ResultsRow row = (ResultsRow) r.get(1);
@@ -357,8 +356,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
         q.setConstraint(new SimpleConstraint(into, ConstraintOp.GREATER_THAN, new QueryValue(new Integer(100000))));
         q = QueryCloner.cloneQuery(q);
-        r = os.execute(q);
-        r.setBatchSize(10);
+        r = os.execute(q, 10, true, true, true);
 
         row = (ResultsRow) r.get(0);
         o = (InterMineObject) row.get(2);
@@ -387,8 +385,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.setDistinct(false);
         ((ObjectStoreInterMineImpl) os).precompute(q, "test");
 
-        Results r = os.execute(q);
-        r.setBatchSize(1);
+        Results r = os.execute(q, 1, true, true, true);
         SqlGenerator.registerOffset(q, 1, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, new Integer(278651), new HashMap());
 
         ResultsRow row = (ResultsRow) r.get(1);

@@ -93,8 +93,8 @@ public abstract class WebUtil
      * @return a new Results object with a new batch size
      */
     public static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
-        Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery());
-        newResults.setBatchSize(newBatchSize);
+        Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery(),
+                newBatchSize, true, true, true);
         return newResults;
     }
 
@@ -323,8 +323,7 @@ public abstract class WebUtil
         int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
 
         // sample query
-        Results r = os.execute(ldr.getSampleQuery(false));
-        r.setBatchSize(20000);
+        Results r = os.execute(ldr.getSampleQuery(false), 20000, true, true, true);
         Iterator iter = r.iterator();
         HashMap<String, Long> countMap = new HashMap<String, Long>();
         HashMap<String, String> idMap = new HashMap<String, String>();
@@ -351,8 +350,7 @@ public abstract class WebUtil
         // run population query
         List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
         if (rAll == null) {
-            rAll = os.execute(ldr.getPopulationQuery(false));
-            ((Results) rAll).setBatchSize(20000);
+            rAll = os.execute(ldr.getPopulationQuery(false), 20000, true, true, true);
             rAll = new ArrayList(rAll);
             statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
         }

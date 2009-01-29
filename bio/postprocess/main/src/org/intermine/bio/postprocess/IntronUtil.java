@@ -180,10 +180,7 @@ public class IntronUtil
 
         // Set up the results, the query isn't actually executed until we begin
         // iterating through the results
-        Results results = os.execute(q);
-
-        // Concerned about memory usage so set a small batch size
-        results.setBatchSize(500);
+        Results results = os.execute(q, 500, true, true, true);
 
         // When we start interating the query will be executed
         Iterator resultsIter = results.iterator();

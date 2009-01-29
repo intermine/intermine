@@ -173,8 +173,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         throws ClassNotFoundException {
         // query for chromosome, gene.count for genes in list
         Query q = getQuery(organismName, "actual", bag);
-        results = os.execute(q);
-        results.setBatchSize(50000);
+        results = os.execute(q, 50000, true, true, true);
 
         // find out how many genes in the bag have a chromosome location, use this
         // to work out the expected number for each chromosome. This is a hack to

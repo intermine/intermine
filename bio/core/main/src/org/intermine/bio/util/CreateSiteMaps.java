@@ -174,8 +174,7 @@ public class CreateSiteMaps
 
     private static Iterator getResults(ObjectStore os, String query) {
         IqlQuery q = new IqlQuery(query, os.getModel().getPackageName());
-        Results r = os.execute(q.toQuery());
-        r.setBatchSize(100000);
+        Results r = os.execute(q.toQuery(), 100000, true, true, true);
         Iterator i = r.iterator();
         return i;
     }

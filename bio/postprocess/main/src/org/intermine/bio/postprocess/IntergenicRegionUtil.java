@@ -80,8 +80,7 @@ public class IntergenicRegionUtil
      */
     public void createIntergenicRegionFeatures() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os,
-                Chromosome.class, Gene.class, false, false);
-        results.setBatchSize(500);
+                Chromosome.class, Gene.class, false, false, 500);
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections
                 .singleton(DataSet.class));

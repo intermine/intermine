@@ -139,9 +139,7 @@ public class WriteGFFTask extends Task
 
         Results results =
             BioQueries.findLocationAndObjects(os, Chromosome.class,
-                                                   LOCATED_SEQUENCE_FEATURE_CLASS, false, true);
-
-        results.setBatchSize(2000);
+                    LOCATED_SEQUENCE_FEATURE_CLASS, false, true, 2000);
 
         Iterator<ResultsRow> resIter = results.iterator();
 
@@ -696,8 +694,7 @@ public class WriteGFFTask extends Task
         indexesToCreate.add(qfSyn);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(50000);
+        Results res = os.execute(q, 50000, true, true, true);
 
         Iterator<ResultsRow> resIter = res.iterator();
 
@@ -773,9 +770,7 @@ public class WriteGFFTask extends Task
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    Constants.PRECOMPUTE_CATEGORY);
 
-        Results res = os.execute(q);
-
-        res.setBatchSize(50000);
+        Results res = os.execute(q, 50000, true, true, true);
 
         Iterator<ResultsRow> resIter = res.iterator();
 

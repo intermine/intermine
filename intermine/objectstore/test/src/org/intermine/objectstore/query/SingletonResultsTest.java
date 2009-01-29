@@ -115,8 +115,7 @@ public class SingletonResultsTest extends TestCase
     }
 
     public void testRangeOutOfBounds() throws Exception {
-        Results res = os.executeSingleton(q);
-        res.setBatchSize(5);
+        Results res = os.executeSingleton(q, 5, true, true, true);
         try {
             res.range(6,11);
             fail("Expected IndexOutOfBoundsException");

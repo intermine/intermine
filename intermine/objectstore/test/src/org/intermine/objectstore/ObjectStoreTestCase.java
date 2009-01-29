@@ -625,8 +625,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void executeTest(String type) throws Exception {
         if (results.get(type) instanceof Failure) {
             try {
-                Results res = os.execute((Query) queries.get(type));
-                res.setBatchSize(2);
+                Results res = os.execute((Query) queries.get(type), 2, true, true, true);
                 Iterator iter = res.iterator();
                 while (iter.hasNext()) {
                     iter.next();
@@ -636,8 +635,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                 assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
             }
         } else {
-            Results res = os.execute((Query)queries.get(type));
-            res.setBatchSize(2);
+            Results res = os.execute((Query)queries.get(type), 2, true, true, true);
             List expected = (List) results.get(type);
             if ((expected != null) && (!expected.equals(res))) {
                 Set a = new HashSet(expected);

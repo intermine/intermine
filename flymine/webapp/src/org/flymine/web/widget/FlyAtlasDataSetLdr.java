@@ -62,8 +62,7 @@ public class FlyAtlasDataSetLdr implements DataSetLdr
 
         Query q = createQuery(bag);
 
-        results = os.execute(q);
-        results.setBatchSize(100000);
+        results = os.execute(q, 100000, true, true, true);
         Iterator iter = results.iterator();
         LinkedHashMap<String, int[]> callTable = new LinkedHashMap<String, int[]>();
 

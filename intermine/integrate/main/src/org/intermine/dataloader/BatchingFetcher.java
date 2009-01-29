@@ -429,11 +429,7 @@ public class BatchingFetcher extends HintingFetcher
                 // Iterate through query, and add objects to results
                 long time = System.currentTimeMillis();
                 int matches = 0;
-                Results res = lookupOs.execute(q);
-                res.setNoExplain();
-                res.setNoOptimise();
-                res.setNoPrefetch();
-                res.setBatchSize(2000);
+                Results res = lookupOs.execute(q, 2000, false, false, false);
                 for (ResultsRow row : ((List<ResultsRow>) res)) {
                     List values = new ArrayList();
                     for (int i = 1; i <= pk.getFieldNames().size(); i++) {

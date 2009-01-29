@@ -99,10 +99,7 @@ public class ItemToObjectTranslator extends Translator
         q.setDistinct(false);
         try {
             if (os != null) {
-                Results res = os.execute(q);
-                res.setNoExplain();
-                res.setNoOptimise();
-                res.setNoPrefetch();
+                Results res = os.execute(q, 0, false, false, false);
                 int offset = 0;
                 Iterator iter = res.iterator();
                 while (iter.hasNext()) {

@@ -96,11 +96,8 @@ public class TransferSequences
         long startTime = System.currentTimeMillis();
 
         Results results =
-            BioQueries.findLocationAndObjects(os, Chromosome.class, Assembly.class,
-                                                   false, false);
-        // could try reducing further if still OutOfMemeory problems
-        results.setBatchSize(20);
-        results.setNoPrefetch();
+            BioQueries.findLocationAndObjects(os, Chromosome.class, Assembly.class, false, false,
+                    10);
 
         Map chromosomeTempFiles = new HashMap();
 
@@ -266,9 +263,7 @@ public class TransferSequences
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
             Constants.PRECOMPUTE_CATEGORY);
-        Results results = os.execute(q);
-
-        results.setBatchSize(1000);
+        Results results = os.execute(q, 1000, true, true, true);
 
         Iterator<ResultsRow> resIter = results.iterator();
 
@@ -500,8 +495,7 @@ public class TransferSequences
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-        res.setBatchSize(1000);
+        Results res = os.execute(q, 1000, true, true, true);
 
         Iterator resIter = res.iterator();
 

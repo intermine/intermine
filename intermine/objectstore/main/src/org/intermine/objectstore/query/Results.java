@@ -56,6 +56,7 @@ public class Results extends AbstractList implements LazyCollection
     protected int originalMaxSize = maxSize;
     protected int batchSize = 1000;
     protected boolean initialised = false;
+    protected boolean immutable = false;
 
     // Some prefetch stuff.
     protected int lastGet = -1;
@@ -105,14 +106,20 @@ public class Results extends AbstractList implements LazyCollection
     /**
      * Sets this Results object to bypass the optimiser.
      */
-    public void setNoOptimise() {
+    public synchronized void setNoOptimise() {
+        if (immutable) {
+            throw new IllegalArgumentException("Cannot change settings of Results object in cache");
+        }
         optimise = false;
     }
 
     /**
      * Sets this Results object to bypass the explain check in ObjectStore.execute().
      */
-    public void setNoExplain() {
+    public synchronized void setNoExplain() {
+        if (immutable) {
+            throw new IllegalArgumentException("Cannot change settings of Results object in cache");
+        }
         explain = false;
     }
 
@@ -121,8 +128,19 @@ public class Results extends AbstractList implements LazyCollection
      * This means that Query cancellation via the ObjectStoreInterMineImpl.cancelRequest()
      * will never leave the database busy with cancelled work.
      */
-    public void setNoPrefetch() {
+    public synchronized void setNoPrefetch() {
+        if (immutable) {
+            throw new IllegalArgumentException("Cannot change settings of Results object in cache");
+        }
         prefetch = false;
+    }
+
+    /**
+     * Tells this Results object that it is being put into a cache, so it needs to be made immutable
+     * to prevent threads stomping on each other and changing settings.
+     */
+    public synchronized void setImmutable() {
+        immutable = true;
     }
 
     /**
@@ -460,7 +478,10 @@ public class Results extends AbstractList implements LazyCollection
      *
      * @param size the number of rows
      */
-    public void setBatchSize(int size) {
+    public synchronized void setBatchSize(int size) {
+        if (immutable) {
+            throw new IllegalArgumentException("Cannot change settings of Results object in cache");
+        }
         if (initialised) {
             throw new IllegalStateException("Cannot set batchSize if rows have been retrieved");
         }

@@ -56,8 +56,7 @@ public abstract class TableHelper
      */
     public static Results makeResults(ObjectStore os, Query query)
         throws ObjectStoreException {
-        Results r = os.execute(query);
-        r.setBatchSize(Constants.BATCH_SIZE);
+        Results r = os.execute(query, Constants.BATCH_SIZE, true, true, true);
         return r;
     }
 }

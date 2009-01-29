@@ -96,11 +96,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
             return Collections.EMPTY_SET;
         }
 
-        SingletonResults results = os.executeSingleton(query);
-
-        // faster just to execute the query immediately:
-        results.setNoOptimise();
-        results.setNoExplain();
+        SingletonResults results = os.executeSingleton(query, 0, false, false, true);
 
         int size = results.size();
 

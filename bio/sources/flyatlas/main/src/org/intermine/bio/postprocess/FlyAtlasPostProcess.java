@@ -98,8 +98,7 @@ public class FlyAtlasPostProcess extends PostProcessor
 
         ((ObjectStoreInterMineImpl) os).precompute(q,
                                                    Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-       res.setBatchSize(500);
+        Results res = os.execute(q, 500, true, true, true);
 
         int count = 0;
         Gene lastGene = null;

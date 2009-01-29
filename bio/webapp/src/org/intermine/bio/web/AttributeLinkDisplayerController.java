@@ -306,8 +306,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         cs.addConstraint(bagC);
         q.setConstraint(cs);
 
-        results = os.executeSingleton(q);
-        results.setBatchSize(10000);
+        results = os.executeSingleton(q, 10000, true, true, true);
 
         if (dbName.equalsIgnoreCase("flybase")) {
             return StringUtil.join(results, "|");
@@ -371,8 +370,7 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         q.setConstraint(cs);
 
-        results = os.executeSingleton(q);
-        results.setBatchSize(10000);
+        results = os.executeSingleton(q, 10000, true, true, true);
 
         return new HashSet(results);
 }

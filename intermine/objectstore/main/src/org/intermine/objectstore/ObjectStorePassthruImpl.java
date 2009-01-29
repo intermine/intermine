@@ -52,8 +52,24 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        return os.execute(q, batchSize, optimise, explain, prefetch);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public SingletonResults executeSingleton(Query q) {
         return os.executeSingleton(q);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        return os.executeSingleton(q, batchSize, optimise, explain, prefetch);
     }
 
     /**
