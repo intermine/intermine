@@ -10,12 +10,11 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.intermine.web.logic.SortableMap;
-
-import java.math.BigDecimal;
+import org.intermine.util.SortableMap;
 
 /**
  * This correction is the less stringent than the Bonferroni, and therefore tolerates more
