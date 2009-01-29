@@ -183,6 +183,7 @@ sub preprocess
   return grep {$_ !~ /^(\.svn|.*~)$/} @_;
 }
 
+# recursively call process() on all directories and files
 find({
       wanted => \&process, 
       preprocess => \&preprocess
