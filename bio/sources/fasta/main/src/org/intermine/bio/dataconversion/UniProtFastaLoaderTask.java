@@ -45,8 +45,7 @@ public class UniProtFastaLoaderTask extends FastaLoaderTask
             if (bits.length != 2) {
                 return null;
             }
-            String genus = bits[1];
-            Integer taxonId = getTaxonId(genus);
+            Integer taxonId = getTaxonId(bits[1]);
             if (taxonId == null) {
                 return null;
             }

@@ -15,11 +15,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 
-public class UniprotConverterTest extends ItemsTestCase
+public class UniprotConverterTest extends MockItemsTestCase
 {
     private UniprotConverter converter;
     private MockItemWriter itemWriter;
@@ -47,7 +47,7 @@ public class UniprotConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
         Set expected = readItemSet("UniprotConverterTest_tgt.xml");
 
