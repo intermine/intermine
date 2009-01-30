@@ -118,13 +118,7 @@ public class PathQueryHandler extends DefaultHandler
                 if (node.isAttribute()) {
                     Exception e = new Exception("Invalid bag constraint - only objects can be"
                             + "constrained to be in bags.");
-                    // such complicated because list created by Arrays.asList doesn't
-                    // support add method
                     query.addProblem(e);
-                    //List<Throwable> problems = new ArrayList<Throwable>(Arrays.asList(
-                    //        query.getProblems()));
-                    //problems.add(e);
-                    //query.setProblems(problems);
                 }
             } else {
                 Class c = null;
