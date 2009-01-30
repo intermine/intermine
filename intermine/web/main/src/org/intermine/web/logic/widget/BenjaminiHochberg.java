@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.intermine.util.SortableMap;
+import org.intermine.web.logic.SortableMap;
 
 /**
  * This correction is the less stringent than the Bonferroni, and therefore tolerates more

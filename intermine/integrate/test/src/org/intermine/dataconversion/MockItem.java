@@ -16,7 +16,7 @@ public class MockItem {
     private String identifier = "DUMMY";
     private String className = "";
     private String implementations = "";
-    private SortableMap attributes = new SortableMap();
+    private Map<String, String> attributes = new HashMap();
     private Map<String, MockItem> references = new LinkedHashMap();
     private Map<String, List<MockItem>> collections = new SortableMap();
     public static final String ENDL = System.getProperty("line.separator");
@@ -118,10 +118,11 @@ public class MockItem {
      */
     public String getMockAttributes() {
         String xml = "";
-        attributes.sortKeys();
-        Map<String, String> sortedAttributes = new HashMap(attributes);
-        for (Map.Entry a : sortedAttributes.entrySet()) {
-            xml += "\t<attribute name=\"" + a.getKey() + "\" value=\"" + a.getValue() + "\"/>" + ENDL;
+        Object[] key = attributes.keySet().toArray();
+        Arrays.sort(key);
+        for (int i = 0; i < key.length; i++) {
+            xml += "\t<attribute name=\"" + key[i] + "\" value=\"" + attributes.get(key[i])
+            + "\"/>" + ENDL;
         }
         return xml;
     }
