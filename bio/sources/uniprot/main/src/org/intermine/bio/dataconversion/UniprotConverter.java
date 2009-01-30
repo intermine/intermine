@@ -98,7 +98,7 @@ public class UniprotConverter extends DirectoryConverter
     @Override
     public void process(File dataDir) throws Exception {
         Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
-        if (taxonIdToFiles.isEmpty()) {
+        if (taxonIdToFiles == null || taxonIdToFiles.isEmpty()) {
             throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
         }
         Iterator iter = taxonIds.iterator();
@@ -148,7 +148,7 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, File[]> parseFileNames(File[] fileList) {
         Map<String, File[]> files = new HashMap();
         if (fileList == null) {
-            throw new RuntimeException("no files found to parse");
+            return null;
         }
         for (File file : fileList) {
             String[] bits = file.getName().split("_");
