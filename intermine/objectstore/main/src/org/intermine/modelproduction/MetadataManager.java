@@ -78,6 +78,11 @@ public class MetadataManager
     public static final String OS_FORMAT_VERSION = "osversion";
 
     /**
+     * The name of the key used to store profile format version.
+     */
+    public static final String PROFILE_FORMAT_VERSION = "profileversion";    
+    
+    /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
      * @param key the key
