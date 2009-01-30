@@ -193,6 +193,9 @@ class ProfileManagerHandler extends DefaultHandler
         }
     }
 
+    /**
+     * @see ProfileManagerBinding#getProfileVersion()
+     */
     private void saveProfileVersion(String value, ObjectStoreWriter osw) {
         if (value == null) {
             value = ProfileManagerBinding.ZERO_PROFILE_VERSION;
