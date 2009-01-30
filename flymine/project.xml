@@ -429,29 +429,6 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-<!--
-    <source name="uniprot-dmel-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
-      <property name="fasta.classAttribute" value="primaryAccession"/>
-      <property name="fasta.dataSetTitle" value="UniProt data set for Drosophila melanogaster"/>
-      <property name="fasta.synonymSource" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split/fasta"/>
-      <property name="fasta.includes" value="*.fasta"/>
-      <property name="fasta.sequenceType" value="protein" />
-    </source>
-
-    <source name="uniprot-anoph-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7165"/>
-      <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
-      <property name="fasta.classAttribute" value="primaryAccession"/>
-      <property name="fasta.dataSetTitle" value="UniProt data set for Anopheles"/>
-      <property name="fasta.synonymSource" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split/fasta"/>
-      <property name="fasta.includes" value="*.fasta"/>
-      <property name="fasta.sequenceType" value="protein" />
-    </source>
--->
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
