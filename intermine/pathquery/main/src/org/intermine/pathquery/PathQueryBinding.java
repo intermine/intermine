@@ -12,6 +12,7 @@ package org.intermine.pathquery;
 
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -86,7 +87,14 @@ public class PathQueryBinding
                     Constraint c = (Constraint) k.next();
                     writer.writeStartElement("constraint");
                     writer.writeAttribute("op", "" + c.getOp());
-                    Object outputValue = c.getValue();
+                    // Date is an exception, it is saved as a displayValue, in future all 
+                    // constraint values will be saved this way
+                    Object outputValue;
+                    if (c.getValue() instanceof Date) {
+                        outputValue = c.getDisplayValue();    
+                    } else {
+                        outputValue = c.getValue();
+                    }
                     writer.writeAttribute("value", "" + outputValue);
                     if (c.getDescription() != null) {
                         writer.writeAttribute("description", "" + c.getDescription());
