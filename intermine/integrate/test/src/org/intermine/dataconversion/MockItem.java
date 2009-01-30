@@ -2,9 +2,11 @@ package org.intermine.dataconversion;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.util.SortableMap;
 import org.intermine.xml.full.Attribute;
@@ -14,18 +16,19 @@ public class MockItem {
     private String identifier = "DUMMY";
     private String className = "";
     private String implementations = "";
-    private Map<String, String> attributes = new SortableMap();
+    private SortableMap attributes = new SortableMap();
     private Map<String, MockItem> references = new LinkedHashMap();
     private Map<String, List<MockItem>> collections = new SortableMap();
     public static final String ENDL = System.getProperty("line.separator");
 
     public MockItem(Item item) {
-        //this.identifier = item.getIdentifier();
+        this.identifier = item.getIdentifier();
         this.className = item.getClassName();
         this.implementations = item.getImplementations();
         for (Attribute a : item.getAttributes()) {
             attributes.put(a.getName(), a.getValue());
         }
+
     }
 
 
@@ -115,8 +118,10 @@ public class MockItem {
      */
     public String getMockAttributes() {
         String xml = "";
-        for (Map.Entry<String, String> a : attributes.entrySet()) {
-            xml += "<attribute name=\"" + a.getKey() + "\" value=\"" + a.getValue() + "\"/>" + ENDL;
+        attributes.sortKeys();
+        Map<String, String> sortedAttributes = new HashMap(attributes);
+        for (Map.Entry a : sortedAttributes.entrySet()) {
+            xml += "\t<attribute name=\"" + a.getKey() + "\" value=\"" + a.getValue() + "\"/>" + ENDL;
         }
         return xml;
     }
@@ -130,11 +135,12 @@ public class MockItem {
         Arrays.sort(key);
         for (int i = 0; i < key.length; i++) {
             List<MockItem> c = collections.get(key[i]);
-            xml += "<collection name=\"" + key[i] + "\">";
+            xml += "\t<collection name=\"" + key[i] + "\">";
             for (MockItem item : c) {
-                xml += "<reference ref_id=\"" + item.getIdentifier() + "\"/>";
+                //xml += "<reference ref_id=\"" + item.getIdentifier() + "\"/>";
+                xml += item.referencedItemXML();
             }
-            xml += " </collection>" + ENDL;
+            xml += "\t</collection>" + ENDL;
         }
         return xml;
     }
@@ -145,7 +151,10 @@ public class MockItem {
     public String getMockReferences() {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "<reference name=\"" + entry.getKey() + "\" value=\"" + entry.getValue().getIdentifier() + "\"/>" + ENDL;
+            xml += "\t<reference name=\"" + entry.getKey() + "\">" + ENDL;
+            MockItem item = entry.getValue();
+            xml += item.referencedItemXML();
+            xml += "\t</reference>" + ENDL;
         }
         return xml;
     }
@@ -223,7 +232,12 @@ public class MockItem {
         return xml;
     }
 
-
+    public String referencedItemXML() {
+        String xml = "\t<item id=\"DUMMY\" class=\"" + className + "\">" + ENDL;
+        xml += getMockAttributes();
+        xml += "\t</item>" + ENDL;
+        return xml;
+    }
 
     public boolean equals(Object o) {
         MockItem i = (MockItem) o;
