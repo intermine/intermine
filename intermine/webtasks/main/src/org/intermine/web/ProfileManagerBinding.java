@@ -11,6 +11,7 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.sql.Database;
 import org.intermine.util.SAXParser;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 import org.intermine.web.logic.bag.IdUpgrader;
@@ -36,12 +42,17 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Code for reading and writing ProfileManager objects as XML
  *
- * @author Kim Rutherford
+ * @author Ernst Rutherford
  */
 
 public class ProfileManagerBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
+    
+    /**
+     * Default version of profile if it is not specified.
+     */
+    public static final String ZERO_PROFILE_VERSION = "0";
 
     /**
      * Convert the contents of a ProfileManager to XML and write the XML to the given writer.
@@ -51,6 +62,8 @@ public class ProfileManagerBinding
     public static void marshal(ProfileManager profileManager, XMLStreamWriter writer) {
         try {
             writer.writeStartElement("userprofiles");
+            String profileVersion = getProfileVersion(profileManager.getObjectStore());
+            writer.writeAttribute(MetadataManager.PROFILE_FORMAT_VERSION, profileVersion);
             List usernames = profileManager.getProfileUserNames();
 
             Iterator iter = usernames.iterator();
@@ -71,6 +84,26 @@ public class ProfileManagerBinding
             throw new RuntimeException(e);
         }
     }
+    
+    /** Returns profile format version from database. Version 0 corresponds to 
+     * situation when constraint values are saved in the internal format. Internal
+     * format is format where '*' are replaced with % and other changes. 
+     * @see Util.wildcardSqlToUser()
+     * @return saved format version or "0" if not saved in database
+     */
+    private static String getProfileVersion(ObjectStore os) {
+        Database database = ((ObjectStoreInterMineImpl) os).getDatabase();
+        try {
+            String ret = MetadataManager.retrieve(database, MetadataManager.PROFILE_FORMAT_VERSION);
+            if (ret == null) {
+                ret = ZERO_PROFILE_VERSION;
+            }
+            return ret;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error during retrieving profile version from database.", e);
+        }
+    }
+    
     /**
      * Read a ProfileManager from an XML stream Reader
      * @param reader contains the ProfileManager XML
@@ -147,12 +180,30 @@ class ProfileManagerHandler extends DefaultHandler
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
+        if (qName.equals("userprofiles")) {
+            String value = attrs.getValue(MetadataManager.PROFILE_FORMAT_VERSION);
+            saveProfileVersion(value, profileManager.getProfileObjectStoreWriter());
+        }
         if (qName.equals("userprofile")) {
             startTime = System.currentTimeMillis();
             profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
+        }
+    }
+
+    private void saveProfileVersion(String value, ObjectStoreWriter osw) {
+        if (value == null) {
+            value = ProfileManagerBinding.ZERO_PROFILE_VERSION;
+        }
+        Database dat = ((ObjectStoreWriterInterMineImpl) osw).getDatabase();
+        try {
+            MetadataManager.store(dat, MetadataManager.PROFILE_FORMAT_VERSION, value);
+            System.out.println("Saving attribute with key: " 
+                    + MetadataManager.PROFILE_FORMAT_VERSION + " and value: " + value);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Saving profile format version to database failed.", ex);
         }
     }
 
