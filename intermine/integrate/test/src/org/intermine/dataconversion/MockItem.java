@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.intermine.util.SortableMap;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
@@ -18,7 +16,7 @@ public class MockItem {
     private String implementations = "";
     private Map<String, String> attributes = new HashMap();
     private Map<String, MockItem> references = new LinkedHashMap();
-    private Map<String, List<MockItem>> collections = new SortableMap();
+    private Map<String, List<MockItem>> collections = new LinkedHashMap();
     public static final String ENDL = System.getProperty("line.separator");
 
     public MockItem(Item item) {
@@ -28,9 +26,7 @@ public class MockItem {
         for (Attribute a : item.getAttributes()) {
             attributes.put(a.getName(), a.getValue());
         }
-
     }
-
 
     /**
      * @param name name of reference
