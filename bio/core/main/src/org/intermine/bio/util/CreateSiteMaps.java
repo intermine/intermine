@@ -85,11 +85,6 @@ public class CreateSiteMaps
         // URL
         prefix = sitePrefix + "/" + defaultContext + "/";
 
-//      # sitemaps
-//      sitemap.webappPages = begin.do, templates.do, bags.do, dataCategories.do
-//      sitemap.classes = Gene.primaryIdentifier, Protein.primaryAccession
-//      sitemap.taxonIds = 180454,6239,7227,7237,7217,7220,7222,7230,7234,7238,7240,7244,7260,7245
-
         // write webapp pages to be indexed to sitemap.xml
         // these are JSPs with content
         String newFileName = outputFile + EXT;
