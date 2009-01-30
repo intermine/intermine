@@ -84,7 +84,7 @@ public class PubMedGeneConverter extends FileConverter
         // D.melanogaster
         organismsToProcess.add(new Integer(7227));
         // A.gambiae str PEST
-        organismsToProcess.add(new Integer(180454));
+        organismsToProcess.add(new Integer(9165));
 
         Item datasource = createItem("DataSource");
         datasource.setAttribute("name", "NCBI");
