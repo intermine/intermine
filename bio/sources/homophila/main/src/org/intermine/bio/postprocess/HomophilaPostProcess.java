@@ -170,7 +170,12 @@ public class HomophilaPostProcess extends PostProcessor
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         // Constraint translation (protein) to be on gene
-        QueryObjectReference tg = new QueryObjectReference(tc, "gene");
+        //QueryObjectReference tg = new QueryObjectReference(tc, "gene");
+        //ContainsConstraint tgc = new ContainsConstraint(tg, ConstraintOp.CONTAINS, dgc);
+        //cs.addConstraint(tgc);
+
+
+        QueryCollectionReference tg = new QueryCollectionReference(tc, "genes");
         ContainsConstraint tgc = new ContainsConstraint(tg, ConstraintOp.CONTAINS, dgc);
         cs.addConstraint(tgc);
 
