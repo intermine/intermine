@@ -203,8 +203,6 @@ class ProfileManagerHandler extends DefaultHandler
         Database dat = ((ObjectStoreWriterInterMineImpl) osw).getDatabase();
         try {
             MetadataManager.store(dat, MetadataManager.PROFILE_FORMAT_VERSION, value);
-            System.out.println("Saving attribute with key: " 
-                    + MetadataManager.PROFILE_FORMAT_VERSION + " and value: " + value);
         } catch (SQLException ex) {
             throw new RuntimeException("Saving profile format version to database failed.", ex);
         }
