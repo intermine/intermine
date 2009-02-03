@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,6 +144,7 @@ public class AnophExprConverter extends BioFileConverter
         StageName[] stageNames = new StageName[headerArray.length];
 
         /**
+         *  process header
          *  header is 4 lines
          *  1. title - ignore
          *  2. age
@@ -181,17 +181,19 @@ public class AnophExprConverter extends BioFileConverter
             }
         }
 
+        // process probes
         while ((line = br.readLine()) != null) {
             String lineBits[] = StringUtils.split(line, '\t');
+
             String probe = lineBits[0];
             if (reporterToGene.get(probe) != null) {
                 HashMap<String, Item> results = new HashMap<String, Item>();
 
                 String geneIdentifier = reporterToGene.get(probe);
-                if (reporterToGene.get(probe).contains("(")) {
-                    geneIdentifier = geneIdentifier.substring(0, geneIdentifier.indexOf("("));
-                    geneIdentifier.trim();
+                if (geneIdentifier.contains(" (")) {
+                    geneIdentifier = geneIdentifier.substring(0, geneIdentifier.indexOf(" ("));
                 }
+                geneIdentifier.trim();
                 Item gene = getGene(geneIdentifier);
 
                 ReferenceList microArrayResults
@@ -201,8 +203,7 @@ public class AnophExprConverter extends BioFileConverter
                 material.setAttribute("name", probe);
                 material.setAttribute("primaryIdentifier", probe);
                 material.setReference("organism", org.getIdentifier());
-                material.setCollection("genes",
-                                       new ArrayList(Collections.singleton(gene.getIdentifier())));
+                material.addToCollection("genes", gene.getIdentifier());
 
                 int index = 1;
                 for (int i = 0; i < lineBits.length; i++) {
