@@ -73,7 +73,7 @@
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
-    <source name="bdgp-clone" type="bdgp-clone">
+    <source name="bdgp-clone" type="bdgp-clone" dump="true">
       <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>  
