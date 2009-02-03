@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.lang.ref.Reference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +25,11 @@ import org.apache.log4j.Logger;
  * The entrySet() and values() methods of this class do not work.
  *
  * @see java.lang.ref.WeakReference
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  * @author Matthew Wakeling
  */
-public class WeakReferenceHashMap extends WeakReferenceMap
+public class WeakReferenceHashMap<K, V> extends WeakReferenceMap<K, V>
 {
     private static final Logger LOG = Logger.getLogger(WeakReferenceHashMap.class);
 
@@ -40,7 +43,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
      *         or if the load factor is nonpositive.
      */
     public WeakReferenceHashMap(int initialCapacity, float loadFactor) {
-        subMap = new HashMap(initialCapacity, loadFactor);
+        subMap = new HashMap<K, Reference<Object>>(initialCapacity, loadFactor);
         this.name = "unknown";
     }
 
@@ -52,7 +55,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
      * @throws IllegalArgumentException  If the initial capacity is negative.
      */
     public WeakReferenceHashMap(int initialCapacity) {
-        subMap = new HashMap(initialCapacity);
+        subMap = new HashMap<K, Reference<Object>>(initialCapacity);
         this.name = "unknown";
     }
 
@@ -61,7 +64,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
      * capacity (16) and the default load factor (0.75).
      */
     public WeakReferenceHashMap() {
-        subMap = new HashMap();
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = "unknown";
     }
 
@@ -72,7 +75,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
      * @param name the name of the WeakReferenceHashMap - printed out in log messages
      */
     public WeakReferenceHashMap(String name) {
-        subMap = new HashMap();
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = name;
     }
 
@@ -86,7 +89,7 @@ public class WeakReferenceHashMap extends WeakReferenceMap
      * @throws  NullPointerException if the specified map is null.
      */
     public WeakReferenceHashMap(Map t) {
-        subMap = new HashMap();
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = "unknown";
         putAll(t);
     }

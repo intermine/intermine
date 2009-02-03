@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
@@ -404,8 +406,24 @@ public class PrecomputedTableManager
         if (simpleField.charAt(0) == '"') {
             simpleField = simpleField.substring(1, simpleField.length() - 1);
         }
-        String sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
-            .replace(' ', '_').replace('(', '_').replace(')', '_') + " ON "
+        if (simpleField.length() > 16) {
+            MessageDigest md;
+            try {
+                md = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            md.update(simpleField.getBytes());
+            byte[] digest = md.digest();
+            simpleField = "";
+            for (int i = 0; i < 16; i++) {
+                simpleField += (char) ('a' + ((((int) digest[i]) & 255) * 26 / 256));
+            }
+        } else {
+            simpleField = simpleField.replace(',', '_').replace(' ', '_').replace('(', '_')
+                .replace(')', '_');
+        }
+        String sql = "CREATE INDEX index" + table + "_" + simpleField + " ON "
             + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
             + ")";
         try {
@@ -418,10 +436,9 @@ public class PrecomputedTableManager
             LOG.error("Error while executing " + sql, e);
         }
         if (nulls) {
-            sql = "CREATE INDEX index" + table + "_field_" + simpleField.replace(',', '_')
-                .replace(' ', '_').replace('(', '_').replace(')', '_') + "_nulls"
-                + " ON " + table + " ((" + (field.equals(field.toLowerCase()) ? field : "\"" + field
-                                + "\"") + " IS NULL))";
+            sql = "CREATE INDEX index" + table + "_" + simpleField + "_nulls" + " ON " + table
+                + " ((" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
+                + " IS NULL))";
             try {
                 Statement stmt = con.createStatement();
                 stmt.execute(sql);

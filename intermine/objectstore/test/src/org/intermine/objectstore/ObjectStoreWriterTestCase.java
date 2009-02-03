@@ -12,6 +12,7 @@ package org.intermine.objectstore;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 
 import org.intermine.model.InterMineObject;
@@ -462,6 +463,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             assertEquals(0, res.size());
 
             // However, they should be in the WRITER.
+            // TODO: These lines now fail, because we do not allow querying on writers with uncommitted data. The writer should relax this restriction.
             res = writer.execute(q);
             assertEquals(2, res.size());
 
@@ -509,8 +511,12 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         writer.store(address1);
         writer.store(address2);
 
+        // TODO: These lines now fail, because we do not allow querying on writers with uncommitted data. The writer should relax this restriction.
         res = writer.execute(q);
         assertEquals(2, res.size());
+
+        res = realOs.execute(q);
+        assertEquals(res.toString(), 0, res.size());
 
         writer.abortTransaction();
         assertFalse(writer.isInTransaction());
@@ -711,6 +717,21 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         } finally {
             writer.delete(c1);
             writer.delete(c2);
+        }
+    }
+
+    public void testFailFast() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q1.addFrom(qc1);
+        q1.addToSelect(qc1);
+
+        Results r1 = writer.execute(q1);
+        writer.store(data.get("EmployeeA1"));
+        try {
+            r1.iterator().hasNext();
+            fail("Expected: ConcurrentModificationException");
+        } catch (ConcurrentModificationException e) {
         }
     }
 }

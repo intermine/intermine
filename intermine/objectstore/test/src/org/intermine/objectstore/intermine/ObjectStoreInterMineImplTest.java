@@ -87,9 +87,10 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
         Query q3 = QueryCloner.cloneQuery(q);
         SqlGenerator.registerOffset(q3, 5, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getId(), new HashMap());
-        SingletonResults r3 = os.executeSingleton(q3, 2, true, true, true);
+        SingletonResults r3 = new SingletonResults(q3, os, ObjectStore.SEQUENCE_IGNORE);
+        r3.setBatchSize(2);
 
-        assertTrue(r != r2);
+        assertTrue(r == r2);
         assertTrue(r != r3);
         assertTrue(r2 != r3);
         assertEquals(r, r2);
@@ -115,9 +116,10 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
             Query q3 = QueryCloner.cloneQuery(q);
             SqlGenerator.registerOffset(q3, 2, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).db, o.getName(), new HashMap());
-            SingletonResults r3 = os.executeSingleton(q3, 2, true, true, true);
+            SingletonResults r3 = new SingletonResults(q3, os, ObjectStore.SEQUENCE_IGNORE);
+            r3.setBatchSize(2);
 
-            assertTrue(r != r2);
+            assertTrue(r == r2);
             assertTrue(r != r3);
             assertTrue(r2 != r3);
             assertEquals(r, r2);
@@ -298,14 +300,14 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             }
         }
         Map expectedIndexMap = new HashMap();
-        expectedIndexMap.put("index" + tableName + "_field_orderby_field", "CREATE INDEX index" + tableName + "_field_orderby_field ON " + tableName + " USING btree (orderby_field)");
-        expectedIndexMap.put("index" + tableName + "_field_a1_id__lower_a3____lower_a4__", "CREATE INDEX index" + tableName + "_field_a1_id__lower_a3____lower_a4__ ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a3__", "CREATE INDEX index" + tableName + "_field_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a3___nulls", "CREATE INDEX index" + tableName + "_field_lower_a3___nulls ON " + tableName + " USING btree (((lower(a3_) IS NULL)))");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a3___text_pattern_ops", "CREATE INDEX index" + tableName + "_field_lower_a3___text_pattern_ops ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a4__", "CREATE INDEX index" + tableName + "_field_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a4___nulls", "CREATE INDEX index" + tableName + "_field_lower_a4___nulls ON " + tableName + " USING btree (((lower(a4_) IS NULL)))");
-        expectedIndexMap.put("index" + tableName + "_field_lower_a4___text_pattern_ops", "CREATE INDEX index" + tableName + "_field_lower_a4___text_pattern_ops ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
+        expectedIndexMap.put("index" + tableName + "_orderby_field", "CREATE INDEX index" + tableName + "_orderby_field ON " + tableName + " USING btree (orderby_field)");
+        expectedIndexMap.put("index" + tableName + "_nekeipurlxflgjzt", "CREATE INDEX index" + tableName + "_nekeipurlxflgjzt ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
+        expectedIndexMap.put("index" + tableName + "_lower_a3__", "CREATE INDEX index" + tableName + "_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
+        expectedIndexMap.put("index" + tableName + "_lower_a3___nulls", "CREATE INDEX index" + tableName + "_lower_a3___nulls ON " + tableName + " USING btree (((lower(a3_) IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_ipthurklcwmriwoj", "CREATE INDEX index" + tableName + "_ipthurklcwmriwoj ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
+        expectedIndexMap.put("index" + tableName + "_lower_a4__", "CREATE INDEX index" + tableName + "_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
+        expectedIndexMap.put("index" + tableName + "_lower_a4___nulls", "CREATE INDEX index" + tableName + "_lower_a4___nulls ON " + tableName + " USING btree (((lower(a4_) IS NULL)))");
+        expectedIndexMap.put("index" + tableName + "_klaykagxjszvdpvi", "CREATE INDEX index" + tableName + "_klaykagxjszvdpvi ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
         assertEquals(expectedIndexMap, indexMap);
     }
 
@@ -438,6 +440,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         } catch (ObjectStoreException e) {
             assertEquals("This Thread is not registered with ID flibble3", e.getMessage());
         }
+        Thread.sleep(1000);
     }
 
     /*
@@ -772,7 +775,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertEquals(Collections.EMPTY_LIST, r);
         q = new Query();
         q.addToSelect(osb);
-        r = os.executeSingleton(q);
+        r = new SingletonResults(q, os, os.getSequence(os.getComponentsForQuery(q)));
         storeDataWriter.commitTransaction();
         try {
             r.get(0);
@@ -872,9 +875,9 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         r2.iterator().hasNext();
         r3.iterator().hasNext();
 
-        r1 = os.execute(q1);
-        r2 = os.execute(q2);
-        r3 = os.execute(q3);
+        r1 = new Results(q1, os, os.getSequence(os.getComponentsForQuery(q1)));
+        r2 = new Results(q2, os, os.getSequence(os.getComponentsForQuery(q2)));
+        r3 = new Results(q3, os, os.getSequence(os.getComponentsForQuery(q3)));
         storeDataWriter.addToBag(osb2, new Integer(2));
         r1.iterator().hasNext();
         try {
@@ -884,9 +887,9 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         }
         r3.iterator().hasNext();
 
-        r1 = os.execute(q1);
-        r2 = os.execute(q2);
-        r3 = os.execute(q3);
+        r1 = new Results(q1, os, os.getSequence(os.getComponentsForQuery(q1)));
+        r2 = new Results(q2, os, os.getSequence(os.getComponentsForQuery(q2)));
+        r3 = new Results(q3, os, os.getSequence(os.getComponentsForQuery(q3)));
         storeDataWriter.store((Employee) data.get("EmployeeA1"));
         r1.iterator().hasNext();
         r2.iterator().hasNext();

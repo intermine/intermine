@@ -32,6 +32,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -41,6 +42,8 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.precompute.BestQuery;
 import org.intermine.sql.precompute.OptimiserCache;
@@ -129,6 +132,61 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        if (tablesAltered.isEmpty()) {
+            return super.execute(q, batchSize, optimise, explain, prefetch);
+        } else {
+            Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            //LOG.error("Results cache not used for " + q);
+            return retval;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        if (tablesAltered.isEmpty()) {
+            return super.executeSingleton(q, batchSize, optimise, explain, prefetch);
+        } else {
+            SingletonResults retval = new SingletonResults(q, this, getSequence(
+                        getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            //LOG.error("Results cache not used for " + q);
+            return retval;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean everOptimise() {
         return tablesAltered.isEmpty();
     }
@@ -163,6 +221,21 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
+            Query q, String sql) {
+        os.dbLog(optimise, estimated, execute, permitted, convert, q, sql);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLogEverything(boolean logEverything) {
+        throw new UnsupportedOperationException("Cannot change logEverything on a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public boolean getLogEverything() {
         return os.getLogEverything();
     }
@@ -170,9 +243,57 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
-    protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
-            Query q, String sql) {
-        os.dbLog(optimise, estimated, execute, permitted, convert, q, sql);
+    public void setVerboseQueryLog(boolean verboseQueryLog) {
+        throw new UnsupportedOperationException("Cannot change verboseQueryLog on a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getVerboseQueryLog() {
+        return os.getVerboseQueryLog();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLogExplains(boolean logExplains) {
+        throw new UnsupportedOperationException("Cannot change logExplains on a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getLogExplains() {
+        return os.getLogExplains();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLogBeforeExecute(boolean logBeforeExecute) {
+        throw new UnsupportedOperationException("Cannot change logBeforeExecute on a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getLogBeforeExecute() {
+        return os.getLogBeforeExecute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDisableResultsCache(boolean disableResultsCache) {
+        throw new UnsupportedOperationException("Cannot change disableResultsCache on a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getDisableResultsCache() {
+        return os.getDisableResultsCache();
     }
 
     /**
@@ -1285,6 +1406,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             c.rollback();
             c.setAutoCommit(true);
             os.flushObjectById();
+            tablesAltered.clear();
         } catch (SQLException e) {
             throw new ObjectStoreException("Error aborting transaction", e);
         }
@@ -1320,6 +1442,35 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         } catch (SQLException e) {
             throw new ObjectStoreException("Error batch-committing transaction", e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * This method should never be called on an ObjectStoreWriter.
+     */
+    public void databaseAltered(Set tablesAltered) {
+        throw new IllegalArgumentException("databaseAltered should never be called on an "
+                + "ObjectStoreWriter");
+    }
+
+    /**
+     * {@inheritDoc}
+     * Delegate to the parent ObjectStore.
+     */
+    public Map<Object, Integer> getSequence(Set<Object> tables) {
+        return os.getSequence(tables);
+    }
+
+    /**
+     * {@inheritDoc}
+     * Delegate to the parent ObjectStore.
+     */
+    public void checkSequence(Map<Object, Integer> sequence, Query q, String message)
+    throws DataChangedException {
+        //if ((!tablesAltered.isEmpty()) && (!sequence.isEmpty())) {
+        //    throw new DataChangedException("Cannot query a writer with uncommitted changes");
+        //}
+        os.checkSequence(sequence, q, message);
     }
 
     /**

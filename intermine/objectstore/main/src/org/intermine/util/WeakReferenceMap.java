@@ -25,9 +25,11 @@ import org.apache.log4j.Logger;
  * The entrySet() and values() methods of this class do not work.
  *
  * @see java.lang.ref.WeakReference
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  * @author Matthew Wakeling
  */
-public abstract class WeakReferenceMap extends ReferenceMap
+public abstract class WeakReferenceMap<K, V> extends ReferenceMap<K, V>
 {
     private static final Logger LOG = Logger.getLogger(WeakReferenceMap.class);
 
@@ -39,20 +41,21 @@ public abstract class WeakReferenceMap extends ReferenceMap
      * @param key an Object
      * @return a WeakReferenceWithKey object
      */
-    protected ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key) {
+    protected WeakReferenceWithKey<K> newRef(Object value, ReferenceQueue<Object> queue, K key) {
         return new WeakReferenceWithKey(value, queue, key);
     }
 
-    private static class WeakReferenceWithKey extends WeakReference implements ReferenceWithKey
+    private static class WeakReferenceWithKey<K> extends WeakReference<Object>
+    implements ReferenceWithKey<K>
     {
-        private Object key;
+        private K key;
 
-        WeakReferenceWithKey(Object value, ReferenceQueue queue, Object key) {
+        WeakReferenceWithKey(Object value, ReferenceQueue<Object> queue, K key) {
             super(value, queue);
             this.key = key;
         }
 
-        public Object getKey() {
+        public K getKey() {
             return key;
         }
     }
