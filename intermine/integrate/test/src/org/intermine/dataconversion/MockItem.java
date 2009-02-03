@@ -110,53 +110,6 @@ public class MockItem {
     }
 
     /**
-     * @return the attributes
-     */
-    public String getMockAttributes() {
-        String xml = "";
-        Object[] key = attributes.keySet().toArray();
-        Arrays.sort(key);
-        for (int i = 0; i < key.length; i++) {
-            xml += "\t<attribute name=\"" + key[i] + "\" value=\"" + attributes.get(key[i])
-            + "\"/>" + ENDL;
-        }
-        return xml;
-    }
-
-    /**
-     * @return the collections
-     */
-    public String getMockCollections() {
-        String xml = "";
-        Object[] key = collections.keySet().toArray();
-        Arrays.sort(key);
-        for (int i = 0; i < key.length; i++) {
-            List<MockItem> c = collections.get(key[i]);
-            xml += "\t<collection name=\"" + key[i] + "\">";
-            for (MockItem item : c) {
-                //xml += "<reference ref_id=\"" + item.getIdentifier() + "\"/>";
-                xml += item.referencedItemXML();
-            }
-            xml += "\t</collection>" + ENDL;
-        }
-        return xml;
-    }
-
-    /**
-     * @return the references
-     */
-    public String getMockReferences() {
-        String xml = "";
-        for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "\t<reference name=\"" + entry.getKey() + "\">" + ENDL;
-            MockItem item = entry.getValue();
-            xml += item.referencedItemXML();
-            xml += "\t</reference>" + ENDL;
-        }
-        return xml;
-    }
-
-    /**
      * @return the identifier
      */
     public String getIdentifier() {
@@ -220,21 +173,112 @@ public class MockItem {
         this.collections = collections;
     }
 
-    public String toXML() {
-        String xml = "<item id=\"" + identifier + "\" class=\"" + className + "\">" + ENDL;
-        xml += getMockAttributes();
-        xml += getMockReferences();
-        xml += getMockCollections();
-        xml += "</item>" + ENDL;
+    /**
+     * used for comparison
+     * @return the attributes
+     */
+    public String getMockAttributes() {
+        String xml = "";
+        Object[] key = attributes.keySet().toArray();
+        Arrays.sort(key);
+        for (int i = 0; i < key.length; i++) {
+            xml += "\t<attribute name=\"" + key[i] + "\" value=\"" + attributes.get(key[i])
+            + "\"/>" + ENDL;
+        }
         return xml;
     }
 
+    /**
+     * used for comparison
+     * @return the references
+     */
+    public String getMockReferences() {
+        String xml = "";
+        for (Map.Entry<String, MockItem> entry : references.entrySet()) {
+            xml += "\t<reference name=\"" + entry.getKey() + "\">" + ENDL;
+            MockItem item = entry.getValue();
+            xml += item.referencedItemXML();
+            xml += "\t</reference>" + ENDL;
+        }
+        return xml;
+    }
+
+    /**
+     * used for comparison
+     * @return the collections
+     */
+    public String getMockCollections() {
+        String xml = "";
+        Object[] key = collections.keySet().toArray();
+        Arrays.sort(key);
+        for (int i = 0; i < key.length; i++) {
+            List<MockItem> c = collections.get(key[i]);
+            xml += "\t<collection name=\"" + key[i] + "\">";
+            for (MockItem item : c) {
+                xml += item.referencedItemXML();
+            }
+            xml += "\t</collection>" + ENDL;
+        }
+        return xml;
+    }
+
+    /**
+     * this string is used when comparing items in references and collections.  XML omits the
+     * identifier and only includes attributes of the item.
+     * @return string representing a reference for comparison
+     */
     public String referencedItemXML() {
         String xml = "\t<item id=\"DUMMY\" class=\"" + className + "\">" + ENDL;
         xml += getMockAttributes();
         xml += "\t</item>" + ENDL;
         return xml;
     }
+
+
+    /**
+     * used for display
+     * @return the references to display
+     */
+    public String getPrettyReferences() {
+        String xml = "";
+        for (Map.Entry<String, MockItem> entry : references.entrySet()) {
+            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + identifier + "\"\\>"
+                + ENDL;
+        }
+        return xml;
+    }
+
+    /**
+     * used for display
+     * @return the collections
+     */
+    public String getPrettyCollections() {
+        String xml = "";
+        Object[] key = collections.keySet().toArray();
+        Arrays.sort(key);
+        for (int i = 0; i < key.length; i++) {
+            List<MockItem> c = collections.get(key[i]);
+            xml += "\t<collection name=\"" + key[i] + "\">";
+            for (MockItem item : c) {
+                xml += item.getPrettyReferences();
+            }
+            xml += "\t</collection>" + ENDL;
+        }
+        return xml;
+    }
+
+    /**
+    *
+    * @return string representing an item for display only
+    */
+   public String toXML() {
+       String xml = "<item id=\"" + identifier + "\" class=\"" + className + "\">" + ENDL;
+       xml += getMockAttributes();
+       xml += getPrettyReferences();
+       xml += getPrettyCollections();
+       xml += "</item>" + ENDL;
+       return xml;
+   }
 
     public boolean equals(Object o) {
         MockItem i = (MockItem) o;
