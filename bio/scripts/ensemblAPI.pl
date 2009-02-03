@@ -36,7 +36,6 @@ my $item_factory = new InterMine::ItemFactory(model => $model);
 my $datasource = 'Ensembl';
 my @items = (); 
 my %organisms = parse_orgs($taxon_ids);
-my @synonyms = ();
 my $datasource_item = make_item("DataSource");
 $datasource_item->set('name', $datasource);
 my $org_item;
@@ -55,7 +54,6 @@ foreach my $taxon_id(keys %organisms) {
     my %proteins = ();
     my %exons = ();
     my %sequences = ();
-    @synonyms = ();
 
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -111,6 +109,7 @@ foreach my $taxon_id(keys %organisms) {
             $gene_item->set('curated', $curated);
             
             parseFeature($gene, $gene_item, $chromosome_item);
+            make_synonym($gene_item, "identifier", $gene->stable_id());
 
             my @transcripts = @{ $gene->get_all_Transcripts() };
             while ( my $transcript = shift @transcripts ) {
@@ -123,6 +122,7 @@ foreach my $taxon_id(keys %organisms) {
                 }
                 $transcript_item->set('gene', $gene_item);
                 $transcript_item->set('sequence', make_seq(\%sequences, $transcript->seq->seq));
+                make_synonym($transcript_item, "identifier", $transcript->stable_id());
                 parseFeature($transcript, $transcript_item, $chromosome_item);
           
                 if ($gene_type eq "protein_coding") {
@@ -148,11 +148,13 @@ foreach my $taxon_id(keys %organisms) {
                                 
                 my @exons = @{ $transcript->get_all_Exons() };
                 while ( my $exon = shift @exons ) {
-                    my $exon_item = make_exon(\%exons, $exon->stable_id());
+                    my $primary_identifier = $exon->stable_id();
+                    my $exon_item = make_exon(\%exons, $primary_identifier);
                     $exon_item->set('transcripts', [$transcript_item]);
                     $exon_item->set('gene', $gene_item);                    
                     $exon_item->set('sequence', make_seq(\%sequences, $exon->seq->seq));
-                    parseFeature($exon, $exon_item, $chromosome_item);                   
+                    parseFeature($exon, $exon_item, $chromosome_item);     
+                    make_synonym($exon_item, "identifier", $primary_identifier);          
                 }
             }
         }    
@@ -212,7 +214,7 @@ sub parseFeature {
     $item->set('chromosomeLocation', $location);
     $item->set('chromosome', $chromosome);
     
-    make_synonym($item, "identifier", $feature->stable_id());
+    
 
     return;
 }
@@ -279,15 +281,13 @@ sub parse_chromosomes {
 sub make_synonym {
   my ($subject, $type, $value) = @_;
   my $key = $subject . $type . $value;
-  if (!grep {$_ eq $key} @synonyms) {
-      my $syn = make_item("Synonym");
-      $syn->set('subject', $subject);
-      $syn->set('type', $type);
-      $syn->set('value', $value);
-      $syn->set('source', $datasource_item);
-      $syn->set('isPrimary', 'true');
-      push(@synonyms, $key);
-  }
+
+  my $syn = make_item("Synonym");
+  $syn->set('subject', $subject);
+  $syn->set('type', $type);
+  $syn->set('value', $value);
+  $syn->set('source', $datasource_item);
+  $syn->set('isPrimary', 'true');
 }
 
 sub make_chromosome {
@@ -334,6 +334,7 @@ sub make_exon {
         $exon_item = make_item("Exon"); 
         $exon_item->set('primaryIdentifier', $primary_identifier);
         $exons->{$primary_identifier} = $exon_item;
+        make_synonym($exon_item, "identifier", $primary_identifier);
     }
     return $exon_item;
 }
