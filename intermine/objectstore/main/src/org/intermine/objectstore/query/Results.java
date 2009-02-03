@@ -144,7 +144,9 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
-     * Get the Query that produced this Results object
+     * Get the Query that produced this Results object. Note that due to the ObjectStore's Results
+     * cache, this may not be the exact same Query as you passed to ObjectStore.execute. The query
+     * will have the same meaning, but may not be .equals() to your original query.
      *
      * @return the Query that produced this Results object
      */
