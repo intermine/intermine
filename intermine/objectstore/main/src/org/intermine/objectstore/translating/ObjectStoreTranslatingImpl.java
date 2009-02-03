@@ -172,7 +172,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         time2 = System.currentTimeMillis();
         timeSpentTranslate += time2 - time1;
         queryCount++;
-        if (queryCount % 10 == 0) {
+        if (queryCount % 10000 == 0) {
             LOG.info("Translated " + queryCount + " queries, " + objectCount + " objects. Time"
                     + " spent: Translate query: " + timeSpentQuery + ", Execute: "
                     + timeSpentExecute + ", Translate objects: " + timeSpentTranslate);
