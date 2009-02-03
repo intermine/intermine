@@ -154,7 +154,6 @@ foreach my $taxon_id(keys %organisms) {
                     $exon_item->set('gene', $gene_item);                    
                     $exon_item->set('sequence', make_seq(\%sequences, $exon->seq->seq));
                     parseFeature($exon, $exon_item, $chromosome_item);     
-                    make_synonym($exon_item, "identifier", $primary_identifier);          
                 }
             }
         }    
