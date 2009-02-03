@@ -321,7 +321,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                 }
             }
             queryCount++;
-            if (queryCount % 10 == 0) {
+            if (queryCount % 10000 == 0) {
                 LOG.info("Time spent: Execute: " + timeSpentExecute + ", Inspect: "
                         + timeSpentInspect + ", Prepare: " + timeSpentPrepare + ", Generate query: "
                         + timeSpentQuery + ", Execute query: " + timeSpentSubExecute
