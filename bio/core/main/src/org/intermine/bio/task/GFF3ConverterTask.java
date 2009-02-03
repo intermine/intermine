@@ -235,6 +235,9 @@ public class GFF3ConverterTask extends Task
 
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
+            if (files.length == 0) {
+                throw new BuildException("No GFF files found in: " + fileSet.getDir(getProject()));
+            }
             for (int i = 0; i < files.length; i++) {
                 File f = new File(ds.getBasedir(), files[i]);
                 System.err .println("Processing file: " + f.getName());
