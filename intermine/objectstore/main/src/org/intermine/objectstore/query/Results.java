@@ -153,6 +153,15 @@ public class Results extends AbstractList implements LazyCollection
     }
 
     /**
+     * Returns the sequence that this Results object was created with
+     *
+     * @return the ObjectStore-specific object
+     */
+    public Map<Object, Integer> getSequence() {
+        return sequence;
+    }
+
+    /**
      * Returns the ObjectStore that this Results object will use
      *
      * @return an ObjectStore

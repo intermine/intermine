@@ -41,6 +41,7 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
+import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
@@ -62,8 +63,10 @@ import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
@@ -79,6 +82,7 @@ import org.intermine.sql.query.ExplainResult;
 import org.intermine.sql.query.PostgresExplainResult;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
+import org.intermine.util.CacheMap;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.TypeUtil;
@@ -121,6 +125,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected static final int SEQUENCE_MULTIPLE = 1000000;
     protected boolean logExplains = false;
     private int formatVersion = -1;
+    protected boolean disableResultsCache = false;
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
@@ -130,6 +135,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Map goFasterCacheMap = Collections.synchronizedMap(new IdentityHashMap());
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
     private String description;
+    protected Map<String, Results> resultsCache = new CacheMap<String, Results>();
+    protected Map<String, SingletonResults> singletonResultsCache
+        = new CacheMap<String, SingletonResults>();
 
     protected InterMineLogger logger = null;
 
@@ -321,6 +329,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String verboseQueryLogString = props.getProperty("verboseQueryLog");
         String logExplainsString = props.getProperty("logExplains");
         String logBeforeExecuteString = props.getProperty("logBeforeExecute");
+        String disableResultsCacheString = props.getProperty("disableResultsCache");
 
         synchronized (instances) {
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) instances.get(osAlias);
@@ -421,6 +430,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if ("true".equals(logBeforeExecuteString)) {
                     os.setLogBeforeExecute(true);
                 }
+                if ("true".equals(disableResultsCacheString)) {
+                    os.setDisableResultsCache(true);
+                }
                 instances.put(osAlias, os);
             }
             return os;
@@ -489,12 +501,30 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
+     * Gets the logEverything configuration option.
+     *
+     * @return a boolean
+     */
+    public boolean getLogEverything() {
+        return logEverything;
+    }
+
+    /**
      * Sets the verboseQueryLog configuration option.
      *
      * @param verboseQueryLog a boolean
      */
     public void setVerboseQueryLog(boolean verboseQueryLog) {
         this.verboseQueryLog = verboseQueryLog;
+    }
+
+    /**
+     * Gets the verboseQueryLog configuration option.
+     *
+     * @return a boolean
+     */
+    public boolean getVerboseQueryLog() {
+        return verboseQueryLog;
     }
 
     /**
@@ -507,12 +537,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
-     * Gets the logEverything configuration option.
+     * Gets the logExplains configuration option.
      *
      * @return a boolean
      */
-    public boolean getLogEverything() {
-        return logEverything;
+    public boolean getLogExplains() {
+        return logExplains;
     }
 
     /**
@@ -531,6 +561,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public boolean getLogBeforeExecute() {
         return logBeforeExecute;
+    }
+
+    /**
+     * Sets the disableResultsCache configuration option.
+     *
+     * @param disableResultsCache a boolean
+     */
+    public void setDisableResultsCache(boolean disableResultsCache) {
+        this.disableResultsCache = disableResultsCache;
+    }
+
+    /**
+     * Gets the disableResultsCache configuration option.
+     *
+     * @return a boolean
+     */
+    public boolean getDisableResultsCache() {
+        return disableResultsCache;
     }
 
     /**
@@ -595,6 +643,74 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public int getMinBagTableSize() {
         return minBagTableSize;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Results execute(Query q) {
+        return execute(q, 0, true, true, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
+            + explain + ", prefetch: " + prefetch + ", query: " + q;
+        synchronized (resultsCache) {
+            Results retval = resultsCache.get(cacheKey);
+            if (retval != null) {
+                try {
+                    checkSequence(retval.getSequence(), null, null);
+                } catch (DataChangedException e) {
+                    retval = null;
+                }
+            }
+            if (retval == null) {
+                retval = super.execute(q, batchSize, optimise, explain, prefetch);
+                resultsCache.put(cacheKey, retval);
+                //LOG.error("Results cache miss for " + q);
+            //} else {
+                //LOG.error("Results cache hit for " + q);
+            }
+            return retval;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q) {
+        return executeSingleton(q, 0, true, true, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
+            + explain + ", prefetch: " + prefetch + ", query: " + q;
+        synchronized (singletonResultsCache) {
+            SingletonResults retval = singletonResultsCache.get(cacheKey);
+            if (retval != null) {
+                try {
+                    checkSequence(retval.getSequence(), null, null);
+                } catch (DataChangedException e) {
+                    retval = null;
+                }
+            }
+            if (retval == null) {
+                retval = super.executeSingleton(q, batchSize, optimise, explain, prefetch);
+                singletonResultsCache.put(cacheKey, retval);
+                //LOG.error("Results cache miss for " + q);
+            //} else {
+                //LOG.error("Results cache hit for " + q);
+            }
+            return retval;
+        }
     }
 
     /*
@@ -924,7 +1040,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 LOG.debug(getModel().getName() + ": Executed SQL (time = "
                         + (postExecute - preExecute) + " > " + permittedTime + ", rows = "
                         + objResults.size() + "): " + sql);
-                if (logExplains) {
+                if (getLogExplains()) {
                     doneExplainLog = true;
                     if (explainResult == null) {
                         explainResult = ExplainResult.getInstance(sql, c);
@@ -965,7 +1081,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             statsExeTime += exeTime;
             long conTime = postConvert - postExecute;
             statsConTime += conTime;
-            if (verboseQueryLog) {
+            if (getVerboseQueryLog()) {
                 SQLLOGGER.info("(VERBOSE) iql: " + q + "\n"
                         + "generated sql: " + generatedSql + "\n"
                         + "optimised sql: " + sql + "\n"
@@ -975,7 +1091,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         + " ms, convert results: " + conTime + " ms, total: "
                         + (postConvert - preBagTableTime) + " ms" + ", rows: "
                         + objResults.size());
-                if (logExplains && (!doneExplainLog)) {
+                if (getLogExplains() && (!doneExplainLog)) {
                     if (explainResult == null) {
                         explainResult = ExplainResult.getInstance(sql, c);
                     }

@@ -25,9 +25,11 @@ import org.apache.log4j.Logger;
  * The entrySet() and values() methods of this class do not work.
  *
  * @see java.lang.ref.SoftReference
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  * @author Matthew Wakeling
  */
-public abstract class SoftReferenceMap extends ReferenceMap
+public abstract class SoftReferenceMap<K, V> extends ReferenceMap<K, V>
 {
     private static final Logger LOG = Logger.getLogger(SoftReferenceMap.class);
 
@@ -39,20 +41,21 @@ public abstract class SoftReferenceMap extends ReferenceMap
      * @param key an Object
      * @return a SoftReferenceWithKey object
      */
-    protected ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key) {
-        return new SoftReferenceWithKey(value, queue, key);
+    protected SoftReferenceWithKey<K> newRef(Object value, ReferenceQueue<Object> queue, K key) {
+        return new SoftReferenceWithKey<K>(value, queue, key);
     }
 
-    private static class SoftReferenceWithKey extends SoftReference implements ReferenceWithKey
+    private static class SoftReferenceWithKey<K> extends SoftReference<Object>
+    implements ReferenceWithKey<K>
     {
-        private Object key;
+        private K key;
 
-        SoftReferenceWithKey(Object value, ReferenceQueue queue, Object key) {
+        SoftReferenceWithKey(Object value, ReferenceQueue<Object> queue, K key) {
             super(value, queue);
             this.key = key;
         }
 
-        public Object getKey() {
+        public K getKey() {
             return key;
         }
     }

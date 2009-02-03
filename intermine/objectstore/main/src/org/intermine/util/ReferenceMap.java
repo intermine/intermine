@@ -13,7 +13,6 @@ package org.intermine.util;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.Reference;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,15 +27,17 @@ import org.apache.log4j.Logger;
  * The entrySet() and values() methods of this class do not work.
  *
  * @see java.lang.ref.SoftReference
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  * @author Matthew Wakeling
  */
-public abstract class ReferenceMap implements Map
+public abstract class ReferenceMap<K, V> implements Map<K, V>
 {
     private static final Logger LOG = Logger.getLogger(ReferenceMap.class);
     protected static final NullValue NULL_VALUE = new NullValue();
 
-    protected Map subMap;
-    protected ReferenceQueue queue = new ReferenceQueue();
+    protected Map<K, Reference<Object>> subMap;
+    protected ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
     protected String name;
 
     /**
@@ -46,10 +47,10 @@ public abstract class ReferenceMap implements Map
      */
     private void expungeStaleEntries() {
         int oldSize = subMap.size();
-        ReferenceWithKey r;
-        while ((r = (ReferenceWithKey) queue.poll()) != null) {
-            Object key = r.getKey();
-            Object ref = subMap.get(key);
+        ReferenceWithKey<K> r;
+        while ((r = (ReferenceWithKey<K>) queue.poll()) != null) {
+            K key = r.getKey();
+            Reference<Object> ref = subMap.get(key);
             if (r == ref) {
                 subMap.remove(key);
             }
@@ -78,7 +79,7 @@ public abstract class ReferenceMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Set keySet() {
+    public Set<K> keySet() {
         expungeStaleEntries();
         return subMap.keySet();
     }
@@ -94,15 +95,15 @@ public abstract class ReferenceMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Object get(Object key) {
+    public V get(Object key) {
         expungeStaleEntries();
-        Reference ref = (Reference) subMap.get(key);
+        Reference ref = subMap.get(key);
         if (ref != null) {
             Object value = ref.get();
             if (value instanceof NullValue) {
                 return null;
             }
-            return value;
+            return (V) value;
         }
         return null;
     }
@@ -116,7 +117,7 @@ public abstract class ReferenceMap implements Map
         // been cleared. The garbage collector may insert a gap between clearing a Reference and
         // enqueueing it.
         if (subMap.containsKey(key)) {
-            Reference ref = (Reference) subMap.get(key);
+            Reference<Object> ref = subMap.get(key);
             if (ref != null) {
                 Object value = ref.get();
                 if (value == null) {
@@ -132,18 +133,19 @@ public abstract class ReferenceMap implements Map
     /**
      * {@inheritDoc}
      */
-    public Object put(Object key, Object value) {
+    public V put(K key, V value) {
         expungeStaleEntries();
-        if (value == null) {
-            value = NULL_VALUE;
+        Object v = value;
+        if (v == null) {
+            v = NULL_VALUE;
         }
-        Reference ref = (Reference) subMap.put(key, newRef(value, queue, key));
+        Reference<Object> ref = subMap.put(key, newRef(v, queue, key));
         if (ref != null) {
-            value = ref.get();
-            if (value instanceof NullValue) {
+            v = ref.get();
+            if (v instanceof NullValue) {
                 return null;
             }
-            return value;
+            return (V) v;
         }
         return null;
     }
@@ -156,33 +158,32 @@ public abstract class ReferenceMap implements Map
      * @param queue the ReferenceQueue to register the Reference in
      * @param key the key
      * @return a ReferenceWithKey, that is also a Reference (long story, no multiple inheritance in
-     * Java)
+     * Java, and Reference is daftly an abstract class rather than an interface)
      */
-    protected abstract ReferenceWithKey newRef(Object value, ReferenceQueue queue, Object key);
+    protected abstract Reference<Object> newRef(Object value, ReferenceQueue<Object> queue,
+            K key);
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(Map t) {
-        Iterator i = t.entrySet().iterator();
-        while (i.hasNext()) {
-            Map.Entry e = (Map.Entry) i.next();
-            put(e.getKey(), e.getValue());
+    public void putAll(Map<? extends K, ? extends V> t) {
+        for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
+            put(entry.getKey(), entry.getValue());
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object remove(Object key) {
+    public V remove(Object key) {
         expungeStaleEntries();
-        Reference ref = (Reference) subMap.remove(key);
+        Reference<Object> ref = subMap.remove(key);
         if (ref != null) {
             Object value = ref.get();
             if (value instanceof NullValue) {
                 return null;
             }
-            return value;
+            return (V) value;
         }
         return null;
     }
@@ -190,7 +191,7 @@ public abstract class ReferenceMap implements Map
     /**
      * {@inheritDoc}
      */
-    public boolean containsValue(Object key) {
+    public boolean containsValue(Object value) {
         throw new UnsupportedOperationException();
     }
 
@@ -232,14 +233,14 @@ public abstract class ReferenceMap implements Map
     /**
      * Interface for entries in the map.
      */
-    protected static interface ReferenceWithKey
+    protected static interface ReferenceWithKey<K>
     {
         /**
          * Returns the key in the entry.
          *
          * @return an Object
          */
-        public Object getKey();
+        public K getKey();
     }
 
     private static class NullValue

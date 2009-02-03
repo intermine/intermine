@@ -120,6 +120,16 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
+    public SingletonResults executeSingleton(Query q) {
+        SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
+                        q)));
+        retval.setImmutable();
+        return retval;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
             boolean explain, boolean prefetch) {
         SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
@@ -136,15 +146,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         if (!prefetch) {
             retval.setNoPrefetch();
         }
-        retval.setImmutable();
-        return retval;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SingletonResults executeSingleton(Query q) {
-        SingletonResults retval = new SingletonResults(q, this, getSequence(getComponentsForQuery(
-                        q)));
         retval.setImmutable();
         return retval;
     }
@@ -207,7 +208,12 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     protected InterMineObject internalGetObjectById(Integer id,
             Class clazz) throws ObjectStoreException {
-        Results results = execute(QueryCreator.createQueryForId(id, clazz), 0, false, false, false);
+        Results results = new Results(QueryCreator.createQueryForId(id, clazz), this,
+                SEQUENCE_IGNORE);
+        results.setBatchSize(2);
+        results.setNoOptimise();
+        results.setNoExplain();
+        results.setNoPrefetch();
 
         if (results.size() > 1) {
             throw new IllegalArgumentException("More than one object in the database has "

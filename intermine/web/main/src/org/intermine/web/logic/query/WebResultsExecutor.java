@@ -10,9 +10,11 @@ package org.intermine.web.logic.query;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -32,6 +34,8 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
+import org.apache.log4j.Logger;
+
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
  * style results are required.  
@@ -40,12 +44,16 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class WebResultsExecutor 
 {
+    private static final Logger LOG = Logger.getLogger(WebResultsExecutor.class);
+
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
     private Profile profile;
     private List<TemplateQuery> conversionTemplates;
     private SearchRepository searchRepository;
+    private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
+        = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
 
     /**
      * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
@@ -104,6 +112,21 @@ public class WebResultsExecutor
                 pathToBagQueryResult, false);
 
         Results results = os.execute(q, Constants.BATCH_SIZE, true, true, false);
+
+        Query realQ = results.getQuery();
+        if (realQ == q) {
+            queryToPathToQueryNode.put(q, pathToQueryNode);
+            LOG.error("queries are equal");
+            LOG.error("query: " + realQ);
+            LOG.error("pathToQueryNode: " + pathToQueryNode);
+            LOG.error("queryToPathToQueryNode: " + queryToPathToQueryNode);
+        } else {
+            pathToQueryNode = queryToPathToQueryNode.get(realQ);
+            LOG.error("queries are not equal");
+            LOG.error("query: " + realQ);
+            LOG.error("pathToQueryNode: " + pathToQueryNode);
+            LOG.error("queryToPathToQueryNode: " + queryToPathToQueryNode);
+        }
 
         WebResults webResults = new WebResults(pathQuery, results, os.getModel(),
                 pathToQueryNode, classKeys, pathToBagQueryResult);

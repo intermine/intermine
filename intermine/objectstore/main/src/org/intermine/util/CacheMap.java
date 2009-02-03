@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.lang.ref.Reference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +25,11 @@ import org.apache.log4j.Logger;
  * The entrySet() and values() methods of this class do not work.
  *
  * @see java.lang.ref.SoftReference
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  * @author Matthew Wakeling
  */
-public class CacheMap extends SoftReferenceMap
+public class CacheMap<K, V> extends SoftReferenceMap<K, V>
 {
     private static final Logger LOG = Logger.getLogger(CacheMap.class);
 
@@ -40,7 +43,7 @@ public class CacheMap extends SoftReferenceMap
      *         or if the load factor is nonpositive.
      */
     public CacheMap(int initialCapacity, float loadFactor) {
-        subMap = new HashMap(initialCapacity, loadFactor);
+        subMap = new HashMap<K, Reference<Object>>(initialCapacity, loadFactor);
         this.name = "unknown";
     }
 
@@ -52,7 +55,7 @@ public class CacheMap extends SoftReferenceMap
      * @throws IllegalArgumentException  If the initial capacity is negative.
      */
     public CacheMap(int initialCapacity) {
-        subMap = new HashMap(initialCapacity);
+        subMap = new HashMap<K, Reference<Object>>(initialCapacity);
         this.name = "unknown";
     }
 
@@ -61,7 +64,7 @@ public class CacheMap extends SoftReferenceMap
      * capacity (16) and the default load factor (0.75).
      */
     public CacheMap() {
-        subMap = new HashMap();
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = "unknown";
     }
 
@@ -72,7 +75,7 @@ public class CacheMap extends SoftReferenceMap
      * @param name the name of the CacheMap - printed out in log messages
      */
     public CacheMap(String name) {
-        subMap = new HashMap();
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = name;
     }
 
@@ -85,8 +88,8 @@ public class CacheMap extends SoftReferenceMap
      * @param   t the map whose mappings are to be placed in this map.
      * @throws  NullPointerException if the specified map is null.
      */
-    public CacheMap(Map t) {
-        subMap = new HashMap();
+    public CacheMap(Map<K, V> t) {
+        subMap = new HashMap<K, Reference<Object>>();
         this.name = "unknown";
         putAll(t);
     }
