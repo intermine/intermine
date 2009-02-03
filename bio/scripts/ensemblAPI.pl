@@ -36,6 +36,7 @@ my $item_factory = new InterMine::ItemFactory(model => $model);
 my $datasource = 'Ensembl';
 my @items = (); 
 my %organisms = parse_orgs($taxon_ids);
+my @synonyms = ();
 my $datasource_item = make_item("DataSource");
 $datasource_item->set('name', $datasource);
 my $org_item;
@@ -54,6 +55,7 @@ foreach my $taxon_id(keys %organisms) {
     my %proteins = ();
     my %exons = ();
     my %sequences = ();
+    @synonyms = ();
 
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -276,13 +278,16 @@ sub parse_chromosomes {
 
 sub make_synonym {
   my ($subject, $type, $value) = @_;
-
-  my $syn = make_item("Synonym");
-  $syn->set('subject', $subject);
-  $syn->set('type', $type);
-  $syn->set('value', $value);
-  $syn->set('source', $datasource_item);
-  $syn->set('isPrimary', 'true');
+  my $key = $subject . $type . $value;
+  if (!grep {$_ eq $key} @synonyms) {
+      my $syn = make_item("Synonym");
+      $syn->set('subject', $subject);
+      $syn->set('type', $type);
+      $syn->set('value', $value);
+      $syn->set('source', $datasource_item);
+      $syn->set('isPrimary', 'true');
+      push(@synonyms, $key);
+  }
 }
 
 sub make_chromosome {
