@@ -1,0 +1,99 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use IO::All;
+use Net::FTP;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+
+#Define ARGVs
+my ($data_dir,$organism_name);
+if(@ARGV!=2){
+    die "Wrong number of arguments.\nplease supply the organism name and the download directory\n";
+}else{
+    $organism_name = $ARGV[0];
+    $data_dir = $ARGV[1];
+}
+
+my $version = "";	
+my $species_prefix = $organism_name . "_core_";
+
+# ensembl ftp site
+my $server = "ftp.ensembl.org";
+my $releases_dir = "pub";
+my $current_dir = "current_mysql";
+my $species_dir = "";
+
+# -------- access ftp server ------------- #
+my $ftp = Net::FTP->new($server, Passive => 1)
+  or die "Cannot connect to $server: $@";
+
+$ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $ftp->message;
+
+$ftp->cwd($releases_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+$ftp->cwd($current_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+
+my($filetype) = "binary"; 
+$ftp->$filetype;
+
+# get list of all directories
+my @dir_list = $ftp->ls();
+for my $dir (@dir_list) {
+    if ($dir =~ m/$species_prefix/) {
+        $species_dir = $dir;
+    }
+}
+
+$version = substr($species_dir, length($species_prefix), length($species_dir));
+
+my $organism_dir = "$data_dir/$organism_name";
+if (!(-d $organism_dir)) {
+   print "creating $organism_dir\n";
+   mkdir "$organism_dir" or die "failed to create $organism_dir";
+}
+
+my $download_dir = "$data_dir/$organism_name/$species_prefix$version";
+
+$ftp->cwd($species_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+if (!(-d $download_dir)) {
+
+   # make download directory locally
+   print "creating $download_dir\n";
+   mkdir "$download_dir" or die "failed to create $download_dir";
+
+   # get list of all files
+   my @file_list = $ftp->ls();
+
+   # download all files
+   for my $file (@file_list) {
+       print("downloading ... $file\n");
+       $ftp->get($file, "$download_dir/$file")
+           or die "failed to get file: $file";
+   }
+
+   # unzip files
+   print"gzip -dr $download_dir\n";
+   
+   if ((system "gzip -dr $download_dir") != 0) {
+       die qq|system "gzip -dr $download_dir" failed: $?\n|;
+   }
+
+} else {
+ 	print "$organism_name \nCurrent version $version ok\n\n";
+}
+
+#TODO createdb here
+
