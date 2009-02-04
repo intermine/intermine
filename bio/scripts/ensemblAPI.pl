@@ -122,6 +122,7 @@ foreach my $taxon_id(keys %organisms) {
                 }
                 $transcript_item->set('gene', $gene_item);
                 $transcript_item->set('sequence', make_seq(\%sequences, $transcript->seq->seq));
+                # TODO are these transcripts going to be unique?
                 make_synonym($transcript_item, "identifier", $transcript->stable_id());
                 parseFeature($transcript, $transcript_item, $chromosome_item);
           
@@ -212,9 +213,6 @@ sub parseFeature {
     $item->set('primaryIdentifier', $feature->stable_id());
     $item->set('chromosomeLocation', $location);
     $item->set('chromosome', $chromosome);
-    
-    
-
     return;
 }
 
