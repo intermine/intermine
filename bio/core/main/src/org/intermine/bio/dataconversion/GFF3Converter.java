@@ -282,7 +282,8 @@ public class GFF3Converter
                     dataSet.getIdentifier()
                 }));
             handler.setLocation(relation);
-            if (seqClsName.equals("Chromosome")) {
+            if (seqClsName.equals("Chromosome") 
+                    && (cd.getFieldDescriptorByName("chromosome") != null)) {
                 feature.setReference("chromosome", seq.getIdentifier());
                 if (makeLocation) {
                     feature.setReference("chromosomeLocation", relation);
