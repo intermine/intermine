@@ -34,8 +34,6 @@ import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
-import org.apache.log4j.Logger;
-
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
  * style results are required.  
@@ -44,8 +42,6 @@ import org.apache.log4j.Logger;
  */
 public class WebResultsExecutor 
 {
-    private static final Logger LOG = Logger.getLogger(WebResultsExecutor.class);
-
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
@@ -116,16 +112,8 @@ public class WebResultsExecutor
         Query realQ = results.getQuery();
         if (realQ == q) {
             queryToPathToQueryNode.put(q, pathToQueryNode);
-            LOG.error("queries are equal");
-            LOG.error("query: " + realQ);
-            LOG.error("pathToQueryNode: " + pathToQueryNode);
-            LOG.error("queryToPathToQueryNode: " + queryToPathToQueryNode);
         } else {
             pathToQueryNode = queryToPathToQueryNode.get(realQ);
-            LOG.error("queries are not equal");
-            LOG.error("query: " + realQ);
-            LOG.error("pathToQueryNode: " + pathToQueryNode);
-            LOG.error("queryToPathToQueryNode: " + queryToPathToQueryNode);
         }
 
         WebResults webResults = new WebResults(pathQuery, results, os.getModel(),
