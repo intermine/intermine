@@ -50,6 +50,7 @@ public class PerformanceTester
 {
 
     private static String superuser;
+    private static ProfileManager pm = null;
 
     /**.
      * @param args number of threads you want to run
@@ -69,11 +70,11 @@ public class PerformanceTester
                 .getResourceAsStream("webapp/WEB-INF/bag-queries.xml"));
         Map classKeys = ClassKeyHelper.readKeys(productionOs.getModel(), classKeyProps);
 
-        ProfileManager pm = new ProfileManager(productionOs, userProfileOs);
+        pm = new ProfileManager(productionOs, userProfileOs);
         Profile p = pm.getProfile(superuser);
 
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
-        templates = new SearchFilterEngine().filterByTags(templates, 
+        templates = new SearchFilterEngine().filterByTags(templates,
                 Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, superuser, new TagManagerFactory(userProfileOs).getTagManager());
         int i = Integer.parseInt(args[0]);
@@ -128,7 +129,7 @@ public class PerformanceTester
         try {
             //Query q = TemplateHelper.getPrecomputeQuery(entry.getValue(), new ArrayList(), null);
             long queryStartTime = System.currentTimeMillis();
-            Query q = MainHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), null,
+            Query q = MainHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), pm,
                     null, false, productionOs, classKeys, bagQueryConfig);
             String sqlString = SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
                     ((ObjectStoreInterMineImpl) productionOs).getSchema(),
