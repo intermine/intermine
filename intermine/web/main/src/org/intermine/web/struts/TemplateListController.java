@@ -95,9 +95,10 @@ public class TemplateListController extends TilesAction
 
             Iterator<TemplateQuery> templateIter = templates.iterator();
 
+            // don't show templates that are invalir or have no report tag
             while (templateIter.hasNext()) {
                 TemplateQuery tq = templateIter.next();
-                if (noReportNames.contains(tq.getName())) {
+                if (noReportNames.contains(tq.getName()) || !tq.isValid()) {
                     templateIter.remove();
                 }
             }
