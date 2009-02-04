@@ -25,7 +25,7 @@
   <br/>
 </c:if>
 
-<fmt:setBundle basename="model"/>
+
 
 <c:forEach var="entry" items="${exporters}" varStatus="status">
   <c:set var="exporterId" value="${entry.key}"/>

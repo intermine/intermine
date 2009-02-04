@@ -3,10 +3,10 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- locatedSequenceFeatureImage.jsp -->
-<fmt:setBundle basename="model"/>
 
 
-<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome) 
+
+<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome')
             && object.organism.abbreviation != 'MM' && object.organism.abbreviation != 'MD'
             && object.organism.abbreviation != 'RN' && cld.unqualifiedName != 'ChromosomeBand'}">

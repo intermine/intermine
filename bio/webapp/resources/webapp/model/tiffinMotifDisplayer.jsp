@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- tiffinDisplayer.jsp -->
-<fmt:setBundle basename="model"/>
+
 
 <c:set var="sitePrefix" value="http://servlet.sanger.ac.uk/tiffin/motif.jsp?acc="/>
 

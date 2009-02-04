@@ -22,6 +22,8 @@
       <patternset>
   	<include name="WEB-INF/struts-config.xml"/>
         <include name="WEB-INF/tiles-defs.xml"/>
+        <include name="WEB-INF/classes/InterMineWebApp.properties"/>
+        <include name="WEB-INF/classes/model.properties"/>
       </patternset>
     </unwar>
 
@@ -47,6 +49,11 @@
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
+
+    <!-- merge InterMine and model internationalisation properties files -->
+    <concat destfile="${build.dir}/webapp/WEB-INF/classes/InterMineWebApp.properties" append="yes">
+      <fileset file="resources/model.properties"/>
+    </concat>
 
     <war destfile="${dist.war}" update="true" >
       <webinf dir="${build.dir}/webapp/WEB-INF/">
