@@ -87,6 +87,8 @@ public class PathQueryHandler extends DefaultHandler
                            sortDirection = PathQuery.ASCENDING;
                        }
                        i++;
+                   } else {
+                       sortDirection = PathQuery.ASCENDING;
                    }
                    sortOrder.put(orderByString, sortDirection);
                }
