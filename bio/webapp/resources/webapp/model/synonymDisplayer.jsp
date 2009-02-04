@@ -1,12 +1,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- THID IS NOW OBSOLETE AND SHOULD USE AN attributeLinkDisplayer INSTEAD -->
 
 <!-- synonymDisplayer.jsp -->
-<fmt:setBundle basename="model"/>
+
 
 <c:set var="seenIdentifiers" value=""/>
 
@@ -29,7 +28,7 @@
         <c:set var="linkPrefix" value="${WEB_PROPERTIES[linkProperty]}"/>
         <c:set var="href" value="${linkPrefix}${thisSynonym.value}"/>
         <c:if test="${!empty WEB_PROPERTIES[linkProperty]
-                      && (thisSynonym.type == 'identifier' 
+                      && (thisSynonym.type == 'identifier'
                           || ((thisSynonym.type == 'name' || thisSynonym.type == 'accession')
                                && sourceName == 'HUGO'))
                       && (sourceName != 'FlyBase' || fn:startsWith(thisSynonym.value, 'FBgn'))
@@ -55,7 +54,7 @@
               </html:link>
             </td>
           </tr>
-          <c:set var="seenIdentifiers" 
+          <c:set var="seenIdentifiers"
                  value="${seenIdentifiers} -:${thisSynonym.value}:-"/>
         </c:if>
       </c:forEach>

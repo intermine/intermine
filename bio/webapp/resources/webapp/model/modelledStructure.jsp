@@ -1,7 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-
-<fmt:setBundle basename="model"/>
 
 <!-- modelledStructure.jsp -->
 <script type="text/javascript" src="<html:rewrite href='model/jmol/Jmol.js'/>" ></script>

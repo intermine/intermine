@@ -1,11 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <!-- modmineGBrowse.jsp -->
-<fmt:setBundle basename="model"/>
-
-<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome) 
+<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome')
                 && cld.unqualifiedName != 'Exon'
                 && cld.unqualifiedName != 'CDS'}">

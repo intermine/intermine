@@ -55,7 +55,6 @@
   </c:when>
   <c:otherwise>
     <fmt:message var="exportReorderMessage" key="export.reorder"/>
-    <fmt:setBundle basename="model"/>
     <fmt:message key="exporter.${type}.description"/>
   </c:otherwise>
 </c:choose></legend>
