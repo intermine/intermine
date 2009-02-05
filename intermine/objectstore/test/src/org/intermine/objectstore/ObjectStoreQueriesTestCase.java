@@ -270,6 +270,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SubclassCollection", subclassCollection());
         queries.put("SubclassCollection2", subclassCollection2());
         queries.put("SelectWhereBackslash", selectWhereBackslash());
+        queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
     }
 
     /*
@@ -2151,6 +2152,26 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         q.setConstraint(new SimpleConstraint(new QueryField(qc, "name"), ConstraintOp.EQUALS, new QueryValue("Fred\\Blog's")));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.departments(SELECT default, a1_.0, a1_.1 PATH default.company(SELECT default, default.contractors) AS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name
+     */
+    public static Query multiColumnObjectInCollection() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc, "departments");
+        qcpe.addToSelect(qcpe.getDefaultClass());
+        QueryObjectPathExpression qope = new QueryObjectPathExpression(qcpe.getDefaultClass(), "company");
+        qope.addToSelect(qope.getDefaultClass());
+        qope.addToSelect(new QueryCollectionPathExpression(qope.getDefaultClass(), "contractors"));
+        qcpe.addToSelect(new PathExpressionField(qope, 0));
+        qcpe.addToSelect(new PathExpressionField(qope, 1));
+        q.addToSelect(qcpe);
         q.setDistinct(false);
         return q;
     }

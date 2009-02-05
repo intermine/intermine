@@ -315,6 +315,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SubclassCollection2", Collections.singleton("InterMineObject"));
         results.put("SelectWhereBackslash", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("InterMineObject"));
+        results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
+        results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("InterMineObject", "CompanysContractors")));
     }
 
     protected DatabaseSchema getSchema() {

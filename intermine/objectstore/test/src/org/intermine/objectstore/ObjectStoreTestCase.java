@@ -612,6 +612,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("DepartmentB2"), Collections.EMPTY_LIST } };
         results.put("SubclassCollection2", toList(r));
         results.put("SelectWhereBackslash", Collections.emptyList());
+        results.put("MultiColumnObjectInCollection", Arrays.asList(
+                    Arrays.asList(data.get("CompanyA"), Arrays.asList(
+                            Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))))),
+                    Arrays.asList(data.get("CompanyB"), Arrays.asList(
+                            Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))),
+                            Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB")))))));
     }
 
     /**

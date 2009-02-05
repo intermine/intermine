@@ -411,6 +411,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SubclassCollection2", new HashSet(Arrays.asList("InterMineObject", "Department", "Employee", "Broke")));
         results.put("SelectWhereBackslash", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
+        results.put("MultiColumnObjectInCollection", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "InterMineObject", "Department", "Contractor", "CompanysContractors")));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";

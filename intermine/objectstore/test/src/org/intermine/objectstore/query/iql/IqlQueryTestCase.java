@@ -296,5 +296,6 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("SubclassCollection2", new IqlQuery("SELECT a1_, a1_.employees::(org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employee) AS a2_ FROM org.intermine.model.testmodel.Department AS a1_", null));
         results.put("SelectWhereBackslash", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name = 'Fred\\Blog's'", null));
         results.put("SelectWhereBackslash", NO_RESULT);
+        results.put("MultiColumnObjectInCollection", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, a1_.0, a1_.1 PATH default.company(SELECT default, default.contractors) AS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
     }
 }
