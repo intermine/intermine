@@ -53,7 +53,7 @@ public class KeggPathwayConverter extends BioFileConverter
         // Drosophila melanogaster
         keggOrganismToTaxonId.put("dme", "7227");
         // Homo sapiens
-        keggOrganismToTaxonId.put("hsa", "9609");
+        keggOrganismToTaxonId.put("hsa", "9606");
        // Plasmodium falciparum
         keggOrganismToTaxonId.put("pfa", "36329");
         // Drosophila pseudoobscura
