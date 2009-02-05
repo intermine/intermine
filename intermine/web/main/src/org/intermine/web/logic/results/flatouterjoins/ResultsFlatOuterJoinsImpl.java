@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
@@ -37,6 +39,8 @@ import org.intermine.util.Util;
  */
 public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<MultiRowValue>>>
 {
+    protected static final Logger LOG = Logger.getLogger(ResultsFlatOuterJoinsImpl.class);
+
     private List<ResultsRow> orig;
     private Query query;
     private int columnWidth[];
@@ -232,13 +236,19 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
     }
 
     private MultiRow<ResultsRow<MultiRowValue>> translateRow2(ResultsRow origRow) {
-        ResultsRow<MultiRowValue> template = new ResultsRow<MultiRowValue>();
-        for (int i = 0; i < columnCount; i++) {
-            template.add(null);
+        try {
+            ResultsRow<MultiRowValue> template = new ResultsRow<MultiRowValue>();
+            for (int i = 0; i < columnCount; i++) {
+                template.add(null);
+            }
+            MultiRow<ResultsRow<MultiRowValue>> retval = new MultiRow<ResultsRow<MultiRowValue>>();
+            expandCollections(origRow, retval, template, columnTypes, 0);
+            return retval;
+        } catch (RuntimeException e) {
+            LOG.error("Exception while translating row " + origRow);
+            LOG.error("columnTypes = " + columnTypes);
+            throw e;
         }
-        MultiRow<ResultsRow<MultiRowValue>> retval = new MultiRow<ResultsRow<MultiRowValue>>();
-        expandCollections(origRow, retval, template, columnTypes, 0);
-        return retval;
     }
 
     private int expandCollections(List row, MultiRow<ResultsRow<MultiRowValue>> retval,
@@ -254,14 +264,18 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
             int rowNo = startRow;
             if (column instanceof ResultsRow) {
                 List collection = (List) row.get(columnNo);
-                for (Object subRow : collection) {
-                    rowNo = expandCollections(Collections.singletonList(subRow), retval, template,
-                            (List) column, rowNo);
+                if (collection != null) {
+                    for (Object subRow : collection) {
+                        rowNo = expandCollections(Collections.singletonList(subRow), retval,
+                                template, (List) column, rowNo);
+                    }
                 }
             } else if (column instanceof List) {
                 List<ResultsRow> collection = (List<ResultsRow>) row.get(columnNo);
-                for (ResultsRow subRow : collection) {
-                    rowNo = expandCollections(subRow, retval, template, (List) column, rowNo);
+                if (collection != null) {
+                    for (ResultsRow subRow : collection) {
+                        rowNo = expandCollections(subRow, retval, template, (List) column, rowNo);
+                    }
                 }
             }
             maxRowNo = Math.max(maxRowNo, rowNo);
