@@ -27,7 +27,8 @@ public class BiosegIndexTask
     protected ObjectStoreWriterInterMineImpl osw;
 
     /**
-     * Construct a new BiosegIndexTaskthat will change the given object store.
+     * Construct a new BiosegIndexTask that will change the given object store.
+     *
      * @param osw an ObjectStore to write to
      */
     public BiosegIndexTask(ObjectStoreWriter osw) {
@@ -41,6 +42,7 @@ public class BiosegIndexTask
 
     /**
      * Create a bioseg index on the location table.
+     *
      * @throws SQLException if there is a problem dropping the tabe or creating the view
      */
     public void createIndex() throws SQLException {
@@ -57,5 +59,6 @@ public class BiosegIndexTask
         statement.close();
 
         con.commit();
+        con.close();
     }
 }

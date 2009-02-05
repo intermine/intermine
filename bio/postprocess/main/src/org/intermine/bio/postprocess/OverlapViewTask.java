@@ -70,5 +70,6 @@ public class OverlapViewTask
         statement.close();
 
         con.commit();
+        con.close();
     }
 }
