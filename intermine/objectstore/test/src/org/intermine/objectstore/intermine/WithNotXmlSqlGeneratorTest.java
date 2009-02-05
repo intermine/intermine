@@ -252,6 +252,8 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SubclassCollection2", new HashSet(Arrays.asList("Department", "Employee", "Broke")));
         results.put("SelectWhereBackslash", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
+        results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
+        results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "Department", "Contractor", "CompanysContractors")));
     }
 
     protected DatabaseSchema getSchema() {

@@ -366,6 +366,7 @@ public class IqlQuery
                 Query subQ = col.getQuery(empty);
                 retval.append("(");
                 boolean needSpace = false;
+                Set<QueryObjectPathExpression> pathList2 = new HashSet<QueryObjectPathExpression>();
                 if (!col.getSelect().isEmpty()) {
                     retval.append("SELECT ");
                     if (col.isSingleton()) {
@@ -377,7 +378,7 @@ public class IqlQuery
                             retval.append(", ");
                         }
                         needComma = true;
-                        retval.append(nodeToString(subQ, selectable, parameters, null));
+                        retval.append(nodeToString(subQ, selectable, parameters, pathList2));
                     }
                     needSpace = true;
                 }
@@ -415,6 +416,14 @@ public class IqlQuery
                     }
                     retval.append("WHERE ")
                         .append(constraintToString(subQ, col.getConstraint(), parameters));
+                }
+                boolean needComma = false;
+                for (QueryObjectPathExpression qope : pathList2) {
+                    retval.append(needComma ? ", " : " PATH ");
+                    needComma = true;
+                    retval.append(nodeToString(subQ, qope, null, null))
+                        .append(" AS ")
+                        .append(subQ.getAliases().get(qope));
                 }
                 retval.append(")");
             }
