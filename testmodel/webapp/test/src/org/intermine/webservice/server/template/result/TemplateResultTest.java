@@ -37,13 +37,14 @@ public class TemplateResultTest extends TestCase
     
     /**
      * Default url (it is url with default values in it) for this template is
-     * http://localhost:8080/intermine-test/service/template/results?name=employeesOfACertainAge&op1=gt&value1=10&op2=ne&value2=10&size=10&format=tab 
+     * http://localhost:8080/intermine-test/service/template/results?name=employeesOfACertainAge&op1=gt
+     * &value1=10&op2=ne&value2=10&size=10&format=tab 
      * This test checks, that values in template are replaced with actual parameters in request.
      * @throws Exception if some error occurs
      */
     public void testForNonDefaultParameterValues() throws Exception {
-        String tabResult = getResultForQueryString("name=employeesOfACertainAge&op1=gt" +
-        		"&value1=20&op2=ne&value2=40&size=10&format=tab").trim();
+        String tabResult = getResultForQueryString("name=employeesOfACertainAge&cons1=Employee.age&code1=A&op1=gt" +
+        		"&value1=20&cons2=Employee.age&code2=B&op2=ne&value2=40&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
         
         System.out.println("result: " + tabResult);
@@ -63,7 +64,10 @@ public class TemplateResultTest extends TestCase
      * @throws Exception
      */
     public void testFourConstraints() throws Exception {
-        String tabResult = getResultForQueryString("name=fourConstraints&op1=CONTAINS&value1=Employee&op2=lt&value2=20&op3=gt&value3=20&op4=eq&value4=false&size=10&format=tab").trim();
+        String tabResult = getResultForQueryString("name=fourConstraints&cons1=Employee.name" +
+        		"&op1=CONTAINS&value1=Employee&cons2=Employee.age&code2=B&op2=lt&value2=20" +
+        		"&cons3=Employee.age&code3=C&op3=gt&value3=20&cons4=Employee.fullTime&op4=eq" +
+        		"&value4=false&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
 
         assertEquals("EmployeeA3", results.get(0).get(0));
