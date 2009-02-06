@@ -30,13 +30,34 @@ public class TemplateParameter
 
     private String extraValue;
     
+    private String pathId;
+    
+    private String code;
+    
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getPathId() {
+        return pathId;
+    }
+
+    public void setPathId(String pathId) {
+        this.pathId = pathId;
+    }
+
     /**
      * @param operation operation 
      * @param value value
      * @param extraValue extra value
      */
-    public TemplateParameter(String operation, String value, String extraValue) {
+    public TemplateParameter(String pathId, String operation, String value, String extraValue) {
         super();
+        this.pathId = pathId;
         this.operation = operation;
         this.value = value;
         this.extraValue = extraValue;
@@ -91,9 +112,10 @@ public class TemplateParameter
      * @param operation operation
      * @param value value
      */
-    public TemplateParameter(String operation, String value) {
+    public TemplateParameter(String pathId, String operation, String value) {
         super();
         this.operation = operation;
         this.value = value;
+        this.pathId = pathId;
     }    
 }

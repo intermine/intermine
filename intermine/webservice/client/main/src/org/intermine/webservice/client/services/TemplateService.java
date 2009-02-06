@@ -18,7 +18,6 @@ import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
 import org.intermine.webservice.client.core.TabTableResult;
 import org.intermine.webservice.client.core.Request.RequestType;
-import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.template.TemplateParameter;
 import org.intermine.webservice.client.util.HttpConnection;
 
@@ -50,10 +49,6 @@ public class TemplateService extends Service
         public TemplateRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
         }
-
-        public void setStart(int start) {
-            setParameter("start", start + "");
-        }
         
         public void setMaxCount(int maxCount) {
             setParameter("size", maxCount + "");
@@ -67,36 +62,17 @@ public class TemplateService extends Service
             for (int i = 0; i < parameters.size(); i++) {
                 TemplateParameter par = parameters.get(i);
                 int index = i + 1;
+                addParameter("cons" + index, par.getPathId());
                 addParameter("op" + index, par.getOperation());
                 addParameter("value" + index, par.getValue());
+                if (par.getExtraValue() != null) {
+                    addParameter("extra" + index, par.getExtraValue());
+                }
+                if (par.getCode() != null) {
+                    addParameter("code" + index, par.getCode());
+                }
             }
         }
-    }
-
-    /**
-     * Returns count of template results for given parameters.  
-     * @param templateName template name
-     * @param parameters parameters of template 
-     * @see TemplateService
-     * @return count
-     */
-    public int getCount(String templateName, List<TemplateParameter> parameters) {
-        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
-                ContentType.TEXT_TAB);
-        request.setName(templateName);
-        request.setTemplateParameters(parameters);
-        request.setParameter("tcount", "");
-        HttpConnection connection = executeRequest(request);
-        String body = connection.getResponseBodyAsString().trim();
-        if (body.length() == 0) {
-            throw new ServiceException("Service didn't return any result");
-        }
-        try {
-            return Integer.parseInt(body);
-        }  catch (NumberFormatException e) {
-            throw new ServiceException("Service returned invalid result. It is not number: " 
-                    + body, e);
-        }        
     }
     
     /**
@@ -104,19 +80,18 @@ public class TemplateService extends Service
      * use getResultIterator() method.  
      * @param templateName template name
      * @param parameters parameters of template
-     * @param start index of first result, that should be returned
      * @param maxCount maximum number of returned results 
      * @see TemplateService
      * @return results
      */
     public List<List<String>> getResult(String templateName, List<TemplateParameter> parameters, 
-            int start, int maxCount) {
+            int maxCount) {
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
-        request.setStart(start);
         request.setMaxCount(maxCount);
         request.setName(templateName);
         request.setTemplateParameters(parameters);
+        System.out.println(request);
         HttpConnection connection = executeRequest(request);
         return new TabTableResult(connection).getData();
     } 
@@ -126,16 +101,14 @@ public class TemplateService extends Service
      * of results and you would run out of memory.   
      * @param templateName template name
      * @param parameters parameters of template
-     * @param start index of first result, that should be returned
      * @param maxCount maximum number of returned results 
      * @see TemplateService
      * @return results
      */
     public Iterator<List<String>> getResultIterator(String templateName, 
-            List<TemplateParameter> parameters, int start, int maxCount) {
+            List<TemplateParameter> parameters, int maxCount) {
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
-        request.setStart(start);
         request.setMaxCount(maxCount);
         request.setName(templateName);
         request.setTemplateParameters(parameters);
