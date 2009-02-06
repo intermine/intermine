@@ -49,7 +49,6 @@ public class PsiConverter extends BioFileConverter
     private String termId = null;
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
-//    private static final Map<String, String> IDENTIFIERS = new LinkedHashMap();
     private static final String INTERACTION_TYPE = "physical";
 
     /**
@@ -70,39 +69,11 @@ public class PsiConverter extends BioFileConverter
         }
     }
 
-//    static {
-//        IDENTIFIERS.put("primaryIdentifier", "primaryIdentifier");
-////        IDENTIFIERS.put("ensembl", null);
-////        IDENTIFIERS.put("orf name", "secondaryIdentifier");
-//        //IDENTIFIERS.put("gene name", "symbol");
-////        IDENTIFIERS.put("fullName", "secondaryIdentifier");
-//        //IDENTIFIERS.put("shortLabel", "symbol");
-//    }
-
-    /**
-     * A space separated list of of NCBI taxonomy ids for which we want to retrieve
-     * interactions.
-     * @param orgStr a list of taxon ids
-     */
-    public void setOrganisms(String orgStr) {
-        List<String> orgArray = Arrays.asList(orgStr.split("\\s"));
-        for (Iterator iter = orgArray.iterator(); iter.hasNext();) {
-            String taxId = (String) iter.next();
-            try {
-                getOrganism(taxId);
-            } catch (SAXException e) {
-                throw new RuntimeException("ack");
-            }
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-
         PsiHandler handler = new PsiHandler();
-
         try {
             SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
@@ -209,7 +180,6 @@ public class PsiConverter extends BioFileConverter
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-//                if (organisms.containsKey(taxId)) {
                 if (!taxId.equals("-1") && !taxId.equals("-2")) {
                     try {
                         gene = getGene(taxId);
@@ -608,23 +578,6 @@ public class PsiConverter extends BioFileConverter
 
             String identifier = null, label = null;
 
-//            for (String identifierType : IDENTIFIERS.keySet()) {
-//                identifier = identifiers.get(identifierType);
-//                if (identifier != null) {
-//                    if (identifierType.equals("ensembl")) {
-//                        if (identifier.startsWith("EN")) {
-//                            label = "primaryIdentifier";
-//                        } else {
-//                            // worm, dmel, yeast
-//                            label = "secondaryIdentifier";
-//                        }
-//                    } else {
-//                        label = IDENTIFIERS.get(identifierType);
-//                    }
-//                    break;
-//                }
-//            }
-
             if (taxonId.equals("7227") || taxonId.equals("4932")) {
                 identifier = identifiers.get("primaryIdentifier");
                 label = "primaryIdentifier";
@@ -643,9 +596,7 @@ public class PsiConverter extends BioFileConverter
                     if (identifier == null) {
                         return null;
                     }
-                } else {
-                    return null;
-                }
+                 }
             }
 
             // everyone not using the resolver should have an identifier

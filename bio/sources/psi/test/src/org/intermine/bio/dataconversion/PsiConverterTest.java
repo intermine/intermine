@@ -16,11 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
-public class PsiConverterTest extends ItemsTestCase
+public class PsiConverterTest extends MockItemsTestCase
 {
 
     Model model = Model.getInstanceByName("genomic");
@@ -47,7 +47,6 @@ public class PsiConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                             .getResourceAsStream("PsiConverterTest_src.xml"));
 
-        converter.setOrganisms("7227");
         converter.process(reader);
         converter.close();
 
