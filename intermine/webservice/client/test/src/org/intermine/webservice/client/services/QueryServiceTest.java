@@ -22,7 +22,10 @@ import org.intermine.webservice.client.util.TestUtil;
  *
  */
 
-/**
+/**Tests functionality of QueryService - client class, implementing easy
+ * access to InterMine web service. That's why it tests the web service itself
+ * as well.
+ * 
  * @author Jakub Kulaviak
  **/
 public class QueryServiceTest extends TestCase
@@ -39,21 +42,15 @@ public class QueryServiceTest extends TestCase
         query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(60)));
         query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
         QueryService queryService = factory.getQueryService();
-        List<List<String>> result = queryService.getResult(query, 1, 100);
+        List<List<String>> result = queryService.getResult(query, 100);
         TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1", "true");
         TestUtil.checkRow(result.get(1), "EmployeeA2", "20", "2", "true");
-    }
-
-
-    public void testGetCount() {
-        QueryService service = TestUtil.getQueryService();
-        assertEquals(3, service.getCount(getSimpleXml()));
     }
 
     public void testGetResultPathQuery() throws IOException {
         QueryService queryService = TestUtil.getQueryService();
         PathQuery query = queryService.createPathQuery(getSimpleXml());
-        checkResult(queryService.getResult(query, 1, 10));
+        checkResult(queryService.getResult(query, 10));
     }
 
     private String getSimpleXml() {
@@ -72,7 +69,7 @@ public class QueryServiceTest extends TestCase
     
     public void testGetResultStringXmlQuery() throws IOException {
         QueryService service = TestUtil.getQueryService();
-        List<List<String>> result = service.getResult(getSimpleXml(), 1, 10);
+        List<List<String>> result = service.getResult(getSimpleXml(), 10);
         checkResult(result);
     }
 

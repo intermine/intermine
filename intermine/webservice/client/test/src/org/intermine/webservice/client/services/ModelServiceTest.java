@@ -17,6 +17,10 @@ import org.intermine.webservice.client.util.TestUtil;
  */
 
 /**
+ * Tests functionality of ModelService - client class, implementing easy
+ * access to InterMine web service. That's why it tests the web service itself
+ * as well.
+ * 
  * @author Jakub Kulaviak
  **/
 public class ModelServiceTest extends TestCase
