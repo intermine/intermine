@@ -12,12 +12,9 @@ package org.intermine.webservice.server.template.result;
 
 import org.intermine.objectstore.query.ConstraintOp;
 
-/* 
- * In future Constraint class can be used instead of this class. This was used
- * because it was possible, that will carries other things than just constraint values.
- */
 /**
- * Simple object that carries constraint values for other processing.  
+ * Simple object that carries constraint values for other processing.
+ *   
  * @author Jakub Kulaviak
  **/
 public class ConstraintLoad
@@ -28,15 +25,77 @@ public class ConstraintLoad
     
     private String extraValue;
 
+    private String pathId;
+    
+    private String code;
+
+    private String parameterName;
+
+    /**
+     * 
+     * @return parameter name
+     */
+    public String getParameterName() {
+        return parameterName;
+    }
+
+    /**
+     * 
+     * @param parameterName saves to the object name of the path parameter of this constraint
+     * For example: cons1, cons2 ...
+     */
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    /**
+     * 
+     * @return code
+     */
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * 
+     * @param code code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * 
+     * @return path that is used as constraint id
+     */
+    public String getPathId() {
+        return pathId;
+    }
+
+    /**
+     * 
+     * @param pathId path that is used as constraint id
+     */
+    public void setPathId(String pathId) {
+        this.pathId = pathId;
+    }
+
     /**
      * ConstraintLoad constructor.
+     * @param parameterName parameter name
+     * @param pathId path that serves as id
+     * @param code constraint code
      * @param op constraint operation
      * @param value value restricting result
      * @param extraValue optional extra value used for lookup, automatically restricts 
      * results according other criterion, for example for Gene there can specified organism name, 
      * restricts resulted genes to specified organism 
      */
-    public ConstraintLoad(ConstraintOp op, String value, String extraValue) {
+    public ConstraintLoad(String parameterName, String pathId, String code, ConstraintOp op, 
+            String value, String extraValue) {
+        this.code = code;
+        this.parameterName = parameterName;
+        this.pathId = pathId;
         this.op = op;
         this.value = value;
         this.extraValue = extraValue;

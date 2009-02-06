@@ -11,7 +11,9 @@ package org.intermine.webservice.server.template.result;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +43,10 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private static final String EXTRA_PARAMETER = "extra";
     
     private static final String VALUE_PARAMETER = "value";
+
+    private static final String ID_PARAMETER = "cons";
+
+    private static final String CODE_PARAMETER = "code";
     
     
     /**
@@ -64,23 +70,19 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
 
     private void parseRequest(TemplateResultInput input) {
         super.parseRequest(request, input);
-        input.setComputeTotalCount(parseComputeTotalCountParameter(request));
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
         input.setConstraints(parseConstraints(request));
         input.setLayout(request.getParameter(QueryResultRequestParser.LAYOUT_PARAMETER));
     }
 
-    private boolean parseComputeTotalCountParameter(HttpServletRequest request) {
-        String totalCount = request.getParameter(QueryResultRequestParser.
-                COMPUTE_TOTAL_COUNT_PARAMETER);
-        return totalCount != null;
-    }
-
-    private List<ConstraintLoad> parseConstraints(HttpServletRequest request) {
+    private Map<String, List<ConstraintLoad>> parseConstraints(HttpServletRequest request) {
         // Maximum of constraints is 50, it should be enough  
         logger.debug("request: " + request.getQueryString());
-        List<ConstraintLoad> ret = new ArrayList<ConstraintLoad>();
+        Map<String, List<ConstraintLoad>> ret = new HashMap<String, List<ConstraintLoad>>();
         for (int i = 0; i < 50; i++) {
+            
+            String idParameter = ID_PARAMETER + i;
+            String id = request.getParameter(idParameter);
             
             String opParameter = OPERATION_PARAMETER + i;
             String opString = request.getParameter(opParameter);
@@ -91,6 +93,9 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
             
             String extraParameter = EXTRA_PARAMETER + i;
             String extraValue = request.getParameter(extraParameter);
+
+            String codeParameter = CODE_PARAMETER + i;
+            String code = request.getParameter(codeParameter);
             
             if (opString != null && opString.length() > 0 && op == null) {
                 throw new BadRequestException("invalid parameter: " + opParameter + " with value " 
@@ -98,24 +103,29 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
                         + "must be encoded in request. See help for 'url encoding'.");
             }
 
-            if (isPresent(op) && !isPresent(value)) {
-                throw new BadRequestException("invalid parameter: " + valueParameter 
-                        + " Operation was specified, but not value.");
+            if (isPresent(op) || isPresent(value) || isPresent(id) || isPresent(extraValue)
+                    || isPresent(code)) {
+                String help = " Incomplete parameters. Some parameters for constraint with number "
+                    + i + " were specified and some weren't. ";
+                if (!isPresent(id)) {
+                    throw new BadRequestException("missing or invalid parameter: " + idParameter 
+                            + help);                    
+                }
+                if (!isPresent(op)) {
+                    throw new BadRequestException("missing or invalid parameter: " + opParameter 
+                            + help);
+                }
+                if (!isPresent(value)) {
+                    throw new BadRequestException("invalid or missing parameter: " + valueParameter 
+                            + help);
+                }
+                ConstraintLoad load = new ConstraintLoad(idParameter, id, code, op, value, 
+                        extraValue);
+                if (ret.get(id) == null) {
+                    ret.put(id, new ArrayList<ConstraintLoad>());
+                } 
+                ret.get(id).add(load);
             }
-            
-            if (isPresent(value) && !isPresent(op)) {
-                throw new BadRequestException("invalid parameter: " + opParameter 
-                    + " Value was specified, but not operation.");
-            }
-            
-            if (isPresent(extraValue) && (!isPresent(op) || !isPresent(value))) {
-                throw new BadRequestException("invalid parameter: " + extraParameter 
-                        + " Extra value was specified, but not operation or value.");
-            }
-            
-            if (op != null && value != null && value.length() != 0) {
-                ret.add(new ConstraintLoad(op, value, extraValue));
-            }            
         }
         return ret;
     }

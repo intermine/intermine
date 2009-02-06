@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -118,20 +119,31 @@ public class ListsService extends WebService
         Constraint constraint = new Constraint(ConstraintOp.LOOKUP, input.getPublicId());
         node.getConstraints().add(constraint);
         pathQuery.getNodes().put(input.getType(), node);
-        pathQuery.addView(input.getType());
+        pathQuery.setView(getViewAccordingClasskeys(request, input.getType()));
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         Iterator<List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
-            ResultsRow row = (ResultsRow) it.next();
+            List<ResultElement> row = (ResultsRow) it.next();
             if (it.hasNext()) {
                 throw new BadRequestException("Multiple objects of type " + input.getType() 
                         + " with public id " + input.getPublicId() + " were found.");
             }
-            return ((InterMineObject) row.get(0)).getId();            
+            return ((InterMineObject) row.get(0).getObject()).getId();            
         } else {
             throw new ResourceNotFoundException("No objects of type " + input.getType() 
                     + " with public id " + input.getPublicId() + " were found.");            
         }
+    }
+
+    private List<String> getViewAccordingClasskeys(HttpServletRequest request,
+            String type) {
+        List<String> ret = new ArrayList<String>();
+        List<FieldDescriptor> descs = SessionMethods.getClassKeys(request.getSession()
+                .getServletContext()).get(type);
+        for (FieldDescriptor desc : descs) {
+            ret.add(type + "." + desc.getName());
+        } 
+        return ret;
     }
 
     private void forward(ListsServiceInput input, Output output) {

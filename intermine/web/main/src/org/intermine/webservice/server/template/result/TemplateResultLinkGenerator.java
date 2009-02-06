@@ -10,8 +10,9 @@ package org.intermine.webservice.server.template.result;
  *
  */
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
@@ -96,20 +97,40 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         if (highlighted) {
             ret += "<br />";
         }
-        List<Constraint> constraints = getConstraints(template);
-        for (int i = 0; i < constraints.size(); i++) {
-            Constraint cs = constraints.get(i);
-            if (i != 0) {
-                ret += "&";
-            }
-            int index = i + 1;
-            ret += operationToString(cs.getOp(), index , highlighted);
-            ret += "&" + valueToString(cs.getValue(), index, highlighted);
-            if (cs.getOp().equals(ConstraintOp.LOOKUP)) {
-                ret += "&" + extraToString(cs.getExtraValue(), index, highlighted);
+        Map<String, List<Constraint>> consMap = getConstraints(template);
+        int i = 0;
+        for (String path : consMap.keySet()) {
+            List<Constraint> constraints = consMap.get(path);
+            for (Constraint cons : constraints) {
+                if (i != 0) {
+                    ret += "&";
+                }
+                int index = i + 1;
+                ret += pathToString(path, index);
+                // if there are more constraints with the some path, codes must be added
+                if (constraints.size() > 1) {
+                    ret += "&" + codeToString(cons.getCode(), index);
+                }
+                ret += "&" + operationToString(cons.getOp(), index , highlighted);
+                ret += "&" + valueToString(cons.getValue(), index, highlighted);
+                if (cons.getOp().equals(ConstraintOp.LOOKUP)) {
+                    ret += "&" + extraToString(cons.getExtraValue(), index, highlighted);
+                } 
+                if (highlighted) {
+                    ret += "<br />";
+                }
+                i++;
             }
         }
         return ret;
+    }
+
+    private String codeToString(String code, int index) {
+        return "code" + index + "=" + code; 
+    }
+
+    private String pathToString(String path, int index) {
+        return "cons" + index + "=" + path;
     }
 
     private String operationToString(ConstraintOp op, int index, boolean highlighted) {
@@ -152,10 +173,10 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @param template
      * @return editable constraints 
      */
-    private List<Constraint> getConstraints(TemplateQuery template) {
-        List<Constraint> ret = new ArrayList<Constraint>();
+    private Map<String, List<Constraint>> getConstraints(TemplateQuery template) {
+        Map<String, List<Constraint>> ret = new HashMap<String, List<Constraint>>();
         for (PathNode node : template.getEditableNodes()) {
-            ret.addAll(template.getEditableConstraints(node));
+            ret.put(node.getPathString(), template.getEditableConstraints(node));
         }
         return ret;
     }

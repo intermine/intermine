@@ -10,6 +10,7 @@ package org.intermine.webservice.server.template.result;
  *
  */
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.webservice.server.WebServiceInput;
 
@@ -22,7 +23,7 @@ public class TemplateResultInput extends WebServiceInput
 {
     private String name;
     
-    private List<ConstraintLoad> constraints;
+    private Map<String, List<ConstraintLoad>> constraints;
     
     private boolean computeTotalCount = false;
 
@@ -62,7 +63,7 @@ public class TemplateResultInput extends WebServiceInput
      * Sets constraints.
      * @param constraints constraints
      */
-    public void setConstraints(List<ConstraintLoad> constraints) {
+    public void setConstraints(Map<String, List<ConstraintLoad>> constraints) {
         this.constraints = constraints;
     }
 
@@ -70,7 +71,7 @@ public class TemplateResultInput extends WebServiceInput
      * Returns constraints.
      * @return constraints
      */
-    public List<ConstraintLoad> getConstraints() {
+    public Map<String, List<ConstraintLoad>> getConstraints() {
         return constraints;
     }
 

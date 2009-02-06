@@ -238,4 +238,9 @@ public interface Constants
      * Batch size for the underlying objectstore
      */
     public static final int BATCH_SIZE = 500;
+
+    /**
+     * Current version of InterMine. This constant must changed by every new InteMine release.
+     */
+    public static final int INTERMINE_VERSION = 1;
 }
