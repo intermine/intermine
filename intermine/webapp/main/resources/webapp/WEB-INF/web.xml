@@ -70,6 +70,8 @@
 	<url-pattern>/service/query/results</url-pattern>
   </servlet-mapping>
 
+
+
   <servlet>
 	<servlet-name>ws-lists</servlet-name>
 	<servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
@@ -125,7 +127,21 @@
     <servlet-name>ws-widgets</servlet-name>
     <url-pattern>/service/widgets</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ws-version</servlet-name>
+    <servlet-class>org.intermine.webservice.server.VersionServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
 
+  <servlet-mapping>
+    <servlet-name>ws-version</servlet-name>
+    <url-pattern>/service/version</url-pattern>
+  </servlet-mapping>
+  
 <!-- ================================================================================= -->
 
   <session-config>
