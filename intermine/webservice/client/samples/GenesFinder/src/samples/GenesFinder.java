@@ -191,8 +191,8 @@ public class GenesFinder
         queryXml = queryXml.replaceAll("LocatedSequenceFeature", type);
         QueryService service = new ServiceFactory(serviceRootUrl, "GenesFinder")
                 .getQueryService();
-        int maxCount = 1000000;
-        List<List<String>> results = service.getResult(queryXml, 1, maxCount);
+        int maxCount = 10000;
+        List<List<String>> results = service.getResult(queryXml, maxCount);
         if (results.size() == maxCount) {
             throw new GenesFinderException("Too many genes for this location: "
                     + chromozome + " " + start + " " + end);
