@@ -56,13 +56,12 @@ sub usage
 {
   die <<"EOF";
 usage:
-  $0 [-b] [-e]
+  $0 [-b] [-e] [-t]
 
 Without arguments the script will run the entire process of releasing the mine.
 
 With flags:
- -b run only the first part of the script, which
-
+ -b run only the first part of the script
    * find current and previous versions from properties file
    * createdb new userprofile database <minename>-r<version>-userprofile
    * precompute queries and templates
@@ -75,13 +74,17 @@ With flags:
    N.B.: the current release webapp is now stopped!!
 
  -e run only the second part of the script
-
    * start new webapp
    * start old webapp
    * update apache rewrite/redirect configuration
    * restart apache
+
+ -t test run
+  as -b but don't stop the old webapp
+
 example:
   $0 -b
+
 EOF
 }
 
@@ -100,13 +103,14 @@ if (!-d 'dbmodel') {
 
 
 my %opts = ();
-if (!getopts('be', \%opts)) {
+if (!getopts('bet', \%opts)) {
   usage();
 }
 
 my $all = 1;
 my $begin = 0;
 my $end = 0;
+my $test = 0;
 
 if ($opts{b}) {
   $begin = 1;
@@ -116,6 +120,14 @@ if ($opts{b}) {
 if ($opts{e}) {
   $end = 1;
   $all = 0;
+}
+
+if ($opts{t}) {
+  $begin = 1;
+  $all = 0;
+  $test= 1;
+#warn "$all, $begin, $test";
+#exit 0;
 }
 
 
@@ -253,11 +265,12 @@ system ("ant -Drelease=r$new_version create-db-userprofile >> $LOG_FILENAME 2>&1
 #create_gbrowse_conf($GBROWSE_CONF_DIR, $current_version, $new_version);
 
 #################
+if (!$test) {
 warn "stopping old webapp (r$current_version)\n";
 
 system ("ant -Drelease=r$current_version stop-webapp >> $LOG_FILENAME 2>&1") == 0
   or die_with_log "can't stop webapp r$current_version: $!";
-
+}
 
 #################
 warn "write-userprofile-xml for current version\n";
@@ -297,7 +310,10 @@ my $apache_config = '';
 
 my $tomcat_host = get_property_value('webapp.deploy.url', $new_prop_filename);
 
-$tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
+#$tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
+# the preceding line was leaving the port number, for the moment substituting with this 2 expressions
+$tomcat_host =~ s!http://!$1!; # drop the http//
+$tomcat_host =~ s/(:\d+).*$//; # cut :8080
 
 {
   open my $apache_conf_file, '<', $APACHE_CONF_FILENAME
@@ -308,6 +324,12 @@ $tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
       $need_apache_config = 0;
       last;
     }
+
+
+	if ($line =~ m:/intermine.modencode.org/release-$current_version:) {
+  # added to change the present alias for intermine.modencode.org to the new version
+   		$line =~ s/release-$current_version/release-$new_version/;
+	}
 
     if ($line =~ m:</VirtualHost>:i) {
       $apache_config .= <<CONF;
