@@ -10,12 +10,16 @@ package org.intermine.webservice.server.template.result;
  *
  */
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -30,8 +34,6 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public class TemplateConfigurator
 {
 
-    private Iterator<ConstraintLoad> newConstraintIt;
-
     /**
      * Makes copy of original template and configures it with new constraints that have
      * new values. New constraints must correspond to old constraints. Actually this creates
@@ -41,24 +43,69 @@ public class TemplateConfigurator
      * @return new template
      */
     public TemplateQuery getConfiguredTemplate(TemplateQuery origTemplate,
-                                               List<ConstraintLoad> newConstraints) {
-        /* Made according to org.intermine.web.logic.template.
-         * TemplateHelper.templateFormToTemplateQuery().
-         * Be carefull when changing this code. If you replace constraint
-         * in list that was returned for example from getAllEditableConstraints method,
-         * this change won't have effect to template*/
+                                               Map<String, List<ConstraintLoad>> newConstraints) {
+        /* Be carefull when changing this code. If you replace constraint
+         * in list that was returned for example from getEditableConstraints method,
+         * this change won't have effect to template */
+        checkPaths(origTemplate.getModel(), newConstraints.values());
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
-        newConstraintIt = newConstraints.iterator();
         for (PathNode node : template.getEditableNodes()) {
-            for (Constraint c : template.getEditableConstraints(node)) {
-                setConstraint(node, c);
+            List<Constraint> cons = template.getEditableConstraints(node);
+            List<ConstraintLoad> loads = newConstraints.get(node.getPathString());
+            if (loads == null) {
+                throw new BadRequestException("There isn't specified constraint value "
+                        + "and operation for path " + node.getPathString() 
+                        + " in the request.");                
+            }
+            if (cons.size() > loads.size()) {
+                throw new BadRequestException("Template has more editable constraints for path " 
+                        + node.getPathString() + " than was specified. All must be specified in "
+                        + "the request.");
+            }
+            if (cons.size() < loads.size()) {
+                throw new BadRequestException("There were more constraints specified "
+                        + " in the request than there are editable constraints for path " 
+                        + node.getPathString() + ".");            
+            }
+            if (loads.size() == 1) {
+                setConstraint(node, cons.get(0), loads.get(0));                                    
+            } else {
+                for (Constraint con : cons) {
+                    boolean found = false;
+                    for (int i = 0; i < loads.size(); i++) {
+                        ConstraintLoad load = loads.get(i);
+                        if (load != null && con.getCode().equals(load.getCode())) {
+                            setConstraint(node, con, load);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        throw new BadRequestException("There are multiple editable constraints for "
+                                + "path " + node.getPathString() + " but value and operation for "
+                                + "constraint with code " + con.getCode() + " wasn't specified in " 
+                                + "the request or there is an error. Check the codes.");
+                    }
+                }
             }
         }
         return template;
     }
 
-    private void setConstraint(PathNode node, Constraint c) {
-        ConstraintLoad load = nextNewConstraint();
+    private void checkPaths(Model model, Collection<List<ConstraintLoad>> collection) {
+        for (List<ConstraintLoad> col : collection) {
+            for (ConstraintLoad load : col) {
+                try {
+                    new Path(model, load.getPathId());    
+                } catch (PathError ex) {
+                    throw new BadRequestException("Invalid path specified in " 
+                            + load.getParameterName() + " parameter.");
+                }                
+            }
+        }
+    }
+
+    private void setConstraint(PathNode node, Constraint c, ConstraintLoad load) {
         int constraintIndex = node.getConstraints().indexOf(c);
         Object extraValue = getExtraValue(c, load, node);
         Object value = getValue(c, load, node);
@@ -102,15 +149,5 @@ public class TemplateConfigurator
             fieldClass = String.class;
         }
         return fieldClass;
-    }
-
-
-    private ConstraintLoad nextNewConstraint() {
-        if (newConstraintIt.hasNext()) {
-            return newConstraintIt.next();
-        } else {
-            throw new BadRequestException("There is insufficient number of constraints in your "
-                    + "request. Template has more constrains than you have specified.");
-        }
     }
 }

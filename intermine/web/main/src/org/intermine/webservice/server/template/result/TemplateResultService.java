@@ -12,12 +12,13 @@ package org.intermine.webservice.server.template.result;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Locale;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.Globals;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -54,7 +55,7 @@ public class TemplateResultService extends QueryResultService
         if (template.getPathQuery().isValid()) {
             runPathQuery(template, input.getStart(), input.getMaxCount(),
                     input.isComputeTotalCount(), template.getTitle(),
-                    template.getDescription(), input, getMineLinkURL(request, input),
+                    template.getDescription(), input, getMineLinkURL(request, template, input),
                     input.getLayout());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
@@ -64,41 +65,63 @@ public class TemplateResultService extends QueryResultService
         }
     }
 
-    private Locale getLocale(HttpServletRequest request) {
-        return (Locale) request.getSession().getAttribute(Globals.LOCALE_KEY);
-    }
-
     private TemplateResultInput getInput() {
         return new TemplateResultRequestParser(request).getInput();
     }
 
-    private String getMineLinkURL(HttpServletRequest request, TemplateResultInput input) {
+    private String getMineLinkURL(HttpServletRequest request, TemplateQuery template, 
+            TemplateResultInput input) {
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
-        ret += "?" + getQueryString(request, input);
+        ret += "?" + getQueryString(request, template, input);
         ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateForm.TYPE_PARAMETER
             + "=" + TemplateHelper.ALL_TEMPLATE;
         return ret;
     }
 
-    private String getQueryString(HttpServletRequest request,
+    private String getQueryString(HttpServletRequest request, TemplateQuery template,
             TemplateResultInput input) {
         String ret = "";
         ret += TemplateForm.NAME_PARAMETER + "=" + en(input.getName()) + "&";
-        for (int i = 0; i < input.getConstraints().size(); i++) {
-            ConstraintLoad load = input.getConstraints().get(i);
-            ret += constraintToString(load, i + 1);
+        int i = 1;
+        for (PathNode node : template.getEditableNodes()) {
+            for (Constraint cons : template.getEditableConstraints(node)) {
+                ConstraintLoad load = getCorrespondingLoad(node.getPathString(), cons, input);
+                ret += constraintToString(load, i);
+                i++;
+            }
         }
         return ret;
     }
 
+    private ConstraintLoad getCorrespondingLoad(String path, Constraint cons,
+            TemplateResultInput input) {
+        List<ConstraintLoad> loads = input.getConstraints().get(path);
+        if (loads.size() == 1) {
+            return loads.get(0);
+        } else {
+            for (ConstraintLoad load : loads) {
+                if (load.getCode().equals(cons.getCode())) {
+                    return load;
+                }
+            }
+        }
+        throw new BadRequestException("Parameters for constraint with path " + path 
+                + " and code '" + cons.getCode() + "' were not probably provided.");
+    }
+
     private String constraintToString(ConstraintLoad load, int index) {
         String ret = "";
-        ret += en("attributeOps(" + index + ")") + "="
-            + en(load.getConstraintOp().getIndex().toString()) + "&";
-        ret += en("attributeValues(" + index + ")") + "=" + en(load.getValue()) + "&";
+        
+        ret += en("attributeOps(" + index + ")") + "=";
+        ret += en(load.getConstraintOp().getIndex().toString()) + "&";
+        
+        ret += en("attributeValues(" + index + ")") + "=";
+        ret += en(load.getValue()) + "&";
+        
         if (load.getExtraValue() != null) {
-            ret += en("extraValues(" + index + ")") + "=" + en(load.getExtraValue()) + "&";
+            ret += en("extraValues(" + index + ")") + "=" 
+                + en(load.getExtraValue()) + "&";
         }
         return ret;
     }
