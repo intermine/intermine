@@ -9,7 +9,10 @@
 <html:xhtml/>
 
 <c:set var="indent" value="0"/>
-
+<%-- Table tag is tricky here. It closes all the nested divs so when 
+there is some closing div missing than it doesn't spoil query builder page. 
+--%>
+<table><tr><td>
 <c:forEach var="node" items="${nodes}">
   <%-- This hideous stuff surrounds branches of the statically
     rendered tree with the right div ids. This kind of thing
@@ -31,7 +34,7 @@
 <c:forEach begin="1" end="${indent}">
   </div>
 </c:forEach>
-
+</td></tr></table>
 <!-- /mainBrowserLines.jsp -->
 
 
