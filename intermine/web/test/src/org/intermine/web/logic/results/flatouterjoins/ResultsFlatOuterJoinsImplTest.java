@@ -166,6 +166,22 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
                     Arrays.asList(
                         Arrays.asList(new MultiRowFirstValue(data.get("DepartmentB2"), 1), null))));
         results.put("ObjectStoreBagsForObject", NO_RESULT);
+        v1 = new MultiRowFirstValue(data.get("CompanyA"), 2);
+        v2 = new MultiRowFirstValue(data.get("DepartmentA1"), 2);
+        v3 = new MultiRowFirstValue(data.get("CompanyB"), 4);
+        v4 = new MultiRowFirstValue(data.get("DepartmentB1"), 2);
+        v5 = new MultiRowFirstValue(data.get("DepartmentB2"), 2);
+        MultiRowFirstValue v6 = new MultiRowFirstValue(data.get("CompanyB"), 2);
+        results.put("MultiColumnObjectInCollection", Arrays.asList(
+                    Arrays.asList(
+                        Arrays.asList(v1, v2, v1, new MultiRowFirstValue(data.get("ContractorA"), 1)),
+                        Arrays.asList(v1.getMrlv(), v2.getMrlv(), v1.getMrlv(), new MultiRowFirstValue(data.get("ContractorB"), 1))),
+                    Arrays.asList(
+                        Arrays.asList(v3, v4, v6, new MultiRowFirstValue(data.get("ContractorA"), 1)),
+                        Arrays.asList(v3.getMrlv(), v4.getMrlv(), v6.getMrlv(), new MultiRowFirstValue(data.get("ContractorB"), 1)),
+                        Arrays.asList(v3.getMrlv(), v5, v6, new MultiRowFirstValue(data.get("ContractorA"), 1)),
+                        Arrays.asList(v3.getMrlv(), v5.getMrlv(), v6.getMrlv(), new MultiRowFirstValue(data.get("ContractorB"), 1)))));
+
     }
 
     /**
@@ -211,7 +227,7 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
             MultiRowFirstValue mrfv = (MultiRowFirstValue) o;
             return "MRFV(" + objectToName(mrfv.getValue()) + ", " + mrfv.getRowspan() + ")";
         } else if (o instanceof MultiRowLaterValue) {
-            return "MRLV(" + objectToName(((MultiRowLaterValue) o).getValue());
+            return "MRLV(" + objectToName(((MultiRowLaterValue) o).getValue()) + ")";
         } else {
             return super.objectToName(o);
         }
