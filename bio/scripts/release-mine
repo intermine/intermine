@@ -83,7 +83,7 @@ With flags:
   as -b but don't stop the old webapp
 
 example:
-  $0 -b
+  $0 -t
 
 EOF
 }
