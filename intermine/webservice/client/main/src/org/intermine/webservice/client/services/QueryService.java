@@ -55,10 +55,6 @@ public class QueryService extends Service
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
         }
-
-        public void setStart(int start) {
-            setParameter("start", start + "");
-        }
         
         public void setMaxCount(int maxCount) {
             setParameter("size", maxCount + "");
@@ -119,54 +115,49 @@ public class QueryService extends Service
      * Returns results of specified PathQuery. If you expect a lot of results 
      * use getResultIterator() method.
      * @param query query
-     * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */
-    public List<List<String>> getResult(PathQuery query, int start, int maxCount) {
-        return getResultInternal(query.toXml(), start, maxCount).getData();
+    public List<List<String>> getResult(PathQuery query, int maxCount) {
+        return getResultInternal(query.toXml(), maxCount).getData();
     }
 
     /**
      * Returns results of specified PathQuery as iterator. Use this method if you expects a lot 
      * of results and you would run out of memory. 
      * @param query query
-     * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */
-    public Iterator<List<String>> getResultIterator(PathQuery query, int start, int maxCount) {
-        return getResultInternal(query.toXml(), start, maxCount).getIterator();
+    public Iterator<List<String>> getResultIterator(PathQuery query, int maxCount) {
+        return getResultInternal(query.toXml(), maxCount).getIterator();
     }
  
     /**
      * Returns results of specified PathQuery. If you expect a lot of results 
      * use getResultIterator() method.
      * @param queryXml PathQuery represented as a XML string
-     * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */    
-    public List<List<String>> getResult(String queryXml, int start, int maxCount) {
-        return getResultInternal(queryXml, start, maxCount).getData();
+    public List<List<String>> getResult(String queryXml, int maxCount) {
+        return getResultInternal(queryXml, maxCount).getData();
     }
 
     /**
      * Returns results of specified PathQuery. Use this method if you expects a lot 
      * of results and you would run out of memory. 
      * @param queryXml PathQuery represented as a XML string
-     * @param start index of first returned result, indexes starts at 1 
      * @param maxCount maximum number of returned results
      * @return results of specified PathQuery
      */    
-    public Iterator<List<String>> getResultIterator(String queryXml, int start, int maxCount) {
-        return getResultInternal(queryXml, start, maxCount).getIterator();
+    public Iterator<List<String>> getResultIterator(String queryXml, int maxCount) {
+        return getResultInternal(queryXml, maxCount).getIterator();
     }
     
-    private TabTableResult getResultInternal(String queryXml, int start, int maxCount) {
+    private TabTableResult getResultInternal(String queryXml, int maxCount) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
-        request.setStart(start);
         request.setMaxCount(maxCount);
         request.setQueryXml(queryXml);
         HttpConnection connection = executeRequest(request);
