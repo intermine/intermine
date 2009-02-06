@@ -42,12 +42,46 @@
 </c:choose>			
 --%>
 
-		</c:forEach>
+		</c:forEach> <%--organism --%>
 		</td>
 			<td><html:link
 				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
  ${item.key.name}
     </html:link>
+
+
+
+<br>
+      <c:forEach items="${counts}" var="nr">
+        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
+          <c:set var="nrSubs" value="${nr.value}" />
+        </c:if>
+      </c:forEach> 
+      <c:choose>
+        <c:when test="${nrSubs eq 0}">
+        -
+        </c:when>
+        <c:when test="${nrSubs gt 0}">
+        <hr>
+        <im:querylink text="${nrSubs} submissions" showArrow="true" skipBuilder="true">
+            <query name="" model="genomic"
+              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
+              sortOrder="Project.labs.submissions.title">
+            <node path="Project" type="Project">
+            </node>
+            <node path="Project.surnamePI" type="String">
+            <constraint op="=" value="${item.key.surnamePI}" description=""
+              identifier="" code="A">
+            </constraint>
+            </node>
+            </query>
+          </im:querylink>
+        </c:when>
+      </c:choose>
+
+</td>
+
+
 
 <td>
 <c:choose>
@@ -72,8 +106,10 @@
 </c:otherwise>
 </c:choose>
  </td>
+ 
+</c:forEach>
 
-
+<%--
      <td>
       <c:forEach items="${counts}" var="nr">
         <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
@@ -100,10 +136,9 @@
           </im:querylink>
         </c:when>
       </c:choose>
-     
-     
-     
   </c:forEach>
+
+--%>
 
 </table>
 </div>
