@@ -50,7 +50,7 @@ public class QueryAPIClient
         query.setOrderBy("Gene.primaryIdentifier");
         query.addConstraint("Gene.length", Constraints.lessThan(1000));
         // first 100 results are fetched
-        List<List<String>> result = service.getResult(query, 0, 100);
+        List<List<String>> result = service.getResult(query, 100);
         System.out.println("First 100 genes shorter than 1kB sorted according to the identifier: ");
         for (List<String> row : result) {
             for (String cell : row) {
