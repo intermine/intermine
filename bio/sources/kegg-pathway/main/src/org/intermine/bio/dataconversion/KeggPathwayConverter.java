@@ -9,15 +9,20 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
+import java.io.IOException;
 import java.io.File;
 import java.io.Reader;
+import java.util.List;
+import java.util.Set;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -35,12 +40,13 @@ import org.intermine.xml.full.ReferenceList;
 public class KeggPathwayConverter extends BioFileConverter
 {
     protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
-
+    private static final String PROP_FILE = "kegg_config.properties";
     protected Item dataSource, dataSet;
-    protected Map<String, String> keggOrganismToTaxonId = new HashMap<String, String>();
     protected HashMap pathwayMap = new HashMap();
     private Map<String, Item> geneItems = new HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
+    private Map<String, String[]> config = new HashMap();
+    private Set<String> taxonIds = new HashSet();
 
     /**
      * Constructor
@@ -49,23 +55,60 @@ public class KeggPathwayConverter extends BioFileConverter
      */
     public KeggPathwayConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG PATHWAY");
-
-        // Drosophila melanogaster
-        keggOrganismToTaxonId.put("dme", "7227");
-        // Homo sapiens
-        keggOrganismToTaxonId.put("hsa", "9606");
-       // Plasmodium falciparum
-        keggOrganismToTaxonId.put("pfa", "36329");
-        // Drosophila pseudoobscura
-//        keggOrganismToTaxonId.put("dpo", "7237");
-        // Anopheles gambiae
-//        keggOrganismToTaxonId.put("aga", "7165");
-        // Apis mellifera
-//        keggOrganismToTaxonId.put("dame", "7460");
-
+        readConfig();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
+
+
+    /**
+     * Sets the list of taxonIds that should be imported
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setKeggOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
+        LOG.info("Setting list of organisms to " + this.taxonIds);
+    }
+
+
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                                           + key);
+            }
+            String organism = attributes[0];
+
+            if (config.get(organism) == null) {
+                String[] configs = new String[2];
+                configs[1] = "primaryIdentifier";
+                config.put(organism, configs);
+            }
+            if (attributes[1].equals("taxonId")) {
+                config.get(organism)[0] = value;
+            } else if (attributes[1].equals("identifier")) {
+                config.get(organism)[1] = value;
+            } else {
+                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
+                    + ".  This line has not been processed.";
+                LOG.error(msg);
+            }
+        }
+    }
+
 
 
     /**
@@ -76,9 +119,9 @@ public class KeggPathwayConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
-        // there a two files
+        // there are two files
         // data is in format
-        // CG | list of space separated map Id's
+        // CG | list of space separated map Ids
         // and
         // Map Id | name
 
@@ -98,10 +141,12 @@ public class KeggPathwayConverter extends BioFileConverter
                 pathway.setAttribute("name", mapName);
                 store(pathway);
             } else if (matcher.find()) {
-                LOG.error("MATCHED");
-                String keggOrgName = matcher.group(1);
-                String taxonId = keggOrganismToTaxonId.get(keggOrgName);
-
+                String organism = matcher.group(1);
+                String taxonId = config.get(organism)[0];
+                // only process organisms set in project.xml
+                if (!taxonIds.isEmpty() && !taxonIds.contains(taxonId)) {
+                    continue;
+                }
                 if (taxonId != null && taxonId.length() != 0) {
                     String geneName = line[0];
 
@@ -123,16 +168,17 @@ public class KeggPathwayConverter extends BioFileConverter
                         referenceList.addRefId(getAndStoreItemOnce("Pathway", "identifier",
                                                                    mapArray[i]).getIdentifier());
                     }
-                    getGene(geneName, taxonId, referenceList);
+                    getGene(geneName, organism, referenceList);
                 }
             }
         }
     }
 
-    private Item getGene(String geneCG, String taxonId, ReferenceList referenceList)
+    private Item getGene(String geneCG, String organism, ReferenceList referenceList)
         throws ObjectStoreException {
         String identifier = null;
         IdResolver resolver = resolverFactory.getIdResolver(false);
+        String taxonId = config.get(organism)[0];
         if (taxonId.equals("7227") && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
@@ -148,28 +194,13 @@ public class KeggPathwayConverter extends BioFileConverter
 
         Item gene = geneItems.get(identifier);
         if (gene == null) {
-            Item organism = getAndStoreItemOnce("Organism", "taxonId", taxonId);
             gene = createItem("Gene");
-            if (taxonId.equals("7227") && resolver != null) {
-                gene.setAttribute("primaryIdentifier", identifier);
-            } else if (taxonId.equals("9606")) {
-                gene.setAttribute("ncbiGeneNumber", geneCG);
-            } else {
-                gene.setAttribute("primaryIdentifier", identifier);
-            }
-            gene.setReference("organism", organism);
+            gene.setAttribute(config.get(organism)[1], identifier);
+            gene.setReference("organism", getAndStoreItemOnce("Organism", "taxonId", taxonId));
             gene.addCollection(referenceList);
             geneItems.put(identifier, gene);
             store(gene);
         }
         return gene;
     }
-
-    /**
-     * Pick up the data location from the ant, the translator needs to open some more files.
-     * @param srcdatadir location of the source data
-     */
-//    public void setSrcDataDir(String srcdatadir) {
-//        this.dataLocation = srcdatadir;
-//    }
 }
