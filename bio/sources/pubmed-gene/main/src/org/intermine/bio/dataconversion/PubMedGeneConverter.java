@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
+import org.apache.commons.lang.StringUtils;
 
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -27,19 +29,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
-/*
- * - is it correct that for non 180454 genes identifier is not set?
- * - is it correct that for non 180454 genes organism is not set
- * WBGene00044949 X ?
- */
 
-/*
- * Inspired by ncbi_pubmed_xml.pl perl script. Basic optimization is
- * in the fact that data are loaded and processed incrementally by organism.
- * Memory can be saved by just saving referencesId to publications instead
- * of publications.
- *
- */
 /**
  * DataConverter creating items from PubMed data files. Data files contain
  * information about references between publications and genes and some
@@ -50,21 +40,13 @@ import org.intermine.xml.full.Item;
  *  ftp://ftp.ncbi.nlm.nih.gov/gene/DATA) and then writes the xml file for linking the
  *  ncbi gene ID to one or more pubmed IDs.
  *
- *  Configuration file must be configured in this way:
- *  &lt;source name="pubmed-gene" type="pubmed-gene"&gt;
- *      &lt;property name="src.data.dir" location="/shared/data/pubmed/current"/&gt;
- *      &lt;property name="src.data.dir.includes" value="gene2pubmed"/&gt;
- *      &lt;property name="infoFile" location="/shared/data/pubmed/current/gene_info"/&gt;
- *   &lt;/source&gt;
- *    => Convertor  is run only once with reader set to references file == pubmed2gene
- *
  * @author Jakub Kulaviak
  */
 public class PubMedGeneConverter extends FileConverter
 {
     private String referencesFileName;
     private File infoFile;
-    private Set<Integer> organismsToProcess = new HashSet<Integer>();
+    private Set<String> taxonIds = new HashSet();
     private Map<Integer, String> publications = new HashMap<Integer, String>();
     private String datasetRefId;
     private String datasourceRefId;
@@ -76,15 +58,6 @@ public class PubMedGeneConverter extends FileConverter
      */
     public PubMedGeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
-        // process only these organisms
-        // S.cerevisiae
-        organismsToProcess.add(new Integer(4932));
-        // C.elegans
-        organismsToProcess.add(new Integer(6239));
-        // D.melanogaster
-        organismsToProcess.add(new Integer(7227));
-        // A.gambiae str PEST
-        organismsToProcess.add(new Integer(7165));
 
         Item datasource = createItem("DataSource");
         datasource.setAttribute("name", "NCBI");
@@ -97,6 +70,14 @@ public class PubMedGeneConverter extends FileConverter
         store(dataset);
         datasetRefId = dataset.getIdentifier();
         resolverFactory = new FlyBaseIdResolverFactory("gene");
+    }
+    /**
+     * Sets the list of taxonIds that should be imported
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setPubmedOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
     }
 
     /**
@@ -127,11 +108,13 @@ public class PubMedGeneConverter extends FileConverter
             while (it.hasNext()) {
                 PubMedReference ref = it.next();
                 Integer organismId = ref.getOrganism();
-                if (organismsToProcess.contains(organismId)) {
-                    Map<Integer, List<String>> geneToPub = convertAndStorePubs(ref.getReferences());
-                    Item organism = createOrganism(organismId);
-                    geneConverter.processGenes(geneToPub, organismId, organism);
+                if (!taxonIds.isEmpty() && !taxonIds.contains(organismId.toString())) {
+                    continue;
                 }
+                Map<Integer, List<String>> geneToPub = convertAndStorePubs(ref.getReferences());
+                Item organism = createOrganism(organismId);
+                geneConverter.processGenes(geneToPub, organismId, organism);
+
             }
         } catch (ReferencesProcessorException ex) {
             throw new RuntimeException("Conversion failed. File: " + getReferencesFileName(), ex);
@@ -215,20 +198,6 @@ public class PubMedGeneConverter extends FileConverter
      */
     public void setInfoFile(File infoFile) {
         this.infoFile = infoFile;
-    }
-
-    /**
-     * @return organisms that only should be processed
-     */
-    public Set<Integer> getOrganismsToProcess() {
-        return organismsToProcess;
-    }
-
-    /**
-     * @param organismsToProcess organisms that only should be processed
-     */
-    public void setOrganismsToProcess(Set<Integer> organismsToProcess) {
-        this.organismsToProcess = organismsToProcess;
     }
 }
 

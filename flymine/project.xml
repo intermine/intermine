@@ -109,6 +109,7 @@
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
+      <property name="kegg.organisms" value="7227 9606"/>
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
@@ -139,14 +140,12 @@
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/shared/data/pdb/current"/>
     </source>
-
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
@@ -431,6 +430,7 @@
     </source>
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
+      <property name="pubmed.organisms" value="7227 7165 4932 6239"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/> 
     </source>
