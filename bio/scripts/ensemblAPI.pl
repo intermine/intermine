@@ -1,3 +1,4 @@
+
 #!/usr/bin/perl
 
 # translates data from ensembl database to intermine items XML file
@@ -41,7 +42,7 @@ $datasource_item->set('name', $datasource);
 my $org_item;
 my $dataset_item;
 
-my $config_file = '../sources/ensembl/resources/ensembl.config';
+my $config_file = '../sources/ensembl/resources/ensembl_config.properties';
 parse_config(read_file($config_file));
 
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
