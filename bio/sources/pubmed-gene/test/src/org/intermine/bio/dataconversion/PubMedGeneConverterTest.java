@@ -174,11 +174,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
         converter.setInfoFile(geneInfo);
         converter.setCurrentFile(gene2pubmed);
-        Set<Integer> orgs = new HashSet<Integer>();
-        orgs.add(34);
-        orgs.add(6239);
-        orgs.add(7227);
-        converter.setOrganismsToProcess(orgs);
+        converter.setPubmedOrganisms("34 6239 7227");
         converter.process(new FileReader(gene2pubmed));
         storedItems = itemWriter.getItems();
     }
