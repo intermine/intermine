@@ -16,11 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.intermine.dataconversion.ItemsTestCase;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
-public class KeggPathwayConverterTest extends ItemsTestCase
+public class KeggPathwayConverterTest extends MockItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
     KeggPathwayConverter converter;
