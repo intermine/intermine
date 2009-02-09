@@ -1,5 +1,13 @@
 InterMine Webservice Client 1.0
-29.8.2008
+6.2.2009
+
+Use this with FlyMine release 16 and newer.  For contacting FlyMine release 15 please use older client 
+implementation (flymine-release-15.0-client.zip), template service changed in particular. You can make
+sure that you are using right version just pointing your browser to http://connected_server/query/service/version 
+It displays version of InterMine deployed on the server. If the page on this server doesn't exist it 
+means that the server doesn't have web services or the version of the web services is 0.
+
+For all the issues with versions please see documentation at http://intermine.org/wiki/WebService#version
 
 Overview
 ========
