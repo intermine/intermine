@@ -73,6 +73,7 @@
 </item>
 <item id="10_1" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
+<reference name="organism" ref_id="9_1"/>
 </item>
 <item id="8_1" class="http://www.flymine.org/model/genomic#Protein">
 <attribute name="description" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
@@ -128,6 +129,7 @@
 </item>
 <item id="10_2" class="http://www.flymine.org/model/genomic#Gene">
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
+<reference name="organism" ref_id="9_1"/>
 </item>
 <item id="4_3" class="http://www.flymine.org/model/genomic#Comment">
 <attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
