@@ -130,23 +130,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOGGER.info("Starting CreateReferences.createUtrRefs()");
                 cr.createUtrRefs();
-            } else if ("fetch-ensembl-contig-sequences".equals(operation)) {
-                if (ensemblDb == null) {
-                    throw new BuildException("ensemblDb attribute is not set");
-                }
-                Database db = DatabaseFactory.getDatabase(ensemblDb);
-                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
-                LOGGER.info("Starting StoreSequences.storeContigSequences()");
-                ss.storeContigSequences();
-            } else if ("fetch-contig-sequences-ensembl".equals(operation)) {
-                if (ensemblDb == null) {
-                    throw new BuildException("ensemblDb attribute is not set");
-                }
-                Database db = DatabaseFactory.getDatabase(ensemblDb);
-                StoreSequences ss = new StoreSequences(getObjectStoreWriter(), db);
-                LOGGER.info("Starting StoreSequences.storeContigSequences() for ensemblDb:"
-                        + ensemblDb);
-                ss.storeContigSequences();
             } else if ("transfer-sequences".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToChromosome()");
