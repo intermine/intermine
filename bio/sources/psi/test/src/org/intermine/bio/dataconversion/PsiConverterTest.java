@@ -23,22 +23,21 @@ import org.intermine.metadata.Model;
 public class PsiConverterTest extends MockItemsTestCase
 {
 
-    Model model = Model.getInstanceByName("genomic");
     PsiConverter converter;
     MockItemWriter itemWriter;
 
     public PsiConverterTest(String arg) {
         super(arg);
+    }
+
+    public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap());
-        converter = new PsiConverter(itemWriter, model);
+        converter = new PsiConverter(itemWriter,  Model.getInstanceByName("genomic"));
+
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
         converter.resolverFactory = resolverFactory;
-
-    }
-
-    public void setUp() throws Exception {
         super.setUp();
     }
 
