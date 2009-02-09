@@ -380,6 +380,7 @@ public class UniprotConverter extends DirectoryConverter
         if (geneRefId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
+            gene.setReference("organism", getOrganism(entry.getTaxonId()));
             geneFields.remove(uniqueIdentifier);
             for (String geneField : geneFields) {
                 String identifier = getGeneIdentifier(entry, geneField);
@@ -725,19 +726,19 @@ public class UniprotConverter extends DirectoryConverter
         return refId;
     }
 
-    private String getOrganism(String orgId)
+    private String getOrganism(String taxonId)
     throws SAXException {
-        String refId = organisms.get(orgId);
+        String refId = organisms.get(taxonId);
         if (refId == null) {
             Item item = createItem("Organism");
-            item.setAttribute("taxonId", orgId);
-            organisms.put(orgId, item.getIdentifier());
+            item.setAttribute("taxonId", taxonId);
+            refId = item.getIdentifier();
+            organisms.put(taxonId, refId);
             try {
                 store(item);
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-            refId = item.getIdentifier();
         }
         return refId;
     }
