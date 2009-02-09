@@ -18,11 +18,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
+import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
@@ -77,10 +79,17 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
             headers = getHeaders(pt);
         }
         Exporter exporter = getExporter(out, separator, headers);
+        ExportResultsIterator iter = null;
         try {
-            exporter.export(getResultRows(pt, request));    
-        } finally {
-            releaseGoFaster();
+            try {
+                iter = getResultRows(pt, request);
+                iter.goFaster();
+                exporter.export(iter);    
+            } finally {
+                iter.releaseGoFaster();
+            }
+        } catch (ObjectStoreException e) {
+            throw new ExportException("ObjectStoreException while exporting", e);
         }
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");

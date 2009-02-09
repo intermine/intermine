@@ -32,7 +32,7 @@ public interface Exporter
      * Do export.
      * @param it iterator over stuff to be exported
      */
-    public void export(Iterator<List<ResultElement>> it);
+    public void export(Iterator<? extends List<ResultElement>> it);
 
     /**
      * This method finds out if result row composed from instances of these

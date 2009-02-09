@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -37,10 +38,10 @@ import org.intermine.web.logic.query.MainHelper;
  *
  * @author Matthew Wakeling
  */
-public class ExportResultsIterator implements Iterator<ResultsRow>
+public class ExportResultsIterator implements Iterator<ResultsRow<ResultElement>>
 {
     private Iterator<ResultsRow> osIter;
-    private Iterator<ResultsRow> subIter;
+    private Iterator<ResultsRow<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
     private int columnCount;
@@ -80,7 +81,7 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
                 returnBagQueryResults, false);
         results = os.execute(q, batchSize, true, true, true);
         osIter = results.iterator();
-        List<ResultsRow> empty = Collections.emptyList();
+        List<ResultsRow<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
         columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
@@ -99,7 +100,7 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
     /**
      * {@inheritDoc}
      */
-    public ResultsRow next() {
+    public ResultsRow<ResultElement> next() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
         }
@@ -112,6 +113,24 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
      */
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Switches on the goFaster mode in the objectstore for this query.
+     *
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void goFaster() throws ObjectStoreException {
+        ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
+    }
+
+    /**
+     * Switches off the goFaster mode in the objectstore for this query.
+     *
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public void releaseGoFaster() throws ObjectStoreException {
+        ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results.getQuery());
     }
 
     private List convertColumnTypes(List<? extends QuerySelectable> select, PathQuery pq,
@@ -167,18 +186,18 @@ public class ExportResultsIterator implements Iterator<ResultsRow>
         return retval;
     }
 
-    private List<ResultsRow> decodeRow(ResultsRow row) {
-        ResultsRow template = new ResultsRow();
+    private List<ResultsRow<ResultElement>> decodeRow(ResultsRow row) {
+        ResultsRow<ResultElement> template = new ResultsRow<ResultElement>();
         for (int i = 0; i < columnCount; i++) {
             template.add(null);
         }
-        List<ResultsRow> retval = new ArrayList<ResultsRow>();
+        List<ResultsRow<ResultElement>> retval = new ArrayList<ResultsRow<ResultElement>>();
         expandCollections(row, retval, template, columns);
         return retval;
     }
 
-    private void expandCollections(ResultsRow row, List<ResultsRow> retval, ResultsRow template,
-            List columns) {
+    private void expandCollections(ResultsRow row, List<ResultsRow<ResultElement>> retval,
+            ResultsRow<ResultElement> template, List columns) {
         if (row.size() != columns.size()) {
             throw new IllegalArgumentException("Column description (size " + columns.size()
                     + ") does not match input data (size " + row.size() + ")");

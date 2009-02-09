@@ -43,7 +43,7 @@ public class ExcelExporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(Iterator<List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
         try {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFSheet sheet = wb.createSheet("results");

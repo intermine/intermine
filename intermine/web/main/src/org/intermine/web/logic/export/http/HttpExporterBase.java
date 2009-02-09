@@ -10,15 +10,12 @@ package org.intermine.web.logic.export.http;
  *
  */
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.query.PathQueryExecutor;
+import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -40,18 +37,10 @@ public abstract class HttpExporterBase
      * @param request request
      * @return all results of pathquery corresponding specified paged table.
      */
-    public Iterator<List<ResultElement>> getResultRows(PagedTable pt, HttpServletRequest request) {
+    public ExportResultsIterator getResultRows(PagedTable pt, HttpServletRequest request) {
         PathQuery pathQuery = pt.getWebTable().getPathQuery();
         executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
         return executor.execute(pathQuery);
-    }
-    
-    /**
-     * Releases go faster. Must be called in finally block of block where method getResultRows
-     * is called. 
-     */
-    public void releaseGoFaster() {
-        // goFaster is not used now
     }
 }

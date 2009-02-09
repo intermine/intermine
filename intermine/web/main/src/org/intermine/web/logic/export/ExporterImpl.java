@@ -68,16 +68,22 @@ public class ExporterImpl implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(Iterator<List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
         try {
             if (headers != null) {
                 out.println(rowFormatter.format(new ArrayList<Object>(headers)));
             }
+            out.flush();
             ResultElementConverter converter = new ResultElementConverter();
             while (resultIt.hasNext()) {
                 List<ResultElement> result = resultIt.next();
                 out.println(rowFormatter.format(converter.convert(result)));
                 writtenResultsCount++;
+                if (writtenResultsCount % 10000 == 0) {
+                    if (out.checkError()) {
+                        throw new ExportException("Output closed");
+                    }
+                }
             }
             out.flush();
         } catch (RuntimeException e) {
