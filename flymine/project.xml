@@ -63,7 +63,7 @@
       <property name="src.data.dir" location="/shared/data/anopheles/mappings/current"/>
       <property name="src.data.dir.includes" value="New_IDs*"/>
     </source>
-    <source name="uniprot-keywords" type="uniprot-keywords" dump="true">
+    <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
@@ -73,7 +73,7 @@
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
-    <source name="bdgp-clone" type="bdgp-clone" dump="true">
+    <source name="bdgp-clone" type="bdgp-clone">
       <property name="src.data.dir" location="/shared/data/bdgp_clones"/>
       <property name="src.data.dir.includes" value="dgc2flybase.txt"/>
     </source>  
@@ -83,7 +83,7 @@
       <property name="gff3.seqDataSourceName" value="Micklem lab"/>
       <property name="src.data.dir" location="/shared/data/long_oligo"/>
     </source>
-    <source name="ensembl" type="ensembl" dump="true"> 
+    <source name="ensembl" type="ensembl"> 
      <property name="src.data.dir" location="/shared/data/ensembl/current"/> 
     </source> 
     <source name="flyreg" type="flyreg">
@@ -114,7 +114,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr" dump="true">
+    <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
@@ -418,7 +418,7 @@
       <property name="fasta.synonymSource" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.flymine.model.genomic.ThreePrimeUTR"/>
@@ -473,7 +473,7 @@
       <property name="organisms" value="7227 6239 4932"/>
     </source>
 
-    <source name="biogrid" type="biogrid" dump="true">
+    <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
