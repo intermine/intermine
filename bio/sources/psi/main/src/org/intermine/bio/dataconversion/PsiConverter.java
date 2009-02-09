@@ -9,16 +9,16 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -42,6 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PsiConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PsiConverter.class);
+    private static final String PROP_FILE = "psi-intact_config.properties";
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Object> experimentNames = new HashMap<String, Object>();
@@ -50,6 +51,7 @@ public class PsiConverter extends BioFileConverter
     private Map<String, Item> genes = new  HashMap<String, Item>();
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
+    private Map<String, String[]> config = new HashMap();
 
     /**
      * Constructor
@@ -58,7 +60,7 @@ public class PsiConverter extends BioFileConverter
      */
     public PsiConverter(ItemWriter writer, Model model) {
         super(writer, model, "IntAct", "IntAct data set");
-
+        readConfig();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
 
@@ -79,6 +81,44 @@ public class PsiConverter extends BioFileConverter
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                                           + key);
+            }
+            String organism = attributes[0];
+
+            if (config.get(organism) == null) {
+                String[] configs = new String[2];
+                configs[0] = "primaryIdentifier";
+                configs[1] = "ensembl";
+                config.put(organism, configs);
+            }
+            if (attributes[1].equals("identifier")) {
+                config.get(organism)[0] = value;
+            } else if (attributes[1].equals("datasource")) {
+                config.get(organism)[1] = value.toLowerCase();
+            } else {
+                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
+                    + ".  This line has not been processed.";
+                LOG.error(msg);
+            }
         }
     }
 
@@ -116,7 +156,6 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("experimentDescription") == 2) {
                 attName = "experimentName";
-
             //  <experimentList><experimentDescription id="2"><names><fullName>
             } else if (qName.equals("fullName") && stack.peek().equals("names")
                             && stack.search("experimentDescription") == 2) {
@@ -138,7 +177,6 @@ public class PsiConverter extends BioFileConverter
                     comment = createItem("Comment");
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
-
                 } else {
                     LOG.info("Can't create comment, bad experiment.");
                 }
@@ -165,18 +203,9 @@ public class PsiConverter extends BioFileConverter
             // <interactorList><interactor id="4"><xref>
             // <secondaryRef db="sgd" dbAc="MI:0484" id="S000006331" secondary="YPR127W"/>
             } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
-                            && stack.search("interactor") == 2) {
-                String db = attrs.getValue("db");
-                if (db != null) {
-                    if (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")
-                                    || db.equalsIgnoreCase("ensembl")) {
-                        if (!db.equals("ensembl")) {
-                            db = "primaryIdentifier";
-                        }
-                        identifiers.put(db, attrs.getValue("id"));
-                    }
-                }
-
+                            && stack.search("interactor") == 2
+                       && attrs.getValue("db") != null) {
+                identifiers.put(attrs.getValue("db").toLowerCase(), attrs.getValue("id"));
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
@@ -282,46 +311,6 @@ public class PsiConverter extends BioFileConverter
             stack.push(qName);
             attValue = new StringBuffer();
         }
-
-
-        /**
-         * {@inheritDoc}
-         */
-        public void characters(char[] ch, int start, int length) {
-            int st = start;
-            int l = length;
-
-            if (attName != null) {
-
-                // DefaultHandler may call this method more than once for a single
-                // attribute content -> hold text & create attribute in endElement
-                while (l > 0) {
-                    boolean whitespace = false;
-                    switch(ch[st]) {
-                    case ' ':
-                    case '\r':
-                    case '\n':
-                    case '\t':
-                        whitespace = true;
-                        break;
-                    default:
-                        break;
-                    }
-                    if (!whitespace) {
-                        break;
-                    }
-                    ++st;
-                    --l;
-                }
-
-                if (l > 0) {
-                    StringBuffer s = new StringBuffer();
-                    s.append(ch, st, l);
-                    attValue.append(s);
-                }
-            }
-        }
-
 
         /**
          * {@inheritDoc}
@@ -576,19 +565,17 @@ public class PsiConverter extends BioFileConverter
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
 
-            String identifier = null, label = null;
-
-            if (taxonId.equals("7227") || taxonId.equals("4932")) {
-                identifier = identifiers.get("primaryIdentifier");
-                label = "primaryIdentifier";
-            } else {
-                identifier = identifiers.get("ensembl");
-                if (identifier != null) {
-                    label = (identifier.startsWith("EN")
-                                    ? "primaryIdentifier" : "secondaryIdentifier");
-                }
+            if (config.get(taxonId) == null) {
+                throw new RuntimeException("taxonId not found: " + taxonId);
             }
 
+            String field = config.get(taxonId)[0];
+            String datasource = config.get(taxonId)[1];
+            String identifier = identifiers.get(datasource);
+
+            System.out.println("field:" + field);
+            System.out.println("datasource:" + datasource);
+            System.out.println("identifier:" + identifier);
             if (taxonId.equals("7227")) {
                 IdResolver resolver = resolverFactory.getIdResolver(false);
                 if (resolver != null) {
@@ -612,7 +599,7 @@ public class PsiConverter extends BioFileConverter
             Item item = genes.get(identifier);
             if (item == null) {
                 item = createItem("Gene");
-                item.setAttribute(label, identifier);
+                item.setAttribute(field, identifier);
                 item.setReference("organism", getOrganism(taxonId));
                 genes.put(identifier, item);
                 store(item);
@@ -657,6 +644,45 @@ public class PsiConverter extends BioFileConverter
                 experimentNames.put(name, eh);
             }
             return eh;
+        }
+
+
+        /**
+         * {@inheritDoc}
+         */
+        public void characters(char[] ch, int start, int length) {
+            int st = start;
+            int l = length;
+
+            if (attName != null) {
+
+                // DefaultHandler may call this method more than once for a single
+                // attribute content -> hold text & create attribute in endElement
+                while (l > 0) {
+                    boolean whitespace = false;
+                    switch(ch[st]) {
+                    case ' ':
+                    case '\r':
+                    case '\n':
+                    case '\t':
+                        whitespace = true;
+                        break;
+                    default:
+                        break;
+                    }
+                    if (!whitespace) {
+                        break;
+                    }
+                    ++st;
+                    --l;
+                }
+
+                if (l > 0) {
+                    StringBuffer s = new StringBuffer();
+                    s.append(ch, st, l);
+                    attValue.append(s);
+                }
+            }
         }
 
         /**
