@@ -63,7 +63,7 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(Iterator<List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }

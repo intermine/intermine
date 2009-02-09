@@ -131,8 +131,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int minBagTableSize = -1;
     protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
     protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
-    protected Map goFasterMap = Collections.synchronizedMap(new IdentityHashMap());
-    protected Map goFasterCacheMap = Collections.synchronizedMap(new IdentityHashMap());
+    protected Map<Query, PrecomputedTable> goFasterMap = Collections.synchronizedMap(
+            new IdentityHashMap<Query, PrecomputedTable>());
+    protected Map<Query, OptimiserCache> goFasterCacheMap = Collections.synchronizedMap(
+            new IdentityHashMap<Query, OptimiserCache>());
+    protected Map<Query, Integer> goFasterCountMap = new IdentityHashMap<Query, Integer>();
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
     private String description;
     protected Map<String, Results> resultsCache = new CacheMap<String, Results>();
@@ -970,10 +973,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long startOptimiseTime = System.currentTimeMillis();
             ExplainResult explainResult = null;
             if (optimise && everOptimise()) {
-                PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(q);
+                PrecomputedTable pt = goFasterMap.get(q);
                 BestQuery bestQuery;
                 if (pt != null) {
-                    OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(q);
+                    OptimiserCache oCache = goFasterCacheMap.get(q);
                     bestQuery = QueryOptimiser.optimiseWith(sql, null, db, c,
                             QueryOptimiserContext.DEFAULT, Collections.singleton(pt), oCache);
                     if (sql.equals(bestQuery.getBestQueryString())) {
@@ -1790,24 +1793,29 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if something is wrong
      */
     public void goFasterWithConnection(Query q, Connection c) throws ObjectStoreException {
-        if (goFasterMap.containsKey(q)) {
-            throw new ObjectStoreException("Error - this Query is already going faster");
-        }
-        try {
-            if (getMinBagTableSize() != -1) {
-                createTempBagTables(c, q);
-                flushOldTempBagTables(c);
+        synchronized (goFasterMap) {
+            if (goFasterMap.containsKey(q)) {
+                int goFasterCount = goFasterCountMap.get(q).intValue();
+                goFasterCount++;
+                goFasterCountMap.put(q, new Integer(goFasterCount));
             }
-            String sql = SqlGenerator.generate(q, schema, db, null,
-                    SqlGenerator.QUERY_NORMAL, Collections.EMPTY_MAP);
-            PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
-                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-            ptm.addTableToDatabase(pt, new HashSet(), false);
-            goFasterMap.put(q, pt);
-            goFasterCacheMap.put(q, new OptimiserCache());
-        } catch (SQLException e) {
-            throw new ObjectStoreException(e);
+            try {
+                if (getMinBagTableSize() != -1) {
+                    createTempBagTables(c, q);
+                    flushOldTempBagTables(c);
+                }
+                String sql = SqlGenerator.generate(q, schema, db, null,
+                        SqlGenerator.QUERY_NORMAL, Collections.EMPTY_MAP);
+                PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
+                        sql, "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+                ptm.addTableToDatabase(pt, new HashSet(), false);
+                goFasterMap.put(q, pt);
+                goFasterCacheMap.put(q, new OptimiserCache());
+                goFasterCountMap.put(q, new Integer(1));
+            } catch (SQLException e) {
+                throw new ObjectStoreException(e);
+            }
         }
     }
 
@@ -1819,11 +1827,22 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public void releaseGoFaster(Query q) throws ObjectStoreException {
         try {
-            PrecomputedTable pt = (PrecomputedTable) goFasterMap.remove(q);
-            if (pt != null) {
-                goFasterCacheMap.remove(q);
-                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-                ptm.deleteTableFromDatabase(pt.getName());
+            synchronized (goFasterMap) {
+                if (goFasterMap.containsKey(q)) {
+                    int goFasterCount = goFasterCountMap.get(q).intValue();
+                    goFasterCount--;
+                    if (goFasterCount == 0) {
+                        PrecomputedTable pt = goFasterMap.remove(q);
+                        goFasterCacheMap.remove(q);
+                        goFasterCountMap.remove(q);
+                        if (pt != null) {
+                            PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
+                            ptm.deleteTableFromDatabase(pt.getName());
+                        }
+                    } else {
+                        goFasterCountMap.put(q, new Integer(goFasterCount));
+                    }
+                }
             }
         } catch (SQLException e) {
             throw new ObjectStoreException(e);

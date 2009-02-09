@@ -74,7 +74,7 @@ public class SequenceExporter implements Exporter
      * Lines are always separated with \n because third party tool writeFasta
      * is used for writing sequence.
      */
-    public void export(Iterator<List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
         // IDs of the features we have successfully output - used to avoid duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
 

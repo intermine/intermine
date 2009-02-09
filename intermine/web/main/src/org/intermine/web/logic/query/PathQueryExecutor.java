@@ -30,16 +30,16 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Executes path query and returns results in form suitable for export or web services.
- * 
+ *
  * @author Jakub Kulaviak
  */
 public class PathQueryExecutor
 {
-    
+
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
     private static final int INFINITE_RESULTS_SIZE = 1000000000;
-    
+
     private Map<String, InterMineBag> allBags;
 
     private BagQueryRunner runner;
@@ -47,7 +47,7 @@ public class PathQueryExecutor
     private ObjectStore os;
 
     private int batchSize = DEFAULT_BATCH_SIZE;
-    
+
     /**
      * Sets batch size.
      * @param size batch size
@@ -55,7 +55,7 @@ public class PathQueryExecutor
     public void setBatchSize(int size) {
         this.batchSize = size;
     }
-        
+
     /**
      * Constructor with necessary objects.
      * @param os the ObjectStore to run the query in
@@ -68,35 +68,39 @@ public class PathQueryExecutor
     public PathQueryExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
-            Profile profile, List<TemplateQuery> conversionTemplates, 
+            Profile profile, List<TemplateQuery> conversionTemplates,
             SearchRepository searchRepository) {
         this.os = os;
         this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
-        this.allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                searchRepository);    
-    }
-            
-    /**
-     * Executes object store query and returns results as iterator over rows. Every row is a list 
-     * of result elements.
-     * @param pathQuery path query to be executed 
-     * @return results
-     */
-    public Iterator<List<ResultElement>> execute(PathQuery pathQuery) {
-        return execute(pathQuery, 0, INFINITE_RESULTS_SIZE);
+        this.allBags = WebUtil.getAllBags(profile.getSavedBags(),
+                searchRepository);
     }
 
     /**
-     * Executes object store query and returns results as iterator over rows. Every row is a list 
-     * of result elements. 
+     * Executes object store query and returns results as iterator over rows. Every row is a list
+     * of result elements.
      * @param pathQuery path query to be executed
-     * @param start index of first result which will be retrieved. It can be very slow, 
-     * it fetches results from database from index 0 and just throws away all before start index.
-     * @param limit maximum number of results 
      * @return results
      */
-    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int start, 
+    public ExportResultsIterator execute(PathQuery pathQuery) {
+        try {
+            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Creating export results iterator failed", e);
+        }
+    }
+
+    /**
+     * Executes object store query and returns results as iterator over rows. Every row is a list
+     * of result elements.
+     * @param pathQuery path query to be executed
+     * @param start index of first result which will be retrieved. It can be very slow,
+     * it fetches results from database from index 0 and just throws away all before start index.
+     * @param limit maximum number of results
+     * @return results
+     */
+    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int start,
             final int limit) {
         final ExportResultsIterator resultIt;
         try {
@@ -113,16 +117,16 @@ public class PathQueryExecutor
                 // throw away results before start index
                 while (counter < start) {
                     if (resultIt.hasNext()) {
-                        next();    
+                        next();
                     } else {
                         return false;
                     }
                 }
-                
+
                 if (counter >= (limit + start)) {
                     return false;
                 } else {
-                    return resultIt.hasNext();    
+                    return resultIt.hasNext();
                 }
             }
 
@@ -137,5 +141,5 @@ public class PathQueryExecutor
             }
         };
         return ret;
-    }    
+    }
 }

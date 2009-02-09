@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
@@ -35,6 +36,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
@@ -77,11 +79,16 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths);
-            exporter.export(getResultRows(pt, request));
+            ExportResultsIterator iter = null;
+            try {
+                iter = getResultRows(pt, request);
+                iter.goFaster();
+                exporter.export(iter);
+            } finally {
+                iter.releaseGoFaster();
+            }
         } catch (Exception e) {
             throw new ExportException("Export failed", e);
-        } finally {
-            releaseGoFaster();
         }
         
         if (exporter.getWrittenResultsCount() == 0) {

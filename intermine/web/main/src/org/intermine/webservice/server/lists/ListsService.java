@@ -121,7 +121,7 @@ public class ListsService extends WebService
         pathQuery.getNodes().put(input.getType(), node);
         pathQuery.setView(getViewAccordingClasskeys(request, input.getType()));
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
-        Iterator<List<ResultElement>> it = executor.execute(pathQuery);
+        Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
             List<ResultElement> row = (ResultsRow) it.next();
             if (it.hasNext()) {

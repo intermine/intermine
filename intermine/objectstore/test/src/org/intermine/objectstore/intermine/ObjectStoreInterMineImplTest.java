@@ -427,6 +427,11 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             ((ObjectStoreInterMineImpl) os).cancelRequest(id);
             ((ObjectStoreInterMineImpl) os).deregisterStatement(s);
             ((ObjectStoreInterMineImpl) os).deregisterRequestId(id);
+            try {
+                s.executeQuery("SELECT 1");
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
         } finally {
             ((ObjectStoreInterMineImpl) os).releaseConnection(c);
         }
@@ -440,7 +445,6 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         } catch (ObjectStoreException e) {
             assertEquals("This Thread is not registered with ID flibble3", e.getMessage());
         }
-        Thread.sleep(1000);
     }
 
     /*

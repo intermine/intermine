@@ -279,15 +279,21 @@ public class PrecomputedTableManager
                 LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
                 indexes.add(orderByField);
             } else {
-                List orderBy = pt.getQuery().getOrderBy();
+                List<AbstractValue> orderBy = (List<AbstractValue>) pt.getQuery().getOrderBy();
                 if (!orderBy.isEmpty()) {
-                    AbstractValue firstOrderBy = ((AbstractValue) orderBy.get(0));
-                    SelectValue firstOrderByValue = ((SelectValue) pt.getValueMap()
-                            .get(firstOrderBy));
-                    if (firstOrderByValue != null) {
-                        LOG.info("Creating index on precomputed table " + pt.getName());
-                        indexes.add(firstOrderByValue.getAlias());
+                    boolean needComma = false;
+                    StringBuilder sb = new StringBuilder();
+                    for (AbstractValue ob : orderBy) {
+                        if (needComma) {
+                            sb.append(", ");
+                        }
+                        needComma = true;
+                        SelectValue obv = (SelectValue) pt.getValueMap().get(ob);
+                        sb.append(obv.getAlias());
                     }
+                    LOG.info("Creating index on precomputed table " + pt.getName() + "(" + sb
+                            + ")");
+                    indexes.add(sb.toString());
                 }
             }
             indexes = canonicaliseIndexes(indexes);
