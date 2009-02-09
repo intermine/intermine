@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 
 /**
  * File processor processing references between genes and publications
- * from PubMed.  
+ * from PubMed.
  * @author Jakub Kulaviak
  **/
 public class ReferencesFileProcessor
@@ -31,7 +31,7 @@ public class ReferencesFileProcessor
     private BufferedReader reader;
 
     private Integer processedOrganism = null;
-    
+
     /**
      * Constructor.
      * @param fileReader reader of file from which data are obtained, this class
@@ -40,18 +40,18 @@ public class ReferencesFileProcessor
     public ReferencesFileProcessor(Reader fileReader) {
         reader = new BufferedReader(fileReader);
     }
-    
+
     /**
-     * @return iterator over data in file. Each item in collection that is iterator 
+     * @return iterator over data in file. Each item in collection that is iterator
      * iterating over is PubMedReference object that carries information about
-     * references between genes and publications for one organism. 
-     * @see PubMedReference for content of data 
+     * references between genes and publications for one organism.
+     * @see PubMedReference for content of data
      */
     public Iterator<PubMedReference> getReferencesIterator() {
         return new ReferencesIterator();
     }
 
-    private class ReferencesIterator implements Iterator<PubMedReference>  
+    private class ReferencesIterator implements Iterator<PubMedReference>
     {
 
         private int lineCounter = 0;
@@ -62,18 +62,18 @@ public class ReferencesFileProcessor
 
         public ReferencesIterator() {
             try {
-                next = parseNext();    
+                next = parseNext();
             } catch (IOException ex) {
                 throw  new ReferencesProcessorException(ex);
             }
         }
-        
+
         private PubMedReference parseNext() throws IOException {
             if (reader == null) {
                 return null;
             }
             String line;
-            Map<Integer, List<Integer>> references = new HashMap<Integer, List<Integer>>(); 
+            Map<Integer, List<Integer>> references = new HashMap<Integer, List<Integer>>();
             while ((line = getLine()) != null) {
                 line = line.trim();
                 lineCounter++;
@@ -82,19 +82,19 @@ public class ReferencesFileProcessor
                 }
                 String[] parts = line.split("\\t");
                 if (parts.length != 3) {
-                    throw new ReferencesProcessorException("Error at " + lineCounter 
-                            + " line. It doesn't have" 
+                    throw new ReferencesProcessorException("Error at " + lineCounter
+                            + " line. It doesn't have"
                             + " format tax_id\tGeneID\tPubMed_ID.");
                 }
                 Integer organismId, geneId, pubId;
                 try {
                     organismId = new Integer(parts[0].trim());
                     geneId = new Integer(parts[1].trim());
-                    pubId = new Integer(parts[2].trim());                    
+                    pubId = new Integer(parts[2].trim());
                 } catch (NumberFormatException ex) {
-                    throw new ReferencesProcessorException("Invalid identifier at line " 
+                    throw new ReferencesProcessorException("Invalid identifier at line "
                             + lineCounter + ". Identifier is not integer.");
-                }                
+                }
                 if (processedOrganism == null) {
                     processedOrganism = organismId;
                 }
@@ -124,12 +124,12 @@ public class ReferencesFileProcessor
                 String tmp = lastLine;
                 lastLine = null;
                 return tmp;
-            } else {
-                return reader.readLine();
             }
+            return reader.readLine();
+
         }
 
-        private void processReference(Integer geneId, Integer pubId, 
+        private void processReference(Integer geneId, Integer pubId,
                 Map<Integer, List<Integer>> references) {
             List<Integer> publications = references.get(geneId);
             if (publications == null) {
@@ -154,6 +154,6 @@ public class ReferencesFileProcessor
 
         public void remove() {
             throw new UnsupportedOperationException();
-        }        
-    }    
+        }
+    }
 }
