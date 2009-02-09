@@ -573,9 +573,6 @@ public class PsiConverter extends BioFileConverter
             String datasource = config.get(taxonId)[1];
             String identifier = identifiers.get(datasource);
 
-            System.out.println("field:" + field);
-            System.out.println("datasource:" + datasource);
-            System.out.println("identifier:" + identifier);
             if (taxonId.equals("7227")) {
                 IdResolver resolver = resolverFactory.getIdResolver(false);
                 if (resolver != null) {
