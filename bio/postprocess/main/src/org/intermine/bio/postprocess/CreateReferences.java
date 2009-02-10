@@ -14,23 +14,45 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.intermine.objectstore.query.*;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStore;
-
-import org.intermine.sql.Database;
-
+import org.apache.log4j.Logger;
+import org.flymine.model.genomic.Annotation;
+import org.flymine.model.genomic.CDS;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.ChromosomeBand;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.FivePrimeUTR;
+import org.flymine.model.genomic.GOAnnotation;
+import org.flymine.model.genomic.GOTerm;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.MRNA;
+import org.flymine.model.genomic.Protein;
+import org.flymine.model.genomic.ThreePrimeUTR;
+import org.flymine.model.genomic.Transcript;
+import org.flymine.model.genomic.UTR;
 import org.intermine.bio.util.Constants;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.TypeUtil;
-import org.flymine.model.genomic.*;
-
-import org.apache.log4j.Logger;
 
 /**
  * Fill in additional references/collections in genomic model
@@ -61,21 +83,6 @@ public class CreateReferences
     public void insertReferences() throws Exception {
 
         LOG.info("insertReferences stage 1");
-        // Transcript.exons / Exon.transcripts
-        insertCollectionField(Transcript.class, "subjects", RankedRelation.class, "subject",
-                              Exon.class, "transcripts", false);
-
-        LOG.info("insertReferences stage 2");
-        // Gene.transcript / Transcript.gene
-        insertReferenceField(Gene.class, "subjects", SimpleRelation.class, "subject",
-                             Transcript.class, "gene");
-
-        LOG.info("insertReferences stage 3");
-        // this should now be done by CalculateLocations.createChromosomeLocationsAndLengths
-        //insertReferenceField(Chromosome.class, "subjects", Location.class, "subject",
-        //                     LocatedSequenceFeature.class, "chromosome");
-
-        LOG.info("insertReferences stage 4");
         // fill in collections on Chromosome
         insertCollectionField(Gene.class, "objects", Location.class, "object",
                               Chromosome.class, "genes", false);
@@ -86,24 +93,16 @@ public class CreateReferences
         insertCollectionField(ChromosomeBand.class, "objects", Location.class, "object",
                               Chromosome.class, "chromosomeBands", false);
 
-        LOG.info("insertReferences stage 5");
+        LOG.info("insertReferences stage 2");
         // Exon.gene / Gene.exons
         insertReferenceField(Gene.class, "transcripts", Transcript.class, "exons",
                              Exon.class, "gene");
-        LOG.info("insertReferences stage 6");
+        LOG.info("insertReferences stage 3");
         // UTR.gene / Gene.UTRs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "UTRs",
                              UTR.class, "gene");
-        LOG.info("insertReferences stage 7");
-        // Gene.chromosome / Chromosome.genes
-        insertReferenceField(Chromosome.class, "exons", Exon.class, "gene",
-                             Gene.class, "chromosome");
-        LOG.info("insertReferences stage 8");
-        // Transcript.chromosome / Chromosome.transcripts
-        insertReferenceField(Chromosome.class, "exons", Exon.class, "transcripts",
-                             Transcript.class, "chromosome");
-        LOG.info("insertReferences stage 9");
 
+        LOG.info("insertReferences stage 4");
         // CDS.gene / Gene.CDSs
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
@@ -114,7 +113,7 @@ public class CreateReferences
             DatabaseUtil.analyse(db, false);
         }
 
-        LOG.info("insertReferences stage 13");
+        LOG.info("insertReferences stage 5");
         insertGeneAnnotationReferences();
 
         if (os instanceof ObjectStoreInterMineImpl) {
@@ -320,226 +319,6 @@ public class CreateReferences
 
 
     /**
-     * Create specific named collection of a particular Relation type.
-     * For example Gene.subjects contains Orthologues and other Relations, create collection
-     * called Gene.orthologues with just Orthologues in (but remain duplicated in Gene.subjects.
-     * BioEntity.collection1 -> Relation   ==>   BioEntity.collection2 -> subclass of Relation
-     * @param thisClass the class of the objects to fill in a collection for
-     * @param collectionClass the type of Relation in the collection
-     * @param oldCollectionName the name of the collection to find objects in
-     * @param newCollectionName the name of the collection to add objects to
-     * @throws Exception if anything goes wrong
-     */
-    protected void insertReferences(Class thisClass, Class collectionClass,
-                                    String oldCollectionName, String newCollectionName)
-        throws Exception {
-
-        LOG.info("Beginning insertReferences(" + thisClass.getName() + ", "
-                 + collectionClass.getName() + ", " + oldCollectionName + ", "
-                 + newCollectionName + ")");
-
-        long startTime = System.currentTimeMillis();
-
-        InterMineObject lastObject = null;
-        Set newCollection = new HashSet();
-        Iterator resIter = PostProcessUtil.findConnectedClasses(osw.getObjectStore(), thisClass,
-                                                         collectionClass, oldCollectionName);
-        // results will be: thisClass ; collectionClass  (ordered by thisClass)
-        osw.beginTransaction();
-
-        int count = 0;
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            InterMineObject thisObject = (InterMineObject) rr.get(0);
-            InterMineObject collectionObject = (InterMineObject) rr.get(1);
-
-            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
-                if (lastObject != null) {
-                    // clone so we don't change the ObjectStore cache
-                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-
-                    TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                    count += newCollection.size();
-                    osw.store(tempObject);
-                }
-
-                newCollection = new HashSet();
-            }
-
-            newCollection.add(collectionObject);
-
-            lastObject = thisObject;
-        }
-
-        if (lastObject != null) {
-            // clone so we don't change the ObjectStore cache
-            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-            count += newCollection.size();
-            osw.store(tempObject);
-        }
-        LOG.info("Created " + count + " " + newCollectionName + " collections in "
-                 + thisClass.getName() + " of " + collectionClass.getName()
-                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
-        osw.commitTransaction();
-
-        // now ANALYSE tables relation to class that has been altered - may be rows added
-        // to indirection tables
-        if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(thisClass.getName());
-            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-        }
-    }
-
-
-    /**
-     * Fill in missing references/collections in model by querying relations
-     * BioEntity -> Annotation -> BioProperty   ==>   BioEntity -> BioProperty
-     * @param entityClass the class of the objects to which the collection will be added
-     * @param propertyClass the class of the BioProperty to transkfer
-     * @param newCollectionName the collection in entityClass to add objects to
-     * @throws Exception if anything goes wrong
-     */
-    protected void insertReferences(Class entityClass, Class propertyClass,
-                                    String newCollectionName)
-        throws Exception {
-
-        LOG.info("Beginning insertReferences(" + entityClass.getName() + ", "
-                 + propertyClass.getName() + ", " + newCollectionName + ")");
-
-        long startTime = System.currentTimeMillis();
-        InterMineObject lastObject = null;
-        Set newCollection = new HashSet();
-        Iterator resIter = PostProcessUtil.findProperties(osw.getObjectStore(), entityClass,
-                                                         propertyClass);
-        // results will be:  entityClass ; properyClass (ordered by entityClass)
-        osw.beginTransaction();
-
-        int count = 0;
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            InterMineObject thisObject = (InterMineObject) rr.get(0);
-            InterMineObject thisProperty = (InterMineObject) rr.get(1);
-
-            if (lastObject == null || !thisObject.getId().equals(lastObject.getId())) {
-                if (lastObject != null) {
-                    // clone so we don't change the ObjectStore cache
-                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-
-                    TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-                    count += newCollection.size();
-                    osw.store(tempObject);
-                }
-
-                newCollection = new HashSet();
-            }
-
-            newCollection.add(thisProperty);
-
-            lastObject = thisObject;
-        }
-
-        if (lastObject != null) {
-            // clone so we don't change the ObjectStore cache
-            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            TypeUtil.setFieldValue(tempObject, newCollectionName, newCollection);
-            count += newCollection.size();
-            osw.store(tempObject);
-        }
-        LOG.info("Created " + count + " " + newCollectionName + " collections in "
-                 + entityClass.getName() + " of " + propertyClass.getName()
-                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
-        osw.commitTransaction();
-
-        // now ANALYSE tables relation to class that has been altered - may be rows added
-        // to indirection tables
-        if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(entityClass.getName());
-            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-        }
-    }
-
-    /**
-     * Set the collection in objectClass by the name of collectionFieldName by querying for pairs of
-     * objects in the bioEntities collection of relationClass (which should be a
-     * SymmetricalRelation).
-     * @param objectClass the class of the objects to which the collection will be added and which
-     * should be in the bioEntities collection of the relationClass
-     * @param relationClass the class that relates objectClass objects togeather
-     * @param collectionFieldName if there is a collection other than bioEntities which is available
-     * @throws Exception if anything goes wrong
-     */
-    protected void insertSymmetricalRelationReferences(
-            Class objectClass, Class relationClass, String collectionFieldName)
-        throws Exception {
-        LOG.info("Beginning insertSymmetricalReferences(" + objectClass.getName() + ", "
-                 + relationClass.getName() + ", "
-                 + collectionFieldName + ")");
-
-        long startTime = System.currentTimeMillis();
-
-        InterMineObject lastObject = null;
-        Set newCollection = new HashSet();
-        // results will be:  object1, relation, object2  (ordered by object1)
-        Iterator resIter =
-            PostProcessUtil.findSymmetricalRelation(
-                    osw.getObjectStore(), objectClass, relationClass);
-
-        osw.beginTransaction();
-
-        int count = 0;
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            BioEntity object1 = (BioEntity) rr.get(0);
-            BioEntity object2 = (BioEntity) rr.get(2);
-
-            if (lastObject == null || !object1.getId().equals(lastObject.getId())) {
-                if (lastObject != null) {
-                    // clone so we don't change the ObjectStore cache
-                    InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-
-                    TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-                    count += newCollection.size();
-                    osw.store(tempObject);
-                }
-
-                newCollection = new HashSet();
-            }
-
-            if (!object1.getId().equals(object2.getId())) {
-                // don't add the object to its own collection
-                newCollection.add(object2);
-            }
-
-            lastObject = object1;
-        }
-
-        if (lastObject != null) {
-            // clone so we don't change the ObjectStore cache
-            InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastObject);
-            TypeUtil.setFieldValue(tempObject, collectionFieldName, newCollection);
-            count += newCollection.size();
-            osw.store(tempObject);
-        }
-        LOG.info("Created " + count + " references in " + objectClass.getName() + " to "
-                 + objectClass.getName() + " via the " + collectionFieldName + " field"
-                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
-        osw.commitTransaction();
-
-        // now ANALYSE tables relation to class that has been altered - may be rows added
-        // to indirection tables
-        if (osw instanceof ObjectStoreWriterInterMineImpl) {
-            ClassDescriptor cld = model.getClassDescriptorByName(objectClass.getName());
-            DatabaseUtil.analyse(((ObjectStoreWriterInterMineImpl) osw).getDatabase(), cld, false);
-        }
-
-    }
-
-
-    /**
      * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
      * @throws Exception if anything goes wrong
      */
@@ -613,7 +392,7 @@ public class CreateReferences
      * corresponding UTRs.
      * @throws Exception if anything goes wrong
      */
-    protected void createUtrRefs() throws Exception {
+    public void createUtrRefs() throws Exception {
         long startTime = System.currentTimeMillis();
         Query q = new Query();
         q.setDistinct(false);

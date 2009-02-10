@@ -17,9 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.flymine.model.genomic.Annotation;
 import org.flymine.model.genomic.Location;
-
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -32,7 +30,6 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Results;
@@ -98,41 +95,6 @@ public class PostProcessUtil
             }
         }
         return newObj;
-    }
-
-    /**
-     * Query ObjectStore for all objects that connect the given object and any subject classes.
-     * Return an iterator ordered by objectCls.
-     * e.g. To return Transcript and Location where Transcript.subjects CONTAINS Location pass
-     * Transcript.class, Location.class, "subjects"
-     * @param os an ObjectStore to query
-     * @param mainCls object type of the first class
-     * @param referredCls type of the second
-     * @param colName name of collection in mainCls that contains objects of type referredCls
-     * @return an iterator over the results
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    public static Iterator findConnectedClasses(ObjectStore os, Class mainCls, Class referredCls,
-                                                String colName) throws ObjectStoreException {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(mainCls);
-        q.addFrom(qcObj);
-        q.addToSelect(qcObj);
-        QueryClass qcRel = new QueryClass(referredCls);
-        q.addFrom(qcRel);
-        q.addToSelect(qcRel);
-        q.addToOrderBy(qcObj);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference col1 = new QueryCollectionReference(qcObj, colName);
-        ContainsConstraint cc1 = new ContainsConstraint(col1, ConstraintOp.CONTAINS, qcRel);
-        cs.addConstraint(cc1);
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 500, true, true, true);
-        return res.iterator();
     }
 
 
@@ -214,87 +176,6 @@ public class PostProcessUtil
         return res.iterator();
     }
 
-    /**
-     * Query ObjectStore for all SymmetricalRelation objects (or specified subclass)
-     * for the given object (ie. Obj1 <- SymmetricalRelation -> Obj2  - obj1 and obj2 will be in the
-     * bioEntities collection of the SymmetricalRelation).
-     * Return an iterator over: obj1, SymmetricalRelation, obj2 order by obj1
-     * @param os an ObjectStore to query
-     * @param objectCls the type in the bioEntities collection of the SymmetricalRelation
-     * @param relationCls type of SymmetricalRelation
-     * @return an iterator over the results.  Each pair of objects will be returned twice: (obj1,
-     * rel, obj2) and (obj2, rel, obj1).
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    public static Iterator findSymmetricalRelation(ObjectStore os, Class objectCls,
-                                                   Class relationCls) throws ObjectStoreException {
-        // TODO check objectCls and subjectCls assignable to BioEntity
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcObj1 = new QueryClass(objectCls);
-        q.addFrom(qcObj1);
-        q.addToSelect(qcObj1);
-        q.addToOrderBy(qcObj1);
-        QueryClass qcRel = new QueryClass(relationCls);
-        q.addFrom(qcRel);
-        q.addToSelect(qcRel);
-        QueryClass qcObj2 = new QueryClass(objectCls);
-        q.addFrom(qcObj2);
-        q.addToSelect(qcObj2);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference ref1 = new QueryCollectionReference(qcRel, "bioEntities");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj1);
-        cs.addConstraint(cc1);
-        QueryCollectionReference ref2 = new QueryCollectionReference(qcRel, "bioEntities");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcObj2);
-        cs.addConstraint(cc2);
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 500, true, true, true);
-        return res.iterator();
-    }
-
-
-    /**
-     * Query ObjectStore for BioProperty subclasses related to BioEntities by an
-     * Annotation object.  Select BioEntity and BioProperty.  Return an iterator
-     * ordered by BioEntity
-     * @param os an ObjectStore to query
-     * @param entityCls type of BioEntity
-     * @param propertyCls class of BioProperty to select
-     * @return an iterator over the results
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    public static Iterator findProperties(ObjectStore os, Class entityCls, Class propertyCls)
-        throws ObjectStoreException {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcEntity = new QueryClass(entityCls);
-        q.addFrom(qcEntity);
-        q.addToSelect(qcEntity);
-        QueryClass qcAnn = new QueryClass(Annotation.class);
-        q.addFrom(qcAnn);
-        QueryClass qcProperty = new QueryClass(propertyCls);
-        q.addFrom(qcProperty);
-        q.addToSelect(qcProperty);
-        q.addToOrderBy(qcEntity);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryCollectionReference col1 = new QueryCollectionReference(qcEntity, "annotations");
-        ContainsConstraint cc1 = new ContainsConstraint(col1, ConstraintOp.CONTAINS, qcAnn);
-        cs.addConstraint(cc1);
-        QueryObjectReference ref1 = new QueryObjectReference(qcAnn, "property");
-        ContainsConstraint cc2 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcProperty);
-        cs.addConstraint(cc2);
-        q.setConstraint(cs);
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 500, true, true, true);
-        return res.iterator();
-    }
 
     /**
      * Return an iterator over all objects of the given class in the ObjectStore provided.
@@ -312,48 +193,7 @@ public class PostProcessUtil
         return res.iterator();
     }
 
-    /**
-     * Query ObjectStore for all Location object between given object (eg. Chromosome) and
-     * subject classes (eg. Gene).  Return an iterator over the results ordered by object
-     * @param os the ObjectStore to find the Locations in
-     * @param objectCls object type of the Location
-     * @param subjectCls subject type of the Location
-     * @return a Results object: object.id, location
-     * @throws ObjectStoreException if problem reading ObjectStore
-     */
-    public static Results findLocations(ObjectStore os, Class objectCls, Class subjectCls)
-        throws ObjectStoreException {
-        // TODO check objectCls and subjectCls assignable to BioEntity
 
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(objectCls);
-        QueryField qfObj = new QueryField(qcObj, "id");
-        q.addFrom(qcObj);
-        q.addToSelect(qfObj);
-        q.addToOrderBy(qfObj);
-
-        QueryClass qcSub = new QueryClass(subjectCls);
-        q.addFrom(qcSub);
-
-        QueryClass qcLoc = new QueryClass(Location.class);
-        q.addFrom(qcLoc);
-        q.addToSelect(qcLoc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
-        cs.addConstraint(cc1);
-        QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
-        ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
-        cs.addConstraint(cc2);
-
-        q.setConstraint(cs);
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q);
-
-        return res;
-    }
 
     /**
      * Query ObjectStore for all Location object that conect the given BioEntity classes.
