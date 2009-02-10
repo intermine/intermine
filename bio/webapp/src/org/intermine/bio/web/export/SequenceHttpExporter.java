@@ -25,7 +25,6 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -95,17 +94,15 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         }
 
         SequenceExporter exporter = new SequenceExporter(os, outputStream, realFeatureIndex);
+        ExportResultsIterator iter = null;
         try {
-            ExportResultsIterator iter = null;
-            try {
-                iter = getResultRows(pt, request);
-                iter.goFaster();
-                exporter.export(iter);
-            } finally {
-                iter.releaseGoFaster();
+            iter = getResultRows(pt, request);
+            iter.goFaster();
+            exporter.export(iter);
+        } finally {
+            if (iter != null) {
+                iter.releaseGoFaster();    
             }
-        } catch (ObjectStoreException e) {
-            throw new ExportException("Error in ObjectStore", e);
         }
         
         if (exporter.getWrittenResultsCount() == 0) {
