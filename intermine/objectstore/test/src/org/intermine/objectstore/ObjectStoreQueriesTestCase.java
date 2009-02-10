@@ -213,6 +213,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("Substring2", substring2());
         queries.put("OrderByReference", orderByReference());
         queries.put("FailDistinctOrder", failDistinctOrder());
+        queries.put("FailDistinctOrder2", failDistinctOrder2());
         queries.put("NegativeNumbers", negativeNumbers());
         queries.put("Lower", lower());
         queries.put("Upper", upper());
@@ -1429,6 +1430,22 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addFrom(qc);
         q.addToSelect(new QueryField(qc, "name"));
         q.addToOrderBy(new QueryField(qc, "age"));
+        q.setDistinct(true);
+        return q;
+    }
+
+    /*
+     * SELECT DISTINCT a1_ FROM Employee AS a1_, Department AS a2_ WHERE a1_.department CONTAINS a2_ ORDER BY a2_
+     */
+    public static Query failDistinctOrder2() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        QueryClass qc2 = new QueryClass(Department.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(qc1);
+        q.addToOrderBy(qc2);
+        q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc1, "department"), ConstraintOp.CONTAINS, qc2));
         q.setDistinct(true);
         return q;
     }

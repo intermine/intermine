@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +106,7 @@ public class SqlGenerator
     protected static final int NO_ALIASES_ALL_FIELDS = 3;
     protected static final int QUERY_FOR_PRECOMP = 4;
     protected static final int QUERY_SUBQUERY_EXISTS = 5;
+    protected static final int QUERY_FOR_GOFASTER = 6;
 
     protected static Map sqlCache = new WeakHashMap();
     protected static Map tablenamesCache = new WeakHashMap();
@@ -495,7 +495,7 @@ public class SqlGenerator
         buildWhereClause(state, q, q.getConstraint(), schema);
         buildWhereClause(state, q, offsetCon, schema);
         String orderBy = "";
-        if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+        if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP) || (kind == QUERY_FOR_GOFASTER)) {
             boolean haveOrderBy = true;
             if (q.getGroupBy().isEmpty()) {
                 for (QuerySelectable selectable : q.getSelect()) {
@@ -505,7 +505,7 @@ public class SqlGenerator
                 }
             }
             if (haveOrderBy) {
-                orderBy = buildOrderBy(state, q, schema);
+                orderBy = buildOrderBy(state, q, schema, kind);
             }
         }
         StringBuffer retval = new StringBuffer("SELECT ")
@@ -1807,7 +1807,8 @@ public class SqlGenerator
             String objectAlias = (String) state.getFieldToAlias(qc).get("OBJECT");
             if ((kind != QUERY_SUBQUERY_FROM) && (objectAlias != null)) {
                 buffer.append(objectAlias);
-                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
+                        || (kind == QUERY_FOR_GOFASTER)) {
                     buffer.append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias)
@@ -1816,12 +1817,14 @@ public class SqlGenerator
                 needComma = true;
             }
             if ((kind == QUERY_SUBQUERY_FROM) || (kind == NO_ALIASES_ALL_FIELDS)
-                    || ((kind == QUERY_NORMAL) && schema.isFlatMode(qc.getType()))
+                    || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER))
+                        && schema.isFlatMode(qc.getType()))
                     || (kind == QUERY_FOR_PRECOMP)) {
                 Iterator fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
                         .getName());
-                if (schema.isFlatMode(qc.getType()) && (kind == QUERY_NORMAL)) {
+                if (schema.isFlatMode(qc.getType()) && ((kind == QUERY_NORMAL)
+                            || (kind == QUERY_FOR_GOFASTER))) {
                     List iterators = new ArrayList();
                     DatabaseSchema.Fields fields = schema.getTableFields(schema
                             .getTableMaster(cld));
@@ -1853,7 +1856,8 @@ public class SqlGenerator
                     if (kind == QUERY_SUBQUERY_FROM) {
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
-                    } else if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+                    } else if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
+                            || (kind == QUERY_FOR_GOFASTER)) {
                         buffer.append(" AS ")
                             .append(alias.equals(alias.toLowerCase())
                                     ? DatabaseUtil.generateSqlCompatibleName(alias) + columnName
@@ -2065,7 +2069,8 @@ public class SqlGenerator
                 }
                 needComma = true;
                 queryEvaluableToString(retval, (QueryEvaluable) node, q, state);
-                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)) {
+                if ((kind == QUERY_NORMAL) || (kind == QUERY_FOR_PRECOMP)
+                        || (kind == QUERY_FOR_GOFASTER)) {
                     retval.append(" AS " + (alias.equals(alias.toLowerCase())
                             ? DatabaseUtil.generateSqlCompatibleName(alias)
                             : "\"" + DatabaseUtil.generateSqlCompatibleName(alias) + "\""));
@@ -2078,14 +2083,14 @@ public class SqlGenerator
                 throw new ObjectStoreException("Unknown object in SELECT list: " + node.getClass());
             }
         }
-        iter = state.getOrderBy().iterator();
-        while (iter.hasNext()) {
-            String orderByField = (String) iter.next();
+        for (Map.Entry<String, String> entry : state.getOrderBy().entrySet()) {
             if (needComma) {
                 retval.append(", ");
             }
             needComma = true;
-            retval.append(orderByField);
+            retval.append(entry.getKey())
+               .append(" AS ")
+               .append(entry.getValue());
         }
         return retval.toString();
     }
@@ -2124,10 +2129,11 @@ public class SqlGenerator
      * @param state the current Sql Query state
      * @param q the Query
      * @param schema the DatabaseSchema in which to look up metadata
+     * @param kind the kind of output requested
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildOrderBy(State state, Query q, DatabaseSchema schema)
+    protected static String buildOrderBy(State state, Query q, DatabaseSchema schema, int kind)
             throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         HashSet seen = new HashSet();
@@ -2154,6 +2160,18 @@ public class SqlGenerator
                         needComma = true;
                         retval.append(buffer.toString());
                         seen.add(buffer.toString());
+                        if ((!q.getSelect().contains(node))
+                                && (!q.getSelect().contains(new QueryField((QueryClass) node,
+                                                "id")))) {
+                            if (q.isDistinct()) {
+                                throw new ObjectStoreException("Class " + q.getAliases().get(node)
+                                        + " in the ORDER BY list must be in the SELECT list, or its"
+                                        + " id, or the query made non-distinct");
+                            } else if ((kind == QUERY_FOR_PRECOMP)
+                                    || (kind == QUERY_FOR_GOFASTER)) {
+                                state.addToOrderBy(buffer.toString());
+                            }
+                        }
                     }
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
@@ -2172,8 +2190,6 @@ public class SqlGenerator
                                 // list, so adding the field artificially will not alter the number
                                 // of rows of a DISTINCT query.
                                 if (!schema.isFlatMode(ref.getQueryClass().getType())) {
-                                    buffer.append(" AS ")
-                                        .append(state.getOrderByAlias());
                                     state.addToOrderBy(buffer.toString());
                                 }
                             } else {
@@ -2182,6 +2198,10 @@ public class SqlGenerator
                                         + " whole QueryClass must be in the SELECT list, or the"
                                         + " query made non-distinct");
                             }
+                        } else if ((!q.getSelect().contains(ref)) && ((kind == QUERY_FOR_PRECOMP)
+                                    || (kind == QUERY_FOR_GOFASTER))
+                                && (!schema.isFlatMode(ref.getQueryClass().getType()))) {
+                            state.addToOrderBy(buffer.toString());
                         }
                     }
                 } else {
@@ -2199,8 +2219,6 @@ public class SqlGenerator
                                 // FromElement is, therefore adding it artificially to the SELECT
                                 // list will not alter the number of rows of a DISTINCT query.
                                 if (!schema.isFlatMode(InterMineObject.class)) {
-                                    buffer.append(" AS ")
-                                        .append(state.getOrderByAlias());
                                     state.addToOrderBy(buffer.toString());
                                 }
                             } else if (fe instanceof QueryClass) {
@@ -2213,6 +2231,11 @@ public class SqlGenerator
                                         + " in the ORDER BY list must be in the SELECT list, or the"
                                         + " query made non-distinct");
                             }
+                        } else if ((!q.getSelect().contains(node)) && (!q.isDistinct())
+                                && ((kind == QUERY_FOR_PRECOMP)
+                                    || (kind == QUERY_FOR_GOFASTER))
+                                && (!schema.isFlatMode(InterMineObject.class))) {
+                            state.addToOrderBy(buffer.toString());
                         }
                     }
                 }
@@ -2229,7 +2252,7 @@ public class SqlGenerator
         private StringBuffer whereText = new StringBuffer();
         private StringBuffer havingText = new StringBuffer();
         private StringBuffer fromText = new StringBuffer();
-        private Set orderBy = new LinkedHashSet();
+        private Map<String, String> orderBy = new LinkedHashMap<String, String>();
         private int number = 0;
         private Map fromToFieldToAlias = new HashMap();
         private Database db;
@@ -2290,10 +2313,10 @@ public class SqlGenerator
         }
 
         public void addToOrderBy(String s) {
-            orderBy.add(s);
+            orderBy.put(s, getOrderByAlias());
         }
 
-        public Set getOrderBy() {
+        public Map<String, String> getOrderBy() {
             return orderBy;
         }
 
