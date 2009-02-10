@@ -75,8 +75,8 @@ public class QueryResultService extends WebService
                 savedBags);
 
         PathQuery query = builder.getQuery();
-        runPathQuery(query, input.getStart(), input.getMaxCount(), 
-                input.isComputeTotalCount(), null, null, input, null, input.getLayout());
+        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null, input, null, input
+                .getLayout());
     }
 
     private void forward(PathQuery pathQuery, String title, String description, 
@@ -149,16 +149,14 @@ public class QueryResultService extends WebService
      * @param pathQuery path query
      * @param firstResult index of first result, that should be returned
      * @param maxResults maximum number of results
-     * @param displayTotalCount if total result count should be displayed
      * @param title title displayed in html output, can be null
      * @param description description displayed in html output, can be null
      * @param input input of web service
      * @param mineLink link pointing results of this query (template) in InterMine, can be null
      * @param layout results table layout string, can be null
      */
-    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  
-            boolean displayTotalCount, String title, String description, 
-            WebServiceInput input, String mineLink, String layout) {
+    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  String title, 
+            String description, WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
         Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, firstResult, 

@@ -25,8 +25,6 @@ public class TemplateResultInput extends WebServiceInput
     
     private Map<String, List<ConstraintLoad>> constraints;
     
-    private boolean computeTotalCount = false;
-
     private String layout;
     
     /**
@@ -73,21 +71,5 @@ public class TemplateResultInput extends WebServiceInput
      */
     public Map<String, List<ConstraintLoad>> getConstraints() {
         return constraints;
-    }
-
-    /**
-     * 
-     * @return true if total count  should be displayed else false
-     */
-    public boolean isComputeTotalCount() {
-        return computeTotalCount;
-    }
-
-    /**
-     * 
-     * @param computeTotalCount set true if total count should be displayed else false
-     */
-    public void setComputeTotalCount(boolean computeTotalCount) {
-        this.computeTotalCount = computeTotalCount;
     }
 }
