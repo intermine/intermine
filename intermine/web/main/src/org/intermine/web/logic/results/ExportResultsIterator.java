@@ -19,14 +19,13 @@ import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryRunner;
@@ -40,8 +39,8 @@ import org.intermine.web.logic.query.MainHelper;
  */
 public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
-    private Iterator<ResultsRow> osIter;
-    private Iterator<ResultsRow<ResultElement>> subIter;
+    private Iterator<List> osIter;
+    private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
     private List columns;
     private int columnCount;
@@ -59,7 +58,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
-        this(os, pq, savedBags, bagQueryRunner, 0);
+        init(os, pq, savedBags, bagQueryRunner, 0);
     }
 
     /**
@@ -75,13 +74,19 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public ExportResultsIterator(ObjectStore os, PathQuery pq, Map savedBags,
             BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
+        init(os, pq, savedBags, bagQueryRunner, batchSize);
+    }
+    
+    private void init(ObjectStore os, PathQuery pq, Map savedBags,
+            BagQueryRunner bagQueryRunner, int batchSize)
+            throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
                 returnBagQueryResults, false);
         results = os.execute(q, batchSize, true, true, true);
         osIter = results.iterator();
-        List<ResultsRow<ResultElement>> empty = Collections.emptyList();
+        List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
         columns = convertColumnTypes(q.getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
@@ -100,7 +105,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     /**
      * {@inheritDoc}
      */
-    public ResultsRow<ResultElement> next() {
+    public List<ResultElement> next() {
         while ((!subIter.hasNext()) && osIter.hasNext()) {
             subIter = decodeRow(osIter.next()).iterator();
         }
@@ -186,23 +191,23 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         return retval;
     }
 
-    private List<ResultsRow<ResultElement>> decodeRow(ResultsRow row) {
-        ResultsRow<ResultElement> template = new ResultsRow<ResultElement>();
+    private List<List<ResultElement>> decodeRow(List row) {
+        List<ResultElement> template = new ArrayList<ResultElement>();
         for (int i = 0; i < columnCount; i++) {
             template.add(null);
         }
-        List<ResultsRow<ResultElement>> retval = new ArrayList<ResultsRow<ResultElement>>();
+        List<List<ResultElement>> retval = new ArrayList<List<ResultElement>>();
         expandCollections(row, retval, template, columns);
         return retval;
     }
 
-    private void expandCollections(ResultsRow row, List<ResultsRow<ResultElement>> retval,
-            ResultsRow<ResultElement> template, List columns) {
+    private void expandCollections(List row, List<List<ResultElement>> retval,
+            List<ResultElement> template, List columns) {
         if (row.size() != columns.size()) {
             throw new IllegalArgumentException("Column description (size " + columns.size()
                     + ") does not match input data (size " + row.size() + ")");
         }
-        template = new ResultsRow(template);
+        template = new ArrayList(template);
         int columnNo = 0;
         for (Object column : columns) {
             if (column instanceof Map) {
@@ -219,8 +224,8 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         columnNo = 0;
         for (Object column : columns) {
             if (column instanceof List) {
-                List<ResultsRow> collection = (List<ResultsRow>) row.get(columnNo);
-                for (ResultsRow subRow : collection) {
+                List<List> collection = (List<List>) row.get(columnNo);
+                for (List subRow : collection) {
                     hasCollections = true;
                     expandCollections(subRow, retval, template, (List) column);
                 }
