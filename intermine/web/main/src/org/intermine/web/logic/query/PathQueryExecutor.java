@@ -10,7 +10,6 @@ package org.intermine.web.logic.query;
  *
  */
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +28,15 @@ import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
- * Executes path query and returns results in form suitable for export or web services.
- *
+ * Executes path query and returns results in form suitable for export or web
+ * services.
+ * 
  * @author Jakub Kulaviak
  */
-public class PathQueryExecutor
+public class PathQueryExecutor 
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
-
-    private static final int INFINITE_RESULTS_SIZE = 1000000000;
 
     private Map<String, InterMineBag> allBags;
 
@@ -50,7 +48,9 @@ public class PathQueryExecutor
 
     /**
      * Sets batch size.
-     * @param size batch size
+     * 
+     * @param size
+     *            batch size
      */
     public void setBatchSize(int size) {
         this.batchSize = size;
@@ -58,17 +58,24 @@ public class PathQueryExecutor
 
     /**
      * Constructor with necessary objects.
-     * @param os the ObjectStore to run the query in
-     * @param classKeys key fields for classes in the data model
-     * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
-     * @param profile the user executing the query - for access to saved lists
-     * @param conversionTemplates templates used for converting bag query results between types
-     * @param searchRepository global search repository to fetch saved bags from
+     * 
+     * @param os
+     *            the ObjectStore to run the query in
+     * @param classKeys
+     *            key fields for classes in the data model
+     * @param bagQueryConfig
+     *            bag queries to run when interpreting LOOKUP constraints
+     * @param profile
+     *            the user executing the query - for access to saved lists
+     * @param conversionTemplates
+     *            templates used for converting bag query results between types
+     * @param searchRepository
+     *            global search repository to fetch saved bags from
      */
     public PathQueryExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig,
-            Profile profile, List<TemplateQuery> conversionTemplates,
+            BagQueryConfig bagQueryConfig, Profile profile,
+            List<TemplateQuery> conversionTemplates,
             SearchRepository searchRepository) {
         this.os = os;
         this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig,
@@ -78,68 +85,111 @@ public class PathQueryExecutor
     }
 
     /**
-     * Executes object store query and returns results as iterator over rows. Every row is a list
-     * of result elements.
-     * @param pathQuery path query to be executed
+     * Executes object store query and returns results as iterator over rows.
+     * Every row is a list of result elements.
+     * 
+     * @param pathQuery
+     *            path query to be executed
      * @return results
      */
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
-            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
+            return new ExportResultsIterator(os, pathQuery, allBags, runner,
+                    batchSize);
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("Creating export results iterator failed", e);
+            throw new RuntimeException(
+                    "Creating export results iterator failed", e);
         }
     }
 
     /**
-     * Executes object store query and returns results as iterator over rows. Every row is a list
-     * of result elements.
-     * @param pathQuery path query to be executed
-     * @param start index of first result which will be retrieved. It can be very slow,
-     * it fetches results from database from index 0 and just throws away all before start index.
-     * @param limit maximum number of results
+     * Executes object store query and returns results as iterator over rows.
+     * Every row is a list of result elements.
+     * 
+     * @param pathQuery
+     *            path query to be executed
+     * @param start
+     *            index of first result which will be retrieved. It can be very
+     *            slow, it fetches results from database from index 0 and just
+     *            throws away all before start index.
+     * @param limit
+     *            maximum number of results
      * @return results
      */
-    public Iterator<List<ResultElement>> execute(PathQuery pathQuery, final int start,
+    public ExportResultsIterator execute(PathQuery pathQuery, final int start,
             final int limit) {
-        final ExportResultsIterator resultIt;
         try {
-            resultIt = new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
+            return new ResultIterator(os, pathQuery, allBags, runner, batchSize, start, limit);
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("Creating export results iterator failed", e);
+            throw new RuntimeException(
+                    "Creating export results iterator failed", e);
         }
-        Iterator<List<ResultElement>> ret = new Iterator<List<ResultElement>>() {
+    }
+}
 
-            private int counter = 0;
+/**
+ * Class adapting ExportResultsIterator to be able to get results only in specified range 
+ * but is very slow, it just throws away all results before the start index.
+ * 
+ * @author Jakub Kulaviak
+ *
+ */
+class ResultIterator extends ExportResultsIterator 
+{
 
-            public boolean hasNext() {
+    private int counter = 0;
+    
+    private int limit;
+    
+    private int start;
 
-                // throw away results before start index
-                while (counter < start) {
-                    if (resultIt.hasNext()) {
-                        next();
-                    } else {
-                        return false;
-                    }
-                }
+    /**
+     * Constructor for ExportResultsIterator. This creates a new instance from the given
+     * ObjectStore, PathQuery, and other necessary objects.
+     *
+     * @param os an ObjectStore that the query will be run on
+     * @param pq a PathQuery to run
+     * @param savedBags a Map of the bags that the query may have used
+     * @param bagQueryRunner a BagQueryRunner for any LOOKUP constraints
+     * @param batchSize the batch size for the results
+     * @param start start index from which retrieve results
+     * @param limit maximum number retrieved results
+     * @throws ObjectStoreException if something goes wrong executing the query
+     */
+    public ResultIterator(ObjectStore os, PathQuery pq, Map savedBags,
+            BagQueryRunner bagQueryRunner, int batchSize, int start, int limit)
+            throws ObjectStoreException {
+        super(os, pq, savedBags, bagQueryRunner, batchSize);
+        this.limit = limit;
+        this.start = start;
+    }
 
-                if (counter >= (limit + start)) {
-                    return false;
-                } else {
-                    return resultIt.hasNext();
-                }
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasNext() {
+        // throw away results before start index
+        while (counter < start) {
+            if (super.hasNext()) {
+                next();
+            } else {
+                return false;
             }
+        }
 
-            public List<ResultElement> next() {
-                List<ResultElement> ret = (List<ResultElement>) resultIt.next();
-                counter++;
-                return ret;
-            }
+        if (counter >= (limit + start)) {
+            return false;
+        } else {
+            return super.hasNext();
+        }
+    }
 
-            public void remove() {
-                resultIt.remove();
-            }
-        };
+    /**
+     * {@inheritDoc}
+     */
+    public List<ResultElement> next() {
+        List<ResultElement> ret = (List<ResultElement>) super.next();
+        counter++;
         return ret;
     }
 }
