@@ -10,6 +10,13 @@ import java.util.Map;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
+/**
+ * Class used in place of Item for testing.  Uses internal identifier to map relationships to
+ * other items, then throws the identifier away.
+ *
+ * Often when you add an item to
+ * @author julie
+ */
 public class MockItem {
     private String identifier = "DUMMY";
     private String className = "";
@@ -17,8 +24,12 @@ public class MockItem {
     private Map<String, String> attributes = new HashMap();
     private Map<String, MockItem> references = new LinkedHashMap();
     private Map<String, List<MockItem>> collections = new LinkedHashMap();
-    public static final String ENDL = System.getProperty("line.separator");
+    private static final String ENDL = System.getProperty("line.separator");
 
+    /**
+     * Constructor
+     * @param item item to replace with this mock item
+     */
     public MockItem(Item item) {
         this.identifier = item.getIdentifier();
         this.className = item.getClassName();
@@ -30,7 +41,7 @@ public class MockItem {
 
     /**
      * @param name name of reference
-     * @param item item
+     * @return reference reference
      */
     public MockItem getMockReference(String name) {
         MockItem reference = references.get(name);
@@ -236,7 +247,7 @@ public class MockItem {
 
 
     /**
-     * used for display
+     * used for displaying collections
      * @return the references to display
      */
     public String getPrettyReferences() {
@@ -258,11 +269,12 @@ public class MockItem {
         Arrays.sort(key);
         for (int i = 0; i < key.length; i++) {
             List<MockItem> c = collections.get(key[i]);
-            xml += "\t<collection name=\"" + key[i] + "\">";
+            xml += "<collection name=\"" + key[i] + "\">" + ENDL;
             for (MockItem item : c) {
-                xml += item.getPrettyReferences();
+                xml += "\t<reference name=\"" + item.getMockClassName() + "\" ref_id=\""
+                + item.getIdentifier() + "\">" + ENDL;
             }
-            xml += "\t</collection>" + ENDL;
+            xml += "</collection>" + ENDL;
         }
         return xml;
     }

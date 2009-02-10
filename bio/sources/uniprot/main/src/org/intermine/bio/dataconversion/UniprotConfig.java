@@ -87,10 +87,8 @@ public class UniprotConfig
 
             ConfigEntry configEntry = getConfig(taxonId);
 
-            if (attributes[1].equals("key")) {
+            if (attributes[1].equals("uniqueField")) {
                 configEntry.setUniqueIdentifier(value);
-//            } else if (attributes[1].equals("synonym")) {
-//                configEntry.setSource(value);
             } else if (attributes.length == 3) {
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {
@@ -166,7 +164,7 @@ public class UniprotConfig
         /**
          * example:
          *
-         * 6239.primaryIdentifier.datasource = WormBase
+         * 6239.primaryIdentifier.dbref = WormBase
          * 6239.secondaryIdentifier.name = ORF
          *
          * [taxonId].[identifier].[type] = [value]

@@ -23,11 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
-import org.intermine.xml.full.Attribute;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
@@ -111,12 +110,17 @@ public abstract class MockItemsTestCase extends TestCase
             // TestCase.assertEquals(a, b);
 
         } else {
+
+            StringBuffer aToString = new StringBuffer(), bToString = new StringBuffer();
+
             // fail with a helpful message
             message.append("Item collections do not match." + ENDL);
             if (!inAnotB.isEmpty()) {
                 message.append("In expected, not actual: " + ENDL);
                 for (MockItem mockItem : inAnotB) {
-                    message.append(mockItem.toXML() + ENDL);
+                    String xml = mockItem.toXML();
+                    message.append(xml + ENDL);
+                    aToString.append(xml);
                 }
                 message.append("Summary of expected: " + ENDL);
                 message.append(countItemClasses(inAnotB));
@@ -126,13 +130,19 @@ public abstract class MockItemsTestCase extends TestCase
             if (!inBnotA.isEmpty()) {
                 message.append("In actual, not expected: " + ENDL);
                 for (MockItem mockItem : inBnotA) {
-                    message.append(mockItem.toXML());
+                    String xml = mockItem.toXML();
+                    message.append(xml);
+                    bToString.append(xml);
                 }
                 message.append("Summary of actual: " + ENDL);
                 message.append(countItemClasses(inBnotA) + ENDL);
             } else if (b.isEmpty()) {
                 message.append("Actual set was empty. " + ENDL);
             }
+
+
+            message.append("DIFFERENCE:" + ENDL);
+            message.append(StringUtils.difference(aToString.toString(), bToString.toString()));
         }
         return message.toString();
     }
