@@ -8,18 +8,12 @@
 # sc 09/08
 #
 # TODO: ant failing and exiting with 0!
-#       #3 scenari: new build, incremental (i.e. new chado added to existing mine), test
-#       #test with file option
+#       test with file option
 #       analyse after stag?
-#       #-R restart after fails for full
-#       #-r recursive for validation
-#       if -x => -s implicit
-#       #add user to logs name
 #
 
 # see after argument parsing for all envs related to the release
 
-#FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
 FTPURL=http://submit.modencode.org/submit/public/list
 EXDIRS=/pub/dcc/for_modmine/old   #comma separated, i.e. a,b,c
 MODIR=/shared/data/modmine
@@ -29,7 +23,7 @@ NEWDIR=$DATADIR/new
 WGETDIR=$NEWDIR/wgetdir
 PROPDIR=$HOME/.intermine
 
-RECIPIENTS=contrino@flymine.org,kmr@flymine.org,rns@flymine.org
+RECIPIENTS=contrino@flymine.org,rns@flymine.org
 REPORTPATH=file:///shared/data/modmine/subs/reports/
 
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
@@ -39,13 +33,6 @@ SOURCES=modmine-static,modencode-metadata
 MINEDIR=$PWD
 
 #MINEDIR=$HOME/svn/dev/modmine
-#MINEDIR=$HOME/svn/modmine-pre-outer-joins/modmine
-
-# for running from trunk directory (as modmine)
-#if [ ! -d $MINEDIR ]
-#then
-#MINEDIR=$HOME/svn/trunk/modmine
-#fi
 
 # these should not be edited
 WEBAPP=y       #defaults: build a webapp
@@ -59,9 +46,9 @@ STAG=y         #          run stag loading
 TEST=y         #          do acceptance tests
 VALIDATING=n   #          not running as a validation (1 entry at a time)
 FOUND=n        #          y if new files downloaded
-INFILE=not_defined #      not using a given list of submissions
+INFILE=undefined #       not using a given list of submissions
 TIMESTAMP=`date "+%y%m%d.%H%M"`  # used in the log
-NAMESTAMP=not_defined     #          used to name the acceptance tests
+NAMESTAMP=undefined     #        used to name the acceptance tests
 INTERACT=n     #          off: step by step interaction
 WGET=y         #          use wget to get files from ftp
 
@@ -114,8 +101,7 @@ EOF
 	exit 0
 }
 
-#while getopts ":FIMRVabf:ginstuvwx" opt; do
-while getopts ":FIMRVabginstuvwx" opt; do
+while getopts ":FIMRVabf:ginstuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -126,7 +112,7 @@ while getopts ":FIMRVabginstuvwx" opt; do
 	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
-	f )  echo; INFILE=$OPTARG; WGET=n; echo "Using given list of chadoxml files:"; more $INFILE;;
+	f )  echo; INFILE=$OPTARG; WGET=n; echo "Using given list of chadoxml files (wget won't be run):"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
 	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
@@ -171,11 +157,10 @@ echo "================================="
 echo "Building modmine-$REL on $DBHOST."
 echo "================================="
 echo "Logs: $LOADLOG"
-echo "      $DATADIR/wget.log"
+#echo "      $DATADIR/wget.log"
 echo
 
 if [ $VALIDATING = "y" ] && [ $STAG = "n" ] && [ -n "$1" ]
-#if [[ $VALIDATING = "y" && $STAG = "n" && -n "$1" ]]
 then
 	NAMESTAMP="$1"
 	echo "NOTE: you are restarting after a failed modMine build: the test result will be named $NAMESTAMP.html"
@@ -214,23 +199,16 @@ touch $LOADLOG
 
 if [ $WGET = "y" ]
 then
-#if [ $STAG = "y" ] && [ $INFILE = "not_defined" ]
-	if [ $INFILE = "not_defined" ]
-	then
-		#wget -N $FTPURL$DIR/*.chadoxml
+#	if [ $INFILE = "undefined" ]
+#	then
 		echo
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
 		#wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
 #		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
-#		wget -r -nd -l1 -X $EXDIRS -N -P$THRASHDIR $FTPURL -R *tracks*,*citations*,*stanzas*,*download* --debug --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
 		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citations*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
-
-#		wget -r -nd -l1 -X $EXDIRS -N -P$THRASHD
-
-#		wget -r -nd -l1 -N -P$WGETDIR $FTPURL  --debug -D http://submit.modencode.org/submit/public/get_file
 		#r recursive
 		#nd the directories structure is NOT recreated locally
 		#-l 2 depth of recursion
@@ -241,11 +219,6 @@ then
     #-N timestamping
 		echo $TIMESTAMP
 
-if [ $INTERACT = "y" ]
-then
-		echo "press return to continue.."
-		read
-fi
 		#---------------------------------------
 		# check if any new file, exit if not
 		#---------------------------------------
@@ -270,24 +243,24 @@ fi
 			exit 0;
 		fi
 
-	# else read file, mv files to newdir and go
-	# nb: check clobbing, and if files already in newdir (not links)
-	elif [ ! $INFILE = "not_defined" ]
-	then
-		for chadofile in `cat $MINEDIR/$INFILE`
-		do
-			echo "$chadofile..."
-			mv $chadofile $NEWDIR
-		done
-	fi
+if [ $INTERACT = "y" ]
+then
+		echo "press return to continue.."
+		read
+fi
+
 fi #if $WGET=y
+
+
+
+
 #---------------------------------------
 # build the chado db
 #---------------------------------------
 #
 cd $DATADIR
-# do a back-up?
 
+# do a back-up?
 if [ "$BUP" = "y" ]
 then
 dropdb -e "$CHADODB"-old -h $DBHOST -U $DBUSER;
@@ -296,7 +269,6 @@ createdb -e "$CHADODB"-old -T $CHADODB -h $DBHOST -U $DBUSER\
 fi
 
 # build new?
-
 if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ] && [ "$VALIDATING" = "n" ]
 then
 # rebuild skeleton chado db
@@ -306,8 +278,11 @@ then
 	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
 	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 
+if [ $INTERACT = "y" ]
+then
 echo "press return to continue.."
 read
+fi
 
 fi
 
@@ -320,7 +295,17 @@ then
 
 cd $NEWDIR
 
-for sub in *.chadoxml
+LOOPVAR="*.chadoxml"
+
+	# TODO : check newdir issues when wget source is stable
+	if [ ! $INFILE = "undefined" ]
+	then
+    LOOPVAR=`cat $INFILE`
+	fi
+
+
+#for sub in *.chadoxml
+for sub in $LOOPVAR
 do
 if [ -L $sub ] #is a symbolic link
 then
@@ -331,6 +316,9 @@ echo "================"
 echo "$sub..."
 echo "================"
 
+#
+# for validation, we rebuild chado for each file
+#
 if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
 then
 cd $DATADIR
@@ -340,9 +328,6 @@ cd $DATADIR
 
 	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
 	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
-#echo "press return to continue.."
-#read
-
 cd $NEWDIR
 fi
 
@@ -355,7 +340,6 @@ stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
 || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
 >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; exit 1 ; }
-# >> `date "+%y%m%d.$REL.log"`; $F ; }
 
 #if we are not validating we move away the file
 if [ $VALIDATING = "n" ]
@@ -364,20 +348,21 @@ mv $sub $DATADIR
 ln -s ../$sub $sub
 fi
 
-if [ $VALIDATING = "y" ] #if we are validating an entry at a time
+#if we are validating, we'll process an entry at a time
+if [ $VALIDATING = "y" ] 
 then
-NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`    # for the naming of the acceptance tests file
+# to name the acceptance tests file
+NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
 echo "******"
 echo $NAMESTAMP
 echo "******"
-
 
 if [ $BUILD = "y" ]
 then
 cd $MINEDIR
 echo "Building modMine $REL"
 echo
-# new build. static, metadata, organism
+# new build. static, metadata
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi #BUILD=y
@@ -389,7 +374,7 @@ echo "running acceptance tests"
 echo
 cd $MINEDIR/integrate
 ant $V -Drelease=$REL acceptance-tests-metadata
-if [ $NAMESTAMP != "not_defined" ]
+if [ $NAMESTAMP != "undefined" ]
 then
 TIMESTAMP="$NAMESTAMP"
 fi
@@ -518,7 +503,7 @@ else
 ant $V -Drelease=$REL acceptance-tests-metadata
 fi
 
-if [ $NAMESTAMP != "not_defined" ]
+if [ $NAMESTAMP != "undefined" ]
 then
 TIMESTAMP="$NAMESTAMP"
 fi
