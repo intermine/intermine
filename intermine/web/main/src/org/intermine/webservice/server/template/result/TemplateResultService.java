@@ -53,8 +53,7 @@ public class TemplateResultService extends QueryResultService
         template = new TemplateConfigurator().getConfiguredTemplate(template,
                                                                     input.getConstraints());
         if (template.getPathQuery().isValid()) {
-            runPathQuery(template, input.getStart(), input.getMaxCount(),
-                    input.isComputeTotalCount(), template.getTitle(),
+            runPathQuery(template, input.getStart(), input.getMaxCount(), template.getTitle(),
                     template.getDescription(), input, getMineLinkURL(request, template, input),
                     input.getLayout());
         } else {
