@@ -19,25 +19,33 @@
 
 # see after argument parsing for all envs related to the release
 
-FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
+#FTPURL=ftp://ftp.modencode.org/pub/dcc/for_modmine
+FTPURL=http://submit.modencode.org/submit/public/list
 EXDIRS=/pub/dcc/for_modmine/old   #comma separated, i.e. a,b,c
 MODIR=/shared/data/modmine
 REPORTS=$MODIR/subs/reports
 DATADIR=$MODIR/subs/chado
 NEWDIR=$DATADIR/new
+WGETDIR=$NEWDIR/wgetdir
 PROPDIR=$HOME/.intermine
 
 RECIPIENTS=contrino@flymine.org,kmr@flymine.org,rns@flymine.org
-SOURCES=modmine-static,modencode-metadata,entrez-organism
+REPORTPATH=file:///shared/data/modmine/subs/reports/
 
-MINEDIR=$HOME/svn/dev/modmine
+#SOURCES=modmine-static,modencode-metadata,entrez-organism
+SOURCES=modmine-static,modencode-metadata
+
+# TODO add check that modmine in path
+MINEDIR=$PWD
+
+#MINEDIR=$HOME/svn/dev/modmine
 #MINEDIR=$HOME/svn/modmine-pre-outer-joins/modmine
 
 # for running from trunk directory (as modmine)
-if [ ! -d $MINEDIR ]
-then
-MINEDIR=$HOME/svn/trunk/modmine
-fi
+#if [ ! -d $MINEDIR ]
+#then
+#MINEDIR=$HOME/svn/trunk/modmine
+#fi
 
 # these should not be edited
 WEBAPP=y       #defaults: build a webapp
@@ -106,7 +114,8 @@ EOF
 	exit 0
 }
 
-while getopts ":FIMRVabf:ginstuvwx" opt; do
+#while getopts ":FIMRVabf:ginstuvwx" opt; do
+while getopts ":FIMRVabginstuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -117,7 +126,7 @@ while getopts ":FIMRVabf:ginstuvwx" opt; do
 	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
-	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files:"; more $INFILE;;
+	f )  echo; INFILE=$OPTARG; WGET=n; echo "Using given list of chadoxml files:"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
 	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
@@ -195,7 +204,8 @@ fi
 # getting the chadoxml from ftp site
 #---------------------------------------
 
-cd $DATADIR
+#cd $DATADIR
+cd $NEWDIR
 # this for confirmation the program run and to avoid to grep on a non-existent file
 touch $LOADLOG
 
@@ -212,8 +222,15 @@ then
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
 		#wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
-		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+#		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+#		wget -r -nd -l1 -X $EXDIRS -N -P$THRASHDIR $FTPURL -R *tracks*,*citations*,*stanzas*,*download* --debug --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
+		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citations*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+
+
+#		wget -r -nd -l1 -X $EXDIRS -N -P$THRASHD
+
+#		wget -r -nd -l1 -N -P$WGETDIR $FTPURL  --debug -D http://submit.modencode.org/submit/public/get_file
 		#r recursive
 		#nd the directories structure is NOT recreated locally
 		#-l 2 depth of recursion
@@ -526,7 +543,7 @@ cp newreport $REPORTS/$TIMESTAMP.html
 if [ $VALIDATING = "y" ]
 then
 echo "sending mail!!"
-mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTS" < $REPORTS/$TIMESTAMP.html
+mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTS" <  $REPORTS/$TIMESTAMP.html
 fi
 
 echo
