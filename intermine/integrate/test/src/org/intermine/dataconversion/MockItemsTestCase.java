@@ -140,9 +140,9 @@ public abstract class MockItemsTestCase extends TestCase
                 message.append("Actual set was empty. " + ENDL);
             }
 
-
-            message.append("DIFFERENCE:" + ENDL);
-            message.append(StringUtils.difference(aToString.toString(), bToString.toString()));
+// TODO compare each item and list what is different
+//            message.append("DIFFERENCE:" + ENDL);
+//            message.append(StringUtils.difference(aToString.toString(), bToString.toString()));
         }
         return message.toString();
     }

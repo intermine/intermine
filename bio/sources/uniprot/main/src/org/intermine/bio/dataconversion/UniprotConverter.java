@@ -48,7 +48,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class UniprotConverter extends DirectoryConverter
 {
-    // TODO set up default using primary name
     private static final UniprotConfig CONFIG = new UniprotConfig();
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap();
@@ -212,14 +211,24 @@ public class UniprotConverter extends DirectoryConverter
                 protein.setAttribute("isFragment", entry.isFragment());
                 protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
                 protein.setAttribute("primaryAccession", entry.getPrimaryAccession());
-                protein.setAttribute("primaryIdentifier", entry.getName());
+                String name = entry.getName();
+                protein.setAttribute("uniprotName", name);
+                // primaryIdentifier must be unique, so append isoform suffix, eg -1
+                if (entry.isIsoform()) {
+                    String[] bits = name.split("-");
+                    if (bits.length == 2) {
+                        name += bits[1];
+                    }
+                }
+                protein.setAttribute("primaryIdentifier", name);
+
                 String isCanonical = (entry.isIsoform() ? "false" : "true");
                 protein.setAttribute("isUniprotCanonical", isCanonical);
 
                 /* dataset */
                 protein.addToCollection("dataSets", entry.getDatasetRefId());
 
-                /* name and description */
+                /* identifier name and description */
                 processName(protein, entry);
 
                 /* sequence */

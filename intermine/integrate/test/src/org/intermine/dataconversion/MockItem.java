@@ -253,7 +253,7 @@ public class MockItem {
     public String getPrettyReferences() {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + identifier + "\"\\>"
+            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"\\>"
                 + ENDL;
         }
         return xml;

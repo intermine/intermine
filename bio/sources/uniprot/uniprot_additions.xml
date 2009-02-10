@@ -13,6 +13,7 @@
     <attribute name="isUniprotCanonical" type="java.lang.Boolean"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="uniprotAccession" type="java.lang.String"/>
+    <attribute name="uniprotName" type="java.lang.String"/>
     <attribute name="ecNumber" type="java.lang.String"/>
     <attribute name="md5checksum" type="java.lang.String"/>
     <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
