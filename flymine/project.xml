@@ -40,7 +40,7 @@
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227"/>
+      <property name="fasta.taxonId" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
       <property name="fasta.className" value="org.flymine.model.genomic.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
