@@ -257,6 +257,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("OrderByReference", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("FailDistinctOrder", new Failure(ObjectStoreException.class, "Field a1_.age in the ORDER BY list must be in the SELECT list, or the whole QueryClass org.intermine.model.testmodel.Employee must be in the SELECT list, or the query made non-distinct"));
         results2.put("FailDistinctOrder", NO_RESULT);
+        results.put("FailDistinctOrder2", new Failure(ObjectStoreException.class, "Class a2_ in the ORDER BY list must be in the SELECT list, or its id, or the query made non-distinct"));
+        results2.put("FailDistinctOrder2", NO_RESULT);
 
         String largeBagConstraintText = new BufferedReader(new InputStreamReader(TruncatedSqlGeneratorTest.class.getClassLoader().getResourceAsStream("largeBag.sql"))).readLine();
         results.put("LargeBagConstraint", largeBagConstraintText);

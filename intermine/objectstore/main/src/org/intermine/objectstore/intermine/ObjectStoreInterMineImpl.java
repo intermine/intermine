@@ -1659,7 +1659,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP,
                         Collections.EMPTY_MAP);
             } else {
-                sql = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db,
+                sql = SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_GOFASTER,
                         Collections.EMPTY_MAP);
             }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
@@ -1670,22 +1670,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 stringIndexes = new HashSet();
                 String all = null;
                 Iterator indexIter = indexes.iterator();
-                while (indexIter.hasNext()) {
-                    qn = (QueryNode) indexIter.next();
-                    String alias = DatabaseUtil.generateSqlCompatibleName((String) aliases.get(qn));
-                    if (qn instanceof QueryClass) {
-                        alias += "id";
-                    } else if (qn instanceof QueryField) {
-                        if (String.class.equals(((QueryField) qn).getType())) {
-                            alias = "lower(" + alias + ")";
+                try {
+                    while (indexIter.hasNext()) {
+                        qn = (QueryNode) indexIter.next();
+                        String alias = DatabaseUtil.generateSqlCompatibleName((String) aliases
+                                .get(qn));
+                        if (qn instanceof QueryClass) {
+                            alias += "id";
+                        } else if (qn instanceof QueryField) {
+                            if (String.class.equals(((QueryField) qn).getType())) {
+                                alias = "lower(" + alias + ")";
+                            }
+                        }
+                        if (all == null) {
+                            all = alias;
+                        } else {
+                            stringIndexes.add(alias);
+                            all += ", " + alias;
                         }
                     }
-                    if (all == null) {
-                        all = alias;
-                    } else {
-                        stringIndexes.add(alias);
-                        all += ", " + alias;
-                    }
+                } catch (NullPointerException e) {
+                    throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not"
+                            + " present in the SELECT list of query " + q, e);
                 }
                 stringIndexes.add(all);
                 LOG.info("Creating precomputed table for query " + q + " with indexes "
@@ -1714,9 +1720,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             return retval;
-        } catch (NullPointerException e) {
-            throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not present in"
-                    + " the SELECT list of query " + q, e);
         } catch (SQLException e) {
             throw new ObjectStoreException(e);
         } catch (RuntimeException e) {
@@ -1805,7 +1808,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     flushOldTempBagTables(c);
                 }
                 String sql = SqlGenerator.generate(q, schema, db, null,
-                        SqlGenerator.QUERY_NORMAL, Collections.EMPTY_MAP);
+                        SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
                 PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                         sql, "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);

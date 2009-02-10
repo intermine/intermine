@@ -174,6 +174,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("Substring2", new IqlQuery("SELECT SUBSTR(a1_.name, 2) AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_", null));
         results.put("OrderByReference", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.department", null));
         results.put("FailDistinctOrder", new IqlQuery("SELECT DISTINCT a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.age", null));
+        results.put("FailDistinctOrder2", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE a1_.department CONTAINS a2_ ORDER BY a2_", null));
         results.put("LargeBagConstraint", NO_RESULT);
         results.put("LargeBagConstraintUsingTable", NO_RESULT);
         results.put("LargeBagNotConstraint", NO_RESULT);
