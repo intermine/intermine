@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
 import org.intermine.web.logic.results.ResultElement;
 import org.intermine.webservice.server.output.Output;
@@ -50,7 +49,7 @@ public class ResultProcessor
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
         int writtenCount = 0;
         while (resultIt.hasNext())  {
-            ResultsRow row = (ResultsRow) resultIt.next();
+            List<ResultElement> row = resultIt.next();
             output.addResultItem(convertResultElementsToStrings(row));
             writtenCount++;
         }

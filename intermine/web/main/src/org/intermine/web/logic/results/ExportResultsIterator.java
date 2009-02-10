@@ -123,19 +123,28 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     /**
      * Switches on the goFaster mode in the objectstore for this query.
      *
-     * @throws ObjectStoreException if something goes wrong
+     * @throws RuntimeException if something goes wrong
      */
-    public void goFaster() throws ObjectStoreException {
-        ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
+    public void goFaster()  {
+        try {
+            ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());    
+        } catch (ObjectStoreException ex) {
+            throw new RuntimeException("Error happened during executing goFaster method.", ex);
+        }
     }
 
     /**
      * Switches off the goFaster mode in the objectstore for this query.
      *
-     * @throws ObjectStoreException if something goes wrong
+     * @throws RuntimeException if something goes wrong
      */
-    public void releaseGoFaster() throws ObjectStoreException {
-        ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results.getQuery());
+    public void releaseGoFaster() {
+        try {
+            ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
+                    .getQuery());    
+        } catch (ObjectStoreException ex) {
+            throw new RuntimeException("Error happened during executing goFaster method.", ex);
+        }
     }
 
     private List convertColumnTypes(List<? extends QuerySelectable> select, PathQuery pq,

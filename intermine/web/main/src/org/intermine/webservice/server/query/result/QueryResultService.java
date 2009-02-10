@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.PathQueryExecutor;
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.WebService;
@@ -159,9 +158,14 @@ public class QueryResultService extends WebService
             String description, WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
-        Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, firstResult, 
+        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult, 
                 maxResults);
-        new ResultProcessor().write(resultIt, output);              
+        try {
+            resultIt.goFaster();
+            new ResultProcessor().write(resultIt, output);    
+        } finally {
+            resultIt.releaseGoFaster();
+        }
         forward(pathQuery, title, description, input, mineLink, layout);
     }
 
