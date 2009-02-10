@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,9 +62,6 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> ontologies = new HashMap();
     private Map<String, String> keywords = new HashMap();
     private Map<String, String> genes = new HashMap();
-
-    private Set<UniprotEntry> entries = new HashSet();
-    private Set<UniprotEntry> isoforms = new HashSet();
 
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
@@ -113,7 +109,8 @@ public class UniprotConverter extends DirectoryConverter
                 if (file == null) {
                     continue;
                 }
-                UniprotHandler handler = new UniprotHandler();
+                Set<UniprotEntry> entries = new HashSet();
+                UniprotHandler handler = new UniprotHandler(entries);
                 try {
                     Reader reader = new FileReader(file);
                     SAXParser.parse(new InputSource(reader), handler);
@@ -121,17 +118,16 @@ public class UniprotConverter extends DirectoryConverter
                     e.printStackTrace();
                     throw new RuntimeException(e);
                 }
-                processEntries();
-                entries.addAll(isoforms);
-                processEntries();
-                isoforms = new HashSet();
+                // process all uniprot entries
+                Set<UniprotEntry> isoforms = processEntries(entries);
+                // process all isoforms created
+                processEntries(isoforms);
             }
 
             // reset all variables here, new organism
             synonyms = new HashMap();
             sequences = new HashMap();
             genes = new HashMap();
-
         }
     }
 
@@ -199,13 +195,18 @@ public class UniprotConverter extends DirectoryConverter
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
-    private void processEntries()
+    private Set<UniprotEntry> processEntries(Set<UniprotEntry> entries)
     throws SAXException {
+
+        Set<UniprotEntry> isoforms = new HashSet();
+
         for (UniprotEntry entry : entries) {
             // TODO there are uniparc entries so check for swissprot-trembl datasets
             if (entry.hasDatasetRefId() && entry.hasPrimaryAccession() && !entry.isDuplicate()) {
 
-                processIsoforms(entry);
+                for (String isoformAccession: entry.getIsoforms()) {
+                    isoforms.add(entry.clone(isoformAccession));
+                }
 
                 Item protein = createItem("Protein");
                 protein.setAttribute("isFragment", entry.isFragment());
@@ -253,7 +254,7 @@ public class UniprotConverter extends DirectoryConverter
                 }
 
                 // linked so tests pass
-                LinkedList<String> synonymRefIds = new LinkedList();
+                List<String> synonymRefIds = new ArrayList();
 
                 try {
 
@@ -272,16 +273,8 @@ public class UniprotConverter extends DirectoryConverter
                 }
 
             }
-            // TODO remove the entry from map to free up memory?
         }
-        entries = new HashSet();
-    }
-
-    private void processIsoforms(UniprotEntry entry) {
-        for (String isoformAccession: entry.getIsoforms()) {
-            UniprotEntry isoform = entry.clone(isoformAccession);
-            isoforms.add(isoform);
-        }
+        return isoforms;
     }
 
     private void processSequence(Item protein, UniprotEntry entry) {
@@ -359,23 +352,16 @@ public class UniprotConverter extends DirectoryConverter
             LOG.error("Couldn't process genes for " + taxonId + ", no unique identifier set");
             return;
         }
-
         // for this organism, set the following gene fields
         Set<String> geneFields = CONFIG.getGeneIdentifierFields(taxonId);
-
         if (geneFields == null) {
             LOG.error("Couldn't process genes for " + taxonId + ", configuration missing");
             return;
         }
-
         String uniqueIdentifier = getGeneIdentifier(entry, uniqueIdentifierField);
-
         if (uniqueIdentifier == null) {
-//            LOG.error("Couldn't process gene for protein " + entry.getPrimaryAccession()
-//                      + ", no " + uniqueIdentifierField);
             return;
         }
-
         String geneRefId = genes.get(uniqueIdentifier);
         if (geneRefId == null) {
             Item gene = createItem("Gene");
@@ -406,7 +392,7 @@ public class UniprotConverter extends DirectoryConverter
         String taxonId = entry.getTaxonId();
         String identifierValue = null;
 
-        // how to get the identifier, eg. datasource OR variable
+        // how to get the identifier, eg. dbref OR name
         String method = CONFIG.getIdentifierMethod(taxonId, identifierType);
         // what value to use with method, eg. "FlyBase" or "ORF"
         String value = CONFIG.getIdentifierValue(taxonId, identifierType);
@@ -418,7 +404,7 @@ public class UniprotConverter extends DirectoryConverter
 
         if (method.equals("name")) {
             identifierValue = entry.getGenes().get(value);
-        } else if (method.equals("datasource")) {
+        } else if (method.equals("dbref")) {
             // TODO there may be two
             identifierValue = entry.getDbrefs().get(value);
         } else {
@@ -458,6 +444,15 @@ public class UniprotConverter extends DirectoryConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private String taxonId = null;
+        private Set<UniprotEntry> entries;
+
+        /**
+         * @param entries empty map to be populated with uniprot entries
+         * @param isoforms empty map to be populated with isoforms
+         */
+        public UniprotHandler(Set<UniprotEntry> entries) {
+            this.entries = entries;
+        }
 
         /**
          * {@inheritDoc}
@@ -824,7 +819,7 @@ public class UniprotConverter extends DirectoryConverter
     private Item storeFeature(String type, String description, String status)
     throws SAXException {
         List<String> featureTypes = CONFIG.getFeatureTypes();
-        if (!featureTypes.isEmpty() && featureTypes.contains(type)) {
+        if (featureTypes.isEmpty() || featureTypes.contains(type)) {
             Item feature = createItem("UniProtFeature");
             feature.setAttribute("type", type);
             String keywordRefId = getKeyword(type);
