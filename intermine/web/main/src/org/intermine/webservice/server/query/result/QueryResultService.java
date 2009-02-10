@@ -161,9 +161,6 @@ public class QueryResultService extends WebService
         executor.setBatchSize(BATCH_SIZE);
         Iterator<List<ResultElement>> resultIt = executor.execute(pathQuery, firstResult, 
                 maxResults);
-
-        // displayTotalCount now without effect because information about results size
-        // is not available because of the implementation of the object store outer join 
         new ResultProcessor().write(resultIt, output);              
         forward(pathQuery, title, description, input, mineLink, layout);
     }
