@@ -133,7 +133,7 @@ public class ExportResultsIteratorTest extends TestCase
         pq.setViewPaths(view);
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
-        for (ResultsRow gotRow : new IteratorIterable<ResultsRow<ResultElement>>(iter)) {
+        for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
         List expected = Arrays.asList(Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), new ResultElement(department1, p3, false), new ResultElement(employee1, p4, false)),
@@ -207,7 +207,7 @@ public class ExportResultsIteratorTest extends TestCase
         pq.setViewPaths(view);
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
-        for (ResultsRow gotRow : new IteratorIterable<ResultsRow<ResultElement>>(iter)) {
+        for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
         List expected = Arrays.asList(Arrays.asList(new ResultElement(company1, p1, false), new ResultElement(company1, p2, false), new ResultElement(department1, p3, false), null),
@@ -251,7 +251,7 @@ public class ExportResultsIteratorTest extends TestCase
         pq.setViewPaths(view);
         ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
         List got = new ArrayList();
-        for (ResultsRow gotRow : new IteratorIterable<ResultsRow<ResultElement>>(iter)) {
+        for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
         List expected = Arrays.asList(Arrays.asList(new ResultElement(department1, p1, false), new ResultElement(company1, p2, false)),
