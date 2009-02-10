@@ -38,7 +38,7 @@ import org.intermine.web.logic.query.MainHelper;
  *
  * @author Matthew Wakeling
  */
-public class ExportResultsIterator implements Iterator<ResultsRow<ResultElement>>
+public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
     private Iterator<ResultsRow> osIter;
     private Iterator<ResultsRow<ResultElement>> subIter;
