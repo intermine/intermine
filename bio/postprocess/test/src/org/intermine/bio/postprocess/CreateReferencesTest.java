@@ -162,54 +162,6 @@ public class CreateReferencesTest extends TestCase {
 
     }
 
-    public void testInsertReferences() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
-        CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences();
-
-        compareResultsToExpected();
-    }
-
-    /*public void testInsertSymmetricalRelationReferences() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
-        CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences();
-        cr.insertSymmetricalRelationReferences();
-
-        ObjectStore os = osw.getObjectStore();
-
-        Query q = new Query();
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-
-        QueryField qf2 = new QueryField(qcGene, "primaryIdentifier");
-        SimpleConstraint sc2 =
-            new SimpleConstraint(qf2, ConstraintOp.EQUALS, new QueryValue("gene1"));
-        q.setConstraint(sc2);
-
-        Results res = os.execute(q);
-        ResultsRow row = (ResultsRow) res.iterator().next();
-
-        Gene resGene = (Gene) row.get(0);
-
-        Set overlappingFeatures = resGene.getOverlappingFeatures();
-
-        Assert.assertEquals(1, overlappingFeatures.size());
-
-        Set expectedIDs = new HashSet();
-        expectedIDs.add(storedGene2.getId());
-
-        Set actualIDs = new HashSet();
-        Iterator ofIter = overlappingFeatures.iterator();
-        actualIDs.add(((Gene) ofIter.next()).getId());
-
-        Assert.assertEquals(expectedIDs, actualIDs);
-    }*/
 
     public void testCreateUtrRefs() throws Exception {
         MRNA storedMRNA1 = (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
@@ -736,10 +688,7 @@ public class CreateReferencesTest extends TestCase {
 
         expectedExon.setPrimaryIdentifier("exon1");
         expectedExon.setId(storedExon.getId());
-        expectedTranscript.setExons(Collections.singleton(expectedExon));
         expectedExon.setTranscripts(Collections.singleton(expectedTranscript));
-        expectedGene.setExons(Collections.singleton(expectedExon));
-        expectedExon.setGene(expectedGene);
 
         RankedRelation expectedExonRelation =
             (RankedRelation) DynamicUtil.createObject(Collections.singleton(RankedRelation.class));
@@ -751,8 +700,6 @@ public class CreateReferencesTest extends TestCase {
 
         expectedChromosome.setPrimaryIdentifier("chr1");
         expectedChromosome.setId(storedChromosome.getId());
-        expectedChromosome.addFeatures(expectedTranscript);
-        expectedChromosome.addFeatures(expectedGene);
 
         Relation expectedChromosomeRelation =
             (Relation) DynamicUtil.createObject(Collections.singleton(Relation.class));
@@ -775,8 +722,6 @@ public class CreateReferencesTest extends TestCase {
             expectedGene2, expectedGene1, expectedGene})));
         expectedChromosome.setTranscripts(new HashSet(Arrays.asList(new Object[] {
             expectedTranscript3, expectedTranscript2, expectedTranscript1, expectedTranscript})));
-        expectedGene.setChromosome(expectedChromosome);
-        expectedTranscript.setChromosome(expectedChromosome);
         expectedExon.setObjects(new HashSet(Arrays.asList(new Object[] {expectedChromosomeRelation,
             expectedExonRelation})));
 
