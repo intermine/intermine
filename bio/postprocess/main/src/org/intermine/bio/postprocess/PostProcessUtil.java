@@ -33,7 +33,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -176,25 +175,7 @@ public class PostProcessUtil
         return res.iterator();
     }
 
-
-    /**
-     * Return an iterator over all objects of the given class in the ObjectStore provided.
-     * @param os an ObjectStore to query
-     * @param cls the class to select instances of
-     * @return an iterator over the results
-     */
-    public static Iterator selectObjectsOfClass(ObjectStore os, Class cls) {
-        Query q = new Query();
-        q.setDistinct(false);
-        QueryClass qc = new QueryClass(cls);
-        q.addToSelect(qc);
-        q.addFrom(qc);
-        SingletonResults res = os.executeSingleton(q, 500, true, true, true);
-        return res.iterator();
-    }
-
-
-
+    
     /**
      * Query ObjectStore for all Location object that conect the given BioEntity classes.
      * (eg. Contig->Supercontig->Chromosome)
