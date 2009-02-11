@@ -44,7 +44,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     
     private static final String VALUE_PARAMETER = "value";
 
-    private static final String ID_PARAMETER = "cons";
+    private static final String ID_PARAMETER = "constraint";
 
     private static final String CODE_PARAMETER = "code";
     
