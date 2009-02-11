@@ -56,6 +56,10 @@ public class DirectoryConverterTask extends ConverterTask
         if (dataDir == null) {
             throw new BuildException("dataDir must be specified");
         }
+        File dir = new File(dataDir);
+        if (!dir.isDirectory() || dir.listFiles().length == 0) {
+            throw new BuildException("dataDir contains no files");
+        }
         if (clsName == null) {
             throw new BuildException("clsName attribute is not set");
         }
