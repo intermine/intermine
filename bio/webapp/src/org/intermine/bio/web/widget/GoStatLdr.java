@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.GOTerm;
+import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Gene;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
@@ -43,6 +42,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class GoStatLdr extends EnrichmentWidgetLdr
 {
+    private static final Logger LOG = Logger.getLogger(GoStatLdr.class);
     private Collection<String> organisms;
     private InterMineBag bag;
     private String namespace;
@@ -80,10 +80,17 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         String bagType = bag.getType();
 
         QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcGoAnnotation = new QueryClass(GOAnnotation.class);
-        QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryClass qcGo = new QueryClass(GOTerm.class);
+        QueryClass qcGoAnnotation = null;
+        QueryClass qcGo = null;
+        try {
+            qcGoAnnotation = new QueryClass(Class.forName("GOAnnotation"));
+            qcGo = new QueryClass(Class.forName("GOTerm"));
+        } catch (ClassNotFoundException e) {
+            LOG.error(e);
+            return null;
+        }
         QueryClass qcProtein = new QueryClass(Protein.class);
+        QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
