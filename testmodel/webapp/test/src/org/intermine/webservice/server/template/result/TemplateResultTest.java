@@ -75,6 +75,25 @@ public class TemplateResultTest extends TestCase
         assertEquals("3", results.get(0).get(2));
         assertEquals("false", results.get(0).get(3));
     }
+    
+    /**
+     * Tests that if you modify order of constraints in request than it returns
+     * valid result. Old version of template service was dependent on order of 
+     * constraints in request.
+     * @throws Exception
+     */
+    public void testModifiedConstraintsOrder() throws Exception {
+        String tabResult = getResultForQueryString("name=fourConstraints&cons4=Employee.name" +
+                "&op4=CONTAINS&value4=Employee&cons3=Employee.age&code3=B&op3=lt&value3=20" +
+                "&cons2=Employee.age&code2=C&op2=gt&value2=20&cons1=Employee.fullTime&op1=eq" +
+                "&value1=false&size=10&format=tab").trim();
+        List<List<String>> results = TestUtil.parseTabResult(tabResult);
+
+        assertEquals("EmployeeA3", results.get(0).get(0));
+        assertEquals("30", results.get(0).get(1));
+        assertEquals("3", results.get(0).get(2));
+        assertEquals("false", results.get(0).get(3));
+    }
          
     private String getRequestString(String parameterString) {
         return getServiceUrl() + parameterString;
