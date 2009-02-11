@@ -86,7 +86,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
             
             String opParameter = OPERATION_PARAMETER + i;
             String opString = request.getParameter(opParameter);
-            ConstraintOp op = ConstraintOp.getConstraintOp(CodeTranslator.getCode(opString));
+            ConstraintOp op = getConstraintOp(opParameter, opString);
             
             String valueParameter = VALUE_PARAMETER + i;
             String value = request.getParameter(valueParameter);            
@@ -105,19 +105,17 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
 
             if (isPresent(op) || isPresent(value) || isPresent(id) || isPresent(extraValue)
                     || isPresent(code)) {
-                String help = " Incomplete parameters. Some parameters for constraint with number "
-                    + i + " were specified and some weren't. ";
                 if (!isPresent(id)) {
-                    throw new BadRequestException("missing or invalid parameter: " + idParameter 
-                            + help);                    
+                    throw new BadRequestException("There is no path provided for constraint " + i  
+                            + ".Missing parameter " + idParameter + ".");
                 }
                 if (!isPresent(op)) {
-                    throw new BadRequestException("missing or invalid parameter: " + opParameter 
-                            + help);
+                    throw new BadRequestException("There is no operation provided for constraint " 
+                            + i  + ".Missing parameter " + opParameter + ".");
                 }
                 if (!isPresent(value)) {
-                    throw new BadRequestException("invalid or missing parameter: " + valueParameter 
-                            + help);
+                    throw new BadRequestException("There is no value provided for constraint " + i  
+                            + ".Missing parameter " + valueParameter + ".");
                 }
                 ConstraintLoad load = new ConstraintLoad(idParameter, id, code, op, value, 
                         extraValue);
@@ -126,6 +124,15 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
                 } 
                 ret.get(id).add(load);
             }
+        }
+        return ret;
+    }
+
+    private ConstraintOp getConstraintOp(String parName, String parValue) {
+        ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
+        if (parValue != null && ret == null) {
+            throw new BadRequestException("Invalid value of parameter: " + parName 
+                    + "It must specify operation.");
         }
         return ret;
     }
