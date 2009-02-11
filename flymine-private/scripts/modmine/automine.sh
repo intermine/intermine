@@ -9,6 +9,7 @@
 #
 # TODO: ant failing and exiting with 0!
 #       test with file option
+#       test full release
 #       analyse after stag?
 #
 
@@ -24,8 +25,8 @@ WGETDIR=$NEWDIR/wgetdir
 PROPDIR=$HOME/.intermine
 SCRIPTPATH=../flymine-private/scripts/modmine/
 
-RECIPIENTS=contrino@flymine.org
-#RECIPIENTS=contrino@flymine.org,rns@flymine.org
+#RECIPIENTS=contrino@flymine.org
+RECIPIENTS=contrino@flymine.org,rns@flymine.org
 REPORTPATH=file:///shared/data/modmine/subs/reports/
 
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
@@ -382,25 +383,12 @@ then
 TIMESTAMP="$NAMESTAMP"
 fi
 
-#mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$TIMESTAMP.html
 # check chado for new features
 cd $MINEDIR
-$SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER
-$BUILDDIR/acceptance_test.html > $BUILDDIR/$TIMESTAMP.html
+$SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
 
-# # crap code, use perl
-# cd /tmp
-# rm -f chadoclasses reporthead newreport
-# psql -H -h $DBHOST -d $CHADODB -U $DBUSER -c 'select c.name, c.cvterm_id, count(*) from feature f, cvterm c where c.cvterm_id = f.type_id group by c.name, c.cvterm_id order by c.name;' > chadoclasses
-# head -n -1 $MINEDIR/integrate/build/$TIMESTAMP.html > reporthead
-# echo '<h3>Chado classes</h3>' | cat >> reporthead
-# cat reporthead chadoclasses > newreport
-# echo '</body></html>' | cat >> newreport
-#cp newreport $REPORTS/$TIMESTAMP.html
-
-mv  $BUILDDIR/$TIMESTAMP.html $REPORTS
 echo "sending mail!!"
-mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTS" < $REPORTS/$TIMESTAMP.html
+mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
 
 echo
 echo "acceptance test results in "
@@ -418,6 +406,7 @@ fi #VAL=y
 #go back to the chado directory
 cd $NEWDIR
 done
+exit;
 
 else
 echo
@@ -526,21 +515,11 @@ mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$TIMES
 elinks $MINEDIR/integrate/build/$TIMESTAMP.html
 
 # check chado for new features
-# crap code, use perl
-cd /tmp
-rm -f chadoclasses reporthead newreport
-psql -H -h $DBHOST -d $CHADODB -U $DBUSER -c 'select c.name, c.cvterm_id, count(*) from feature f, cvterm c where c.cvterm_id = f.type_id group by c.name, c.cvterm_id order by c.name;' > chadoclasses
-head -n -1 $MINEDIR/integrate/build/$TIMESTAMP.html > reporthead
-echo '<h3>Chado classes</h3>' | cat >> reporthead
-cat reporthead chadoclasses > newreport
-echo '</body></html>' | cat >> newreport
-cp newreport $REPORTS/$TIMESTAMP.html
+cd $MINEDIR
+$SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
 
-if [ $VALIDATING = "y" ]
-then
 echo "sending mail!!"
-mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" <  $REPORTS/$TIMESTAMP.html
-fi
+mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
 
 echo
 echo "acceptance test results in "
