@@ -20,7 +20,6 @@ import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Exon;
@@ -161,7 +160,7 @@ public class TransferSequencesTest extends TestCase
         "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
         "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
     
-    private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
+    //private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
 
     private static final String EXPECTED_TRANSCRIPT_0_RESIDUES =
         "tcaaatcaaattgataacttgtcaagtatccctatgcttgtcaagataaacct";
@@ -172,7 +171,6 @@ public class TransferSequencesTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        LOG.error("in tear down");
         if (osw.isInTransaction()) {
             osw.abortTransaction();
         }
@@ -181,18 +179,14 @@ public class TransferSequencesTest extends TestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = osw.getObjectStore().executeSingleton(q);
-        LOG.error("created results");
         Iterator resIter = res.iterator();
-        //osw.beginTransaction();
+        osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            LOG.error("deleting: " + o.getId());
             osw.delete(o);
         }
-        //osw.commitTransaction();
-        LOG.error("committed transaction");
+        osw.commitTransaction();
         osw.close();
-        LOG.error("closed objectstore");
     }
 
 
