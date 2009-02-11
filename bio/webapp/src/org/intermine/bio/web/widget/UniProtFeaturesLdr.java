@@ -13,10 +13,9 @@ package org.intermine.bio.web.widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.UniProtFeature;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
@@ -39,7 +38,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
 {
-
+    private static final Logger LOG = Logger.getLogger(UniProtFeaturesLdr.class);
     private Collection<String> organisms;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
@@ -65,7 +64,14 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
 
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryClass qcUniProtFeature = new QueryClass(UniProtFeature.class);
+        QueryClass qcUniProtFeature = null;
+        try {
+            qcUniProtFeature = new QueryClass(Class.forName("UniProtFeature"));
+        } catch (ClassNotFoundException e) {
+            LOG.error(e);
+            return null;
+        }
+
 
         QueryField qfProtId = new QueryField(qcProtein, "id");
         QueryField qfName = new QueryField(qcUniProtFeature, "type");
