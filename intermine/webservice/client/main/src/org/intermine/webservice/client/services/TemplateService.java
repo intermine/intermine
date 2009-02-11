@@ -62,7 +62,7 @@ public class TemplateService extends Service
             for (int i = 0; i < parameters.size(); i++) {
                 TemplateParameter par = parameters.get(i);
                 int index = i + 1;
-                addParameter("cons" + index, par.getPathId());
+                addParameter("constraint" + index, par.getPathId());
                 addParameter("op" + index, par.getOperation());
                 addParameter("value" + index, par.getValue());
                 if (par.getExtraValue() != null) {
