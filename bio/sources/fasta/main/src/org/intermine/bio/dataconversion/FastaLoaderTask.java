@@ -385,7 +385,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     protected String getIdentifier(Sequence bioJavaSequence) {
         String name = bioJavaSequence.getName() + idSuffix;
         // description_line=sp|Q9V8R9-2|41_DROME
-        if (name.contains("\\|")) {
+        if (name.contains("|")) {
             String[] bits = name.split("\\|");
             if (bits.length < 2) {
                 return null;
