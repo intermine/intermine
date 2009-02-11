@@ -78,13 +78,6 @@ public class UniprotConverter extends DirectoryConverter
         super(writer, model);
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
-        try {
-            datasourceRefId = getDataSource("UniProt");
-            setOntology("UniProtKeyword");
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -95,6 +88,14 @@ public class UniprotConverter extends DirectoryConverter
         Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
         if (taxonIdToFiles == null || taxonIdToFiles.isEmpty()) {
             throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
+        }
+        // check that we have valid files before we start storing data
+        try {
+            datasourceRefId = getDataSource("UniProt");
+            setOntology("UniProtKeyword");
+        } catch (SAXException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         Iterator iter = taxonIds.iterator();
         while (iter.hasNext()) {
