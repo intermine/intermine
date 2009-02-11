@@ -520,17 +520,19 @@
 
   <post-processing>
     <post-process name="create-utr-references"/>
-    <post-process name="calculate-locations"/>
     <post-process name="create-references" dump="true"/>
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
-    <post-process name="create-overlap-relations-flymine"/>
+    <!--<post-process name="create-overlap-relations-flymine"/>-->
     <post-process name="do-sources" dump="true"/>
     <post-process name="create-intron-features">
       <property name="organisms" value="180454,7460"/>
     </post-process>   
+    <post-process name="create-bioseg-location-index"/>
+    <post-process name="create-overlap-view"/>
+
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
