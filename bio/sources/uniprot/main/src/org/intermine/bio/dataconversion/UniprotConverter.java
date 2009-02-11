@@ -1,4 +1,4 @@
-package org.intermine.bio.dataconversion;
+    package org.intermine.bio.dataconversion;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -210,14 +210,15 @@ public class UniprotConverter extends DirectoryConverter
                 Item protein = createItem("Protein");
                 protein.setAttribute("isFragment", entry.isFragment());
                 protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
-                protein.setAttribute("primaryAccession", entry.getPrimaryAccession());
+                String primaryAccession = entry.getPrimaryAccession();
+                protein.setAttribute("primaryAccession", primaryAccession);
                 String name = entry.getName();
                 protein.setAttribute("uniprotName", name);
                 // primaryIdentifier must be unique, so append isoform suffix, eg -1
                 if (entry.isIsoform()) {
-                    String[] bits = name.split("-");
+                    String[] bits = primaryAccession.split("\\-");
                     if (bits.length == 2) {
-                        name += bits[1];
+                        name += "-" + bits[1];
                     }
                 }
                 protein.setAttribute("primaryIdentifier", name);
