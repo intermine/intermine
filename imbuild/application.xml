@@ -72,8 +72,9 @@
 
   <target name="create-db-userprofile" depends="-do-build-db-userprofile"/>
 
-  <target name="build-db-userprofile" depends="-do-build-db-userprofile, -load-default-templates"/>
-
+  <target name="build-db-userprofile" depends="-do-build-db-userprofile, -load-default-templates, 
+  	 -set-userprofile-version"/>
+	
   <target name="-do-build-db-userprofile" depends="-init-properties, -init-build-db">
     <task:build-db osname="${userprofile.objectstore.name}"
                    model="${userprofile.model.name}"/>
@@ -83,6 +84,10 @@
     <load-default-templates templatesXml="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"
                             userProfileAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+	
+  <target name="-set-userprofile-version" depends="-init-properties, -init-build-db">
+    <set-userprofile-version osname="${userprofile.objectstore.name}" />
   </target>
 
   <target name="dump-default-templates" depends="-init-properties, -init-build-db">
