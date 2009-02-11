@@ -11,12 +11,31 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.biojava.bio.seq.DNATools;
+import org.biojava.bio.symbol.IllegalAlphabetException;
+import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SymbolList;
+import org.flymine.model.genomic.Assembly;
+import org.flymine.model.genomic.CDS;
+import org.flymine.model.genomic.Chromosome;
+import org.flymine.model.genomic.ChromosomeBand;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.flymine.model.genomic.Location;
+import org.flymine.model.genomic.Sequence;
+import org.flymine.model.genomic.Transcript;
+import org.intermine.bio.util.Constants;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -28,40 +47,7 @@ import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.bio.util.BioQueries;
-import org.intermine.bio.util.Constants;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
-
-import org.flymine.model.genomic.Assembly;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.ChromosomeBand;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Supercontig;
-import org.flymine.model.genomic.Transcript;
-import org.flymine.model.genomic.CDS;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.log4j.Logger;
-import org.biojava.bio.seq.DNATools;
-import org.biojava.bio.symbol.IllegalAlphabetException;
-import org.biojava.bio.symbol.IllegalSymbolException;
-import org.biojava.bio.symbol.SymbolList;
 
 /**
  * Transfer sequences from the Assembly objects to the other objects that are located on the
@@ -83,123 +69,6 @@ public class TransferSequences
         this.osw = osw;
     }
 
-    /**
-     * Copy the Assembly sequences to the appropriate place in the chromosome sequences and store a
-     * Sequence object for each Chromosome.  Uses the ObjectStoreWriter that was passed to the
-     * constructor
-     * @throws Exception if there are problems with the transfer
-     */
-    public void transferToChromosome()
-        throws Exception {
-        ObjectStore os = osw.getObjectStore();
-
-        long startTime = System.currentTimeMillis();
-
-        Results results =
-            BioQueries.findLocationAndObjects(os, Chromosome.class, Assembly.class, false, false,
-                    10);
-
-        Map chromosomeTempFiles = new HashMap();
-
-        Iterator resIter = results.iterator();
-
-        Chromosome currentChr = null;
-        RandomAccessFile currentChrBases = null;
-
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            Integer chrId = (Integer) rr.get(0);
-            Chromosome chr = (Chromosome) os.getObjectById(chrId);
-            Assembly assembly = (Assembly) rr.get(1);
-            Location assemblyOnChrLocation = (Location) rr.get(2);
-
-            if (assembly instanceof Supercontig) {
-                continue;
-            }
-
-            if (currentChr == null || !chr.equals(currentChr)) {
-                if (currentChr != null) {
-                    currentChrBases.close();
-                    LOG.info("finished writing temp file for Chromosome: "
-                             + currentChr.getSecondaryIdentifier());
-                }
-
-                File tempFile = getTempFile(chr);
-                currentChrBases = getChromosomeTempSeqFile(chr, tempFile);
-                chromosomeTempFiles.put(chr, tempFile);
-
-                currentChr = chr;
-            }
-
-            copySeqArray(currentChrBases, assembly.getSequence().getResidues(),
-                         assemblyOnChrLocation.getStart().intValue(),
-                         assemblyOnChrLocation.getStrand());
-        }
-        if (currentChrBases == null) {
-            LOG.error("in transferToChromosome(): no Assembly sequences found");
-        } else {
-            currentChrBases.close();
-            storeTempSequences(chromosomeTempFiles);
-            LOG.info("finished writing temp file for Chromosome: "
-                     + currentChr.getSecondaryIdentifier());
-        }
-
-        LOG.info("Finished transferring sequences to chromosomes - took "
-                 + (System.currentTimeMillis() - startTime) + " ms.");
-    }
-
-    private File getTempFile(Chromosome chr) throws IOException {
-        String prefix = "transfer_sequences_temp_" + chr.getId() + "_"
-            + chr.getSecondaryIdentifier();
-        return File.createTempFile(prefix, null, new File ("/tmp/"));
-    }
-
-    /**
-     * Initialise the given File by setting it's length to the length of the Chromosome and
-     * initialising it with "." characters.
-     * @throws IOException
-     */
-    private RandomAccessFile getChromosomeTempSeqFile(Chromosome chr, File tempFile)
-                                                      throws IOException {
-        RandomAccessFile raf = new RandomAccessFile(tempFile, "rw");
-
-        byte[] bytes;
-        try {
-            bytes = ("......................................................................."
-                            + ".............................................").getBytes("US-ASCII");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("unexpected exception", e);
-        }
-
-        int writeCount = chr.getLength().intValue() / bytes.length + 1;
-
-        // fill with '.' so we can see the parts of the Chromosome sequence that haven't
-        // been set
-        for (int i = 0; i < writeCount; i++) {
-            raf.write(bytes);
-        }
-
-        raf.setLength(chr.getLength().longValue());
-
-        return raf;
-    }
-
-    private void storeTempSequences(Map chromosomeTempFiles)
-        throws ObjectStoreException, IOException {
-        Iterator chromosomeTempFilesIter = chromosomeTempFiles.keySet().iterator();
-
-        while (chromosomeTempFilesIter.hasNext()) {
-            Chromosome chr = (Chromosome) chromosomeTempFilesIter.next();
-            File file = (File) chromosomeTempFiles.get(chr);
-            FileReader reader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String sequenceString = bufferedReader.readLine();
-            osw.beginTransaction();
-            LOG.info("Storing sequence for chromosome: " + chr.getSecondaryIdentifier());
-            storeNewSequence(chr, sequenceString);
-            osw.commitTransaction();
-        }
-    }
 
     private void storeNewSequence(LocatedSequenceFeature feature, String sequenceString)
         throws ObjectStoreException {
@@ -410,25 +279,6 @@ public class TransferSequences
         return subSeqString;
     }
 
-    private void copySeqArray(RandomAccessFile raf, String sourceSequence,
-                              int start, String strand)
-        throws IllegalSymbolException, IllegalAlphabetException, IOException {
-
-        byte[] byteArray = new byte[sourceSequence.length()];
-
-        if (strand.equals("-1")) {
-            SymbolList symbolList = DNATools.createDNA(sourceSequence);
-
-            symbolList = DNATools.reverseComplement(symbolList);
-
-            byteArray = symbolList.seqString().getBytes("US-ASCII");
-        } else {
-            byteArray = sourceSequence.toLowerCase().getBytes("US-ASCII");
-        }
-
-        raf.seek(start - 1);
-        raf.write(byteArray);
-    }
 
     /**
      * For each Transcript, join and transfer the sequences from the child Exons to a new Sequence

@@ -10,10 +10,19 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.flymine.model.genomic.Exon;
+import org.flymine.model.genomic.Gene;
+import org.flymine.model.genomic.Transcript;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -21,24 +30,11 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.task.CreateIndexesTask;
 import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Transcript;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.log4j.Logger;
-import org.apache.tools.ant.BuildException;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -109,13 +105,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
         }
         long startTime = System.currentTimeMillis();
         try {
-            if ("calculate-locations".equals(operation)) {
-                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                LOGGER.info("Starting CalculateLocations.fixPartials()");
-                cl.fixPartials();
-                LOGGER.info("Starting CalculateLocations.createLocations()");
-                cl.createLocations();
-            } else if ("create-chromosome-locations-and-lengths".equals(operation)) {
+            if ("create-chromosome-locations-and-lengths".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOGGER.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
                 cl.setChromosomeLocationsAndLengths();
@@ -132,9 +122,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 cr.createUtrRefs();
             } else if ("transfer-sequences".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOGGER.info("Starting TransferSequences.transferToChromosome()");
-                ts.transferToChromosome();
-
                 ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
@@ -142,10 +129,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
-            } else if ("transfer-sequences-chromosome".equals(operation)) {
-                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOGGER.info("Starting TransferSequences.transferToChromosome()");
-                ts.transferToChromosome();
             } else if ("transfer-sequences-located-sequence-feature".equals(operation)) {
                 TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
