@@ -46,9 +46,7 @@ public class TemplateResultTest extends TestCase
         String tabResult = getResultForQueryString("name=employeesOfACertainAge&cons1=Employee.age&code1=A&op1=gt" +
         		"&value1=20&cons2=Employee.age&code2=B&op2=ne&value2=40&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
-        
-        System.out.println("result: " + tabResult);
-        
+                
         assertEquals("EmployeeA3", results.get(0).get(0));
         assertEquals("30", results.get(0).get(1));
 
