@@ -128,9 +128,6 @@ public class CreateReferencesTest extends TestCase {
 
 
     public void testInsertGeneTranscriptReferences() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
         cr.insertCollectionField(Transcript.class, "objects", SimpleRelation.class, "object",
                                  Gene.class, "transcripts", false);
@@ -139,9 +136,6 @@ public class CreateReferencesTest extends TestCase {
     }
 
     public void testInsertChromosomeLSFReferences() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
         cr.insertReferenceField(Chromosome.class, "subjects", Relation.class, "subject",
                                 LocatedSequenceFeature.class, "chromosome");
@@ -150,16 +144,12 @@ public class CreateReferencesTest extends TestCase {
     }
 
     public void testInsertCollectionField1() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
         CreateReferences cr = new CreateReferences(osw);
 
         cr.insertCollectionField(Gene.class, "transcripts", MRNA.class, "protein",
                                  Protein.class, "genes", false);
 
         compareCollectionField1ResultsToExpected();
-
     }
 
 
