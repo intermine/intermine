@@ -255,9 +255,6 @@ fi
 
 fi #if $WGET=y
 
-
-
-
 #---------------------------------------
 # build the chado db
 #---------------------------------------
@@ -508,15 +505,14 @@ then
 TIMESTAMP="$NAMESTAMP"
 fi
 
-mv $MINEDIR/integrate/build/acceptance_test.html $MINEDIR/integrate/build/$TIMESTAMP.html
-#cp $MINEDIR/integrate/build/$TIMESTAMP.html $REPORTS/$TIMESTAMP.html
-
-#xterm -bg grey20 -hold -e "elinks file://$MINEDIR/integrate/build/$1.html" &
-elinks $MINEDIR/integrate/build/$TIMESTAMP.html
-
 # check chado for new features
 cd $MINEDIR
 $SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
+
+echo "sending mail!!"
+mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
+
+#elinks $REPORTS/$TIMESTAMP.html
 
 echo "sending mail!!"
 mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
