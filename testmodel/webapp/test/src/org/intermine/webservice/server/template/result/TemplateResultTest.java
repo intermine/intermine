@@ -43,8 +43,8 @@ public class TemplateResultTest extends TestCase
      * @throws Exception if some error occurs
      */
     public void testForNonDefaultParameterValues() throws Exception {
-        String tabResult = getResultForQueryString("name=employeesOfACertainAge&cons1=Employee.age&code1=A&op1=gt" +
-        		"&value1=20&cons2=Employee.age&code2=B&op2=ne&value2=40&size=10&format=tab").trim();
+        String tabResult = getResultForQueryString("name=employeesOfACertainAge&constraint1=Employee.age&code1=A&op1=gt" +
+        		"&value1=20&constraint2=Employee.age&code2=B&op2=ne&value2=40&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
                 
         assertEquals("EmployeeA3", results.get(0).get(0));
@@ -62,9 +62,9 @@ public class TemplateResultTest extends TestCase
      * @throws Exception
      */
     public void testFourConstraints() throws Exception {
-        String tabResult = getResultForQueryString("name=fourConstraints&cons1=Employee.name" +
-        		"&op1=CONTAINS&value1=Employee&cons2=Employee.age&code2=B&op2=lt&value2=20" +
-        		"&cons3=Employee.age&code3=C&op3=gt&value3=20&cons4=Employee.fullTime&op4=eq" +
+        String tabResult = getResultForQueryString("name=fourConstraints&constraint1=Employee.name" +
+        		"&op1=CONTAINS&value1=Employee&constraint2=Employee.age&code2=B&op2=lt&value2=20" +
+        		"&constraint3=Employee.age&code3=C&op3=gt&value3=20&constraint4=Employee.fullTime&op4=eq" +
         		"&value4=false&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
 
@@ -81,9 +81,9 @@ public class TemplateResultTest extends TestCase
      * @throws Exception
      */
     public void testModifiedConstraintsOrder() throws Exception {
-        String tabResult = getResultForQueryString("name=fourConstraints&cons4=Employee.name" +
-                "&op4=CONTAINS&value4=Employee&cons3=Employee.age&code3=B&op3=lt&value3=20" +
-                "&cons2=Employee.age&code2=C&op2=gt&value2=20&cons1=Employee.fullTime&op1=eq" +
+        String tabResult = getResultForQueryString("name=fourConstraints&constraint4=Employee.name" +
+                "&op4=CONTAINS&value4=Employee&constraint3=Employee.age&code3=B&op3=lt&value3=20" +
+                "&constraint2=Employee.age&code2=C&op2=gt&value2=20&constraint1=Employee.fullTime&op1=eq" +
                 "&value1=false&size=10&format=tab").trim();
         List<List<String>> results = TestUtil.parseTabResult(tabResult);
 
