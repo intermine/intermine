@@ -408,8 +408,13 @@ public class UniprotConverter extends DirectoryConverter
         String value = CONFIG.getIdentifierValue(taxonId, identifierType);
 
         if (method == null || value == null) {
-            LOG.error("error processing line in config file for organism " + taxonId);
-            return null;
+            // use default set in config file, if this organism isn't configured
+            method = CONFIG.getIdentifierMethod("default", identifierType);
+            value = CONFIG.getIdentifierValue("default", identifierType);
+            if (method == null || value == null) {
+                LOG.error("error processing line in config file for organism " + taxonId);
+                return null;
+            }
         }
 
         if (method.equals("name")) {
