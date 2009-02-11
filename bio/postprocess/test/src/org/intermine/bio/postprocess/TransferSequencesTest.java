@@ -23,13 +23,10 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Contig;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.RankedRelation;
-import org.flymine.model.genomic.RepeatRegion;
 import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -47,12 +44,8 @@ public class TransferSequencesTest extends TestCase
 {
     private ObjectStoreWriter osw;
     private Chromosome storedChromosome;
-    private Supercontig storedSupercontig;
-    private Contig [] storedContigs;
-    private Sequence [] storedContigSequences;
     private Exon [] storedExons;
     private Transcript [] storedTranscripts;
-    private RepeatRegion [] storedRepeatRegions;
 
     private String expectedExonSequence0 =
         "ctctctctctaaagagaggggaggaggaggactctctctct";
@@ -99,6 +92,75 @@ public class TransferSequencesTest extends TestCase
         "tcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttttgtgcgg" +
         "tggtgagcgtg";
 
+    private String storedChrSequence =
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "............................................................"+
+        "....................gataaagtcggatctcaaaggaataaaaaatagtccgttg"+
+        "attaaatttaaaatacgctagtaattctctaaacttcgtctgcgcttttcaacaataatc"+
+        "agttaaaccggcggttggtggagagcagttaatacttgacaagcatatcatttacatcgc"+
+        "acctccttagtacgatttatttaacgataagtaacaccgtccacgtgctgaccagcctat"+
+        "ttgaagaataacgatatcatagagcttactgtaggattaataaaaatatcatcaaaatgg"+
+        "ggaaaaaattgaaagattatgagaagtatatgattattaaataaaataaaacttttaaga"+
+        "attgatactgagttttgatctttaaatttagtggagatactcattaaacagccttatacc"+
+        "taaatgaaaactgaaaggtttactgcgtttacctagcatgcttagcaatgaattaaagga"+
+        "ttgctcaattacctagctttctgaatattacgctagctttctactcccttgccattgtaa"+
+        "aatacttttctggtcatcccgctgcttttcaatgaaactgctattcattgacagcctctc"+
+        "aacaaaagatgggtttctcaaattaaatgtacaaaaattatgcatattttatatttattt"+
+        "gagcacaaaatcacattatatgaccatgccgtggatatacaacaaattttacaacaccag"+
+        "gtatttctttacggcttaaggaagttttagttatgactgtaaattgtacagctgtgaata"+
+        "tattacttaaccatagtataccctttaaaccaatgcaattacacttttgcagtagatata"+
+        "tatccagattctaccacgctggctataatattctcctctgtagaataataatttgactgc"+
+        "aacacctaccaacttctgactactgtttgggctttaatttcattgcctactacaatgcgt"+
+        "cgttctgggagtaaagaatcaacaattgtaagtaatcgagttatgtttttagctgttaac"+
+        "tatatataatttaataaatacattccgacgatactgcctctatggcttagtggtacagca"+
+        "tcgcacttgtaatgcgaagatccttggttcgattccgagtggaggcatatacattatatt"+
+        "atattctttttcatgcggaaaaaagatttcaaatttttgggtatgatattaatatgactg"+
+        "taacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatctcttttccg"+
+        "agtaagacgttttccagtctaaatttggagtctgcagttgtttcgcaattcttaatgtat"+
+        "ggttatactaaatacaaactttaaagctctgatttatgtttgcaataaactaaaataaaa"+
+        "gcacaaaaacctttacccattaatttcaaacaacttataaactaccggtaaacttttttt"+
+        "ctaacctttataatttataaactagaatgtttaatgtctacggccatacctaggcgaaaa"+
+        "caccagttcccgtccgatcactgcagttaagcgtctgagggcctcgttagtactatggtt"+
+        "ggagacaacatgggaatccggggtgctgtaggctatttttttatatccgtctttcttact"+
+        "acttgcctaacaagtcatgatgtactctcaaaatatgtttgcatgccttgtaatattggt"+
+        "tatggatagctccttctggacttgatcttttgtagccaagaacaatgggtatagactctg"+
+        "accttgtgatgttgtagccacagattataataggtattttcaagtacagtaacaaaaatc"+
+        "ttctagtttttttttagaaaggatacaccaagtataagcaaattcaggaattgttgatta"+
+        "aactgtcaacttcggtaaaactttgggcataagtagtgtgggagcaagtttaactaaaat"+
+        "tctattcagatgtcgaatccaaaccgctaattttgctcaactagcttttcataaaaacca"+
+        "attcatagtttcatactaataaagacgattgtttactttacacgccggaaatgaaaaccg"+
+        "caatggtgctcaaggcaaaagacgttatccgccgtggctgtctggaatacgacgtcagcg"+
+        "ccaccgacatcaccagctcgtttatggctatccgcaagaccatgaccagcagcggacgca"+
+        "gcgccacctatgaggccagccgcagcgaggaagccagccacgccgacctcgcctgggcga"+
+        "ccatgcacgccctgttaaatgagccactcaccgccggtatcagcaccccgctgacatcca"+
+        "ccattctggagttttactgatgagcaagaaaaaagggaaaacaccgcaacctgcggcaaa"+
+        "aacaatgaccgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggt"+
+        "actcgaccgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatga"+
+        "gccaccggtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctc"+
+        "gccgatttacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttc"+
+        "ccagcaggatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctgga"+
+        "aaagcgttacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatac"+
+        "ccgccgtggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagc"+
+        "cttcgcgcccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacgg"+
+        "cctgccggaatatctcagcgcccttaactctgcctggctgaatgagtcggccacgttgtt"+
+        "ccgccgcaagtattacgaaaatggcgcacatgccggatacatcatgtatgtcaccgatgc"+
+        "cgtgcaggatcgcaacgatatcgaaatgcttcgcgaaaacatggtcaagtcgaaaggccg"+
+        "caacaactttaaaaacctgtttctctatgccccacaggggaaagccgacggcattaaaat"+
+        "tatccccctcagtgaagtggcgacgaaggacgatttttttaatatcaaaaaagccagcgc"+
+        "cgctgacctgctggacgcgcaccgcatcccctttcagttgatgggtggcaagccggagaa"+
+        "cgtcgggtcgctgggtgatattgagaaagtggcaaaggtctttgtccgcaatgagcttat"+
+        "cccgttacaggacaggatccgcgagataaacggctggctcggtcaggaggtcatccgctt"+
+        "taaaaactactcactggacactgacaacgactgaacatcgccgcctgcgggcggcttttt"+
+        "tacaccccgtcatcccccctcacacgctcaccaccgcacaaaacaccccgcagacacaca"+
+        "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
+        "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
+    
     private static final Logger LOG = Logger.getLogger(TransferSequencesTest.class);
 
     private static final String EXPECTED_TRANSCRIPT_0_RESIDUES =
@@ -133,117 +195,20 @@ public class TransferSequencesTest extends TestCase
         LOG.error("closed objectstore");
     }
 
-    public void testChromosomeSequenceTransfer() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
-        TransferSequences ts = new TransferSequences(osw);
-        ts.transferToChromosome();
-        checkChromosomeSequences();
-    }
 
     public void testTransferToLocatedSequenceFeatures() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
         TransferSequences ts = new TransferSequences(osw);
-        ts.transferToChromosome();
         ts.transferToLocatedSequenceFeatures();
         checkExonSequences();
     }
 
     public void testTranscriptSequence() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.fixPartials();
-        cl.createLocations();
-        CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences();
-        cl.setChromosomeLocationsAndLengths();
         TransferSequences ts = new TransferSequences(osw);
-        ts.transferToChromosome();
         ts.transferToLocatedSequenceFeatures();
         ts.transferToTranscripts();
         checkTranscriptSequences();
     }
 
-    public void checkChromosomeSequences() throws Exception {
-        osw.flushObjectById();
-
-        ObjectStore os = osw.getObjectStore();
-
-        Chromosome resChromosome = (Chromosome) os.getObjectById(storedChromosome.getId());
-
-        String expectedChrSequence =
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "............................................................"+
-            "....................gataaagtcggatctcaaaggaataaaaaatagtccgttg"+
-            "attaaatttaaaatacgctagtaattctctaaacttcgtctgcgcttttcaacaataatc"+
-            "agttaaaccggcggttggtggagagcagttaatacttgacaagcatatcatttacatcgc"+
-            "acctccttagtacgatttatttaacgataagtaacaccgtccacgtgctgaccagcctat"+
-            "ttgaagaataacgatatcatagagcttactgtaggattaataaaaatatcatcaaaatgg"+
-            "ggaaaaaattgaaagattatgagaagtatatgattattaaataaaataaaacttttaaga"+
-            "attgatactgagttttgatctttaaatttagtggagatactcattaaacagccttatacc"+
-            "taaatgaaaactgaaaggtttactgcgtttacctagcatgcttagcaatgaattaaagga"+
-            "ttgctcaattacctagctttctgaatattacgctagctttctactcccttgccattgtaa"+
-            "aatacttttctggtcatcccgctgcttttcaatgaaactgctattcattgacagcctctc"+
-            "aacaaaagatgggtttctcaaattaaatgtacaaaaattatgcatattttatatttattt"+
-            "gagcacaaaatcacattatatgaccatgccgtggatatacaacaaattttacaacaccag"+
-            "gtatttctttacggcttaaggaagttttagttatgactgtaaattgtacagctgtgaata"+
-            "tattacttaaccatagtataccctttaaaccaatgcaattacacttttgcagtagatata"+
-            "tatccagattctaccacgctggctataatattctcctctgtagaataataatttgactgc"+
-            "aacacctaccaacttctgactactgtttgggctttaatttcattgcctactacaatgcgt"+
-            "cgttctgggagtaaagaatcaacaattgtaagtaatcgagttatgtttttagctgttaac"+
-            "tatatataatttaataaatacattccgacgatactgcctctatggcttagtggtacagca"+
-            "tcgcacttgtaatgcgaagatccttggttcgattccgagtggaggcatatacattatatt"+
-            "atattctttttcatgcggaaaaaagatttcaaatttttgggtatgatattaatatgactg"+
-            "taacgttaatagcaaagtgagtgttaataatgataaaatagcagcaaaatctcttttccg"+
-            "agtaagacgttttccagtctaaatttggagtctgcagttgtttcgcaattcttaatgtat"+
-            "ggttatactaaatacaaactttaaagctctgatttatgtttgcaataaactaaaataaaa"+
-            "gcacaaaaacctttacccattaatttcaaacaacttataaactaccggtaaacttttttt"+
-            "ctaacctttataatttataaactagaatgtttaatgtctacggccatacctaggcgaaaa"+
-            "caccagttcccgtccgatcactgcagttaagcgtctgagggcctcgttagtactatggtt"+
-            "ggagacaacatgggaatccggggtgctgtaggctatttttttatatccgtctttcttact"+
-            "acttgcctaacaagtcatgatgtactctcaaaatatgtttgcatgccttgtaatattggt"+
-            "tatggatagctccttctggacttgatcttttgtagccaagaacaatgggtatagactctg"+
-            "accttgtgatgttgtagccacagattataataggtattttcaagtacagtaacaaaaatc"+
-            "ttctagtttttttttagaaaggatacaccaagtataagcaaattcaggaattgttgatta"+
-            "aactgtcaacttcggtaaaactttgggcataagtagtgtgggagcaagtttaactaaaat"+
-            "tctattcagatgtcgaatccaaaccgctaattttgctcaactagcttttcataaaaacca"+
-            "attcatagtttcatactaataaagacgattgtttactttacacgccggaaatgaaaaccg"+
-            "caatggtgctcaaggcaaaagacgttatccgccgtggctgtctggaatacgacgtcagcg"+
-            "ccaccgacatcaccagctcgtttatggctatccgcaagaccatgaccagcagcggacgca"+
-            "gcgccacctatgaggccagccgcagcgaggaagccagccacgccgacctcgcctgggcga"+
-            "ccatgcacgccctgttaaatgagccactcaccgccggtatcagcaccccgctgacatcca"+
-            "ccattctggagttttactgatgagcaagaaaaaagggaaaacaccgcaacctgcggcaaa"+
-            "aacaatgaccgccagcggcccgaaaatggaggcattcacctttggtgagccggtgccggt"+
-            "actcgaccgccgtgacattctggattacgtcgagtgcatcagtaacggcagatggtatga"+
-            "gccaccggtcagctttaccggtctggcaaaaagcctgcgggctgccgtgcatcacagctc"+
-            "gccgatttacgtcaaacgcaatattctggcctcgacatttatcccgcatccatggctttc"+
-            "ccagcaggatttcagccgctttgtgctggattttctggtgttcggtaatgcgtttctgga"+
-            "aaagcgttacagcaccaccggtaaggtcatcagactggaaacctcaccggcaaaatatac"+
-            "ccgccgtggcgtggaagaggatgtttactggtgggtgccgtccttcaacgagccgacagc"+
-            "cttcgcgcccggctccgtgtttcacctgctggagccggatattaatcaggagctgtacgg"+
-            "cctgccggaatatctcagcgcccttaactctgcctggctgaatgagtcggccacgttgtt"+
-            "ccgccgcaagtattacgaaaatggcgcacatgccggatacatcatgtatgtcaccgatgc"+
-            "cgtgcaggatcgcaacgatatcgaaatgcttcgcgaaaacatggtcaagtcgaaaggccg"+
-            "caacaactttaaaaacctgtttctctatgccccacaggggaaagccgacggcattaaaat"+
-            "tatccccctcagtgaagtggcgacgaaggacgatttttttaatatcaaaaaagccagcgc"+
-            "cgctgacctgctggacgcgcaccgcatcccctttcagttgatgggtggcaagccggagaa"+
-            "cgtcgggtcgctgggtgatattgagaaagtggcaaaggtctttgtccgcaatgagcttat"+
-            "cccgttacaggacaggatccgcgagataaacggctggctcggtcaggaggtcatccgctt"+
-            "taaaaactactcactggacactgacaacgactgaacatcgccgcctgcgggcggcttttt"+
-            "tacaccccgtcatcccccctcacacgctcaccaccgcacaaaacaccccgcagacacaca"+
-            "acgcctcaacgggcagactaagtgccgtcacgacgcgctgagacgctgaaaaaatacaat"+
-            "cagcaccaccgtcagcgcgcagtgctttccccgcctcgcc";
-        Assert.assertEquals(expectedChrSequence, resChromosome.getSequence().getResidues());
-
-    }
 
     public void checkExonSequences() throws Exception {
         osw.flushObjectById();
@@ -252,7 +217,7 @@ public class TransferSequencesTest extends TestCase
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues());
-
+        
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
         Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues());
 
@@ -274,24 +239,6 @@ public class TransferSequencesTest extends TestCase
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
         Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues());
 
-        RepeatRegion resRepeatRegion0 =
-            (RepeatRegion) os.getObjectById(storedRepeatRegions[0].getId());
-        Assert.assertEquals("gctatttttttatatccgtctttcttactacttgcc", resRepeatRegion0.getSequence().getResidues());
-
-        RepeatRegion resRepeatRegion1 =
-            (RepeatRegion) os.getObjectById(storedRepeatRegions[1].getId());
-        Assert.assertEquals("atttttgttactgtacttgaaaatacctattataatctgtggctacaa",
-                     resRepeatRegion1.getSequence().getResidues());
-
-        RepeatRegion resRepeatRegion2 =
-            (RepeatRegion) os.getObjectById(storedRepeatRegions[2].getId());
-        Assert.assertEquals("gccagaccggtaaagctgaccggtggctcataccatctgccgtta",
-                     resRepeatRegion2.getSequence().getResidues());
-
-        RepeatRegion resRepeatRegion3 =
-            (RepeatRegion) os.getObjectById(storedRepeatRegions[3].getId());
-        Assert.assertEquals("tggcgacgaaggacgatttttttaatatcaaaaaagccagcgccg",
-                     resRepeatRegion3.getSequence().getResidues());
     }
 
     public void checkTranscriptSequences() throws Exception {
@@ -313,123 +260,22 @@ public class TransferSequencesTest extends TestCase
     private void createData() throws Exception {
         osw.flushObjectById();
 
+        Set<InterMineObject> toStore = new HashSet<InterMineObject>();
+        
         storedChromosome =
             (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
         storedChromosome.setPrimaryIdentifier("store_chromosome");
-
-        storedSupercontig =
-            (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
-        storedSupercontig.setId(new Integer(201));
-
-        storedContigs = new Contig[3];
-        storedContigSequences = new Sequence[3];
-
-        Set toStore = new HashSet(Arrays.asList(new Object[] {
-                                                    storedChromosome,
-                                                    storedSupercontig,
-                                                }));
-        toStore.add(createLocation(storedChromosome, storedSupercontig, "1", 501, 4000));
-
-        storedContigSequences[0] =
+        
+        
+        Sequence chrSequence =
             (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        storedContigs[0] =
-            (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[0].setPrimaryIdentifier("contig0");
-        storedContigs[0].setId(new Integer(300));
-        storedContigs[0].setLength(new Integer(1000));
-        String contigResidues0 =
-            "TATATATAATTTAATAAATACATTCCGACGATACTGCCTCTATGGCTTAGTGGTACAGCA" +
-            "TCGCACTTGTAATGCGAAGATCCTTGGTTCGATTCCGAGTGGAGGCATATACATTATATT" +
-            "ATATTCTTTTTCATGCGGAAAAAAGATTTCAAATTTTTGGGTATGATATTAATATGACTG" +
-            "TAACGTTAATAGCAAAGTGAGTGTTAATAATGATAAAATAGCAGCAAAATCTCTTTTCCG" +
-            "AGTAAGACGTTTTCCAGTCTAAATTTGGAGTCTGCAGTTGTTTCGCAATTCTTAATGTAT" +
-            "GGTTATACTAAATACAAACTTTAAAGCTCTGATTTATGTTTGCAATAAACTAAAATAAAA" +
-            "GCACAAAAACCTTTACCCATTAATTTCAAACAACTTATAAACTACCGGTAAACTTTTTTT" +
-            "CTAACCTTTATAATTTATAAACTAGAATGTTTAATGTCTACGGCCATACCTAGGCGAAAA" +
-            "CACCAGTTCCCGTCCGATCACTGCAGTTAAGCGTCTGAGGGCCTCGTTAGTACTATGGTT" +
-            "GGAGACAACATGGGAATCCGGGGTGCTGTAGGCTATTTTTTTATATCCGTCTTTCTTACT" +
-            "ACTTGCCTAACAAGTCATGATGTACTCTCAAAATATGTTTGCATGCCTTGTAATATTGGT" +
-            "TATGGATAGCTCCTTCTGGACTTGATCTTTTGTAGCCAAGAACAATGGGTATAGACTCTG" +
-            "ACCTTGTGATGTTGTAGCCACAGATTATAATAGGTATTTTCAAGTACAGTAACAAAAATC" +
-            "TTCTAGTTTTTTTTTAGAAAGGATACACCAAGTATAAGCAAATTCAGGAATTGTTGATTA" +
-            "AACTGTCAACTTCGGTAAAACTTTGGGCATAAGTAGTGTGGGAGCAAGTTTAACTAAAAT" +
-            "TCTATTCAGATGTCGAATCCAAACCGCTAATTTTGCTCAACTAGCTTTTCATAAAAACCA" +
-            "ATTCATAGTTTCATACTAATAAAGACGATTGTTTACTTTA";
-        storedContigSequences[0].setResidues(contigResidues0);
-        storedContigs[0].setSequence(storedContigSequences[0]);
-
-        toStore.add(createLocation(storedSupercontig, storedContigs[0], "1", 1001, 2000));
-
-        storedContigSequences[1] =
-            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        storedContigs[1] =
-            (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[1].setPrimaryIdentifier("contig1");
-        storedContigs[1].setId(new Integer(301));
-        storedContigs[1].setLength(new Integer(1500));
-        String contigResidues1 =
-            "ggcgaggcggggaaagcactgcgcgctgacggtggtgctgattgtattttttcagcgtct" +
-            "cagcgcgtcgtgacggcacttagtctgcccgttgaggcgttgtgtgtctgcggggtgttt" +
-            "tgtgcggtggtgagcgtgtgaggggggatgacggggtgtaaaaaagccgcccgcaggcgg" +
-            "cgatgttcagtcgttgtcagtgtccagtgagtagtttttaaagcggatgacctcctgacc" +
-            "gagccagccgtttatctcgcggatcctgtcctgtaacgggataagctcattgcggacaaa" +
-            "gacctttgccactttctcaatatcacccagcgacccgacgttctccggcttgccacccat" +
-            "caactgaaaggggatgcggtgcgcgtccagcaggtcagcggcgctggcttttttgatatt" +
-            "AAAAAAATCGTCCTTCGTCGCCACTTCACTGAGGGGGATAATTTTAATGCCGTCGGCTTT" +
-            "CCCCTGTGGGGCATAGAGAAACAGGTTTTTAAAGTTGTTGCGGCCTTTCGACTTGACCAT" +
-            "GTTTTCGCGAAGCATTTCGATATCGTTGCGATCCTGCACGGCATCGGTGACATACATGAT" +
-            "GTATCCGGCATGTGCGCCATTTTCGTAATACTTGCGGCGGAACAACGTGGCCGACTCATT" +
-            "CAGCCAGGCAGAGTTAAGGGCGCTGAGATATTCCGGCAGGCCGTACAGCTCCTGATTAAT" +
-            "ATCCGGCTCCAGCAGGTGAAACACGGAGCCGGGCGCGAAGGCTGTCGGCTCGTTGAAGGA" +
-            "CGGCACCCACCAGTAAACATCCTCTTCCACGCCACGGCGGGTATATTTTGCCGGTGAGGT" +
-            "TTCCAGTCTGATGACCTTACCGGTGGTGCTGTAACGCTTTTCCAGAAACGCATTACCGAA" +
-            "caccagaaaatccAGCACAAAGCGGCTGAAATCCTGCTGGGAAAGCCATGGATGCGGGAT" +
-            "aaatgtcgaggccagaatattgcgtttgacgtaaatcggcgagctgtgatgcacggcagc" +
-            "ccgcaggctttttgccagaccggtaaagctgaccggtggctcataccatctgccgttact" +
-            "gatgcactcgacgtaatccagaatgtcacggcggtcgagtaccggcaccggctcaccaaa" +
-            "ggtgaatgcctccattttcgggccgctggcggtcattgtttttgccgcaggttgcggtgt" +
-            "tttcccttttttcttgctcatcagtaaaactccagaatggtggatgtcagcggggtgctg" +
-            "ataccggcggtgagtggctcatttaacagggcgtgcatggtcgcccaggcgaggtcggcg" +
-            "tggctggcttcctcgctgcggctggcctcataggtggcgctgcgtccgctgctggtcatg" +
-            "gtcttgcggatagccataaacgagctggtgatgtcggtggcgctgacgtcgtattccaga" +
-            "cagccacggcggataacgtcttttgccttgagcaccattgcggttttcatttccggcgtg";
-        storedContigSequences[1].setResidues(contigResidues1);
-        storedContigs[1].setSequence(storedContigSequences[1]);
-
-        toStore.add(createLocation(storedSupercontig, storedContigs[1], "-1", 2001, 3500));
-
-        storedContigSequences[2] =
-            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
-        storedContigs[2] =
-            (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        storedContigs[2].setPrimaryIdentifier("contig2");
-        storedContigs[2].setId(new Integer(302));
-        storedContigs[2].setLength(new Integer(1000));
-        String contigResidues2 =
-            "gttaacagctaaaaacataactcgattacttacaattgttgattctttactcccagaacg" +
-            "acgcattgtagtaggcaatgaaattaaagcccaaacagtagtcagaagttggtaggtgtt" +
-            "GCAGTCAAATTATTATTCTACAGAGGAGAATATTATAGCCAGCGTGGTAGAATCTGGATA" +
-            "TATATCTACTGCAAAAGTGTAATTGCATTGGTTTAAAGGGTATACTATGGTTAAGTAATA" +
-            "TATTCACAGCTGTACAATTTACAGTCATAACTAAAACTTCCTTAAGCCGTAAAGAAATAC" +
-            "CTGGTGTTGTAAAATTTGTTGTATATCCACGGCATGGTCATATAATGTGATTTTGTGCTC" +
-            "AAATAAATATAAAATATGCATAATTTTTGTACATTTAATTTGAGAAACCCATCTTTTGTT" +
-            "GAGAGGCTGTCAATGAATAGCAGTTTCATTGAAAAGCAGCGGGATGACCAGAAAAGTATT" +
-            "TTACAATGGCAAGGGAGTAGAAAGCTAGCGTAATATTCAGAAAGCTAGGTAATTGAGCAA" +
-            "TCCTTTAATTCATTGCTAAGCATGCTAGGTAAACGCAGTAAACCTTTCAGTTTTCATTTA" +
-            "GGTATAAGGCTGTTTAATGAGTATCTCCACTAAATTTAAAGATCAAAACTCAGTATCAAT" +
-            "TCTTAAAAGTTTTATTTTATTTAATAATCATATACTTCTCATAATCTTTCAATTTTTTCC" +
-            "CCATTTTGATGATATTTTTATTAATCCTACAGTAAGCTCTATGATATCGTTATTCTTCAA" +
-            "ATAGGCTGGTCAGCACGTGGACGGTGTTACTTATCGTTAAATAAATCGTACTAAGGAGGT" +
-            "gcgatgtaaatgatatgcttgtcaagtattaactgctctccaccaaccgccggtttaact" +
-            "gattattgttgaaaagcgcagacgaagtttagagaattactagcgtattttaaatttaat" +
-            "caacggactattttttattcctttgagatccgactttatc";
-        storedContigSequences[2].setResidues(contigResidues2);
-        storedContigs[2].setSequence(storedContigSequences[2]);
-
-        toStore.add(createLocation(storedSupercontig, storedContigs[2], "-1", 1, 1000));
-
+        chrSequence.setResidues(storedChrSequence);
+        storedChromosome.setSequence(chrSequence);
+        toStore.add(chrSequence);
+        toStore.add(storedChromosome);
+        
         storedTranscripts = new Transcript[2];
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
             storedTranscripts[i] =
@@ -456,12 +302,12 @@ public class TransferSequencesTest extends TestCase
         storedExons[0].setSequence(exonSequence);
         toStore.add(exonSequence);
 
-        List transcript0Exons = Arrays.asList(new Object[] {storedExons[1], storedExons[2],
+        List<Exon> transcript0Exons = Arrays.asList(new Exon[] {storedExons[1], storedExons[2],
             storedExons[3]});
-        storedTranscripts[0].setExons(new HashSet(transcript0Exons));
+        storedTranscripts[0].setExons(new HashSet<Exon>(transcript0Exons));
 
-        List transcript1Exons = Arrays.asList(new Object[] {storedExons[7], storedExons[6]});
-        storedTranscripts[1].setExons(new HashSet(transcript1Exons));
+        List<Exon> transcript1Exons = Arrays.asList(new Exon[] {storedExons[7], storedExons[6]});
+        storedTranscripts[1].setExons(new HashSet<Exon>(transcript1Exons));
 
         for (int i = 0; i < transcript0Exons.size() ; i++) {
             RankedRelation rankedRelation =
@@ -480,36 +326,35 @@ public class TransferSequencesTest extends TestCase
             rankedRelation.setObject(storedTranscripts[1]);
             toStore.add(rankedRelation);
         }
+        
+        Location loc0 = createLocation(storedChromosome, storedExons[0], "1",   1673,  1759);
+        toStore.add(loc0);
+        storedExons[0].setChromosomeLocation(loc0);
+        Location loc1 = createLocation(storedChromosome, storedExons[1], "1",   2273,  2314);
+        toStore.add(loc1);
+        storedExons[0].setChromosomeLocation(loc1);
+        Location loc2 = createLocation(storedChromosome, storedExons[2], "1",   2484, 2777);
+        toStore.add(loc2);
+        storedExons[2].setChromosomeLocation(loc2);
+        Location loc3 = createLocation(storedChromosome, storedExons[3], "1",  2828, 3338);
+        toStore.add(loc3);
+        storedExons[3].setChromosomeLocation(loc3);
+        Location loc4 = createLocation(storedChromosome, storedExons[4], "-1",  1954,  2105);
+        toStore.add(loc4);
+        storedExons[4].setChromosomeLocation(loc4);
+        Location loc5 = createLocation(storedChromosome, storedExons[5], "-1",  2496, 2714);
+        toStore.add(loc5);
+        storedExons[5].setChromosomeLocation(loc5);
+        Location loc6 = createLocation(storedChromosome, storedExons[6], "-1",   3508,  3633);
+        toStore.add(loc6);
+        storedExons[6].setChromosomeLocation(loc6);
+        Location loc7 = createLocation(storedChromosome, storedExons[7], "-1",     3863, 3993);
+        toStore.add(loc7);
+        storedExons[7].setChromosomeLocation(loc7);
 
-        storedRepeatRegions = new RepeatRegion [4];
-        for (int i = 0 ; i < storedRepeatRegions.length ; i++) {
-            storedRepeatRegions[i] =
-                (RepeatRegion) DynamicUtil.createObject(Collections.singleton(RepeatRegion.class));
-            storedRepeatRegions[i].setPrimaryIdentifier("repeat_region_" + i);
-        }
-
-        toStore.add(createLocation(storedContigs[0], storedExons[0], "1",   173,  259));
-        toStore.add(createLocation(storedContigs[0], storedExons[4], "-1",  454,  605));
-        toStore.add(createLocation(storedContigs[0], storedExons[1], "1",   773,  814));
-        toStore.add(createLocation(storedContigs[0], storedExons[2], "1",   984, 1000));
-        toStore.add(createLocation(storedContigs[0], storedExons[5], "-1",  996, 1000));
-
-        toStore.add(createLocation(storedContigs[1], storedExons[7], "1",     8,  138));
-        toStore.add(createLocation(storedContigs[1], storedExons[6], "1",   368,  493));
-        toStore.add(createLocation(storedContigs[1], storedExons[3], "-1",  663, 1173));
-        toStore.add(createLocation(storedContigs[1], storedExons[2], "-1", 1224, 1500));
-        toStore.add(createLocation(storedContigs[1], storedExons[5], "1",  1287, 1500));
-
-        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[0], "1", 572, 607));
-        toStore.add(createLocation(storedContigs[0], storedRepeatRegions[1], "-1", 732, 779));
-
-        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[2], "1", 1034, 1078));
-        toStore.add(createLocation(storedContigs[1], storedRepeatRegions[3], "-1", 399, 443));
-
-        Iterator iter = toStore.iterator();
         osw.beginTransaction();
-        while (iter.hasNext()) {
-            osw.store((InterMineObject) iter.next());
+        for (InterMineObject obj : toStore) {
+            osw.store(obj);
         }
         for (int i = 0; i<storedTranscripts.length; i++) {
             osw.store(storedTranscripts[i]);
@@ -517,16 +362,7 @@ public class TransferSequencesTest extends TestCase
         for (int i = 0; i<storedExons.length; i++) {
             osw.store(storedExons[i]);
         }
-        for (int i = 0; i<storedRepeatRegions.length; i++) {
-            osw.store(storedRepeatRegions[i]);
-        }
-
-        osw.store(storedContigs[0]);
-        osw.store(storedContigs[1]);
-        osw.store(storedContigs[2]);
-        osw.store(storedContigSequences[0]);
-        osw.store(storedContigSequences[1]);
-        osw.store(storedContigSequences[2]);
+     
         osw.commitTransaction();
     }
 
