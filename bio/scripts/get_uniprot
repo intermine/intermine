@@ -13,15 +13,19 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-#Define ARGVs
-my ($logdir,$logname,$home,$config_file);
-if (@ARGV!=4) {
-  die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+my $logdir="/shared/data/download_logs/";
+my $tempname="temp_log.txt";
+my $logname=$logdir.$tempname;
+my $home="/shared/data";
+my $config_file="../../flymine/project.xml";
+
+if (@ARGV!=4) {   
+    print "no arguments passed, using default settings\n";
 } else {
-  $logdir = $ARGV[0];
-  $logname= $ARGV[1];
-  $home = $ARGV[2];
-  $config_file = $ARGV[3];
+    $logdir = $ARGV[0];
+    $logname= $ARGV[1];
+    $home = $ARGV[2];
+    $config_file = $ARGV[3];
 }
 
 #data source
@@ -101,7 +105,7 @@ if (&checkdir_exists($download_dir)==1) {
   $log_buffer = "Uniprot\nCurrent data ok\n\n";
 }
 
-&write_log($log_buffer,$logdir,$logname);
+#&write_log($log_buffer,$logdir,$logname);
 $connection->quit;
 
 #============================================================================
@@ -141,7 +145,12 @@ if (&checkdir_exists($split_dir)==0) {
               );
 
   #open file to get taxonIDs from the config file
-  my %taxons = &config_species($config_file,"uniprot");
+  my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
+  my $size = %taxons;
+  if ($size eq 0) {
+      die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
+  }
+
 
   # set to 1 while we are inside an <organism>...</organism>
   my $in_organism = 0;
@@ -220,4 +229,21 @@ sub writefile(){
     print FH "$xml";
     close(FH);
   }
+}
+
+# TODO move this into DataDownloader.pm
+sub get_taxonIds(){
+    my ($file,$trigger) = @_;	
+    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>
+    open(F,"<$file") or die "$!";
+    my @projectxml = <F>;
+    my @lines = grep(/$trigger/, @projectxml); 
+    close(F) or die "$!";
+    
+    my $line = $lines[0];
+    my $i = index($line, 'value="') + 7; 
+    my $valueSubstr = substr $line, $i;
+    my $locationSecondQuotation = index($valueSubstr, '"');
+    my $taxonIds = substr $valueSubstr, 0, $locationSecondQuotation;
+    return split(" ", $taxonIds);
 }
