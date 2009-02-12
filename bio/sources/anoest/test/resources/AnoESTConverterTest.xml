@@ -3,7 +3,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043434.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_3"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -36,7 +35,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BX040896.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_9"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -44,7 +42,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -52,7 +49,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_8"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -79,7 +75,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_5"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -111,7 +106,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043436.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_4"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -119,7 +113,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_4"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -127,7 +120,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043437.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_5"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -135,7 +127,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_7"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -143,7 +134,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AA413316.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_8"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -151,7 +141,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="NCLAG150001"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="2_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -159,7 +148,7 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
+
     <reference name="subject" ref_id="7_10"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -167,7 +156,7 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
+
     <reference name="subject" ref_id="7_12"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -196,7 +185,7 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
+
     <reference name="subject" ref_id="7_3"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -204,7 +193,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BX610489.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_11"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -212,7 +200,7 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
+
     <reference name="subject" ref_id="7_9"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -225,7 +213,7 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043439.1"/>
-    <reference name="source" ref_id="0_1"/>
+
     <reference name="subject" ref_id="7_6"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -268,7 +256,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_2"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -276,7 +263,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="UCLAG189057"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="2_4"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -296,7 +282,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="NCLAG169971"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="2_3"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -304,7 +289,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BM654701.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -319,7 +303,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BX610490.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_12"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -327,7 +310,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AF043443.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_7"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -335,7 +317,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="NCLAG150002"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="2_2"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -343,7 +324,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BX040897.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_10"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -351,7 +331,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="BX615094.1"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_2"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -359,7 +338,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_6"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -374,7 +352,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1234567"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="7_11"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
