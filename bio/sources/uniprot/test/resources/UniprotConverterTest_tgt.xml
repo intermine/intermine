@@ -77,7 +77,7 @@
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="JULIE_DROME"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
 <item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
@@ -112,21 +112,21 @@
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="eve accession"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_2"/>
 </item>
 <item id="11_3" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
 <item id="11_5" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="EVE_DROME"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_2"/>
 </item>
 <item id="4_2" class="http://www.flymine.org/model/genomic#Comment">
@@ -149,14 +149,14 @@
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q000"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
 <item id="11_6" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="eve's name"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_2"/>
 </item>
 </items>

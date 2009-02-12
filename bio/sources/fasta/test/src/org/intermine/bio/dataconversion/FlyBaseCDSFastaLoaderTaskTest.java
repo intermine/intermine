@@ -116,7 +116,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
-        flt.setSynonymSource("test-source");
+        flt.setDataSourceName("test-source");
 
         File tmpFile = File.createTempFile("FlyBaseCDSFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tmpFile);

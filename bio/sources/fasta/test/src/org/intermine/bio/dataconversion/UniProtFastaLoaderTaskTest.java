@@ -61,9 +61,8 @@ public class UniProtFastaLoaderTaskTest extends TestCase
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
-        flt.setSynonymSource("test-source");
         flt.setClassAttribute("primaryAccession");
-
+        flt.setDataSourceName("test-source");
 
         File[] files = new File[1];
         files[0] = File.createTempFile("UniProtFastaLoaderTaskTest", "tmp");

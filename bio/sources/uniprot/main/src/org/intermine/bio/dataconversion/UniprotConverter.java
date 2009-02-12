@@ -92,6 +92,7 @@ public class UniprotConverter extends DirectoryConverter
         // check that we have valid files before we start storing data
         try {
             datasourceRefId = getDataSource("UniProt");
+
             setOntology("UniProtKeyword");
         } catch (SAXException e) {
             e.printStackTrace();
@@ -311,23 +312,30 @@ public class UniprotConverter extends DirectoryConverter
     private void processSynonyms(List<String> proteinSynonyms, String proteinRefId,
                                  UniprotEntry entry)
     throws SAXException {
+
+        String datasetRefId = entry.getDatasetRefId();
+
         // primary accession
-        String refId = getSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true");
+        String refId = getSynonym(proteinRefId, "accession", entry.getPrimaryAccession(), "true",
+                                  datasetRefId);
         proteinSynonyms.add(refId);
 
         // accessions
         for (String accession : entry.getAccessions()) {
-            refId = getSynonym(proteinRefId, "accession", accession, "false");
+            refId = getSynonym(proteinRefId, "accession", accession, "false",
+                               datasetRefId);
             proteinSynonyms.add(refId);
         }
 
         // primaryIdentifier
-        refId = getSynonym(proteinRefId, "identifier", entry.getName(), "false");
+        refId = getSynonym(proteinRefId, "identifier", entry.getName(), "false",
+                           datasetRefId);
         proteinSynonyms.add(refId);
 
         // name
         for (String name : entry.getDescriptions()) {
-            refId = getSynonym(proteinRefId, "name", name, "false");
+            refId = getSynonym(proteinRefId, "name", name, "false",
+                               datasetRefId);
             proteinSynonyms.add(refId);
         }
 
@@ -335,7 +343,8 @@ public class UniprotConverter extends DirectoryConverter
         if (!entry.isIsoform() && entry.getMd5checksum() != null
                         && !sequences.get(entry.getMd5checksum()).isEmpty()) {
             for (String synonym : sequences.get(entry.getMd5checksum())) {
-                refId = getSynonym(proteinRefId, "accession", synonym, "false");
+                refId = getSynonym(proteinRefId, "accession", synonym, "false",
+                                   datasetRefId);
                 proteinSynonyms.add(refId);
             }
         }
@@ -349,7 +358,8 @@ public class UniprotConverter extends DirectoryConverter
         }
         if (dbrefs.containsKey("RefSeq")) {
                String synonym = dbrefs.get("RefSeq");
-               String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, "false");
+               String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, "false",
+                                         entry.getDatasetRefId());
                synonymRefIds.add(refId);
         }
     }
@@ -754,7 +764,8 @@ public class UniprotConverter extends DirectoryConverter
         return refId;
     }
 
-    private String getSynonym(String subjectId, String type, String value, String isPrimary)
+    private String getSynonym(String subjectId, String type, String value, String isPrimary,
+                              String datasetRefId)
     throws SAXException {
         String key = type + subjectId + value;
         if (StringUtils.isEmpty(value)) {
@@ -766,7 +777,7 @@ public class UniprotConverter extends DirectoryConverter
             item.setReference("subject", subjectId);
             item.setAttribute("type", type);
             item.setAttribute("value", value);
-            item.setReference("source", datasourceRefId);
+            item.addToCollection("dataSets", datasetRefId);
             item.setAttribute("isPrimary", isPrimary);
             refId = item.getIdentifier();
             try {

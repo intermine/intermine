@@ -55,7 +55,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private Organism org;
     private String className;
     private int storeCount = 0;
-    private String synonymSource = null;
+    private String dataSourceName = null;
     private DataSource dataSource = null;
     private String fastaTaxonId = null;
     private Map<String, Integer> taxonIds = new HashMap();
@@ -129,12 +129,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     /**
-     * If a value is specified a Synonym will be created for the feature with this attribute used
-     * as the name of the DataSource.
-     * @param synonymSource the name of the synonym DataSource
+     * Datasource for any bioentities created
+     * @param dataSourceName name of datasource for items created
      */
-    public void setSynonymSource(String synonymSource) {
-        this.synonymSource = synonymSource;
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
     /**
@@ -309,12 +308,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
 
         Synonym synonym = null;
-        if (!StringUtils.isEmpty(synonymSource)) {
+        if (dataSource != null) {
             synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
             synonym.setType(classAttribute);
             synonym.setSubject(imo);
-            synonym.setSource(getDataSource());
         }
 
         if (StringUtils.isEmpty(dataSetTitle)) {
@@ -396,12 +394,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     }
 
     private DataSource getDataSource() throws ObjectStoreException {
-        if (StringUtils.isEmpty(synonymSource)) {
-            throw new RuntimeException("synonymSource not set");
+        if (StringUtils.isEmpty(dataSourceName)) {
+            throw new RuntimeException("dataSourceName not set");
         }
         if (dataSource == null) {
             dataSource = (DataSource) getDirectDataLoader().createObject(DataSource.class);
-            dataSource.setName(synonymSource);
+            dataSource.setName(dataSourceName);
             getDirectDataLoader().store(dataSource);
             storeCount += 1;
         }

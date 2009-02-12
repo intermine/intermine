@@ -117,7 +117,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
         flt.setSourceName("fasta-test");
         flt.setSequenceType("protein");
         flt.setDataSetTitle(dataSetTitle);
-        flt.setSynonymSource("test-source");
+        flt.setDataSourceName("test-source");
 
         File tmpFile = File.createTempFile("NCBIFastaLoaderTaskTest", "tmp");
         FileWriter fw = new FileWriter(tmpFile);
