@@ -153,7 +153,7 @@ public class IntronTest extends TestCase{
             Synonym synonym = (Synonym) ir.getSynonyms().iterator().next();
             assertEquals(ir.getPrimaryIdentifier(), synonym.getValue());
             assertEquals("identifier", synonym.getType());
-            assertEquals("FlyMine", synonym.getSource().getName());
+
 
             actualIdentifiers.add(ir.getPrimaryIdentifier());
         }

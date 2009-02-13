@@ -330,7 +330,6 @@ public class IntronUtil
                 location.addDataSets(dataSet);
 
                 synonym.addDataSets(dataSet);
-                synonym.setSource(dataSource);
                 synonym.setSubject(intron);
                 synonym.setType("identifier");
                 synonym.setValue(intron.getPrimaryIdentifier());

@@ -40,10 +40,10 @@ import org.intermine.util.DynamicUtil;
 
 /**
  * Methods for creating feature for intergenic regions.
- * 
+ *
  * @author Kim Rutherford
  */
-public class IntergenicRegionUtil 
+public class IntergenicRegionUtil
 {
     private ObjectStoreWriter osw = null;
     private ObjectStore os;
@@ -53,7 +53,7 @@ public class IntergenicRegionUtil
     /**
      * Create a new IntergenicRegionUtil object that will operate on the given
      * ObjectStoreWriter.
-     * 
+     *
      * @param osw
      *            the ObjectStoreWriter to use when creating/changing objects
      */
@@ -74,7 +74,7 @@ public class IntergenicRegionUtil
 
     /**
      * Create IntergenicRegion objects
-     * 
+     *
      * @throws ObjectStoreException
      *             if there is an ObjectStore problem
      */
@@ -132,7 +132,7 @@ public class IntergenicRegionUtil
     /**
      * Add a value to a Map from keys to List of values, creating the value list
      * as needed.
-     * 
+     *
      * @param map
      *            the Map
      * @param key
@@ -177,7 +177,7 @@ public class IntergenicRegionUtil
      * overlap the Locations in the locationSet argument. The caller must call
      * ObjectStoreWriter.store() on the IntergenicRegion, its chromosomeLocation
      * and the synonym in the synonyms collection.
-     * 
+     *
      * @param locationSet
      *            a set of Locations for the Genes on a particular chromosome
      * @param locToGeneMap
@@ -270,7 +270,6 @@ public class IntergenicRegionUtil
                 intergenicRegion.addSynonyms(synonym);
                 intergenicRegion.addDataSets(dataSet);
                 synonym.addDataSets(dataSet);
-                synonym.setSource(dataSource);
                 synonym.setSubject(intergenicRegion);
                 synonym.setType("identifier");
                 int length = location.getEnd().intValue()
