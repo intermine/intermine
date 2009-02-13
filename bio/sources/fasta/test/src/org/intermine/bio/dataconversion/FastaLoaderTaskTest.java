@@ -59,7 +59,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setClassName("org.flymine.model.genomic.Gene");
         flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
-        flt.setSourceName("fasta-test");
+        flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
 
         File[] files = new File[2];
@@ -108,7 +108,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setSequenceType("protein");
         flt.setClassName("org.flymine.model.genomic.Protein");
         flt.setIntegrationWriterAlias("integration.bio-test");
-        flt.setSourceName("fasta-test");
+        flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
 
         File[] files = new File[1];
