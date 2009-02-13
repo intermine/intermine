@@ -136,6 +136,9 @@ public class TransferSequences
 
         Iterator<ResultsRow> resIter = results.iterator();
 
+        // keep a set of chromosomes without sequence - for logging only
+        Set<Integer> chrsNoSequence = new HashSet<Integer>();
+        
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
@@ -174,9 +177,10 @@ public class TransferSequences
                 Chromosome chr = (Chromosome) os.getObjectById(chrId);
                 Sequence chromosomeSequence = chr.getSequence();
 
-                if (chromosomeSequence == null) {
-                    LOG.warn("no sequence found for: " + chr.getSecondaryIdentifier() + "  id: "
+                if (chromosomeSequence == null && !chrsNoSequence.contains(chr.getId())) {
+                    LOG.warn("no sequence found for: " + chr.getPrimaryIdentifier() + "  id: "
                             + chr.getId());
+                    chrsNoSequence.add(chr.getId());
                     continue;
                 }
 

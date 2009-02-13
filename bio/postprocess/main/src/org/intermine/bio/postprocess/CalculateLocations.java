@@ -357,7 +357,7 @@ public class CalculateLocations
          throws ObjectStoreException {
 
         Results results =
-            PostProcessUtil.findLocationsToTransform(os, moveClass, sourceClass, destClass, 500);
+            PostProcessUtil.findLocationsToTransform(os, moveClass, sourceClass, destClass, 5000);
 
         Iterator resIter = results.iterator();
 
