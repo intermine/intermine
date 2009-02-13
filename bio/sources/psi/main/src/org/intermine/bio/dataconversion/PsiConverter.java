@@ -272,17 +272,8 @@ public class PsiConverter extends BioFileConverter
                 interactionRegion.setReference("gene", interactorHolder.geneRefId);
                 interactionRegion.setReference("ontologyTerm", termId);
 
-                // create new location object (start and end are coming later)
-                Item location = createItem("Location");
-                location.setReference("object", interactorHolder.geneRefId);
-                location.setReference("subject", interactionRegion.getIdentifier());
-
-                interactionRegion.setReference("location", location);
-
                 // add location and region to interaction object
                 interactorHolder.interactionRegion = interactionRegion;
-                interactorHolder.location = location;
-
                 holder.addRegion(interactionRegion.getIdentifier());
 
                 // <participantList><participant id="6919"><featureList><feature id="6920">
@@ -451,14 +442,19 @@ public class PsiConverter extends BioFileConverter
                 //<interactionList><interaction>
             } else if (qName.equals("interaction") && holder != null) {
                 if (holder.isValid) {
-                    storeAll(holder);
+                    try {
+                        storeAll(holder);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
                     holder = null;
                     interactorHolder = null;
                 }
             }
         }
 
-        private void storeAll(InteractionHolder interactionHolder) throws SAXException  {
+        private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException,
+        SAXException  {
             Set interactors = interactionHolder.interactors;
             // loop through proteins/interactors in this interaction
             for (Iterator iter = interactors.iterator(); iter.hasNext();) {
@@ -500,11 +496,7 @@ public class PsiConverter extends BioFileConverter
                 }
 
                 /* store all protein interaction-related items */
-                try {
-                    store(interaction);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
+                store(interaction);
 
                 if (interactorHolder.interactionRegion != null) {
                     Item region = interactorHolder.interactionRegion;
@@ -523,12 +515,19 @@ public class PsiConverter extends BioFileConverter
                         regionIdentifier += "-" + interactorHolder.end;
                     }
                     region.setAttribute("primaryIdentifier", regionIdentifier);
-                    try {
-                        store(region);
-                        store(interactorHolder.location);
-                    } catch (ObjectStoreException e) {
-                        //
+
+                    String start = interactorHolder.start;
+                    String end = interactorHolder.end;
+                    if (!start.equals("0") && !end.equals("0")) {
+                        Item location = createItem("Location");
+                        location.setAttribute("start", start);
+                        location.setAttribute("end", end);
+                        location.setReference("object", interactorHolder.geneRefId);
+                        location.setReference("subject", region.getIdentifier());
+                        region.setReference("location", location);
+                        store(location);
                     }
+                    store(region);
                 }
             }
 
@@ -542,10 +541,6 @@ public class PsiConverter extends BioFileConverter
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("Couldn't store experiment: ", e);
                 }
-                //TODO store comments here instead
-                //for (Object o : eh.comments) {
-                //    writer.store(ItemHelper.convert((Item) o));
-                //}
             }
         }
 
@@ -560,7 +555,6 @@ public class PsiConverter extends BioFileConverter
             }
             return name;
         }
-
 
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
@@ -776,7 +770,6 @@ public class PsiConverter extends BioFileConverter
             private String geneRefId;   // protein.getIdentifier()
             private String role;
             private Item interactionRegion; // for storage later
-            private Item location;          // for storage later
             private String startStatus, start;
             private String endStatus, end;
             protected String identifier;
@@ -804,7 +797,7 @@ public class PsiConverter extends BioFileConverter
              * @param start start position of region
              */
             protected void setStart(String start) {
-                location.setAttribute("start", start);
+                //location.setAttribute("start", start);
                 this.start = start;
             }
 
@@ -812,7 +805,7 @@ public class PsiConverter extends BioFileConverter
              * @param end the end position of the region
              */
             protected void setEnd(String end) {
-                location.setAttribute("end", end);
+                //location.setAttribute("end", end);
                 this.end = end;
             }
 
