@@ -1,5 +1,0 @@
-<project name="bio-network-test" default="default" basedir=".">
-  <description>test bio network code</description>
-  <import file="../../../imbuild/tests.xml"/>
-</project>
-
