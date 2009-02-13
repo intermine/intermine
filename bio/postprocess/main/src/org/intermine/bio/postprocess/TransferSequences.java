@@ -177,10 +177,12 @@ public class TransferSequences
                 Chromosome chr = (Chromosome) os.getObjectById(chrId);
                 Sequence chromosomeSequence = chr.getSequence();
 
-                if (chromosomeSequence == null && !chrsNoSequence.contains(chr.getId())) {
-                    LOG.warn("no sequence found for: " + chr.getPrimaryIdentifier() + "  id: "
-                            + chr.getId());
-                    chrsNoSequence.add(chr.getId());
+                if (chromosomeSequence == null) {
+                    if (!chrsNoSequence.contains(chr.getId())) {
+                        LOG.warn("no sequence found for: " + chr.getPrimaryIdentifier() + "  id: "
+                                + chr.getId());
+                        chrsNoSequence.add(chr.getId());
+                    }
                     continue;
                 }
 
