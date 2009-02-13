@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+# NB: This isn't the script that is run with the update, that code is in get_uniprot
+
 #splits the uniprot xml files into separate files based on the ncbi taxon id. Reads the taxons of interest from a 
 #centrally stored file. Source directory and output directory are supplied as command line args, expexts source
 #files to be uniprot_sprot.xml uniprot_trembl.xml 
@@ -12,6 +14,19 @@ my ($filename, $fname_end);
 my ($keep, $taxon) = ("false", '0000');
 my (@new_contents, @old_contents);
 my %taxons;
+
+#open file to get taxonIDs currently in flymine
+my $config_file="../../flymine/project.xml";
+%taxons = &get_taxonIds($config_file,"uniprot.organisms");
+my $size = %taxons;
+print "size: $size\n";
+
+
+
+if ($size eq 0) {
+    die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
+}
+
 
 #the xml declaration and root element for each output file			
 my $prolog = '<?xml version="1.0" encoding="UTF-8"?>
@@ -34,73 +49,66 @@ my $split_dir = "/shared/data/uniprot/$version/split/";
 
 #create output dir, empty it if already exists?
 if(!-e $split_dir ){
-	mkdir ("$split_dir", 0755) || die "Cannot mkdir newdir: $!";
+    mkdir ("$split_dir", 0755) || die "Cannot mkdir newdir: $!";
 }else{
-	opendir(DIR,$split_dir) || die("Cannot open directory !\n");
-	@old_contents=grep(!/^\.\.?$/,readdir DIR);
-	closedir(DIR);
-	if(@old_contents){
-		print "\n!!$split_dir is not empty!!\nDo you want to delete files and continue running split_uniprot.pl [y]?\n";
-		$| = 1;               # force a flush after print
-   		$_ = <STDIN>;
-		chomp;
-		if($_ eq'y'){
-			foreach my $file (@old_contents){
-			print "Deleting $file\n";
-			unlink $split_dir.$file;
-			}
-		}else{
-		die "\nsplit_uniprot.pl terminated\n";
-		}
-	}		
+    opendir(DIR,$split_dir) || die("Cannot open directory !\n");
+    @old_contents=grep(!/^\.\.?$/,readdir DIR);
+    closedir(DIR);
+    if(@old_contents){
+        print "\n!!$split_dir is not empty!!\nDo you want to delete files and continue running split_uniprot.pl [y]?\n";
+        $| = 1;               # force a flush after print
+        $_ = <STDIN>;
+        chomp;
+        if($_ eq'y'){
+            foreach my $file (@old_contents){
+                print "Deleting $file\n";
+                unlink $split_dir.$file;
+            }
+        }else{
+                die "\nsplit_uniprot.pl terminated\n";
+        }
+    }		
 }
 
 #use hash to define output name for each source file
 #comment out one of them to process the other file only
 my %files = (
-             'sprot'  => { 	'filename' => $source_dir."uniprot_sprot.xml", 
+             'sprot'  => { 'filename' => $source_dir."uniprot_sprot.xml", 
 			 				'fname_end' => '_uniprot_sprot.xml'},
              'trembl'  => { 'filename' => $source_dir."uniprot_trembl.xml",
 			 				'fname_end' => '_uniprot_trembl.xml'},
              );		
 
-#open file to get taxonIDs currently in flymine
-my $taxon_file = '/shared/data/flymine_taxonIDs.txt';
-open(F,"<$taxon_file") or die "$!";
-while(<F>){
-	my @f = split/\t/;
-	$taxons{$f[0]}=$f[0];
-}
-close(F) or die "$!";
+
 
 #open each uniprot file
 foreach my $file_type(sort keys %files){
-	$filename = $files{$file_type}->{'filename'};
-	$fname_end = $files{$file_type}->{'fname_end'};
-	
-	#read a line at a time and identify the start/stop/taxon id
-	open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
-	while(my $newline = <F>){
-		if($newline && $newline =~ /$start/gi){
-			$keep = "true";
-		}elsif($newline && $newline =~ /$trigger/gi){
-			if($newline=~/id="(\d+)"/){
-			$taxon = $1;
-			}
-		}elsif($newline && $newline =~ /$end/gi){
-			$buffer .= $newline;
-			if(exists $taxons{$taxon}){
-				&writefile($buffer,$taxon,$fname_end);
-			}
-			$keep = "false";
-			$buffer = "";
-			$taxon = 0000;
-		}	
-		if($keep eq "true"){
-			$buffer .= $newline;
-		}
-	}
-close(F) or die "$!";
+    $filename = $files{$file_type}->{'filename'};
+    $fname_end = $files{$file_type}->{'fname_end'};
+    
+    #read a line at a time and identify the start/stop/taxon id
+    open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
+    while(my $newline = <F>){
+        if($newline && $newline =~ /$start/gi){
+            $keep = "true";
+        }elsif($newline && $newline =~ /$trigger/gi){
+            if($newline=~/id="(\d+)"/){
+                $taxon = $1;
+            }
+        }elsif($newline && $newline =~ /$end/gi){
+            $buffer .= $newline;
+            if(exists $taxons{$taxon}){
+                &writefile($buffer,$taxon,$fname_end);
+            }
+            $keep = "false";
+            $buffer = "";
+            $taxon = 0000;
+        }	
+        if($keep eq "true"){
+            $buffer .= $newline;
+        }
+    }
+    close(F) or die "$!";
 }
 
 #identify the output files
@@ -110,10 +118,10 @@ closedir(DIR);
 
 #add the copyright and close the root element to the output files
 foreach my $file (@new_contents){
-	$file = $split_dir.$file;
-	open( FILE, ">>$file") or die "cannot open $file: $!";
-	print FILE "$element_end";
-	close(FILE);
+    $file = $split_dir.$file;
+    open( FILE, ">>$file") or die "cannot open $file: $!";
+    print FILE "$element_end";
+    close(FILE);
 }	
 
 #creates files and adds elements as appropriate 
@@ -133,3 +141,24 @@ my $new_file = $split_dir.$species.$end;
 	}
 }
 
+
+# TODO move this into DataDownloader.pm
+sub get_taxonIds(){
+    my ($file,$trigger) = @_;   
+    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>
+    open(F,"<$file") or die "$!";
+    my @projectxml = <F>;
+    my @lines = grep(/$trigger/, @projectxml); 
+    close(F) or die "$!";
+    
+    my $line = $lines[0];
+    my $i = index($line, 'value="') + 7; 
+    my $valueSubstr = substr $line, $i;
+    my $locationSecondQuotation = index($valueSubstr, '"');
+    my $taxonIds = substr $valueSubstr, 0, $locationSecondQuotation;
+    print "processing $taxonIds\n";
+    my @orgArray = split(/ /, $taxonIds);
+    my %orgHash;
+    @orgHash{@orgArray} = (1) x @orgArray;
+    return %orgHash;
+}
