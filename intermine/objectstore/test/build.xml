@@ -18,7 +18,7 @@
         <jvmarg value="-Xmx50M"/>
       </customize>
     </imtestsproj:junit>-->
-    <imtestsproj:junit excludes="org/intermine/objectstore/webservice/**,org/intermine/util/CacheMapTest.class"/>
+    <imtestsproj:junit excludes="org/intermine/util/CacheMapTest.class"/>
   </target>
   
   <target name="-define-task-classpath">

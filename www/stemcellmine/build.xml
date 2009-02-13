@@ -171,16 +171,6 @@
     </ant>
   </target>
 
-  <target name="release-production-webservice">
-    <ant dir="../../intermine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../intermine" target="build-webservice" inheritRefs="true"/>
-    <ant dir="../../intermine" target="jar" inheritRefs="true"/>
-
-    <ant dir="../../flymine" target="distclean" inheritRefs="true"/>
-    <ant dir="../../flymine" target="build-production-webservice" inheritRefs="true"/>
-    <ant dir="../../flymine" target="release-webservice" inheritRefs="true"/>
-  </target>
-
   <target name="create-indexes-production-attribute" depends="prepare">
     <ant dir="../../flymine" target="create-indexes-production-attribute" inheritRefs="true">
       <property name="intermine.dist.path" location="../../intermine/dist"/>
