@@ -19,8 +19,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * A task the replace the locatedsequencefeatureoverlappingfeatures with a view that uses the bioseg
- * type to calculate the overlaps.
+ * A task the replace the locatedsequencefeatureoverlappingfeatures table with a view that uses the
+ * bioseg type to calculate the overlaps.
  * @author Kim Rutherford
  */
 public class OverlapViewTask
@@ -58,6 +58,7 @@ public class OverlapViewTask
             + "           l2.subjectid AS locatedsequencefeature "
             + "      FROM location l1, location l2 "
             + "     WHERE l1.objectid = l2.objectid "
+            + "       AND l1.subjectid != l2.subjectid"
             + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
             + "              && bioseg_create(l2.intermine_start, l2.intermine_end)";
 
