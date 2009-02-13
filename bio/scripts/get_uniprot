@@ -41,6 +41,8 @@ my @files_to_get = qw(
                      );
 my $keywords_file = "keywlist.xml.gz";
 
+
+
 &checkdir_exists($uniprot_main_dir);
 
 #### Access ftp server
@@ -52,6 +54,14 @@ or die "Cannot change working directory ", $connection->message;
 #download the release notes file
 my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
 &ftp_download($connection,$uniprot_main_dir,$release_notes_file);
+
+  #open file to get taxonIDs from the config file
+  my %taxons = &get_taxonids($config_file,"uniprot.organisms");
+  my $size = %taxons;
+  if ($size eq 0) {
+      die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
+  }
+
 
 #get the uniprot version from the release notes file
 my $version;
@@ -231,23 +241,6 @@ sub writefile(){
   }
 }
 
-# TODO move this into DataDownloader.pm
-sub get_taxonIds(){
-    my ($file,$trigger) = @_;   
-    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>
-    open(F,"<$file") or die "$!";
-    my @projectxml = <F>;
-    my @lines = grep(/$trigger/, @projectxml); 
-    close(F) or die "$!";
-    
-    my $line = $lines[0];
-    my $i = index($line, 'value="') + 7; 
-    my $valueSubstr = substr $line, $i;
-    my $locationSecondQuotation = index($valueSubstr, '"');
-    my $taxonIds = substr $valueSubstr, 0, $locationSecondQuotation;
-    print "processing $taxonIds\n";
-    my @orgArray = split(/ /, $taxonIds);
-    my %orgHash;
-    @orgHash{@orgArray} = (1) x @orgArray;
-    return %orgHash;
-}
+
+
+
