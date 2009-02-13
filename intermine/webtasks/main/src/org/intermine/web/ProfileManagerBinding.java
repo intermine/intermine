@@ -48,7 +48,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ProfileManagerBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
-    
+
     /**
      * Default version of profile if it is not specified.
      */
@@ -84,10 +84,10 @@ public class ProfileManagerBinding
             throw new RuntimeException(e);
         }
     }
-    
-    /** Returns profile format version from database. Version 0 corresponds to 
+
+    /** Returns profile format version from database. Version 0 corresponds to
      * situation when constraint values are saved in the internal format. Internal
-     * format is format where '*' are replaced with % and other changes. 
+     * format is format where '*' are replaced with % and other changes.
      * @see Util.wildcardSqlToUser()
      * @return saved format version or "0" if not saved in database
      */
@@ -103,7 +103,7 @@ public class ProfileManagerBinding
             throw new RuntimeException("Error during retrieving profile version from database.", e);
         }
     }
-    
+
     /**
      * Read a ProfileManager from an XML stream Reader
      * @param reader contains the ProfileManager XML
@@ -223,13 +223,12 @@ class ProfileManagerHandler extends DefaultHandler
             for (Tag tag : tags) {
                 try {
                     tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
-                            profile.getUsername());                                            
+                            profile.getUsername());
                 } catch (RuntimeException e) {
                     if (abortOnError) {
                         throw e;
-                    } else {
-                        LOG.error("Error during adding tag: " + tag.toString(), e);   
                     }
+                    LOG.error("Error during adding tag: " + tag.toString(), e);
                 }
             }
             profileHandler = null;
