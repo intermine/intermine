@@ -32,6 +32,7 @@ import org.flymine.model.genomic.Transcript;
 import org.flymine.model.genomic.UTR;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -236,7 +237,7 @@ public class CreateReferences
         InterMineObject lastDestObject = null;
         Set newCollection = new HashSet();
 
-        LOG.info("Beginning insertReferences("
+        LOG.info("Beginning insertCollectionField("
                  + firstClass.getName() + ", "
                  + firstClassFieldName + ", "
                  + connectingClass.getName() + ", "
@@ -246,6 +247,20 @@ public class CreateReferences
                  + createInFirstClass + ")");
         long startTime = System.currentTimeMillis();
 
+        // if this is a many to many collection we can use ObjectStore.addToCollection which will
+        // write directly to the database.
+        boolean manyToMany = false;
+        ClassDescriptor destCld;
+        if (createInFirstClass) {
+            destCld = model.getClassDescriptorByName(firstClass.getName());
+        } else {
+            destCld = model.getClassDescriptorByName(secondClass.getName());
+        }
+        CollectionDescriptor col = destCld.getCollectionDescriptorByName(createFieldName);
+        if (col.relationType() == CollectionDescriptor.M_N_RELATION) {
+            manyToMany = true;
+        }
+        
         Iterator resIter =
             PostProcessUtil.findConnectingClasses(osw.getObjectStore(),
                                           firstClass, firstClassFieldName,
@@ -267,10 +282,10 @@ public class CreateReferences
             } else {
                 thisDestObject = (InterMineObject) rr.get(1);
                 thisSourceObject = (InterMineObject) rr.get(0);
-            }
-
-            if (lastDestObject == null
-                || !thisDestObject.getId().equals(lastDestObject.getId())) {
+            }            
+            
+            if (!manyToMany && (lastDestObject == null
+                || !thisDestObject.getId().equals(lastDestObject.getId()))) {
 
                 if (lastDestObject != null) {
                     try {
@@ -291,20 +306,24 @@ public class CreateReferences
                 newCollection = new HashSet();
             }
 
-            newCollection.add(thisSourceObject);
-
+            if (manyToMany) {
+                osw.addToCollection(thisDestObject.getId(), destCld.getType(),
+                        createFieldName, thisSourceObject.getId());
+            } else {
+                newCollection.add(thisSourceObject);
+            }
+            
             lastDestObject = thisDestObject;
         }
 
-        if (lastDestObject != null) {
+        if (!manyToMany && lastDestObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastDestObject);
             TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
             count += newCollection.size();
             osw.store(tempObject);
         }
-
-        LOG.info("Created " + count + " references in " + secondClass.getName() + " to "
+        LOG.info("Finished: created " + count + " references in " + secondClass.getName() + " to "
                  + firstClass.getName() + " via " + connectingClass.getName()
                  + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();

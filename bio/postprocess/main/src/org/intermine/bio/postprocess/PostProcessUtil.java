@@ -170,7 +170,7 @@ public class PostProcessUtil
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants
                                                    .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 500, true, true, true);
+        Results res = os.execute(q, 5000, true, true, true);
 
         return res.iterator();
     }
