@@ -145,6 +145,24 @@ sub config_species(){
 	return %data;
 }
 
+#get taxon Ids from file
+sub get_taxonIds(){
+    my ($file,$trigger) = @_;	
+    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>
+    open(F,"<$file") or die "$!";
+    my @projectxml = <F>;
+    my @lines = grep(/$trigger/, @projectxml); 
+    close(F) or die "$!";
+    
+    my $line = $lines[0];
+    my $i = index($line, 'value="') + 7; 
+    my $valueSubstr = substr $line, $i;
+    my $locationSecondQuotation = index($valueSubstr, '"');
+    my $taxonIds = substr $valueSubstr, 0, $locationSecondQuotation;
+    return split(" ", $taxonIds);
+}
+
+
 #write the version file
 sub write_version(){
 	my ($root_dir,$buffer) = @_;
