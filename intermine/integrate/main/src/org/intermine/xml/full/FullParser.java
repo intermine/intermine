@@ -49,7 +49,7 @@ public class FullParser
         throws Exception {
 
         if (is == null) {
-            throw new NullPointerException("Parameter 'is' cannot be null");
+            throw new NullPointerException("InputStream cannot be null");
         }
 
         FullHandler handler = new FullHandler();
