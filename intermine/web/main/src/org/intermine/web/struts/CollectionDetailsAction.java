@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
-import java.util.Set;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +23,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -39,8 +35,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class CollectionDetailsAction extends Action
 {
-    private static int index = 0;
-
     /**
      * Create PagedTable for this collection, register it with an identifier and redirect to
      * results.do?table=identifier
@@ -63,28 +57,21 @@ public class CollectionDetailsAction extends Action
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        // Model model = os.getModel();
+
         Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
         String trail = request.getParameter("trail");
 
         InterMineObject o = os.getObjectById(id);
 
-        Set cds = os.getModel().getClassDescriptorsForClass(o.getClass());
-
         ReferenceDescriptor refDesc = null;
-
-        Iterator iter = cds.iterator();
-        while (iter.hasNext()) {
-           ClassDescriptor cd = (ClassDescriptor) iter.next();
-
-           refDesc = (ReferenceDescriptor) cd.getFieldDescriptorByName(field);
-           // objectClassName = cd.getUnqualifiedName();
+        for (ClassDescriptor cld : os.getModel().getClassDescriptorsForClass(o.getClass())) {
+           refDesc = (ReferenceDescriptor) cld.getFieldDescriptorByName(field);
            if (refDesc != null) {
                break;
            }
         }
-        String referencedClassName = TypeUtil.unqualifiedName(refDesc.getReferencedClassName());
+        String referencedClassName = refDesc.getReferencedClassDescriptor().getUnqualifiedName();
 
         PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, servletContext, o,
                         field, referencedClassName);
