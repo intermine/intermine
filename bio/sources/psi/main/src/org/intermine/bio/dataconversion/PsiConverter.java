@@ -453,8 +453,7 @@ public class PsiConverter extends BioFileConverter
             }
         }
 
-        private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException,
-        SAXException  {
+        private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException {
             Set interactors = interactionHolder.interactors;
             // loop through proteins/interactors in this interaction
             for (Iterator iter = interactors.iterator(); iter.hasNext();) {
@@ -518,7 +517,7 @@ public class PsiConverter extends BioFileConverter
 
                     String start = interactorHolder.start;
                     String end = interactorHolder.end;
-                    if (!start.equals("0") && !end.equals("0")) {
+                    if (!start.equals("0") || !end.equals("0")) {
                         Item location = createItem("Location");
                         location.setAttribute("start", start);
                         location.setAttribute("end", end);
@@ -797,7 +796,6 @@ public class PsiConverter extends BioFileConverter
              * @param start start position of region
              */
             protected void setStart(String start) {
-                //location.setAttribute("start", start);
                 this.start = start;
             }
 
@@ -805,7 +803,6 @@ public class PsiConverter extends BioFileConverter
              * @param end the end position of the region
              */
             protected void setEnd(String end) {
-                //location.setAttribute("end", end);
                 this.end = end;
             }
 
