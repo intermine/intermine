@@ -108,19 +108,8 @@ public class CreateReferences
         insertReferenceField(Gene.class, "transcripts", MRNA.class, "CDSs",
                              CDS.class, "gene");
 
-        ObjectStore os = osw.getObjectStore();
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            DatabaseUtil.analyse(db, false);
-        }
-
         LOG.info("insertReferences stage 5");
         insertGeneAnnotationReferences();
-
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            DatabaseUtil.analyse(db, false);
-        }
     }
 
 
