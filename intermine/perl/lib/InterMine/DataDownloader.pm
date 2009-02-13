@@ -147,20 +147,25 @@ sub config_species(){
 
 #get taxon Ids from file
 sub get_taxonIds(){
-    my ($file,$trigger) = @_;	
-    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>
+    my ($file,$trigger) = @_;
+    # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>                                                                                                                 
     open(F,"<$file") or die "$!";
     my @projectxml = <F>;
-    my @lines = grep(/$trigger/, @projectxml); 
+    my @lines = grep(/$trigger/, @projectxml);
     close(F) or die "$!";
-    
+
     my $line = $lines[0];
-    my $i = index($line, 'value="') + 7; 
+    my $i = index($line, 'value="') + 7;
     my $valueSubstr = substr $line, $i;
     my $locationSecondQuotation = index($valueSubstr, '"');
     my $taxonIds = substr $valueSubstr, 0, $locationSecondQuotation;
-    return split(" ", $taxonIds);
+    print "processing $taxonIds\n";
+    my @orgArray = split(/ /, $taxonIds);
+    my %orgHash;
+    @orgHash{@orgArray} = (1) x @orgArray;
+    return %orgHash;
 }
+
 
 
 #write the version file
