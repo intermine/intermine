@@ -10,7 +10,6 @@ package org.intermine.bio.gbrowse;
  *
  */
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,11 +30,6 @@ import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.Organism;
 import org.flymine.model.genomic.Sequence;
 import org.flymine.model.genomic.Transcript;
-
-import org.intermine.bio.gbrowse.WriteGFFTask;
-import org.intermine.bio.postprocess.CalculateLocations;
-import org.intermine.bio.postprocess.CreateReferences;
-import org.intermine.bio.postprocess.TransferSequences;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -109,13 +103,6 @@ public class WriteGFFTaskTest extends TestCase
     }
 
     public void testWriteGFF() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        cl.createLocations();
-        cl.setChromosomeLocationsAndLengths();
-        CreateReferences cr = new CreateReferences(osw);
-        cr.insertReferences();
-        TransferSequences ts = new TransferSequences(osw);
-        ts.transferToLocatedSequenceFeatures();
         WriteGFFTask task = new WriteGFFTask();
         task.writeGFF(osw.getObjectStore());
     }
