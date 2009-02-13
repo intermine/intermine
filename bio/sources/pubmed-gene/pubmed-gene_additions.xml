@@ -1,23 +1,11 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.RNAiScreen" extends="org.flymine.model.genomic.Experiment" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="cellLine" type="java.lang.String"/>
-    <attribute name="analysisDescription" type="java.lang.String"/>
-    <reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
-    <collection name="rnaiScreenHits" referenced-type="org.flymine.model.genomic.RNAiScreenHit" reverse-reference="rnaiScreen"/>
-  </class>
-  <class name="org.flymine.model.genomic.RNAiScreenHit" extends="org.flymine.model.genomic.RNAiResult" is-interface="true">
-    <attribute name="result" type="java.lang.String"/>
-    <reference name="amplicon" referenced-type="org.flymine.model.genomic.Amplicon" reverse-reference="rnaiScreenHits"/>
-    <reference name="rnaiScreen" referenced-type="org.flymine.model.genomic.RNAiScreen" reverse-reference="rnaiScreenHits"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="rnaiResults" />
-  </class>
-  <class name="org.flymine.model.genomic.Amplicon" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
-    <collection name="rnaiScreenHits" referenced-type="org.flymine.model.genomic.RNAiScreenHit"/>
-    <collection name="genes" referenced-type="org.flymine.model.genomic.Gene"/>
+  <class name="org.flymine.model.genomic.Publication" is-interface="true">
+    <attribute name="pubMedId" type="java.lang.String"/>
   </class>
   <class name="org.flymine.model.genomic.Gene" is-interface="true">
-  	<collection name="rnaiResults" referenced-type="org.flymine.model.genomic.RNAiResult" reverse-reference="gene"/>
+    <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+    <attribute name="primaryIdentifier" type="java.lang.String"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
   </class>
 </classes>
