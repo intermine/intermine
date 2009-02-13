@@ -34,8 +34,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
-import org.intermine.log.InterMineLogger;
-import org.intermine.log.InterMineLoggerFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -141,8 +139,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected Map<String, Results> resultsCache = new CacheMap<String, Results>();
     protected Map<String, SingletonResults> singletonResultsCache
         = new CacheMap<String, SingletonResults>();
-
-    protected InterMineLogger logger = null;
 
     private static final String[] LOG_TABLE_COLUMNS = new String[] {"timestamp", "optimise",
         "estimated", "execute", "permitted", "convert", "iql", "sql"};
@@ -328,7 +324,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String minBagTableSizeString = props.getProperty("minBagTableSize");
         String noNotXmlString = props.getProperty("noNotXml");
         String logEverythingString = props.getProperty("logEverything");
-        String loggerAlias = props.getProperty("logger");
         String verboseQueryLogString = props.getProperty("verboseQueryLog");
         String logExplainsString = props.getProperty("logExplains");
         String logBeforeExecuteString = props.getProperty("logBeforeExecute");
@@ -383,17 +378,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         noNotXml, missingTables);
                 os = new ObjectStoreInterMineImpl(database, databaseSchema);
                 os.description = osAlias;
-
-                if (loggerAlias != null) {
-                    try {
-                        LOG.debug("Intermine logger instantiated for osalias:" + loggerAlias);
-                        os.logger = InterMineLoggerFactory.getInterMineLogger(loggerAlias);
-                    } catch (Exception e) {
-                        LOG.debug("Intermine logger unable to be instantiated!", e);
-                    }
-                } else {
-                    LOG.debug("Intermine logger alias not set for osalias:" + osAlias);
-                }
 
                 if (logfile != null) {
                     try {
@@ -620,12 +604,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             } catch (SQLException e) {
                 LOG.error("Failed to write to log table: " + e);
             }
-        }
-
-        if (logger != null) {
-            logger.logQuery("ObjectStoreInterMineImpl", System.getProperty("user.name"),
-                    q, sql, new Long(optimise), new Long(estimated), new Long(execute),
-                    new Long(permitted), new Long(convert));
         }
     }
 
