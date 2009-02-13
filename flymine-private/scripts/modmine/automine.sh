@@ -8,7 +8,6 @@
 # sc 09/08
 #
 # TODO: ant failing and exiting with 0!
-#       test with file option
 #       test full release
 #       analyse after stag?
 #
@@ -45,30 +44,30 @@ CHADOAPPEND=n  #          rebuild the chado db
 BUP=n          #          don't do a back up copy of the databases
 V=             #          non-verbose mode
 #F=;           #          continue stag loading (also after errors)
-REL=dev;       #          if no release is passed, do a dev
+REL=dev;       #          if no release is passed, do a dev (unless you are validating)
 STAG=y         #          run stag loading
 TEST=y         #          do acceptance tests
 VALIDATING=n   #          not running as a validation (1 entry at a time)
 FOUND=n        #          y if new files downloaded
-INFILE=undefined #       not using a given list of submissions
+INFILE=undefined #        not using a given list of submissions
 TIMESTAMP=`date "+%y%m%d.%H%M"`  # used in the log
-NAMESTAMP=undefined     #        used to name the acceptance tests
-INTERACT=n     #          off: step by step interaction
+NAMESTAMP=undefined     # used to name the acceptance tests
+INTERACT=n     #          y: step by step interaction
 WGET=y         #          use wget to get files from ftp
+VAL1=n         #          y: validate 1! entry
 
 
 INCR=y
 FULL=n
 META=n         # it builds a new mine with static, organism and metadata only
 RESTART=n
-VAL1=n
 
 progname=$0
 
 function usage () {
 	cat <<EOF
 
-Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [-s] [-t] [-w] [-v] [-x]
+Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [g] [i] [-s] [-t] [-w] [-v] [-x]
 	-F: full (modmine) rebuild
 	-M: test build (metadata only)
 	-R: restart full build after failure
@@ -78,8 +77,8 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [-s] [-t] [-w] [-v
 	-b: build a back-up of modchado-$REL
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
-  -i: interactive mode
-  -s: no new loading of chado (stag is not run)
+	-i: interactive mode
+	-s: no new loading of chado (stag is not run)
 	-t: no acceptance test run
 	-w: no new webapp will be built
 	-v: verbode mode
@@ -90,22 +89,22 @@ Note: The file is downloaded only if not present or the remote copy
 
 examples:
 
-$progname
-				add new submissions to modmine-dev, getting new files from ftp
-$progname -F test
-				build a modmine-test with metadata, Flybase and Wormbase, getting new files from ftp
-$progname -M test
-				build a new chado with all the NEW submissions in $FTPURL and use this to build a modmine-test
-$progname -s -w -t  dev
-				build modmine-dev using the existing modchado-dev, without performing acceptance tests and without building the webapp
-$progname -f file_name val
-				build modmine-val using the (already downloaded) chadoxml files listed in file_name
+$progname			add new submissions to modmine-dev, getting new files from ftp
+$progname -F test		build a modmine-test with metadata, Flybase and Wormbase,
+				getting new files from ftp
+$progname -M test		build a new chado with all the NEW submissions in
+				$FTPURL
+				and use this to build a modmine-test
+$progname -s -w -t dev	build modmine-dev using the existing modchado-dev,
+				without performing acceptance tests and without building the webapp
+$progname -f file_name val	build modmine-val using the (already downloaded)
+				chadoxml files listed in file_name
 
 EOF
 	exit 0
 }
 
-while getopts ":FIMRVabf:ginstuvwx" opt; do
+while getopts ":FMRVabf:gistuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -162,6 +161,8 @@ echo "Building modmine-$REL on $DBHOST."
 echo "================================="
 echo "Logs: $LOADLOG"
 #echo "      $DATADIR/wget.log"
+echo
+echo "current directory: $MINEDIR"
 echo
 
 if [ $VALIDATING = "y" ] && [ $STAG = "n" ] && [ -n "$1" ]
@@ -270,22 +271,22 @@ createdb -e "$CHADODB"-old -T $CHADODB -h $DBHOST -U $DBUSER\
 fi
 
 # build new?
-if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ] && [ "$VALIDATING" = "n" ]
-then
-# rebuild skeleton chado db
-	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
-	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
-
-	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
-	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
-
-if [ $INTERACT = "y" ]
-then
-echo "press return to continue.."
-read
-fi
-
-fi
+ if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ] && [ "$VALIDATING" = "n" ]
+ then
+ # rebuild skeleton chado db
+ 	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
+ 	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+ 
+ 	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
+ 	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+ 
+ if [ $INTERACT = "y" ]
+ then
+ echo "press return to continue.."
+ read
+ fi
+ 
+ fi
 
 #---------------------------------------
 # fill chado db
@@ -350,7 +351,7 @@ ln -s ../$sub $sub
 fi
 
 #if we are validating, we'll process an entry at a time
-if [ $VALIDATING = "y" ] 
+if [ $VALIDATING = "y" ]
 then
 # to name the acceptance tests file
 NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
@@ -358,23 +359,20 @@ echo "******"
 echo $NAMESTAMP
 echo "******"
 
-if [ $BUILD = "y" ]
-then
 cd $MINEDIR
 echo "Building modMine $REL"
 echo
 # new build. static, metadata
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
-fi #BUILD=y
 
-if [ "$TEST" = "y" ]
-then
+
 echo
 echo "running acceptance tests"
 echo
 cd $MINEDIR/integrate
-ant $V -Drelease=$REL acceptance-tests-metadata
+ant $V -Drelease=$REL acceptance-tests-metadata|| { printf "%b" "\n acceptance test FAILED.\n" ; exit 1 ; }
+
 if [ $NAMESTAMP != "undefined" ]
 then
 TIMESTAMP="$NAMESTAMP"
@@ -382,6 +380,10 @@ fi
 
 # check chado for new features
 cd $MINEDIR
+
+# this is done because there is a problem with automount....
+ls $REPORTS > /dev/null
+
 $SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
 
 echo "sending mail!!"
@@ -391,7 +393,7 @@ echo
 echo "acceptance test results in "
 echo "$REPORTS/$TIMESTAMP.html"
 echo
-fi #TEST=y
+
 
 if [ "$VAL1" = "y" ]
 then
@@ -409,18 +411,20 @@ else
 echo
 echo "Using previously loaded chado."
 echo
-fi # if $STAG=y
-
 if [ $INTERACT = "y" ]
 then
 echo "press return to continue.."
 read
 fi
 
+fi # if $STAG=y
+
+
 #---------------------------------------
 # build modmine
 #---------------------------------------
-if [ $BUILD = "y" ] && [ $VALIDATING = "n" ]
+#if [ $BUILD = "y" ] && [ $VALIDATING = "n" ]
+if [ $BUILD = "y" ]
 then
 cd $MINEDIR
 
@@ -484,7 +488,8 @@ fi
 #---------------------------------------
 # and run acceptance tests
 #---------------------------------------
-if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
+#if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
+if [ "$TEST" = "y" ]
 then
 echo
 echo "========================"
@@ -513,9 +518,6 @@ echo "sending mail!!"
 mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
 
 #elinks $REPORTS/$TIMESTAMP.html
-
-echo "sending mail!!"
-mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
 
 echo
 echo "acceptance test results in "
