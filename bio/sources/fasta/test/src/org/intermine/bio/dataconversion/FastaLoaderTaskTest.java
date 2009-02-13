@@ -61,6 +61,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
+        flt.setSourceName("fasta-test");
 
         File[] files = new File[2];
         for (int i = 0; i < 2; i++) {
@@ -110,6 +111,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);
+        flt.setSourceName("fasta-test");
 
         File[] files = new File[1];
         files[0] = File.createTempFile("pombe_sid2_short.fasta", "tmp");

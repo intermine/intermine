@@ -43,15 +43,14 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     throws ObjectStoreException {
         if (chrMap.containsKey(chromosomeId)) {
             return chrMap.get(chromosomeId);
-        } else {
-            Region chr = (Region) getDirectDataLoader().createObject(Region.class);
-            chr.setPrimaryIdentifier(chromosomeId);
-            chr.setOrganism(organism);
-            chr.addDataSets(getDataSet());
-            getDirectDataLoader().store(chr);
-            chrMap.put(chromosomeId, chr);
-            return chr;
         }
+        Region chr = (Region) getDirectDataLoader().createObject(Region.class);
+        chr.setPrimaryIdentifier(chromosomeId);
+        chr.setOrganism(organism);
+        chr.addDataSets(getDataSet());
+        getDirectDataLoader().store(chr);
+        chrMap.put(chromosomeId, chr);
+        return chr;
     }
 
     /**
@@ -67,7 +66,6 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
         synonym.setValue(identifier);
         synonym.setType("identifier");
         synonym.setSubject(interMineObject);
-        synonym.setSource(dataSource);
         getDirectDataLoader().store(synonym);
     }
 
@@ -103,10 +101,8 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
             loc.setObject(getChromosome(chromosomeId, organism));
             lsf.setChromosomeLocation(loc);
             return loc;
-        } else {
-            throw new RuntimeException("header doesn't match pattern \"" + regexp + "\": "
-                                       + header);
         }
+        throw new RuntimeException("header doesn't match pattern \"" + regexp + "\": " + header);
     }
 
     /**

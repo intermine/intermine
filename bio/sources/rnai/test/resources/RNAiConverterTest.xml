@@ -30,7 +30,6 @@
 <item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="WBGene00000516"/>
-<reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
@@ -50,7 +49,6 @@
 <item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="WBGene00006974"/>
-<reference name="source" ref_id="0_1"/>
 <reference name="subject" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>

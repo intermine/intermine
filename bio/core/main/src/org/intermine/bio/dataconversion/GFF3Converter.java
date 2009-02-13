@@ -201,10 +201,9 @@ public class GFF3Converter
                     String recordName = (String) i.next();
                     Item synonym = createItem("Synonym");
                     if (!recordName.equals(record.getId())) {
-                        synonym.addReference(new Reference("subject", feature.getIdentifier()));
-                        synonym.addAttribute(new Attribute("value", recordName));
-                        synonym.addAttribute(new Attribute("type", "name"));
-                        synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+                        synonym.setReference("subject", feature.getIdentifier());
+                        synonym.setAttribute("value", recordName);
+                        synonym.setAttribute("type", "name");
                         synonymsToAdd.add(synonym);
                     }
                 }
@@ -269,7 +268,7 @@ public class GFF3Converter
                 if (record.getPhase() != null) {
                     relation.setAttribute("phase", record.getPhase());
                 }
-                
+
                 int length = Math.abs(end - start) + 1;
                 feature.setAttribute("length", String.valueOf(length));
             } else {
@@ -282,7 +281,7 @@ public class GFF3Converter
                     dataSet.getIdentifier()
                 }));
             handler.setLocation(relation);
-            if (seqClsName.equals("Chromosome") 
+            if (seqClsName.equals("Chromosome")
                     && (cd.getFieldDescriptorByName("chromosome") != null)) {
                 feature.setReference("chromosome", seq.getIdentifier());
                 if (makeLocation) {
@@ -481,7 +480,7 @@ public class GFF3Converter
                 synonym.setReference("subject", seq.getIdentifier());
                 synonym.setAttribute("value", identifier);
                 synonym.setAttribute("type", "identifier");
-                synonym.setReference("source", seqDataSource.getIdentifier());
+                synonym.addToCollection("dataSets", getDataSet());
                 handler.addItem(synonym);
                 seqs.put(identifier, seq);
             }
