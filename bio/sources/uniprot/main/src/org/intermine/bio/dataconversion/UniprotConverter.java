@@ -252,13 +252,19 @@ public class UniprotConverter extends DirectoryConverter
                 }
 
                 /* publications */
-                protein.setCollection("publications", entry.getPubs());
+                if (!entry.getPubs().isEmpty()) {
+                    protein.setCollection("publications", entry.getPubs());
+                }
 
                 /* comments */
-                protein.setCollection("comments", entry.getComments());
+                if (!entry.getComments().isEmpty()) {
+                    protein.setCollection("comments", entry.getComments());
+                }
 
                 /* keywords */
-                protein.setCollection("keywords", entry.getKeywords());
+                if (!entry.getKeywords().isEmpty()) {
+                    protein.setCollection("keywords", entry.getKeywords());
+                }
 
                 /* features */
                 if (!entry.getFeatures().isEmpty() && !entry.isIsoform()) {
@@ -277,8 +283,9 @@ public class UniprotConverter extends DirectoryConverter
 
                     // TODO store these after the protein
                     processSynonyms(synonymRefIds, protein.getIdentifier(), entry);
-                    protein.setCollection("synonyms", synonymRefIds);
-
+                    if (!synonymRefIds.isEmpty()) {
+                        protein.setCollection("synonyms", synonymRefIds);
+                    }
                     store(protein);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
