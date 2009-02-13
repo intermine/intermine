@@ -39,15 +39,15 @@ public class UniprotConverterTest extends MockItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File datadir = new File ("resources/");
-        //File datadir = new File ("./test/resources/");
+        //File datadir = new File ("resources/");
+        File datadir = new File ("./test/resources/");
         converter.setCreateinterpro("true");
-        converter.setUniprotOrganisms("7227");
+        converter.setUniprotOrganisms("7955");
         converter.process(datadir);
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "uniprot-tgt-items.xml");
 
         Set expected = readItemSet("UniprotConverterTest_tgt.xml");
 

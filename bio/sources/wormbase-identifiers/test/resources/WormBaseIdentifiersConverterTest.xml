@@ -11,7 +11,6 @@
   <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="WBGene00007167"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -20,7 +19,6 @@
   <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="rbg-3"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -29,7 +27,6 @@
   <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="B0393.2"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -41,7 +38,6 @@
   <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="WBGene00007168"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -66,7 +62,6 @@
   <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="B0393.3"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="3_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
