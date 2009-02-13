@@ -116,12 +116,6 @@
     <ant dir="../../testmodel/webapp/main" target="release-webapp" inheritAll="false"/>
   </target>
 
-  <target name="release-demo-webservice">
-    <ant dir="../../intermine" target="distclean" inheritAll="false"/>
-    <ant dir="../../intermine" target="build-testmodel-webservice" inheritAll="false"/>
-    <ant dir="../../intermine" target="release-webservice" inheritAll="false"/>
-  </target>
-
   <target name="setup-userprofile">
     <ant dir="../../testmodel/webapp/main" target="build-db-userprofile" inheritAll="false">
       <!--property name="intermine.dist.path" location="../../intermine/dist"/-->
