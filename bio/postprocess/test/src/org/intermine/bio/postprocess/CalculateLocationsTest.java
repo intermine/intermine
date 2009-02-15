@@ -31,9 +31,7 @@ import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.OverlapRelation;
 import org.flymine.model.genomic.ReversePrimer;
-import org.flymine.model.genomic.Supercontig;
 import org.flymine.model.genomic.Transcript;
-import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -41,14 +39,13 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-public class CalculateLocationsTest extends TestCase {
+public class CalculateLocationsTest extends TestCase 
+{
 
     private ObjectStoreWriter osw;
     private Chromosome chromosome = null;
@@ -420,128 +417,6 @@ public class CalculateLocationsTest extends TestCase {
         Assert.assertFalse(CalculateLocations.overlap(parent, s6));
     }
 
-
-    public void testCreateTransformedLocation() throws Exception {
-        Chromosome chr = getChromosome();
-        int chrId = chr.getId().intValue();
-        BioEntity parent = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
-        int parentId = 101;
-        parent.setId(new Integer(parentId));
-        BioEntity child = (BioEntity) DynamicUtil.createObject(Collections.singleton(BioEntity.class));
-        int childId = 102;
-        child.setId(new Integer(childId));
-
-        //  ------------------>   parent
-        //      |        |
-        //      ---------->       child
-        CalculateLocations cl = new CalculateLocations(osw);
-        CalculateLocations.SimpleLoc parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, "1");
-        CalculateLocations.SimpleLoc childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, "1");
-        Location res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
-
-        Location exp1 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        exp1.setStart(new Integer(251));
-        exp1.setEnd(new Integer(350));
-        exp1.setStartIsPartial(Boolean.FALSE);
-        exp1.setEndIsPartial(Boolean.FALSE);
-        exp1.setStrand("1");
-        exp1.setObject(chr);
-        exp1.setSubject(child);
-        Assert.assertEquals(toItem(exp1), toItem(res));
-
-        //  <------------------   parent
-        //      |        |
-        //     <----------       child
-        cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, "-1");
-        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, "1");
-        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
-
-        Location exp2 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        exp2.setStart(new Integer(151));
-        exp2.setEnd(new Integer(250));
-        exp2.setStartIsPartial(Boolean.FALSE);
-        exp2.setEndIsPartial(Boolean.FALSE);
-        exp2.setStrand("-1");
-        exp2.setObject(chr);
-        exp2.setSubject(child);
-        Assert.assertEquals(toItem(exp2), toItem(res));
-
-        //  ------------------>  parent
-        //      |        |
-        //     <----------       child
-        cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, "1");
-        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, "-1");
-        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
-
-        Location exp3 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        exp3.setStart(new Integer(251));
-        exp3.setEnd(new Integer(350));
-        exp3.setStartIsPartial(Boolean.FALSE);
-        exp3.setEndIsPartial(Boolean.FALSE);
-        exp3.setStrand("-1");
-        exp3.setObject(chr);
-        exp3.setSubject(child);
-        Assert.assertEquals(toItem(exp3), toItem(res));
-
-        //  <-----------------   parent
-        //      |        |
-        //      ---------->      child
-        cl = new CalculateLocations(osw);
-        parentOnChr = cl.new SimpleLoc(chrId, parentId, 101, 400, "-1");
-        childOnParent = cl.new SimpleLoc(parentId, childId, 151, 250, "-1");
-        res = cl.createTransformedLocation(parentOnChr, childOnParent, chr, child);
-
-        Location exp4 = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
-        exp4.setStart(new Integer(151));
-        exp4.setEnd(new Integer(250));
-        exp4.setStartIsPartial(Boolean.FALSE);
-        exp4.setEndIsPartial(Boolean.FALSE);
-        exp4.setStrand("1");
-        exp4.setObject(chr);
-        exp4.setSubject(child);
-        Assert.assertEquals(toItem(exp4), toItem(res));
-    }
-
-
-
-
-    public void testCreateTransformedLocations() throws Exception {
-        Set toStore = new HashSet(Arrays.asList(new Object[] {getChromosome()}));
-        Supercontig sc =
-            (Supercontig) DynamicUtil.createObject(Collections.singleton(Supercontig.class));
-        Contig c = (Contig) DynamicUtil.createObject(Collections.singleton(Contig.class));
-        sc.setId(new Integer(104));
-        c.setId(new Integer(105));
-        Location scOnChr = createLocation(getChromosome(), sc, "1", 1201, 1600, Location.class);
-        Location contigOnSc = createLocation(sc, c, "1", 101, 350, Location.class);
-        toStore.add(sc);
-        toStore.add(c);
-        toStore.add(scOnChr);
-        toStore.add(contigOnSc);
-
-        Iterator i = toStore.iterator();
-        while (i.hasNext()) {
-            osw.store((InterMineObject) i.next());
-        }
-        CalculateLocations cl = new CalculateLocations(osw);
-
-        cl.createTransformedLocations(Supercontig.class, Chromosome.class, Contig.class);
-
-        // test contig location on chromosome
-        Location expected = createLocation(getChromosome(), c, "1", 1301, 1550, Location.class);
-        expected.setId(new Integer(0));
-        Item expItem = itemFactory.makeItem(expected);
-        Results results = BioQueries.findLocationAndObjects(osw.getObjectStore(),
-                                                               Chromosome.class,
-                                                               Contig.class, true, false, 1000);
-        Iterator chrContigIter = results.iterator();
-        Location result = (Location) ((ResultsRow) chrContigIter.next()).get(2);
-        Item resItem = itemFactory.makeItem(result);
-        resItem.setIdentifier("0");
-        Assert.assertEquals(expItem, resItem);
-    }
 
     public void testSetChromosomeLocationsAndLengths() throws Exception {
         Chromosome chr1 = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
