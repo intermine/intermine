@@ -25,7 +25,6 @@ import org.flymine.model.genomic.BioEntity;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.LocatedSequenceFeature;
 import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.PartialLocation;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
@@ -340,117 +339,6 @@ public class CalculateLocations
         return returnMap;
     }
 
-
-    /**
-     * Make a Location on a destClass (eg. Chromosome) for each moveClass (eg. Contig).
-     * The moveClass object must be located on a sourceClass object (eg. Supercontig) and the
-     * sourceClass object must be located on the destClass.
-     * Example: Create Chromosome Locations for Contig objects that are currently Located
-     * on Supercontigs.
-     * @param sourceClass the moveClass objects are originally located on sourceClass objects
-     * @param destClass after createTransformedLocations(), extra Locations will exist between
-     * moveClass objects and destClass
-     * @param moveClass the class of objects to create new Locations for
-     * @throws ObjectStoreException if anything goes wrong
-     */
-    protected void createTransformedLocations(Class sourceClass, Class destClass, Class moveClass)
-         throws ObjectStoreException {
-
-        Results results =
-            PostProcessUtil.findLocationsToTransform(os, moveClass, sourceClass, destClass, 5000);
-
-        Iterator resIter = results.iterator();
-
-        int i = 0;
-        long start = System.currentTimeMillis();
-        while (resIter.hasNext()) {
-            ResultsRow rr = (ResultsRow) resIter.next();
-            BioEntity moveObject = (BioEntity) rr.get(0);
-            Location locMoveObjectOnSource = (Location) rr.get(1);
-            BioEntity sourceObject = (BioEntity) rr.get(2);
-            Location locSourceOnDest = (Location) rr.get(3);
-            BioEntity destObject = (BioEntity) rr.get(4);
-
-            SimpleLoc moveObjectOnSource = new SimpleLoc(sourceObject.getId().intValue(),
-                                                         moveObject.getId().intValue(),
-                                                         locMoveObjectOnSource);
-
-            SimpleLoc sourceOnDest = new SimpleLoc(destObject.getId().intValue(),
-                                                   sourceObject.getId().intValue(),
-                                                   locSourceOnDest);
-
-            // create location of moveClass on destClass (eg. Contig on Supercontig)
-            Location contigOnDestLoc =
-                createTransformedLocation(sourceOnDest, moveObjectOnSource, destObject, moveObject);
-
-            osw.store(contigOnDestLoc);
-            i++;
-
-            if (i % 100 == 0) {
-                long now = System.currentTimeMillis();
-                LOG.info("Created " + i + " BioEntity->BioEntity locations (avg = "
-                         + ((60000L * i) / (now - start)) + " per minute)");
-            }
-        }
-        LOG.info("Stored " + i + " Locations between Contig and Chromosome.");
-    }
-
-
-    /**
-     * Given the location of a child BioEntity on a parent and the location of
-     * the parent on a destination BioEntity (eg. Chromosome), create a Location for the child on
-     * the destination.
-     * @param parentOnDest location of parent (eg. Supercontig) object on dest (eg. Chromosome)
-     * @param childOnParent location of child (eg. Contig) on parent (eg. Supercontig)
-     * @param dest the object that will be the object of the new Location (eg. Chromosome)
-     * @param child the child BioEntity - ie. the subject of the new Location
-     * @return the new Location
-     */
-    protected Location createTransformedLocation(SimpleLoc parentOnDest, SimpleLoc childOnParent,
-                                                 BioEntity dest, BioEntity child) {
-        Location childOnDest;
-        if (childOnParent.startIsPartial() || childOnParent.endIsPartial()) {
-            childOnDest = (PartialLocation)
-                DynamicUtil.createObject(Collections.singleton(PartialLocation.class));
-        } else {
-            childOnDest = (Location)
-                DynamicUtil.createObject(Collections.singleton(Location.class));
-        }
-        if (parentOnDest.getStrand().equals("-1")) {
-            childOnDest.setStart(new Integer((parentOnDest.getEnd() - childOnParent.getEnd()) + 1));
-            childOnDest.setEnd(new Integer((parentOnDest.getEnd() - childOnParent.getStart()) + 1));
-        } else {
-            childOnDest.setStart(new Integer((parentOnDest.getStart()
-                                             + childOnParent.getStart()) - 1));
-            childOnDest.setEnd(new Integer((parentOnDest.getStart() + childOnParent.getEnd()) - 1));
-        }
-        if (childOnParent.getStrand().equals("-1")) {
-            if (parentOnDest.getStrand().equals("-1")) {
-                childOnDest.setStrand("1");
-            } else {
-                childOnDest.setStrand("-1");
-            }
-        } else {
-            if (parentOnDest.getStrand().equals("-1")) {
-                childOnDest.setStrand("-1");
-            } else {
-                childOnDest.setStrand("1");
-            }
-        }
-
-        childOnDest.setStartIsPartial(Boolean.FALSE);
-        childOnDest.setEndIsPartial(Boolean.FALSE);
-
-        if (childOnParent.startIsPartial()) {
-            childOnDest.setStartIsPartial(Boolean.TRUE);
-        }
-        if (childOnParent.endIsPartial()) {
-            childOnDest.setEndIsPartial(Boolean.TRUE);
-        }
-        childOnDest.setObject(dest);
-        childOnDest.setSubject(child);
-        return childOnDest;
-    }
 
     /**
      * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
