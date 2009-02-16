@@ -52,7 +52,6 @@ my $current_link = "$home/orthologues/inparanoid/current";
 
 if(@page){    
     foreach (@page){
-	print "getting table:  $_\n";        
 	#if an orthologue file is found
 	if ($_=~ /href="(sqltable\.\w{3}(\w{5})\.fa-\w{3}(\w{5})\.fa)"/g) {
 		#if the right combination of key and other organisms is found, add the filename to the files hash
