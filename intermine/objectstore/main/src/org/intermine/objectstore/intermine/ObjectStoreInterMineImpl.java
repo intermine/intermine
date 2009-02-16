@@ -1012,8 +1012,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 deregisterStatement(s);
             }
             long postExecute = System.currentTimeMillis();
+            ExtraQueryTime extra = new ExtraQueryTime();
             List<ResultsRow>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
-                    sequence, optimise);
+                    sequence, optimise, extra);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
@@ -1061,7 +1062,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             statsEstTime += estTime;
             long exeTime = postExecute - preExecute;
             statsExeTime += exeTime;
-            long conTime = postConvert - postExecute;
+            long conTime = postConvert - postExecute - extra.getQueryTime();
             statsConTime += conTime;
             if (getVerboseQueryLog()) {
                 SQLLOGGER.info("(VERBOSE) iql: " + q + "\n"
@@ -1070,7 +1071,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime
                         + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
                         + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
-                        + " ms, convert results: " + conTime + " ms, total: "
+                        + " ms, convert results: " + conTime + " ms, extra queries: "
+                        + extra.getQueryTime() + " ms, total: "
                         + (postConvert - preBagTableTime) + " ms" + ", rows: "
                         + objResults.size());
                 if (getLogExplains() && (!doneExplainLog)) {
