@@ -22,6 +22,38 @@ public class WebServiceInput
 
     private Integer maxCount;
 
+    private String userName;
+
+    private String password;
+    
+    /**
+     * @return user name
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName user name
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @return password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     /**
      * Sets from which index should be results returned 1-based.
      * @param start start
@@ -53,5 +85,4 @@ public class WebServiceInput
     public Integer getMaxCount() {
         return maxCount;
     }
-
 }

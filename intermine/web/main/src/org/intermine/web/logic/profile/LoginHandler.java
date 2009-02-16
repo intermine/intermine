@@ -63,7 +63,6 @@ public abstract class LoginHandler extends InterMineAction
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
                     Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
-        String superuser = pm.getSuperuser();
         Map mergeQueries = Collections.EMPTY_MAP;
         Map mergeBags = Collections.EMPTY_MAP;
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
@@ -71,19 +70,7 @@ public abstract class LoginHandler extends InterMineAction
             mergeBags = new HashMap(currentProfile.getSavedBags());
         }
 
-        Profile profile;
-        if (pm.hasProfile(username)) {
-            profile = pm.getProfile(username, password);
-        } else {
-            profile = new Profile(pm, username, null, password, new HashMap(), new HashMap(),
-                    new HashMap());
-            pm.saveProfile(profile);
-        }
-        session.setAttribute(Constants.PROFILE, profile);
-
-        if (profile.getUsername().equals(superuser)) {
-            session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
-        }
+        Profile profile = setUpProfile(session, pm, username, password);
 
         // Merge in anonymous query history
         for (Iterator iter = mergeQueries.entrySet().iterator(); iter.hasNext();) {
@@ -113,6 +100,33 @@ public abstract class LoginHandler extends InterMineAction
             }
         }
         return renamedBags;
+    }
+
+    /**
+     * Retrieves profile (creates or gets from ProfileManager) and saves it to session.
+     *
+     * @param session http session 
+     * @param pm profile manager
+     * @param username user name
+     * @param password password
+     * @return profile
+     */
+    public static Profile setUpProfile(HttpSession session, ProfileManager pm,
+            String username, String password) {
+        Profile profile;
+        if (pm.hasProfile(username)) {
+            profile = pm.getProfile(username, password);
+        } else {
+            profile = new Profile(pm, username, null, password, new HashMap(), new HashMap(),
+                    new HashMap());
+            pm.saveProfile(profile);
+        }
+        session.setAttribute(Constants.PROFILE, profile);
+
+        if (profile.getUsername().equals(pm.getSuperuser())) {
+            session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
+        }
+        return profile;
     }
 
     private String makeUniqueQueryName(String name, Set names) {
