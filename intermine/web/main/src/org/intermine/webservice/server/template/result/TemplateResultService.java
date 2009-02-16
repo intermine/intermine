@@ -45,7 +45,12 @@ public class TemplateResultService extends QueryResultService
             HttpServletResponse response) {
 
         TemplateResultInput input = getInput();
-        TemplateQuery template = new TemplateManager(request).getGlobalTemplate(input.getName());
+        TemplateQuery template;
+        if (isAuthenticated()) {
+            template = new TemplateManager(request).getTemplate(input.getName());
+        } else {
+            template = new TemplateManager(request).getGlobalTemplate(input.getName());    
+        }
         if (template == null) {
             throw new ResourceNotFoundException("public template with name '" + input.getName()
                     + "' doesn't exist.");

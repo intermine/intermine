@@ -18,10 +18,15 @@ import java.util.Properties;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -80,11 +85,15 @@ public abstract class WebService
 
     private static final String FORWARD_PATH = "/webservice/table.jsp";
 
+    private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
+    
     protected HttpServletRequest request;
 
     protected HttpServletResponse response;
 
     protected Output output;
+    
+    private boolean authenticated = false;
 
     /**
      * Starting method of web service. The web service should be run like
@@ -114,12 +123,59 @@ public abstract class WebService
                 throw new ServiceForbiddenException("Web service is disabled.");
             }
 
+            authenticate(request);
+            
             execute(request, response);
 
         } catch (Throwable t) {
             sendError(t, response);
         } 
         output.flush();
+    }
+    
+    /**
+     * If user name and password is specified in request, then it setups user profile in session.
+     * User was authenticated.
+     * It is using Http basis access authentication. 
+     * {@link http://en.wikipedia.org/wiki/Basic_access_authentication}
+     * @param request request
+     */
+    private void authenticate(HttpServletRequest request) {
+        String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
+        if (authString == null || authString.length() == 0) {
+            return;
+        }
+
+        String decoded = new String(Base64.decodeBase64(authString.getBytes()));
+        String[] parts = decoded.split(":", 2);
+        if (parts.length != 2) {
+            throw new BadRequestException("Invalid request authentication. " 
+                    + "Authorization field contains invalid value. Decoded authorization value: " 
+                    + parts[0]);
+        }
+        String userName = parts[0];
+        String password = parts[1];
+        
+        if (userName.length() == 0) {
+            throw new BadRequestException("Empty user name.");
+        }
+        if (password.length() == 0) {
+            throw new BadRequestException("Empty password.");
+        }
+        ProfileManager pm = SessionMethods.getProfileManager(request.getSession()
+                .getServletContext());
+        if (pm.hasProfile(userName)) {
+            if (!pm.validPassword(userName, password)) {
+                throw new BadRequestException("Invalid password: " + password);
+            }
+        } else {
+            throw new BadRequestException("Unknown user name: " + userName);
+        }
+        
+        HttpSession session = request.getSession();
+        LoginHandler.setUpProfile(session, SessionMethods.getProfileManager(
+                session.getServletContext()), userName, password);
+        authenticated = true;
     }
 
     private void sendError(Throwable t, HttpServletResponse response) {
@@ -305,5 +361,12 @@ public abstract class WebService
     public RequestDispatcher getHtmlForward() {
         return request.getSession().getServletContext().getRequestDispatcher(
                 FORWARD_PATH);
+    }
+    
+    /**
+     * @return true if request specified user name and password
+     */
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 }

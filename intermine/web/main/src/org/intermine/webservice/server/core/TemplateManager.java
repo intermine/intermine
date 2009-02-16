@@ -46,4 +46,16 @@ public class TemplateManager
         return TemplateHelper.findTemplate(request.getSession().getServletContext(),
                 request.getSession(), userName, name, TemplateHelper.GLOBAL_TEMPLATE);
     }
+
+    /**
+     * Gets template that is global or user.
+     * @param name template name
+     * @return template
+     */
+    public TemplateQuery getTemplate(String name) {
+        String userName = ((Profile) request.getSession().
+                getAttribute(Constants.PROFILE)).getUsername();
+        return TemplateHelper.findTemplate(request.getSession().getServletContext(),
+                request.getSession(), userName, name, TemplateHelper.ALL_TEMPLATE);
+    }
 }
