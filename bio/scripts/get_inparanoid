@@ -32,7 +32,8 @@ my %other_codes = &config_species($file,"other_inparanoid");
 
 # data source and destination
 my $inparanoid_server = "http://inparanoid.sbc.su.se/download/current/sqltables";
-my $InP_main_dir = "$home/orthologues/inparanoid";
+my $orthologues_dir = "$home/orthologues";
+my $InP_main_dir = "$orthologues_dir/inparanoid";
 my $download_dir = "$InP_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 my $log_buffer = "InParanoid\n";
@@ -66,6 +67,7 @@ if(@page){
 
 # download each file, check to see if it is a new version. it is assumed that either 
 # all files will be upadated or all files will not
+    &checkdir_exists($orthologues_dir);
     &checkdir_exists($InP_main_dir);
     &checkdir_exists($download_dir);
 
