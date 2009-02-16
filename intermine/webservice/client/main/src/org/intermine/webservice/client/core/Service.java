@@ -13,7 +13,9 @@ package org.intermine.webservice.client.core;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 
 
@@ -31,6 +33,8 @@ public class Service
     private static final String VERSION_HEADER = "InterMine-Version";
 
     private static final String USER_AGENT_HEADER = "User-Agent";
+    
+    private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
 
     private static Logger logger = Logger.getLogger(Service.class);
     
@@ -41,6 +45,10 @@ public class Service
     private String applicationName;
 
     private int timeout;
+
+    private String userName;
+
+    private String password;
 
     /**
      * Constructor. {@link ServiceFactory} should be used always to create service and not this 
@@ -54,6 +62,12 @@ public class Service
      */
     public Service(String rootUrl, String serviceRelativeUrl,
             String applicationName) {
+        init(rootUrl, serviceRelativeUrl, applicationName);
+    }
+
+
+    private void init(String rootUrl, String serviceRelativeUrl,
+            String applicationName) {
         this.rootUrl = rootUrl;
         this.applicationName = applicationName;
         if (!rootUrl.endsWith("/")) {
@@ -64,6 +78,15 @@ public class Service
         } catch (MalformedURLException ex) {
             throw new IllegalStateException(ex);
         }
+    }
+    
+    public void setAuthentication(String userName, String password) {
+        if (userName == null || password == null || userName.length() == 0 
+                || password.length() == 0) {
+            throw new ServiceException("User name or password or both are empty.");
+        }
+        this.userName = userName;
+        this.password = password;
     }
 
     /**
@@ -77,6 +100,7 @@ public class Service
         request.setHeader(VERSION_HEADER, getVersion().toString());
         request.setHeader(USER_AGENT_HEADER, getApplicationName() + " " 
                 + "JavaLibrary/" + getVersion().toString());
+        setAuthenticationHeader(request);
         HttpConnection connection = new HttpConnection(request);
         connection.setTimeout(timeout);
         logger.debug("Executing request: " + url);
@@ -84,7 +108,14 @@ public class Service
         return connection;
     }
 
-    
+    private void setAuthenticationHeader(Request request) {
+        if (userName != null && password != null) {
+            String authValue = userName + ":" + password;
+            String encodedValue = new String(Base64.encodeBase64(authValue.getBytes()));
+            request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);            
+        }
+    }
+
     private void assureOutputFormatSpecified(Request request) {
         if (request.getParameter("format") == null 
                 && getFormatValue(request.getContentType()) != null) {
