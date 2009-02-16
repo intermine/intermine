@@ -17,7 +17,7 @@ my $logdir="/shared/data/download_logs/";
 my $tempname="temp_log.txt";
 my $logname=$logdir.$tempname;
 my $home="/shared/data";
-my $config_file="../../flymine/project.xml";
+my $config_file;
 
 if (@ARGV!=4) {   
     print "no arguments passed, using default settings\n";
