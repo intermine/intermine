@@ -56,7 +56,7 @@ my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
 &ftp_download($connection,$uniprot_main_dir,$release_notes_file);
 
   #open file to get taxonIDs from the config file
-  my %taxons = &get_taxonids($config_file,"uniprot.organisms");
+  my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
   my $size = %taxons;
   if ($size eq 0) {
       die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";

@@ -28,10 +28,12 @@ my $file = "fly_anatomy.obo";
 my $file_to_get = "$server/$file";
 
 #data destination
-my $fly_ont_main_dir = "$home/ontologies/fly_anatomy";
+my $ont_dir = "$home/ontologies";
+my $fly_ont_main_dir = "$ont_dir/fly_anatomy";
 my $download_dir = "$fly_ont_main_dir/temp";
 my $temp_file = "$download_dir/temp.txt";
 
+&checkdir_exists($ont_dir);
 &checkdir_exists($fly_ont_main_dir);
 &checkdir_exists($download_dir);
 &http_download($file_to_get,$temp_file);
