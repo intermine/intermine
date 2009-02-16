@@ -24,10 +24,10 @@ import org.intermine.util.DynamicBean;
 
 public class NotXmlTest extends TestCase
 {
-    ObjectStore os;
+    ObjectStoreInterMineImpl os;
 
     public void setUp() throws Exception {
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        os = (ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest");
     }
 
     public void test1() throws Exception {
@@ -38,22 +38,22 @@ public class NotXmlTest extends TestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = NotXmlRenderer.DELIM + "org.intermine.model.testmodel.Employee"
-            + NotXmlRenderer.DELIM + "aage" + NotXmlRenderer.DELIM + "0"
-            + NotXmlRenderer.DELIM + "rdepartment" + NotXmlRenderer.DELIM + "5678"
-            + NotXmlRenderer.DELIM + "afullTime" + NotXmlRenderer.DELIM + "false"
-            + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "1234"
-            + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1";
+        String expected = NotXmlParser.DELIM + "org.intermine.model.testmodel.Employee"
+            + NotXmlParser.DELIM + "aage" + NotXmlParser.DELIM + "0"
+            + NotXmlParser.DELIM + "rdepartment" + NotXmlParser.DELIM + "5678"
+            + NotXmlParser.DELIM + "afullTime" + NotXmlParser.DELIM + "false"
+            + NotXmlParser.DELIM + "aid" + NotXmlParser.DELIM + "1234"
+            + NotXmlParser.DELIM + "aname" + NotXmlParser.DELIM + "Employee1";
 
         String got = NotXmlRenderer.render(e).toString();
         assertEquals(got, expected, got);
     }
 
     public void testParse1() throws Exception {
-        String s = NotXmlRenderer.DELIM + "org.intermine.model.testmodel.Employee"
-            + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "1234"
-            + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "Employee1"
-            + NotXmlRenderer.DELIM + "rdepartment" + NotXmlRenderer.DELIM + "5678";
+        String s = NotXmlParser.DELIM + "org.intermine.model.testmodel.Employee"
+            + NotXmlParser.DELIM + "aid" + NotXmlParser.DELIM + "1234"
+            + NotXmlParser.DELIM + "aname" + NotXmlParser.DELIM + "Employee1"
+            + NotXmlParser.DELIM + "rdepartment" + NotXmlParser.DELIM + "5678";
 
         Employee obj1 = (Employee) NotXmlParser.parse(s, os);
 
@@ -69,11 +69,11 @@ public class NotXmlTest extends TestCase
 
     public void testParseDynamic() throws Exception {
 
-        String s = NotXmlRenderer.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.proxy.Factory"
-            + NotXmlRenderer.DELIM + "raddress" + NotXmlRenderer.DELIM + "74328"
-            + NotXmlRenderer.DELIM + "avatNumber" + NotXmlRenderer.DELIM + "100"
-            + NotXmlRenderer.DELIM + "aname" + NotXmlRenderer.DELIM + "CompanyC"
-            + NotXmlRenderer.DELIM + "aid" + NotXmlRenderer.DELIM + "74350";
+        String s = NotXmlParser.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.proxy.Factory"
+            + NotXmlParser.DELIM + "raddress" + NotXmlParser.DELIM + "74328"
+            + NotXmlParser.DELIM + "avatNumber" + NotXmlParser.DELIM + "100"
+            + NotXmlParser.DELIM + "aname" + NotXmlParser.DELIM + "CompanyC"
+            + NotXmlParser.DELIM + "aid" + NotXmlParser.DELIM + "74350";
 
         Company obj1 = (Company) NotXmlParser.parse(s, os);
 
@@ -81,7 +81,7 @@ public class NotXmlTest extends TestCase
         assertEquals(100, obj1.getVatNumber());
         assertEquals(new Integer(74350), obj1.getId());
         Map fieldMap = ((DynamicBean) ((net.sf.cglib.proxy.Factory) obj1).getCallback(0)).getMap();
-        ProxyReference addressRef = (ProxyReference) fieldMap.get("Address");
+        ProxyReference addressRef = (ProxyReference) fieldMap.get("address");
         assertNotNull(addressRef);
         assertEquals(new Integer(74328), addressRef.getId());
     }

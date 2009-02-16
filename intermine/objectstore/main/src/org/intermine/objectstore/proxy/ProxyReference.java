@@ -13,6 +13,7 @@ package org.intermine.objectstore.proxy;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringConstructor;
 
 /**
  * Class which holds a reference to an object in the database
@@ -90,5 +91,76 @@ public class ProxyReference implements InterMineObject, Lazy
      */
     public String toString() {
         return "<ProxyReference os: " + os + ", id: " + id + ", proxied class: " + clazz + ">";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StringConstructor getoBJECT() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setoBJECT(String notXml, ObjectStore os) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setoBJECT(String[] notXml, ObjectStore os) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getFieldValue(String fieldName) {
+        if ("id".equals(fieldName)) {
+            return id;
+        }
+        throw new UnsupportedOperationException("Tried to get field " + fieldName + " from proxy");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getFieldProxy(String fieldName) {
+        if ("id".equals(fieldName)) {
+            return id;
+        }
+        throw new UnsupportedOperationException("Tried to get field " + fieldName + " from proxy");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setFieldValue(String fieldName, Object value) {
+        if ("id".equals(fieldName)) {
+            throw new IllegalArgumentException("Cannot change the id of a ProxyReference");
+        }
+        throw new UnsupportedOperationException("Tried to set field " + fieldName + " to value "
+                + value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Class getFieldType(String fieldName) {
+        if ("id".equals(fieldName)) {
+            return Integer.class;
+        }
+        throw new UnsupportedOperationException("Tried to get field type for field " + fieldName
+                + " from proxy");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Class getElementType(String fieldName) {
+        throw new UnsupportedOperationException("Tried to get element type for field " + fieldName
+                + " from proxy");
     }
 }

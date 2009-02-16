@@ -70,7 +70,7 @@ public abstract class FieldDescriptor
                                                    + name);
             }
         }
-        this.name = name;
+        this.name = name.intern();
     }
 
     /**
@@ -128,7 +128,7 @@ public abstract class FieldDescriptor
     /**
      * Is this FieldDescriptor a reference?
      *
-     * @return true if this FieldDescriptor describes an attribute
+     * @return true if this FieldDescriptor describes a reference
      */
     public boolean isReference() {
         return (relationType() == ONE_ONE_RELATION) || (relationType() == N_ONE_RELATION);
@@ -137,7 +137,7 @@ public abstract class FieldDescriptor
     /**
      * Is this FieldDescriptor a collection?
      *
-     * @return true if this FieldDescriptor describes an attribute
+     * @return true if this FieldDescriptor describes a collection
      */
     public boolean isCollection() {
         return (relationType() == ONE_N_RELATION) || (relationType() == M_N_RELATION);

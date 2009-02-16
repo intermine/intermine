@@ -50,6 +50,8 @@ public class Model
         = new HashMap<Class, Set<ClassDescriptor>>();
     private final Map<Class, Map<String, FieldDescriptor>> classToFieldDescriptorMap
         = new HashMap<Class, Map<String, FieldDescriptor>>();
+    private final Map<Class, Map<String, Class>> classToCollectionsMap
+        = new HashMap<Class, Map<String, Class>>();
 
     private boolean generatedClassesAvailable = true;
 
@@ -332,6 +334,31 @@ public class Model
                     }
                 }
                 classToFieldDescriptorMap.put(c, retval);
+            }
+            return retval;
+        }
+    }
+
+    /**
+     * Takes a Class, and generates a Map of all the collections that are in the Class or any of its
+     * parents. The Class may be a dynamic class - ie not in the model, although at least one of its
+     * parents are in the model.
+     *
+     * @param c a Class
+     * @return a Map from String collection name to Class element type
+     */
+    public Map<String, Class> getCollectionsForClass(Class c) {
+        synchronized (classToCollectionsMap) {
+            Map<String, Class> retval = classToCollectionsMap.get(c);
+            if (retval == null) {
+                retval = new LinkedHashMap<String, Class>();
+                for (FieldDescriptor fd : getFieldDescriptorsForClass(c).values()) {
+                    if (fd instanceof CollectionDescriptor) {
+                        CollectionDescriptor cd = (CollectionDescriptor) fd;
+                        retval.put(cd.getName(), cd.getReferencedClassDescriptor().getType());
+                    }
+                }
+                classToCollectionsMap.put(c, retval);
             }
             return retval;
         }

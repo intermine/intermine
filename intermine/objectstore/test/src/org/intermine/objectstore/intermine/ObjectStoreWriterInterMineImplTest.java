@@ -16,6 +16,7 @@ import junit.framework.Test;
 
 import org.apache.log4j.Logger;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreWriterTestCase;
@@ -206,7 +207,7 @@ public class ObjectStoreWriterInterMineImplTest extends ObjectStoreWriterTestCas
         assertFalse(writer.isInTransaction());
         // First, cause an exception outside a transaction
         try {
-            writer.store(new InterMineObject() {
+            writer.store(new Employee() {
                     public Integer getId() {
                     throw new RuntimeException();
                     }

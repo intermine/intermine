@@ -42,6 +42,7 @@ public class DatabaseSchema
     private boolean noNotXml;
     private boolean flatMode;
     private Set missingTables;
+    private boolean fetchFromInterMineObject;
 
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
@@ -64,6 +65,7 @@ public class DatabaseSchema
         this.missingTables = missingTables;
         this.noNotXml = noNotXml && (!missingTables.contains("intermineobject"));
         this.flatMode = noNotXml && missingTables.contains("intermineobject");
+        this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
         for (int i = 0; i < truncated.size(); i++) {
             Class cA = ((ClassDescriptor) truncated.get(i)).getType();
             for (int o = 0; o < i; o++) {
@@ -142,6 +144,15 @@ public class DatabaseSchema
      */
     public boolean isFlatMode(Class c) {
         return flatMode || (!InterMineObject.class.isAssignableFrom(c));
+    }
+
+    /**
+     * Returns true if ProxyReferences can be fetched from the InterMineObject table.
+     *
+     * @return a boolean
+     */
+    public boolean isFetchFromInterMineObject() {
+        return fetchFromInterMineObject;
     }
 
     /**

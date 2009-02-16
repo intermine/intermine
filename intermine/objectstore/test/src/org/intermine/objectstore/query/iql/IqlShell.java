@@ -12,6 +12,7 @@ package org.intermine.objectstore.query.iql;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,15 +23,25 @@ import org.gnu.readline.ReadlineCompleter;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.precompute.QueryOptimiserContext;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 
 /**
  * Shell for doing IQL queries
@@ -233,6 +244,53 @@ public class IqlShell
             iql = iql.substring(11);
             doPrecompute = true;
         }
+        if (iql.toUpperCase().equals("MAKEEMPLOYEES")) {
+            if (os instanceof ObjectStoreInterMineImpl) {
+                out.println("Storing 1,000,000 Employees");
+                long startTime = System.currentTimeMillis();
+                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+                osw.beginTransaction();
+                for (int i = 0; i < 1000000; i++) {
+                    Employee emp = new Employee();
+                    emp.setFullTime(i % 2 == 0);
+                    emp.setEnd("end: " + i);
+                    emp.setAge(i);
+                    emp.setName("Name" + i);
+                    emp.proxyDepartment(new ProxyReference(os, i, Department.class));
+                    osw.store(emp);
+                    if (i % 10000 == 0) {
+                        out.print(".");
+                        out.flush();
+                    }
+                }
+                osw.commitTransaction();
+                out.println("\nDone in " + (System.currentTimeMillis() - startTime) + " ms.");
+            }
+            return;
+        }
+        if (iql.toUpperCase().equals("MAKECOMPANIES")) {
+            if (os instanceof ObjectStoreInterMineImpl) {
+                out.println("Storing 1,000,000 Companies");
+                long startTime = System.currentTimeMillis();
+                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+                osw.beginTransaction();
+                for (int i = 0; i < 1000000; i++) {
+                    Company comp = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+                    comp.setVatNumber(i);
+                    comp.setName("Name" + i);
+                    comp.proxycEO(new ProxyReference(os, i, CEO.class));
+                    comp.proxyAddress(new ProxyReference(os, i, Address.class));
+                    osw.store(comp);
+                    if (i % 10000 == 0) {
+                        out.print(".");
+                        out.flush();
+                    }
+                }
+                osw.commitTransaction();
+                out.println("\nDone in " + (System.currentTimeMillis() - startTime) + " ms.");
+            }
+            return;
+        }
         IqlQuery iq = new IqlQuery(iql, modelPackage);
         Query q = iq.toQuery();
 
@@ -275,7 +333,7 @@ public class IqlShell
 
             if ((optimiseMode == QueryOptimiserContext.MODE_NORMAL)
                     || (optimiseMode == QueryOptimiserContext.MODE_VERBOSE)) {
-                Results res = os.execute(q, 5000, true, !noExplain, true);
+                Results res = os.execute(q, 50000, true, !noExplain, true);
                 out.print("Column headings: ");
                 outputList(QueryHelper.getColumnAliases(q));
                 out.print("Column types: ");
