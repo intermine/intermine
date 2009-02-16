@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Net::FTP;
 use IO::All;
+use IO::All::LWP;
 use File::Compare;
 require Exporter;
 
