@@ -11,7 +11,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(ftp_connect make_link ftp_download http_download compare_files
 				checkdir_exists date_string_file unzip_dir convert_date
-				config_species write_version write_log search_webpage);
+				config_species write_version write_log search_webpage get_taxonIds);
 
 #connect to server
 sub ftp_connect(){
