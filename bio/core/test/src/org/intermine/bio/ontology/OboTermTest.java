@@ -21,7 +21,6 @@ public class OboTermTest extends TestCase
     public void testEquals() {
         OboTerm d1 = new OboTerm("name", "id");
         OboTerm d2 = new OboTerm("name", "id");
-        OboTerm d3 = new OboTerm("name", "id3");
 
         assertTrue(equalOboTerms(d1, d2));
         assertTrue(equalOboTerms(d2, d1));
@@ -38,31 +37,10 @@ public class OboTermTest extends TestCase
         assertTrue(equalOboTerms(d1, d2));
         assertTrue(equalOboTerms(d2, d1));
 
-        d1.addChild(d3);
-
-        assertFalse(equalOboTerms(d1, d2));
-        assertFalse(equalOboTerms(d2, d1));
-
-        d2.addChild(d3);
-
-        assertTrue(equalOboTerms(d1, d2));
-        assertTrue(equalOboTerms(d2, d1));
-
-        d1.addComponent(d3);
-
-        assertFalse(equalOboTerms(d1, d2));
-        assertFalse(equalOboTerms(d2, d1));
-
-        d2.addComponent(d3);
-
-        assertTrue(equalOboTerms(d1, d2));
-        assertTrue(equalOboTerms(d2, d1));
     }
 
     public static boolean equalOboTerms(OboTerm t1, OboTerm t2) {
         return t1.getId().equals(t2.getId()) && t1.getName().equals(t2.getName()) &&
-            t1.getChildren().equals(t2.getChildren()) &&
-            t1.getComponents().equals(t2.getComponents()) &&
             t1.getSynonyms().equals(t2.getSynonyms());
     }
 }

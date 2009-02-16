@@ -12,15 +12,15 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.ontology.OboParser;
+import org.intermine.bio.ontology.OboRelation;
 import org.intermine.bio.ontology.OboTerm;
 import org.intermine.bio.ontology.OboTermSynonym;
 import org.intermine.dataconversion.DataConverter;
@@ -30,6 +30,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
+import org.obo.dataadapter.OBOAdapter;
+import org.obo.dataadapter.OBOFileAdapter;
+import org.obo.dataadapter.OBOSerializationEngine;
+import org.obo.dataadapter.SimpleLinkFileAdapter;
+import org.obo.datamodel.OBOSession;
 
 /**
  * Convert tree of OboTerms into Items.
@@ -39,14 +44,17 @@ import org.intermine.xml.full.Reference;
  */
 public class OboConverter extends DataConverter
 {
+    private static final Logger LOG = Logger.getLogger(DataConverter.class);
+    
     protected String dagFilename;
     protected String termClass;
     protected int uniqueId = 0;
     protected int uniqueSynId = 0;
+    protected Collection oboTerms;
+    protected List<OboRelation> oboRelations;
     protected Map nameToTerm = new HashMap();
     protected Map synToItem = new HashMap();
     protected Item ontology;
-    protected List relations = new ArrayList();
 
     /**
      * Constructor for this class.
@@ -77,38 +85,47 @@ public class OboConverter extends DataConverter
     public void process() throws Exception {
         nameToTerm = new HashMap();
         synToItem = new HashMap();
-        process(findRootTerms(new File(dagFilename)));
+        OboParser parser = new OboParser();
+        parser.processOntology(new File(dagFilename));
+        parser.processRelations(dagFilename);
+        oboTerms = parser.getOboTerms();
+        oboRelations = parser.getOboRelations();
+        storeItems();
     }
 
     /**
-     * Get all root terms for an OBO format file.
-     * @param oboFile the OBO file
-     * @return Collection of root OboTerms
-     * @throws IOException if something goes wrong
-     */
-    protected Collection findRootTerms(File oboFile) throws IOException {
-        return new OboParser().processForLabellingOntology(new FileReader(oboFile));
-    }
-    /**
      * Convert DagTerms into Items and relation Items, and write them to the ItemWriter
      *
-     * @param rootTerms a Collection of DagTerms
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
-    protected void process(Collection rootTerms) throws ObjectStoreException {
-        for (Iterator i = rootTerms.iterator(); i.hasNext();) {
+    protected void storeItems() throws ObjectStoreException {
+        for (Iterator i = oboTerms.iterator(); i.hasNext();) {
             process((OboTerm) i.next());
         }
         store(ontology);
+        for (OboRelation oboRelation : oboRelations) {
+            processRelation(oboRelation);
+        }
         for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
             store((Item) i.next());
         }
         for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
             store((Item) i.next());
         }
-        for (Iterator i = relations.iterator(); i.hasNext();) {
-            store((Item) i.next());
-        }
+    }
+
+    /**
+     * @param oboTerms the oboTerms to set
+     */
+    public void setOboTerms(Collection oboTerms) {
+        this.oboTerms = oboTerms;
+    }
+    
+    /**
+     * @param oboRelations the OboRelations to set
+     */
+    public void setOboRelations(List<OboRelation> oboRelations) {
+        this.oboRelations = oboRelations;
     }
 
     /**
@@ -158,14 +175,14 @@ public class OboConverter extends DataConverter
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
-        for (OboTerm subTerm : term.getChildren()) {
-            Item subItem = process(subTerm);
-            relate(item, subItem, "is_a");
-        }
-        for (OboTerm subTerm : term.getComponents()) {
-            Item subItem = process(subTerm);
-            relate(item, subItem, "part_of");
-        }
+//        for (OboTerm subTerm : term.getChildren()) {
+//            Item subItem = process(subTerm);
+//            relate(item, subItem, "is_a");
+//        }
+//        for (OboTerm subTerm : term.getComponents()) {
+//            Item subItem = process(subTerm);
+//            relate(item, subItem, "part_of");
+//        }
         for (OboTermSynonym syn : term.getSynonyms()) {
             Item synItem = (Item) synToItem.get(syn);
             if (synItem == null) {
@@ -203,18 +220,29 @@ public class OboConverter extends DataConverter
     }
 
     /**
-     * Create (and store) a relation between two DagTerms.
-     *
-     * @param item the parent item
-     * @param subItem the child item
-     * @param type the String type of the relationship (is_a, part_of, etc)
-     * @throws ObjectStoreException if an error occurs while writing to the ItemWriter
+     * @param oboRelations
      */
-    protected void relate(Item item, Item subItem, String type) throws ObjectStoreException {
-        Item relation = createItem("OntologyRelation");
-        relation.setAttribute("type", type);
-        relation.setReference("childTerm", subItem.getIdentifier());
-        relation.setReference("parentTerm", item.getIdentifier());
-        relations.add(relation);
+    protected void processRelation(OboRelation oboRelation) throws ObjectStoreException {
+        // create the relation item
+        if (nameToTerm.get(oboRelation.getParentTermId()) != null
+            && nameToTerm.get(oboRelation.getChildTermId()) != null) {
+            Item relation = createItem("OntologyRelation");
+            relation.setReference("parentTerm", (Item) nameToTerm
+                            .get(oboRelation.getParentTermId()));
+            relation.setReference("childTerm", (Item) nameToTerm.get(oboRelation.getChildTermId()));
+            relation.setAttribute("relationship", oboRelation.getRelationship().getName());
+            relation.setAttribute("direct", Boolean.toString(oboRelation.isDirect()));
+            relation.setAttribute("redundant", Boolean.toString(oboRelation.isRedundant()));
+            // Set the reverse reference
+            ((Item) nameToTerm.get(oboRelation.getParentTermId()))
+                            .addToCollection("relations", relation);
+            ((Item) nameToTerm.get(oboRelation.getChildTermId()))
+                            .addToCollection("relations", relation);
+            store(relation);
+        } else {
+            LOG.info("GOTerm id not found for relation " + oboRelation.getParentTermId() + " "
+                     + oboRelation.getChildTermId());
+        }
     }
+   
 }

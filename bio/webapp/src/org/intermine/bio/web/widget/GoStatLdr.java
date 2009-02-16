@@ -84,7 +84,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGo = null;
         try {
             qcGoAnnotation = new QueryClass(Class.forName("GOAnnotation"));
-            qcGo = new QueryClass(Class.forName("GOTerm"));
+            qcGo = new QueryClass(Class.forName("OntologyTerm"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
             return null;
