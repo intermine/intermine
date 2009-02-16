@@ -6,7 +6,7 @@ then
 fi
 tempname="temp_log.txt"
 tempfile=$logdir$tempname
-shared_data="/shared/data/rns/modmine"
+shared_data="/shared/data/modmine/sources"
 config_file="./resources/get_scripts_modmine.config"
 if [ -a $tempfile ]
 then
