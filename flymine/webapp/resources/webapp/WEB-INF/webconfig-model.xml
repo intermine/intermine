@@ -233,11 +233,8 @@
   <class className="org.flymine.model.genomic.GOAnnotation">
     <fields>
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="property[GOTerm].namespace" showInSummary="false" />
+      <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
       <fieldconfig fieldExpr="qualifier"/>
-      <fieldconfig fieldExpr="isPrimaryAssignment"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -253,7 +250,7 @@
     </longdisplayers>
   </class>
 
-   <class className="org.flymine.model.genomic.GOTerm">
+   <class className="org.flymine.model.genomic.OntologyTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -403,7 +400,7 @@
 
   <class className="org.flymine.model.genomic.OntologyRelation">
     <fields>
-      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationship"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
