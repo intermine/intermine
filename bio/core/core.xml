@@ -74,12 +74,6 @@
     <attribute name="type" type="java.lang.String"/>
   </class>
 
-  <class name="org.flymine.model.genomic.OntologyRelation" is-interface="true">
-    <attribute name="type" type="java.lang.String"/>
-    <reference name="parentTerm" referenced-type="org.flymine.model.genomic.OntologyTerm" reverse-reference="childRelations"/>
-    <reference name="childTerm" referenced-type="org.flymine.model.genomic.OntologyTerm" reverse-reference="parentRelations"/>
-  </class>
-  
   <class name="org.flymine.model.genomic.SymmetricalRelation" is-interface="true">
     <collection name="bioEntities" referenced-type="org.flymine.model.genomic.BioEntity" ordered="true" reverse-reference="relations"/>
   </class>
@@ -118,17 +112,33 @@
   </class>
 
   <class name="org.flymine.model.genomic.SimpleRelation" extends="org.flymine.model.genomic.Relation" is-interface="true"/>
+  
   <class name="org.flymine.model.genomic.OntologyTerm" extends="org.flymine.model.genomic.BioProperty" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="namespace" type="java.lang.String"/>
     <attribute name="obsolete" type="java.lang.Boolean"/>
-    <attribute name="depth" type="java.lang.Integer"/>
     <reference name="ontology" referenced-type="org.flymine.model.genomic.Ontology"/>
-    <collection name="parentRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="childTerm"/>
-    <collection name="childRelations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" reverse-reference="parentTerm"/>
+    <collection name="relations" referenced-type="org.flymine.model.genomic.OntologyRelation" ordered="true" />
     <collection name="synonyms" referenced-type="org.flymine.model.genomic.OntologyTermSynonym" ordered="true"/>
+    <collection name="ontologyAnnotations" referenced-type="org.flymine.model.genomic.OntologyAnnotation" ordered="true" reverse-reference="ontologyTerm" /> 
+  </class>
+
+  <class name="org.flymine.model.genomic.OntologyRelation" is-interface="true">
+    <reference name="parentTerm" referenced-type="org.flymine.model.genomic.OntologyTerm" />
+    <reference name="childTerm" referenced-type="org.flymine.model.genomic.OntologyTerm" />
+    <attribute name="relationship" type="java.lang.String"/>
+    <attribute name="direct" type="java.lang.Boolean"/>
+    <attribute name="redundant" type="java.lang.Boolean"/>
+  </class>
+
+  <class name="org.flymine.model.genomic.OntologyAnnotation" is-interface="true">
+    <attribute name="qualifier" type="java.lang.String"/>
+    <reference name="subject" referenced-type="org.flymine.model.genomic.BioEntity" reverse-reference="annotations"/>
+    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet" ordered="true"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
+    <reference name="ontologyTerm" referenced-type="org.flymine.model.genomic.OntologyTerm" reverse-reference="ontologyAnnotations"/>
   </class>
 
   <class name="org.flymine.model.genomic.OntologyTermSynonym" is-interface="true">

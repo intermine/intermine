@@ -87,7 +87,7 @@
 		<reference name="prideProject" referenced-type="org.flymine.model.genomic.PrideProject" reverse-reference="prideExperiments"/>
 		<reference name="organism" referenced-type="org.flymine.model.genomic.Organism"/>
 		<collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
-		<reference name="goTerm" referenced-type="org.flymine.model.genomic.GOTerm"/>
+		<reference name="goTerm" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
 		<reference name="psiMod" referenced-type="org.flymine.model.genomic.PSIMod"/>
 		<reference name="medSubject" referenced-type="org.flymine.model.genomic.MedSubject"/>
 		<reference name="cellType" referenced-type="org.flymine.model.genomic.CellType"/>

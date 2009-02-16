@@ -1,50 +1,51 @@
-<?xml version="1.0"?>
 <items>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
-    <attribute name="title" value="SO"/>
-    <attribute name="url" value="http://www.flymine.org"/>
-  </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
-    <attribute name="name" value="syn1"/>
-    <attribute name="type" value="narrow_synonym"/>
-  </item>
-  <item id="1_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
-    <attribute name="identifier" value="SO:44"/>
-    <attribute name="name" value="partof"/>
-    <attribute name="obsolete" value="false"/>
-    <reference name="ontology" ref_id="0_1"/>
-    <collection name="synonyms">
-      <reference ref_id="2_2"/>
-    </collection>
-  </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#OntologyRelation">
-    <attribute name="type" value="part_of"/>
-    <reference name="childTerm" ref_id="1_3"/>
-    <reference name="parentTerm" ref_id="1_1"/>
-  </item>
-  <item id="2_2" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
-    <attribute name="name" value="syn2"/>
-    <attribute name="type" value="exact_synonym"/>
-  </item>
-  <item id="1_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
-    <attribute name="identifier" value="SO:43"/>
-    <attribute name="name" value="child"/>
-    <attribute name="obsolete" value="false"/>
-    <reference name="ontology" ref_id="0_1"/>
-    <collection name="synonyms">
-      <reference ref_id="2_1"/>
-      <reference ref_id="2_2"/>
-    </collection>
-  </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
-    <attribute name="identifier" value="SO:42"/>
-    <attribute name="name" value="parent"/>
-    <attribute name="obsolete" value="false"/>
-    <reference name="ontology" ref_id="0_1"/>
-  </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#OntologyRelation">
-    <attribute name="type" value="is_a"/>
-    <reference name="childTerm" ref_id="1_2"/>
-    <reference name="parentTerm" ref_id="1_1"/>
-  </item>
+<item id="0_1" class="http://www.flymine.org/model/genomic#Ontology">
+<attribute name="title" value="SO"/>
+<attribute name="url" value="http://www.flymine.org"/>
+</item>
+<item id="3_2" class="http://www.flymine.org/model/genomic#OntologyRelation">
+<attribute name="direct" value="false"/>
+<attribute name="redundant" value="false"/>
+<attribute name="relationship" value="part_of"/>
+<reference name="childTerm" ref_id="1_3"/>
+<reference name="parentTerm" ref_id="1_2"/>
+</item>
+<item id="1_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="identifier" value="SO:42"/>
+<attribute name="name" value="parent"/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="relations"><reference ref_id="3_1"/></collection>
+</item>
+<item id="2_1" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="syn1"/>
+<attribute name="type" value="narrow_synonym"/>
+</item>
+<item id="3_1" class="http://www.flymine.org/model/genomic#OntologyRelation">
+<attribute name="direct" value="false"/>
+<attribute name="redundant" value="false"/>
+<attribute name="relationship" value="is_a"/>
+<reference name="childTerm" ref_id="1_2"/>
+<reference name="parentTerm" ref_id="1_1"/>
+</item>
+<item id="1_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="identifier" value="SO:43"/>
+<attribute name="name" value="child"/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="relations"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+<collection name="synonyms"><reference ref_id="2_1"/><reference ref_id="2_2"/></collection>
+</item>
+<item id="1_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<attribute name="identifier" value="SO:44"/>
+<attribute name="name" value="partof"/>
+<attribute name="obsolete" value="false"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="relations"><reference ref_id="3_2"/></collection>
+<collection name="synonyms"><reference ref_id="2_2"/></collection>
+</item>
+<item id="2_2" class="http://www.flymine.org/model/genomic#OntologyTermSynonym">
+<attribute name="name" value="syn2"/>
+<attribute name="type" value="exact_synonym"/>
+</item>
 </items>

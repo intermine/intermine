@@ -13,8 +13,10 @@ package org.intermine.bio.dataconversion;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.intermine.bio.ontology.OboRelation;
 import org.intermine.bio.ontology.OboTerm;
 import org.intermine.bio.ontology.OboTermSynonym;
+import org.intermine.bio.ontology.OboTypeDefinition;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -41,10 +43,13 @@ public class OboConverterTest extends ItemsTestCase {
         c.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
         b.addSynonym(new OboTermSynonym("syn1", "narrow_synonym"));
         b.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
-        a.addChild(b);
-        a.addComponent(c);
-        converter.process(Arrays.asList(new Object[] {a, b, c}));
-        writeItemsFile(itemWriter.getItems(), "tmp");
+        OboRelation r1 = new OboRelation("SO:43","SO:42",new OboTypeDefinition("is_a", "is_a", true));
+        OboRelation r2 = new OboRelation("SO:44","SO:43",new OboTypeDefinition("part_of", "part_of", true));
+
+        converter.setOboTerms(Arrays.asList(new Object[] {a, b, c}));
+        converter.setOboRelations(Arrays.asList(new OboRelation[] {r1,r2} ));
+        converter.storeItems();
+        // writeItemsFile(itemWriter.getItems(), "tmp");
         assertEquals(readItemSet("OboConverterTest.xml"), itemWriter.getItems());
     }
 

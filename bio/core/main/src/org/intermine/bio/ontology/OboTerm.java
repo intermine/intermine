@@ -26,13 +26,10 @@ public class OboTerm
 {
     private final String id;
     private String name;
-    private Set<OboTerm> children = new HashSet<OboTerm>();
     private Set<OboTermSynonym> synonyms = new LinkedHashSet<OboTermSynonym>();
-    private Set<OboTerm> components = new HashSet<OboTerm>();
     private String namespace = "";
     private String description = "";
     private boolean obsolete = false;
-    private Set allParentIds = null;
     private Map tagValues;
 
     /**
@@ -64,37 +61,6 @@ public class OboTerm
         return this.name;
     }
 
-    /**
-     * Add a child DagTerm to this term (isa relationship).
-     * @param child the child term
-     */
-    public void addChild(OboTerm child) {
-        this.children.add(child);
-    }
-
-    /**
-     * Get a set of direct child DagTerms of this term.
-     * @return set of direct child DagTerms
-     */
-    public Set<OboTerm> getChildren() {
-        return this.children;
-    }
-
-    /**
-     * Add a component DagTerm to this term (partof relationship).
-     * @param component the component term
-     */
-    public void addComponent(OboTerm component) {
-        this.components.add(component);
-    }
-
-    /**
-     * Get a set of direct component DagTerms of this term.
-     * @return set of direct component DagTerms
-     */
-    public Set<OboTerm> getComponents() {
-        return this.components;
-    }
 
     /**
      * Add a synonym for this term.
@@ -166,25 +132,6 @@ public class OboTerm
      */
     public boolean isObsolete() {
         return obsolete;
-    }
-
-    /**
-     * Get the terms parents as a set.
-     * @return a set of all the parents of this term.
-     * */
-    public Set getAllParentIds() {
-        return allParentIds;
-    }
-
-    /**
-     * Adds more parent ids to the set of parent ids for this item.
-     * @param parentIds A collection of some parent go term ids to add to the set of parent ids
-     * */
-    protected void addToAllParentIds(Collection parentIds) {
-        if (allParentIds == null) {
-            allParentIds = new HashSet();
-        }
-        allParentIds.addAll(parentIds);
     }
 
     /**

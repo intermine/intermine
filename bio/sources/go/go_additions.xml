@@ -1,5 +1,3 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.GOTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
-</class>
 </classes>

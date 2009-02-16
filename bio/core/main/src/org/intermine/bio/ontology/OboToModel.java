@@ -83,12 +83,8 @@ public class OboToModel
     public boolean process(OboTerm term, String superClassName) {
         String className = generateClassName(term);
         boolean include = false;
-        for (Iterator i = term.getChildren().iterator(); i.hasNext(); ) {
-            OboTerm subTerm = (OboTerm) i.next();
-            include = process(subTerm, className) || include;
-        }
         if (term.isObsolete()) {
-            return include;
+            return include;  
         }
         Map tagValues = term.getTagValues();
         List subsets = null;
@@ -112,13 +108,13 @@ public class OboToModel
                 partofs = new HashSet();
                 nameToPartofs.put(className, partofs);
             }
-            for (OboTerm component : term.getComponents()) {
-                partofs.add(generateClassName(component));
-            }
+//            for (OboTerm component : term.getComponents()) {
+//                partofs.add(generateClassName(component));
+//            }
         }
         return include;
     }
-
+    
     /**
      * Specifies how a class name is generated.
      *
@@ -152,24 +148,13 @@ public class OboToModel
             System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
                     + modelFilename);
             OboParser parser = new OboParser();
-            Set rootTerms = parser.processForLabellingOntology(new FileReader(oboFile));
-
-            DagValidator validator = new DagValidator();
-            if (!validator.validate(rootTerms)) {
-                if (errorFilename != null) {
-                    BufferedWriter out =
-                        new BufferedWriter(new FileWriter(new File(errorFilename)));
-                    out.write(validator.getOutput());
-                    out.flush();
-                } else {
-                    System.err.print(validator.getOutput());
-                    System.err.flush();
-                }
-            }
-
+            parser.processOntology(oboFile);
+            parser.processRelations(oboFilename);
+            Set oboTerms = parser.getOboTerms();
+            
             OboToModel owler = new OboToModel(tgtNamespace);
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
-            owler.process(rootTerms);
+            owler.process(oboTerms);
             Set<ClassDescriptor> clds = new HashSet();
             for (Map.Entry<String, Set<String>> entry : owler.nameToSupers.entrySet()) {
                 String className = entry.getKey();
