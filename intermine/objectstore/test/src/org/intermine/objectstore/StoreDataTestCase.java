@@ -74,11 +74,10 @@ public abstract class StoreDataTestCase extends SetupDataTestCase
                 Object o = entry.getValue();
                 storeDataWriter.store(o);
             }
+            storeDataWriter.commitTransaction();
         } catch (Exception e) {
             storeDataWriter.abortTransaction();
             throw new Exception(e);
-        } finally {
-            storeDataWriter.commitTransaction();
         }
 
         System.out.println("Took " + (new Date().getTime() - start) + " ms to set up data");

@@ -348,11 +348,16 @@ public class TypeUtil
                             Method proxyGetter = methods.get(proxyGetterName);
                             Method adder = methods.get(adderName);
                             String fieldName = getterName.substring(3);
-                            fieldName = StringUtil.reverseCapitalisation(fieldName);
+                            fieldName = StringUtil.reverseCapitalisation(fieldName).intern();
 
                             // cglib Factory interface has getCallBack() and getCallBacks() methods
                             if (!getter.getName().equals("getClass")
-                                && !getter.getName().startsWith("getCallback")) {
+                                && !getter.getName().startsWith("getCallback")
+                                && !getter.getName().equals("getoBJECT")
+                                && !getter.getName().equals("getFieldValue")
+                                && !getter.getName().equals("getFieldProxy")
+                                && !getter.getName().equals("getFieldType")
+                                && !getter.getName().equals("getElementType")) {
                                 FieldInfo info = new FieldInfo(fieldName, getter, setter,
                                         proxySetter, proxyGetter, adder);
                                 infos.put(fieldName, info);

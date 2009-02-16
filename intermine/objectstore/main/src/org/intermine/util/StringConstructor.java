@@ -35,10 +35,72 @@ public class StringConstructor implements CharSequence
      * Appends a String onto the end of this object.
      *
      * @param string the String
+     * @return this
      */
-    public void append(String string) {
+    public StringConstructor append(String string) {
         strings.put(new Integer(length), string);
         length += string.length();
+        return this;
+    }
+
+    /**
+     * Appends an Object onto the end of this object.
+     *
+     * @param o an Object
+     * @return this
+     */
+    public StringConstructor append(Object o) {
+        return append(o.toString());
+    }
+
+    /**
+     * Appends a boolean onto the end of this object.
+     *
+     * @param b a boolean
+     * @return this
+     */
+    public StringConstructor append(boolean b) {
+        return append(String.valueOf(b));
+    }
+
+    /**
+     * Appends an int onto the end of this object.
+     *
+     * @param i an int
+     * @return this
+     */
+    public StringConstructor append(int i) {
+        return append(String.valueOf(i));
+    }
+
+    /**
+     * Appends a long onto the end of this object.
+     *
+     * @param l a long
+     * @return this
+     */
+    public StringConstructor append(long l) {
+        return append(String.valueOf(l));
+    }
+
+    /**
+     * Appends a float onto the end of this object.
+     *
+     * @param f a float
+     * @return this
+     */
+    public StringConstructor append(float f) {
+        return append(String.valueOf(f));
+    }
+
+    /**
+     * Appends a double onto the end of this object.
+     *
+     * @param d a double
+     * @return this
+     */
+    public StringConstructor append(double d) {
+        return append(String.valueOf(d));
     }
 
     /**

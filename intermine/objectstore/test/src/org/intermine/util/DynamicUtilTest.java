@@ -262,4 +262,10 @@ public class DynamicUtilTest extends TestCase
         Class importantPersonEmployable = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employable.class})));
         assertTrue(importantPersonEmployable.isAssignableFrom(Contractor.class));
     }*/
+
+    public void testGetNullPrimitives() throws Exception {
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        assertEquals(0, c.getVatNumber());
+        assertEquals(new Integer(0), c.getFieldValue("vatNumber"));
+    }
 }

@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;

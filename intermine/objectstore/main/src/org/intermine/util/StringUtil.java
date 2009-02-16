@@ -242,24 +242,16 @@ public class StringUtil
         if (str == null) {
             return null;
         }
-        if (str.length() >= 1) {
-            if (Character.isLowerCase(str.charAt(0))) {
-                String newStr = str.substring(0, 1).toUpperCase();
-                if (str.length() > 1) {
-                    newStr += str.substring(1);
-                }
-                return newStr;
-
-            }
-            if (Character.isUpperCase(str.charAt(0))) {
-                String newStr = str.substring(0, 1).toLowerCase();
-                if (str.length() > 1) {
-                    newStr += str.substring(1);
-                }
-                return newStr;
+        if (str == "") {
+            return str;
+        } else {
+            char first = str.charAt(0);
+            if (Character.isLowerCase(first)) {
+                return Character.toUpperCase(first) + str.substring(1);
+            } else {
+                return Character.toLowerCase(first) + str.substring(1);
             }
         }
-        return str;
     }
 
     /**

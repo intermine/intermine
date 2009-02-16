@@ -21,7 +21,10 @@ import java.util.TreeMap;
 
 import net.sf.cglib.proxy.*;
 
+import org.apache.log4j.Logger;
+
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.intermine.NotXmlRenderer;
 import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
@@ -30,6 +33,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public class DynamicBean implements MethodInterceptor
 {
+    private static final Logger LOG = Logger.getLogger(DynamicBean.class);
     private Map map = new HashMap();
 
     /**
@@ -75,14 +79,14 @@ public class DynamicBean implements MethodInterceptor
         if (method.getName().equals("equals")) {
             if (args[0] instanceof InterMineObject) {
                 Integer otherId = ((InterMineObject) args[0]).getId();
-                Integer thisId = (Integer) map.get("Id");
+                Integer thisId = (Integer) map.get("id");
                 return Boolean.valueOf((otherId != null) && (thisId != null)
                         && thisId.equals(otherId));
             }
             return Boolean.FALSE;
         }
         if (method.getName().equals("hashCode")) {
-            return map.get("Id");
+            return map.get("id");
         }
         if (method.getName().equals("finalize")) {
             return null;
@@ -123,53 +127,192 @@ public class DynamicBean implements MethodInterceptor
             }
             return retval.toString() + "]";
         }
-        // Bean methods
-        if (method.getName().startsWith("get") && (args.length == 0)) {
-            Object retval = map.get(method.getName().substring(3));
+        if ("getoBJECT".equals(method.getName()) && (args.length == 0)) {
+            return NotXmlRenderer.render(obj);
+        }
+        if ("getFieldValue".equals(method.getName()) && (args.length == 1)) {
+            String fieldName = (String) args[0];
+            Object retval = map.get(fieldName);
             if (retval instanceof ProxyReference) {
                 try {
                     retval = ((ProxyReference) retval).getObject();
                 } catch (NullPointerException e) {
                     NullPointerException e2 = new NullPointerException("Exception while calling "
-                            + method.getName() + " on object with ID " + map.get("Id"));
+                            + method.getName() + "(\"" + args[0] + "\") on object with ID "
+                            + map.get("id"));
                     e2.initCause(e);
                     throw e2;
                 } catch (Exception e) {
                     RuntimeException e2 = new RuntimeException("Exception while calling "
-                            + method.getName() + " on object with ID " + map.get("Id"));
+                            + method.getName() + "(\"" + args[0] + "\") on object with ID "
+                            + map.get("id"));
+                    e2.initCause(e);
+                    throw e2;
+                }
+            }
+            if (retval == null) {
+                Class fieldType = null;
+                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                Method methods[] = obj.getClass().getMethods();
+                for (Method getMethod : methods) {
+                    if (getMethod.getName().equals(methodName)) {
+                        fieldType = getMethod.getReturnType();
+                        break;
+                    }
+                }
+                if (fieldType == null) {
+                    throw new RuntimeException("No such field " + args[0]);
+                }
+
+                if (Collection.class.isAssignableFrom(fieldType)) {
+                    retval = new HashSet();
+                    map.put(fieldName, retval);
+                }
+                if (fieldType.isPrimitive()) {
+                    if (Boolean.TYPE.equals(fieldType)) {
+                        retval = Boolean.FALSE;
+                    } else if (Short.TYPE.equals(fieldType)) {
+                        retval = new Short((short) 0);
+                    } else if (Integer.TYPE.equals(fieldType)) {
+                        retval = new Integer(0);
+                    } else if (Long.TYPE.equals(fieldType)) {
+                        retval = new Long(0);
+                    } else if (Float.TYPE.equals(fieldType)) {
+                        retval = new Float(0.0);
+                    } else if (Double.TYPE.equals(fieldType)) {
+                        retval = new Double(0.0);
+                    }
+                    map.put(fieldName, retval);
+                }
+            }
+            return retval;
+        }
+        if ("getFieldProxy".equals(method.getName()) && (args.length == 1)) {
+            String fieldName = (String) args[0];
+            Object retval = map.get(fieldName);
+            if (retval == null) {
+                Class fieldType = null;
+                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                Method methods[] = obj.getClass().getMethods();
+                for (Method getMethod : methods) {
+                    if (getMethod.getName().equals(methodName)) {
+                        fieldType = getMethod.getReturnType();
+                        break;
+                    }
+                }
+                if (fieldType == null) {
+                    throw new RuntimeException("No such field " + args[0]);
+                }
+
+                if (Collection.class.isAssignableFrom(fieldType)) {
+                    retval = new HashSet();
+                    map.put(fieldName, retval);
+                }
+                if (fieldType.isPrimitive()) {
+                    if (Boolean.TYPE.equals(fieldType)) {
+                        retval = Boolean.FALSE;
+                    } else if (Short.TYPE.equals(fieldType)) {
+                        retval = new Short((short) 0);
+                    } else if (Integer.TYPE.equals(fieldType)) {
+                        retval = new Integer(0);
+                    } else if (Long.TYPE.equals(fieldType)) {
+                        retval = new Long(0);
+                    } else if (Float.TYPE.equals(fieldType)) {
+                        retval = new Float(0.0);
+                    } else if (Double.TYPE.equals(fieldType)) {
+                        retval = new Double(0.0);
+                    }
+                    map.put(fieldName, retval);
+                }
+            }
+            return retval;
+        }
+        if ("setFieldValue".equals(method.getName()) && (args.length == 2)
+                && (method.getReturnType() == Void.TYPE)) {
+            String fieldName = (String) args[0];
+            map.put(fieldName, args[1]);
+            return null;
+        }
+        if ("addCollectionElement".equals(method.getName()) && (args.length == 2)
+                && (method.getReturnType() == Void.TYPE)) {
+            String fieldName = (String) args[0];
+            Collection col = (Collection) map.get(fieldName);
+            if (col == null) {
+                col = new HashSet();
+                map.put(fieldName, col);
+            }
+            col.add(args[1]);
+            return null;
+        }
+        if ("getFieldType".equals(method.getName()) && (args.length == 1)) {
+            String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+            Method methods[] = obj.getClass().getMethods();
+            for (Method getMethod : methods) {
+                if (getMethod.getName().equals(methodName)) {
+                    return getMethod.getReturnType();
+                }
+            }
+            throw new RuntimeException("No such field " + args[0]);
+        }
+        if ("getElementType".equals(method.getName()) && (args.length == 1)) {
+            String methodName = "add" + StringUtil.reverseCapitalisation((String) args[0]);
+            Method methods[] = obj.getClass().getMethods();
+            for (Method addMethod : methods) {
+                if (addMethod.getName().equals(methodName)) {
+                    return addMethod.getParameterTypes()[0];
+                }
+            }
+            throw new RuntimeException("No such collection " + args[0]);
+        }
+        // Bean methods
+        if (method.getName().startsWith("get") && (args.length == 0)) {
+            Object retval = map.get(StringUtil.reverseCapitalisation(method.getName()
+                        .substring(3)));
+            if (retval instanceof ProxyReference) {
+                try {
+                    retval = ((ProxyReference) retval).getObject();
+                } catch (NullPointerException e) {
+                    NullPointerException e2 = new NullPointerException("Exception while calling "
+                            + method.getName() + " on object with ID " + map.get("id"));
+                    e2.initCause(e);
+                    throw e2;
+                } catch (Exception e) {
+                    RuntimeException e2 = new RuntimeException("Exception while calling "
+                            + method.getName() + " on object with ID " + map.get("id"));
                     e2.initCause(e);
                     throw e2;
                 }
             }
             if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
                 retval = new HashSet();
-                map.put(method.getName().substring(3), retval);
+                map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), retval);
             }
             return retval;
         }
         if (method.getName().startsWith("is")
             && (args.length == 0)) {
-            return map.get(method.getName().substring(2));
+            return map.get(StringUtil.reverseCapitalisation(method.getName().substring(2)));
         }
         if (method.getName().startsWith("set") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
-            map.put(method.getName().substring(3), args[0]);
+            map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), args[0]);
             return null;
         }
         if (method.getName().startsWith("proxy") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
-            map.put(method.getName().substring(5), args[0]);
+            map.put(StringUtil.reverseCapitalisation(method.getName().substring(5)), args[0]);
             return null;
         }
         if (method.getName().startsWith("proxGet") && (args.length == 0)) {
-            return map.get(method.getName().substring(7));
+            return map.get(StringUtil.reverseCapitalisation(method.getName().substring(7)));
         }
         if (method.getName().startsWith("add") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
-            Collection col = (Collection) map.get(method.getName().substring(3));
+            Collection col = (Collection) map.get(StringUtil.reverseCapitalisation(
+                        method.getName().substring(3)));
             if (col == null) {
                 col = new HashSet();
-                map.put(method.getName().substring(3), col);
+                map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), col);
             }
             col.add(args[0]);
             return null;

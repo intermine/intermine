@@ -607,11 +607,20 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             value = objectClass;
                         } else if ("OBJECT".equals(tableInfo.colNames[colNo])) {
                             if (xml == null) {
-                                xml = NotXmlRenderer.render(o);
+                                if (o instanceof InterMineObject) {
+                                    xml = ((InterMineObject) o).getoBJECT();
+                                } else {
+                                    xml = NotXmlRenderer.render(o);
+                                }
                             }
                             value = xml;
                         } else if (validFieldNames.contains(tableInfo.fieldNames[colNo])) {
-                            value = TypeUtil.getFieldProxy(o, tableInfo.fieldNames[colNo]);
+                            if (o instanceof InterMineObject) {
+                                value = ((InterMineObject) o).getFieldProxy(tableInfo
+                                        .fieldNames[colNo]);
+                            } else {
+                                value = TypeUtil.getFieldProxy(o, tableInfo.fieldNames[colNo]);
+                            }
                             if (value instanceof Date) {
                                 value = new Long(((Date) value).getTime());
                             }
@@ -666,7 +675,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 Iterator collectionIter = collections.iterator();
                 while (collectionIter.hasNext()) {
                     CollectionDescriptor collection = (CollectionDescriptor) collectionIter.next();
-                    Collection coll = (Collection) TypeUtil.getFieldValue(o, collection.getName());
+                    Collection coll = (Collection) ((InterMineObject) o).getFieldValue(collection
+                            .getName());
                     boolean needToStoreCollection = true;
 
                     if (coll instanceof Lazy) {

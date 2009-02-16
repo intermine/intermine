@@ -295,7 +295,11 @@ public class ResultsConverter
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
                 Collection lazyColl = new ProxyCollection(os, (InterMineObject) retval,
                         cd.getName(), cd.getReferencedClassDescriptor().getType());
-                TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
+                if (retval instanceof InterMineObject) {
+                    ((InterMineObject) retval).setFieldValue(cd.getName(), lazyColl);
+                } else {
+                    TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
+                }
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;
                 //long time3 = System.currentTimeMillis();

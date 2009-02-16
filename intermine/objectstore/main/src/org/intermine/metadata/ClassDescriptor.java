@@ -85,7 +85,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                                                    + " but class name was: " + unqualified);
             }
         }
-        this.className = name;
+        this.className = name.intern();
 
         if (supers != null && (supers.equals("") || (!supers.equals(supers.trim())))) {
             throw new IllegalArgumentException("'supers' parameter must be null or a valid"

@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.intermine.model.InterMineObject;
+import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
+import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringConstructor;
 import org.intermine.util.TypeUtil;
@@ -30,8 +32,6 @@ import org.apache.log4j.Logger;
 public class NotXmlRenderer
 {
     private static final Logger LOG = Logger.getLogger(NotXmlRenderer.class);
-    protected static final String DELIM = "$_^";
-    protected static final String ENCODED_DELIM = "d";
 
     /**
      * Render the given object as NotXml.
