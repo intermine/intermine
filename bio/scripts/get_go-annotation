@@ -69,21 +69,24 @@ my $log_buffer = "Go Annotation\ngene_ontology.obo updated to $go_download_dir\n
 my $go_version_buffer = "Gene Ontology\n$date\nThe Gene Ontology\nhttp://www.geneontology.org";
 &write_version($go_download_dir,$go_version_buffer);
 
-### Get goa files
-my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
-$goa_connection->cwd($uniprot_go_dir)
+### Get goa files if any taxon ids configured
+if (keys %taxon_map) {
+
+
+    my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
+    $goa_connection->cwd($uniprot_go_dir)
 	or die "Cannot change working directory ", $goa_connection->message;
 
 #use the date stamp of the uniprot goa file to create a version id for the output directory
-my $uniprot_date_string = &date_string_file($goa_connection,$goa_file_gz);
+    my $uniprot_date_string = &date_string_file($goa_connection,$goa_file_gz);
 
 # make uniprot directory if necessary and download file
-my $uniprot_dir = "$home/go-annotation/uniprot";
-my $uniprot_download_dir = "$uniprot_dir/$uniprot_date_string";
-my $uniprot_link = "$home/go-annotation/uniprot/current";
-
-&checkdir_exists($uniprot_dir);
-if(&checkdir_exists($uniprot_download_dir)==1){
+    my $uniprot_dir = "$home/go-annotation/uniprot";
+    my $uniprot_download_dir = "$uniprot_dir/$uniprot_date_string";
+    my $uniprot_link = "$home/go-annotation/uniprot/current";
+    
+    &checkdir_exists($uniprot_dir);
+    if(&checkdir_exists($uniprot_download_dir)==1){
   	&ftp_download($goa_connection,$uniprot_download_dir,$goa_file_gz);
 	&ftp_download($goa_connection,$uniprot_download_dir,"README");
 	&unzip_dir($uniprot_download_dir);
@@ -101,9 +104,9 @@ if(&checkdir_exists($uniprot_download_dir)==1){
     	}
 	}
 	close GOA_FILE or die;
-
+        
         rename("$uniprot_download_dir/$goa_file", "$uniprot_download_dir/downloaded_$goa_file");
-
+        
 	#print each buffer out to a file
 	print "writing files\n";
 	for my $taxon_id (keys %taxon_map) {
@@ -134,11 +137,12 @@ if(&checkdir_exists($uniprot_download_dir)==1){
 	my $go_link_dir = "../uniprot/$uniprot_date_string";
 	&make_link($go_link_dir,$go_uniprot_link);
 	system "chmod -R a+r,g+w $uniprot_download_dir";
-}else {
-    warn " current uniprot version up to date - skipping download\n";
+    }else {
+        warn " current uniprot version up to date - skipping download\n";
 	$log_buffer .= "$uniprot_dir up to date\n";
+    }
+    $goa_connection->quit;
 }
-$goa_connection->quit;
 
 #### Get other gene association files 
 # use a new connection in case $go_connection is timed out while the uniprot
