@@ -38,7 +38,7 @@ public class OboParserTest extends TestCase
 
     public void testBasicStructure() throws Exception {
 //        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("resources/OboParserTest.obo"));
+        parser.processOntology(new File("OboParserTest.obo"));
         Set terms = parser.getOboTerms();
         assertEquals("GO:0000004", ((OboTerm) terms.iterator().next()).getId());
 
@@ -63,7 +63,7 @@ public class OboParserTest extends TestCase
 
     public void testSynonyms() throws Exception {
 //        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("resources/OboParserTest.obo"));
+        parser.processOntology(new File("OboParserTest.obo"));
 
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
 
@@ -81,7 +81,7 @@ public class OboParserTest extends TestCase
 
     public void testDescriptions() throws Exception {
 //        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("resources/OboParserTest.obo"));
+        parser.processOntology(new File("OboParserTest.obo"));
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
@@ -93,7 +93,7 @@ public class OboParserTest extends TestCase
 
     public void testNamespaces() throws Exception {
 //        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("resources/OboParserTest.obo"));
+        parser.processOntology(new File("OboParserTest.obo"));
 
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
