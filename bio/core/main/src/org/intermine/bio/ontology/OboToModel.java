@@ -148,7 +148,7 @@ public class OboToModel
             System.out .println("Starting OboToModel conversion from " + oboFilename + " to "
                     + modelFilename);
             OboParser parser = new OboParser();
-            parser.processOntology(oboFile);
+            parser.processOntology(new FileReader(oboFile));
             parser.processRelations(oboFilename);
             Set oboTerms = parser.getOboTerms();
             

@@ -86,7 +86,7 @@ public class OboConverter extends DataConverter
         nameToTerm = new HashMap();
         synToItem = new HashMap();
         OboParser parser = new OboParser();
-        parser.processOntology(new File(dagFilename));
+        parser.processOntology(new FileReader(new File(dagFilename)));
         parser.processRelations(dagFilename);
         oboTerms = parser.getOboTerms();
         oboRelations = parser.getOboRelations();
