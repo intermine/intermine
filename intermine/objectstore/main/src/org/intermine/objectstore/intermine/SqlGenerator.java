@@ -1463,7 +1463,6 @@ public class SqlGenerator
                 if (arg2 == null) {
                     ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
                     String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
-                    Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
                     String arg2Alias = indirectTableAlias + "."
                         + DatabaseUtil.getColumnName(reverse);
                     ClassDescriptor tableMaster = schema.getTableMaster(reverse
@@ -1480,6 +1479,7 @@ public class SqlGenerator
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias + " AND ");
                     } else if (arg1Qcb != null) {
+                        Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
                             buffer.append(arg2Alias + " = " + fieldToAlias.get("id") + " AND ");
                         } else {
@@ -1491,11 +1491,15 @@ public class SqlGenerator
                                         schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
                                 buffer.append(" AND ");
                             } else if (arg1Qcb.getIds() != null) {
-                                bagConstraintToString(state, buffer, new BagConstraint(
-                                            new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
-                                                .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
-                                            arg1Qcb.getIds()), q, schema,
-                                        SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
+                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                                state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
+                                            arg1Qcb));
+                                bagConstraintToString(state, buffer, bagCon, q, schema,
+                                        ((safeness == SAFENESS_SAFE)
+                                         && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                        : SAFENESS_UNSAFE); // TODO: Not really unsafe
                                 buffer.append(" AND ");
                             }
                         }
@@ -1524,11 +1528,15 @@ public class SqlGenerator
                                             arg1Qcb.getOsb()), q, schema,
                                         SAFENESS_UNSAFE); // TODO: Not really unsafe
                             } else if (arg1Qcb.getIds() != null) {
-                                bagConstraintToString(state, buffer, new BagConstraint(
-                                            new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
-                                                .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
-                                            arg1Qcb.getIds()), q, schema,
-                                        SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
+                                        (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                         : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                                state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
+                                            arg1Qcb));
+                                bagConstraintToString(state, buffer, bagCon, q, schema,
+                                        ((safeness == SAFENESS_SAFE)
+                                         && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                        : SAFENESS_UNSAFE); // TODO: Not really unsafe
                             }
                         }
                     } else {
@@ -1570,11 +1578,15 @@ public class SqlGenerator
                                     SAFENESS_UNSAFE); // TODO: Not really unsafe
                             buffer.append(" AND ");
                         } else if (arg1Qcb.getIds() != null) {
-                            bagConstraintToString(state, buffer, new BagConstraint(
-                                        new QueryField(arg1Qcb), (c.getOp() == ConstraintOp
-                                            .CONTAINS ? ConstraintOp.IN : ConstraintOp.NOT_IN),
-                                        arg1Qcb.getIds()), q, schema,
-                                    SAFENESS_UNSAFE); // TODO: Not really unsafe
+                            BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
+                                    (c.getOp() == ConstraintOp.CONTAINS ? ConstraintOp.IN
+                                     : ConstraintOp.NOT_IN), arg1Qcb.getIds());
+                            state.getBagTableNames().put(bagCon, state.getBagTableNames().get(
+                                        arg1Qcb));
+                            bagConstraintToString(state, buffer, bagCon, q, schema,
+                                    ((safeness == SAFENESS_SAFE)
+                                     && (c.getOp() == ConstraintOp.CONTAINS)) ? SAFENESS_SAFE
+                                    : SAFENESS_UNSAFE); // TODO: Not really unsafe
                             buffer.append(" AND ");
                         }
                     }
