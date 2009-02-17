@@ -41,7 +41,10 @@ public class ProjectXmlBinding
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 factory.setValidating(true);
                 factory.newSAXParser().parse(new InputSource(reader), handler);
-                return handler.project;
+                Project project = handler.project;
+
+                project.validate(file);
+                return project;
             } catch (ParserConfigurationException e) {
                 throw new Exception("The underlying parser does not support "
                                     + " the requested features", e);

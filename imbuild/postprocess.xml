@@ -28,7 +28,6 @@
           depends="-init-properties, init, -init-deps, -init-postprocess, -init-task-xml">
     <postprocess projectXml="../project.xml"
                  classpathref="task.class.path" 
-                 basedir="${library.xml.basedir}/.."
                  action="${action}"/>
   </target>
 

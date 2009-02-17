@@ -1,5 +1,6 @@
 <project type="test1">
   <property name="target.model" value="performancetest1"/>
+  <property name="source.location" location="../bio/sources/"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="intermine.performancetest1.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>

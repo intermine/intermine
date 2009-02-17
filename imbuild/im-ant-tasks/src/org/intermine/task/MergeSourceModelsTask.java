@@ -126,11 +126,9 @@ public class MergeSourceModelsTask extends Task
         Collection<Source> sources = imProject.getSources().values();
 
         for (Source source: sources) {
-            String additionsFileName =
-                imProject.getType() + File.separator + Integrate.SOURCES + File.separator
-                + source.getType() + File.separator + source.getType() + "_additions.xml";
-
-            File additionsFile = new File(workspaceBaseDir + File.separator + additionsFileName);
+            String additionsFileName = source.getType() + "_additions.xml";
+            
+            File additionsFile = new File(source.getLocation(), additionsFileName);
             addToAdditionsList(pathsToMerge, additionsFile);
         }
 
@@ -185,7 +183,6 @@ public class MergeSourceModelsTask extends Task
     private Task newModelMergerTask() {
         ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
 
-        // use reflection to avoid depending on the bio/postprocess project
         Task mergeTask = (Task) ClasspathUtils.newInstance(MODEL_MERGER_TASK, cl);
 
         try {
