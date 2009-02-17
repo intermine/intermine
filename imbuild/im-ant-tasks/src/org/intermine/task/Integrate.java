@@ -10,27 +10,23 @@ package org.intermine.task;
  *
  */
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
-import org.intermine.task.project.Project;
-import org.intermine.task.project.ProjectXmlBinding;
-import org.intermine.task.project.Source;
-import org.intermine.task.project.UserProperty;
-
-import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.util.StringUtils;
+import org.intermine.task.project.Project;
+import org.intermine.task.project.ProjectXmlBinding;
+import org.intermine.task.project.Source;
+import org.intermine.task.project.UserProperty;
 
 /**
  * A task that can read a project.xml file and run an data integration build.
@@ -38,23 +34,19 @@ import org.apache.tools.ant.util.StringUtils;
  */
 public class Integrate extends Task
 {
-    /**
-     * The name of the sources directory.
-     */
-    public static final String SOURCES = "sources";
-
+    private static final String ENDL = System.getProperty("line.separator");
+    
     private String [] possibleActionsArray = {
         "retrieve",
         "load",
         "clean"
     };
 
-    private Set possibleActions = new HashSet(Arrays.asList(possibleActionsArray));
+    private Set<String> possibleActions = new HashSet<String>(Arrays.asList(possibleActionsArray));
 
     private File projectXml;
     private Project intermineProject;
     private String action, sourceAttribute;
-    private File workspaceBaseDir;
 
     /**
      * Set the project.xml to use for this Task.
@@ -80,14 +72,6 @@ public class Integrate extends Task
         this.sourceAttribute = source;
     }
 
-    /**
-     * Base directory that all projects are assumed relative to.
-     *
-     * @param basedir base directory that all projects are assumed relative to
-     */
-    public void setBasedir(File basedir) {
-        workspaceBaseDir = basedir;
-    }
 
     /**
      * Run the integration.
@@ -97,15 +81,12 @@ public class Integrate extends Task
         if (projectXml == null) {
             throw new BuildException("no projectXml specified");
         }
-        if (workspaceBaseDir == null) {
-            throw new BuildException("no workspaceBaseDir specified");
-        }
         if (sourceAttribute == null || sourceAttribute.trim().equals("")) {
             throw new BuildException("no source set, try \"ant -Dsource=all\" or "
                                      + "\"ant -Dsource=source1,source2\"");
         }
 
-        System.err.print("action: " + action + "\n");
+        System.err.print("action: " + action + ENDL);
 
         if (action != null && !action.equals("") && !possibleActions.contains(action)) {
             StringBuffer sb = new StringBuffer();
@@ -119,14 +100,12 @@ public class Integrate extends Task
 
         intermineProject = ProjectXmlBinding.unmarshall(projectXml);
 
-        System.out.print("Found " + intermineProject.getSources().size() + " sources" + "\n");
+        System.out.print("Found " + intermineProject.getSources().size() + " sources" + ENDL);
 
         List<String> sourceNames = new ArrayList<String>();
 
         if (sourceAttribute.equals("") || sourceAttribute.equals("all")) {
-            Iterator iter = intermineProject.getSources().entrySet().iterator();
-            while (iter.hasNext()) {
-                String thisSource = (String) ((Map.Entry) iter.next()).getKey();
+            for (String thisSource : intermineProject.getSources().keySet()) {
                 sourceNames.add(thisSource);
             }
         } else {
@@ -158,12 +137,10 @@ public class Integrate extends Task
 
     private void performAction(String actionName, String sourceName, String sourceType) {
         Source s = (Source) intermineProject.getSources().get(sourceName);
-        File baseDir = new File(workspaceBaseDir,
-                                intermineProject.getType() + File.separatorChar + SOURCES);
-        File sourceDir = new File(baseDir, s.getType());
-
+        File sourceDir = s.getLocation();
+        
         System.out.print("Performing integration action \"" + actionName + "\" for source \""
-                         + sourceName + "\" (" + sourceType + ") in: " + sourceDir + "\n");
+                         + sourceName + "\" (" + sourceType + ") in: " + sourceDir + ENDL);
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
@@ -187,9 +164,7 @@ public class Integrate extends Task
         integrateBasedir.execute();
 
         // Add global properties
-        Iterator globalPropIter = intermineProject.getProperties().iterator();
-        while (globalPropIter.hasNext()) {
-            UserProperty sp = (UserProperty) globalPropIter.next();
+        for (UserProperty sp : intermineProject.getProperties()) {
             Property prop = ant.createProperty();
             if (sp.getName() == null) {
                 throw new BuildException("name not set for property in: " + sourceName);
@@ -210,9 +185,7 @@ public class Integrate extends Task
         }
 
         // Add source properties
-        Iterator propIter = s.getUserProperties().iterator();
-        while (propIter.hasNext()) {
-            UserProperty sp = (UserProperty) propIter.next();
+        for (UserProperty sp : s.getUserProperties()) {
             Property prop = ant.createProperty();
             prop.setName(sp.getName());
             if (sp.isLocation()) {

@@ -10,18 +10,10 @@ package org.intermine.task;
  *
  */
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
-import org.intermine.task.project.PostProcess;
-import org.intermine.task.project.Project;
-import org.intermine.task.project.ProjectXmlBinding;
-import org.intermine.task.project.Source;
-import org.intermine.task.project.UserProperty;
-
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -29,6 +21,11 @@ import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.ClasspathUtils;
+import org.intermine.task.project.PostProcess;
+import org.intermine.task.project.Project;
+import org.intermine.task.project.ProjectXmlBinding;
+import org.intermine.task.project.Source;
+import org.intermine.task.project.UserProperty;
 
 /**
  * Class that operates on the PostProcessing section of a Mines project.xml file.
@@ -52,7 +49,6 @@ public class PostProcessTask extends Task
     private File projectXml;
     private Project project;
     private String action;
-    private File workspaceBaseDir;
 
     /**
      * Set the classpath to use for post processing.
@@ -76,15 +72,6 @@ public class PostProcessTask extends Task
      * tasks and some other tasks afterwards.
      * */
     public static final String DO_SOURCES = "do-sources";
-
-    /**
-     * Base directory that all projects are assumed relative to.
-     *
-     * @param basedir base directory that all projects are assumed relative to
-     */
-    public void setBasedir(File basedir) {
-        workspaceBaseDir = basedir;
-    }
 
     /**
      * Set the action to perform - ie. the post-process
@@ -164,18 +151,14 @@ public class PostProcessTask extends Task
     }
 
     private void doAllSourcePostProcessing() {
-        Iterator<Map.Entry<String, Source>> iter = project.getSources().entrySet().iterator();
-        while (iter.hasNext()) {
-            String thisSource = iter.next().getKey();
+        for (String thisSource : project.getSources().keySet()) {
             doSourcePostProcess(thisSource);
         }
     }
 
     private void doSourcePostProcess(String source) {
         Source s = project.getSources().get(source);
-        File sourceDir = new File(new File(workspaceBaseDir,
-                                           project.getType() + File.separator + Integrate.SOURCES),
-                                           s.getType());
+        File sourceDir = s.getLocation();
 
         Properties projProps = Dependencies.loadProjectProperties(sourceDir);
 
