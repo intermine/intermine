@@ -384,7 +384,7 @@ public class CalculateLocations
         }
         
         // make sure final feature gets stored
-        if (storeLastFeature) {
+        if (storeLastFeature && lastFeature != null) {
             setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
         }
         
