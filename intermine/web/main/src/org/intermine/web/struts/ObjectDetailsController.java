@@ -259,37 +259,6 @@ public class ObjectDetailsController extends InterMineAction
         }
     }
 
-    /**
-     * The prefix to use before properties the specify which collection fields
-     * are open when coming from the portal page. eg. portal.verbose.fields.Gene =
-     * proteins,chromosome
-     */
-    public static final String PORTAL_VERBOSE_FIELDS_PREFIX = "portal.verbose.fields.";
-
-    /**
-     * Read the port.verbose.fields.* properties from WEB_PROPERTIES and call
-     * DisplayObject.setVerbosity(true) on the field in the property value.
-     */
-// disabled until portal can be fixed
-//    private static void setVerboseCollections(HttpSession session, DisplayObject dobj) {
-//        ServletContext servletContext = session.getServletContext();
-//        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-//        Set clds = dobj.getClds();
-//        Iterator iter = clds.iterator();
-//        while (iter.hasNext()) {
-//            ClassDescriptor cd = (ClassDescriptor) iter.next();
-//            String propName = PORTAL_VERBOSE_FIELDS_PREFIX
-//    + TypeUtil.unqualifiedName(cd.getName());
-//            String fieldNamesString = (String) webProperties.get(propName);
-//            if (fieldNamesString != null) {
-//                String[] fieldNames = fieldNamesString.split("\\s*,\\s*");
-//                for (int i = 0; i < fieldNames.length; i++) {
-//                    String fieldName = fieldNames[i];
-//                    dobj.setVerbosity(fieldName, true);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Make a new DisplayObject from the given object.
