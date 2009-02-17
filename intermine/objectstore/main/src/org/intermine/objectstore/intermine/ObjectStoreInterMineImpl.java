@@ -51,10 +51,12 @@ import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
@@ -130,8 +132,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int minBagTableSize = -1;
     protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
     protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
-    protected Map<Query, PrecomputedTable> goFasterMap = Collections.synchronizedMap(
-            new IdentityHashMap<Query, PrecomputedTable>());
+    protected Map<Query, Set<PrecomputedTable>> goFasterMap = Collections.synchronizedMap(
+            new IdentityHashMap<Query, Set<PrecomputedTable>>());
     protected Map<Query, OptimiserCache> goFasterCacheMap = Collections.synchronizedMap(
             new IdentityHashMap<Query, OptimiserCache>());
     protected Map<Query, Integer> goFasterCountMap = new IdentityHashMap<Query, Integer>();
@@ -928,7 +930,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, Map<Object, Integer> sequence)
     throws ObjectStoreException {
+        return executeWithConnection(c, q, start, limit, optimise, explain, sequence, null, null);
+    }
 
+    /**
+     * Performs the actual execute, given a Connection.
+     *
+     * @param c the Connection
+     * @param q the Query
+     * @param start the start row number (inclusive, from zero)
+     * @param limit maximum number of rows to return
+     * @param optimise boolean
+     * @param explain boolean
+     * @param sequence object representing database state
+     * @param goFasterTables a Set of PrecomputedTables that can help with the query
+     * @param goFasterCache an OptimiserCache that can help with the query
+     * @return a List of ResultRow objects
+     * @throws ObjectStoreException sometimes
+     */
+    protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
+            boolean optimise, boolean explain, Map<Object, Integer> sequence,
+            Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
+    throws ObjectStoreException {
         if (explain) {
             checkStartLimit(start, limit, q);
         }
@@ -952,15 +975,17 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long startOptimiseTime = System.currentTimeMillis();
             ExplainResult explainResult = null;
             if (optimise && everOptimise()) {
-                PrecomputedTable pt = goFasterMap.get(q);
+                if (goFasterTables == null) {
+                    goFasterTables = goFasterMap.get(q);
+                    goFasterCache = goFasterCacheMap.get(q);
+                }
                 BestQuery bestQuery;
-                if (pt != null) {
-                    OptimiserCache oCache = goFasterCacheMap.get(q);
+                if (goFasterTables != null) {
                     bestQuery = QueryOptimiser.optimiseWith(sql, null, db, c,
-                            QueryOptimiserContext.DEFAULT, Collections.singleton(pt), oCache);
+                            QueryOptimiserContext.DEFAULT, goFasterTables, goFasterCache);
                     if (sql.equals(bestQuery.getBestQueryString())) {
                         LOG.warn("Query with goFaster failed to optimise: original = "
-                                + sql + ", pt = " + pt.getSQLString());
+                                + sql + ", goFasterTables = " + goFasterTables);
                     }
                 } else {
                     bestQuery = QueryOptimiser.optimise(sql, null, db, c,
@@ -1014,7 +1039,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long postExecute = System.currentTimeMillis();
             ExtraQueryTime extra = new ExtraQueryTime();
             List<ResultsRow>  objResults = ResultsConverter.convert(sqlResults, q, this, c,
-                    sequence, optimise, extra);
+                    sequence, optimise, extra, goFasterTables, goFasterCache);
             long postConvert = System.currentTimeMillis();
             long permittedTime = (objResults.size() * 2) + start + (150 * q.getFrom().size())
                     + (sql.length() / 20) - (q.getFrom().size() == 0 ? 0 : 100);
@@ -1202,6 +1227,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             if (wasNotInTransaction) {
                 c.setAutoCommit(false);
             }
+            String queryString = null;
 
             while (bagConstraintIterator.hasNext()) {
                 BagConstraint bagConstraint = (BagConstraint) bagConstraintIterator.next();
@@ -1209,8 +1235,24 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     Collection bag = bagConstraint.getBag();
 
                     if (bag.size() >= getMinBagTableSize()) {
-                        createTempBagTable(c, bagConstraint, true,
-                                new IqlQuery(q).getQueryString());
+                        if (queryString == null) {
+                            queryString = new IqlQuery(q).getQueryString();
+                        }
+                        createTempBagTable(c, bagConstraint, true, queryString);
+                    }
+                }
+            }
+            for (FromElement fe : q.getFrom()) {
+                if (fe instanceof QueryClassBag) {
+                    QueryClassBag qcb = (QueryClassBag) fe;
+                    if (!bagConstraintTables.containsKey(qcb)) {
+                        Collection bag = qcb.getIds();
+                        if ((bag != null) && (bag.size() >= getMinBagTableSize())) {
+                            if (queryString == null) {
+                                queryString = new IqlQuery(q).getQueryString();
+                            }
+                            createTempBagTable(c, qcb, true, queryString);
+                        }
                     }
                 }
             }
@@ -1269,10 +1311,33 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             LOG.info("Creating temporary table " + tableName + " of size "
                     + bagConstraint.getBag().size() + " for " + text);
         }
-        Exception e = new Exception();
-        e.fillInStackTrace();
         DatabaseUtil.createBagTable(db, c, tableName, bagConstraint.getBag(), type);
         bagConstraintTables.put(bagConstraint, tableName);
+        BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
+                bagTablesToRemove);
+        bagTablesInDatabase.add(bagTableToRemove);
+        return bagTableToRemove;
+    }
+
+    /**
+     * Creates a temporary bag table for the given QueryClassBag.
+     *
+     * @param c a Connection
+     * @param qcb a QueryClassBag
+     * @param log true to log this action
+     * @param text extra data to place in the log
+     * @return a BagTableToRemove object
+     * @throws SQLException if an error occurs
+     */
+    protected BagTableToRemove createTempBagTable(Connection c, QueryClassBag qcb,
+            boolean log, String text) throws SQLException {
+        String tableName = "Integer_bag_" + getUniqueInteger(c);
+        if (log) {
+            LOG.info("Creating temporary table " + tableName + " of size "
+                    + qcb.getIds().size() + " for " + text);
+        }
+        DatabaseUtil.createBagTable(db, c, tableName, qcb.getIds(), Integer.class);
+        bagConstraintTables.put(qcb, tableName);
         BagTableToRemove bagTableToRemove = new BagTableToRemove(tableName,
                 bagTablesToRemove);
         bagTablesInDatabase.add(bagTableToRemove);
@@ -1794,7 +1859,31 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         sql, "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
                 ptm.addTableToDatabase(pt, new HashSet(), false);
-                goFasterMap.put(q, pt);
+                Set<PrecomputedTable> pts = new HashSet<PrecomputedTable>();
+                pts.add(pt);
+                for (QuerySelectable qs : q.getSelect()) {
+                    if (qs instanceof QueryCollectionPathExpression) {
+                        Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
+                        sql = SqlGenerator.generate(subQ, schema, db, null,
+                                SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                        PrecomputedTable subPt = new PrecomputedTable(
+                                new org.intermine.sql.query.Query(sql), sql, "temporary_precomp_"
+                                + getUniqueInteger(c), "goFaster", c);
+                        ptm.addTableToDatabase(subPt, new HashSet(), false);
+                        pts.add(subPt);
+                    } else if (qs instanceof QueryObjectPathExpression) {
+                        Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
+                                getSchema().isMissingNotXml());
+                        sql = SqlGenerator.generate(subQ, schema, db, null,
+                                SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                        PrecomputedTable subPt = new PrecomputedTable(
+                                new org.intermine.sql.query.Query(sql), sql, "temporary_precomp_"
+                                + getUniqueInteger(c), "goFaster", c);
+                        ptm.addTableToDatabase(subPt, new HashSet(), false);
+                        pts.add(subPt);
+                    }
+                }
+                goFasterMap.put(q, pts);
                 goFasterCacheMap.put(q, new OptimiserCache());
                 goFasterCountMap.put(q, new Integer(1));
             } catch (SQLException e) {
@@ -1816,12 +1905,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     int goFasterCount = goFasterCountMap.get(q).intValue();
                     goFasterCount--;
                     if (goFasterCount == 0) {
-                        PrecomputedTable pt = goFasterMap.remove(q);
+                        Set<PrecomputedTable> pts = goFasterMap.remove(q);
                         goFasterCacheMap.remove(q);
                         goFasterCountMap.remove(q);
-                        if (pt != null) {
+                        if (pts != null) {
                             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-                            ptm.deleteTableFromDatabase(pt.getName());
+                            for (PrecomputedTable pt : pts) {
+                                ptm.deleteTableFromDatabase(pt.getName());
+                            }
                         }
                     } else {
                         goFasterCountMap.put(q, new Integer(goFasterCount));

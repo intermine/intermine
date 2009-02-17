@@ -45,6 +45,8 @@ import org.intermine.objectstore.query.QueryPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.sql.precompute.OptimiserCache;
+import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -76,13 +78,16 @@ public class ResultsConverter
      * @param sequence an object representing the state of the database
      * @param optimise whether to use optimisation on path expression queries
      * @param extra object to record extra query execution time
+     * @param goFasterTables a Set of PrecomputedTables that may help with extra queries
+     * @param goFasterCache an OptimiserCache that may help with extra queries
      * @return a List of ResultsRow objects
      * @throws ObjectStoreException if the ResultSet does not match the Query in any way, or if a
      * SQL exception occurs
      */
     public static List<ResultsRow> convert(ResultSet sqlResults, Query q,
             ObjectStoreInterMineImpl os, Connection c, Map<Object, Integer> sequence,
-            boolean optimise, ExtraQueryTime extra) throws ObjectStoreException {
+            boolean optimise, ExtraQueryTime extra, Set<PrecomputedTable> goFasterTables,
+            OptimiserCache goFasterCache) throws ObjectStoreException {
         Object currentColumn = null;
         HashSet noObjectColumns = new HashSet();
         HashSet noObjectClassColumns = new HashSet();
@@ -203,17 +208,19 @@ public class ResultsConverter
                         // TODO: Fetch the objects
                         if (!done.contains(node)) {
                             fetchObjectPathExpression(os, c, sequence, q,
-                                    (QueryObjectPathExpression) node, retval, optimise, extra);
+                                    (QueryObjectPathExpression) node, retval, optimise, extra,
+                                    goFasterTables, goFasterCache);
                             done.add(node);
                         }
                     } else if (node instanceof QueryCollectionPathExpression) {
                         fetchCollectionPathExpression(os, c, sequence, q,
-                                (QueryCollectionPathExpression) node, retval, optimise, extra);
+                                (QueryCollectionPathExpression) node, retval, optimise, extra,
+                                goFasterTables, goFasterCache);
                     } else if (node instanceof PathExpressionField) {
                         if (!done.contains(((PathExpressionField) node).getQope())) {
                             fetchObjectPathExpression(os, c, sequence, q,
                                     ((PathExpressionField) node).getQope(), retval, optimise,
-                                    extra);
+                                    extra, goFasterTables, goFasterCache);
                             done.add(((PathExpressionField) node).getQope());
                         }
                     }
@@ -336,11 +343,14 @@ public class ResultsConverter
      * @param retval the array of results that will be returned
      * @param optimise whether to optimise the query
      * @param extra object to record extra query execution time
+     * @param goFasterTables a Set of PrecomputedTables that may help with extra queries
+     * @param goFasterCache an OptimiserCache that may help with extra queries
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchObjectPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryObjectPathExpression qope,
-            List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra)
+            List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra,
+            Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
     throws ObjectStoreException {
         int startingPoint;
         // This is a Map from the starting point ID to the ID of the referenced object
@@ -371,7 +381,7 @@ public class ResultsConverter
         Query qopeQuery = qope.getQuery(idsToFetch, os.getSchema().isMissingNotXml());
         long startTime = System.currentTimeMillis();
         List<ResultsRow> res = os.executeWithConnection(c, qopeQuery, 0,
-                Integer.MAX_VALUE, optimise, false, sequence);
+                Integer.MAX_VALUE, optimise, false, sequence, goFasterTables, goFasterCache);
         extra.addTime(System.currentTimeMillis() - startTime);
         Map<Integer, ResultsRow> fetched = new HashMap<Integer, ResultsRow>();
         for (ResultsRow row : res) {
@@ -415,11 +425,14 @@ public class ResultsConverter
      * @param retval the array of results that will be returned
      * @param optimise whether to optimise the query
      * @param extra object to record extra query execution time
+     * @param goFasterTables a Set of PrecomputedTables that may help with extra queries
+     * @param goFasterCache an OptimiserCache that may help with extra queries
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void fetchCollectionPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryCollectionPathExpression qcpe,
-            List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra)
+            List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra,
+            Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
     throws ObjectStoreException {
         int startingPoint;
         Map<Integer, List> idsToFetch = new HashMap();
@@ -441,7 +454,7 @@ public class ResultsConverter
         Query subQ = qcpe.getQuery(objectsToFetch);
         long startTime = System.currentTimeMillis();
         List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
-                optimise, false, sequence);
+                optimise, false, sequence, goFasterTables, goFasterCache);
         extra.addTime(System.currentTimeMillis() - startTime);
         boolean singleton = qcpe.isSingleton();
         for (ResultsRow row : results) {
