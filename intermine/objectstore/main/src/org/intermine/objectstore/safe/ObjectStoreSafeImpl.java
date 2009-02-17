@@ -49,8 +49,53 @@ public class ObjectStoreSafeImpl extends ObjectStorePassthruImpl
     /**
      * {@inheritDoc}
      */
+    public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+            boolean prefetch) {
+        Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+        if (batchSize != 0) {
+            retval.setBatchSize(batchSize);
+        }
+        if (!optimise) {
+            retval.setNoOptimise();
+        }
+        if (!explain) {
+            retval.setNoExplain();
+        }
+        if (!prefetch) {
+            retval.setNoPrefetch();
+        }
+        retval.setImmutable();
+        return retval;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public SingletonResults executeSingleton(Query q) {
         return os.executeSingleton(QueryCloner.cloneQuery(q));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+            boolean explain, boolean prefetch) {
+        SingletonResults retval = new SingletonResults(q, this,
+                getSequence(getComponentsForQuery(q)));
+        if (batchSize != 0) {
+            retval.setBatchSize(batchSize);
+        }
+        if (!optimise) {
+            retval.setNoOptimise();
+        }
+        if (!explain) {
+            retval.setNoExplain();
+        }
+        if (!prefetch) {
+            retval.setNoPrefetch();
+        }
+        retval.setImmutable();
+        return retval;
     }
 
     /**
