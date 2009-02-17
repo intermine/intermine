@@ -70,11 +70,11 @@ public class OboParser
 
     /**
      * Parse an OBO file to produce a set of OboTerms.
-     * @param file with text in OBO format
+     * @param in with text in OBO format
      * @throws Exception if anything goes wrong
      */
-    public void processOntology(File file) throws Exception {
-        readTerms(new BufferedReader(new FileReader(file)));
+    public void processOntology(Reader in) throws Exception {
+        readTerms(new BufferedReader(in));
     }
     
     /**

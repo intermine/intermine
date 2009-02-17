@@ -12,6 +12,7 @@ package org.intermine.bio.ontology;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,10 +38,9 @@ public class OboParserTest extends TestCase
     }
 
     public void testBasicStructure() throws Exception {
-//        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("OboParserTest.obo"));
+        parser.processOntology(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo")));
         Set terms = parser.getOboTerms();
-        assertEquals("GO:0000004", ((OboTerm) terms.iterator().next()).getId());
+        assertEquals("GO:0000003", ((OboTerm) terms.iterator().next()).getId());
 
         terms = new HashSet(parser.terms.values());
         assertEquals(4, terms.size()); // 4 terms total
@@ -62,8 +62,7 @@ public class OboParserTest extends TestCase
     }
 
     public void testSynonyms() throws Exception {
-//        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("OboParserTest.obo"));
+        parser.processOntology(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo")));
 
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
 
@@ -80,8 +79,7 @@ public class OboParserTest extends TestCase
     }
 
     public void testDescriptions() throws Exception {
-//        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("OboParserTest.obo"));
+        parser.processOntology(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo")));
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
         OboTerm dt3 = (OboTerm) parser.terms.get("GO:0000003");
@@ -92,8 +90,7 @@ public class OboParserTest extends TestCase
     }
 
     public void testNamespaces() throws Exception {
-//        String test = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo"));
-        parser.processOntology(new File("OboParserTest.obo"));
+        parser.processOntology(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo")));
 
         OboTerm dt1 = (OboTerm) parser.terms.get("GO:0000001");
         OboTerm dt2 = (OboTerm) parser.terms.get("GO:0000002");
