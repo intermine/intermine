@@ -74,8 +74,14 @@ public class JavaModelOutput
                 try {
                     path.delete();
                     BufferedWriter fos = new BufferedWriter(new FileWriter(path, true));
-                    fos.write(generate(cld));
+                    fos.write(generate(cld, false));
                     fos.close();
+                    if (cld.isInterface()) {
+                        path = new File(dir, "Concrete" + cls + ".java");
+                        fos = new BufferedWriter(new FileWriter(path, true));
+                        fos.write(generate(cld, true));
+                        fos.close();
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException("Error creating java", e);
                 }
@@ -87,9 +93,10 @@ public class JavaModelOutput
      * Generate the output for a ClassDescriptor.
      *
      * @param cld the ClassDescriptor
+     * @param shadow whether to generate the shadow class of an interface
      * @return the relevant String representation
      */
-    protected String generate(ClassDescriptor cld) {
+    protected String generate(ClassDescriptor cld, boolean shadow) {
         StringBuffer sb = new StringBuffer();
 
         String packageName = TypeUtil.packageName(cld.getName());
@@ -99,7 +106,7 @@ public class JavaModelOutput
                 .append(packageName)
                 .append(";" + ENDL + ENDL);
         }
-        if (!cld.isInterface()) {
+        if ((!cld.isInterface()) || shadow) {
             sb.append("import org.intermine.objectstore.ObjectStore;" + ENDL);
             sb.append("import org.intermine.objectstore.intermine.NotXmlParser;" + ENDL);
             sb.append("import org.intermine.objectstore.intermine.NotXmlRenderer;" + ENDL);
@@ -110,41 +117,47 @@ public class JavaModelOutput
             sb.append("import org.intermine.util.TypeUtil;" + ENDL);
         }
         sb.append("public ")
-            .append(cld.isInterface() ? "interface " : "class ")
+            .append((cld.isInterface() && (!shadow)) ? "interface " : "class ")
+            .append(shadow ? "Concrete" : "")
             .append(TypeUtil.unqualifiedName(cld.getName()));
 
-        if (!cld.isInterface()) {
-            if (cld.getSuperclassDescriptor() != null) {
-                sb.append(" extends ")
-                    .append(cld.getSuperclassDescriptor().getName());
-            }
-        }
-
-        boolean firstTime = true;
-
-        if (cld.getSuperDescriptors().size() > 0) {
-            Iterator iter = cld.getSuperDescriptors().iterator();
-            while (iter.hasNext()) {
-                ClassDescriptor superCld = (ClassDescriptor) iter.next();
-                if (superCld.isInterface()) {
-                    if (firstTime) {
-                        sb.append(cld.isInterface() ? " extends " : " implements ");
-                        firstTime = false;
-                    } else {
-                        sb.append(", ");
-                    }
-                    sb.append(superCld.getName());
+        if (shadow) {
+            sb.append(" implements ")
+                .append(TypeUtil.unqualifiedName(cld.getName()));
+        } else {
+            if (!cld.isInterface()) {
+                if (cld.getSuperclassDescriptor() != null) {
+                    sb.append(" extends ")
+                        .append(cld.getSuperclassDescriptor().getName());
                 }
             }
-        } else {
-            sb.append(" implements org.intermine.model.FastPathObject");
+
+            boolean firstTime = true;
+
+            if (cld.getSuperDescriptors().size() > 0) {
+                Iterator iter = cld.getSuperDescriptors().iterator();
+                while (iter.hasNext()) {
+                    ClassDescriptor superCld = (ClassDescriptor) iter.next();
+                    if (superCld.isInterface()) {
+                        if (firstTime) {
+                            sb.append(cld.isInterface() ? " extends " : " implements ");
+                            firstTime = false;
+                        } else {
+                            sb.append(", ");
+                        }
+                        sb.append(superCld.getName());
+                    }
+                }
+            } else {
+                sb.append(" implements org.intermine.model.FastPathObject");
+            }
         }
 
         sb.append(ENDL)
             .append("{" + ENDL);
 
         // FieldDescriptors defined for this class/interface
-        if (cld.isInterface()) {
+        if (cld.isInterface() && (!shadow)) {
             sb.append(generateFieldDescriptors(cld, false));
         } else {
             sb.append(generateFieldDescriptors(cld, true))
