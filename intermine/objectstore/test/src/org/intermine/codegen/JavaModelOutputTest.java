@@ -31,8 +31,8 @@ import org.intermine.metadata.ReferenceDescriptor;
 public class JavaModelOutputTest extends TestCase
 {
 
-    private String INDENT = ModelOutput.INDENT;
-    private String ENDL = ModelOutput.ENDL;
+    private String INDENT = JavaModelOutput.INDENT;
+    private String ENDL = JavaModelOutput.ENDL;
     private File file;
     private JavaModelOutput mo;
     private String uri = "http://www.intermine.org/model/testmodel";
@@ -74,11 +74,6 @@ public class JavaModelOutputTest extends TestCase
         } finally {
             processFile.delete();
         }
-    }
-
-    public void testGenerateModel() throws Exception {
-        Model emptyModel = new Model("model", uri, new HashSet());
-        assertNull(mo.generate(emptyModel));
     }
 
     public void testGenerateClassDescriptorIsClass() throws Exception {

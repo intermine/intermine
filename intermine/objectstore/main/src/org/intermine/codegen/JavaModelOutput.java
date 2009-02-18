@@ -10,7 +10,10 @@ package org.intermine.codegen;
  *
  */
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,21 +32,28 @@ import org.intermine.util.TypeUtil;
  * @author Mark Woodbridge
  * @author Matthew Wakeling
  */
-public class JavaModelOutput extends ModelOutput
+public class JavaModelOutput
 {
+    protected static final String INDENT = "    ";
+    protected static final String ENDL = System.getProperty("line.separator");
+
+    protected Model model;
+    protected File file; //note: this is a directory
+
     /**
-     * @see ModelOutput#ModelOutput(Model, File)
+     * Constructor.
      *
      * @param model a Model
      * @param file a File
      * @throws Exception if something goes wrong
      */
     public JavaModelOutput(Model model, File file) throws Exception {
-        super(model, file);
+        this.model = model;
+        this.file = file;
     }
 
     /**
-     * {@inheritDoc}
+     * Perform the mapping.
      */
     public void process() {
         Iterator iter = model.getClassDescriptors().iterator();
@@ -61,22 +71,23 @@ public class JavaModelOutput extends ModelOutput
                 File dir = new File(file, pkg.replaceAll("[.]", separator));
                 dir.mkdirs();
                 File path = new File(dir, cls + ".java");
-                initFile(path);
-                outputToFile(path, generate(cld));
+                try {
+                    path.delete();
+                    BufferedWriter fos = new BufferedWriter(new FileWriter(path, true));
+                    fos.write(generate(cld));
+                    fos.close();
+                } catch (IOException e) {
+                    throw new RuntimeException("Error creating java", e);
+                }
             }
         }
     }
 
     /**
-     * This mapping generates one file per ClassDescriptor, so nothing output for the Model itself
-     * {@inheritDoc}
-     */
-    protected String generate(Model model) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
+     * Generate the output for a ClassDescriptor.
+     *
+     * @param cld the ClassDescriptor
+     * @return the relevant String representation
      */
     protected String generate(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
@@ -188,24 +199,6 @@ public class JavaModelOutput extends ModelOutput
             }
         }
         return sb.toString();
-    }
-    /**
-     * {@inheritDoc}
-     */
-    protected String generate(AttributeDescriptor attr) {
-        return generate(attr, false);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    protected String generate(ReferenceDescriptor attr) {
-        return generate(attr, false);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    protected String generate(CollectionDescriptor attr) {
-        return generate(attr, false);
     }
 
     /**
