@@ -125,6 +125,8 @@ public class JavaModelOutput extends ModelOutput
                     sb.append(superCld.getName());
                 }
             }
+        } else {
+            sb.append(" implements org.intermine.model.FastPathObject");
         }
 
         sb.append(ENDL)
@@ -138,14 +140,16 @@ public class JavaModelOutput extends ModelOutput
                 .append(generateEquals(cld))
                 .append(generateHashCode(cld))
                 .append(generateToString(cld))
-                .append(generateGetObject(cld))
-                .append(generateSetObject(cld))
                 .append(generateGetFieldValue(cld, false))
                 .append(generateGetFieldValue(cld, true))
                 .append(generateSetFieldValue(cld))
-                .append(generateAddCollectionElement(cld))
-                .append(generateGetFieldType(cld))
-                .append(generateGetElementType(cld));
+                .append(generateGetFieldType(cld));
+            if (cld.getSuperDescriptors().size() > 0) {
+                sb.append(generateGetObject(cld))
+                    .append(generateSetObject(cld))
+                    .append(generateAddCollectionElement(cld))
+                    .append(generateGetElementType(cld));
+            }
         }
 
         sb.append("}" + ENDL);
@@ -317,7 +321,7 @@ public class JavaModelOutput extends ModelOutput
             .append("public void ")
             .append("set")
             .append(StringUtil.reverseCapitalisation(name))
-            .append("(")
+            .append("(final ")
             .append(type)
             .append(" ")
             .append(name)
@@ -338,7 +342,7 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(INDENT)
                     .append("public void add")
                     .append(StringUtil.reverseCapitalisation(name))
-                    .append("(")
+                    .append("(final ")
                     .append(((CollectionDescriptor) field).getReferencedClassDescriptor().getName())
                     .append(" arg)");
                 if (fieldPresent) {
@@ -353,7 +357,7 @@ public class JavaModelOutput extends ModelOutput
                 sb.append(INDENT)
                     .append("public void proxy")
                     .append(StringUtil.reverseCapitalisation(name))
-                    .append("(org.intermine.objectstore.proxy.ProxyReference ")
+                    .append("(final org.intermine.objectstore.proxy.ProxyReference ")
                     .append(name)
                     .append(")");
                 if (fieldPresent) {
@@ -583,7 +587,8 @@ public class JavaModelOutput extends ModelOutput
             .append("setoBJECT(NotXmlParser.SPLITTER.split(notXml), os);\n")
             .append(INDENT)
             .append("}\n")
-            .append("public void setoBJECT(String[] notXml, ObjectStore os) {\n")
+            .append(INDENT)
+            .append("public void setoBJECT(final String[] notXml, final ObjectStore os) {\n")
             .append(INDENT + INDENT)
             .append("if (!" + cld.getName() + ".class.equals(getClass())) {\n")
             .append(INDENT + INDENT + INDENT)
@@ -596,43 +601,49 @@ public class JavaModelOutput extends ModelOutput
             .append(INDENT + INDENT + INDENT)
             .append("int startI = i;\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
+            String fieldName = field.getName();
+            if ("notXml".equals(fieldName)) {
+                fieldName = "this.notXml";
+            } else if ("os".equals(fieldName)) {
+                fieldName = "this.os";
+            }
             if (field instanceof AttributeDescriptor) {
                 AttributeDescriptor attribute = (AttributeDescriptor) field;
                 sb.append(INDENT + INDENT + INDENT)
-                    .append("if ((i < notXml.length) && \"a" + attribute.getName()
+                    .append("if ((i < notXml.length) && \"a" + fieldName
                             + "\".equals(notXml[i])) {\n")
                     .append(INDENT + INDENT + INDENT + INDENT)
                     .append("i++;\n")
                     .append(INDENT + INDENT + INDENT + INDENT);
                 if ("boolean".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Boolean.parseBoolean(notXml[i]);\n");
+                    sb.append(fieldName + " = Boolean.parseBoolean(notXml[i]);\n");
                 } else if ("short".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Short.parseShort(notXml[i]);\n");
+                    sb.append(fieldName + " = Short.parseShort(notXml[i]);\n");
                 } else if ("int".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Integer.parseInt(notXml[i]);\n");
+                    sb.append(fieldName + " = Integer.parseInt(notXml[i]);\n");
                 } else if ("long".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Long.parseLong(notXml[i]);\n");
+                    sb.append(fieldName + " = Long.parseLong(notXml[i]);\n");
                 } else if ("float".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Float.parseFloat(notXml[i]);\n");
+                    sb.append(fieldName + " = Float.parseFloat(notXml[i]);\n");
                 } else if ("double".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Double.parseDouble(notXml[i]);\n");
+                    sb.append(fieldName + " = Double.parseDouble(notXml[i]);\n");
                 } else if ("java.lang.Boolean".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Boolean.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Boolean.valueOf(notXml[i]);\n");
                 } else if ("java.lang.Short".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Short.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Short.valueOf(notXml[i]);\n");
                 } else if ("java.lang.Integer".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Integer.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Integer.valueOf(notXml[i]);\n");
                 } else if ("java.lang.Long".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Long.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Long.valueOf(notXml[i]);\n");
                 } else if ("java.lang.Float".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Float.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Float.valueOf(notXml[i]);\n");
                 } else if ("java.lang.Double".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = Double.valueOf(notXml[i]);\n");
+                    sb.append(fieldName + " = Double.valueOf(notXml[i]);\n");
                 } else if ("java.util.Date".equals(attribute.getType())) {
-                    sb.append(attribute.getName()
+                    sb.append(fieldName
                             + " = new java.util.Date(Long.parseLong(notXml[i]));\n");
                 } else if ("java.math.BigDecimal".equals(attribute.getType())) {
-                    sb.append(attribute.getName() + " = new java.math.BigDecimal(notXml[i]);\n");
+                    sb.append(fieldName + " = new java.math.BigDecimal(notXml[i]);\n");
                 } else if ("java.lang.String".equals(attribute.getType())) {
                     sb.append("StringBuilder string = null;\n")
                         .append(INDENT + INDENT + INDENT + INDENT)
@@ -648,7 +659,7 @@ public class JavaModelOutput extends ModelOutput
                         .append(INDENT + INDENT + INDENT + INDENT)
                         .append("}\n")
                         .append(INDENT + INDENT + INDENT + INDENT)
-                        .append(attribute.getName()
+                        .append(fieldName
                                 + " = string == null ? notXml[i] : string.toString();\n");
                 } else {
                     throw new IllegalArgumentException("Unknown type " + attribute.getType());
@@ -660,13 +671,12 @@ public class JavaModelOutput extends ModelOutput
             } else if (field.isReference()) {
                 ReferenceDescriptor reference = (ReferenceDescriptor) field;
                 sb.append(INDENT + INDENT + INDENT)
-                    .append("if ((i < notXml.length) &&\"r" + reference.getName()
+                    .append("if ((i < notXml.length) &&\"r" + fieldName
                             + "\".equals(notXml[i])) {\n")
                     .append(INDENT + INDENT + INDENT + INDENT)
                     .append("i++;\n")
                     .append(INDENT + INDENT + INDENT + INDENT)
-                    .append(reference.getName()
-                            + " = new ProxyReference(os, Integer.valueOf(notXml[i])"
+                    .append(fieldName + " = new ProxyReference(os, Integer.valueOf(notXml[i])"
                             + ", " + reference.getReferencedClassName() + ".class);\n")
                     .append(INDENT + INDENT + INDENT + INDENT)
                     .append("i++;\n")
@@ -683,10 +693,16 @@ public class JavaModelOutput extends ModelOutput
             .append(INDENT + INDENT)
             .append("}\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
+            String fieldName = field.getName();
+            if ("notXml".equals(fieldName)) {
+                fieldName = "this.notXml";
+            } else if ("os".equals(fieldName)) {
+                fieldName = "this.os";
+            }
             if (field instanceof CollectionDescriptor) {
                 CollectionDescriptor coll = (CollectionDescriptor) field;
                 sb.append(INDENT + INDENT)
-                    .append(coll.getName() + " = new ProxyCollection(os, this, \"" + coll.getName()
+                    .append(fieldName + " = new ProxyCollection(os, this, \"" + fieldName
                             + "\", " + coll.getReferencedClassName() + ".class);\n");
             }
         }
@@ -706,52 +722,56 @@ public class JavaModelOutput extends ModelOutput
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
             .append("public Object getField" + (proxy ? "Proxy" : "Value")
-                    + "(String fieldName) throws IllegalAccessException {\n");
+                    + "(final String fieldName) throws IllegalAccessException {\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             sb.append(INDENT + INDENT)
                 .append("if (\"" + field.getName() + "\".equals(fieldName)) {\n");
+            String fieldName = field.getName();
+            if ("fieldName".equals(fieldName)) {
+                fieldName = "this.fieldName";
+            }
             if (field instanceof AttributeDescriptor) {
                 AttributeDescriptor attribute = (AttributeDescriptor) field;
                 if ("boolean".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Boolean.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Boolean.valueOf(" + fieldName + ");\n");
                 } else if ("short".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Short.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Short.valueOf(" + fieldName + ");\n");
                 } else if ("int".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Integer.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Integer.valueOf(" + fieldName + ");\n");
                 } else if ("long".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Long.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Long.valueOf(" + fieldName + ");\n");
                 } else if ("float".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Float.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Float.valueOf(" + fieldName + ");\n");
                 } else if ("double".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return Double.valueOf(" + attribute.getName() + ");\n");
+                        .append("return Double.valueOf(" + fieldName + ");\n");
                 } else {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append("return " + attribute.getName() + ";\n");
+                        .append("return " + fieldName + ";\n");
                 }
             } else if (field.isReference()) {
                 sb.append(INDENT + INDENT + INDENT);
                 if (proxy) {
-                    sb.append("return " + field.getName() + ";\n");
+                    sb.append("return " + fieldName + ";\n");
                 } else {
-                    sb.append("if (" + field.getName() + " instanceof ProxyReference) {\n")
+                    sb.append("if (" + fieldName + " instanceof ProxyReference) {\n")
                         .append(INDENT + INDENT + INDENT + INDENT)
-                        .append("return ((ProxyReference) " + field.getName() + ").getObject();\n")
+                        .append("return ((ProxyReference) " + fieldName + ").getObject();\n")
                         .append(INDENT + INDENT + INDENT)
                         .append("} else {\n")
                         .append(INDENT + INDENT + INDENT + INDENT)
-                        .append("return " + field.getName() + ";\n")
+                        .append("return " + fieldName + ";\n")
                         .append(INDENT + INDENT + INDENT)
                         .append("}\n");
                 }
             } else {
                 sb.append(INDENT + INDENT + INDENT)
-                    .append("return " + field.getName() + ";\n");
+                    .append("return " + fieldName + ";\n");
             }
             sb.append(INDENT + INDENT)
                 .append("}\n");
@@ -779,40 +799,46 @@ public class JavaModelOutput extends ModelOutput
     public String generateSetFieldValue(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public void setFieldValue(String fieldName, Object value) {\n")
+            .append("public void setFieldValue(final String fieldName, final Object value) {\n")
             .append(INDENT + INDENT);
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             sb.append("if (\"" + field.getName() + "\".equals(fieldName)) {\n");
+            String fieldName = field.getName();
+            if ("value".equals(fieldName)) {
+                fieldName = "this.value";
+            } else if ("fieldName".equals(fieldName)) {
+                fieldName = "this.fieldName";
+            }
             if (field instanceof AttributeDescriptor) {
                 AttributeDescriptor attribute = (AttributeDescriptor) field;
                 if ("boolean".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Boolean) value).booleanValue();\n");
+                        .append(fieldName + " = ((Boolean) value).booleanValue();\n");
                 } else if ("short".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Short) value).shortValue();\n");
+                        .append(fieldName + " = ((Short) value).shortValue();\n");
                 } else if ("int".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Integer) value).intValue();\n");
+                        .append(fieldName + " = ((Integer) value).intValue();\n");
                 } else if ("long".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Long) value).longValue();\n");
+                        .append(fieldName + " = ((Long) value).longValue();\n");
                 } else if ("float".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Float) value).floatValue();\n");
+                        .append(fieldName + " = ((Float) value).floatValue();\n");
                 } else if ("double".equals(attribute.getType())) {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = ((Double) value).doubleValue();\n");
+                        .append(fieldName + " = ((Double) value).doubleValue();\n");
                 } else {
                     sb.append(INDENT + INDENT + INDENT)
-                        .append(field.getName() + " = (" + attribute.getType() + ") value;\n");
+                        .append(fieldName + " = (" + attribute.getType() + ") value;\n");
                 }
             } else if (field.isReference()) {
                 sb.append(INDENT + INDENT + INDENT)
-                    .append(field.getName() + " = (org.intermine.model.InterMineObject) value;\n");
+                    .append(fieldName + " = (org.intermine.model.InterMineObject) value;\n");
             } else {
                 sb.append(INDENT + INDENT + INDENT)
-                    .append(field.getName() + " = (java.util.Set) value;\n");
+                    .append(fieldName + " = (java.util.Set) value;\n");
             }
             sb.append(INDENT + INDENT)
                 .append("} else ");
@@ -844,14 +870,20 @@ public class JavaModelOutput extends ModelOutput
     public String generateAddCollectionElement(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public void addCollectionElement(String fieldName,")
-            .append(" org.intermine.model.InterMineObject element) {\n")
+            .append("public void addCollectionElement(final String fieldName,")
+            .append(" final org.intermine.model.InterMineObject element) {\n")
             .append(INDENT + INDENT);
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             if (field.isCollection()) {
+                String fieldName = field.getName();
+                if ("fieldName".equals(fieldName)) {
+                    fieldName = "this.fieldName";
+                } else if ("element".equals(fieldName)) {
+                    fieldName = "this.element";
+                }
                 sb.append("if (\"" + field.getName() + "\".equals(fieldName)) {\n")
                     .append(INDENT + INDENT + INDENT)
-                    .append(field.getName() + ".add(("
+                    .append(fieldName + ".add(("
                             + ((CollectionDescriptor) field).getReferencedClassName()
                             + ") element);\n")
                     .append(INDENT + INDENT)
@@ -885,7 +917,7 @@ public class JavaModelOutput extends ModelOutput
     public String generateGetFieldType(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public Class getFieldType(String fieldName) {\n");
+            .append("public Class getFieldType(final String fieldName) {\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             sb.append(INDENT + INDENT)
                 .append("if (\"" + field.getName() + "\".equals(fieldName)) {\n")
@@ -938,7 +970,7 @@ public class JavaModelOutput extends ModelOutput
     public String generateGetElementType(ClassDescriptor cld) {
         StringBuffer sb = new StringBuffer();
         sb.append(INDENT)
-            .append("public Class getElementType(String fieldName) {\n");
+            .append("public Class getElementType(final String fieldName) {\n");
         for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
             if (field.isCollection()) {
                 sb.append(INDENT + INDENT)

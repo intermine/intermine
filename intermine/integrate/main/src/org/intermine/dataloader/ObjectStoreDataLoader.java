@@ -13,6 +13,7 @@ package org.intermine.dataloader;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -132,7 +133,7 @@ public class ObjectStoreDataLoader extends DataLoader
             while (iter.hasNext()) {
                 time1 = System.currentTimeMillis();
                 timeSpentLoop += time1 - time4;
-                Object obj = iter.next();
+                FastPathObject obj = (FastPathObject) iter.next();
                 time2 = System.currentTimeMillis();
                 timeSpentRead += time2 - time1;
                 //if (obj.getClass().getName().equals("org.intermine.model.chado.feature")) {

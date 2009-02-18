@@ -10,7 +10,6 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +28,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyCollection;
@@ -48,7 +48,6 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.precompute.OptimiserCache;
 import org.intermine.sql.precompute.PrecomputedTable;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -280,7 +279,7 @@ public class ResultsConverter
                 }
             }
         }
-        Object retval = DynamicUtil.createObject(classes);
+        FastPathObject retval = DynamicUtil.createObject(classes);
         Map fields = os.getModel().getFieldDescriptorsForClass(retval.getClass());
         Iterator iter = fields.entrySet().iterator();
         while (iter.hasNext()) {
@@ -288,15 +287,14 @@ public class ResultsConverter
             String fieldName = (String) entry.getKey();
             FieldDescriptor fd = (FieldDescriptor) entry.getValue();
             if (fd instanceof AttributeDescriptor) {
-                TypeUtil.FieldInfo fieldInfo = TypeUtil.getFieldInfo(retval.getClass(), fieldName);
                 //long time3 = System.currentTimeMillis();
                 Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
                 //timeSpentSql += System.currentTimeMillis() - time3;
-                if ((value instanceof Long) && Date.class.equals(fieldInfo.getType())) {
+                if ((value instanceof Long) && Date.class.equals(retval.getFieldType(fieldName))) {
                     value = new Date(((Long) value).longValue());
                 }
                 try {
-                    fieldInfo.getSetter().invoke(retval, value);
+                    retval.setFieldValue(fieldName, value);
                 } catch (Exception e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -304,11 +302,7 @@ public class ResultsConverter
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
                 Collection lazyColl = new ProxyCollection(os, (InterMineObject) retval,
                         cd.getName(), cd.getReferencedClassDescriptor().getType());
-                if (retval instanceof InterMineObject) {
-                    ((InterMineObject) retval).setFieldValue(cd.getName(), lazyColl);
-                } else {
-                    TypeUtil.setFieldValue(retval, cd.getName(), lazyColl);
-                }
+                retval.setFieldValue(cd.getName(), lazyColl);
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;
                 //long time3 = System.currentTimeMillis();
@@ -316,9 +310,9 @@ public class ResultsConverter
                 //timeSpentSql += System.currentTimeMillis() - time3;
                 Class refType = rd.getReferencedClassDescriptor().getType();
                 if (id == null) {
-                    TypeUtil.setFieldValue(retval, fieldName, null);
+                    retval.setFieldValue(fieldName, null);
                 } else {
-                    TypeUtil.setFieldValue(retval, fieldName, new ProxyReference(os, id, refType));
+                    retval.setFieldValue(fieldName, new ProxyReference(os, id, refType));
                 }
             }
         }
@@ -363,12 +357,11 @@ public class ResultsConverter
             throw new ObjectStoreException("Path Expression " + qope + " needs QueryClass "
                     + qc + " to be in the SELECT list");
         }
-        Method getter = TypeUtil.getProxyGetter(qc.getType(), qope.getFieldName());
         for (ResultsRow row : retval) {
             InterMineObject o = (InterMineObject) row.get(startingPoint);
             Integer refId = null;
             try {
-                InterMineObject ref = (InterMineObject) getter.invoke(o);
+                InterMineObject ref = (InterMineObject) o.getFieldProxy(qope.getFieldName());
                 if (ref != null) {
                     refId = ref.getId();
                     idsToFetch.add(refId);

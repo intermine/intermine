@@ -155,7 +155,7 @@ public class BatchingFetcher extends HintingFetcher
                         for (String fieldName : TypeUtil.getFieldInfos(imo.getClass()).keySet()) {
                             Object fieldValue;
                             try {
-                                fieldValue = TypeUtil.getFieldProxy(imo, fieldName);
+                                fieldValue = imo.getFieldProxy(fieldName);
                             } catch (IllegalAccessException e) {
                                 throw new RuntimeException(e);
                             }
@@ -233,6 +233,15 @@ public class BatchingFetcher extends HintingFetcher
         equivalents.putAll(results);
     }
 
+    /**
+     * Fetches data for the given primary keys.
+     *
+     * @param pksToDo a Map of the primary keys to fetch
+     * @param results a Map to hold results that are to be added to the cache
+     * @param cldToObjectsForCld a Map of Lists of objects relevant to PrimaryKeys
+     * @param time1 the time that processing started
+     * @throws ObjectStoreException if something goes wrong
+     */
     protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
             Map<InterMineObject, Set<InterMineObject>> results,
             Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)
@@ -271,6 +280,9 @@ public class BatchingFetcher extends HintingFetcher
      * Returns whether this primary key can be fetched now.
      *
      * @param pk the PrimaryKey
+     * @param cld the ClassDescriptor that the PrimaryKey is in
+     * @param pksNotDone a Map of pks not yet fetched
+     * @return a boolean
      */
     protected boolean canDoPkNow(PrimaryKey pk, ClassDescriptor cld,
             Map<PrimaryKey, ClassDescriptor> pksNotDone) {
@@ -348,7 +360,7 @@ public class BatchingFetcher extends HintingFetcher
                         Map<String, Set> fieldsValues = new HashMap();
                         for (String fieldName : pk.getFieldNames()) {
                             try {
-                                Object value = TypeUtil.getFieldValue(object, fieldName);
+                                Object value = object.getFieldValue(fieldName);
                                 Set fieldValues;
                                 if (value instanceof InterMineObject) {
                                     Integer id = idMap.get(((InterMineObject) value).getId());

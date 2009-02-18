@@ -220,7 +220,7 @@ public class DataLoaderHelper
             if (fd instanceof AttributeDescriptor) {
                 Object value;
                 try {
-                    value = TypeUtil.getFieldValue(obj, fieldName);
+                    value = obj.getFieldValue(fieldName);
                 } catch (IllegalAccessException e) {
                     throw new MetaDataException("Failed to get field " + fieldName
                             + " for key " + pk + " from " + obj, e);
@@ -236,7 +236,7 @@ public class DataLoaderHelper
             } else if (fd instanceof ReferenceDescriptor) {
                 InterMineObject refObj;
                 try {
-                    refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
+                    refObj = (InterMineObject) obj.getFieldProxy(fieldName);
                 } catch (IllegalAccessException e) {
                     throw new MetaDataException("Failed to get field " + fieldName
                             + " for key " + pk + " from " + obj, e);

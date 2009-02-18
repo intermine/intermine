@@ -16,6 +16,7 @@ import java.util.List;
 import java.io.InputStream;
 
 import org.intermine.InterMineException;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.XmlBinding;
@@ -81,7 +82,7 @@ public class XmlDataLoader extends DataLoader
             getIntegrationWriter().beginTransaction();
             iter = objects.iterator();
             while (iter.hasNext()) {
-                getIntegrationWriter().store(iter.next(), source, skelSource);
+                getIntegrationWriter().store((FastPathObject) iter.next(), source, skelSource);
                 opCount++;
                 if (opCount % 1000 == 0) {
                     long now = (new Date()).getTime();
