@@ -89,8 +89,8 @@ public class SourcePriorityComparator implements Comparator
             Source source2 = null;
             Object value1, value2;
             try {
-                value1 = TypeUtil.getFieldProxy(f1, field.getName());
-                value2 = TypeUtil.getFieldProxy(f2, field.getName());
+                value1 = f1.getFieldProxy(field.getName());
+                value2 = f2.getFieldProxy(field.getName());
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -205,13 +205,13 @@ public class SourcePriorityComparator implements Comparator
                     if (value1 instanceof ProxyReference) {
                         value1 = ((ProxyReference) value1).getObject();
                     }
-                    value1 = iw.store(value1, source, skelSource, SKELETON);
+                    value1 = iw.store((InterMineObject) value1, source, skelSource, SKELETON);
                 }
                 if ((f2 == defObj) && (value2 instanceof InterMineObject)) {
                     if (value2 instanceof ProxyReference) {
                         value2 = ((ProxyReference) value2).getObject();
                     }
-                    value2 = iw.store(value2, source, skelSource, SKELETON);
+                    value2 = iw.store((InterMineObject) value2, source, skelSource, SKELETON);
                 }
             } catch (ObjectStoreException e) {
                 throw new RuntimeException(e);

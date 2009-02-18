@@ -395,7 +395,13 @@ public class TypeUtil
         Collection getters = new HashSet();
         for (int i = 0; i < pd.length; i++) {
             Method getter = pd[i].getReadMethod();
-            if (!getter.getName().equals("getClass")) {
+            if ((!getter.getName().equals("getClass"))
+                    && (!getter.getName().equals("getoBJECT"))
+                    && (!getter.getName().equals("getCallback"))
+                    && (!getter.getName().equals("getFieldValue"))
+                    && (!getter.getName().equals("getFieldProxy"))
+                    && (!getter.getName().equals("getFieldType"))
+                    && (!getter.getName().equals("getElementType"))) {
                 getters.add(getter);
             }
         }

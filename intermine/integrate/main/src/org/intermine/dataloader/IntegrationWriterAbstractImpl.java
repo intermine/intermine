@@ -21,6 +21,7 @@ import java.util.Set;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -35,7 +36,6 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -158,7 +158,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public void store(Object o, Source source, Source skelSource)
+    public void store(FastPathObject o, Source source, Source skelSource)
             throws ObjectStoreException {
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
@@ -185,7 +185,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return the InterMineObject that was written to the database
      * @throws ObjectStoreException if an error occurs in the underlying objectstore
      */
-    protected abstract InterMineObject store(Object o, Source source,
+    protected abstract InterMineObject store(FastPathObject o, Source source,
             Source skelSource, int type) throws ObjectStoreException;
 
     protected long timeSpentRecursing = 0;
@@ -204,26 +204,24 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws IllegalAccessException should never happen
      * @throws ObjectStoreException if an error ocurs in the underlying objectstore
      */
-    protected void copyField(Object srcObj, Object dest,
+    protected void copyField(FastPathObject srcObj, FastPathObject dest,
             Source source, Source skelSource, FieldDescriptor field, int type)
             throws IllegalAccessException, ObjectStoreException {
         String fieldName = field.getName();
         if (!"id".equals(fieldName)) {
             switch (field.relationType()) {
                 case FieldDescriptor.NOT_RELATION:
-                    TypeUtil.setFieldValue(dest, fieldName, TypeUtil.getFieldValue(srcObj,
-                                fieldName));
+                    dest.setFieldValue(fieldName, srcObj.getFieldValue(fieldName));
                     break;
                 case FieldDescriptor.N_ONE_RELATION:
                     if ((type == FROM_DB) || (type == SOURCE)
                             || DataLoaderHelper.fieldIsPrimaryKey(getModel(),
                                 dest.getClass(), fieldName, source)) {
                         if (type == FROM_DB) {
-                            TypeUtil.setFieldValue(dest, fieldName,
-                                    TypeUtil.getFieldProxy(srcObj, fieldName));
+                            dest.setFieldValue(fieldName, srcObj.getFieldProxy(fieldName));
                         } else {
                             InterMineObject sourceTarget = (InterMineObject)
-                                TypeUtil.getFieldProxy(srcObj, fieldName);
+                                srcObj.getFieldProxy(fieldName);
                             if (sourceTarget instanceof ProxyReference) {
                                 if (idMap.get(sourceTarget.getId()) == null) {
                                     sourceTarget = ((ProxyReference) sourceTarget).getObject();
@@ -234,20 +232,19 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                     SKELETON);
                             long time2 = System.currentTimeMillis();
                             timeSpentRecursing += time2 - time1;
-                            TypeUtil.setFieldValue(dest, fieldName, target);
+                            dest.setFieldValue(fieldName, target);
                         }
                     }
                     break;
                 case FieldDescriptor.ONE_ONE_RELATION:
                     if ((type == FROM_DB) || (type == SOURCE)) {
-                        InterMineObject loser = (InterMineObject)
-                            TypeUtil.getFieldValue(dest, fieldName);
+                        InterMineObject loser = (InterMineObject) dest.getFieldValue(fieldName);
                         ReferenceDescriptor reverseRef = ((ReferenceDescriptor) field)
                             .getReverseReferenceDescriptor();
                         if (loser != null) {
                             invalidateObjectById(loser.getId());
                             try {
-                                TypeUtil.setFieldValue(loser, reverseRef.getName(), null);
+                                loser.setFieldValue(reverseRef.getName(), null);
                             } catch (NullPointerException e) {
                                 throw new NullPointerException("reverseRef must be null: "
                                         + reverseRef + ", forward ref is "
@@ -258,7 +255,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                         }
                         InterMineObject target = null;
                         if (type == SOURCE) {
-                            target = (InterMineObject) TypeUtil.getFieldProxy(srcObj, fieldName);
+                            target = (InterMineObject) srcObj.getFieldProxy(fieldName);
                             if ((target != null) && (target.getId() != null)
                                     && (idMap.get(target.getId()) == null)
                                     && (target instanceof ProxyReference)) {
@@ -269,8 +266,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             long time2 = System.currentTimeMillis();
                             timeSpentRecursing += time2 - time1;
                         } else {
-                            target = (InterMineObject) TypeUtil.getFieldValue(srcObj,
-                                    fieldName);
+                            target = (InterMineObject) srcObj.getFieldValue(fieldName);
                         }
                         /*if (target != null) {
                             if (target instanceof ProxyReference) {
@@ -287,40 +283,19 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                             TypeUtil.setFieldValue(target, reverseRef.getName(), dest);
                             store(target);
                         }*/
-                        TypeUtil.setFieldValue(dest, fieldName, target);
+                        dest.setFieldValue(fieldName, target);
                     }
                     break;
                 case FieldDescriptor.ONE_N_RELATION:
-                    /* Okay, I don't think we should bother with this.
-                    if ((type == FROM_DB) && ((dest.getId() == null)
-                                || (!dest.getId().equals(srcObj.getId())))) {
-                        Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
-                        Iterator colIter = col.iterator();
-                        while (colIter.hasNext()) {
-                            InterMineObject colObj = (InterMineObject) colIter.next();
-                            invalidateObjectById(colObj.getId());
-                            ReferenceDescriptor reverseRef = ((CollectionDescriptor) field)
-                                .getReverseReferenceDescriptor();
-                            TypeUtil.setFieldValue(colObj, reverseRef.getName(), dest);
-                            if (type == FROM_DB) {
-                                store(colObj);
-                                // We don't need to call again on this object, this call may have
-                                // been present to ensure the tracker is updated - but would get
-                                // updated with the wrong source anyway.  See ticket #955.
-                                //store(colObj, source, skelSource, FROM_DB);
-                            } else {
-                                store(colObj, source, skelSource, SKELETON);
-                            }
-                        }
-                    }*/
+                    // Do nothing.
                     break;
                 case FieldDescriptor.M_N_RELATION:
                     if ((type == SOURCE) || ((type == FROM_DB)
                                 && ((((InterMineObject) dest).getId() == null)
                                 || (!((InterMineObject) dest).getId()
                                     .equals(((InterMineObject) srcObj).getId()))))) {
-                        Collection destCol = (Collection) TypeUtil.getFieldValue(dest, fieldName);
-                        Collection col = (Collection) TypeUtil.getFieldValue(srcObj, fieldName);
+                        Collection destCol = (Collection) dest.getFieldValue(fieldName);
+                        Collection col = (Collection) srcObj.getFieldValue(fieldName);
                         Iterator colIter = col.iterator();
                         while (colIter.hasNext()) {
                             InterMineObject colObj = (InterMineObject) colIter.next();

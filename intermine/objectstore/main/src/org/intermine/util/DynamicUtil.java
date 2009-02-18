@@ -22,6 +22,7 @@ import java.util.TreeSet;
 
 import net.sf.cglib.proxy.*;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 
 /**
@@ -50,7 +51,8 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if fields are not
      * compatible.
      */
-    public static synchronized Object createObject(Set classes) throws IllegalArgumentException {
+    public static synchronized FastPathObject createObject(Set classes)
+    throws IllegalArgumentException {
         Class requiredClass = (Class) classMap.get(classes);
         if (requiredClass != null) {
             return createObject(requiredClass);
@@ -79,7 +81,7 @@ public class DynamicUtil
                 } else {
                     try {
                         classMap.put(classes, clazz);
-                        return clazz.newInstance();
+                        return (FastPathObject) clazz.newInstance();
                     } catch (InstantiationException e) {
                         IllegalArgumentException e2 = new IllegalArgumentException("Problem running"
                                 + " constructor");
@@ -93,7 +95,7 @@ public class DynamicUtil
                     }
                 }
             }
-            Object retval = DynamicBean.create(clazz, interfaces.toArray(new Class[] {}));
+            FastPathObject retval = DynamicBean.create(clazz, interfaces.toArray(new Class[] {}));
             classMap.put(classes, retval.getClass());
             return retval;
         }
@@ -106,10 +108,10 @@ public class DynamicUtil
      * @return the object
      * @throws IllegalArgumentException if an error occurs
      */
-    public static Object createObject(Class clazz) throws IllegalArgumentException {
-        Object retval = null;
+    public static FastPathObject createObject(Class clazz) throws IllegalArgumentException {
+        FastPathObject retval = null;
         try {
-            retval = clazz.newInstance();
+            retval = (FastPathObject) clazz.newInstance();
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
@@ -241,7 +243,7 @@ public class DynamicUtil
      * @return the materialised business object
      * @throws ClassNotFoundException if className can't be found
      */
-    public static Object instantiateObject(String className, String implementations)
+    public static FastPathObject instantiateObject(String className, String implementations)
         throws ClassNotFoundException {
 
         Set<String> classNames = new HashSet<String>();
@@ -259,7 +261,7 @@ public class DynamicUtil
                                        + "classes or interfaces");
         }
 
-        return DynamicUtil.createObject(convertToClasses(classNames));
+        return createObject(convertToClasses(classNames));
     }
 
     /**

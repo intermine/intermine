@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -231,7 +232,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
     /**
      * {@inheritDoc}
      */
-    protected InterMineObject store(Object nimo, Source source, Source skelSource,
+    protected InterMineObject store(FastPathObject nimo, Source source, Source skelSource,
             int type) throws ObjectStoreException {
         if (nimo == null) {
             return null;
@@ -239,7 +240,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         try {
             if (!(nimo instanceof InterMineObject)) {
                 long time1 = System.currentTimeMillis();
-                Object newObj = DynamicUtil.createObject(nimo.getClass());
+                FastPathObject newObj = DynamicUtil.createObject(nimo.getClass());
                 long time2 = System.currentTimeMillis();
                 timeSpentCreate += time2 - time1;
                 Map<String, FieldDescriptor> fields = getModel().getFieldDescriptorsForClass(nimo

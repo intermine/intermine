@@ -23,6 +23,7 @@ import net.sf.cglib.proxy.*;
 
 import org.apache.log4j.Logger;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.NotXmlRenderer;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -50,7 +51,7 @@ public class DynamicBean implements MethodInterceptor
      * @param inter the interfaces to implement
      * @return the DynamicBean
      */
-    public static Object create(Class clazz, Class [] inter) {
+    public static FastPathObject create(Class clazz, Class [] inter) {
         if ((clazz != null) && clazz.isInterface()) {
             throw new IllegalArgumentException("clazz must not be an interface");
         }
@@ -59,7 +60,7 @@ public class DynamicBean implements MethodInterceptor
         //if ( clazz == null) {
         //    clazz = DynamicBean.class;
         //}
-        return Enhancer.create(clazz, inter, new DynamicBean());
+        return (FastPathObject) Enhancer.create(clazz, inter, new DynamicBean());
     }
 
     /**
@@ -152,16 +153,12 @@ public class DynamicBean implements MethodInterceptor
             }
             if (retval == null) {
                 Class fieldType = null;
-                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
-                Method methods[] = obj.getClass().getMethods();
-                for (Method getMethod : methods) {
-                    if (getMethod.getName().equals(methodName)) {
-                        fieldType = getMethod.getReturnType();
-                        break;
-                    }
-                }
-                if (fieldType == null) {
-                    throw new RuntimeException("No such field " + args[0]);
+                try {
+                    String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                    Method getMethod = obj.getClass().getMethod(methodName);
+                    fieldType = getMethod.getReturnType();
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("No such field " + args[0], e);
                 }
 
                 if (Collection.class.isAssignableFrom(fieldType)) {
@@ -192,16 +189,12 @@ public class DynamicBean implements MethodInterceptor
             Object retval = map.get(fieldName);
             if (retval == null) {
                 Class fieldType = null;
-                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
-                Method methods[] = obj.getClass().getMethods();
-                for (Method getMethod : methods) {
-                    if (getMethod.getName().equals(methodName)) {
-                        fieldType = getMethod.getReturnType();
-                        break;
-                    }
-                }
-                if (fieldType == null) {
-                    throw new RuntimeException("No such field " + args[0]);
+                try {
+                    String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                    Method getMethod = obj.getClass().getMethod(methodName);
+                    fieldType = getMethod.getReturnType();
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("No such field " + args[0], e);
                 }
 
                 if (Collection.class.isAssignableFrom(fieldType)) {
@@ -245,14 +238,13 @@ public class DynamicBean implements MethodInterceptor
             return null;
         }
         if ("getFieldType".equals(method.getName()) && (args.length == 1)) {
-            String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
-            Method methods[] = obj.getClass().getMethods();
-            for (Method getMethod : methods) {
-                if (getMethod.getName().equals(methodName)) {
-                    return getMethod.getReturnType();
-                }
+            try {
+                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                Method getMethod = obj.getClass().getMethod(methodName);
+                return getMethod.getReturnType();
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("No such field " + args[0], e);
             }
-            throw new RuntimeException("No such field " + args[0]);
         }
         if ("getElementType".equals(method.getName()) && (args.length == 1)) {
             String methodName = "add" + StringUtil.reverseCapitalisation((String) args[0]);

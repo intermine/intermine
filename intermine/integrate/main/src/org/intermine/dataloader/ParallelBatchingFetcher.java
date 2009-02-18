@@ -65,6 +65,9 @@ public class ParallelBatchingFetcher extends BatchingFetcher
                 + " objects by batch");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
             Map<InterMineObject, Set<InterMineObject>> results,
             Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)

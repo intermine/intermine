@@ -28,7 +28,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -183,7 +182,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             if (fd instanceof AttributeDescriptor) {
                 Object value;
                 try {
-                    value = TypeUtil.getFieldValue(obj, fieldName);
+                    value = obj.getFieldValue(fieldName);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Failed to get field value for field name: "
                             + fieldName + " in " + obj, e);
@@ -206,7 +205,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             } else if (fd instanceof ReferenceDescriptor) {
                 InterMineObject refObj;
                 try {
-                    refObj = (InterMineObject) TypeUtil.getFieldProxy(obj, fieldName);
+                    refObj = (InterMineObject) obj.getFieldProxy(fieldName);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Failed to get field proxy for field name: "
                             + fieldName + " in " + obj, e);

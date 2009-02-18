@@ -20,6 +20,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Bank;
@@ -113,7 +114,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             while (iter.hasNext()) {
                 Object o = ((Map.Entry) iter.next())
                     .getValue();
-                iw.store(o, source, skelSource);
+                iw.store((FastPathObject) o, source, skelSource);
             }
             //DataTracking.releasePrecached(iw.getDataTracker());
 
