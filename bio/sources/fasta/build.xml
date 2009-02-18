@@ -48,8 +48,8 @@
                 idSuffix="${fasta.idSuffix}"
                 className="${fasta.className}"
                 classAttribute="${fasta.classAttribute}"
-                synonymSource="${fasta.synonymSource}"
                 dataSetTitle="${fasta.dataSetTitle}"
+                dataSourceName="${fasta.dataSourceName}"
                 sequenceType="${fasta.sequenceType}"
                 fastaTaxonId="${fasta.taxonId}">
       <fileset dir="${src.data.dir}" includes="${fasta.includes}"/>
