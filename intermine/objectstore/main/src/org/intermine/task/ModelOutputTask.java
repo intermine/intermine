@@ -16,7 +16,6 @@ import org.apache.tools.ant.BuildException;
 import java.io.File;
 
 import org.intermine.codegen.JavaModelOutput;
-import org.intermine.codegen.ModelOutput;
 import org.intermine.metadata.Model;
 
 /**
@@ -73,19 +72,15 @@ public class ModelOutputTask extends Task
             throw new BuildException("model attribute is not set");
         }
 
-        ModelOutput mo = null;
-
         try {
             if (type.equals("java")) {
-                mo = new JavaModelOutput(model, destDir);
+                JavaModelOutput mo = new JavaModelOutput(model, destDir);
+                mo.process();
             } else {
                 throw new BuildException("Unrecognised value for output type: " + type);
             }
         } catch (Exception e) {
             throw new BuildException(e);
         }
-
-        mo.process();
     }
 }
-
