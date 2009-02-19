@@ -95,6 +95,15 @@ public class DynamicUtil
                     }
                 }
             }
+            if ((clazz == null) && (interfaces.size() == 1)) {
+                try {
+                    Class retval = Class.forName(interfaces.iterator().next().getName() + "Shadow");
+                    classMap.put(classes, retval);
+                    return createObject(retval);
+                } catch (ClassNotFoundException e) {
+                    // No problem - falling back on dynamic
+                }
+            }
             FastPathObject retval = DynamicBean.create(clazz, interfaces.toArray(new Class[] {}));
             classMap.put(classes, retval.getClass());
             return retval;
@@ -226,6 +235,16 @@ public class DynamicUtil
                             retval.add(inter);
                         }
                     }
+                }
+            } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
+                try {
+                    retval = Collections.singleton((Class) clazz.getField("shadowOf").get(null));
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
+                            + "shadowOf method", e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(clazz.getName()
+                            + ".shadowOf method is inaccessible", e);
                 }
             } else {
                 // Normal class - return it.

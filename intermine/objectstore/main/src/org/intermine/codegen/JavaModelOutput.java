@@ -77,7 +77,8 @@ public class JavaModelOutput
                     fos.write(generate(cld, false));
                     fos.close();
                     if (cld.isInterface()) {
-                        path = new File(dir, "Concrete" + cls + ".java");
+                        path = new File(dir, cls + "Shadow.java");
+                        path.delete();
                         fos = new BufferedWriter(new FileWriter(path, true));
                         fos.write(generate(cld, true));
                         fos.close();
@@ -115,15 +116,19 @@ public class JavaModelOutput
             sb.append("import org.intermine.util.StringConstructor;" + ENDL);
             sb.append("import org.intermine.util.StringUtil;" + ENDL);
             sb.append("import org.intermine.util.TypeUtil;" + ENDL);
+            if (shadow) {
+                sb.append("import org.intermine.model.ShadowClass;" + ENDL);
+            }
         }
         sb.append("public ")
             .append((cld.isInterface() && (!shadow)) ? "interface " : "class ")
-            .append(shadow ? "Concrete" : "")
-            .append(TypeUtil.unqualifiedName(cld.getName()));
+            .append(TypeUtil.unqualifiedName(cld.getName()))
+            .append(shadow ? "Shadow" : "");
 
         if (shadow) {
             sb.append(" implements ")
-                .append(TypeUtil.unqualifiedName(cld.getName()));
+                .append(TypeUtil.unqualifiedName(cld.getName()))
+                .append(", org.intermine.model.ShadowClass");
         } else {
             if (!cld.isInterface()) {
                 if (cld.getSuperclassDescriptor() != null) {
@@ -155,6 +160,13 @@ public class JavaModelOutput
 
         sb.append(ENDL)
             .append("{" + ENDL);
+
+        if (shadow) {
+            sb.append(INDENT)
+                .append("public static final Class shadowOf = ")
+                .append(TypeUtil.unqualifiedName(cld.getName()))
+                .append(".class;" + ENDL);
+        }
 
         // FieldDescriptors defined for this class/interface
         if (cld.isInterface() && (!shadow)) {
