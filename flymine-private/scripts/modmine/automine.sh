@@ -10,6 +10,7 @@
 # TODO: ant failing and exiting with 0!
 #       test full release
 #       analyse after stag?
+#       if -M -f stops after stag. check
 #
 
 # see after argument parsing for all envs related to the release
@@ -338,10 +339,16 @@ echo
 echo "filling $CHADODB db with $sub..."
 echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 
+DCCID=`echo $sub | cut -f 1 -d.`
+
+echo $DCCID
+
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
 || { printf "\n **** $sub **** stag-storenode FAILED at `date`.\n" "%b" \
 >> `date "+%y%m%d.$REL.log"`; grep -v $sub $LOADLOG > tmp ; mv -f tmp $LOADLOG; exit 1 ; }
+
+psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 
 #if we are not validating we move away the file
 if [ $VALIDATING = "n" ]
