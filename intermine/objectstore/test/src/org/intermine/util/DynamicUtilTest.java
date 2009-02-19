@@ -137,7 +137,7 @@ public class DynamicUtilTest extends TestCase
     }
 
     public void testConstructors() throws Exception {
-        Class c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+        Class c = DynamicUtil.composeClass(Company.class, Broke.class);
         Company obj = (Company) c.newInstance();
         ((net.sf.cglib.proxy.Factory) obj).setCallback(0, new DynamicBean());
         obj.setName("Fred");
