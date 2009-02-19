@@ -14,11 +14,11 @@
     </im:boxarea>
 
 <div id="leftcolumn">
-     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" fixedWidth="300px">
+     <im:boxarea title="Submissions" titleLink="/${WEB_PROPERTIES['webapp.path']}/submissions.do" stylename="plainbox" fixedWidth="360px">
          <tiles:insert name="latestSubs.tile"/>
     </im:boxarea>
 
-      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox" fixedWidth="300px">
+      <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox" fixedWidth="360px">
         <p><em><fmt:message key="begin.bags"/></em></p>
         <br/>
         <div>
