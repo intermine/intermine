@@ -1,70 +1,70 @@
 <items>
-<item id="5_6" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_6" class="MicroArrayAssay">
 <attribute name="name" value="stage: 192_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 192_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#MicroArrayExperiment">
+<item id="4_1" class="MicroArrayExperiment">
 <attribute name="name" value="Koutos AC:  Life cycle transcriptions of malaria mosquito Anopheles gambiae and comparison with the fruitfly Drosophila melanogaster"/>
 <reference name="publication" ref_id="3_1"/>
 </item>
-<item id="5_9" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_9" class="MicroArrayAssay">
 <attribute name="name" value="stage: 312_h_adult_male"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 312_h_adult_male"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
+<item id="3_1" class="Publication">
 <attribute name="pubMedId" value="17563388"/>
 </item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_4" class="MicroArrayAssay">
 <attribute name="name" value="stage: 96_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 96_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_2" class="MicroArrayAssay">
 <attribute name="name" value="stage: 12-14_h_embryo_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 12-14_h_embryo_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="2_1" class="Organism">
 <attribute name="taxonId" value="7165"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="DataSource">
 <attribute name="name" value="ArrayExpress"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="1_1" class="DataSet">
 <attribute name="title" value="Anoph-Expr data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_1" class="MicroArrayAssay">
 <attribute name="name" value="stage: 240_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 240_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="5_7" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_7" class="MicroArrayAssay">
 <attribute name="name" value="stage: 240_h_pupa_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 240_h_pupa_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="5_5" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_5" class="MicroArrayAssay">
 <attribute name="name" value="stage: 144_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 144_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_3" class="MicroArrayAssay">
 <attribute name="name" value="stage: 48_h_larva_mixed sex"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 48_h_larva_mixed sex"/>
 <reference name="experiment" ref_id="4_1"/>
 </item>
-<item id="5_8" class="http://www.flymine.org/model/genomic#MicroArrayAssay">
+<item id="5_8" class="MicroArrayAssay">
 <attribute name="name" value="stage: 312_h_adult_female"/>
 <attribute name="sample1" value="Sample: Reference"/>
 <attribute name="sample2" value="stage: 312_h_adult_female"/>

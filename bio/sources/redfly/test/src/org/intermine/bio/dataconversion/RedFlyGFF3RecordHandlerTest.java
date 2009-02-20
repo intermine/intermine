@@ -43,7 +43,6 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
     private String taxonId = "DM";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
-    private String tgtNs;
     private ItemFactory itemFactory;
     private List featureIdentifiers;
     private GFF3Converter converter;
@@ -60,7 +59,6 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         // call the GFF3Converter constructor to initialise the handler
         converter = new GFF3Converter(tgtIw, seqClsName, taxonId, dataSourceName,
                           "FlyBase", dataSetTitle, tgtModel, handler, null);
-        tgtNs = tgtModel.getNameSpace().toString();
         itemFactory = handler.getItemFactory();
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
@@ -90,7 +88,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
             GFF3Record record = (GFF3Record) iter.next();
             String term = record.getType();
             String className = TypeUtil.javaiseClassName(term);
-            Item feature = itemFactory.makeItem(null, tgtNs + className, "");
+            Item feature = itemFactory.makeItem(null, className, "");
 
             handler.setFeature(feature);
             handler.process(record);

@@ -85,14 +85,14 @@ public class ItemFactoryTest extends TestCase
 
         try {
             Item item = itemFactory.makeItem("my_id1",
-                                             "http://www.intermine.org/model/testmodel#Foo", "");
+                                             "Foo", "");
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
         }
 
         try {
-            Item item = itemFactory.makeItemForClass("http://www.intermine.org/model/testmodel#Foo");
+            Item item = itemFactory.makeItemForClass("Foo");
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected

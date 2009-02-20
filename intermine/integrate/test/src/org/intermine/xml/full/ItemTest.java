@@ -37,8 +37,8 @@ public class ItemTest extends TestCase
     public void testCreateWithModel1() throws Exception {
         Item item1 = new Item();
         item1.setModel(model);
-        item1.setImplementations("http://www.intermine.org/model/testmodel#Company");
-        item1.setClassName("http://www.intermine.org/model/testmodel#Company");
+        item1.setImplementations("Company");
+        item1.setClassName("Company");
         item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -59,40 +59,11 @@ public class ItemTest extends TestCase
         item1.addCollection(col1);
     }
 
-    public void testCreateWithWrongModel1() throws Exception {
-        Item item1 = new Item();
-        item1.setModel(model);
-        try {
-            item1.setImplementations("http://www.intermine.org/model/nottestmodel#Company");
-            fail("expected RuntimeException");
-        } catch (RuntimeException _) {
-            // expected
-        }
-        try {
-            item1.setClassName("http://www.intermine.org/model/nottestmodel#Company");
-            fail("expected RuntimeException");
-        } catch (RuntimeException _) {
-            // expected
-        }
-        try {
-            item1.setImplementations("http://www.intermine.org/model/testmodel#NotCompany");
-            fail("expected RuntimeException");
-        } catch (RuntimeException _) {
-            // expected
-        }
-        try {
-            item1.setClassName("http://www.intermine.org/model/testmodel#NotCompany");
-            fail("expected RuntimeException");
-        } catch (RuntimeException _) {
-            // expected
-        }
-    }
-
     public void testCreateWithWrongModel2() throws Exception {
         Item item1 = new Item();
         item1.setModel(model);
-        item1.setImplementations("http://www.intermine.org/model/testmodel#Company");
-        item1.setClassName("http://www.intermine.org/model/testmodel#Company");
+        item1.setImplementations("Company");
+        item1.setClassName("Company");
         item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("not_name");
@@ -129,23 +100,23 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         try {
-            item1.setClassName(model.getNameSpace() + "IllegalClass");
+            item1.setClassName("IllegalClass");
             fail("expected RuntimeException");
         } catch (RuntimeException _) {
             // expected
         }
 
-        assertEquals(model.getNameSpace() + "Company", item1.getClassName());
+        assertEquals("Company", item1.getClassName());
     }
 
     public void testAddAttribute() throws Exception {
         ItemFactory itemFactory = new ItemFactory(model);
 
         Item item1 = itemFactory.makeItem();
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         item1.addAttribute(new Attribute("vatNumber", "1000"));
 
@@ -177,7 +148,7 @@ public class ItemTest extends TestCase
         ItemFactory itemFactory = new ItemFactory(model);
 
         Item item1 = itemFactory.makeItem();
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         try {
             item1.setAttribute("name", null);
@@ -209,7 +180,7 @@ public class ItemTest extends TestCase
         ItemFactory itemFactory = new ItemFactory(model);
 
         Item item1 = itemFactory.makeItem();
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         item1.setAttributeToEmptyString("name");
 
@@ -221,7 +192,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         item1.addReference(new Reference("address", "address_id_1"));
 
@@ -247,7 +218,7 @@ public class ItemTest extends TestCase
 
         Item item2 = itemFactory.makeItem();
 
-        item2.setClassName(model.getNameSpace() + "CEO");
+        item2.setClassName("CEO");
 
         item2.setIdentifier("item_2");
 
@@ -262,7 +233,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         item1.addToCollection("contractors", "contractor_id_1");
         item1.addToCollection("contractors", "contractor_id_2");
@@ -293,7 +264,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         List idsToAdd = new ArrayList();
 
@@ -328,7 +299,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         List idsToAdd = new ArrayList();
 
@@ -348,7 +319,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         assertTrue(item1.canHaveReference("CEO"));
     }
@@ -359,7 +330,7 @@ public class ItemTest extends TestCase
 
         Item item1 = itemFactory.makeItem();
 
-        item1.setClassName(model.getNameSpace() + "Company");
+        item1.setClassName("Company");
 
         assertTrue(item1.canHaveCollection("departments"));
     }

@@ -44,17 +44,17 @@ $writer->endTag('items');
 
 my $xml_exp = q[
 <items>
-   <item id="0_1" class="" implements="http://www.intermine.org/model/testmodel#Employee">
+   <item id="0_1" class="" implements="Employee">
       <reference name="department" ref_id="0_3" />
       <attribute name="name" value="fred" />
       <attribute name="age" value="40" />
    </item>
-   <item id="0_2" class="" implements="http://www.intermine.org/model/testmodel#Employee">
+   <item id="0_2" class="" implements="Employee">
       <reference name="department" ref_id="0_3" />
       <attribute name="name" value="ginger" />
       <attribute name="age" value="50" />
    </item>
-   <item id="0_3" class="" implements="http://www.intermine.org/model/testmodel#Department">
+   <item id="0_3" class="" implements="Department">
       <collection name="employees">
          <reference ref_id="0_1" />
          <reference ref_id="0_2" />
@@ -62,7 +62,7 @@ my $xml_exp = q[
       <attribute name="name" value="big department" />
       <reference name="company" ref_id="0_4" />
    </item>
-   <item id="0_4" class="" implements="http://www.intermine.org/model/testmodel#Company">
+   <item id="0_4" class="" implements="Company">
       <attribute name="name" value="big company" />
       <collection name="departments">
          <reference ref_id="0_3" />

@@ -21,7 +21,6 @@ import java.util.Set;
 public class CollectionDescriptorTest extends TestCase
 {
     private static final Set EMPTY_SET = Collections.EMPTY_SET;
-    private String uri = "http://www.intermine.org/model/testmodel";
 
     public CollectionDescriptorTest(String arg) {
         super(arg);
@@ -91,7 +90,7 @@ public class CollectionDescriptorTest extends TestCase
         // cld1 has a ReferenceDescriptor that points to Class2
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), collections);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ClassDescriptor refCld = cod1.getReferencedClassDescriptor();
             assertTrue("ClassDescriptor was null", refCld != null);
@@ -109,7 +108,7 @@ public class CollectionDescriptorTest extends TestCase
         Set cols2 = Collections.singleton(cod2);
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols1);
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols2);
-        Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         try {
             ReferenceDescriptor rfdReverse = cod1.getReverseReferenceDescriptor();
             assertEquals(cod2, rfdReverse);
@@ -129,7 +128,7 @@ public class CollectionDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), cols2, new HashSet());
 
         try {
-            Model model = new Model("model", uri, new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
             fail("Expected a MetaDataException to be thrown");
         } catch (MetaDataException e) {
         }
@@ -141,7 +140,7 @@ public class CollectionDescriptorTest extends TestCase
         Set cols = Collections.singleton(col);
         Set refs = Collections.singleton(ref);
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, refs, cols);
-        Model model = new Model("model1", uri, Collections.singleton(cld));
+        Model model = new Model("model1", Collections.singleton(cld));
         assertEquals(FieldDescriptor.ONE_N_RELATION, col.relationType());
     }
 
@@ -150,7 +149,7 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor col2 = new CollectionDescriptor("col2", "Class1", null);
         Set cols = new HashSet(Arrays.asList(new Object[] { col1, col2 }));
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, EMPTY_SET, cols);
-        Model model = new Model("model1", uri, Collections.singleton(cld));
+        Model model = new Model("model1", Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col1.relationType());
     }
 
@@ -158,7 +157,7 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor col = new CollectionDescriptor("col1", "Class1", null);
         Set cols = Collections.singleton(col);
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false, EMPTY_SET, EMPTY_SET, cols);
-        Model model = new Model("model1", uri, Collections.singleton(cld));
+        Model model = new Model("model1", Collections.singleton(cld));
         assertEquals(FieldDescriptor.M_N_RELATION, col.relationType());
     }
 

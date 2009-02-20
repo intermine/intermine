@@ -1,5 +1,5 @@
 <items>
-  <item id="1" class="" implements="http://www.intermine.org/model/testmodel#Company">
+  <item id="1" class="" implements="Company">
     <attribute name="name" value="Company1"/>
     <attribute name="vatNumber" value="10"/>
     <reference name="address" ref_id="2"/>
@@ -9,15 +9,15 @@
     </collection>
   </item>
 
-  <item id="2" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="2" class="Address" implements="Thing">
     <attribute name="address" value="&quot;Company&apos;s&quot; street"/>
   </item>
 
-  <item id="3" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+  <item id="3" class="Department" implements="RandomInterface">
     <attribute name="name" value="Department1"/>
   </item>
 
-  <item id="4" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+  <item id="4" class="Department" implements="RandomInterface">
     <attribute name="name" value="Department2"/>
   </item>
 </items>

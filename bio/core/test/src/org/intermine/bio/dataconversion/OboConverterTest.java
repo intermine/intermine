@@ -22,7 +22,6 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 
 public class OboConverterTest extends ItemsTestCase {
-    String NAMESPACE = "http://www.flymine.org/model/genomic#";
     MockItemWriter itemWriter;
     Model model = Model.getInstanceByName("genomic");
 

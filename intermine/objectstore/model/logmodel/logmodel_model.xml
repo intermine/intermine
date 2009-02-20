@@ -1,4 +1,4 @@
-<model name="logmodel" namespace="http://www.intermine.org/model/logmodel#">
+<model name="logmodel">
 
     <class name="org.intermine.model.logmodel.InterMineLoggable" is-interface="false">
         <attribute name="caller" type="java.lang.String"/>

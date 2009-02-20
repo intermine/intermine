@@ -1,18 +1,18 @@
 <items>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Tissue">
+<item id="2_1" class="Tissue">
 <attribute name="name" value="liver"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#CellType">
+<item id="3_1" class="CellType">
 <attribute name="name" value="hepatocyte"/>
 </item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_3" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00260"/>
 <attribute name="location" value="3"/>
 <attribute name="modAvgDelta" value="117.1"/>
 <attribute name="modDB" value="PSI-MOD"/>
 <attribute name="modMonoDelta" value="117.2"/>
 </item>
-<item id="4_6" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_6" class="ProteinIdentification">
 <attribute name="score" value="14.8"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.15"/>
@@ -21,7 +21,7 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="4_3" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_3" class="ProteinIdentification">
 <attribute name="score" value="14.0"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.11"/>
@@ -30,10 +30,10 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="1_1" class="Organism">
 <attribute name="taxonId" value="9031"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#PrideExperiment">
+<item id="0_1" class="PrideExperiment">
 <attribute name="accessionId" value="3195"/>
 <attribute name="shortLabel" value="Pride Test Experiment Short Title"/>
 <attribute name="title" value="Pride Test Experiment Title"/>
@@ -42,31 +42,31 @@
 <reference name="prideProject" ref_id="6_1"/>
 <reference name="tissue" ref_id="2_1"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#PrideProject">
+<item id="6_1" class="PrideProject">
 <attribute name="title" value="Test Project Title"/>
 </item>
-<item id="5_6" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_6" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00419"/>
 <attribute name="location" value="13"/>
 <attribute name="modAvgDelta" value="120.1"/>
 <attribute name="modDB" value="PSI-MOD"/>
 <attribute name="modMonoDelta" value="120.2"/>
 </item>
-<item id="5_5" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_5" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00260"/>
 <attribute name="location" value="9"/>
 <attribute name="modAvgDelta" value="119.1"/>
 <attribute name="modDB" value="PSI-MOD"/>
 <attribute name="modMonoDelta" value="119.2"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_1" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00419"/>
 <attribute name="location" value="7"/>
 <attribute name="modAvgDelta" value="115.1"/>
 <attribute name="modDB" value="PSI-MOD"/>
 <attribute name="modMonoDelta" value="115.2"/>
 </item>
-<item id="4_4" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_4" class="ProteinIdentification">
 <attribute name="score" value="14.2"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.12"/>
@@ -75,7 +75,7 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_1" class="ProteinIdentification">
 <attribute name="score" value="13.6"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.09"/>
@@ -84,7 +84,7 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="4_5" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_5" class="ProteinIdentification">
 <attribute name="score" value="14.6"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.14"/>
@@ -93,14 +93,14 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_4" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00419"/>
 <attribute name="location" value="8"/>
 <attribute name="modAvgDelta" value="118.1"/>
 <attribute name="modDB" value="PSI-MOD"/>
 <attribute name="modMonoDelta" value="118.2"/>
 </item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#ProteinIdentification">
+<item id="4_2" class="ProteinIdentification">
 <attribute name="score" value="13.8"/>
 <attribute name="searchEngine" value="Mascot"/>
 <attribute name="sequenceCoverage" value="0.1"/>
@@ -109,7 +109,7 @@
 <attribute name="threshold" value="23.0"/>
 <reference name="prideExperiment" ref_id="0_1"/>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#PeptideModification">
+<item id="5_2" class="PeptideModification">
 <attribute name="accessionId" value="MOD:00260"/>
 <attribute name="location" value="15"/>
 <attribute name="modAvgDelta" value="116.1"/>

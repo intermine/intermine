@@ -128,7 +128,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         expected.addToSelect(qc);
         QueryField qf = new QueryField(qc, "className");
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS,
-                       new QueryValue("http://www.intermine.org/model/testmodel#Department"));
+                       new QueryValue("Department"));
         expected.setConstraint(sc);
 
         Query original = new Query();
@@ -150,7 +150,7 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
         cs.addConstraint(sc2);
         QueryField qf1 = new QueryField(qc, "className");
         SimpleConstraint sc1 = new SimpleConstraint(qf1, ConstraintOp.EQUALS,
-                       new QueryValue("http://www.intermine.org/model/testmodel#Department"));
+                       new QueryValue("Department"));
         cs.addConstraint(sc1);
         expected.setConstraint(cs);
 
@@ -180,8 +180,8 @@ public class ItemToObjectTranslatorTest extends QueryTestCase
 
     public void testTranslateFromDbObject() throws Exception {
         Item dbItem = new Item();
-        dbItem.setClassName("http://www.intermine.org/model/testmodel#Department");
-        dbItem.setImplementations("http://www.intermine.org/model/testmodel#Broke");
+        dbItem.setClassName("Department");
+        dbItem.setImplementations("Broke");
         dbItem.setIdentifier("fish_1");
         Attribute dbAttr1 = new  Attribute();
         dbAttr1.setName("name");

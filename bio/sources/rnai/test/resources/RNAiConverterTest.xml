@@ -1,19 +1,19 @@
 <items>
-<item id="8_1" class="http://www.flymine.org/model/genomic#Publication">
+<item id="8_1" class="Publication">
 <attribute name="pubMedId" value="9716524"/>
 </item>
-<item id="8_2" class="http://www.flymine.org/model/genomic#Publication">
+<item id="8_2" class="Publication">
 <attribute name="pubMedId" value="9693365"/>
 </item>
-<item id="9_1" class="http://www.flymine.org/model/genomic#RNAiScreen">
+<item id="9_1" class="RNAiScreen">
 <reference name="organism" ref_id="2_1"/>
 <reference name="publication" ref_id="8_1"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="1_1" class="DataSet">
 <attribute name="title" value="WormBase RNAi Phenotype"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#RNAiPhenotype">
+<item id="6_1" class="RNAiPhenotype">
 <attribute name="comment" value="clone does not match to the reported genomic sequence"/>
 <attribute name="name" value="alae_abnormal"/>
 <attribute name="observed" value="true"/>
@@ -24,46 +24,46 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="8_1"/></collection>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="DataSource">
 <attribute name="name" value="WormBase"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="5_1" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="WBGene00000516"/>
 <reference name="subject" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Ontology">
+<item id="3_1" class="Ontology">
 <attribute name="title" value="WormBase phenotype codes"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="2_1" class="Organism">
 <attribute name="taxonId" value="6239"/>
 </item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Phenotype">
+<item id="7_2" class="Phenotype">
 <attribute name="code" value="Emb"/>
 <attribute name="identifier" value="WBPhenotype0000765"/>
 <attribute name="name" value="spindle_elongation_integrity_abnormal_early_emb"/>
 <reference name="ontology" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="5_2" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="WBGene00006974"/>
 <reference name="subject" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Phenotype">
+<item id="7_1" class="Phenotype">
 <attribute name="identifier" value="WBPhenotype0000202"/>
 <attribute name="name" value="alae_abnormal"/>
 <reference name="ontology" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Gene">
+<item id="4_2" class="Gene">
 <attribute name="primaryIdentifier" value="WBGene00006974"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#RNAiPhenotype">
+<item id="6_2" class="RNAiPhenotype">
 <attribute name="code" value="Emb"/>
 <attribute name="name" value="spindle_elongation_integrity_abnormal_early_emb"/>
 <attribute name="observed" value="false"/>
@@ -76,12 +76,12 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="8_2"/></collection>
 </item>
-<item id="9_2" class="http://www.flymine.org/model/genomic#RNAiScreen">
+<item id="9_2" class="RNAiScreen">
 <reference name="organism" ref_id="2_1"/>
 <reference name="publication" ref_id="8_2"/>
 <collection name="dataSet" ref_id="1_1"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Gene">
+<item id="4_1" class="Gene">
 <attribute name="primaryIdentifier" value="WBGene00000516"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>

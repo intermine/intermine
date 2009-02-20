@@ -46,7 +46,7 @@
   </userprofile>
   <userprofile password="sally_pass" username="sally">
     <items>
-      <item id="2" class="" implements="http://www.intermine.org/model/testmodel#Company">
+      <item id="2" class="" implements="Company">
         <attribute name="name" value="CompanyB"/>
         <attribute name="vatNumber" value="5678"/>
         <collection name="contractors">
@@ -66,7 +66,7 @@
           <reference ref_id="15"/>
         </collection>
       </item>
-      <item id="6" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+      <item id="6" class="Department" implements="RandomInterface">
         <attribute name="name" value="DepartmentB1"/>
         <reference name="company" ref_id="2"/>
         <collection name="employees">
@@ -74,14 +74,14 @@
           <reference ref_id="12"/>
         </collection>
       </item>
-      <item id="10" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+      <item id="10" class="Employee" implements="Employable HasAddress">
         <attribute name="age" value="30"/>
         <attribute name="end" value="3"/>
         <attribute name="fullTime" value="false"/>
         <attribute name="name" value="EmployeeA3"/>
         <reference name="department" ref_id="5"/>
       </item>
-      <item id="11" class="http://www.intermine.org/model/testmodel#CEO" implements="http://www.intermine.org/model/testmodel#Broke">
+      <item id="11" class="CEO" implements="Broke">
         <attribute name="age" value="40"/>
         <attribute name="debt" value="340"/>
         <attribute name="end" value="4"/>
@@ -93,7 +93,7 @@
         <reference name="company" ref_id="2"/>
         <reference name="department" ref_id="6"/>
       </item>
-      <item id="12" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+      <item id="12" class="Employee" implements="Employable HasAddress">
         <attribute name="age" value="50"/>
         <attribute name="end" value="5"/>
         <attribute name="fullTime" value="true"/>

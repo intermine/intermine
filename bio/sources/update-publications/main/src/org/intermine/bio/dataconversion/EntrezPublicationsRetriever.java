@@ -90,8 +90,6 @@ public class EntrezPublicationsRetriever
     private String cacheDirName;
     private ItemFactory itemFactory;
 
-    static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
-
     /**
      * Set the ObjectStore alias.
      * @param osAlias The ObjectStore alias
@@ -333,7 +331,7 @@ public class EntrezPublicationsRetriever
 
     private Set<Item> mapToItems(ItemFactory itemFactory, Map map) {
         Set<Item> retSet = new HashSet<Item>();
-        Item publication = itemFactory.makeItemForClass(TARGET_NS + "Publication");
+        Item publication = itemFactory.makeItemForClass("Publication");
         retSet.add(publication);
         publication.setAttribute("pubMedId", (String) map.get("id"));
         if (map.get("title") != null && !map.get("title").equals("")) {
@@ -361,7 +359,7 @@ public class EntrezPublicationsRetriever
             for (String authorString : authors) {
                 Item author = authorMap.get(authorString);
                 if (author == null) {
-                    author = itemFactory.makeItemForClass(TARGET_NS + "Author");
+                    author = itemFactory.makeItemForClass("Author");
                     author.setAttribute("name", authorString);
                     authorMap.put(authorString, author);
                 }

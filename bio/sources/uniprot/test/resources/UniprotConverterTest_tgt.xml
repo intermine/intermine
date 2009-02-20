@@ -1,46 +1,46 @@
 <items>
-<item id="10_1" class="http://www.flymine.org/model/genomic#Gene">
+<item id="10_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="9_1"/>
 </item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<item id="5_4" class="OntologyTerm">
 <attribute name="name" value="helix"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="3_2" class="http://www.flymine.org/model/genomic#Publication">
+<item id="3_2" class="Publication">
 <attribute name="pubMedId" value="1111111"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#Ontology">
+<item id="1_1" class="Ontology">
 <attribute name="title" value="UniProtKeyword"/>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#UniProtFeature">
+<item id="6_1" class="UniProtFeature">
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 </item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Sequence">
+<item id="7_2" class="Sequence">
 <attribute name="length" value="13"/>
 <attribute name="residues" value="JULIESEQUENCE"/>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<item id="5_2" class="OntologyTerm">
 <attribute name="name" value="Complete proteome"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="9_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="9_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="2_1" class="DataSet">
 <attribute name="title" value="Swiss-Prot data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#UniProtFeature">
+<item id="6_2" class="UniProtFeature">
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="8_2" class="http://www.flymine.org/model/genomic#Protein">
+<item id="8_2" class="Protein">
 <attribute name="description" value="eve's name"/>
 <attribute name="isFragment" value="false"/>
 <attribute name="isUniprotCanonical" value="true"/>
@@ -62,32 +62,32 @@
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 <collection name="synonyms"><reference ref_id="11_4"/><reference ref_id="11_5"/><reference ref_id="11_6"/></collection>
 </item>
-<item id="10_2" class="http://www.flymine.org/model/genomic#Gene">
+<item id="10_2" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
 <reference name="organism" ref_id="9_1"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="DataSource">
 <attribute name="name" value="UniProt"/>
 </item>
-<item id="6_3" class="http://www.flymine.org/model/genomic#UniProtFeature">
+<item id="6_3" class="UniProtFeature">
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 </item>
-<item id="11_2" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_2" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="JULIE_DROME"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
+<item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Comment">
+<item id="4_1" class="Comment">
 <attribute name="text" value="Nucleus."/>
 <attribute name="type" value="subcellular location"/>
 </item>
-<item id="8_1" class="http://www.flymine.org/model/genomic#Protein">
+<item id="8_1" class="Protein">
 <attribute name="description" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
 <attribute name="isFragment" value="false"/>
 <attribute name="isUniprotCanonical" value="true"/>
@@ -108,51 +108,51 @@
 <collection name="publications"><reference ref_id="3_2"/></collection>
 <collection name="synonyms"><reference ref_id="11_1"/><reference ref_id="11_2"/><reference ref_id="11_3"/></collection>
 </item>
-<item id="11_4" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_4" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="eve accession"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_2"/>
 </item>
-<item id="11_3" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_3" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
-<item id="11_5" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_5" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="EVE_DROME"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_2"/>
 </item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Comment">
+<item id="4_2" class="Comment">
 <attribute name="text" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="4_3" class="http://www.flymine.org/model/genomic#Comment">
+<item id="4_3" class="Comment">
 <attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#OntologyTerm">
+<item id="5_3" class="OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Sequence">
+<item id="7_1" class="Sequence">
 <attribute name="length" value="376"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
 </item>
-<item id="11_1" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_1" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
 <attribute name="value" value="Q000"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <reference name="subject" ref_id="8_1"/>
 </item>
-<item id="11_6" class="http://www.flymine.org/model/genomic#Synonym">
+<item id="11_6" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
 <attribute name="value" value="eve's name"/>

@@ -44,8 +44,6 @@ import org.biojava.bio.symbol.Location;
  */
 public class BioJavaFlatFileConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected LinkedHashMap bioEntities = new LinkedHashMap();
     protected Item db;
     protected LinkedHashMap ids = new LinkedHashMap();
@@ -77,7 +75,7 @@ public class BioJavaFlatFileConverter extends FileConverter
         super(writer, tgtModel);
         itemFactory = new ItemFactory(tgtModel, "0_");
 
-        dataSource = itemFactory.makeItemForClass(GENOMIC_NS + "DataSource");
+        dataSource = itemFactory.makeItemForClass("DataSource");
         dataSource.setAttribute("name", "EMBL");
         writer.store(ItemHelper.convert(dataSource));
     }
@@ -260,7 +258,7 @@ public class BioJavaFlatFileConverter extends FileConverter
     }
 
     private Item makeItem(String c) {
-        Item item = itemFactory.makeItemForClass(GENOMIC_NS + c);
+        Item item = itemFactory.makeItemForClass(c);
         itemsToStore.add(item);
         System.err.println("made item: " + item);
         return item;

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <items>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="2_1" class="Organism">
     <attribute name="taxonId" value="7165"/>
   </item>
-  <item id="4_4" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_4" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AGAP000035"/>
 
@@ -12,11 +12,11 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="1_1" class="DataSet">
     <attribute name="title" value="VectorBase Anopheles"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_1" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000014848"/>
 
@@ -25,7 +25,7 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_2" class="Gene">
     <attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
     <attribute name="primaryIdentifier" value="AGAP000035"/>
     <reference name="organism" ref_id="2_1"/>
@@ -33,10 +33,10 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="0_1" class="DataSource">
     <attribute name="name" value="VectorBase"/>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_1" class="Gene">
     <attribute name="secondaryIdentifier" value="ENSANGG00000014848"/>
     <attribute name="primaryIdentifier" value="AGAP000034"/>
     <reference name="organism" ref_id="2_1"/>
@@ -44,7 +44,7 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_2" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="AGAP000034"/>
 
@@ -53,7 +53,7 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="4_5" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_5" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000014969"/>
 
@@ -62,7 +62,7 @@
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#Synonym">
+  <item id="4_3" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="ENSANGG00000027829"/>
 

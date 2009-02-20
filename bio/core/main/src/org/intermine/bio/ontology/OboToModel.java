@@ -182,7 +182,7 @@ public class OboToModel
                                               : supers.toString()),
                                              true, fakeAttributes, fakeReferences, collections));
             }
-            Model model = new Model("name", "whatever", clds);
+            Model model = new Model("name", clds);
             out.println(model);
             out.flush();
             out.close();

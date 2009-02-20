@@ -33,9 +33,6 @@ import org.intermine.xml.full.Reference;
  */
 public class HaemAtlasConverter extends FileConverter
 {
-
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items

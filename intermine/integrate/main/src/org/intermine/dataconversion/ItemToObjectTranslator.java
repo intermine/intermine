@@ -219,7 +219,7 @@ public class ItemToObjectTranslator extends Translator
         // if not querying for InterMineObject constrain Item className
         if (!((QueryClass) qn).getType().equals(InterMineObject.class)) {
             String clsName = ((QueryClass) qn).getType().getName();
-            String clsURI = model.getNameSpace() + TypeUtil.unqualifiedName(clsName);
+            String clsURI = TypeUtil.unqualifiedName(clsName);
             SimpleConstraint clsNameConstraint = new SimpleConstraint(
                                 new QueryField(qc, "className"), ConstraintOp.EQUALS,
                                 new QueryValue(clsURI));

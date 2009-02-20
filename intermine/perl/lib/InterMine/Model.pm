@@ -125,7 +125,6 @@ sub start_element
 
   if ($args->{Name} eq "model") {
     $self->{model}{model_name} = $nameattr;
-    $self->{model}{name_space} = $args->{Attributes}{namespace};
     my $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
     $self->{model}{package_name} = $package_name;
   } else {
@@ -318,21 +317,6 @@ sub get_all_classdescriptors
 {
   my $self = shift;
   return values %{$self->{class_hash}};
-}
-
-=head2 name_space
-
- Title   : name_space
- Usage   : $name_space = $model->name_space();
- Function: return the name space from the model file
-           eg. "http://www.intermine.org/model/testmodel#"
- Args    : none
-
-=cut
-sub name_space
-{
-  my $self = shift;
-  return $self->{name_space};
 }
 
 =head2 package_name

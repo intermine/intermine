@@ -41,8 +41,6 @@ import org.apache.log4j.Logger;
  */
 public class RandomDataGenerator extends FileConverter
 {
-    protected static final String NS = "http://www.intermine.org/model/performancetest1#";
-
     protected static final Logger LOG = Logger.getLogger(RandomDataGenerator.class);
 
     protected ItemFactory itemFactory;
@@ -262,6 +260,6 @@ public class RandomDataGenerator extends FileConverter
     }
 
     public Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className), NS + className, "");
+        return itemFactory.makeItem(alias(className) + "_" + newId(className), className, "");
     }
 }

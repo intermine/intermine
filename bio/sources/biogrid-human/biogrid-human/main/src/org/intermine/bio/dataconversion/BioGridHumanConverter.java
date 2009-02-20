@@ -36,8 +36,6 @@ import org.intermine.xml.full.ReferenceList;
  */
 public class BioGridHumanConverter extends FileConverter 
 {
-
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private static Map<String, String> masterList = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;

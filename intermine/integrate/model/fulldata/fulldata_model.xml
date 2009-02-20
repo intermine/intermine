@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<model name="fulldata" namespace="http://www.intermine.org/model/fulldata#">
+<model name="fulldata">
   <class name="org.intermine.model.fulldata.Item" is-interface="false">
     <attribute name="className" type="java.lang.String"/>
     <attribute name="implementations" type="java.lang.String"/>

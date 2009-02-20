@@ -43,7 +43,7 @@ public class InterMineModelParser implements ModelParser
     public Model process(Reader reader) throws Exception {
         ModelHandler handler = new ModelHandler();
         SAXParser.parse(new InputSource(reader), handler);
-        Model model = new Model(handler.modelName, handler.modelNameSpace, handler.classes);
+        Model model = new Model(handler.modelName, handler.classes);
         return model;
     }
 
@@ -67,7 +67,6 @@ public class InterMineModelParser implements ModelParser
     class ModelHandler extends DefaultHandler
     {
         String modelName;
-        String modelNameSpace;
         Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
         SkeletonClass cls;
 
@@ -77,7 +76,6 @@ public class InterMineModelParser implements ModelParser
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if (qName.equals("model")) {
                 modelName = attrs.getValue("name");
-                modelNameSpace = attrs.getValue("namespace");
             } else if (qName.equals("class")) {
                 String name = attrs.getValue("name");
                 String supers = attrs.getValue("extends");

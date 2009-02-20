@@ -105,7 +105,7 @@ public abstract class DataConverter
      */
     public Item createItem(String className) {
         return itemFactory.makeItem(alias(className) + "_" + newId(className),
-                                    model.getNameSpace() + className, "");
+                className, "");
     }
 
     /**

@@ -1,4 +1,4 @@
-<model name="testmodel" namespace="http://www.intermine.org/model/testmodel#">
+<model name="testmodel">
     <class name="org.intermine.model.testmodel.Broke" is-interface="true">
         <attribute name="debt" type="int"/>
         <reference name="bank" referenced-type="org.intermine.model.testmodel.Bank" reverse-reference="debtors"/>

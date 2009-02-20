@@ -505,7 +505,7 @@ public class GFF3Converter
      * @return the created item
      */
     Item createItem(String className, String identifier) {
-        return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
+        return itemFactory.makeItem(identifier, className, "");
     }
 
     private String createIdentifier() {

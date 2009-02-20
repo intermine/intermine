@@ -30,7 +30,7 @@ public class ModelMergerTest extends TestCase
     public void setUp() throws Exception {
         parser = new InterMineModelParser();
         testModel = Model.getInstanceByName("testmodel");
-        emptyModel = new Model("testModel", "testmodel#", Collections.EMPTY_SET);
+        emptyModel = new Model("testModel", Collections.EMPTY_SET);
     }
 
     public void testCloneClassDescriptor() throws Exception {

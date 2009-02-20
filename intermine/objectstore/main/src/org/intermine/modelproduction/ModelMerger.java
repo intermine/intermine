@@ -91,12 +91,10 @@ public class ModelMerger
         // Remove any reference or collection descriptors made redundant by additions
         newClasses = removeRedundancy(newClasses);
         try {
-            Model newModel = new Model(original.getName(), original.getNameSpace().toString(),
+            Model newModel = new Model(original.getName(),
                     new HashSet<ClassDescriptor>(newClasses.values()));
             return newModel;
 
-        } catch (URISyntaxException err) {
-            throw new ModelMergerException(err);
         } catch (MetaDataException err) {
             throw new ModelMergerException(err);
         }

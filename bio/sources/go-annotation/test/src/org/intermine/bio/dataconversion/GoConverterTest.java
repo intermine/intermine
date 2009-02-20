@@ -31,7 +31,6 @@ public class GoConverterTest extends ItemsTestCase
 {
     private File goOboFile;
     Model model;
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     GoConverter converter;
     MockItemWriter writer;
     
@@ -86,22 +85,22 @@ public class GoConverterTest extends ItemsTestCase
     public void testCreateWithObjects() throws Exception {
         Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        Item gene1 = tgtItemFactory.makeItem("0_1", GENOMIC_NS + "Gene", "");
+        Item gene1 = tgtItemFactory.makeItem("0_1", "Gene", "");
         gene1.setAttribute("primaryIdentifier", "FBgn0026430");
         gene1.setReference("organism", "3_1");
         gene1.addToCollection("dataSets", "2_1");
         expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("0_2", GENOMIC_NS + "Gene", "");
+        Item gene2 = tgtItemFactory.makeItem("0_2", "Gene", "");
         gene2.setAttribute("primaryIdentifier", "FBgn0001612");
         gene2.setReference("organism", "3_1");
         gene2.addToCollection("dataSets", "2_1");
         expected.add(gene2);
-        Item organism = tgtItemFactory.makeItem("3_1", GENOMIC_NS + "Organism", "");
+        Item organism = tgtItemFactory.makeItem("3_1", "Organism", "");
         organism.setAttribute("taxonId", "7227");
-        Item datasource = tgtItemFactory.makeItem("1_1", GENOMIC_NS + "DataSource", "");
+        Item datasource = tgtItemFactory.makeItem("1_1", "DataSource", "");
         datasource.setAttribute("name", "FlyBase");
 
-        Item dataset = tgtItemFactory.makeItem("2_1", GENOMIC_NS + "DataSet", "");
+        Item dataset = tgtItemFactory.makeItem("2_1", "DataSet", "");
         dataset.setAttribute("title", "Gene Annotation for FlyBase");
         datasource.setCollection("dataSets", new ArrayList(Collections.singleton(dataset.getIdentifier())));
         assertEquals(expected, new HashSet(converter.createWithObjects(

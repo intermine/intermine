@@ -498,14 +498,6 @@ public class Item implements Comparable
             return null;
         }
 
-        String classNameNS = XmlUtil.getNamespaceFromURI(className);
-
-        if (!model.getNameSpace().toString().equals(classNameNS)) {
-            throw new RuntimeException("class \"" + className + "\" is not in the Model "
-                                       + "(namespace doesn't match \""
-                                       + model.getNameSpace() + "\" != \"" + classNameNS + "\")");
-        }
-
         String fullClassName = model.getPackageName() + "." + XmlUtil.getFragmentFromURI(className);
 
         ClassDescriptor cd = model.getClassDescriptorByName(fullClassName);

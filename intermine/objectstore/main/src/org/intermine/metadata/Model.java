@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
@@ -41,7 +39,6 @@ public class Model
     private static Map<String, Model> models = new HashMap<String, Model>();
 
     private final String modelName;
-    private final URI nameSpace;
     private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
             ClassDescriptor>();
     private final Map<ClassDescriptor, Set<ClassDescriptor>> subMap
@@ -82,24 +79,15 @@ public class Model
      * by members of the modelproduction package, eventually it may be replaced with
      * a static addModel method linked to getInstanceByName.
      * @param name name of model
-     * @param nameSpace the nameSpace uri for this model
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
-     * @throws URISyntaxException if nameSpace string is invalid
      */
-    public Model(String name, String nameSpace, Set<ClassDescriptor> clds) throws MetaDataException,
-           URISyntaxException  {
+    public Model(String name, Set<ClassDescriptor> clds) throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
         if (name.equals("")) {
             throw new IllegalArgumentException("Model name cannot be empty");
-        }
-        if (nameSpace == null) {
-            throw new NullPointerException("Model nameSpace cannot be null");
-        }
-        if (nameSpace.equals("")) {
-            throw new IllegalArgumentException("Model nameSpace cannot be empty");
         }
         if (clds == null) {
             throw new NullPointerException("Model ClassDescriptors list cannot be null");
@@ -107,7 +95,6 @@ public class Model
 
         this.modelName = name;
 
-        this.nameSpace = new URI(XmlUtil.correctNamespace(nameSpace));
         LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
         Set<ReferenceDescriptor> emptyRefs = Collections.emptySet();
@@ -229,21 +216,12 @@ public class Model
     }
 
     /**
-     * Get the nameSpace URI of this model
-     * @return nameSpace URI of the model
-     */
-    public URI getNameSpace() {
-        return nameSpace;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
         if (obj instanceof Model) {
             Model model = (Model) obj;
             return modelName.equals(model.modelName)
-                && nameSpace.equals(model.nameSpace)
                 && cldMap.equals(model.cldMap);
         }
         return false;
@@ -262,7 +240,7 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + modelName + "\" namespace=\"" + nameSpace + "\">");
+        sb.append("<model name=\"" + modelName + "\">");
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
