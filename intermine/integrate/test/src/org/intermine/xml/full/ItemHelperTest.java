@@ -34,8 +34,8 @@ public class ItemHelperTest extends TestCase
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
         item = new Item();
-        item.setClassName("http://www.intermine.org/model/testmodel#Department");
-        item.setImplementations("http://www.intermine.org/model/testmodel#Broke");
+        item.setClassName("Department");
+        item.setImplementations("Broke");
         item.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -56,8 +56,8 @@ public class ItemHelperTest extends TestCase
         item.addCollection(col1);
 
         dbItem = new org.intermine.model.fulldata.Item();
-        dbItem.setClassName("http://www.intermine.org/model/testmodel#Department");
-        dbItem.setImplementations("http://www.intermine.org/model/testmodel#Broke");
+        dbItem.setClassName("Department");
+        dbItem.setImplementations("Broke");
         dbItem.setIdentifier("1");
         dbItem.setId(1001);
         org.intermine.model.fulldata.Attribute dbAttr1 = new  org.intermine.model.fulldata.Attribute();
@@ -117,12 +117,12 @@ public class ItemHelperTest extends TestCase
 
     public void testGenerateClassNamesSingle() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        assertEquals("org.intermine.model.testmodel.Company", ItemHelper.generateClassNames(model.getNameSpace() + "Company", model));
+        assertEquals("org.intermine.model.testmodel.Company", ItemHelper.generateClassNames("Company", model));
     }
 
     public void testGenerateClassNamesMultiple() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        String classNames = " " + model.getNameSpace() + "Company " + model.getNameSpace() + "Department ";
+        String classNames = " Company Department ";
         String expected = "org.intermine.model.testmodel.Company org.intermine.model.testmodel.Department";
         assertEquals(expected, ItemHelper.generateClassNames(classNames, model));
     }

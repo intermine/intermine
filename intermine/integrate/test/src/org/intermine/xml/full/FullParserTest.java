@@ -34,7 +34,7 @@ public class FullParserTest extends TestCase
 
     public void setUp() throws Exception {
         Item item1 = new Item();
-        item1.setImplementations("http://www.intermine.org/model/testmodel#Company");
+        item1.setImplementations("Company");
         item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -55,8 +55,8 @@ public class FullParserTest extends TestCase
         item1.addCollection(col1);
 
         Item item2 = new Item();
-        item2.setClassName("http://www.intermine.org/model/testmodel#Address");
-        item2.setImplementations("http://www.intermine.org/model/testmodel#Thing");
+        item2.setClassName("Address");
+        item2.setImplementations("Thing");
         item2.setIdentifier("2");
         Attribute field2 = new Attribute();
         field2.setName("address");
@@ -64,8 +64,8 @@ public class FullParserTest extends TestCase
         item2.addAttribute(field2);
 
         Item item3 = new Item();
-        item3.setClassName("http://www.intermine.org/model/testmodel#Department");
-        item3.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
+        item3.setClassName("Department");
+        item3.setImplementations("RandomInterface");
         item3.setIdentifier("3");
         Attribute field3 = new Attribute();
         field3.setName("name");
@@ -73,8 +73,8 @@ public class FullParserTest extends TestCase
         item3.addAttribute(field3);
 
         departmentItem = new Item();
-        departmentItem.setClassName("http://www.intermine.org/model/testmodel#Department");
-        departmentItem.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
+        departmentItem.setClassName("Department");
+        departmentItem.setImplementations("RandomInterface");
         departmentItem.setIdentifier("4");
         Attribute field4 = new Attribute();
         field4.setName("name");
@@ -147,7 +147,7 @@ public class FullParserTest extends TestCase
 
     // test with an invalid class name for an item
     public void testRealiseObjectsInvalidClass() throws Exception {
-        departmentItem.setClassName("http://www.intermine.org/model/testmodel#Monkey");
+        departmentItem.setClassName("Monkey");
         // if failOnError try should throw an exception
         try {
             FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);

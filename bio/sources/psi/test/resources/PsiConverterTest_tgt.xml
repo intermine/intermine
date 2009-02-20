@@ -1,9 +1,9 @@
 <items>
-<item id="6_3" class="http://www.flymine.org/model/genomic#Comment">
+<item id="6_3" class="Comment">
 <attribute name="text" value="J. Biol. Chem. (0021-9258)"/>
 <attribute name="type" value="journal"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#InteractionExperiment">
+<item id="4_1" class="InteractionExperiment">
 <attribute name="description" value="Interaction of Alzheimer's beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
 <attribute name="name" value="taru-2002-3"/>
 <reference name="interactionDetectionMethod" ref_id="2_2"/>
@@ -11,22 +11,22 @@
 <reference name="publication" ref_id="5_1"/>
 <collection name="comments"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/></collection>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="DataSource">
 <attribute name="name" value="IntAct"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<item id="2_1" class="InteractionTerm">
 <attribute name="identifier" value="MI:0117"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="2_4" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<item id="2_4" class="InteractionTerm">
 <attribute name="identifier" value="MI:0218"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_2" class="http://www.flymine.org/model/genomic#Comment">
+<item id="6_2" class="Comment">
 <attribute name="text" value="2002"/>
 <attribute name="type" value="publication-year"/>
 </item>
-<item id="10_1" class="http://www.flymine.org/model/genomic#Interaction">
+<item id="10_1" class="Interaction">
 <attribute name="name" value="IntAct:FBgn002_FBgn001"/>
 <attribute name="role" value="prey"/>
 <attribute name="interactionType" value="physical"/>
@@ -38,29 +38,29 @@
 <collection name="interactingGenes"><reference ref_id="7_2"/></collection>
 <collection name="interactingRegions"><reference ref_id="8_1"/></collection>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#Publication">
+<item id="5_1" class="Publication">
 <attribute name="pubMedId" value="11912189"/>
 </item>
-<item id="9_1" class="http://www.flymine.org/model/genomic#Location">
+<item id="9_1" class="Location">
 <attribute name="end" value="370"/>
 <attribute name="start" value="1"/>
 <reference name="object" ref_id="7_2"/>
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="1_1" class="DataSet">
 <attribute name="title" value="IntAct data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="2_2" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<item id="2_2" class="InteractionTerm">
 <attribute name="identifier" value="MI:0007"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="2_3" class="http://www.flymine.org/model/genomic#InteractionTerm">
+<item id="2_3" class="InteractionTerm">
 <attribute name="identifier" value="MI:0086"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="8_1" class="http://www.flymine.org/model/genomic#InteractionRegion">
+<item id="8_1" class="InteractionRegion">
 <attribute name="endStatus" value="certain"/>
 <attribute name="name" value="region"/>
 <attribute name="primaryIdentifier" value="appl-aplip1-2_FBgn001:1-370"/>
@@ -71,7 +71,7 @@
 <reference name="ontologyTerm" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="10_2" class="http://www.flymine.org/model/genomic#Interaction">
+<item id="10_2" class="Interaction">
 <attribute name="name" value="IntAct:FBgn001_FBgn002"/>
 <attribute name="role" value="bait"/>
 <attribute name="interactionType" value="physical"/>
@@ -83,19 +83,19 @@
 <collection name="interactingGenes"><reference ref_id="7_1"/></collection>
 <collection name="interactingRegions"><reference ref_id="8_1"/></collection>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="3_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="7_1" class="http://www.flymine.org/model/genomic#Gene">
+<item id="7_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn002"/>
 <reference name="organism" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="6_1" class="http://www.flymine.org/model/genomic#Comment">
+<item id="6_1" class="Comment">
 <attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
 <attribute name="type" value="author-list"/>
 </item>
-<item id="7_2" class="http://www.flymine.org/model/genomic#Gene">
+<item id="7_2" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>

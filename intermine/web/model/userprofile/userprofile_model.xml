@@ -1,4 +1,4 @@
-<model name="userprofile" namespace="http://www.intermine.org/model/userprofile#">
+<model name="userprofile">
   <class name="org.intermine.model.userprofile.UserProfile" is-interface="false">
     <attribute name="username" type="java.lang.String"/>
     <attribute name="password" type="java.lang.String"/>

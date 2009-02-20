@@ -38,8 +38,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PrideConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     //the following maps should avoid that not unnecessary objects will be created
     private Map<String, String> mapOrganism = new HashMap<String, String>();
     private Map<String, String> mapPublication = new HashMap<String, String>();

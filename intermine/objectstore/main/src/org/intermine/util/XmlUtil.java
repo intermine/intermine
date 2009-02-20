@@ -65,7 +65,6 @@ public class XmlUtil
         return uri;
     }
 
-    
     /**
      * Apply some indentiation to some XML. This method is not very sophisticated and will
      * not cope well with anything but the simplest XML (no CDATA etc). The algorithm used does

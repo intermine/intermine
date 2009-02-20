@@ -31,7 +31,6 @@ import org.intermine.xml.full.Item;
 
 public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 {
-    private String tgtNs;
     private static final String REDFLY_PREFIX = "REDfly:";
     private Map<String, Item> anatomyMap = new LinkedHashMap<String, Item>();
     private Map<String, Item> geneMap = new HashMap<String, Item>();
@@ -47,7 +46,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
      */
     public RedFlyGFF3RecordHandler (Model tgtModel) {
         super(tgtModel);
-        tgtNs = tgtModel.getNameSpace().toString();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -59,7 +57,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        feature.setClassName(tgtNs + "CRM");
+        feature.setClassName("CRM");
 
         String name = record.getId();
 
@@ -160,7 +158,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         String primaryIdentifier = resolver.resolveId(TAXON_ID, geneId).iterator().next();
         Item geneItem = geneMap.get(primaryIdentifier);
         if (geneItem == null) {
-            geneItem = getItemFactory().makeItem(null, tgtNs + "Gene", "");
+            geneItem = getItemFactory().makeItem(null, "Gene", "");
             geneItem.addAttribute(new Attribute("primaryIdentifier", primaryIdentifier));
             geneItem.setReference("organism", getOrganism());
             addItem(geneItem);
@@ -174,7 +172,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             return anatomyMap.get(ontologyTermId);
         }
 
-        Item anatomyItem = getItemFactory().makeItem(null, tgtNs + "AnatomyTerm", "");
+        Item anatomyItem = getItemFactory().makeItem(null, "AnatomyTerm", "");
         anatomyItem.addAttribute(new Attribute("identifier", ontologyTermId));
         addItem(anatomyItem);
         anatomyMap.put(ontologyTermId, anatomyItem);
@@ -192,7 +190,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             return publications.get(pubmedId);
         }
 
-        Item publicationItem = getItemFactory().makeItem(null, tgtNs + "Publication", "");
+        Item publicationItem = getItemFactory().makeItem(null, "Publication", "");
         publicationItem.addAttribute(new Attribute("pubMedId", pubmedId));
         addItem(publicationItem);
         publications.put(pubmedId, publicationItem);

@@ -192,8 +192,8 @@ public class ItemFactory
 
         Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()
                 .toString() : null);
-        item.setClassName(className.equals("") ? "" : model.getNameSpace()
-                          + TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
+        item.setClassName(className.equals("") ? ""
+                : TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
         item.setImplementations(getImplements(obj, model));
 
         try {
@@ -262,8 +262,7 @@ public class ItemFactory
             ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
             if (cld != null && cld.isInterface()
                 && !cld.getName().equals("org.intermine.model.InterMineObject")) {
-                sb.append(model.getNameSpace().toString()
-                          + TypeUtil.unqualifiedName(interfaces[i].getName())).append(" ");
+                sb.append(TypeUtil.unqualifiedName(interfaces[i].getName())).append(" ");
             }
         }
         return sb.toString().trim();

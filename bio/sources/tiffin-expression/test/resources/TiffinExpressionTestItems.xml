@@ -1,429 +1,429 @@
 <items>
-<item id="5_82" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_82" class="MRNAExpressionTerm">
 <attribute name="name" value="P2 primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_38" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_38" class="MRNAExpressionTerm">
 <attribute name="name" value="fertilized egg"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_94" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_94" class="MRNAExpressionTerm">
 <attribute name="name" value="dorsal ectoderm anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_80" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_80" class="MRNAExpressionTerm">
 <attribute name="name" value="integumentary system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_33" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_33" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S10B oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_37" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_37" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S6 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_16" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_16" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13A oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_72" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_72" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic proventriculus"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_62" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_62" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic digestive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="2_1" class="http://www.flymine.org/model/genomic#Organism">
+<item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="5_29" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_29" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S2 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_10" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_10" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12C oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_84" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_84" class="MRNAExpressionTerm">
 <attribute name="name" value="foregut"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_34" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_34" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S8 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_53" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_53" class="MRNAExpressionTerm">
 <attribute name="name" value="prothoracic segment"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="4_1" class="http://www.flymine.org/model/genomic#Motif">
+<item id="4_1" class="Motif">
 <attribute name="primaryIdentifier" value="TIFDMEM0000005"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="expressionTerms"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/><reference ref_id="5_4"/><reference ref_id="5_5"/><reference ref_id="5_6"/><reference ref_id="5_7"/><reference ref_id="5_8"/><reference ref_id="5_9"/><reference ref_id="5_10"/><reference ref_id="5_11"/><reference ref_id="5_12"/><reference ref_id="5_13"/><reference ref_id="5_14"/><reference ref_id="5_15"/><reference ref_id="5_16"/><reference ref_id="5_17"/><reference ref_id="5_18"/><reference ref_id="5_19"/><reference ref_id="5_20"/><reference ref_id="5_21"/><reference ref_id="5_22"/><reference ref_id="5_23"/><reference ref_id="5_24"/><reference ref_id="5_25"/><reference ref_id="5_26"/><reference ref_id="5_27"/><reference ref_id="5_28"/><reference ref_id="5_29"/><reference ref_id="5_30"/><reference ref_id="5_31"/><reference ref_id="5_32"/><reference ref_id="5_33"/><reference ref_id="5_34"/><reference ref_id="5_35"/><reference ref_id="5_36"/><reference ref_id="5_37"/><reference ref_id="5_38"/><reference ref_id="5_39"/><reference ref_id="5_40"/><reference ref_id="5_41"/><reference ref_id="5_42"/><reference ref_id="5_43"/><reference ref_id="5_44"/><reference ref_id="5_45"/><reference ref_id="5_46"/><reference ref_id="5_47"/><reference ref_id="5_48"/><reference ref_id="5_49"/></collection>
 </item>
-<item id="5_43" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_43" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S4 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_41" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_41" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_49" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_49" class="MRNAExpressionTerm">
 <attribute name="name" value="nerve fiber"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_21" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_21" class="MRNAExpressionTerm">
 <attribute name="name" value="egg stage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_61" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_61" class="MRNAExpressionTerm">
 <attribute name="name" value="procephalic ectoderm anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_40" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_40" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13D oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="4_2" class="http://www.flymine.org/model/genomic#Motif">
+<item id="4_2" class="Motif">
 <attribute name="primaryIdentifier" value="TIFDMEM0000007"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="expressionTerms"><reference ref_id="5_50"/><reference ref_id="5_51"/><reference ref_id="5_52"/><reference ref_id="5_53"/><reference ref_id="5_54"/><reference ref_id="5_55"/><reference ref_id="5_56"/><reference ref_id="5_57"/><reference ref_id="5_58"/></collection>
 </item>
-<item id="5_91" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_91" class="MRNAExpressionTerm">
 <attribute name="name" value="anterior ectoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_22" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_22" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12A oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_83" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_83" class="MRNAExpressionTerm">
 <attribute name="name" value="stage13-16"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+<item id="1_1" class="DataSet">
 <attribute name="title" value="Tiffin"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="5_90" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_90" class="MRNAExpressionTerm">
 <attribute name="name" value="ectoderm anlage in statu nascendi"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_6" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_6" class="MRNAExpressionTerm">
 <attribute name="name" value="egg chamber"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_48" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_48" class="MRNAExpressionTerm">
 <attribute name="name" value="nerve"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_7" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_7" class="MRNAExpressionTerm">
 <attribute name="name" value="ovariole"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_45" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_45" class="MRNAExpressionTerm">
 <attribute name="name" value="reproductive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_20" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_20" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S1 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_81" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_81" class="MRNAExpressionTerm">
 <attribute name="name" value="ectoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_74" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_74" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic foregut"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_14" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_14" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic stage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_69" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_69" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic/larval foregut"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_97" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_97" class="MRNAExpressionTerm">
 <attribute name="name" value="dorsal epidermis primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_56" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_56" class="MRNAExpressionTerm">
 <attribute name="name" value="adult hindgut specific anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_1" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_1" class="MRNAExpressionTerm">
 <attribute name="name" value="anatomical descriptive term"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_79" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_79" class="MRNAExpressionTerm">
 <attribute name="name" value="germ layer"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_88" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_88" class="MRNAExpressionTerm">
 <attribute name="name" value="anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_35" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_35" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S9 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_42" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_42" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S14 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_11" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_11" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S14A oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_85" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_85" class="MRNAExpressionTerm">
 <attribute name="name" value="larva"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="3_1" class="http://www.flymine.org/model/genomic#Publication">
+<item id="3_1" class="Publication">
 <attribute name="pubMedId" value="17238282"/>
 </item>
-<item id="5_31" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_31" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13C oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_25" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_25" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="4_3" class="http://www.flymine.org/model/genomic#Motif">
+<item id="4_3" class="Motif">
 <attribute name="primaryIdentifier" value="TIFDMEM0000009"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="expressionTerms"><reference ref_id="5_59"/><reference ref_id="5_60"/><reference ref_id="5_61"/><reference ref_id="5_62"/><reference ref_id="5_63"/><reference ref_id="5_64"/><reference ref_id="5_65"/><reference ref_id="5_66"/><reference ref_id="5_67"/><reference ref_id="5_68"/><reference ref_id="5_69"/><reference ref_id="5_70"/><reference ref_id="5_71"/><reference ref_id="5_72"/><reference ref_id="5_73"/><reference ref_id="5_74"/><reference ref_id="5_75"/><reference ref_id="5_76"/><reference ref_id="5_77"/><reference ref_id="5_78"/><reference ref_id="5_79"/><reference ref_id="5_80"/><reference ref_id="5_81"/><reference ref_id="5_82"/><reference ref_id="5_83"/><reference ref_id="5_84"/><reference ref_id="5_85"/><reference ref_id="5_86"/><reference ref_id="5_87"/><reference ref_id="5_88"/><reference ref_id="5_89"/><reference ref_id="5_90"/><reference ref_id="5_91"/><reference ref_id="5_92"/><reference ref_id="5_93"/><reference ref_id="5_94"/><reference ref_id="5_95"/><reference ref_id="5_96"/><reference ref_id="5_97"/><reference ref_id="5_98"/><reference ref_id="5_99"/><reference ref_id="5_100"/></collection>
 </item>
-<item id="5_9" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_9" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S14B oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_78" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_78" class="MRNAExpressionTerm">
 <attribute name="name" value="Drosophila"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_66" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_66" class="MRNAExpressionTerm">
 <attribute name="name" value="digestive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_59" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_59" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic epidermis"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_76" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_76" class="MRNAExpressionTerm">
 <attribute name="name" value="ectoderm anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_99" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_99" class="MRNAExpressionTerm">
 <attribute name="name" value="neurogenic region"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_4" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_4" class="MRNAExpressionTerm">
 <attribute name="name" value="female reproductive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_28" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_28" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S10A oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_60" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_60" class="MRNAExpressionTerm">
 <attribute name="name" value="P3 primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_2" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_2" class="MRNAExpressionTerm">
 <attribute name="name" value="maternal"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_87" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_87" class="MRNAExpressionTerm">
 <attribute name="name" value="organ system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_26" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_26" class="MRNAExpressionTerm">
 <attribute name="name" value="syncytial blastoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_64" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_64" class="MRNAExpressionTerm">
 <attribute name="name" value="procephalic ectoderm anlage in statu nascendi"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_30" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_30" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S7 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_67" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_67" class="MRNAExpressionTerm">
 <attribute name="name" value="whole organism"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_65" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_65" class="MRNAExpressionTerm">
 <attribute name="name" value="proventriculus"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_96" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_96" class="MRNAExpressionTerm">
 <attribute name="name" value="dorsal ectoderm primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_89" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_89" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic/larval proventriculus"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_44" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_44" class="MRNAExpressionTerm">
 <attribute name="name" value="gonad"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_27" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_27" class="MRNAExpressionTerm">
 <attribute name="name" value="developmental stage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_52" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_52" class="MRNAExpressionTerm">
 <attribute name="name" value="prothoracic gland primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_51" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_51" class="MRNAExpressionTerm">
 <attribute name="name" value="prothoracic gland plate"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_46" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_46" class="MRNAExpressionTerm">
 <attribute name="name" value="neuron"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_32" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_32" class="MRNAExpressionTerm">
 <attribute name="name" value="cellular blastoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_12" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_12" class="MRNAExpressionTerm">
 <attribute name="name" value="blastoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_19" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_19" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S10 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_100" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_100" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic/larval nervous system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_50" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_50" class="MRNAExpressionTerm">
 <attribute name="name" value="prothoracic gland"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_5" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_5" class="MRNAExpressionTerm">
 <attribute name="name" value="oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_71" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_71" class="MRNAExpressionTerm">
 <attribute name="name" value="embryo"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_70" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_70" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic/larval digestive system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_13" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_13" class="MRNAExpressionTerm">
 <attribute name="name" value="unfertilized egg"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_8" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_8" class="MRNAExpressionTerm">
 <attribute name="name" value="ovary"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_73" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_73" class="MRNAExpressionTerm">
 <attribute name="name" value="germ layer anlage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_77" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_77" class="MRNAExpressionTerm">
 <attribute name="name" value="procephalic ectoderm primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_75" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_75" class="MRNAExpressionTerm">
 <attribute name="name" value="epidermis"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_58" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_58" class="MRNAExpressionTerm">
 <attribute name="name" value="adult hindgut primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_63" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_63" class="MRNAExpressionTerm">
 <attribute name="name" value="stage"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_68" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_68" class="MRNAExpressionTerm">
 <attribute name="name" value="proventriculus primordium"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_47" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_47" class="MRNAExpressionTerm">
 <attribute name="name" value="lateral cord neuron"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_98" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_98" class="MRNAExpressionTerm">
 <attribute name="name" value="ventral nervous system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_23" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_23" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S13B oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_93" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_93" class="MRNAExpressionTerm">
 <attribute name="name" value="embryonic integumentary system"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_18" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_18" class="MRNAExpressionTerm">
 <attribute name="name" value="pre-blastoderm"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_24" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_24" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S3 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_3" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_3" class="MRNAExpressionTerm">
 <attribute name="name" value="stage1-3"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_55" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_55" class="MRNAExpressionTerm">
 <attribute name="name" value="thoracic segment"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_39" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_39" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S11 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_92" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_92" class="MRNAExpressionTerm">
 <attribute name="name" value="stomodeum"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_15" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_15" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S5 oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_57" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_57" class="MRNAExpressionTerm">
 <attribute name="name" value="adult hindgut precursor"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_54" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_54" class="MRNAExpressionTerm">
 <attribute name="name" value="thorax"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_17" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_17" class="MRNAExpressionTerm">
 <attribute name="name" value="stage S12B oocyte"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+<item id="0_1" class="DataSource">
 <attribute name="name" value="Sanger Institute"/>
 </item>
-<item id="5_86" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_86" class="MRNAExpressionTerm">
 <attribute name="name" value="stomodeal invagination"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_36" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_36" class="MRNAExpressionTerm">
 <attribute name="name" value="gamete"/>
 <attribute name="type" value="ImaGO"/>
 </item>
-<item id="5_95" class="http://www.flymine.org/model/genomic#MRNAExpressionTerm">
+<item id="5_95" class="MRNAExpressionTerm">
 <attribute name="name" value="dorsal ectoderm anlage in statu nascendi"/>
 <attribute name="type" value="ImaGO"/>
 </item>

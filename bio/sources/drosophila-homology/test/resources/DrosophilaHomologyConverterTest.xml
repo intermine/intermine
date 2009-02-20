@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
 <items>
-  <item id="3_3" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_3" class="Gene">
     <attribute name="primaryIdentifier" value="FBgn001"/>
     <reference name="organism" ref_id="4_3"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="3_4" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_4" class="Gene">
     <attribute name="primaryIdentifier" value="FBgn002"/>
     <reference name="organism" ref_id="4_3"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="3_1" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_1" class="Gene">
     <attribute name="primaryIdentifier" value="FBgn003"/>
     <reference name="organism" ref_id="4_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>  
   </item>
-  <item id="1_1" class="http://www.flymine.org/model/genomic#DataSet">
+  <item id="1_1" class="DataSet">
     <attribute name="title" value="Drosophila 12 Genomes Consortium homology"/>
     <reference name="dataSource" ref_id="0_1"/>
   </item>
-  <item id="0_1" class="http://www.flymine.org/model/genomic#DataSource">
+  <item id="0_1" class="DataSource">
     <attribute name="name" value="FlyBase"/>
   </item>
-  <item id="5_6" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_6" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_2"/>
@@ -40,7 +40,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_9" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_9" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_3"/>
@@ -52,7 +52,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_5" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_5" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_2"/>
@@ -64,7 +64,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_4" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_4" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_2"/>
@@ -76,10 +76,10 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="4_3" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="4_3" class="Organism">
     <attribute name="taxonId" value="7234"/>
   </item>
-  <item id="5_8" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_8" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_4"/>
@@ -91,7 +91,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_1" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_1" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="orthologue"/>
     <reference name="gene" ref_id="3_1"/>
@@ -103,17 +103,17 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="3_2" class="http://www.flymine.org/model/genomic#Gene">
+  <item id="3_2" class="Gene">
     <attribute name="primaryIdentifier" value="FBgn004"/>
     <reference name="organism" ref_id="4_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
     </collection>
   </item>
-  <item id="2_1" class="http://www.flymine.org/model/genomic#Publication">
+  <item id="2_1" class="Publication">
     <attribute name="pubMedId" value="17994087"/>
   </item>
-  <item id="5_10" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_10" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_4"/>
@@ -125,13 +125,13 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="4_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="4_1" class="Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
-  <item id="4_2" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="4_2" class="Organism">
     <attribute name="taxonId" value="7230"/>
   </item>
-  <item id="5_7" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_7" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_3"/>
@@ -143,7 +143,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_3" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_3" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_1"/>
@@ -155,7 +155,7 @@
       <reference ref_id="2_1"/>
     </collection>
   </item>
-  <item id="5_2" class="http://www.flymine.org/model/genomic#Homologue">
+  <item id="5_2" class="Homologue">
     <attribute name="clusterName" value="Drosophila homology:1"/>
     <attribute name="type" value="paralogue"/>
     <reference name="gene" ref_id="3_1"/>

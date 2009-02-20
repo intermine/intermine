@@ -61,8 +61,6 @@ public class EntrezOrganismRetriever extends Task
     private String osAlias = null;
     private String outputFile = null;
 
-    static final String TARGET_NS = "http://www.flymine.org/model/genomic#";
-
     /**
      * Set the ObjectStore alias.
      * @param osAlias The ObjectStore alias
@@ -251,7 +249,7 @@ Example
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve taxonomy record: " + characters);
             } else if ("Id".equals(name)) {
-                organism = itemFactory.makeItemForClass(TARGET_NS + "Organism");
+                organism = itemFactory.makeItemForClass("Organism");
                 toStore.add(organism);
                 organism.setAttribute("taxonId", characters.toString());
             } else if ("ScientificName".equals(name)) {

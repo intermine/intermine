@@ -439,7 +439,7 @@ public class GFF3RecordHandler
         Item feature = getFeature();
 
         // set additional references from parents according to references map
-        String clsName = classFromURI(feature.getClassName());
+        String clsName = feature.getClassName();
         if (references.containsKey(clsName) && getParentRelations() != null) {
             ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
@@ -482,8 +482,8 @@ public class GFF3RecordHandler
      */
     protected void setCrossGenomeMatch(Item feature, String orgAbb, String seqIdentifier,
                                        Item seq, String locString) {
-        String clsName = classFromURI(feature.getClassName());
-        String seqClsName = classFromURI(seq.getClassName());
+        String clsName = feature.getClassName();
+        String seqClsName = seq.getClassName();
         if (clsName.equals("CrossGenomeMatch")) {
             if (orgAbb != null) {
                 tgtOrganism = getTargetOrganism(orgAbb);
@@ -579,21 +579,13 @@ public class GFF3RecordHandler
     }
 
     /**
-     * @param uri string
-     * @return classname
-     */
-    private String classFromURI(String uri) {
-        return uri.split("#")[1].split("[.]")[0];
-    }
-
-    /**
      * Create an item with given className and item identifier
      * @param className the class to create
      * @param identifier the Item identifier of the new Item
      * @return the created item
      */
     private Item createItem(String className, String identifier) {
-        return itemFactory.makeItem(identifier, tgtModel.getNameSpace() + className, "");
+        return itemFactory.makeItem(identifier, className, "");
     }
 
     /**
@@ -654,8 +646,7 @@ public class GFF3RecordHandler
      * @return the new Synonym Item
      */
     public Item addSynonym(Item subject, String type, String value) {
-        String tgtNs = tgtModel.getNameSpace().toString();
-        Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
+        Item synonym = getItemFactory().makeItem(null, "Synonym", "");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());

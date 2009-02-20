@@ -1,5 +1,5 @@
 <items>
-  <item id="-1_1" class="http://www.flymine.org/model/genomic#Organism">
+  <item id="-1_1" class="Organism">
     <attribute name="taxonId" value="7227"/>
   </item>
 </items>

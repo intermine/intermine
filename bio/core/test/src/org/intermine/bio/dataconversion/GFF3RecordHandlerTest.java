@@ -27,28 +27,26 @@ public class GFF3RecordHandlerTest extends TestCase
 {
     private Model tgtModel;
     private ItemFactory itemFactory;
-    private String tgtNs;
 
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         itemFactory = new ItemFactory(tgtModel);
-        tgtNs = tgtModel.getNameSpace().toString();
     }
 
     public void testSetReference() throws Exception {
         GFF3RecordHandler handler = new GFF3RecordHandler(tgtModel);
 
-        Item threePrimeUTR = itemFactory.makeItem(null, tgtNs + "ThreePrimeUTR", "");
+        Item threePrimeUTR = itemFactory.makeItem(null, "ThreePrimeUTR", "");
         handler.setFeature(threePrimeUTR);
 
-        Item gene = itemFactory.makeItem(null, tgtNs + "Gene", "");
+        Item gene = itemFactory.makeItem(null, "Gene", "");
 
-        Item relation = itemFactory.makeItem(null, tgtNs + "SimpleRelation", "");
+        Item relation = itemFactory.makeItem(null, "SimpleRelation", "");
         relation.setReference("subject", threePrimeUTR.getIdentifier());
         relation.setReference("object", gene.getIdentifier());
         handler.addParentRelation(relation);
 
-        Item expected = itemFactory.makeItem(threePrimeUTR.getIdentifier(), tgtNs + "ThreePrimeUTR", "");
+        Item expected = itemFactory.makeItem(threePrimeUTR.getIdentifier(), "ThreePrimeUTR", "");
         expected.setReference("gene", gene.getIdentifier());
 
         Map refs = new HashMap();
@@ -61,22 +59,22 @@ public class GFF3RecordHandlerTest extends TestCase
     public void testSetCollection() throws Exception {
         GFF3RecordHandler handler = new GFF3RecordHandler(tgtModel);
 
-        Item exon = itemFactory.makeItem(null, tgtNs + "Exon", "");
+        Item exon = itemFactory.makeItem(null, "Exon", "");
         handler.setFeature(exon);
 
-        Item transcript1 = itemFactory.makeItem(null, tgtNs + "Transcript", "");
-        Item transcript2 = itemFactory.makeItem(null, tgtNs + "Transcript", "");
+        Item transcript1 = itemFactory.makeItem(null, "Transcript", "");
+        Item transcript2 = itemFactory.makeItem(null, "Transcript", "");
 
-        Item relation1 = itemFactory.makeItem(null, tgtNs + "SimpleRelation", "");
+        Item relation1 = itemFactory.makeItem(null, "SimpleRelation", "");
         relation1.setReference("subject", exon.getIdentifier());
         relation1.setReference("object", transcript1.getIdentifier());
         handler.addParentRelation(relation1);
-        Item relation2 = itemFactory.makeItem(null, tgtNs + "SimpleRelation", "");
+        Item relation2 = itemFactory.makeItem(null, "SimpleRelation", "");
         relation2.setReference("subject", exon.getIdentifier());
         relation2.setReference("object", transcript2.getIdentifier());
         handler.addParentRelation(relation2);
 
-        Item expected = itemFactory.makeItem(exon.getIdentifier(), tgtNs + "Exon", "");
+        Item expected = itemFactory.makeItem(exon.getIdentifier(), "Exon", "");
         ReferenceList transcripts = new ReferenceList("transcripts", Arrays.asList(new String[] {transcript1.getIdentifier(),
                                                                                                  transcript2.getIdentifier()}));
         expected.addCollection(transcripts);

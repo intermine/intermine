@@ -37,7 +37,7 @@ public class FullRendererTest extends XMLTestCase
 
     public void testRenderItem() throws Exception {
         Item item1 = new Item();
-        item1.setImplementations("http://www.intermine.org/testmodel#Company");
+        item1.setImplementations("Company");
         item1.setIdentifier("1");
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -53,7 +53,7 @@ public class FullRendererTest extends XMLTestCase
         col1.addRefId("4");
         item1.addCollection(col1);
 
-        String expected = "<item id=\"1\" class=\"\" implements=\"http://www.intermine.org/testmodel#Company\">"
+        String expected = "<item id=\"1\" class=\"\" implements=\"Company\">"
             + "<attribute name=\"name\" value=\"Company1\"/>"
             + "<reference name=\"address\" ref_id=\"2\"/>"
             + "<collection name=\"departments\">"
@@ -85,8 +85,8 @@ public class FullRendererTest extends XMLTestCase
 
         Item exp1 = new Item();
         exp1.setIdentifier("1234");
-        exp1.setClassName(model.getNameSpace() + "Employee");
-        exp1.setImplementations("http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress");
+        exp1.setClassName("Employee");
+        exp1.setImplementations("Employable HasAddress");
         Attribute atr1 = new Attribute();
         atr1.setName("name");
         atr1.setValue("Employee1");
@@ -125,7 +125,7 @@ public class FullRendererTest extends XMLTestCase
         Item exp1 = new Item();
         exp1.setIdentifier("1234");
         exp1.setClassName("");
-        exp1.setImplementations("http://www.intermine.org/model/testmodel#Broke http://www.intermine.org/model/testmodel#Company");
+        exp1.setImplementations("Broke Company");
         Attribute atr1 = new Attribute();
         atr1.setName("name");
         atr1.setValue("BrokeCompany1");
@@ -193,7 +193,7 @@ public class FullRendererTest extends XMLTestCase
         d.setId(new Integer(5678));
         e.setDepartment(d);
 
-        String expected = "<item id=\"1234\" class=\"http://www.intermine.org/model/testmodel#Employee\" implements=\"http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress\">" + ENDL
+        String expected = "<item id=\"1234\" class=\"Employee\" implements=\"Employable HasAddress\">" + ENDL
             + "<attribute name=\"age\" value=\"0\"/>" + ENDL
             + "<attribute name=\"fullTime\" value=\"false\"/>" + ENDL
             + "<attribute name=\"name\" value=\"Employee1\"/>" + ENDL
@@ -219,7 +219,7 @@ public class FullRendererTest extends XMLTestCase
         Broke b = (Broke) o;
         b.setDebt(10);
 
-        String expected = "<item id=\"1234\" class=\"\" implements=\"http://www.intermine.org/model/testmodel#Broke http://www.intermine.org/model/testmodel#Company\">" + ENDL
+        String expected = "<item id=\"1234\" class=\"\" implements=\"Broke Company\">" + ENDL
             + "<attribute name=\"debt\" value=\"10\"/>" + ENDL
             + "<attribute name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
             + "<attribute name=\"vatNumber\" value=\"0\"/>" + ENDL
@@ -241,9 +241,9 @@ public class FullRendererTest extends XMLTestCase
         List list = Arrays.asList(new Object[] {d1, d2});
 
         String expected = "<items>" + ENDL
-            + "<item id=\"5678\" class=\"http://www.intermine.org/model/testmodel#Department\" implements=\"http://www.intermine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<item id=\"5678\" class=\"Department\" implements=\"RandomInterface\">" + ENDL
             + "</item>" + ENDL
-            + "<item id=\"6789\" class=\"http://www.intermine.org/model/testmodel#Department\" implements=\"http://www.intermine.org/model/testmodel#RandomInterface\">" + ENDL
+            + "<item id=\"6789\" class=\"Department\" implements=\"RandomInterface\">" + ENDL
             + "</item>" + ENDL
             + "</items>" + ENDL;
 
@@ -270,7 +270,7 @@ public class FullRendererTest extends XMLTestCase
         t.setDateObjType(new Date(7777777777l));
         t.setStringObjType("A String");
 
-        String expected = "<item id=\"1234\" class=\"http://www.intermine.org/model/testmodel#Types\">" + ENDL
+        String expected = "<item id=\"1234\" class=\"Types\">" + ENDL
             + "<attribute name=\"bigDecimalObjType\" value=\"9872876349183274123432.876128716235487621432\"/>" + ENDL
             + "<attribute name=\"booleanObjType\" value=\"true\"/>" + ENDL
             + "<attribute name=\"booleanType\" value=\"true\"/>" + ENDL
@@ -303,7 +303,7 @@ public class FullRendererTest extends XMLTestCase
         String id4 = "4";
 
         Item item1 = new Item();
-        item1.setImplementations("http://www.intermine.org/model/testmodel#Company");
+        item1.setImplementations("Company");
         item1.setIdentifier(id1);
         Attribute attr1 = new Attribute();
         attr1.setName("name");
@@ -330,8 +330,8 @@ public class FullRendererTest extends XMLTestCase
         item1.addCollection(col1);
 
         Item item2 = new Item();
-        item2.setClassName("http://www.intermine.org/model/testmodel#Address");
-        item2.setImplementations("http://www.intermine.org/model/testmodel#Thing");
+        item2.setClassName("Address");
+        item2.setImplementations("Thing");
         item2.setIdentifier(id2);
         Attribute attr3 = new Attribute();
         attr3.setName("address");
@@ -339,8 +339,8 @@ public class FullRendererTest extends XMLTestCase
         item2.addAttribute(attr3);
 
         Item item3 = new Item();
-        item3.setClassName("http://www.intermine.org/model/testmodel#Department");
-        item3.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
+        item3.setClassName("Department");
+        item3.setImplementations("RandomInterface");
         item3.setIdentifier(id3);
         Attribute attr4 = new Attribute();
         attr4.setName("name");
@@ -348,8 +348,8 @@ public class FullRendererTest extends XMLTestCase
         item3.addAttribute(attr4);
 
         Item item4 = new Item();
-        item4.setClassName("http://www.intermine.org/model/testmodel#Department");
-        item4.setImplementations("http://www.intermine.org/model/testmodel#RandomInterface");
+        item4.setClassName("Department");
+        item4.setImplementations("RandomInterface");
         item4.setIdentifier(id4);
         Attribute attr5 = new Attribute();
         attr5.setName("name");

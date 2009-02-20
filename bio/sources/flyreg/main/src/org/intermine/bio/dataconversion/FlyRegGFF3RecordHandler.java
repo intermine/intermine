@@ -34,7 +34,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 {
     private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
     private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
-    private URI nameSpace;
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
 
@@ -55,8 +54,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-        nameSpace = getTargetModel().getNameSpace();
-        getFeature().setClassName(nameSpace + "TFBindingSite");
+        getFeature().setClassName("TFBindingSite");
 
         Item bindingSite = getFeature();
 
@@ -85,7 +83,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             bindingSite.setAttribute("evidenceMethod", elementEvidence);
         }
 
-        String publicationNs = nameSpace + "Publication";
+        String publicationNs = "Publication";
 
         List<String> dbxrefs = record.getAttributes().get("Dbxref");
 
@@ -160,7 +158,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String primaryIdentifier = resolver.resolveId(TAXON_ID, symbol).iterator().next();
         Item gene = geneIdMap.get(primaryIdentifier);
         if (gene == null) {
-            gene = getItemFactory().makeItemForClass(nameSpace + "Gene");
+            gene = getItemFactory().makeItemForClass("Gene");
             geneIdMap.put(primaryIdentifier, gene);
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
             gene.setReference("organism", getOrganism().getIdentifier());

@@ -25,15 +25,12 @@ import org.intermine.xml.full.Item;
 
 public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
 {
-    private String tgtNs;
-    
     /**
      * Create a new LongOligoGFF3RecordHandler for the given target model.
      * @param tgtModel the model for which items will be created
      */
     public LongOligoGFF3RecordHandler (Model tgtModel) {
         super(tgtModel);
-        tgtNs = tgtModel.getNameSpace().toString();
     }
 
     /**
@@ -55,7 +52,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         
         String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
         if (residues != null) {
-            Item seqItem = getItemFactory().makeItem(null, tgtNs + "Sequence", "");
+            Item seqItem = getItemFactory().makeItem(null, "Sequence", "");
             seqItem.setAttribute("residues", residues);
             seqItem.setAttribute("length", "" + residues.length());
             addItem(seqItem);
@@ -76,7 +73,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
      * Create a synonym Item from the given information.
      */
     private Item createSynonym(Item subject, String type, String value) {
-        Item synonym = getItemFactory().makeItem(null, tgtNs + "Synonym", "");
+        Item synonym = getItemFactory().makeItem(null, "Synonym", "");
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());

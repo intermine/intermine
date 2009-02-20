@@ -1637,10 +1637,10 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Method to add dataSets and DataSources to items before storing
      */
     private void processItem(Item item, Integer taxonId) {
-        if (item.getClassName().equals("http://www.flymine.org/model/genomic#DataSource")
-            || item.getClassName().equals("http://www.flymine.org/model/genomic#DataSet")
-            || item.getClassName().equals("http://www.flymine.org/model/genomic#Organism")
-            || item.getClassName().equals("http://www.flymine.org/model/genomic#Sequence")) {
+        if (item.getClassName().equals("DataSource")
+            || item.getClassName().equals("DataSet")
+            || item.getClassName().equals("Organism")
+            || item.getClassName().equals("Sequence")) {
             return;
         }
 

@@ -37,7 +37,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class InterProConverter extends FileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
     private Map<String, Item> pubMaster = new HashMap<String, Item>();
     private Map<String, Item> dbMaster = new HashMap<String, Item>();
     private Map<String, Item> dsMaster = new HashMap<String, Item>();

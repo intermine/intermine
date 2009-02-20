@@ -33,8 +33,6 @@ import org.apache.log4j.Logger;
  */
 public class ReferenceFromToGenerator extends FileConverter
 {
-    protected static final String NS = "http://www.intermine.org/model/performancetest1#";
-
     protected static final Logger LOG = Logger.getLogger(ReferenceFromToGenerator.class);
 
     protected ItemFactory itemFactory;
@@ -103,7 +101,7 @@ public class ReferenceFromToGenerator extends FileConverter
     }
 
     private Item createItem(String className) {
-        return itemFactory.makeItem(alias(className) + "_" + newId(className), NS + className, "");
+        return itemFactory.makeItem(alias(className) + "_" + newId(className), className, "");
     }
 }
 

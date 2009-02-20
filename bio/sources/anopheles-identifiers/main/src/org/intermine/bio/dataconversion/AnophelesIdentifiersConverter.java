@@ -32,8 +32,6 @@ import org.intermine.xml.full.Item;
  */
 public class AnophelesIdentifiersConverter extends BioFileConverter
 {
-    protected static final String GENOMIC_NS = "http://www.flymine.org/model/genomic#";
-
     protected Item organism;
     protected Set<String> seenEnsIds = new HashSet<String>();
 

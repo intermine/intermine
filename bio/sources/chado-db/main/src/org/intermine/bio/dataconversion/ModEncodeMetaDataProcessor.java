@@ -1752,7 +1752,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInProtocolMaps(Item i, Integer chadoId, Integer intermineObjectId)
     throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Protocol")) {
+        if (i.getClassName().equals("Protocol")) {
             LOG.info("prot map: " + chadoId + " im: " + intermineObjectId);
             protocolIdMap .put(chadoId, intermineObjectId);
             protocolIdRefMap .put(chadoId, i.getIdentifier());
@@ -1773,7 +1773,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInProjectMaps(Item i, String surnamePI, Integer intermineObjectId)
     throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Project")) {
+        if (i.getClassName().equals("Project")) {
             projectIdMap .put(surnamePI, intermineObjectId);
             projectIdRefMap .put(surnamePI, i.getIdentifier());
         } else {
@@ -1794,7 +1794,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void storeInLabMaps(Item i, String labName, Integer intermineObjectId)
     throws ObjectStoreException {
-        if (i.getClassName().equals("http://www.flymine.org/model/genomic#Lab")) {
+        if (i.getClassName().equals("Lab")) {
             labIdMap .put(labName, intermineObjectId);
             labIdRefMap .put(labName, i.getIdentifier());
         } else {

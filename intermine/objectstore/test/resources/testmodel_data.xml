@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <items>
-  <item id="1" class="" implements="http://www.intermine.org/model/testmodel#Broke http://www.intermine.org/model/testmodel#Company">
+  <item id="1" class="" implements="Broke Company">
     <attribute name="debt" value="876324"/>
     <attribute name="name" value="CompanyA"/>
     <attribute name="vatNumber" value="1234"/>
@@ -22,7 +22,7 @@
       <reference ref_id="16"/>
     </collection>
   </item>
-  <item id="2" class="" implements="http://www.intermine.org/model/testmodel#Company">
+  <item id="2" class="" implements="Company">
     <attribute name="name" value="CompanyB"/>
     <attribute name="vatNumber" value="5678"/>
     <reference name="CEO" ref_id="11"/>
@@ -44,7 +44,7 @@
       <reference ref_id="15"/>
     </collection>
   </item>
-  <item id="3" class="http://www.intermine.org/model/testmodel#Contractor" implements="http://www.intermine.org/model/testmodel#Broke">
+  <item id="3" class="Contractor" implements="Broke">
     <attribute name="debt" value="7634"/>
     <attribute name="name" value="ContractorA"/>
     <attribute name="seniority" value="128764"/>
@@ -59,7 +59,7 @@
       <reference ref_id="2"/>
     </collection>
   </item>
-  <item id="4" class="http://www.intermine.org/model/testmodel#Contractor" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#ImportantPerson">
+  <item id="4" class="Contractor" implements="Employable ImportantPerson">
     <attribute name="name" value="ContractorB"/>
     <attribute name="seniority" value="62341"/>
     <reference name="businessAddress" ref_id="17"/>
@@ -73,7 +73,7 @@
       <reference ref_id="2"/>
     </collection>
   </item>
-  <item id="5" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+  <item id="5" class="Department" implements="RandomInterface">
     <attribute name="name" value="DepartmentA1"/>
     <reference name="company" ref_id="1"/>
     <reference name="manager" ref_id="8"/>
@@ -83,7 +83,7 @@
       <reference ref_id="10"/>
     </collection>
   </item>
-  <item id="6" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+  <item id="6" class="Department" implements="RandomInterface">
     <attribute name="name" value="DepartmentB1"/>
     <reference name="company" ref_id="2"/>
     <reference name="manager" ref_id="11"/>
@@ -92,7 +92,7 @@
       <reference ref_id="11"/>
     </collection>
   </item>
-  <item id="7" class="http://www.intermine.org/model/testmodel#Department" implements="http://www.intermine.org/model/testmodel#RandomInterface">
+  <item id="7" class="Department" implements="RandomInterface">
     <attribute name="name" value="DepartmentB2"/>
     <reference name="company" ref_id="2"/>
     <reference name="manager" ref_id="13"/>
@@ -100,7 +100,7 @@
       <reference ref_id="13"/>
     </collection>
   </item>
-  <item id="8" class="http://www.intermine.org/model/testmodel#Manager" implements="http://www.intermine.org/model/testmodel#ImportantPerson">
+  <item id="8" class="Manager" implements="ImportantPerson">
     <attribute name="age" value="10"/>
     <attribute name="end" value="1"/>
     <attribute name="fullTime" value="true"/>
@@ -109,7 +109,7 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="9" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+  <item id="9" class="Employee" implements="Employable HasAddress">
     <attribute name="age" value="20"/>
     <attribute name="end" value="2"/>
     <attribute name="fullTime" value="true"/>
@@ -117,7 +117,7 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="10" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+  <item id="10" class="Employee" implements="Employable HasAddress">
     <attribute name="age" value="30"/>
     <attribute name="end" value="3"/>
     <attribute name="fullTime" value="false"/>
@@ -125,7 +125,7 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="11" class="http://www.intermine.org/model/testmodel#CEO" implements="http://www.intermine.org/model/testmodel#Broke">
+  <item id="11" class="CEO" implements="Broke">
     <attribute name="age" value="40"/>
     <attribute name="debt" value="340"/>
     <attribute name="end" value="4"/>
@@ -137,7 +137,7 @@
     <reference name="company" ref_id="2"/>
     <reference name="department" ref_id="6"/>
   </item>
-  <item id="12" class="http://www.intermine.org/model/testmodel#Employee" implements="http://www.intermine.org/model/testmodel#Employable http://www.intermine.org/model/testmodel#HasAddress">
+  <item id="12" class="Employee" implements="Employable HasAddress">
     <attribute name="age" value="50"/>
     <attribute name="end" value="5"/>
     <attribute name="fullTime" value="true"/>
@@ -145,7 +145,7 @@
     <reference name="address" ref_id="20"/>
     <reference name="department" ref_id="6"/>
   </item>
-  <item id="13" class="http://www.intermine.org/model/testmodel#Manager" implements="http://www.intermine.org/model/testmodel#ImportantPerson">
+  <item id="13" class="Manager" implements="ImportantPerson">
     <attribute name="age" value="60"/>
     <attribute name="end" value="6"/>
     <attribute name="fullTime" value="true"/>
@@ -155,40 +155,40 @@
     <reference name="address" ref_id="20"/>
     <reference name="department" ref_id="7"/>
   </item>
-  <item id="14" class="http://www.intermine.org/model/testmodel#Secretary">
+  <item id="14" class="Secretary">
     <attribute name="name" value="Secretary1"/>
   </item>
-  <item id="15" class="http://www.intermine.org/model/testmodel#Secretary">
+  <item id="15" class="Secretary">
     <attribute name="name" value="Secretary2"/>
   </item>
-  <item id="16" class="http://www.intermine.org/model/testmodel#Secretary">
+  <item id="16" class="Secretary">
     <attribute name="name" value="Secretary3"/>
   </item>
-  <item id="17" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="17" class="Address" implements="Thing">
     <attribute name="address" value="Contractor Business Street, BVille"/>
   </item>
-  <item id="18" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="18" class="Address" implements="Thing">
     <attribute name="address" value="Contractor Personal Street, BVille"/>
   </item>
-  <item id="19" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="19" class="Address" implements="Thing">
     <attribute name="address" value="Company Street, BVille"/>
   </item>
-  <item id="20" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="20" class="Address" implements="Thing">
     <attribute name="address" value="Employee Street, BVille"/>
   </item>
-  <item id="21" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="21" class="Address" implements="Thing">
     <attribute name="address" value="Contractor Business Street, AVille"/>
   </item>
-  <item id="22" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="22" class="Address" implements="Thing">
     <attribute name="address" value="Contractor Personal Street, AVille"/>
   </item>
-  <item id="23" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="23" class="Address" implements="Thing">
     <attribute name="address" value="Company Street, AVille"/>
   </item>
-  <item id="24" class="http://www.intermine.org/model/testmodel#Address" implements="http://www.intermine.org/model/testmodel#Thing">
+  <item id="24" class="Address" implements="Thing">
     <attribute name="address" value="Employee Street, AVille"/>
   </item>
-  <item id="25" class="http://www.intermine.org/model/testmodel#Types">
+  <item id="25" class="Types">
     <attribute name="bigDecimalObjType" value="876323428764587621764532432.8768173432887324123645"/>
     <attribute name="booleanObjType" value="true"/>
     <attribute name="booleanType" value="true"/>
@@ -206,15 +206,15 @@
     <attribute name="shortType" value="675"/>
     <attribute name="stringObjType" value="A test String"/>
   </item>
-  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+  <item class="SimpleObject">
     <attribute name="name" value="Fred"/>
     <reference name="employee" ref_id="8"/>
   </item>
-  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+  <item class="SimpleObject">
     <attribute name="name" value="Adam"/>
     <reference name="employee" ref_id="8"/>
   </item>
-  <item class="http://www.intermine.org/model/testmodel#SimpleObject">
+  <item class="SimpleObject">
     <attribute name="name" value="Robert"/>
     <reference name="employee" ref_id="9"/>
   </item>

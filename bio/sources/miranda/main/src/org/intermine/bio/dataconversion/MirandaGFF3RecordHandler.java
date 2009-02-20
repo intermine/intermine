@@ -32,7 +32,6 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
 
     private Set<String> problems = new HashSet<String>();
 
-    private URI nameSpace;
 
     protected IdResolverFactory geneResolverFactory;
     protected IdResolverFactory mrnaResolverFactory;
@@ -55,8 +54,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     @Override
     public void process(GFF3Record record) {
         Item feature = getFeature();
-        nameSpace = getTargetModel().getNameSpace();
-        feature.setClassName(nameSpace + "MiRNATarget");
+        feature.setClassName("MiRNATarget");
         String geneName = record.getAttributes().get("Name").iterator().next();
         String targetName = record.getAttributes().get("target").iterator().next();
         feature.setAttribute("pvalue", record.getAttributes().get("pvalue").iterator().next());

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<model name="genomic" namespace="http://www.flymine.org/model/genomic#">
+<model name="genomic">
   <class name="org.flymine.model.genomic.DataSource" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>

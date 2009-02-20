@@ -1,4 +1,4 @@
-<model name="performancetest1" namespace="http://www.intermine.org/model/performancetest1#">
+<model name="performancetest1">
     <class name="org.intermine.model.performancetest1.OneAttribute" is-interface="true">
         <attribute name="att" type="int"/>
     </class>
