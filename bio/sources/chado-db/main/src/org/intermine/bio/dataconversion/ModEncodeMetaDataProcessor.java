@@ -276,9 +276,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             id = dataId;
             String featureItemId = featureData.getItemIdentifier();
-            FeatureData fd = featureData;
-            LOG.info("dataId " + id + " FD " + fd.getInterMineType() + ": " 
-                    + fd.getChadoFeatureName());
+            //FeatureData fd = featureData;
+            //LOG.info("dataId " + id + " FD " + fd.getInterMineType() + ": " 
+            //        + fd.getChadoFeatureName());
 
             // old ref setting
 //            Reference featureRef = new Reference("feature", featureItemId);
