@@ -18,7 +18,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.flymine.model.genomic.Chromosome;
 import org.flymine.model.genomic.Exon;
 import org.flymine.model.genomic.FivePrimeUTR;
@@ -27,7 +26,6 @@ import org.flymine.model.genomic.Location;
 import org.flymine.model.genomic.MRNA;
 import org.flymine.model.genomic.ThreePrimeUTR;
 import org.flymine.model.genomic.Transcript;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -49,7 +47,6 @@ import org.intermine.util.DynamicUtil;
 public class CreateReferencesTest extends TestCase {
 
     private ObjectStoreWriter osw;
-    private Model model;
     private Chromosome storedChromosome = null;
     private Gene storedGene1 = null;
     private Gene storedGene2 = null;
@@ -63,12 +60,9 @@ public class CreateReferencesTest extends TestCase {
     private ThreePrimeUTR storedThreePrimeUTR = null;
     private FivePrimeUTR storedFivePrimeUTR = null;
 
-    private static final Logger LOG = Logger.getLogger(CreateReferencesTest.class);
-
     public void setUp() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         osw.getObjectStore().flushObjectById();
-        model = Model.getInstanceByName("genomic");
         createData();
     }
 
