@@ -349,17 +349,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         if (StringUtil.isEmpty(identifier)) {
             if (StringUtil.isEmpty(name)) {
                 String fixedName = uniqueName.substring(uniqueName.lastIndexOf('.') + 1);
-                LOG.info("IDI " + fixedName + "|<-" + uniqueName + "|" + name + "|");
+                //LOG.info("IDI " + fixedName + "|<-" + uniqueName + "|" + name + "|");
                 return fixedName;
             } else {
-                LOG.info("IDI else " + uniqueName + "|" + name + "|");
+                //LOG.info("IDI else " + uniqueName + "|" + name + "|");
                 return name;
             }
         } else if (identifier == name) {
-            LOG.info("IDI name | " + uniqueName + "|" + name + "|");
+            //LOG.info("IDI name | " + uniqueName + "|" + name + "|");
             return identifier;
         } else {
-            LOG.info("IDI rest | " + uniqueName + "|" + name + "|");
+            //LOG.info("IDI rest | " + uniqueName + "|" + name + "|");
             return identifier;
         }
     }
