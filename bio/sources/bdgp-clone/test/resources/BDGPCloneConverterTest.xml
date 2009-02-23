@@ -21,7 +21,6 @@
   <item id="5_1" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="RE02181"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="4_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
@@ -38,7 +37,6 @@
   <item id="5_2" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="RE21586"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="4_2"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
