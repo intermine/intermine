@@ -1,79 +1,79 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.PhenotypeAnnotation" extends="org.flymine.model.genomic.Annotation" is-interface="true">
+  <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="annotationType" type="java.lang.String"/>
-    <reference name="allele" referenced-type="org.flymine.model.genomic.Allele" 
+    <reference name="allele" referenced-type="Allele" 
                reverse-reference="phenotypeAnnotations"/>
     <!--
       - removed as the "with" clauses from FlyBase have errors - see ticket #889
-    <collection name="with" referenced-type="org.flymine.model.genomic.Allele"/>
+    <collection name="with" referenced-type="Allele"/>
     -->
-    <reference name="anatomyTerm" referenced-type="org.flymine.model.genomic.AnatomyTerm"/>
-    <reference name="developmentTerm" referenced-type="org.flymine.model.genomic.DevelopmentTerm"/>
-    <collection name="cvTerms" referenced-type="org.flymine.model.genomic.CVTerm"/>
-    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
-    <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
+    <reference name="anatomyTerm" referenced-type="AnatomyTerm"/>
+    <reference name="developmentTerm" referenced-type="DevelopmentTerm"/>
+    <collection name="cvTerms" referenced-type="CVTerm"/>
+    <collection name="publications" referenced-type="Publication"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
-  <class name="org.flymine.model.genomic.Allele" 
-         extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <class name="Allele" 
+         extends="BioEntity" is-interface="true">
     <attribute name="alleleClass" type="java.lang.String"/>
     <collection name="mutagens"
-                referenced-type="org.flymine.model.genomic.Mutagen"
+                referenced-type="Mutagen"
                 reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations"
-                referenced-type="org.flymine.model.genomic.PhenotypeAnnotation" 
+                referenced-type="PhenotypeAnnotation" 
                 reverse-reference="allele"/>
   </class>
   <!-- mv from biogrid/biogrid_additions.xml  -->
-    <class name="org.flymine.model.genomic.InteractionExperiment" extends="org.flymine.model.genomic.Experiment" is-interface="true">
+    <class name="InteractionExperiment" extends="Experiment" is-interface="true">
       <attribute name="name" type="java.lang.String"/>
-<!--       <attribute name="publication" type="org.flymine.model.genomic.Publication"/> -->
+<!--       <attribute name="publication" type="Publication"/> -->
 <!--       <attribute name="description" type="java.lang.String"/> -->
 <!--       <attribute name="hostOrganism" type="java.lang.String" /> -->
-      <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="experiment"/>
+      <collection name="interactions" referenced-type="Interaction" ordered="true" reverse-reference="experiment"/>
     </class>
     
-         <class name="org.flymine.model.genomic.Interaction" is-interface="true">
+         <class name="Interaction" is-interface="true">
            <attribute name="shortName" type="java.lang.String"/>
            <attribute name="interactionType" type="java.lang.String"/>
-           <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="interactions" />
-           <reference name="experiment" referenced-type="org.flymine.model.genomic.InteractionExperiment" reverse-reference="interactions"/>
-           <collection name="interactingGenes" referenced-type="org.flymine.model.genomic.Gene" ordered="true" reverse-reference="interactions"/>
-<!--            <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/> -->
+           <reference name="gene" referenced-type="Gene" reverse-reference="interactions" />
+           <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
+           <collection name="interactingGenes" referenced-type="Gene" ordered="true" reverse-reference="interactions"/>
+<!--            <collection name="dataSets" referenced-type="DataSet"/> -->
          </class>
          
-         <class name="org.flymine.model.genomic.Gene" is-interface="true">
+         <class name="Gene" is-interface="true">
            <attribute name="featureType" type="java.lang.String"/>
-           <collection name="interactions" referenced-type="org.flymine.model.genomic.Interaction" ordered="true" reverse-reference="gene"/>
+           <collection name="interactions" referenced-type="Interaction" ordered="true" reverse-reference="gene"/>
          </class>
          
 
-  <class name="org.flymine.model.genomic.Mutagen" is-interface="true">
+  <class name="Mutagen" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <collection name="alleles"
-                referenced-type="org.flymine.model.genomic.Allele"
+                referenced-type="Allele"
                 reverse-reference="mutagens"/>
   </class>
 
-  <class name="org.flymine.model.genomic.AnatomyTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true">
     
   </class>
-  <class name="org.flymine.model.genomic.DevelopmentTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true">
     
   </class>
-  <class name="org.flymine.model.genomic.CVTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true">
+  <class name="CVTerm" extends="OntologyTerm" is-interface="true">
     
   </class>
 
-<!--  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+<!--  <class name="Gene" is-interface="true">
     <attribute name="featureType" type="java.lang.String"/>
   </class>-->
 
-  <class name="org.flymine.model.genomic.ChromosomeStructureVariation" 
-         extends="org.flymine.model.genomic.LocatedSequenceFeature"
+  <class name="ChromosomeStructureVariation" 
+         extends="LocatedSequenceFeature"
          is-interface="true">
     <collection name="featureTerms"
-                referenced-type="org.flymine.model.genomic.SequenceOntologyTerm"/>
+                referenced-type="SequenceOntologyTerm"/>
   </class>
 </classes>

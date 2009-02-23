@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Allele" extends="org.flymine.model.genomic.BioEntity"
+  <class name="Allele" extends="BioEntity"
          is-interface="true">
-    <collection name="stocks" referenced-type="org.flymine.model.genomic.Stock"
+    <collection name="stocks" referenced-type="Stock"
                 reverse-reference="alleles"/>
   </class>
-  <class name="org.flymine.model.genomic.Stock" extends="org.flymine.model.genomic.BioEntity"
+  <class name="Stock" extends="BioEntity"
          is-interface="true">
     <attribute name="type" type="java.lang.String"/>
     <attribute name="stockCenter" type="java.lang.String"/>
-    <collection name="alleles" referenced-type="org.flymine.model.genomic.Allele"
+    <collection name="alleles" referenced-type="Allele"
                 reverse-reference="stocks"/>
   </class>
 </classes>

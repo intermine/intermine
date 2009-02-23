@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.UniProtFeature" is-interface="true">
+  <class name="UniProtFeature" is-interface="true">
     <attribute name="type" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="begin" type="java.lang.Integer"/>
     <attribute name="end" type="java.lang.Integer"/>
-    <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
-    <reference name="feature" referenced-type="org.flymine.model.genomic.OntologyTerm"/>
+    <reference name="protein" referenced-type="Protein"/>
+    <reference name="feature" referenced-type="OntologyTerm"/>
   </class>
-  <class name="org.flymine.model.genomic.Protein" is-interface="true">
+  <class name="Protein" is-interface="true">
     <attribute name="isFragment" type="java.lang.Boolean"/>
     <attribute name="isUniprotCanonical" type="java.lang.Boolean"/>
     <attribute name="description" type="java.lang.String"/>
@@ -16,12 +16,12 @@
     <attribute name="uniprotName" type="java.lang.String"/>
     <attribute name="ecNumber" type="java.lang.String"/>
     <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
-    <collection name="comments" referenced-type="org.flymine.model.genomic.Comment" ordered="true"/>
-    <collection name="keywords" referenced-type="org.flymine.model.genomic.OntologyTerm" ordered="true"/>
-    <collection name="features" referenced-type="org.flymine.model.genomic.UniProtFeature" ordered="true"/>
+    <collection name="publications" referenced-type="Publication" ordered="true"/>
+    <collection name="comments" referenced-type="Comment" ordered="true"/>
+    <collection name="keywords" referenced-type="OntologyTerm" ordered="true"/>
+    <collection name="features" referenced-type="UniProtFeature" ordered="true"/>
   </class>
-  <class name="org.flymine.model.genomic.Sequence" is-interface="true">
+  <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>
 </classes>

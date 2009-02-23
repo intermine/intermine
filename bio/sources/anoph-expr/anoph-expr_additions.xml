@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.AGambiaeLifeCycle" extends="org.flymine.model.genomic.MicroArrayResult" is-interface="true">
+  <class name="AGambiaeLifeCycle" extends="MicroArrayResult" is-interface="true">
     <attribute name="standardError" type="java.lang.Float"/>    
   </class>
-<class name="org.flymine.model.genomic.ProbeSet" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true">
-  <collection name="genes" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="probeSets"/>
+<class name="ProbeSet" extends="LocatedSequenceFeature" is-interface="true">
+  <collection name="genes" referenced-type="Gene" reverse-reference="probeSets"/>
 </class>
-<class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <collection name="probeSets" referenced-type="org.flymine.model.genomic.ProbeSet" reverse-reference="genes"/>
+<class name="Gene" is-interface="true">
+  <collection name="probeSets" referenced-type="ProbeSet" reverse-reference="genes"/>
 </class>
 </classes>

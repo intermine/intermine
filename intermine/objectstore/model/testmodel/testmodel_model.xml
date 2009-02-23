@@ -1,65 +1,65 @@
-<model name="testmodel">
-    <class name="org.intermine.model.testmodel.Broke" is-interface="true">
+<model name="testmodel" package="org.intermine.model.testmodel">
+    <class name="Broke" is-interface="true">
         <attribute name="debt" type="int"/>
-        <reference name="bank" referenced-type="org.intermine.model.testmodel.Bank" reverse-reference="debtors"/>
+        <reference name="bank" referenced-type="Bank" reverse-reference="debtors"/>
     </class>
-    <class name="org.intermine.model.testmodel.Thing" is-interface="true"></class>
-    <class name="org.intermine.model.testmodel.Employable" extends="org.intermine.model.testmodel.Thing" is-interface="true">
+    <class name="Thing" is-interface="true"></class>
+    <class name="Employable" extends="Thing" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
     </class>
-    <class name="org.intermine.model.testmodel.HasAddress" is-interface="true">
-        <reference name="address" referenced-type="org.intermine.model.testmodel.Address"/>
+    <class name="HasAddress" is-interface="true">
+        <reference name="address" referenced-type="Address"/>
     </class>
-    <class name="org.intermine.model.testmodel.HasSecretarys" is-interface="true">
-        <collection name="secretarys" referenced-type="org.intermine.model.testmodel.Secretary"/>
+    <class name="HasSecretarys" is-interface="true">
+        <collection name="secretarys" referenced-type="Secretary"/>
     </class>
-    <class name="org.intermine.model.testmodel.Contractor" extends="org.intermine.model.testmodel.Employable org.intermine.model.testmodel.ImportantPerson" is-interface="false">
-        <reference name="personalAddress" referenced-type="org.intermine.model.testmodel.Address"/>
-        <reference name="businessAddress" referenced-type="org.intermine.model.testmodel.Address"/>
-        <collection name="companys" referenced-type="org.intermine.model.testmodel.Company" reverse-reference="contractors"/>
-        <collection name="oldComs" referenced-type="org.intermine.model.testmodel.Company" reverse-reference="oldContracts"/>
+    <class name="Contractor" extends="Employable ImportantPerson" is-interface="false">
+        <reference name="personalAddress" referenced-type="Address"/>
+        <reference name="businessAddress" referenced-type="Address"/>
+        <collection name="companys" referenced-type="Company" reverse-reference="contractors"/>
+        <collection name="oldComs" referenced-type="Company" reverse-reference="oldContracts"/>
     </class>
-    <class name="org.intermine.model.testmodel.Manager" extends="org.intermine.model.testmodel.Employee org.intermine.model.testmodel.ImportantPerson" is-interface="false">
+    <class name="Manager" extends="Employee ImportantPerson" is-interface="false">
         <attribute name="title" type="java.lang.String"/>
     </class>
-    <class name="org.intermine.model.testmodel.Employee" extends="org.intermine.model.testmodel.Employable org.intermine.model.testmodel.HasAddress" is-interface="false">
+    <class name="Employee" extends="Employable HasAddress" is-interface="false">
         <attribute name="fullTime" type="boolean"/>
         <attribute name="age" type="int"/>
         <attribute name="end" type="java.lang.String"/>
-        <reference name="department" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="employees"/>
-        <reference name="departmentThatRejectedMe" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="rejectedEmployee"/>
-        <collection name="simpleObjects" referenced-type="org.intermine.model.testmodel.SimpleObject" reverse-reference="employee"/>
+        <reference name="department" referenced-type="Department" reverse-reference="employees"/>
+        <reference name="departmentThatRejectedMe" referenced-type="Department" reverse-reference="rejectedEmployee"/>
+        <collection name="simpleObjects" referenced-type="SimpleObject" reverse-reference="employee"/>
     </class>
-    <class name="org.intermine.model.testmodel.Department" extends="org.intermine.model.testmodel.RandomInterface" is-interface="false">
+    <class name="Department" extends="RandomInterface" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
-        <reference name="company" referenced-type="org.intermine.model.testmodel.Company" reverse-reference="departments"/>
-        <reference name="manager" referenced-type="org.intermine.model.testmodel.Manager"/>
-        <collection name="employees" referenced-type="org.intermine.model.testmodel.Employee" reverse-reference="department"/>
-        <collection name="rejectedEmployee" referenced-type="org.intermine.model.testmodel.Employee" reverse-reference="departmentThatRejectedMe"/>
+        <reference name="company" referenced-type="Company" reverse-reference="departments"/>
+        <reference name="manager" referenced-type="Manager"/>
+        <collection name="employees" referenced-type="Employee" reverse-reference="department"/>
+        <collection name="rejectedEmployee" referenced-type="Employee" reverse-reference="departmentThatRejectedMe"/>
     </class>
-    <class name="org.intermine.model.testmodel.Company" extends="org.intermine.model.testmodel.RandomInterface org.intermine.model.testmodel.HasAddress org.intermine.model.testmodel.HasSecretarys" is-interface="true">
+    <class name="Company" extends="RandomInterface HasAddress HasSecretarys" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="vatNumber" type="int"/>
-        <reference name="CEO" referenced-type="org.intermine.model.testmodel.CEO" reverse-reference="company"/>
-        <collection name="departments" referenced-type="org.intermine.model.testmodel.Department" reverse-reference="company"/>
-        <collection name="contractors" referenced-type="org.intermine.model.testmodel.Contractor" reverse-reference="companys"/>
-        <collection name="oldContracts" referenced-type="org.intermine.model.testmodel.Contractor" reverse-reference="oldComs"/>
+        <reference name="CEO" referenced-type="CEO" reverse-reference="company"/>
+        <collection name="departments" referenced-type="Department" reverse-reference="company"/>
+        <collection name="contractors" referenced-type="Contractor" reverse-reference="companys"/>
+        <collection name="oldContracts" referenced-type="Contractor" reverse-reference="oldComs"/>
     </class>
-    <class name="org.intermine.model.testmodel.Address" extends="org.intermine.model.testmodel.Thing" is-interface="false">
+    <class name="Address" extends="Thing" is-interface="false">
         <attribute name="address" type="java.lang.String"/>
     </class>
-    <class name="org.intermine.model.testmodel.RandomInterface" is-interface="true"></class>
-    <class name="org.intermine.model.testmodel.CEO" extends="org.intermine.model.testmodel.Manager org.intermine.model.testmodel.HasSecretarys" is-interface="false">
+    <class name="RandomInterface" is-interface="true"></class>
+    <class name="CEO" extends="Manager HasSecretarys" is-interface="false">
         <attribute name="salary" type="int"/>
-        <reference name="company" referenced-type="org.intermine.model.testmodel.Company" reverse-reference="CEO"/>
+        <reference name="company" referenced-type="Company" reverse-reference="CEO"/>
     </class>
-    <class name="org.intermine.model.testmodel.ImportantPerson" is-interface="true">
+    <class name="ImportantPerson" is-interface="true">
         <attribute name="seniority" type="java.lang.Integer"/>
     </class>
-    <class name="org.intermine.model.testmodel.Secretary" is-interface="false">
+    <class name="Secretary" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
     </class>
-    <class name="org.intermine.model.testmodel.Types" is-interface="false">
+    <class name="Types" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
         <attribute name="booleanType" type="boolean"/>
         <attribute name="floatType" type="float"/>
@@ -77,12 +77,12 @@
         <attribute name="dateObjType" type="java.util.Date"/>
         <attribute name="stringObjType" type="java.lang.String"/>
     </class>
-    <class name="org.intermine.model.testmodel.Bank" is-interface="false">
+    <class name="Bank" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
-        <collection name="debtors" referenced-type="org.intermine.model.testmodel.Broke" reverse-reference="bank"/>
+        <collection name="debtors" referenced-type="Broke" reverse-reference="bank"/>
     </class>
-    <class name="org.intermine.model.testmodel.SimpleObject" is-interface="false" extends="java.lang.Object">
+    <class name="SimpleObject" is-interface="false" extends="java.lang.Object">
         <attribute name="name" type="java.lang.String"/>
-        <reference name="employee" referenced-type="org.intermine.model.testmodel.Employee" reverse-reference="simpleObjects"/>
+        <reference name="employee" referenced-type="Employee" reverse-reference="simpleObjects"/>
     </class>
 </model>

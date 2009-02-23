@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.BindingSite" is-interface="true">
+<class name="BindingSite" is-interface="true">
   <attribute name="primaryIdentifier" type="java.lang.String"/>
-  <reference name="factor" referenced-type="org.flymine.model.genomic.Gene"/>
+  <reference name="factor" referenced-type="Gene"/>
 </class>
-<class name="org.flymine.model.genomic.RegulatoryRegion" is-interface="true">
+<class name="RegulatoryRegion" is-interface="true">
   <attribute name="evidenceMethod" type="java.lang.String"/>
 </class>
 </classes>

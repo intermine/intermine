@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.util.TypeUtil;
-import org.intermine.util.XmlUtil;
 
 /**
  * Represents a named business model, makes available metadata for each class
@@ -33,12 +32,12 @@ import org.intermine.util.XmlUtil;
  *
  * @author Richard Smith
  */
-
 public class Model
 {
     private static Map<String, Model> models = new HashMap<String, Model>();
 
     private final String modelName;
+    private final String packageName;
     private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
             ClassDescriptor>();
     private final Map<ClassDescriptor, Set<ClassDescriptor>> subMap
@@ -66,6 +65,7 @@ public class Model
     
     /**
      * Adds model to known models. 
+     *
      * @param name the model name
      * @param model the model
      */
@@ -78,22 +78,29 @@ public class Model
      * set to this in each of the ClassDescriptors. NB This method should only be called
      * by members of the modelproduction package, eventually it may be replaced with
      * a static addModel method linked to getInstanceByName.
+     *
      * @param name name of model
+     * @param packageName the package name of the model
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, Set<ClassDescriptor> clds) throws MetaDataException {
+    public Model(String name, String packageName, Set<ClassDescriptor> clds)
+    throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
         if (name.equals("")) {
             throw new IllegalArgumentException("Model name cannot be empty");
         }
+        if (packageName == null) {
+            throw new NullPointerException("Package name cannot be null");
+        }
         if (clds == null) {
             throw new NullPointerException("Model ClassDescriptors list cannot be null");
         }
 
         this.modelName = name;
+        this.packageName = packageName;
 
         LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
@@ -139,8 +146,7 @@ public class Model
      * @return package name
      */
     public String getPackageName() {
-        return TypeUtil.packageName(((ClassDescriptor) cldMap.values().iterator().next())
-                                    .getName());
+        return packageName;
     }
 
     /**
@@ -240,7 +246,7 @@ public class Model
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + modelName + "\">");
+        sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">");
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
