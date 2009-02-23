@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.IntergenicRegion;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Synonym;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.IntergenicRegion;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Synonym;
 
 import org.intermine.bio.util.BioQueries;
 import org.intermine.objectstore.ObjectStore;

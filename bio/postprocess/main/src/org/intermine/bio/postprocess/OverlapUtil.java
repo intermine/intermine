@@ -36,9 +36,9 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.OverlapRelation;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.OverlapRelation;
 
 import org.apache.log4j.Logger;
 

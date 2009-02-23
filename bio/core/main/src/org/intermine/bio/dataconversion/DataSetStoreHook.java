@@ -62,7 +62,7 @@ public class DataSetStoreHook implements DataConverterStoreHook
         String className  = XmlUtil.getFragmentFromURI(item.getClassName());
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         ReferenceDescriptor rd = cd.getReferenceDescriptorByName("source");
-        String dataSourceClassName = "org.flymine.model.genomic.DataSource";
+        String dataSourceClassName = "org.intermine.model.bio.DataSource";
         if (rd != null && rd.getReferencedClassDescriptor().getName().equals(dataSourceClassName)
             && !item.hasReference("source")) {
             item.setReference("source", dataSourceId);

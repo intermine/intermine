@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Publication;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Publication;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;

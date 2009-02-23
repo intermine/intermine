@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.flymine.model.genomic.GOAnnotation;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Protein;
+import org.intermine.model.bio.GOAnnotation;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Protein;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;

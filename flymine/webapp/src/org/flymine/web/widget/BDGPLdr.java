@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
-import org.flymine.model.genomic.MRNAExpressionTerm;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MRNAExpressionResult;
+import org.intermine.model.bio.MRNAExpressionTerm;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;

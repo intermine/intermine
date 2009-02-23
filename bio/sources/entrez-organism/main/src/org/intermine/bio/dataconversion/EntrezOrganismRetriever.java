@@ -28,7 +28,7 @@ import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Organism;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;

@@ -27,10 +27,10 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.struts.InterMineAction;
 
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
 
 import java.io.OutputStream;
 

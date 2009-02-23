@@ -13,9 +13,9 @@ package org.intermine.bio.postprocess;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Homologue;
-import org.flymine.model.genomic.Protein;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Homologue;
+import org.intermine.model.bio.Protein;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;

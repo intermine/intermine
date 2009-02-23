@@ -61,7 +61,7 @@ public class CreateSiteMaps
      * @param taxonIds organisms to use as a constraint in the query
      * @param paths paths used to build query
      * @param webappPages URLs to add to the sitemap
-     * @param targetModel eg org.flymine.model.genomic
+     * @param targetModel eg org.intermine.model.bio
      * @param sitePrefix URL of site, eg http://www.flymine.org
      * @param defaultContext default path to webapp, eg. /query
      * @throws Exception if anything goes wrong

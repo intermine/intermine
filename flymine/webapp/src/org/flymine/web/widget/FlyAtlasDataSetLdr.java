@@ -31,9 +31,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
+import org.intermine.model.bio.FlyAtlasResult;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MicroArrayAssay;
 
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;

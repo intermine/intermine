@@ -25,9 +25,9 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.ProteinFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.ProteinFeature;
 
 import java.io.BufferedReader;
 import java.io.File;

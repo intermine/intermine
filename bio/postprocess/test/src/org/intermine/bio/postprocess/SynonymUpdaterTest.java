@@ -17,8 +17,8 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 import org.apache.tools.ant.filters.StringInputStream;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Synonym;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Synonym;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;

@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.FlyAtlasResult;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
+import org.intermine.model.bio.FlyAtlasResult;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MicroArrayAssay;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;

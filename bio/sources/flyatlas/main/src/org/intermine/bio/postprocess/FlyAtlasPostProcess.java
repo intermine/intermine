@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.ProbeSet;
-import org.flymine.model.genomic.MicroArrayResult;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.ProbeSet;
+import org.intermine.model.bio.MicroArrayResult;
 
 import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;

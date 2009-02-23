@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;

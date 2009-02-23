@@ -26,12 +26,12 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.FivePrimeUTR;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.ThreePrimeUTR;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.FivePrimeUTR;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.ThreePrimeUTR;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,7 +60,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
     }
 
     public void testFasta5PrimeLoad() throws Exception {
-        executeLoaderTask("org.flymine.model.genomic.FivePrimeUTR",
+        executeLoaderTask("org.intermine.model.bio.FivePrimeUTR",
                           "dmel-all-five_prime_UTR.fasta");
 
         Results r = getResults();
@@ -108,7 +108,7 @@ public class FlyBaseUTRFastaLoaderTaskTest extends TestCase {
     }
 
     public void testFasta3PrimeLoad() throws Exception {
-        executeLoaderTask("org.flymine.model.genomic.ThreePrimeUTR",
+        executeLoaderTask("org.intermine.model.bio.ThreePrimeUTR",
                           "dmel-all-three_prime_UTR.fasta");
 
         Results r = getResults();

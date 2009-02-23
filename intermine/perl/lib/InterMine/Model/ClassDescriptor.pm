@@ -134,7 +134,7 @@ sub add_field
 =head2 name
  
  Usage   : $name = $cd->name();
- Function: Return the name of this class, eg. "org.flymine.model.genomic.Gene"
+ Function: Return the name of this class, eg. "org.intermine.model.bio.Gene"
  Args    : none
 
 =cut

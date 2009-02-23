@@ -19,7 +19,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 
-import org.flymine.model.genomic.Gene;
+import org.intermine.model.bio.Gene;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

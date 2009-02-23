@@ -11,10 +11,10 @@ import junit.framework.TestCase;
 
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.util.DynamicUtil;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Location;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Location;
 
 
 /**

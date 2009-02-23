@@ -26,8 +26,8 @@ import org.intermine.objectstore.query.SingletonResults;
 
 import org.intermine.objectstore.ObjectStore;
 
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
 
 import java.io.File;
 import java.io.FileWriter;

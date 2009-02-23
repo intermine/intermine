@@ -26,11 +26,11 @@ import org.biojava.bio.BioException;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.SequenceIterator;
 import org.biojava.bio.seq.io.SeqIOTools;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Synonym;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Synonym;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
@@ -104,7 +104,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
     /**
      * The class name to use for objects created during load.  Generally this is
-     * "org.flymine.model.genomic.LocatedSequenceFeature" or "org.flymine.model.genomic.Protein"
+     * "org.intermine.model.bio.LocatedSequenceFeature" or "org.intermine.model.bio.Protein"
      * @param className the class name
      */
     public void setClassName(String className) {
@@ -267,9 +267,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         if (organism == null) {
             return;
         }
-        Class<?> sequenceClass = org.flymine.model.genomic.Sequence.class;
-        org.flymine.model.genomic.Sequence flymineSequence =
-            (org.flymine.model.genomic.Sequence) getDirectDataLoader().createObject(sequenceClass);
+        Class<?> sequenceClass = org.intermine.model.bio.Sequence.class;
+        org.intermine.model.bio.Sequence flymineSequence =
+            (org.intermine.model.bio.Sequence) getDirectDataLoader().createObject(sequenceClass);
 
         String sequence = bioJavaSequence.seqString();
         String md5checksum = Util.getMd5checksum(sequence);
@@ -366,7 +366,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      */
     @SuppressWarnings("unused")
     protected void extraProcessing(Sequence bioJavaSequence,
-                                   org.flymine.model.genomic.Sequence flymineSequence,
+                                   org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
                                    DataSource dataSrc)
         throws ObjectStoreException {

@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Homologue;
-import org.flymine.model.genomic.Protein;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Homologue;
+import org.intermine.model.bio.Protein;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -44,7 +44,7 @@ import org.intermine.util.TypeUtil;
 public class UpdateOrthologuesTest extends XMLTestCase {
     private static final Integer OBJ_PROTEIN_ID = new Integer(100000001);
     private static final Integer SUB_PROTEIN_ID = new Integer(100000002);
-    private static final String PKG = "org.flymine.model.genomic";
+    private static final String PKG = "org.intermine.model.bio";
 
     private ObjectStoreWriter osw;
     private Model model;

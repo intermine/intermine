@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Organism;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;

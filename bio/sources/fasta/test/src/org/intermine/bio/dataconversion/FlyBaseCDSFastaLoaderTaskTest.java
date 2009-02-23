@@ -26,11 +26,11 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.flymine.model.genomic.CDS;
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Sequence;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Sequence;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,7 +59,7 @@ public class FlyBaseCDSFastaLoaderTaskTest extends TestCase {
     }
 
     public void testFastaCDSLoad() throws Exception {
-        executeLoaderTask("org.flymine.model.genomic.CDS",
+        executeLoaderTask("org.intermine.model.bio.CDS",
                           "dmel-all-CDS.fasta");
 
         Results r = getResults();

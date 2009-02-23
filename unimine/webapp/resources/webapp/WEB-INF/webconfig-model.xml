@@ -1,5 +1,5 @@
 <webconfig>
-  <class className="org.flymine.model.genomic.Publication">
+  <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
@@ -15,20 +15,20 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.DataSet">
+  <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
 
-<class className="org.flymine.model.genomic.Author">
+<class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.DataSource">
+  <class className="org.intermine.model.bio.DataSource">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
@@ -38,7 +38,7 @@
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
-  <class className="org.flymine.model.genomic.Organism">
+  <class className="org.intermine.model.bio.Organism">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
@@ -48,7 +48,7 @@
     </longdisplayers>
   </class>
   
-  <class className="org.flymine.model.genomic.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
@@ -60,7 +60,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Exon">
+  <class className="org.intermine.model.bio.Exon">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation.start" showInResults="false"/>
@@ -70,7 +70,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Gene">
+  <class className="org.intermine.model.bio.Gene">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -88,7 +88,7 @@
     </bagdisplayers>a
   </class>
 
-  <class className="org.flymine.model.genomic.Pathway">
+  <class className="org.intermine.model.bio.Pathway">
     <fields>
       <fieldconfig fieldExpr="identifier" />
       <fieldconfig fieldExpr="name" />
@@ -98,7 +98,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinDomain">
+  <class className="org.intermine.model.bio.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -109,14 +109,14 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.BioEntity">
+  <class className="org.intermine.model.bio.BioEntity">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Protein">
+  <class className="org.intermine.model.bio.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryAccession"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -132,7 +132,7 @@
     </bagdisplayers>
   </class>
 
-    <class className="org.flymine.model.genomic.ProteinStructure">
+    <class className="org.intermine.model.bio.ProteinStructure">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="title"/>
@@ -151,7 +151,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
+  <class className="org.intermine.model.bio.ProteinInteractionRegion">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="protein.primaryAccession"/>
@@ -159,7 +159,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.PrideExperiment">
+  <class className="org.intermine.model.bio.PrideExperiment">
 	<fields>
 	   <fieldconfig fieldExpr="title"/>
 	</fields>
@@ -168,7 +168,7 @@
       </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.PrideProject">
+  <class className="org.intermine.model.bio.PrideProject">
         <fields>
            <fieldconfig fieldExpr="title"/>
         </fields>
@@ -177,7 +177,7 @@
       </longdisplayers>
    </class>
 
-  <class className="org.flymine.model.genomic.Transcript">
+  <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName"/>
@@ -188,20 +188,20 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Relation">
+  <class className="org.intermine.model.bio.Relation">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
       <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinInteraction">
+  <class className="org.intermine.model.bio.ProteinInteraction">
     <fields>
       <fieldconfig fieldExpr="shortName"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Location">
+  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
       <fieldconfig fieldExpr="subject.primaryIdentifier"/>
@@ -210,33 +210,33 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.InfoSource">
+  <class className="org.intermine.model.bio.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.AnalysisResult">
+  <class className="org.intermine.model.bio.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ComputationalResult">
+  <class className="org.intermine.model.bio.ComputationalResult">
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Comment">
+  <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.OntologyTerm">
+  <class className="org.intermine.model.bio.OntologyTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -244,7 +244,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.OntologyRelation">
+  <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
@@ -252,14 +252,14 @@
     </fields>
   </class>
   
-  <class className="org.flymine.model.genomic.OntologyTermSynonym">
+  <class className="org.intermine.model.bio.OntologyTermSynonym">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
   
-  <class className="org.flymine.model.genomic.Synonym">
+  <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
       <fieldconfig fieldExpr="type"/>
@@ -267,7 +267,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Sequence">
+  <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.flymine.web.ResidueFieldExporter"
                    sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
@@ -278,7 +278,7 @@
   </class>
 
 
-  <class className="org.flymine.model.genomic.ProteinInteractionRegion">
+  <class className="org.intermine.model.bio.ProteinInteractionRegion">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="protein.primaryAccession"/>
@@ -286,7 +286,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.UniProtFeature">
+  <class className="org.intermine.model.bio.UniProtFeature">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="description"/>
@@ -306,7 +306,7 @@
                                  description="UniProt features enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
-                                 typeClass="org.flymine.model.genomic.Protein"
+                                 typeClass="org.intermine.model.bio.Protein"
                                  max="0.10"  />
 
       <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
@@ -316,7 +316,7 @@
                                  description="UniProt keywords enriched for proteins in this list."
                                  filters=""
                                  filterLabel=""
-                                 typeClass="org.flymine.model.genomic.Protein"
+                                 typeClass="org.intermine.model.bio.Protein"
                                  max="0.10"  />   
 
 
@@ -325,7 +325,7 @@
                          displayFields="identifier,name"
                          exportFields="identifier"
                          externalLink="http://www.genome.jp/dbget-bin/www_bget?pathway+hsa"
-                         typeClass="org.flymine.model.genomic.Gene"
+                         typeClass="org.intermine.model.bio.Gene"
                          externalLinkLabel="KEGG" />
 
        <bagtabledisplayer
@@ -334,7 +334,7 @@
          pathStrings="Protein.proteinIdentifications.prideExperiment"
          link="org.intermine.bio.web.widget.PrideExperimentURLQuery"
          displayFields="title"
-         typeClass="org.flymine.model.genomic.Protein"
+         typeClass="org.intermine.model.bio.Protein"
          externalLinkLabel="PRIDE"
          description="Counts of proteins per PRIDE experiment" />
 
@@ -344,7 +344,7 @@
                                  description="Proteins that interact with other Proteins in this list. Counts may include the same interaction more than once if observed in multiple experiments. If a cell is highlighted the protein is also in the list!"
                                  displayFields="primaryIdentifier"
                                  exportFields="primaryIdentifier"
-				 typeClass="org.flymine.model.genomic.Protein"
+				 typeClass="org.intermine.model.bio.Protein"
 				 columnTitle="Interactions"/>
 
       <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
@@ -355,7 +355,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  max="0.10"
-                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
       <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
@@ -367,7 +367,7 @@
                                  filterLabel=""
                                  max="0.10"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 typeClass="org.flymine.model.genomic.Gene"
+                                 typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
 
     </widgets>

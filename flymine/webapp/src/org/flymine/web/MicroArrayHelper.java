@@ -24,10 +24,10 @@ import org.intermine.objectstore.query.SimpleConstraint;
 
 import org.intermine.objectstore.ObjectStore;
 
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayAssay;
-import org.flymine.model.genomic.MicroArrayExperiment;
-import org.flymine.model.genomic.MicroArrayResult;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MicroArrayAssay;
+import org.intermine.model.bio.MicroArrayExperiment;
+import org.intermine.model.bio.MicroArrayResult;
 
 /**
  * Some static methods that query microarray data.

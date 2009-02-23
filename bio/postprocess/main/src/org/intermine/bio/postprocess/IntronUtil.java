@@ -20,15 +20,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Intron;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Synonym;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Intron;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.Transcript;
 
 import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;

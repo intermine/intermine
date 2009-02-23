@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.flymine.model.genomic.Submission;
+import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
