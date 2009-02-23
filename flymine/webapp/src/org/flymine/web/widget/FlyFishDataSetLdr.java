@@ -33,9 +33,9 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MRNAExpressionResult;
 
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;

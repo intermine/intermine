@@ -39,8 +39,8 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Transcript;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

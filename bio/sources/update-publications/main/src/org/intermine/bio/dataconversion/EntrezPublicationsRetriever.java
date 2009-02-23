@@ -34,7 +34,7 @@ import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
 
-import org.flymine.model.genomic.Publication;
+import org.intermine.model.bio.Publication;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

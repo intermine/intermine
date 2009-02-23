@@ -13,9 +13,9 @@ package org.intermine.bio.web.biojava;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.ProteinTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Protein;
 
 /**
  * A factory for creating BioSequence objects.

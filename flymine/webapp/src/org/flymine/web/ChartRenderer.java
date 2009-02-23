@@ -21,8 +21,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.struts.InterMineAction;
 
-import org.flymine.model.genomic.MicroArrayAssay;
-import org.flymine.model.genomic.MicroArrayResult;
+import org.intermine.model.bio.MicroArrayAssay;
+import org.intermine.model.bio.MicroArrayResult;
 
 import java.awt.Color;
 import java.awt.RenderingHints;

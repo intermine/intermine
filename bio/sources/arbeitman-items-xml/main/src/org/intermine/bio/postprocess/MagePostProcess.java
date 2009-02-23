@@ -36,11 +36,11 @@ import org.intermine.postprocess.PostProcessor;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.TypeUtil;
 
-import org.flymine.model.genomic.CDNAClone;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MicroArrayResult;
-import org.flymine.model.genomic.ProbeSet;
-import org.flymine.model.genomic.Reporter;
+import org.intermine.model.bio.CDNAClone;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MicroArrayResult;
+import org.intermine.model.bio.ProbeSet;
+import org.intermine.model.bio.Reporter;
 
 import java.sql.SQLException;
 

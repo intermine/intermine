@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Organism;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;

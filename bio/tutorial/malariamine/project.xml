@@ -19,7 +19,7 @@
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/gff"/>
     </source>
     <source name="malaria-chromosome-fasta" type="fasta" dump="true">
-      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.synonymSource" value="PlasmoDB"/>
       <property name="fasta.dataSetTitle" value="PlasmoDB chromosome sequence"/>
       <property name="fasta.taxonId" value="36329"/>

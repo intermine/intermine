@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
 import org.intermine.objectstore.ObjectStoreException;

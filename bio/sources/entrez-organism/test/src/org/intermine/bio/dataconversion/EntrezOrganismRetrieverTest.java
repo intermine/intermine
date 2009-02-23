@@ -24,7 +24,7 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Organism;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;

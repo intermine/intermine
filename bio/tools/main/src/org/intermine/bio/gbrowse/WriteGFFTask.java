@@ -44,22 +44,22 @@ import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
-import org.flymine.model.genomic.Analysis;
-import org.flymine.model.genomic.CDS;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.ChromosomeBand;
-import org.flymine.model.genomic.ComputationalAnalysis;
-import org.flymine.model.genomic.ComputationalResult;
-import org.flymine.model.genomic.Evidence;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.MRNA;
-import org.flymine.model.genomic.NcRNA;
-import org.flymine.model.genomic.Sequence;
-import org.flymine.model.genomic.Synonym;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.Analysis;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.ChromosomeBand;
+import org.intermine.model.bio.ComputationalAnalysis;
+import org.intermine.model.bio.ComputationalResult;
+import org.intermine.model.bio.Evidence;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.NcRNA;
+import org.intermine.model.bio.Sequence;
+import org.intermine.model.bio.Synonym;
+import org.intermine.model.bio.Transcript;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -173,7 +173,7 @@ public class WriteGFFTask extends Task
 
             try {
                 if (TypeUtil.isInstanceOf(feature,
-                                          "org.flymine.model.genomic.ChromosomalDeletion")) {
+                                          "org.intermine.model.bio.ChromosomalDeletion")) {
                     try {
                         if (TypeUtil.getFieldValue(feature, "available") != Boolean.TRUE) {
                             // write only the available deletions because there are too many
@@ -578,7 +578,7 @@ public class WriteGFFTask extends Task
         }
 
         try {
-            if (TypeUtil.isInstanceOf(bioEntity, "org.flymine.model.genomic.PCRProduct")) {
+            if (TypeUtil.isInstanceOf(bioEntity, "org.intermine.model.bio.PCRProduct")) {
                 Boolean fieldValue;
                 try {
                     fieldValue = (Boolean) TypeUtil.getFieldValue(bioEntity, "promoter");

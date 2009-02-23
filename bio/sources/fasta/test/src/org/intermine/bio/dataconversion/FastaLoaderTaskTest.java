@@ -26,10 +26,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -56,7 +56,7 @@ public class FastaLoaderTaskTest extends TestCase {
         FastaLoaderTask flt = new FastaLoaderTask();
         flt.setFastaTaxonId("36329");
         flt.setIgnoreDuplicates(true);
-        flt.setClassName("org.flymine.model.genomic.Gene");
+        flt.setClassName("org.intermine.model.bio.Gene");
         flt.setClassAttribute("primaryIdentifier");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setDataSourceName("fasta-test");
@@ -107,7 +107,7 @@ public class FastaLoaderTaskTest extends TestCase {
         flt.setFastaTaxonId("36329");
         flt.setIgnoreDuplicates(true);
         flt.setSequenceType("protein");
-        flt.setClassName("org.flymine.model.genomic.Protein");
+        flt.setClassName("org.intermine.model.bio.Protein");
         flt.setIntegrationWriterAlias("integration.bio-test");
         flt.setDataSourceName("fasta-test");
         flt.setDataSetTitle(dataSetTitle);

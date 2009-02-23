@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.Region;
-import org.flymine.model.genomic.Synonym;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Region;
+import org.intermine.model.bio.Synonym;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**

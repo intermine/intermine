@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
 
 import org.intermine.objectstore.ObjectStoreException;
 
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.CDS;
-import org.flymine.model.genomic.DataSource;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.MRNA;
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.CDS;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.Organism;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
@@ -38,7 +38,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
                                    @SuppressWarnings("unused")
-                                     org.flymine.model.genomic.Sequence flymineSequence,
+                                     org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
                                    DataSource dataSource)
         throws ObjectStoreException {

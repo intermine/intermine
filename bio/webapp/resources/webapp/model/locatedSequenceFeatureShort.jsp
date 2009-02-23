@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="org.flymine.model.genomic.LocatedSequenceFeature" %>
+<%@ page import="org.intermine.model.bio.LocatedSequenceFeature" %>
 <%@ page import="org.intermine.web.results.DisplayObject" %>
 <%@ page import="org.intermine.model.InterMineObject" %>
 

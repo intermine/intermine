@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.LocatedSequenceFeature;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
 import org.intermine.objectstore.ObjectStore;

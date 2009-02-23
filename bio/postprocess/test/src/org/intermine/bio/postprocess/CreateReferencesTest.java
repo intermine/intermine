@@ -18,14 +18,14 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.FivePrimeUTR;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.Location;
-import org.flymine.model.genomic.MRNA;
-import org.flymine.model.genomic.ThreePrimeUTR;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.FivePrimeUTR;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.ThreePrimeUTR;
+import org.intermine.model.bio.Transcript;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;

@@ -7,8 +7,8 @@ import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.dummy.ObjectStoreWriterDummyImpl;
 import org.intermine.util.DynamicUtil;
 
-import org.flymine.model.genomic.Exon;
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.Exon;
+import org.intermine.model.bio.Transcript;
 
 import java.util.Collections;
 import java.util.Map;

@@ -388,7 +388,7 @@
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GO" type="template">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.GOTerm" type="class">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GenesOrganism" type="template">
   </tag>
@@ -396,7 +396,7 @@
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="geneGoOrthologues" type="template">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.Gene" type="class">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermPointMutation" type="template">
   </tag>
@@ -406,7 +406,7 @@
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="AAN_Gene_GoTerms" type="template">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.flymine.model.genomic.GOAnnotation" type="class">
+  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.GOAnnotation" type="class">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
   </tag>
@@ -492,7 +492,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="ProteinGeneLocation" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Transcript" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.Transcript" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene.transcripts" type="collection">
   </tag>
@@ -518,15 +518,15 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome.transcripts" type="collection">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.GOTerm" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.GOTerm" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Protein_GeneChromosomeLength" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.Gene" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Chromosome_GeneInsertionLocation" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.NcRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.NcRNA" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="organism_Proteins" type="template">
   </tag>
@@ -540,7 +540,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Introns" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.UTR" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.UTR" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
   </tag>
@@ -550,7 +550,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Transcript.gene" type="reference">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.ChromosomeBand" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.ChromosomeBand" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptIntronChromosome" type="template">
   </tag>
@@ -560,7 +560,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AllGene_Chromosome" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.Chromosome" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.Chromosome" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="ChromLocation_Gene" type="template">
   </tag>
@@ -574,9 +574,9 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="MRNA.UTRs" type="collection">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.SnoRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.SnoRNA" type="class">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.MRNA" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.MRNA" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Transcript.introns" type="collection">
   </tag>
@@ -588,7 +588,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="AAK_chromosomeLocation2geneSequence1" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="org.flymine.model.genomic.TFBindingSite" type="class">
+  <tag name="im:aspect:Genomics" objectIdentifier="org.intermine.model.bio.TFBindingSite" type="class">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="chromosome2genes" type="template">
   </tag>
@@ -598,7 +598,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Identifiers" type="template">
   </tag>
-  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.Protein" type="class">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Gene.proteins" type="collection">
   </tag>
@@ -628,7 +628,7 @@
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="Protein_GeneChromosomeLength" type="template">
   </tag>
-  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinDomain" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.ProteinDomain" type="class">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteractionsOrthologues_forProtein" type="template">
   </tag>
@@ -642,7 +642,7 @@
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="InterProDomain_ProteinInteractingProtein" type="template">
   </tag>
-  <tag name="im:aspect:Proteins" objectIdentifier="org.flymine.model.genomic.ProteinInteraction" type="class">
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.ProteinInteraction" type="class">
   </tag>
   <tag name="im:aspect:Proteins" objectIdentifier="proteinFeature2proteins" type="template">
   </tag>
@@ -738,9 +738,9 @@
   </tag>
   <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
   </tag>
-  <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Gene" type="class">
+  <tag name="im:preferredBagType" objectIdentifier="org.intermine.model.bio.Gene" type="class">
   </tag>
-  <tag name="im:preferredBagType" objectIdentifier="org.flymine.model.genomic.Protein" type="class">
+  <tag name="im:preferredBagType" objectIdentifier="org.intermine.model.bio.Protein" type="class">
   </tag>
   <tag name="im:summary" objectIdentifier="Protein.comments" type="collection">
   </tag>

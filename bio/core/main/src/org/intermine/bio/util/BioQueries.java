@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 
-import org.flymine.model.genomic.Location;
+import org.intermine.model.bio.Location;
 
 /**
  * Bio utility methods for queries.

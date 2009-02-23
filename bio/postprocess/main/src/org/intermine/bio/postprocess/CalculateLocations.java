@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.flymine.model.genomic.AssemblyComponent;
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Chromosome;
-import org.flymine.model.genomic.LocatedSequenceFeature;
-import org.flymine.model.genomic.Location;
+import org.intermine.model.bio.AssemblyComponent;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
@@ -172,8 +172,8 @@ public class CalculateLocations
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
-                         + parentClass.getName() + " AS a1_, org.flymine.model.genomic.Location "
-                         + "AS a2_, org.flymine.model.genomic.BioEntity as a3_"
+                         + parentClass.getName() + " AS a1_, org.intermine.model.bio.Location "
+                         + "AS a2_, org.intermine.model.bio.BioEntity as a3_"
                          + " WHERE (a1_.objects CONTAINS a2_ and a3_.subjects CONTAINS a2_)",
                          null).toQuery();
 

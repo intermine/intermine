@@ -28,8 +28,8 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 
-import org.flymine.model.genomic.Protein;
-import org.flymine.model.genomic.Sequence;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,7 +58,7 @@ public class NCBIFastaLoaderTaskTest extends TestCase {
     }
 
     public void testNcbiFasta() throws Exception {
-        executeLoaderTask("org.flymine.model.genomic.Protein",
+        executeLoaderTask("org.intermine.model.bio.Protein",
                           "ncbi_test.fasta");
 
         Results r = getResults();

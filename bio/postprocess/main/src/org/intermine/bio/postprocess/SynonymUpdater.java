@@ -37,8 +37,8 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.ClassKeyHelper;
 
-import org.flymine.model.genomic.BioEntity;
-import org.flymine.model.genomic.Synonym;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Synonym;
 
 import java.io.InputStream;
 

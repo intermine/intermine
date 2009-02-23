@@ -30,7 +30,7 @@ import org.intermine.objectstore.ObjectStoreException;
 
 import org.intermine.util.StringUtil;
 
-import org.flymine.model.genomic.*;
+import org.intermine.model.bio.*;
 
 import org.apache.log4j.Logger;
 

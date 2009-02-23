@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.Sequence;
-import org.flymine.model.genomic.Organism;
+import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**

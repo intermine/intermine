@@ -13,9 +13,9 @@ package org.flymine.web.widget;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.MRNAExpressionResult;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MRNAExpressionResult;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;

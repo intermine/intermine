@@ -1,6 +1,6 @@
 <webconfig>
 
-  <class className="org.flymine.model.genomic.Project">
+  <class className="org.intermine.model.bio.Project">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="namePI"/>
@@ -10,7 +10,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Lab">
+  <class className="org.intermine.model.bio.Lab">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="affiliation"/>
@@ -18,7 +18,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Protocol">
+  <class className="org.intermine.model.bio.Protocol">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description"/>
@@ -26,7 +26,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.AppliedProtocol">
+  <class className="org.intermine.model.bio.AppliedProtocol">
     <fields>
       <fieldconfig fieldExpr="protocol.type"/>
       <fieldconfig fieldExpr="protocol.name"/>
@@ -34,7 +34,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Submission">
+  <class className="org.intermine.model.bio.Submission">
     <fields>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="design"/>
@@ -48,7 +48,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.SubmissionData">
+  <class className="org.intermine.model.bio.SubmissionData">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
@@ -56,7 +56,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.SubmissionDataAttribute">
+  <class className="org.intermine.model.bio.SubmissionDataAttribute">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="value"/>
@@ -69,7 +69,7 @@
 <!-- THIS SHOULD BE THE SAME AS FLYMINE MINUS STUFF MODMINE DOESN'T NEED -->
 <!-- ___________________________________________________________________ -->
 
-  <class className="org.flymine.model.genomic.Allele">
+  <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -84,7 +84,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Analysis">
+  <class className="org.intermine.model.bio.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
       <fieldconfig fieldExpr="publication.firstAuthor"/>
@@ -92,20 +92,20 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.AnalysisResult">
+  <class className="org.intermine.model.bio.AnalysisResult">
     <fields>
       <fieldconfig fieldExpr="confidence"/>
     </fields>
   </class>
 
 
-  <class className="org.flymine.model.genomic.Author">
+  <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.HistoneBindingSite">
+  <class className="org.intermine.model.bio.HistoneBindingSite">
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -120,7 +120,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.BindingSite">
+  <class className="org.intermine.model.bio.BindingSite">
     <fields>
 <!--     <fieldconfig fieldExpr="primaryIdentifier"/> -->
 <!--   NB MODMINE   <fieldconfig fieldExpr="factor.primaryIdentifier"/> -->
@@ -135,7 +135,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.BioEntity">
+  <class className="org.intermine.model.bio.BioEntity">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
@@ -144,7 +144,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.CDS">
+  <class className="org.intermine.model.bio.CDS">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol" showInResults="false" showInInlineCollection="false"/>
@@ -162,7 +162,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Chromosome">
+  <class className="org.intermine.model.bio.Chromosome">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
@@ -175,7 +175,7 @@
   </class>
 
 <!-- temporarily removed until it's in the preview
-  <class className="org.flymine.model.genomic.ChromosomeStructureVariation">
+  <class className="org.intermine.model.bio.ChromosomeStructureVariation">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -190,34 +190,34 @@
   </class>
 -->
 
-  <class className="org.flymine.model.genomic.Clone">
+  <class className="org.intermine.model.bio.Clone">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Comment">
+  <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.ComputationalResult">
+  <class className="org.intermine.model.bio.ComputationalResult">
     <fields>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="confidence"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.DataSet">
+  <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.DataSource">
+  <class className="org.intermine.model.bio.DataSource">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
@@ -228,7 +228,7 @@
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
-  <class className="org.flymine.model.genomic.Exon">
+  <class className="org.intermine.model.bio.Exon">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
@@ -245,7 +245,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Gene">
+  <class className="org.intermine.model.bio.Gene">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -268,7 +268,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.GOAnnotation">
+  <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
       <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
@@ -279,7 +279,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.GOEvidenceCode">
+  <class className="org.intermine.model.bio.GOEvidenceCode">
     <fields>
       <fieldconfig fieldExpr="code"/>
     </fields>
@@ -288,7 +288,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Homologue">
+  <class className="org.intermine.model.bio.Homologue">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
@@ -298,13 +298,13 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.InfoSource">
+  <class className="org.intermine.model.bio.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Location">
+  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
@@ -313,7 +313,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.LocatedSequenceFeature">
+  <class className="org.intermine.model.bio.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -331,7 +331,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.OntologyRelation">
+  <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="relationship"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
@@ -342,7 +342,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.OntologyTerm">
+  <class className="org.intermine.model.bio.OntologyTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -350,13 +350,13 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.OntologyTermSynonym">
+  <class className="org.intermine.model.bio.OntologyTermSynonym">
     <fields>
       <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Organism">
+  <class className="org.intermine.model.bio.Organism">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
@@ -366,7 +366,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.PhenotypeAnnotation">
+  <class className="org.intermine.model.bio.PhenotypeAnnotation">
     <fields>
       <fieldconfig fieldExpr="annotationType"/>
       <fieldconfig fieldExpr="description"/>
@@ -374,7 +374,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Primer">
+  <class className="org.intermine.model.bio.Primer">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -386,14 +386,14 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Polypeptide">
+  <class className="org.intermine.model.bio.Polypeptide">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Protein">
+  <class className="org.intermine.model.bio.Protein">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
@@ -407,7 +407,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.ProteinDomain">
+  <class className="org.intermine.model.bio.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="name"/>
@@ -419,7 +419,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Publication">
+  <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
@@ -435,7 +435,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.RegulatoryRegion">
+  <class className="org.intermine.model.bio.RegulatoryRegion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
@@ -449,14 +449,14 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Relation">
+  <class className="org.intermine.model.bio.Relation">
     <fields>
       <fieldconfig fieldExpr="object.primaryIdentifier"/>
       <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.Sequence">
+  <class className="org.intermine.model.bio.Sequence">
     <fields>
       <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
                    sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
@@ -466,7 +466,7 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
-  <class className="org.flymine.model.genomic.Synonym">
+  <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
       <fieldconfig fieldExpr="type"/>
@@ -474,7 +474,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.SyntenicRegion">
+  <class className="org.intermine.model.bio.SyntenicRegion">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -487,7 +487,7 @@
     </fields>
   </class>
 
-  <class className="org.flymine.model.genomic.TFBindingSite">
+  <class className="org.intermine.model.bio.TFBindingSite">
     <fields>
 <!--      <fieldconfig fieldExpr="primaryIdentifier"/> -->
       <fieldconfig fieldExpr="gene.primaryIdentifier"/>
@@ -505,14 +505,14 @@
   </class>
 
 
-  <class className="org.flymine.model.genomic.TFmodule">
+  <class className="org.intermine.model.bio.TFmodule">
     <longdisplayers>
       <displayer src="/model/redflyDisplayer.jsp"/>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.Transcript">
+  <class className="org.intermine.model.bio.Transcript">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="exonCount"/>
@@ -528,7 +528,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.TranscriptRegion">
+  <class className="org.intermine.model.bio.TranscriptRegion">
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -543,7 +543,7 @@
     </longdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.TransposableElementInsertionSite">
+  <class className="org.intermine.model.bio.TransposableElementInsertionSite">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
@@ -559,7 +559,7 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.flymine.model.genomic.UniProtFeature">
+  <class className="org.intermine.model.bio.UniProtFeature">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="description"/>
@@ -582,7 +582,7 @@
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.LocatedSequenceFeature,org.flymine.model.genomic.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
@@ -590,14 +590,14 @@
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
                                  label="Feature"
                                  description="UniProt features enriched for proteins in this list."
-                                 typeClass="org.flymine.model.genomic.Protein" />
+                                 typeClass="org.intermine.model.bio.Protein" />
 
       <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
                                  link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
                                  label="Keyword"
                                  description="UniProt keywords enriched for proteins in this list."
-                                 typeClass="org.flymine.model.genomic.Protein" />
+                                 typeClass="org.intermine.model.bio.Protein" />
 
       <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
@@ -606,7 +606,7 @@
                                  label="GO Term"
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
-                                 typeClass="org.flymine.model.genomic.Gene,org.flymine.model.genomic.Protein"
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
       <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
@@ -615,7 +615,7 @@
                                  label="Publication"
                                  description="Publications enriched for genes in this list."
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 typeClass="org.flymine.model.genomic.Gene"
+                                 typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
 
 
@@ -624,7 +624,7 @@
                          description="Counts of orthologues in other organisms for the genes in this list."
                          displayFields="name"
                          exportField="primaryIdentifier"
-                         typeClass="org.flymine.model.genomic.Gene"
+                         typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
 
     </widgets>

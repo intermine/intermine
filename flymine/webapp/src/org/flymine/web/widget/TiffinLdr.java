@@ -33,12 +33,12 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
-import org.flymine.model.genomic.DataSet;
-import org.flymine.model.genomic.Gene;
-import org.flymine.model.genomic.IntergenicRegion;
-import org.flymine.model.genomic.Motif;
-import org.flymine.model.genomic.Organism;
-import org.flymine.model.genomic.TFBindingSite;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.IntergenicRegion;
+import org.intermine.model.bio.Motif;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.TFBindingSite;
 /**
  * @author Julie Sullivan
  */

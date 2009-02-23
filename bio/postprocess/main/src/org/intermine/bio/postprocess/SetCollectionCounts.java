@@ -21,7 +21,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.TypeUtil;
 
-import org.flymine.model.genomic.Transcript;
+import org.intermine.model.bio.Transcript;
 
 import java.util.Collection;
 import java.util.Iterator;

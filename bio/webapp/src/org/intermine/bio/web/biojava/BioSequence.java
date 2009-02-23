@@ -13,7 +13,7 @@ package org.intermine.bio.web.biojava;
 import org.biojava.bio.seq.impl.SimpleSequence;
 import org.biojava.bio.symbol.SymbolList;
 
-import org.flymine.model.genomic.BioEntity;
+import org.intermine.model.bio.BioEntity;
 
 /**
  * An implementation of the BioJava Sequence interface that uses FlyMine objects underneath.
