@@ -136,7 +136,7 @@
 
   <class className="org.flymine.model.genomic.OntologyRelation">
     <fields>
-      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationship"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
     </fields>
