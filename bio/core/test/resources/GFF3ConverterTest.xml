@@ -16,7 +16,7 @@
 <item id="0_20" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="promoter(2179-)"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_10"/>
 </item>
 <item id="0_31" class="Location">
@@ -42,7 +42,7 @@
 <item id="0_37" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="Mousechain:4246045:10:58864978..58865031"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_34"/>
 </item>
 <item id="0_0" class="Organism">
@@ -81,7 +81,7 @@
 <item id="0_29" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="Mousechain:14:6:3063417..48830107"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_25"/>
 </item>
 <item id="0_15" class="Chromosome">
@@ -109,13 +109,13 @@
 <item id="0_33" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="Mousechain:4162060:13:91454738..91454814"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_30"/>
 </item>
 <item id="0_14" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="promoter(90+)"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_6"/>
 </item>
 <item id="0_18" class="Location">
@@ -129,7 +129,7 @@
 <item id="0_22" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="exon(2179-)#2"/>
-<reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
 <reference name="subject" ref_id="0_8"/>
 </item>
 <item id="0_27" class="ComputationalResult">

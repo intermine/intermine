@@ -40,7 +40,6 @@
 <item id="6_1" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0015567"/>
-<reference name="source" ref_id="1_1"/>
 <reference name="subject" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
@@ -60,7 +59,6 @@
 <item id="6_2" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0020002"/>
-<reference name="source" ref_id="1_1"/>
 <reference name="subject" ref_id="5_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
