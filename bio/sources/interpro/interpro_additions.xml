@@ -5,23 +5,17 @@
         <collection name="proteinDomains" referenced-type="org.flymine.model.genomic.ProteinDomain" reverse-reference="proteins"/>
     </class>
 
-    <class name="org.flymine.model.genomic.ProteinDomain" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
-        <attribute name="name" type="java.lang.String"/>
-        <attribute name="shortName" type="java.lang.String"/>
-        <attribute name="type" type="java.lang.String"/>
-        <attribute name="description" type="java.lang.String"/>
-       	<reference name="domainRelationships" referenced-type="org.flymine.model.genomic.DomainRelationship"/>
-        <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
-        <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="proteinDomains"/>
-    </class>
+  <class name="org.flymine.model.genomic.ProteinDomain" extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="shortName" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <collection name="parentFeatures" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
+    <collection name="childFeatures" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
+    <collection name="contains" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
+    <collection name="foundIn" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
+    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication" ordered="true"/>
+    <collection name="proteins" referenced-type="org.flymine.model.genomic.Protein" ordered="true" reverse-reference="proteinDomains"/>
+  </class>
 
-    <class name="org.flymine.model.genomic.DomainRelationship" is-interface="true">
-    	<collection name="parentFeatures" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
-        <collection name="childFeatures" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
-        <collection name="contains" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
-        <collection name="foundIn" referenced-type="org.flymine.model.genomic.ProteinDomain" ordered="true"/>
-    </class>
-
-
-    
 </classes>
