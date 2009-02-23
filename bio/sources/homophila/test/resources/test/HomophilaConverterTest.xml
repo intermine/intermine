@@ -34,7 +34,6 @@
   <item id="8_2" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="NP_000005"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="5_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
@@ -56,7 +55,6 @@
   <item id="8_1" class="Synonym">
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="A2M"/>
-    <reference name="source" ref_id="0_1"/>
     <reference name="subject" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>

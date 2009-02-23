@@ -44,7 +44,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="T(2;3)V21"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -63,7 +62,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="Scer\GAL4[sd-SG29.1]"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="10_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -74,7 +72,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS3r}CB-5069-3"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_5"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -82,7 +79,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS5}5-HA-1496"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_8"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -90,7 +86,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0030675"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_6"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -98,7 +93,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS3r}CB-0697-3"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_6"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -106,7 +100,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10006[GD2461]"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="10_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -129,7 +122,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RA"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -143,7 +135,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RB"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -171,7 +162,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="3R"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="7_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -179,7 +169,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS3}CB-5069-3"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -190,7 +179,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0036461"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -211,7 +199,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="3L"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="7_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -219,7 +206,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="f07990"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_9"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -239,7 +225,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0029528"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_8"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -247,7 +232,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RA_prot"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -255,7 +239,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0068355"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_9"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -263,7 +246,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0000001"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -278,7 +260,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBpp88888"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -286,7 +267,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0030830"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_5"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -302,7 +282,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS5r}5-HA-1496"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_4"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -320,7 +299,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG10000-RC"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -350,7 +328,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBab0010281"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -375,7 +352,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="dmel_GLEANR_1_synonym"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -414,7 +390,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBpp99999"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -437,7 +412,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="CG10000:2"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="8_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -460,7 +434,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0030367"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_7"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -479,7 +452,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBtr0085315"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -504,7 +476,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS5r}5-SZ-4122"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -512,7 +483,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0000001_dbxref3"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -527,7 +497,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="&amp;beta;Tub85D[10g]"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="11_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -535,7 +504,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBal0198867"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="10_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -543,7 +511,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0028225"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -559,7 +526,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBtr0085317"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -589,7 +555,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS5}5-SZ-4122"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_7"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -597,7 +562,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="CG10000:1"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="8_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -613,7 +577,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0031976"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_4"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -621,7 +584,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="CG10006_symbol"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -629,7 +591,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBal0060667"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="10_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -646,7 +607,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0000001_dbxref2"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -654,7 +614,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="Df(2L)ED1454"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -662,7 +621,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0000001_dbxref1"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -674,7 +632,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="Df(2L)ED482"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -696,7 +653,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG88888-RA_prot"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -707,7 +663,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0028380"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -726,7 +681,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBab0032193"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -763,7 +717,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="CG99999-RB_prot"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -792,7 +745,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBpp10000"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="9_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -807,7 +759,6 @@
     <attribute name="isPrimary" value="false"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBgn0036461_dbxref4"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -819,7 +770,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBti0032815"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_3"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -831,7 +781,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="symbol"/>
     <attribute name="value" value="FBgn0000001_symbol_synonym"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -860,7 +809,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBab0031842"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="13_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -878,7 +826,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="fullname"/>
     <attribute name="value" value="FBgn0000001_fullname_synonym"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="0_1"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -886,7 +833,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="P{RS3}CB-0697-3"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -902,7 +848,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBtr0085316"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="6_2"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
@@ -910,7 +855,6 @@
     <attribute name="isPrimary" value="true"/>
     <attribute name="type" value="name"/>
     <attribute name="value" value="PBac{WH}f07990"/>
-    <reference name="source" ref_id="2_1"/>
     <reference name="subject" ref_id="12_9"/>
     <collection name="dataSets"><reference ref_id="3_1"/></collection>
   </item>
