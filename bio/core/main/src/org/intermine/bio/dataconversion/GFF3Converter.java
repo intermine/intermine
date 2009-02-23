@@ -204,6 +204,7 @@ public class GFF3Converter
                         synonym.setReference("subject", feature.getIdentifier());
                         synonym.setAttribute("value", recordName);
                         synonym.setAttribute("type", "name");
+                        synonym.addToCollection("dataSets", dataSet);
                         synonymsToAdd.add(synonym);
                     }
                 }
@@ -213,10 +214,10 @@ public class GFF3Converter
                     String recordName = (String) i.next();
                     if (!recordName.equals(record.getId())) {
                         Item synonym = createItem("Synonym");
-                        synonym.addReference(new Reference("subject", feature.getIdentifier()));
-                        synonym.addAttribute(new Attribute("value", recordName));
-                        synonym.addAttribute(new Attribute("type", "symbol"));
-                        synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+                        synonym.setReference("subject", feature.getIdentifier());
+                        synonym.setAttribute("value", recordName);
+                        synonym.setAttribute("type", "symbol");
+                        synonym.addToCollection("dataSets", dataSet);
                         synonymsToAdd.add(synonym);
                     }
                 }
