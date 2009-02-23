@@ -323,8 +323,7 @@ public class InparanoidConverter extends FileConverter
         Item item = createItem(type);
         item.setAttribute(attribute, value);
         item.setReference("organism", organism.getIdentifier());
-        item.setCollection("dataSets",
-                            new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+        item.addToCollection("dataSets", dataSet);
         store(item);                                                 // Stores BioEntity
         bioEntities.put(key, item);
 
@@ -333,31 +332,31 @@ public class InparanoidConverter extends FileConverter
         synonym.setAttribute("type", "identifier");
         synonym.setAttribute("value", value);
         synonym.setReference("subject", item.getIdentifier());
-        Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
-        synonym.setReference("source", source.getIdentifier());
-        item.setCollection("dataSets",
-                           new ArrayList(Collections.singleton(dataSet.getIdentifier())));
+        // TODO should we change dataset instead?
+        //Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
+        //synonym.setReference("source", source.getIdentifier());
+        item.addToCollection("dataSets", dataSet);
         store(synonym);                                              // Stores Synonym -> BioEntity
 
         return item;
     }
 
     // get source for synonyms, depends on organism
-    private Item getSourceForOrganism(String taxonId) throws ObjectStoreException {
-        String sourceName = (String) orgSources.get(taxonId);
-        if (sourceName == null) {
-                throw new IllegalArgumentException("unable to find source name for organism: "
-                                                   + taxonId);
-        }
-        Item source = sources.get(sourceName);
-        if (source == null) {
-            source = createItem("DataSource");
-            source.setAttribute("name", sourceName);
-            store(source);
-            sources.put(sourceName, source);
-        }
-        return source;
-    }
+//    private Item getSourceForOrganism(String taxonId) throws ObjectStoreException {
+//        String sourceName = (String) orgSources.get(taxonId);
+//        if (sourceName == null) {
+//                throw new IllegalArgumentException("unable to find source name for organism: "
+//                                                   + taxonId);
+//        }
+//        Item source = sources.get(sourceName);
+//        if (source == null) {
+//            source = createItem("DataSource");
+//            source.setAttribute("name", sourceName);
+//            store(source);
+//            sources.put(sourceName, source);
+//        }
+//        return source;
+//    }
 
     private Item getOrganism(String code) throws ObjectStoreException {
         String taxonId = (String) taxonIds.get(code);

@@ -531,7 +531,7 @@ public class GoConverter extends FileConverter
                 product.getIdentifier(),
                 synonymTypes.get(type),
                 accession,
-                dataSource);
+                datasetId);
 
         ItemWrapper newProductWrapper = new ItemWrapper(key, product, synonym);
         productWrapperMap.put(key, newProductWrapper);
@@ -674,14 +674,12 @@ public class GoConverter extends FileConverter
     }
 
     // TODO set dataset
-    private Item newSynonym(String subjectId, String type, String value, Item dataSource) {
+    private Item newSynonym(String subjectId, String type, String value, String datasetId) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
-        synonym.setReference("source", dataSource.getIdentifier());
-        String datasetId = dataSource.getCollection("dataSets").getRefIds().get(0);
-        synonym.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
+        synonym.addToCollection("dataSets", datasetId);
         return synonym;
     }
 
