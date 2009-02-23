@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Publication" is-interface="true">
+  <class name="Publication" is-interface="true">
     <attribute name="pubMedId" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true">
+  <class name="Gene" is-interface="true">
     <attribute name="ncbiGeneNumber" type="java.lang.String"/>
     <attribute name="primaryIdentifier" type="java.lang.String"/>
-    <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
+    <collection name="publications" referenced-type="Publication"/>
   </class>
 </classes>

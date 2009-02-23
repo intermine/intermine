@@ -34,7 +34,7 @@ public class InterMineModelParserTest extends TestCase
 
     public void testProcess() throws Exception {
         Model model = parser.process(new StringReader(getModelXml()));
-        Model expected = new Model("testmodel",
+        Model expected = new Model("testmodel", "org.intermine.model.testmodel",
                                    getExpectedClds());
         assertEquals(expected, model);
     }
@@ -46,7 +46,7 @@ public class InterMineModelParserTest extends TestCase
 
 
     private String getModelXml() {
-        return "<model  name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Company\" extends=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"><attribute name=\"name\" type=\"java.lang.String\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class><class name=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"></class></model>";
+        return "<model  name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Company\" extends=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"><attribute name=\"name\" type=\"java.lang.String\"/><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class><class name=\"org.intermine.model.testmodel.HasAddress\" is-interface=\"true\"></class></model>";
     }
 
     private Set getExpectedClds() {

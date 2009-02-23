@@ -106,7 +106,8 @@ public class ModelMergerTask extends Task
         try {
             InterMineModelParser parser = new InterMineModelParser();
             Set<ClassDescriptor> additionClds =
-                parser.generateClassDescriptors(new FileReader(newAdditionsFile));
+                parser.generateClassDescriptors(new FileReader(newAdditionsFile),
+                        mergedModel.getPackageName());
             System.err .println("merging model additions from: " + newAdditionsFile);
             Model newMergedModel = ModelMerger.mergeModel(mergedModel, additionClds);
             return newMergedModel;

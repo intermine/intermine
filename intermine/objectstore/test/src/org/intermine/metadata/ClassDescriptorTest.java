@@ -40,13 +40,13 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
                                                   new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model1 = new Model("model1", Collections.singleton(cld));
+            Model model1 = new Model("model1", "package.name", Collections.singleton(cld));
         } catch (IllegalStateException e) {
             fail("Model should have been set correctly");
         }
 
         try {
-            Model model2 = new Model("model2", Collections.singleton(cld));
+            Model model2 = new Model("model2", "package.name", Collections.singleton(cld));
             fail("Model already set, expected IllegalStateException");
         } catch (IllegalStateException e) {
         }
@@ -59,7 +59,7 @@ public class ClassDescriptorTest extends TestCase
                                                   new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {int1, int2, cld}));
-        Model model = new Model("test", clds);
+        Model model = new Model("test", "package.name", clds);
 
         Set interfaces = new HashSet(Arrays.asList(new Object[] {int1, int2}));
         assertEquals(interfaces, cld.getSuperDescriptors());
@@ -75,7 +75,7 @@ public class ClassDescriptorTest extends TestCase
 
         Set clds = new HashSet(Arrays.asList(new Object[] {int1, int2, cld}));
         try {
-            Model model = new Model("test", clds);
+            Model model = new Model("test", "package.name", clds);
             fail("Expected MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -83,7 +83,7 @@ public class ClassDescriptorTest extends TestCase
 
     public void testInterfaceNotImplemented() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", Collections.singleton(cld1));
+        Model model = new Model("model", "package.name", Collections.singleton(cld1));
         assertTrue(cld1.getSubDescriptors().size() == 0);
     }
 
@@ -91,7 +91,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor superCld = new ClassDescriptor("superCld", null, false,
                                                        new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld = new ClassDescriptor("cld", "superCld", false,  new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
+        Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
         assertEquals(superCld, cld.getSuperclassDescriptor());
     }
 
@@ -100,7 +100,7 @@ public class ClassDescriptorTest extends TestCase
                                                        new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld = new ClassDescriptor("cld", "anotherCld", false,  new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
+            Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
             fail("Expected MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -112,7 +112,7 @@ public class ClassDescriptorTest extends TestCase
                                                        new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor interface1 = new ClassDescriptor("interface1", "superCld", true,  new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model2 = new Model("test", new HashSet(Arrays.asList(new Object[] {interface1, superCld})));
+            Model model2 = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {interface1, superCld})));
             fail("Expected MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -123,7 +123,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor superCld2 = new ClassDescriptor("superCld2", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld = new ClassDescriptor("cld", "superCld1 superCld2", false, new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld, superCld1, superCld2})));
+            Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld1, superCld2})));
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -153,7 +153,7 @@ public class ClassDescriptorTest extends TestCase
         AttributeDescriptor atb3 = new AttributeDescriptor("att3", "java.lang.String");
         ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", false, Collections.singleton(atb3), new HashSet(), new HashSet());
 
-        Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
         FieldDescriptor id = cld3.getFieldDescriptorByName("id");
         Set atts = new HashSet(Arrays.asList(new Object[] {atb3, atb2, atb1, id}));
@@ -167,7 +167,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class1", false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", false, new HashSet(), new HashSet(), new HashSet());
 
-        Model model2 = new Model("test2", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
+        Model model2 = new Model("test2", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
 
         // getSubDescriptrors should just return direct subclasses (cld2, cld3)
         Set subs = new HashSet(Arrays.asList(new Object[] {cld2, cld3}));
@@ -181,7 +181,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld3 = new ClassDescriptor("Class3", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", false, new HashSet(), new HashSet(), new HashSet());
 
-        Model model2 = new Model("test2", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
+        Model model2 = new Model("test2", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
 
         // getImplementorDescriptrors should just return direct implementations (cld2, cld3)
         Set impls = new HashSet(Arrays.asList(new Object[] {cld2, cld3}));
@@ -214,7 +214,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2 Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class3\" extends=\"Class2 Interface1\" is-interface=\"false\">"
             + "</class>";
-        Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         assertEquals(expected, cld3.toString());
     }
 
@@ -223,7 +223,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class2\" extends=\"Interface1\" is-interface=\"false\">"
             + "</class>";
-        Model model = new Model("test", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
         assertEquals(expected, cld2.toString());
     }
     // ============================================
@@ -263,7 +263,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, atds1, new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
     }
 
     public void testMultiInheritanceLegalRef() throws Exception {
@@ -274,7 +274,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), atds1, new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), atds2, new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         ReferenceDescriptor rd = cld3.getReferenceDescriptorByName("atd1", true);
         assertEquals("package.name.Class2", rd.getReferencedClassName());
     }
@@ -287,7 +287,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, true, new HashSet(), new HashSet(), atds1);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), new HashSet(), atds2);
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
         ReferenceDescriptor rd = cld3.getCollectionDescriptorByName("atd1", true);
         assertEquals("package.name.Class2", rd.getReferencedClassName());
     }
@@ -301,7 +301,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -316,7 +316,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -331,7 +331,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, atds2, new HashSet(), new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -346,7 +346,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, true, new HashSet(), atds2, new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1 package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
         try {
-            Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
             fail("Expected: MetaDataException");
         } catch (MetaDataException e) {
         }
@@ -361,7 +361,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor c2 = new ClassDescriptor(class2Name, class3Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c3 = new ClassDescriptor(class3Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c4 = new ClassDescriptor(class4Name, null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
+        Model model = new Model("model", "org.intermine.model.testmodel", new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
 
         Set<String> supers = new LinkedHashSet<String>();
         ClassDescriptor.findSuperClassNames(model, class1Name, supers);
@@ -393,7 +393,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor c2 = new ClassDescriptor(class2Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c3 = new ClassDescriptor(class3Name, class4Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c4 = new ClassDescriptor(class4Name, null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
+        Model model = new Model("model", "org.intermine.model.testmodel", new HashSet(Arrays.asList(new Object[] {c1, c2, c3, c4})));
 
         int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
         assertEquals(1, comp);
@@ -421,7 +421,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor c1 = new ClassDescriptor(class1Name, class2Name + " " + class3Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c2 = new ClassDescriptor(class2Name, class3Name, true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor c3 = new ClassDescriptor(class3Name, null, true, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", new HashSet(Arrays.asList(new Object[] {c1, c2, c3})));
+        Model model = new Model("model", "org.intermine.model.testmodel", new HashSet(Arrays.asList(new Object[] {c1, c2, c3})));
 
         int comp = ClassDescriptor.classInheritanceCompare(model, class1Name, class2Name);
         assertEquals(1, comp);

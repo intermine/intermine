@@ -1,37 +1,37 @@
-<model name="userprofile">
-  <class name="org.intermine.model.userprofile.UserProfile" is-interface="false">
+<model name="userprofile" package="org.intermine.model.userprofile">
+  <class name="UserProfile" is-interface="false">
     <attribute name="username" type="java.lang.String"/>
     <attribute name="password" type="java.lang.String"/>
-    <collection name="savedBags" referenced-type="org.intermine.model.userprofile.SavedBag" reverse-reference="userProfile"/>
-    <collection name="savedQuerys" referenced-type="org.intermine.model.userprofile.SavedQuery" reverse-reference="userProfile"/>
-    <collection name="savedTemplateQuerys" referenced-type="org.intermine.model.userprofile.SavedTemplateQuery" reverse-reference="userProfile"/>
-    <collection name="tags" referenced-type="org.intermine.model.userprofile.Tag" reverse-reference="userProfile"/>
+    <collection name="savedBags" referenced-type="SavedBag" reverse-reference="userProfile"/>
+    <collection name="savedQuerys" referenced-type="SavedQuery" reverse-reference="userProfile"/>
+    <collection name="savedTemplateQuerys" referenced-type="SavedTemplateQuery" reverse-reference="userProfile"/>
+    <collection name="tags" referenced-type="Tag" reverse-reference="userProfile"/>
   </class>
-  <class name="org.intermine.model.userprofile.SavedBag" is-interface="false">
+  <class name="SavedBag" is-interface="false">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="dateCreated" type="java.util.Date"/>
     <attribute name="osbId" type="int"/>
-    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedBags"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedBags"/>
   </class>
-  <class name="org.intermine.model.userprofile.SavedQuery" is-interface="false">
+  <class name="SavedQuery" is-interface="false">
     <attribute name="query" type="java.lang.String"/>
-    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedQuerys"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedQuerys"/>
   </class>
-  <class name="org.intermine.model.userprofile.SavedTemplateQuery" is-interface="false">
+  <class name="SavedTemplateQuery" is-interface="false">
     <attribute name="templateQuery" type="java.lang.String"/>
-    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="savedTemplateQuerys"/>
-    <collection name="summaries" referenced-type="org.intermine.model.userprofile.TemplateSummary" reverse-reference="template"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="savedTemplateQuerys"/>
+    <collection name="summaries" referenced-type="TemplateSummary" reverse-reference="template"/>
   </class>
-  <class name="org.intermine.model.userprofile.Tag" is-interface="false">
+  <class name="Tag" is-interface="false">
     <attribute name="tagName" type="java.lang.String"/>
     <attribute name="objectIdentifier" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
-    <reference name="userProfile" referenced-type="org.intermine.model.userprofile.UserProfile" reverse-reference="tags"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="tags"/>
   </class>
-  <class name="org.intermine.model.userprofile.TemplateSummary" is-interface="false">
+  <class name="TemplateSummary" is-interface="false">
     <attribute name="summary" type="java.lang.String"/>
-    <reference name="template" referenced-type="org.intermine.model.userprofile.SavedTemplateQuery" reverse-reference="summaries"/>
+    <reference name="template" referenced-type="SavedTemplateQuery" reverse-reference="summaries"/>
   </class>
 </model>

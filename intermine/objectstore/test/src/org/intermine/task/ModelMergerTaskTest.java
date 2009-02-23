@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class ModelMergerTaskTest extends TestCase
 {
     String inputModel =
-        "<model name=\"testmodel\" namespace=\"testmodel#\">"
+        "<model name=\"testmodel\" package=\"\">"
             + "<class name=\"A\" extends=\"C\" is-interface=\"false\">"
                 + "<reference name=\"ref1\" referenced-type=\"C\"/>"
                 + "<collection name=\"col1\" referenced-type=\"C\"/>"
@@ -39,7 +39,7 @@ public class ModelMergerTaskTest extends TestCase
             + "<class name=\"D\" is-interface=\"true\"></class>"
         + "</model>";
     String additions =
-        "<model name=\"testmodel\" namespace=\"testmodel#\">"
+        "<model name=\"testmodel\" package=\"\">"
         + "<class name=\"A\" extends=\"B\" is-interface=\"false\">"
             + "<reference name=\"ref1\" referenced-type=\"C\"/>"
             + "<collection name=\"col2\" referenced-type=\"C\"/>"
@@ -48,7 +48,7 @@ public class ModelMergerTaskTest extends TestCase
         + "<class name=\"B\" is-interface=\"false\"></class>"
     + "</model>";
     String expected =
-        "<model name=\"testmodel\" namespace=\"testmodel#\">"
+        "<model name=\"testmodel\" package=\"\">"
         + "<class name=\"A\" extends=\"B\" is-interface=\"false\">"
             + "<reference name=\"ref1\" referenced-type=\"C\"/>"
             + "<collection name=\"col1\" referenced-type=\"C\"/>"

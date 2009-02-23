@@ -19,7 +19,6 @@ import org.intermine.metadata.Model;
  *
  * @author Richard Smith
  */
-
 public interface ModelParser
 {
 

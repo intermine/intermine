@@ -32,7 +32,7 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test adding a class
     public void testAddClass() throws Exception {
-        String modelStr = "<model name=\"testmodel\">" +
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                             "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                 "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                             "</class>" +
@@ -42,9 +42,9 @@ public class ModelMergerFunctionalTest extends TestCase
         String addition =   "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
                                 "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                             "</class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\">" +
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                             "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                 "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                             "</class>" +
@@ -59,18 +59,18 @@ public class ModelMergerFunctionalTest extends TestCase
     // addition: A <-- B <-- C
     // target should remove A <-- C
     public void testInheritanceChain() throws Exception {
-        String modelStr = "<model name=\"testmodel\">"
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"C\" is-interface=\"false\"></class>"
                             + "<class name=\"C\" is-interface=\"false\"></class>"
                          + "</model>";
         Model model = parser.process(new StringReader(modelStr));
-        String addition = "<model name=\"testmodel\">"
+        String addition = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
                             + "<class name=\"B\" extends=\"C\" is-interface=\"false\"></class>"
                          + "</model>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\">"
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
                             + "<class name=\"B\" extends=\"C\" is-interface=\"false\"></class>"
                             + "<class name=\"C\" is-interface=\"false\"></class>"
@@ -87,7 +87,7 @@ public class ModelMergerFunctionalTest extends TestCase
     //
     // Attribute, collection and reference should move from A to B
     public void testRedundancy() throws Exception {
-        String modelStr = "<model name=\"testmodel\">"
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"C\" is-interface=\"false\">"
                               + "<attribute name=\"name\" type=\"java.lang.String\"/>"
                               + "<collection name=\"col\" referenced-type=\"C\"/>"
@@ -96,7 +96,7 @@ public class ModelMergerFunctionalTest extends TestCase
                             + "<class name=\"C\" is-interface=\"false\"></class>"
                          + "</model>";
         Model model = parser.process(new StringReader(modelStr));
-        String addition = "<model name=\"testmodel\">"
+        String addition = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
                             + "<class name=\"B\" extends=\"C\" is-interface=\"false\">"
                               + "<attribute name=\"name\" type=\"java.lang.String\"/>"
@@ -104,9 +104,9 @@ public class ModelMergerFunctionalTest extends TestCase
                               + "<reference name=\"ref\" referenced-type=\"C\"/>"
                             + "</class>"
                          + "</model>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\">"
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">"
                             + "<class name=\"A\" extends=\"B\" is-interface=\"false\"></class>"
                             + "<class name=\"B\" extends=\"C\" is-interface=\"false\">"
                               + "<attribute name=\"name\" type=\"java.lang.String\"/>"
@@ -121,7 +121,7 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test adding subclass
     public void testSubclassExisting() throws Exception {
-        String modelStr =   "<model name=\"testmodel\">" +
+        String modelStr =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                                 "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                     "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                                 "</class>" +
@@ -131,9 +131,9 @@ public class ModelMergerFunctionalTest extends TestCase
         String addition =   "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                 "<attribute name=\"department\" type=\"java.lang.String\"/>" +
                             "</class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected =   "<model name=\"testmodel\">" +
+        String expected =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                                 "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                     "<attribute name=\"department\" type=\"java.lang.String\"/>" +
                                 "</class>" +
@@ -147,23 +147,23 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test adding subclass
     public void testSuperclassExisting() throws Exception {
-        String modelStr =   "<model name=\"testmodel\">" +
+        String modelStr =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                                 "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" is-interface=\"false\">" +
                                     "<attribute name=\"department\" type=\"java.lang.String\"/>" +
                                 "</class>" +
                             "</model>";
         Model model = parser.process(new StringReader(modelStr));
 
-        String addition = "<model name=\"additions\">" +
+        String addition = "<model name=\"additions\" package=\"org.intermine.model.testmodel\">" +
                             "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                             "</class>" +
                             "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                 "<attribute name=\"name\" type=\"java.lang.String\"/>" +
                             "</class>" +
                           "</model>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected =   "<model name=\"testmodel\">" +
+        String expected =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                                 "<class name=\"org.intermine.model.testmodel.DepartmentSecretary\" extends=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\">" +
                                     "<attribute name=\"department\" type=\"java.lang.String\"/>" +
                                 "</class>" +
@@ -177,19 +177,19 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test adding a attribute to an existing class
     public void testAddAttribute() throws Exception {
-        String modelStr = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
         Model model = parser.process(new StringReader(modelStr));
 
         String addition = "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"age\" type=\"java.lang.Integer\"/></class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/><attribute name=\"age\" type=\"java.lang.Integer\"/></class></model>";
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/><attribute name=\"age\" type=\"java.lang.Integer\"/></class></model>";
         //assertXMLEqual(expected, xml);
         assertEquals(parser.process(new StringReader(expected)).getClassDescriptors(), ModelMerger.mergeModel(model, additionClds).getClassDescriptors());
     }
 
     public void testAddReference() throws Exception {
-        String modelStr =   "<model name=\"testmodel\">" +
+        String modelStr =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                                 "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\">" +
                                 "</class>" +
                                 "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
@@ -201,9 +201,9 @@ public class ModelMergerFunctionalTest extends TestCase
         String addition = "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
                             "<reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\"/>" +
                           "</class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\">" +
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                             "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\">" +
                             "</class>" +
                             "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
@@ -216,7 +216,7 @@ public class ModelMergerFunctionalTest extends TestCase
 
 
     public void testAddCollection() throws Exception {
-        String modelStr = "<model name=\"testmodel\">" +
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                 "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">" +
                 "</class>" +
                 "<class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\">" +
@@ -228,9 +228,9 @@ public class ModelMergerFunctionalTest extends TestCase
         String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">" +
                           "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/>" +
                           "</class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
-        String expected = "<model name=\"testmodel\">" +
+        String expected = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                 "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">" +
                 "<collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\"/>" +
                 "</class>" +
@@ -243,7 +243,7 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // Test mismatch between is-interface attributes
     public void testIsInterfaceMismatch() throws Exception {
-        String modelStr =   "<model name=\"testmodel\">" +
+        String modelStr =   "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" +
                             "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"false\">" +
                             "</class>" +
                             "</model>";
@@ -251,7 +251,7 @@ public class ModelMergerFunctionalTest extends TestCase
         // Merge class with differing is-interface attribute
         String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\">" +
                           "</class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
         try {
             ModelMerger.mergeModel(model, additionClds);
             fail("Expected ModelMergerException");
@@ -262,11 +262,11 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test conflicting types
     public void testConflictingAttributes() throws Exception {
-            String modelStr = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
+            String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.String\"/></class></model>";
         Model model = parser.process(new StringReader(modelStr));
 
         String addition = "<class name=\"org.intermine.model.testmodel.Secretary\" is-interface=\"false\"><attribute name=\"name\" type=\"java.lang.Integer\"/></class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
         try {
             ModelMerger.mergeModel(model, additionClds);
@@ -278,13 +278,13 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test conflicting references
     public void testConflictingReferences() throws Exception {
-        String modelStr = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
         Model model = parser.process(new StringReader(modelStr));
 
 
         // referenced-type wrong - Department.company
-        String addition = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"departments\"/></class></model>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        String addition = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Department\" reverse-reference=\"departments\"/></class></model>";
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
         try {
             ModelMerger.mergeModel(model, additionClds);
@@ -294,8 +294,8 @@ public class ModelMergerFunctionalTest extends TestCase
         }
 
         // reverse reference wrong - Department.company
-        addition = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"incorrect\"/></class></model>";
-        additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        addition = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"incorrect\"/></class></model>";
+        additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
         model = parser.process(new StringReader(modelStr));
 
         try {
@@ -308,13 +308,13 @@ public class ModelMergerFunctionalTest extends TestCase
 
     // test conflicting collections
     public void testConflictingCollections() throws Exception {
-        String modelStr = "<model name=\"testmodel\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
+        String modelStr = "<model name=\"testmodel\" package=\"org.intermine.model.testmodel\"><class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"company\"/></class><class name=\"org.intermine.model.testmodel.Department\" is-interface=\"false\"><reference name=\"company\" referenced-type=\"org.intermine.model.testmodel.Company\" reverse-reference=\"departments\"/></class></model>";
         Model model = parser.process(new StringReader(modelStr));
 
 
         // referenced-type wrong - Company.departments
         String addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Company\" ordered=\"true\" reverse-reference=\"company\"/></class>";
-        Set additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        Set additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
 
         try {
             ModelMerger.mergeModel(model, additionClds);
@@ -324,7 +324,7 @@ public class ModelMergerFunctionalTest extends TestCase
 
         // reverse reference wrong - Company.departments
         addition = "<class name=\"org.intermine.model.testmodel.Company\" is-interface=\"true\"><collection name=\"departments\" referenced-type=\"org.intermine.model.testmodel.Department\" ordered=\"true\" reverse-reference=\"incorrect\"/></class>";
-        additionClds = parser.generateClassDescriptors(new StringReader(addition));
+        additionClds = parser.generateClassDescriptors(new StringReader(addition), model.getPackageName());
         model = parser.process(new StringReader(modelStr));
 
         try {

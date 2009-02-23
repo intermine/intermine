@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.ChromosomalDeletion" is-interface="true">
+  <class name="ChromosomalDeletion" is-interface="true">
     <attribute name="available" type="java.lang.Boolean"/>
     <attribute name="confirmedByPCR" type="java.lang.Boolean"/>
     <attribute name="confirmedByGenetics" type="java.lang.Boolean"/>
     <reference name="element1" 
-               referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
+               referenced-type="TransposableElementInsertionSite"/>
     <reference name="element2" 
-               referenced-type="org.flymine.model.genomic.TransposableElementInsertionSite"/>
+               referenced-type="TransposableElementInsertionSite"/>
   </class>
-  <class name="org.flymine.model.genomic.TransposableElementInsertionSite" is-interface="true">
+  <class name="TransposableElementInsertionSite" is-interface="true">
     <attribute name="type" type="java.lang.String"/> 
     <attribute name="symbol" type="java.lang.String"/> 
     <attribute name="subType" type="java.lang.String"/> 

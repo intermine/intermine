@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.Motif" 
-         extends="org.flymine.model.genomic.BioEntity" is-interface="true">
+  <class name="Motif" 
+         extends="BioEntity" is-interface="true">
     <collection name="predictedBindingSites"
-                referenced-type="org.flymine.model.genomic.TFBindingSite" 
+                referenced-type="TFBindingSite" 
                 ordered="true" reverse-reference="motif"/>
   </class>
-  <class name="org.flymine.model.genomic.TFBindingSite" is-interface="true">
+  <class name="TFBindingSite" is-interface="true">
     <reference name="motif"
-               referenced-type="org.flymine.model.genomic.Motif" 
+               referenced-type="Motif" 
                reverse-reference="predictedBindingSites"/>
   </class>
 </classes>

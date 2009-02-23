@@ -49,19 +49,19 @@ public class ModelTest extends TestCase
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
 
         try {
-            Model model = new Model(null, clds);
+            Model model = new Model(null, "package.name", clds);
             fail("Expected NullPointerException, name was null");
         } catch(NullPointerException e) {
         }
 
         try {
-            Model model = new Model("", clds);
+            Model model = new Model("", "package.name", clds);
             fail("Expected IllegalArgumentException, name was empty string");
         } catch(IllegalArgumentException e) {
         }
 
         try {
-            Model model = new Model("model", null);
+            Model model = new Model("model", "package.name", null);
             fail("Expected NullPointerException, name was null");
         } catch(NullPointerException e) {
         }
@@ -121,7 +121,7 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", "package.name", clds);
 
         assertEquals(cld1, model.getClassDescriptorByName("Class1"));
         assertEquals(cld2, model.getClassDescriptorByName("Class2"));
@@ -141,7 +141,7 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", "package.name", clds);
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
     }
@@ -167,10 +167,10 @@ public class ModelTest extends TestCase
     }
 
     public void testEquals() throws Exception {
-        Model m1 = new Model("flibble", EMPTY_SET);
-        Model m2 = new Model("flibble", EMPTY_SET);
-        Model m3 = new Model("flobble", EMPTY_SET);
-        Model m4 = new Model("flibble", Collections.singleton(new ClassDescriptor("class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
+        Model m1 = new Model("flibble", "package.name", EMPTY_SET);
+        Model m2 = new Model("flibble", "package.name", EMPTY_SET);
+        Model m3 = new Model("flobble", "package.name", EMPTY_SET);
+        Model m4 = new Model("flibble", "package.name", Collections.singleton(new ClassDescriptor("class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
 
         assertEquals(m1, m2);
         assertEquals(m1.hashCode(), m2.hashCode());
@@ -183,9 +183,9 @@ public class ModelTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", "package.name", clds);
 
-        String expected = "<model name=\"model\">"
+        String expected = "<model name=\"model\" package=\"package.name\">"
             + "<class name=\"Class1\" is-interface=\"false\"></class>"
             + "<class name=\"Class2\" is-interface=\"false\"></class>"
             + "</model>";
@@ -203,7 +203,7 @@ public class ModelTest extends TestCase
         ClassDescriptor sub = new ClassDescriptor(subName, "org.intermine.model.testmodel.BaseClass org.intermine.model.testmodel.MidClass", true, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor mid = new ClassDescriptor(midName, baseName, true, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {base, mid, sub}));
-        Model model = new Model("model", clds);
+        Model model = new Model("model", "org.intermine.model.testmodel", clds);
 
         ClassDescriptor subCD = model.getClassDescriptorByName(subName);
 
@@ -218,7 +218,7 @@ public class ModelTest extends TestCase
         ClassDescriptor c2 = new ClassDescriptor("org.intermine.model.testmodel.Class2", "org.intermine.model.testmodel.Class1", true, new HashSet(), new HashSet(), new HashSet());
         Set clds = new HashSet(Arrays.asList(new Object[] {c1, c2}));
         try {
-            Model model = new Model("model", clds);
+            Model model = new Model("model", "org.intermine.model.testmodel", clds);
             fail("expected exception");
         } catch (MetaDataException e) {
             // expected

@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Gene" is-interface="true" >
-  <collection name="miRNAtargets" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="mirnagene"/>
+<class name="Gene" is-interface="true" >
+  <collection name="miRNAtargets" referenced-type="MiRNATarget" reverse-reference="mirnagene"/>
 </class>
-<class name="org.flymine.model.genomic.MiRNATarget" extends="org.flymine.model.genomic.LocatedSequenceFeature" is-interface="true" >
+<class name="MiRNATarget" extends="LocatedSequenceFeature" is-interface="true" >
   <attribute name="pvalue" type="java.lang.Float"/>
-  <reference name="target" referenced-type="org.flymine.model.genomic.MRNA" reverse-reference="miRNAinteractions"/>
-  <reference name="mirnagene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="miRNAtargets"/>
+  <reference name="target" referenced-type="MRNA" reverse-reference="miRNAinteractions"/>
+  <reference name="mirnagene" referenced-type="Gene" reverse-reference="miRNAtargets"/>
 </class>
-<class name="org.flymine.model.genomic.MRNA" is-interface="true" >
-  <collection name="miRNAinteractions" referenced-type="org.flymine.model.genomic.MiRNATarget" reverse-reference="target"/>
+<class name="MRNA" is-interface="true" >
+  <collection name="miRNAinteractions" referenced-type="MiRNATarget" reverse-reference="target"/>
 </class>
 </classes>

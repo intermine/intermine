@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.InteractionTerm" extends="org.flymine.model.genomic.OntologyTerm" is-interface="true"/>
+  <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>

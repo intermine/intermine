@@ -10,7 +10,6 @@ package org.intermine.modelproduction;
  *
  */
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -91,7 +90,7 @@ public class ModelMerger
         // Remove any reference or collection descriptors made redundant by additions
         newClasses = removeRedundancy(newClasses);
         try {
-            Model newModel = new Model(original.getName(),
+            Model newModel = new Model(original.getName(), original.getPackageName(),
                     new HashSet<ClassDescriptor>(newClasses.values()));
             return newModel;
 

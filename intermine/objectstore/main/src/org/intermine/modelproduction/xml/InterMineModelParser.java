@@ -43,7 +43,7 @@ public class InterMineModelParser implements ModelParser
     public Model process(Reader reader) throws Exception {
         ModelHandler handler = new ModelHandler();
         SAXParser.parse(new InputSource(reader), handler);
-        Model model = new Model(handler.modelName, handler.classes);
+        Model model = new Model(handler.modelName, handler.packageName, handler.classes);
         return model;
     }
 
@@ -52,11 +52,14 @@ public class InterMineModelParser implements ModelParser
      * create a set of ClassDescriptors.
      *
      * @param reader the source model to parse
+     * @param packageName the package name that all the classes should be in
      * @return a set of
      * @throws Exception if Model not created successfully
      */
-    public Set<ClassDescriptor> generateClassDescriptors(Reader reader) throws Exception {
+    public Set<ClassDescriptor> generateClassDescriptors(Reader reader, String packageName)
+    throws Exception {
         ModelHandler handler = new ModelHandler();
+        handler.packageName = packageName;
         SAXParser.parse(new InputSource(reader), handler);
         return handler.classes;
     }
@@ -67,6 +70,7 @@ public class InterMineModelParser implements ModelParser
     class ModelHandler extends DefaultHandler
     {
         String modelName;
+        String packageName;
         Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
         SkeletonClass cls;
 
@@ -76,25 +80,50 @@ public class InterMineModelParser implements ModelParser
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if (qName.equals("model")) {
                 modelName = attrs.getValue("name");
+                packageName = attrs.getValue("package");
             } else if (qName.equals("class")) {
                 String name = attrs.getValue("name");
                 String supers = attrs.getValue("extends");
                 boolean isInterface = Boolean.valueOf(attrs.getValue("is-interface"))
                     .booleanValue();
-                cls = new SkeletonClass(name, supers, isInterface);
+                cls = new SkeletonClass(packageName, name, supers, isInterface);
             } else if (qName.equals("attribute")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
                 cls.attributes.add(new AttributeDescriptor(name, type));
             } else if (qName.equals("reference")) {
                 String name = attrs.getValue("name");
-                String type = attrs.getValue("referenced-type");
+                String origType = attrs.getValue("referenced-type");
+                String type = origType;
+                if (type.startsWith(packageName + ".")) {
+                    type = type.substring(packageName.length() + 1);
+                }
+                if (type.contains(".")) {
+                    throw new IllegalArgumentException("Class " + origType
+                            + " in reference " + cls.name + "." + name
+                            + " is not in the model package " + packageName);
+                }
+                if (!"".equals(packageName)) {
+                    type = packageName + "." + type;
+                }
                 String reverseReference = attrs.getValue("reverse-reference");
                 cls.references.add(new ReferenceDescriptor(name, type,
                                                            reverseReference));
             } else if (qName.equals("collection")) {
                 String name = attrs.getValue("name");
-                String type = attrs.getValue("referenced-type");
+                String origType = attrs.getValue("referenced-type");
+                String type = origType;
+                if (type.startsWith(packageName + ".")) {
+                    type = type.substring(packageName.length() + 1);
+                }
+                if (type.contains(".")) {
+                    throw new IllegalArgumentException("Class " + origType
+                            + " in reference " + cls.name + "." + name
+                            + " is not in the model package " + packageName);
+                }
+                if (!"".equals(packageName)) {
+                    type = packageName + "." + type;
+                }
                 if (attrs.getValue("ordered") != null) {
                     LOG.error("Deprecated \"ordered\" attribute on collection " + cls.name
                             + "." + name);
@@ -129,14 +158,54 @@ public class InterMineModelParser implements ModelParser
         Set<CollectionDescriptor> collections = new LinkedHashSet<CollectionDescriptor>();
 
         /**
-         * Constructor
+         * Constructor.
+         *
+         * @param packageName the name of the model package
          * @param name the fully qualified name of the described class
          * @param supers a space string of fully qualified class names
          * @param isInterface true if describing an interface
          */
-        SkeletonClass(String name, String supers, boolean isInterface) {
+        SkeletonClass(String packageName, String name, String supers, boolean isInterface) {
             this.name = name;
-            this.supers = supers;
+            if (this.name.startsWith(packageName + ".")) {
+                this.name = this.name.substring(packageName.length() + 1);
+            }
+            if (this.name.contains(".")) {
+                throw new IllegalArgumentException("Class " + name + " is not in the model package "
+                        + packageName);
+            }
+            if (!"".equals(packageName)) {
+                this.name = packageName + "." + this.name;
+            }
+            if (supers != null) {
+                String[] superNames = supers.split(" ");
+                StringBuilder supersBuilder = new StringBuilder();
+                boolean needComma = false;
+                for (String superName : superNames) {
+                    String origSuperName = superName;
+                    if (superName.startsWith(packageName + ".")) {
+                        superName = superName.substring(packageName.length() + 1);
+                    }
+                    if (!"java.lang.Object".equals(superName)) {
+                        if (superName.contains(".")) {
+                            throw new IllegalArgumentException("Superclass " + origSuperName
+                                    + " of class " + this.name + " is not in the model package "
+                                    + packageName);
+                        }
+                        if (!"".equals(packageName)) {
+                            superName = packageName + "." + superName;
+                        }
+                    }
+                    if (needComma) {
+                        supersBuilder.append(" ");
+                    }
+                    needComma = true;
+                    supersBuilder.append(superName);
+                }
+                this.supers = supersBuilder.toString();
+            } else {
+                this.supers = null;
+            }
             this.isInterface = isInterface;
         }
     }

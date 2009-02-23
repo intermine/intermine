@@ -1,27 +1,26 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.MRNAExpressionTerm" extends="org.intermine.model.InterMineObject" is-interface="true">
+  <class name="MRNAExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.MRNAExpressionResult" extends="org.intermine.model.InterMineObject" is-interface="true">
+  <class name="MRNAExpressionResult" is-interface="true">
     <attribute name="stageRange" type="java.lang.String"/>
     <attribute name="expressed" type="java.lang.Boolean"/>
-    <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
-    <reference name="dataSet" referenced-type="org.flymine.model.genomic.DataSet"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNAExpressionResults"/>
-    <collection name="images" referenced-type="org.flymine.model.genomic.Image"/>
-    <collection name="stages" referenced-type="org.flymine.model.genomic.Stage"/>
-    <collection name="mRNAExpressionTerms" referenced-type="org.flymine.model.genomic.MRNAExpressionTerm"/>
+    <reference name="publication" referenced-type="Publication"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="mRNAExpressionResults"/>
+    <collection name="images" referenced-type="Image"/>
+    <collection name="stages" referenced-type="Stage"/>
+    <collection name="mRNAExpressionTerms" referenced-type="MRNAExpressionTerm"/>
   </class>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true">
-    <collection name="mRNAExpressionResults" referenced-type="org.flymine.model.genomic.MRNAExpressionResult" reverse-reference="gene"/>
+  <class name="Gene" is-interface="true">
+    <collection name="mRNAExpressionResults" referenced-type="MRNAExpressionResult" reverse-reference="gene"/>
   </class>
-  <class name="org.flymine.model.genomic.Image" is-interface="true">
+  <class name="Image" is-interface="true">
     <attribute name="url" type="java.lang.String"/>
   </class>
-    <class name="org.flymine.model.genomic.Stage" is-interface="true">
+    <class name="Stage" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
   </class>
-
 </classes>

@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <classes>
-<class name="org.flymine.model.genomic.Homologue" is-interface="true">
+<class name="Homologue" is-interface="true">
   <attribute name="inParanoidScore" type="java.lang.Double"/>
   <attribute name="bootstrapScore" type="java.lang.Integer"/>
   <attribute name="homologueBootstrapScore" type="java.lang.Integer"/>
   <attribute name="type" type="java.lang.String"/>
   <attribute name="clusterName" type="java.lang.String"/>
-  <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="homologues"/>
-  <reference name="homologue" referenced-type="org.flymine.model.genomic.Gene"/>
-  <reference name="protein" referenced-type="org.flymine.model.genomic.Protein"/>
-  <reference name="homologueProtein" referenced-type="org.flymine.model.genomic.Protein"/>
-  <collection name="dataSets" referenced-type="org.flymine.model.genomic.DataSet"/>
-  <collection name="publications" referenced-type="org.flymine.model.genomic.Publication"/>
+  <reference name="gene" referenced-type="Gene" reverse-reference="homologues"/>
+  <reference name="homologue" referenced-type="Gene"/>
+  <reference name="protein" referenced-type="Protein"/>
+  <reference name="homologueProtein" referenced-type="Protein"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
+  <collection name="publications" referenced-type="Publication"/>
 </class>
-<class name="org.flymine.model.genomic.Gene" is-interface="true">
-  <collection name="homologues" referenced-type="org.flymine.model.genomic.Homologue" reverse-reference="gene"/>
+<class name="Gene" is-interface="true">
+  <collection name="homologues" referenced-type="Homologue" reverse-reference="gene"/>
 </class>
 </classes>

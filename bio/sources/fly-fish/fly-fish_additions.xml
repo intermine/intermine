@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="org.flymine.model.genomic.MRNAExpressionTerm" extends="org.intermine.model.InterMineObject" is-interface="true">
+  <class name="MRNAExpressionTerm" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
-  <class name="org.flymine.model.genomic.MRNAExpressionResult" extends="org.intermine.model.InterMineObject" is-interface="true">
+  <class name="MRNAExpressionResult" is-interface="true">
     <attribute name="stageRange" type="java.lang.String"/>
     <attribute name="expressed" type="java.lang.Boolean"/>
-    <reference name="publication" referenced-type="org.flymine.model.genomic.Publication"/>
-    <reference name="gene" referenced-type="org.flymine.model.genomic.Gene" reverse-reference="mRNAExpressionResults"/>
-    <reference name="dataSet" referenced-type="org.flymine.model.genomic.DataSet"/>
-    <collection name="mRNAExpressionTerms" referenced-type="org.flymine.model.genomic.MRNAExpressionTerm"/>
-    <collection name="stages" referenced-type="org.flymine.model.genomic.Stage"/>
+    <reference name="publication" referenced-type="Publication"/>
+    <reference name="gene" referenced-type="Gene" reverse-reference="mRNAExpressionResults"/>
+    <reference name="dataSet" referenced-type="DataSet"/>
+    <collection name="mRNAExpressionTerms" referenced-type="MRNAExpressionTerm"/>
+    <collection name="stages" referenced-type="Stage"/>
   </class>
-  <class name="org.flymine.model.genomic.Gene" is-interface="true">
-    <collection name="mRNAExpressionResults" referenced-type="org.flymine.model.genomic.MRNAExpressionResult" reverse-reference="gene"/>
+  <class name="Gene" is-interface="true">
+    <collection name="mRNAExpressionResults" referenced-type="MRNAExpressionResult" reverse-reference="gene"/>
   </class>
-  <class name="org.flymine.model.genomic.Stage" is-interface="true">
+  <class name="Stage" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
   </class>
 </classes>
