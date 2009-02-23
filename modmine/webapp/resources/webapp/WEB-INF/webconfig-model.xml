@@ -287,7 +287,6 @@
       <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
       <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
       <fieldconfig fieldExpr="qualifier"/>
-      <fieldconfig fieldExpr="qualifier"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -368,7 +367,6 @@
   <class className="org.flymine.model.genomic.OntologyTermSynonym">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
