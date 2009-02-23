@@ -10,7 +10,7 @@
   <item id="1_10" class="Synonym">
     <attribute name="type" value="internal_id"/>
     <attribute name="value" value="REDfly:643"/>
-    <reference name="source" ref_id="0_1"/>
+  <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_12"/>
   </item>
   <item id="0_2" class="DataSet">
@@ -20,7 +20,7 @@
   <item id="0_11" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="dl_dpp:REDFLY:TF000069"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_9"/>
   </item>
   <item id="0_4" class="Chromosome">
@@ -65,7 +65,7 @@
   <item id="1_2" class="Synonym">
     <attribute name="type" value="internal_id"/>
     <attribute name="value" value="REDfly:644"/>
-    <reference name="source" ref_id="0_1"/>
+     <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_6"/>
   </item>
   <item id="0_3" class="DataSource">
@@ -99,13 +99,13 @@
   <item id="1_9" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="TF000067"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_12"/>
   </item>
   <item id="1_5" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="TF000069"/>
-    <reference name="source" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_9"/>
   </item>
   <item id="0_6" class="TFBindingSite">
@@ -124,13 +124,13 @@
   <item id="0_14" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="Unspecified_dpp:REDFLY:TF000067"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_12"/>
   </item>
   <item id="0_8" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="Unspecified_dpp:REDFLY:TF000068"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_6"/>
   </item>
   <item id="1_3" class="Publication">
@@ -139,13 +139,13 @@
   <item id="1_6" class="Synonym">
     <attribute name="type" value="internal_id"/>
     <attribute name="value" value="REDfly:645"/>
-    <reference name="source" ref_id="0_1"/>
+   <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_9"/>
   </item>
   <item id="1_1" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="TF000068"/>
-    <reference name="source" ref_id="0_1"/>
+   <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_6"/>
   </item>
   <item id="0_1" class="DataSource">
@@ -154,7 +154,7 @@
   <item id="0_5" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="2L"/>
-    <reference name="source" ref_id="0_3"/>
+   <collection name="dataSets"><reference ref_id="0_2"/></collection>
     <reference name="subject" ref_id="0_4"/>
   </item>
 </items>
