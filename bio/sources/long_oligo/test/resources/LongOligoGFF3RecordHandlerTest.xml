@@ -21,13 +21,17 @@
   <item id="0_7" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="1000044388"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets">
+      <reference ref_id="0_2"/>
+    </collection>
     <reference name="subject" ref_id="0_5"/>
   </item>
   <item id="1_2" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="12-CG4314-RA_1"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets">
+      <reference ref_id="0_2"/>
+    </collection>
     <reference name="subject" ref_id="0_5"/>
   </item>
   <item id="0_5" class="MicroarrayOligo">
@@ -44,7 +48,9 @@
   <item id="0_4" class="Synonym">
     <attribute name="type" value="identifier"/>
     <attribute name="value" value="FBtr0075391"/>
-    <reference name="source" ref_id="0_1"/>
+    <collection name="dataSets">
+      <reference ref_id="0_2"/>
+    </collection>
     <reference name="subject" ref_id="0_3"/>
   </item>
   <item id="0_1" class="DataSource">
