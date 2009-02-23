@@ -1690,6 +1690,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Replicate Type", "replicate");
         FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
         FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
+        FIELD_NAME_MAP.put("dcc_id", "DCCid");
         // FIELD_NAME_MAP.put("species", "organism");
         // FIELD_NAME_MAP.put("PubMed ID", "publication");
         FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);

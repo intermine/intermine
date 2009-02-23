@@ -48,6 +48,7 @@
     <attribute name="replicate" type="java.lang.String" />
     <attribute name="experimentDate" type="java.util.Date" />
     <attribute name="publicReleaseDate" type="java.util.Date" />     
+    <attribute name="DCCid" type="java.lang.Integer" />     
   <reference name="organism"
       referenced-type="Organism" />
     <!-- 
