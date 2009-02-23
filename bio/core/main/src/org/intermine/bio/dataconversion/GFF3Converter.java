@@ -315,20 +315,20 @@ public class GFF3Converter
         }
         if (feature.hasAttribute("secondaryIdentifier")) {
             Item synonym = createItem("Synonym");
-            synonym.addReference(new Reference("subject", feature.getIdentifier()));
+            synonym.setReference("subject", feature.getIdentifier());
             String value = feature.getAttribute("secondaryIdentifier").getValue();
-            synonym.addAttribute(new Attribute("value", value));
-            synonym.addAttribute(new Attribute("type", "identifier"));
-            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+            synonym.setAttribute("value", value);
+            synonym.setAttribute("type", "identifier");
+            synonym.addToCollection("dataSets", dataSet);
             synonymsToAdd.add(synonym);
         }
         if (feature.hasAttribute("primaryIdentifier")) {
             Item synonym = createItem("Synonym");
-            synonym.addReference(new Reference("subject", feature.getIdentifier()));
+            synonym.setReference("subject", feature.getIdentifier());
             String value = feature.getAttribute("primaryIdentifier").getValue();
-            synonym.addAttribute(new Attribute("value", value));
-            synonym.addAttribute(new Attribute("type", "identifier"));
-            synonym.addReference(new Reference("source", dataSource.getIdentifier()));
+            synonym.setAttribute("value", value);
+            synonym.setAttribute("type", "identifier");
+            synonym.addToCollection("dataSets", dataSet);
             synonymsToAdd.add(synonym);
         }
         for (Item synonym : synonymsToAdd) {
