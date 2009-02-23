@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ public class InparanoidConverter extends FileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
-    protected Item dataSet, pub;
+    protected Item dataSource, dataSet, pub;
     protected Map organisms = new LinkedHashMap();
     protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
     protected Map orgSources = new HashMap();
@@ -335,7 +334,7 @@ public class InparanoidConverter extends FileConverter
         // TODO should we change dataset instead?
         //Item source = getSourceForOrganism(organism.getAttribute("taxonId").getValue());
         //synonym.setReference("source", source.getIdentifier());
-        item.addToCollection("dataSets", dataSet);
+        synonym.addToCollection("dataSets", dataSet);
         store(synonym);                                              // Stores Synonym -> BioEntity
 
         return item;
@@ -383,8 +382,12 @@ public class InparanoidConverter extends FileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "11743721");
         store(pub);
+        dataSource = createItem("DataSource");
+        dataSource.setAttribute("name", "InParanoid");
+        store(dataSource);
         dataSet = createItem("DataSet");
         dataSet.setAttribute("title", "InParanoid data set");
+        dataSet.setReference("dataSource", dataSource);
         store(dataSet);
     }
 

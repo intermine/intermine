@@ -650,7 +650,7 @@ public class GFF3RecordHandler
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
-        synonym.setReference("source", getDataSource().getIdentifier());
+        synonym.addToCollection("dataSets", getDataSet());
         addItem(synonym);
         return synonym;
     }
