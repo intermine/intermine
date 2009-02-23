@@ -44,12 +44,12 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         String oaTm = (String) ((List) record.getAttributes().get("oaTm")).get(0);
         oligo.setAttribute("tm", oaTm);
 
-        
+
         Item transcript = getSequence();
         if (transcript != null) {
             oligo.setReference("transcript", transcript.getIdentifier());
         }
-        
+
         String residues = (String) ((List) record.getAttributes().get("sequence")).get(0);
         if (residues != null) {
             Item seqItem = getItemFactory().makeItem(null, "Sequence", "");
@@ -68,7 +68,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         }
     }
 
-    
+
     /**
      * Create a synonym Item from the given information.
      */
@@ -77,7 +77,7 @@ public class LongOligoGFF3RecordHandler extends GFF3RecordHandler
         synonym.setAttribute("type", type);
         synonym.setAttribute("value", value);
         synonym.setReference("subject", subject.getIdentifier());
-        synonym.setReference("source", getDataSource().getIdentifier());
+        synonym.addToCollection("dataSets", getDataSet());
         return synonym;
     }
 }
