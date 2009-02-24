@@ -9,7 +9,6 @@
       <fieldconfig fieldExpr="url"/>
     </fields>
   </class>
-
   <class className="org.intermine.model.bio.Lab">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -471,7 +470,6 @@
     <fields>
       <fieldconfig fieldExpr="value"/>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="source.name"/>
     </fields>
   </class>
 
