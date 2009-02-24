@@ -626,7 +626,6 @@
     <fields>
       <fieldconfig fieldExpr="value"/>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="source.name"/>
     </fields>
   </class>
 
