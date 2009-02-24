@@ -86,13 +86,12 @@ public class UniprotConverter extends DirectoryConverter
     @Override
     public void process(File dataDir) throws Exception {
         Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
+        // check that we have valid files before we start storing ANY data
         if (taxonIdToFiles == null || taxonIdToFiles.isEmpty()) {
             throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
         }
-        // check that we have valid files before we start storing data
         try {
             datasourceRefId = getDataSource("UniProt");
-
             setOntology("UniProtKeyword");
         } catch (SAXException e) {
             e.printStackTrace();
