@@ -245,6 +245,7 @@ public class InitialiserPlugin implements PlugIn
             servletContext.setAttribute(Constants.WEBCONFIG,
                                         WebConfig.parse(is, os.getModel()));
         } catch (Exception e) {
+            LOG.error("Unable to parse webconfig-model.xml", e);            
             throw new ServletException("Unable to parse webconfig-model.xml", e);
         }
     }
