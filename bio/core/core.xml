@@ -199,6 +199,7 @@
 
   <class name="Protein" extends="BioEntity" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="md5checksum" type="java.lang.String"/>
     <attribute name="primaryAccession" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
     <attribute name="molecularWeight" type="java.lang.Integer"/>
@@ -209,6 +210,7 @@
   <class name="Sequence" is-interface="true">
     <attribute name="residues" type="java.lang.String"/>
     <attribute name="length" type="int"/>
+    <attribute name="md5checksum" type="java.lang.String"/>
   </class>
 
   <class name="SequenceOntologyTerm"
