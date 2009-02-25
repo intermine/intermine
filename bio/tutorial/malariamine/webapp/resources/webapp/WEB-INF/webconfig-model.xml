@@ -72,6 +72,27 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="property[GOTerm].namespace" showInSummary="false" />
+      <fieldconfig fieldExpr="qualifier"/>
+      <fieldconfig fieldExpr="isPrimaryAssignment"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+   <class className="org.intermine.model.bio.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
@@ -206,8 +227,55 @@
     </longdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
+  </class>
+
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
+<!-- widgets -->
+<widgets>
+      <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
+        domainLabel="Chromosome"
+        rangeLabel="Count"
+        dataSetLoader="org.intermine.bio.web.widget.ChromosomeDistributionDataSetLdr"
+        link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
+        description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+        graphType="BarChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature"
+       />
+
+      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 typeClass="org.intermine.model.bio.Protein" />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 typeClass="org.intermine.model.bio.Protein" />
+
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+</widgets>
 </webconfig>
