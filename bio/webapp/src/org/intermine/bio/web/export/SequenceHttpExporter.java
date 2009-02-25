@@ -76,7 +76,17 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             throw new ExportException("Export failed.", e);
         }
 
-        String sequencePathString = sef.getSequencePath();
+        String sequencePathString = null;
+
+        if (sef != null) {
+            sequencePathString = sef.getSequencePath();
+        }
+
+        if (sequencePathString == null) {
+            // fall back case: pick the first sequence object that occurs in the view
+            List<Path> sequencePaths = SequenceExportOptionsController.getExportClassPaths(pt);
+            sequencePathString = sequencePaths.iterator().next().toString();
+        }
         sequencePathString = sequencePathString.replaceAll(" > ", ".");
 
         int realFeatureIndex = 0;
