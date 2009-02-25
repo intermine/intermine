@@ -275,7 +275,7 @@ my @failure_lines = ();
   my @prev_lines = ();
   my $failure_line_count = 0;
   while (my $ant_log_line = <$ant_log>) {
-    if ($ant_log_line =~ /\[junit\].*FAILED/ && $ant_log_line neq '[junit] Tests FAILED') {        
+    if ($ant_log_line =~ /\[junit\].*FAILED/ && $ant_log_line !~ /\[junit\] Tests FAILED/) {        
       print $ant_log_line if $debug;
       print $junit_fail_file $ant_log_line;
       push @junit_failures, $ant_log_line;
