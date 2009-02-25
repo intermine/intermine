@@ -35,6 +35,8 @@ SOURCES=modmine-static,modencode-metadata
 # TODO add check that modmine in path
 MINEDIR=$PWD
 BUILDDIR=$MINEDIR/integrate/build
+#USER=`whoami`
+
 
 #MINEDIR=$HOME/svn/dev/modmine
 
@@ -145,13 +147,17 @@ fi
 #
 # Getting some values from the properties file.
 # NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
+#     -a to grep also (alleged) binary files
 #
 
-DBHOST=`grep metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBUSER=`grep metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBPW=`grep metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-CHADODB=`grep metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-MINEDB=`grep db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBHOST=`grep -a metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBUSER=`grep -a metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+MINEDB=`grep -a db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+
+
+
 
 #USER=`whoami`
 LOADLOG="$DATADIR/$USER.$REL-ld.log"
