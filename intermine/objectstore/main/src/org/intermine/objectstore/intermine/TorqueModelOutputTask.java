@@ -14,8 +14,16 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
 
-import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import static org.intermine.objectstore.intermine.TorqueModelOutput.FORMAT_VERSION;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Creates and runs a ModelOutput process to generate java or config files.
@@ -44,9 +52,48 @@ public class TorqueModelOutputTask extends Task
      */
     public void setOsName(String osName) {
         try {
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) ObjectStoreFactory
-                .getObjectStore(osName);
-            schema = os.getSchema();
+            Properties props = PropertiesUtil.getPropertiesStartingWith(osName);
+            props = PropertiesUtil.stripStart(osName, props);
+
+            String missingTablesString = props.getProperty("missingTables");
+            String truncatedClassesString = props.getProperty("truncatedClasses");
+            String noNotXmlString = props.getProperty("noNotXml");
+
+            Model osModel;
+            String modelName = props.getProperty("model");
+            osModel = Model.getInstanceByName(modelName);
+            List truncatedClasses = new ArrayList();
+            if (truncatedClassesString != null) {
+                String classes[] = truncatedClassesString.split(",");
+                for (int i = 0; i < classes.length; i++) {
+                    ClassDescriptor truncatedClassDescriptor =
+                        osModel.getClassDescriptorByName(classes[i]);
+                    if (truncatedClassDescriptor == null) {
+                        throw new ObjectStoreException("Truncated class " + classes[i]
+                                                       + " does not exist in the model");
+                    }
+                    truncatedClasses.add(truncatedClassDescriptor);
+                }
+            }
+            boolean noNotXml = false;
+            if ("true".equals(noNotXmlString) || (noNotXmlString == null)) {
+                noNotXml = true;
+            } else if ("false".equals(noNotXmlString)) {
+                noNotXml = false;
+            } else {
+                throw new ObjectStoreException("Invalid value for property noNotXml: "
+                        + noNotXmlString);
+            }
+            HashSet missingTables = new HashSet();
+            if (missingTablesString != null) {
+                String tables[] = missingTablesString.split(",");
+                for (int i = 0; i < tables.length; i++) {
+                    missingTables.add(tables[i].toLowerCase());
+                }
+            }
+
+            schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml, missingTables,
+                    FORMAT_VERSION);
         } catch (ClassCastException e) {
             throw new BuildException("Objectstore " + osName
                     + " is not an ObjectStoreInterMineImpl", e);

@@ -125,7 +125,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected int sequenceOffset = SEQUENCE_MULTIPLE;
     protected static final int SEQUENCE_MULTIPLE = 1000000;
     protected boolean logExplains = false;
-    private int formatVersion = -1;
     protected boolean disableResultsCache = false;
 
     // don't use a table to represent bags if the bag is smaller than this value
@@ -138,7 +137,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             new IdentityHashMap<Query, OptimiserCache>());
     protected Map<Query, Integer> goFasterCountMap = new IdentityHashMap<Query, Integer>();
     protected ReferenceQueue bagTablesToRemove = new ReferenceQueue();
-    private String description;
+    protected String description;
     protected Map<String, Results> resultsCache = new CacheMap<String, Results>();
     protected Map<String, SingletonResults> singletonResultsCache
         = new CacheMap<String, SingletonResults>();
@@ -167,22 +166,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public static final String CLOBVAL_COLUMN = "value";
 
     /**
-     * Constructs an ObjectStoreInterMineImpl.
+     * Constructs an ObjectStoreInterMineImpl - for use by the ObjectStoreWriter only!
      *
-     * @param db the database in which the model resides
      * @param model the model
-     * @throws NullPointerException if db or model are null
-     * @throws IllegalArgumentException if db or model are invalid
+     * @throws NullPointerException if model is null
+     * @throws IllegalArgumentException if model is invalid
      */
-    protected ObjectStoreInterMineImpl(Database db, Model model) {
+    protected ObjectStoreInterMineImpl(Model model) {
         super(model);
-        this.db = db;
-        initFormatVersion();
-        schema = new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
-        ShutdownHook.registerObject(new WeakReference(this));
-        limitedContext = new QueryOptimiserContext();
-        limitedContext.setTimeLimit(getMaxTime() / 10);
-        description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 
     /**
@@ -197,43 +188,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         super(schema.getModel());
         this.db = db;
         this.schema = schema;
-        initFormatVersion();
         ShutdownHook.registerObject(new WeakReference(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
         description = "ObjectStoreInterMineImpl(" + db + ")";
-    }
-
-    /**
-     * Initialises the format version number of the objectstore from the database. Will throw
-     * an exception if the database format is newer than this code can cope with.
-     */
-    private void initFormatVersion() {
-        if (db != null) {
-            String versionString = null;
-            try {
-                versionString = MetadataManager.retrieve(db, MetadataManager.OS_FORMAT_VERSION);
-            } catch (SQLException e) {
-                LOG.error("Error retrieving database format version number", e);
-            }
-            if (versionString == null) {
-                formatVersion = 0;
-            } else {
-                try {
-                    formatVersion = Integer.parseInt(versionString);
-                } catch (NumberFormatException e) {
-                    NumberFormatException e2 = new NumberFormatException("Cannot parse database"
-                            + " format version \"" + versionString + "\"");
-                    e2.initCause(e);
-                    throw e2;
-                }
-            }
-            if (formatVersion > 0) {
-                throw new IllegalArgumentException("Database version is too new for this code. "
-                        + "Please update to a newer version of InterMine. Database version: "
-                        + formatVersion + ", latest supported version: 0");
-            }
-        }
     }
 
     /**
@@ -320,12 +278,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                            + "Check properties file");
         }
 
+        // Database-format properties
         String missingTablesString = props.getProperty("missingTables");
-        String logfile = props.getProperty("logfile");
         String truncatedClassesString = props.getProperty("truncatedClasses");
+        String noNotXmlString = props.getProperty("noNotXml");
+
+        // Non-format properties
+        String logfile = props.getProperty("logfile");
         String logTable = props.getProperty("logTable");
         String minBagTableSizeString = props.getProperty("minBagTableSize");
-        String noNotXmlString = props.getProperty("noNotXml");
         String logEverythingString = props.getProperty("logEverything");
         String verboseQueryLogString = props.getProperty("verboseQueryLog");
         String logExplainsString = props.getProperty("logExplains");
@@ -342,11 +303,55 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     throw new ObjectStoreException("Unable to get database for InterMine"
                             + " ObjectStore", e);
                 }
+                String versionString = null;
+                int formatVersion = Integer.MAX_VALUE;
+                try {
+                    versionString = MetadataManager.retrieve(database,
+                            MetadataManager.OS_FORMAT_VERSION);
+                } catch (SQLException e) {
+                    LOG.error("Error retrieving database format version number", e);
+                }
+                if (versionString == null) {
+                    formatVersion = 0;
+                } else {
+                    try {
+                        formatVersion = Integer.parseInt(versionString);
+                    } catch (NumberFormatException e) {
+                        NumberFormatException e2 = new NumberFormatException("Cannot parse database"
+                                + " format version \"" + versionString + "\"");
+                        e2.initCause(e);
+                        throw e2;
+                    }
+                }
+                if (formatVersion > 1) {
+                    throw new IllegalArgumentException("Database version is too new for this code. "
+                            + "Please update to a newer version of InterMine. Database version: "
+                            + formatVersion + ", latest supported version: 1");
+                }
+
                 Model osModel;
                 try {
                     osModel = getModelFromClasspath(osAlias, props);
                 } catch (MetaDataException e) {
                     throw new ObjectStoreException("Cannot load model", e);
+                }
+                if (formatVersion >= 1) {
+                    // If it's version >=1 then ignore the properties, and use the embedded values.
+                    try {
+                        truncatedClassesString = MetadataManager.retrieve(database,
+                                MetadataManager.TRUNCATED_CLASSES);
+                        missingTablesString = MetadataManager.retrieve(database,
+                                MetadataManager.MISSING_TABLES);
+                        noNotXmlString = MetadataManager.retrieve(database,
+                                MetadataManager.NO_NOTXML);
+                    } catch (SQLException e) {
+                        throw new IllegalArgumentException("Couldn't retrieve embedded config "
+                                + "for ObjectStore " + osAlias);
+                    }
+                    if (noNotXmlString == null) {
+                        throw new IllegalArgumentException("Missing embedded config for ObjectStore"
+                                + " " + osAlias);
+                    }
                 }
                 List truncatedClasses = new ArrayList();
                 if (truncatedClassesString != null) {
@@ -377,9 +382,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         missingTables.add(tables[i].toLowerCase());
                     }
                 }
-                DatabaseSchema databaseSchema = new DatabaseSchema(osModel, truncatedClasses,
-                        noNotXml, missingTables);
-                os = new ObjectStoreInterMineImpl(database, databaseSchema);
+                DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
+                        missingTables, formatVersion);
+                os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 
                 if (logfile != null) {

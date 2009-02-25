@@ -81,6 +81,21 @@ public class MetadataManager
      * The name of the key used to store profile format version.
      */
     public static final String PROFILE_FORMAT_VERSION = "profileversion";    
+
+    /**
+     * The name of the key used to store the truncated classes string.
+     */
+    public static final String TRUNCATED_CLASSES = "truncatedClasses";
+
+    /**
+     * The name of the key used to store the missing tables string.
+     */
+    public static final String MISSING_TABLES = "missingTables";
+
+    /**
+     * The name of the key used to store the noNotXml string.
+     */
+    public static final String NO_NOTXML = "noNotXml";
     
     /**
      * Store a (key, value) pair in the metadata table of the database

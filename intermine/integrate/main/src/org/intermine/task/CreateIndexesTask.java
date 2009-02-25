@@ -471,8 +471,10 @@ public class CreateIndexesTask extends Task
             CollectionDescriptor col = (CollectionDescriptor) i.next();
             if (FieldDescriptor.M_N_RELATION == col.relationType()) {
                 String tableName = DatabaseUtil.getIndirectionTableName(col);
-                String columnName = DatabaseUtil.getInwardIndirectionColumnName(col);
-                String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col);
+                String columnName = DatabaseUtil.getInwardIndirectionColumnName(col,
+                        schema.getVersion());
+                String columnName2 = DatabaseUtil.getOutwardIndirectionColumnName(col,
+                        schema.getVersion());
                 if ((columnName.compareTo(columnName2) < 0)
                     || (col.getReverseReferenceDescriptor() == null)) {
                     addStatement(statements,

@@ -48,7 +48,7 @@ public class TorqueModelOutput
     private static final Logger LOG = Logger.getLogger(TorqueModelOutput.class);
 
     /** The version number of the database format */
-    public static final int FORMAT_VERSION = 0;
+    public static final int FORMAT_VERSION = 1;
     protected static final String INDENT = "    ";
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -253,8 +253,8 @@ public class TorqueModelOutput
     protected String generateIndirectionTable(CollectionDescriptor col) {
         StringBuffer sb = new StringBuffer();
         String table = DatabaseUtil.getIndirectionTableName(col);
-        String column1 = DatabaseUtil.getInwardIndirectionColumnName(col);
-        String column2 = DatabaseUtil.getOutwardIndirectionColumnName(col);
+        String column1 = DatabaseUtil.getInwardIndirectionColumnName(col, schema.getVersion());
+        String column2 = DatabaseUtil.getOutwardIndirectionColumnName(col, schema.getVersion());
         sb.append(INDENT + "<table name=\"")
             .append(table)
             .append("\">" + ENDL)

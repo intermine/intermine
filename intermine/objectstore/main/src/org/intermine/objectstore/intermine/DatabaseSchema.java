@@ -43,6 +43,7 @@ public class DatabaseSchema
     private boolean flatMode;
     private Set missingTables;
     private boolean fetchFromInterMineObject;
+    private int version;
 
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
@@ -56,16 +57,18 @@ public class DatabaseSchema
      * decreasing priority.
      * @param noNotXml true if NotXML data should be omitted from every table except InterMineObject
      * @param missingTables a Set of lowercase table names which are missing
+     * @param version the version number in the database
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
-    public DatabaseSchema(Model model, List truncated,
-            boolean noNotXml, Set missingTables) throws IllegalArgumentException {
+    public DatabaseSchema(Model model, List truncated, boolean noNotXml, Set missingTables,
+            int version) throws IllegalArgumentException {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
         this.noNotXml = noNotXml && (!missingTables.contains("intermineobject"));
         this.flatMode = noNotXml && missingTables.contains("intermineobject");
         this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
+        this.version = version;
         for (int i = 0; i < truncated.size(); i++) {
             Class cA = ((ClassDescriptor) truncated.get(i)).getType();
             for (int o = 0; o < i; o++) {
@@ -153,6 +156,15 @@ public class DatabaseSchema
      */
     public boolean isFetchFromInterMineObject() {
         return fetchFromInterMineObject;
+    }
+
+    /**
+     * Returns the database format version.
+     *
+     * @return an int
+     */
+    public int getVersion() {
+        return version;
     }
 
     /**

@@ -144,9 +144,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsNot1N", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("ContainsN1", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Department AS a1_, Company AS a2_ WHERE a1_.companyId = a2_.id AND a2_.name = 'CompanyA' ORDER BY a1_.id, a2_.id");
         results2.put("ContainsN1", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
-        results.put("ContainsMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, CompanysContractors AS indirect0 WHERE a1_.id = indirect0.Companys AND indirect0.Contractors = a2_.id AND a1_.name = 'ContractorA' ORDER BY a1_.id, a2_.id");
+        results.put("ContainsMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, CompanysContractors AS indirect0 WHERE a1_.id = indirect0.Contractors AND indirect0.Companys = a2_.id AND a1_.name = 'ContractorA' ORDER BY a1_.id, a2_.id");
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "CompanysContractors", "InterMineObject"})));
-        results.put("ContainsDuplicatesMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS indirect0 WHERE a1_.id = indirect0.OldComs AND indirect0.OldContracts = a2_.id ORDER BY a1_.id, a2_.id");
+        results.put("ContainsDuplicatesMN", "SELECT a1_.id AS a1_id, a2_.id AS a2_id FROM Contractor AS a1_, Company AS a2_, OldComsOldContracts AS indirect0 WHERE a1_.id = indirect0.OldContracts AND indirect0.OldComs = a2_.id ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts", "InterMineObject"})));
         results.put("ContainsNotMN", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsNotMN", NO_RESULT);
@@ -168,7 +168,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("OrderByAnomaly", Collections.singleton("Company"));
         results.put("SelectClassObjectSubquery", "SELECT DISTINCT a1_.id AS a1_id FROM Company AS a1_, Department AS a2_ WHERE a1_.id = " + companyAId + " AND a1_.id = a2_.companyId AND a2_.id IN (SELECT a1_.id FROM Department AS a1_ WHERE a1_.id = " + departmentA1Id + ") ORDER BY a1_.id");
         results2.put("SelectClassObjectSubquery", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
-        results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.name = 'CompanyA' AND a1_.id = indirect0.Secretarys AND indirect0.HasSecretarys = a2_.id ORDER BY a2_.id");
+        results.put("SelectUnidirectionalCollection", "SELECT DISTINCT a2_.id AS a2_id FROM Company AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.name = 'CompanyA' AND a1_.id = indirect0.HasSecretarys AND indirect0.Secretarys = a2_.id ORDER BY a2_.id");
         results2.put("SelectUnidirectionalCollection", new HashSet(Arrays.asList(new String[] {"Company", "Secretary", "HasSecretarysSecretarys", "InterMineObject"})));
         results.put("EmptyAndConstraintSet", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("EmptyAndConstraintSet", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
@@ -235,7 +235,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsConstraintCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
         results.put("ContainsConstraintNotCollectionRefObject", "SELECT a1_.id AS a1_id FROM Department AS a1_, Employee AS indirect0 WHERE a1_.id != indirect0.departmentId AND indirect0.id = 11 ORDER BY a1_.id");
         results2.put("ContainsConstraintNotCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
-        results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE a1_.id = indirect0.Contractors AND indirect0.Companys = 3 ORDER BY a1_.id");
+        results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE a1_.id = indirect0.Companys AND indirect0.Contractors = 3 ORDER BY a1_.id");
         results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CompanysContractors"})));
         results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT);
@@ -284,11 +284,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("Upper", Collections.singleton("Employee"));
         results.put("CollectionQueryOneMany", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE " + departmentA1Id + " = a1_.departmentId ORDER BY a1_.id");
         results2.put("CollectionQueryOneMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE " + companyBId + " = indirect0.Secretarys AND indirect0.HasSecretarys = a1_.id ORDER BY a1_.id");
+        results.put("CollectionQueryManyMany", "SELECT a1_.id AS a1_id FROM Secretary AS a1_, HasSecretarysSecretarys AS indirect0 WHERE " + companyBId + " = indirect0.HasSecretarys AND indirect0.Secretarys = a1_.id ORDER BY a1_.id");
         results2.put("CollectionQueryManyMany", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
         results.put("QueryClassBag", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") ORDER BY a2_.departmentId, a2_.id");
         results2.put("QueryClassBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        results.put("QueryClassBagMM", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.Secretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ") AND indirect0.HasSecretarys = a2_.id ORDER BY indirect0.Secretarys, a2_.id");
+        results.put("QueryClassBagMM", "SELECT indirect0.HasSecretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.HasSecretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
         results.put("QueryClassBagNot", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
         results2.put("QueryClassBagNot", NO_RESULT);
@@ -296,7 +296,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         //results2.put("QueryClassBagNot", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("QueryClassBagNotMM", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
         results2.put("QueryClassBagNotMM", NO_RESULT);
-        results.put("QueryClassBagDynamic", "SELECT indirect0.Secretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.Secretarys IN (" + employeeB1Id + ") AND indirect0.HasSecretarys = a2_.id ORDER BY indirect0.Secretarys, a2_.id");
+        results.put("QueryClassBagDynamic", "SELECT indirect0.HasSecretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.HasSecretarys IN (" + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
         results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
         //res = new HashSet()
         //res.add("SELECT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
@@ -562,7 +562,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET);
+        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1);
         try {
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, s, db, new HashMap());
             fail("Expected: ObjectStoreException");
@@ -816,7 +816,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET);
+        return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET, 1);
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";

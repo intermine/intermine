@@ -1556,7 +1556,7 @@ public class SqlGenerator
                 CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
                 String indirectTableAlias = state.getIndirectAlias();
                 String arg2Alias = indirectTableAlias + "."
-                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc);
+                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc, schema.getVersion());
                 state.addToFrom(DatabaseUtil.getIndirectionTableName(arg1ColDesc) + " AS "
                         + indirectTableAlias);
                 buffer.append(loseBrackets ? "" : "(");
@@ -1595,7 +1595,8 @@ public class SqlGenerator
                     buffer.append(" AND ");
                 }
                 buffer.append(indirectTableAlias + "."
-                        + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc) + " = ");
+                        + DatabaseUtil.getOutwardIndirectionColumnName(arg1ColDesc,
+                            schema.getVersion()) + " = ");
                 if (arg2 == null) {
                     buffer.append("" + arg2Obj.getId());
                 } else {
