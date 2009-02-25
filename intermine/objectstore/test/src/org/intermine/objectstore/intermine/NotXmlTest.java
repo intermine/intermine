@@ -98,4 +98,30 @@ public class NotXmlTest extends TestCase
         assertEquals(e.getName(), reparsed.getName());
         assertEquals(e.getId(), reparsed.getId());
     }
+
+    public void testSplitPerformance() throws Exception {
+        StringBuilder sb = new StringBuilder(49999997);
+        for (int i = 0; i < 1000000; i++) {
+            if (i > 0) {
+                sb.append(NotXmlParser.DELIM);
+            }
+            sb.append("kjakjhsdlkfgjhfjklslkjalkjdfkjalkaskdjhfjkslkjh");
+        }
+        String s = sb.toString();
+        sb = null;
+        assertEquals(49999997, s.length());
+        long time = System.currentTimeMillis();
+        for (int o = 0; o < 10; o++) {
+            NotXmlParser.SPLITTER.split(s);
+        }
+        System.out.println("SPLIT took " + (System.currentTimeMillis() - time) + " ms");
+        time = System.currentTimeMillis();
+        for (int o = 0; o < 10; o++) {
+            String res[] = new String[1000000];
+            for (int i = 0; i < 1000000; i++) {
+                res[i] = s.substring(i * 50, i * 50 + 47);
+            }
+        }
+        System.out.println("SUBSTRING took " + (System.currentTimeMillis() - time) + " ms");
+    }
 }

@@ -52,10 +52,12 @@ public class CreateIndexesTaskTest extends TestCase
     //test indirection table columns
     public void testCreateStandardIndexes2() throws Exception {
         List expected = new ArrayList();
-        expected.add("create index HasSecretarysSecretarys__Secretarys on HasSecretarysSecretarys(Secretarys, HasSecretarys)");
         expected.add("create index HasSecretarysSecretarys__HasSecretarys on HasSecretarysSecretarys(HasSecretarys, Secretarys)");
+        expected.add("create index HasSecretarysSecretarys__Secretarys on HasSecretarysSecretarys(Secretarys, HasSecretarys)");
 
         CreateIndexesTask task = new CreateIndexesTask();
+        task.setAlias("os.unittest");
+        task.setUp();
 
         Map statements = new LinkedHashMap();
         task.getStandardIndexStatements(m.getClassDescriptorByName("org.intermine.model.testmodel.HasSecretarys"),

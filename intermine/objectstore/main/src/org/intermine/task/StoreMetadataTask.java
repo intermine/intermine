@@ -14,7 +14,7 @@ import java.util.Properties;
 
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.MetadataManager;
-import org.intermine.objectstore.intermine.TorqueModelOutput;
+import static org.intermine.objectstore.intermine.TorqueModelOutput.FORMAT_VERSION;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;
@@ -30,6 +30,7 @@ public class StoreMetadataTask extends Task
 {
     protected String modelName;
     protected String database;
+    protected String osName;
 
     /**
      * Sets the model name
@@ -46,6 +47,7 @@ public class StoreMetadataTask extends Task
      */
     public void setOsName(String osname) {
         this.database = PropertiesUtil.getProperties().getProperty(osname + ".db");
+        this.osName = osname;
     }
 
     /**
@@ -83,8 +85,32 @@ public class StoreMetadataTask extends Task
                                       PropertiesUtil.serialize(descriptions));
             }*/
 
-            MetadataManager.store(db, MetadataManager.OS_FORMAT_VERSION,
-                    "" + TorqueModelOutput.FORMAT_VERSION);
+            Properties props = PropertiesUtil.getPropertiesStartingWith(osName);
+            props = PropertiesUtil.stripStart(osName, props);
+
+            String missingTablesString = props.getProperty("missingTables");
+            String truncatedClassesString = props.getProperty("truncatedClasses");
+            String noNotXmlString = props.getProperty("noNotXml");
+            
+            boolean noNotXml = false;
+            if ("true".equals(noNotXmlString) || (noNotXmlString == null)) {
+                noNotXml = true;
+            } else if ("false".equals(noNotXmlString)) {
+                noNotXml = false;
+            } else {
+                throw new BuildException("Invalid value for property noNotXml: "
+                        + noNotXmlString);
+            }
+
+            MetadataManager.store(db, MetadataManager.OS_FORMAT_VERSION, "" + FORMAT_VERSION);
+            if (truncatedClassesString != null) {
+                MetadataManager.store(db, MetadataManager.TRUNCATED_CLASSES,
+                        truncatedClassesString);
+            }
+            if (missingTablesString != null) {
+                MetadataManager.store(db, MetadataManager.MISSING_TABLES, missingTablesString);
+            }
+            MetadataManager.store(db, MetadataManager.NO_NOTXML, "" + noNotXml);
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

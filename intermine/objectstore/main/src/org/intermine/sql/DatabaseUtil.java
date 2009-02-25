@@ -548,43 +548,63 @@ public class DatabaseUtil
                                                + "many-to-many relation");
         }
 
-        String name1 = getInwardIndirectionColumnName(col);
-        String name2 = getOutwardIndirectionColumnName(col);
+        String name1 = getInwardIndirectionColumnName(col, 0);
+        String name2 = getOutwardIndirectionColumnName(col, 0);
         return name1.compareTo(name2) < 0 ? name1 + name2 : name2 + name1;
     }
 
     /**
-     * Creates a column name for the "inward" key of a many-to-many collection descriptor
+     * Creates a column name for the "inward" key of a many-to-many collection descriptor.
      *
      * @param col CollectionDescriptor
+     * @param version the database version number
      * @return a valid column name
      */
-    public static String getInwardIndirectionColumnName(CollectionDescriptor col) {
+    public static String getInwardIndirectionColumnName(CollectionDescriptor col, int version) {
         if (FieldDescriptor.M_N_RELATION != col.relationType()) {
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
         }
 
-        return StringUtil.capitalise(generateSqlCompatibleName(col.getName()));
+        if (version == 0) {
+            return StringUtil.capitalise(generateSqlCompatibleName(col.getName()));
+        } else if (version == 1) {
+            ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
+            String colName = (rd == null
+                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
+                : rd.getName());
+            return StringUtil.capitalise(generateSqlCompatibleName(colName));
+        } else {
+            throw new IllegalArgumentException("Database version number " + version
+                    + " not recognised");
+        }
     }
 
     /**
-     * Creates a column name for the "outward" key of a many-to-many collection descriptor
+     * Creates a column name for the "outward" key of a many-to-many collection descriptor.
      *
      * @param col CollectionDescriptor
+     * @param version the database version number
      * @return a valid column name
      */
-    public static String getOutwardIndirectionColumnName(CollectionDescriptor col) {
+    public static String getOutwardIndirectionColumnName(CollectionDescriptor col, int version) {
         if (FieldDescriptor.M_N_RELATION != col.relationType()) {
             throw new IllegalArgumentException("Argument must be a CollectionDescriptor for a "
                                                + "many-to-many relation");
         }
 
-        ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
-        String colName = (rd == null
-            ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
-            : rd.getName());
-        return StringUtil.capitalise(generateSqlCompatibleName(colName));
+        if (version == 0) {
+            ReferenceDescriptor rd = col.getReverseReferenceDescriptor();
+            String colName = (rd == null
+                ? TypeUtil.unqualifiedName(col.getClassDescriptor().getName())
+                : rd.getName());
+            return StringUtil.capitalise(generateSqlCompatibleName(colName));
+        } else if (version == 1) {
+            return StringUtil.capitalise(generateSqlCompatibleName(col.getName()));
+        } else {
+            throw new IllegalArgumentException("Database version number " + version
+                    + " not recognised");
+        }
     }
 
     /**

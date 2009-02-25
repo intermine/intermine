@@ -94,7 +94,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @throws ObjectStoreException if a problem occurs
      */
     public ObjectStoreWriterInterMineImpl(ObjectStore os) throws ObjectStoreException {
-        super(null, ((ObjectStoreInterMineImpl) os).getSchema());
+        super(((ObjectStoreInterMineImpl) os).getModel());
+        schema = ((ObjectStoreInterMineImpl) os).getSchema();
+        limitedContext = ((ObjectStoreInterMineImpl) os).limitedContext;
+        description = "Writer(" + ((ObjectStoreInterMineImpl) os).description + ")";
         if (os instanceof ObjectStoreWriter) {
             throw new ObjectStoreException("Cannot create an ObjectStoreWriterInterMineImpl from "
                     + "another ObjectStoreWriter. Call osw.getObjectStore() and construct from "
@@ -695,9 +698,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             String indirectTableName =
                                 DatabaseUtil.getIndirectionTableName(collection);
                             String inwardColumnName =
-                                DatabaseUtil.getInwardIndirectionColumnName(collection);
+                                DatabaseUtil.getInwardIndirectionColumnName(collection,
+                                        schema.getVersion());
                             String outwardColumnName =
-                                DatabaseUtil.getOutwardIndirectionColumnName(collection);
+                                DatabaseUtil.getOutwardIndirectionColumnName(collection,
+                                        schema.getVersion());
                             boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
                             String indirColNames[] = (String []) tableToColNameArray
                                 .get(indirectTableName);
@@ -791,8 +796,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 invalidateObjectById(hadId);
                 CollectionDescriptor coll = (CollectionDescriptor) field;
                 String indirectTableName = DatabaseUtil.getIndirectionTableName(coll);
-                String inwardColumnName = DatabaseUtil.getInwardIndirectionColumnName(coll);
-                String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll);
+                String inwardColumnName = DatabaseUtil.getInwardIndirectionColumnName(coll,
+                        schema.getVersion());
+                String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll,
+                        schema.getVersion());
                 boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
                 String indirColNames[] = (String []) tableToColNameArray.get(indirectTableName);
                 if (indirColNames == null) {
