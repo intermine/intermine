@@ -1,0 +1,8 @@
+
+<project name="bdgp-insitu" default="default" basedir=".">
+  <description>build, test, package bdgp-insitu</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+  
+</project>
+

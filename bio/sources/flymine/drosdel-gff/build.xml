@@ -2,7 +2,7 @@
 
   <description>build, test, package drosdel-gff</description>
 
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 
 </project>
 

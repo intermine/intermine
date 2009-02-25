@@ -1,0 +1,6 @@
+
+<project name="bdgp-insitu-tasks" default="default" basedir=".">
+  <description>build bdgp-insitu tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>
+
