@@ -1,6 +1,7 @@
 <%@ tag body-content="scriptless" %>
 <%@ attribute name="text" required="false" %>
 <%@ attribute name="skipBuilder" required="true" type="java.lang.Boolean" %>
+<%@ attribute name="exportFormat" required="false" type="java.lang.String" %>
 <%@ attribute name="showArrow" required="false" type="java.lang.Boolean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -14,6 +15,7 @@
   <c:set target="${linkParams}" property="method" value="xml" />
   <c:set target="${linkParams}" property="query" value="${query}" />
   <c:set target="${linkParams}" property="skipBuilder" value="${skipBuilder}" />
+  <c:set target="${linkParams}" property="exportFormat" value="${exportFormat}" />
   <c:set target="${linkParams}" property="trail" value="|query" />
 </jsp:useBean>
 
