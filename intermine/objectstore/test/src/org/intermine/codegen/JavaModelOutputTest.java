@@ -66,7 +66,7 @@ public class JavaModelOutputTest extends TestCase
                 + INDENT + "protected java.lang.Integer id;" + ENDL
                 + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
                 + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-                + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
+                + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL
                 + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
                 + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
             assertTrue(buffer.toString(), buffer.toString().contains(expected));
@@ -84,7 +84,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
@@ -108,7 +108,7 @@ public class JavaModelOutputTest extends TestCase
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
         String expected = "public class Class2 extends package.name.Class1" + ENDL + "{" + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class2 && id != null) ? id.equals(((Class2)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class2 && id != null) ? id.equals(((Class2)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class2 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
@@ -125,7 +125,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
@@ -143,7 +143,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class1 [id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
@@ -181,7 +181,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class1 [atd1=\\\"\" + atd1 + \"\\\", id=\\\"\" + id + \"\\\", rfd1=\" + (rfd1 == null ? \"null\" : (rfd1.getId() == null ? \"no id\" : rfd1.getId().toString())) + \"]\"; }" + ENDL;
 
@@ -253,7 +253,7 @@ public class JavaModelOutputTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, atts, new HashSet(), new HashSet());
         Model model = new Model("model", "package.name", new HashSet(Collections.singleton(cld1)));
 
-        String expected =  INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : false; }" + ENDL;
+        String expected =  INDENT + "public boolean equals(Object o) { return (o instanceof Class1 && id != null) ? id.equals(((Class1)o).getId()) : this == o; }" + ENDL;
 
         assertEquals(expected, mo.generateEquals(cld1));
     }
@@ -314,7 +314,7 @@ public class JavaModelOutputTest extends TestCase
             + INDENT + "protected java.lang.Integer id;" + ENDL
             + INDENT + "public java.lang.Integer getId() { return id; }" + ENDL
             + INDENT + "public void setId(final java.lang.Integer id) { this.id = id; }" + ENDL + ENDL
-            + INDENT + "public boolean equals(Object o) { return (o instanceof Class3 && id != null) ? id.equals(((Class3)o).getId()) : false; }" + ENDL
+            + INDENT + "public boolean equals(Object o) { return (o instanceof Class3 && id != null) ? id.equals(((Class3)o).getId()) : this == o; }" + ENDL
             + INDENT + "public int hashCode() { return (id != null) ? id.hashCode() : super.hashCode(); }" + ENDL
             + INDENT + "public String toString() { return \"Class3 [atd1=\\\"\" + atd1 + \"\\\", id=\\\"\" + id + \"\\\"]\"; }" + ENDL;
 
