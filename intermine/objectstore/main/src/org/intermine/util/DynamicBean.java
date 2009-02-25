@@ -81,8 +81,7 @@ public class DynamicBean implements MethodInterceptor
             if (args[0] instanceof InterMineObject) {
                 Integer otherId = ((InterMineObject) args[0]).getId();
                 Integer thisId = (Integer) map.get("id");
-                return Boolean.valueOf((otherId != null) && (thisId != null)
-                        && thisId.equals(otherId));
+                return Boolean.valueOf(thisId != null ? thisId.equals(otherId) : obj == args[0]);
             }
             return Boolean.FALSE;
         }

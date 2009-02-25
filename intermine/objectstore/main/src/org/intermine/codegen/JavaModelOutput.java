@@ -419,7 +419,7 @@ public class JavaModelOutput
                 .append(unqualifiedName)
                 .append(" && id != null) ? id.equals(((")
                 .append(unqualifiedName)
-                .append(")o).getId()) : false; }" + ENDL);
+                .append(")o).getId()) : this == o; }" + ENDL);
             return sb.toString();
         } else {
             return "";
