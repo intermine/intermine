@@ -10,33 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.intermine.objectstore.query.QuerySelectable;
-
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.flatouterjoins.ObjectStoreFlatOuterJoinsImpl;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.http.TableExporterFactory;
-import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
-
 import java.io.StringReader;
-
-import javax.servlet.ServletContext;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,9 +26,15 @@ import org.apache.struts.util.MessageResources;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.http.TableExporterFactory;
+import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.query.WebResultsExecutor;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -88,9 +69,7 @@ public class LoadQueryAction extends DispatchAction
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));
         String exportFormat = request.getParameter("exportFormat");
 
-        //Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        //Map<String, InterMineBag> allBags =
-        //    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
+
         Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml));
         MainHelper.checkPathQueries(queries, profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
@@ -113,18 +92,8 @@ public class LoadQueryAction extends DispatchAction
         } else {
             PagedTable pt = null;
             try {
-                ObjectStore os = new ObjectStoreFlatOuterJoinsImpl((ObjectStore)
-                        servletContext.getAttribute(Constants.OBJECTSTORE));
-                Model model = os.getModel();
-
-                Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-                Map<String, BagQueryResult> pathToBagQueryResult = new HashMap();
-                Map<String, InterMineBag> allBags =
-                    WebUtil.getAllBags(profile.getSavedBags(), servletContext);
-
-                pt = SessionMethods.doPathQueryGetPagedTable(query, servletContext,
-                                             os, model, pathToQueryNode,
-                                             pathToBagQueryResult, allBags);
+                WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+                pt = new PagedTable(executor.execute(query));
 
                 if (pt.getWebTable() instanceof WebResults) {
                     ((WebResults) pt.getWebTable()).goFaster();
