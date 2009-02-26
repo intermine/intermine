@@ -58,7 +58,8 @@ public class GoPostprocess extends PostProcessor
      * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
      * @throws ObjectStoreException if anything goes wrong
      */
-    public void postProcess() throws ObjectStoreException {
+    public void postProcess()
+    throws ObjectStoreException {
 
         long startTime = System.currentTimeMillis();
 
@@ -150,7 +151,7 @@ public class GoPostprocess extends PostProcessor
         ContainsConstraint annSubjectConstraint =
             new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein);
         cs.addConstraint(annSubjectConstraint);
-        
+
 
         q.setConstraint(cs);
 

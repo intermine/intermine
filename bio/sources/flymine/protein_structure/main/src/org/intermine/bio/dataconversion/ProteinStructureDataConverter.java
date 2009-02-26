@@ -69,7 +69,8 @@ public class ProteinStructureDataConverter extends BioFileConverter
      * {@inheritDoc}
      */
     @Override
-    public void process(Reader reader) throws Exception {
+    public void process(Reader reader)
+    throws Exception {
         File currentFile = getCurrentFile();
         parentDir = currentFile.getParent();
         if (currentFile.getName().endsWith(".xml")) {

@@ -86,7 +86,8 @@ public class PubMedGeneConverter extends FileConverter
      * an exception is thrown.
      * {@inheritDoc}
      */
-    public void process(Reader reader) throws Exception {
+    public void process(Reader reader)
+    throws Exception {
         if (getInfoFile() == null) {
             throw new RuntimeException("PubMedGeneConverter: Property infoFile is not set.");
         }

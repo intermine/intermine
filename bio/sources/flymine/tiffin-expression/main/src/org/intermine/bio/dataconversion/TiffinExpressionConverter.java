@@ -90,9 +90,8 @@ public class TiffinExpressionConverter extends BioFileConverter
                     if (currentMotif == null) {
                         throw new RuntimeException("internal error \"currentMotif\" shouldn't "
                                                    + "be null at this point");
-                    } else {
-                        currentMotif.addToCollection("expressionTerms", expressionItem);
                     }
+                    currentMotif.addToCollection("expressionTerms", expressionItem);
                     //expressionItem.addToCollection("motifs", currentMotif);
                 } else {
                     if (line.trim().length() > 0) {
@@ -108,13 +107,12 @@ public class TiffinExpressionConverter extends BioFileConverter
     private Item getExpressionTerm(String expressionDescription) {
         if (termItems.containsKey(expressionDescription)) {
             return termItems.get(expressionDescription);
-        } else {
-            Item expressionTermItem = createItem("MRNAExpressionTerm");
-            expressionTermItem.setAttribute("name", expressionDescription);
-            expressionTermItem.setAttribute("type", "ImaGO");
-            termItems.put(expressionDescription, expressionTermItem);
-            return expressionTermItem;
         }
+        Item expressionTermItem = createItem("MRNAExpressionTerm");
+        expressionTermItem.setAttribute("name", expressionDescription);
+        expressionTermItem.setAttribute("type", "ImaGO");
+        termItems.put(expressionDescription, expressionTermItem);
+        return expressionTermItem;
     }
 
     private void storeAll(Map<String, Item> map) throws Exception {
@@ -122,6 +120,5 @@ public class TiffinExpressionConverter extends BioFileConverter
             store(item);
         }
     }
-
 }
 

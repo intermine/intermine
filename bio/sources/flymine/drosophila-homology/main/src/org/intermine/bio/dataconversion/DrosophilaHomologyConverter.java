@@ -160,7 +160,8 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     // fetch a gene or create and store
-    private String getGene(String symbol, String org) throws ObjectStoreException {
+    private String getGene(String symbol, String org)
+    throws ObjectStoreException {
         String geneId = genes.get(symbol + org);
         if (geneId == null) {
             // attempt to resolve to a current FlyBase gene
