@@ -70,7 +70,8 @@ public class Drosophila2ProbeConverter extends FileConverter
      *
      * {@inheritDoc}
      */
-    public void process(Reader reader) throws Exception {
+    public void process(Reader reader)
+    throws Exception {
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean hasDataset = false;

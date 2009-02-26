@@ -218,7 +218,8 @@ public abstract class BioDBConverter extends DBConverter
      * @throws ObjectStoreException if an Item can't be stored
      * @return the Chromsome Item
      */
-    protected Item getChromosome(String identifier, int taxonId) throws ObjectStoreException {
+    protected Item getChromosome(String identifier, int taxonId)
+    throws ObjectStoreException {
         Item chromosome = chromosomes.get(identifier);
         if (chromosome == null) {
             chromosome = createItem("Chromosome");

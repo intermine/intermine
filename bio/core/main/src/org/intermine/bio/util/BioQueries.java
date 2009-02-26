@@ -1,6 +1,6 @@
 package org.intermine.bio.util;
 
-/* 
+/*
  * Copyright (C) 2002-2009 FlyMine
  *
  * This code may be freely distributed and modified under the
@@ -53,9 +53,9 @@ public abstract class BioQueries
      */
     public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
             boolean orderBySubject, boolean hasLength, int batchSize)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
-    
+
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcObj = new QueryClass(objectCls);
@@ -81,7 +81,7 @@ public abstract class BioQueries
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
         cs.addConstraint(cc2);
-    
+
         if (hasLength) {
             QueryField qfObjLength = new QueryField(qcObj, "length");
             SimpleConstraint lengthNotNull =
@@ -96,7 +96,7 @@ public abstract class BioQueries
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, batchSize, true, true, true);
-    
+
         return res;
     }
 

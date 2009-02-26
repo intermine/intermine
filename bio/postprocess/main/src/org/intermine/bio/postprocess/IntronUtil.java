@@ -102,7 +102,7 @@ public class IntronUtil
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
     public void createIntronFeatures()
-        throws ObjectStoreException {
+    throws ObjectStoreException {
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataSet.setTitle("FlyMine introns");

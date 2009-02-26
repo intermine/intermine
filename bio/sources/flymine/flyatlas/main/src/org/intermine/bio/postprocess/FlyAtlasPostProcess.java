@@ -61,7 +61,7 @@ public class FlyAtlasPostProcess extends PostProcessor
      * @throws ObjectStoreException if the objectstore throws an exception
      */
     public void postProcess()
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(false);
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

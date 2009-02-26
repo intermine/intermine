@@ -50,7 +50,8 @@ public class FlyFishConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @throws ObjectStoreException if an error occurs in storing
      */
-    public FlyFishConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public FlyFishConverter(ItemWriter writer, Model model)
+    throws ObjectStoreException {
         super(writer, model, "fly-FISH", "fly-Fish data set");
 
         orgDrosophila = createItem("Organism");

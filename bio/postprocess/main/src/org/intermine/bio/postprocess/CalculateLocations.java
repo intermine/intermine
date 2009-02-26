@@ -73,7 +73,7 @@ public class CalculateLocations
         this.os = osw.getObjectStore();
     }
 
- 
+
     /**
      * Create OverlapRelation objects for all overlapping LocatedSequenceFeatures by querying
      * objects that are located on chromosomes and overlap.
@@ -86,7 +86,7 @@ public class CalculateLocations
      * @throws Exception if anything goes wrong
      */
     public void createOverlapRelations(List classNamesToIgnore, boolean ignoreSelfMatches)
-         throws Exception {
+    throws Exception {
         osw.beginTransaction();
         Map summary = new HashMap();
         Map chromosomeMap = makeChromosomeMap();
@@ -168,7 +168,7 @@ public class CalculateLocations
      * @throws ObjectStoreException if the is a problem with the ObjectStore
      */
     public void createSpanningLocations(Class parentClass, Class childClass, String refField)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
@@ -360,7 +360,7 @@ public class CalculateLocations
         LocatedSequenceFeature lastFeature = null;
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
-        
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
@@ -382,16 +382,16 @@ public class CalculateLocations
             lastChrId = chrId;
             lastLoc = locOnChr;
         }
-        
+
         // make sure final feature gets stored
         if (storeLastFeature && lastFeature != null) {
             setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
         }
-        
+
         osw.commitTransaction();
     }
 
-    private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc, 
+    private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
         LocatedSequenceFeature lsfClone =
             (LocatedSequenceFeature) PostProcessUtil.cloneInterMineObject(lsf);
@@ -411,8 +411,8 @@ public class CalculateLocations
 
         osw.store(lsfClone);
     }
-    
-    
+
+
     /**
      * Return true if locations of two objects on some parent object
      * have any overlap.
