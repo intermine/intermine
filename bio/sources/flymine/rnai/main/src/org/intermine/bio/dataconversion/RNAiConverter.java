@@ -40,7 +40,8 @@ public class RNAiConverter extends BioFileConverter
      * @param model the Model
      * @throws ObjectStoreException of problem reading/writing data
      */
-    public RNAiConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public RNAiConverter(ItemWriter writer, Model model)
+    throws ObjectStoreException {
         super(writer, model, "WormBase", "WormBase RNAi Phenotype");
 
         org = createItem("Organism");
