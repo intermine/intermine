@@ -284,7 +284,6 @@ sub make_synonym {
   $syn->set('subject', $subject);
   $syn->set('type', $type);
   $syn->set('value', $value);
-  $syn->set('source', $datasource_item);
   $syn->set('isPrimary', 'true');
 }
 
