@@ -20,6 +20,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+
+import org.apache.log4j.Logger;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.SAXParser;
+import org.intermine.util.StringUtil;
+import org.intermine.xml.full.Item;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * BioGrid human data converter.
