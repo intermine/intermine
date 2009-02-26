@@ -222,7 +222,8 @@ public class OboConverter extends DataConverter
     /**
      * @param oboRelations
      */
-    protected void processRelation(OboRelation oboRelation) throws ObjectStoreException {
+    protected void processRelation(OboRelation oboRelation)
+    throws ObjectStoreException {
         // create the relation item
         if (nameToTerm.get(oboRelation.getParentTermId()) != null
             && nameToTerm.get(oboRelation.getChildTermId()) != null) {
