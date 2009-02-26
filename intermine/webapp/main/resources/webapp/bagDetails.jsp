@@ -32,15 +32,21 @@
   <TD colspan=2 align="left" style="padding-bottom:10px">
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
 <script type="text/javascript" src="js/toolbar.js"></script>
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function () {
+        jQuery(".tb_button").click(function () { 
+            toggleToolBarMenu(this);
+        });
+    })
+</script>
 <div id="tool_bar_div">
-    <ul id="button_bar" onclick="toggleToolBarMenu(event);">
-        <li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" title="Display related templates or widgets" border="0" id="tool_bar_button_display" class="tool_bar_button"/></li>
-        <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" title="Export this list" border="0" id="tool_bar_button_export" class="tool_bar_button"/></li>
-        <li id="tool_bar_li_use"><img style="cursor: pointer;" src="images/icons/null.gif" width="43" height="25" title="Use this list in a template or a query" border="0" id="tool_bar_button_use" class="tool_bar_button"/></li>
+    <ul id="button_bar">
+        <li id="tool_bar_li_display"class="tb_button"><img src="images/display.png" width="13" height="13" alt="Display related templates or widgets"><html:link linkName="#">Related</html:link></li>
+        <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
+        <li id="tool_bar_li_use"class="tb_button"><img src="images/use.png" width="13" height="13" alt="Use this list in a template or a query"><html:link linkName="#">Use</html:link></li>
         <c:if test="${myBag == 'true'}">
-          <li id="tool_bar_li_edit"><img style="cursor: pointer;" src="images/icons/null.gif" width="56" height="25" alt="Edit" border="0" id="tool_bar_button_edit" class="tool_bar_button"></li>
+          <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
     </c:if>
-        <li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
         <li class="tool_bar_link">
            <html:form action="/findInList">
             <input type="text" name="textToFind" id="textToFind"/>
@@ -56,14 +62,14 @@
 <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 <html:hidden property="bagName" value="${bag.name}"/>
 
-<div id="tool_bar_item_display" style="visibility:hidden;width:100px" class="tool_bar_item">
+<div id="tool_bar_item_display" style="display:none;width:100px" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">Related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">Related widgets</html:link>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_display')"><fmt:message key="confirm.cancel"/></a>
 </div>
 
-<div id="tool_bar_item_export" style="visibility:hidden;width:300px" class="tool_bar_item">
+<div id="tool_bar_item_export" style="display:none;width:300px" class="tool_bar_item">
     <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
     <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
     <tiles:get name="export.tile"/>
@@ -71,14 +77,14 @@
     <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 
-<div id="tool_bar_item_use" style="visibility:hidden;width:100px" class="tool_bar_item">
+<div id="tool_bar_item_use" style="display:none;width:100px" class="tool_bar_item">
     <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">In a query</html:link><br/>
   <html:link action="/templates">In a template</html:link>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 
-<div id="tool_bar_item_edit" style="visibility:hidden;width:300px" class="tool_bar_item">
+<div id="tool_bar_item_edit" style="display:none;width:300px" class="tool_bar_item">
   <%-- add selected to bag --%>
   <fmt:message key="bagDetails.addRecords"/>:<br/>
    <c:choose>

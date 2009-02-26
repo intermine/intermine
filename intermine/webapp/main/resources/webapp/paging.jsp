@@ -17,7 +17,7 @@
   <td><img src="theme/res_bar_left.gif"></td>
   <%-- Paging controls --%>
   <td class="resBar">
-    <span>
+    <span style="padding-top:15px">
     <tiles:insert page="/tablePageLinks.jsp">
       <tiles:put name="resultsTable" beanName="resultsTable" />
       <tiles:put name="currentPage" value="${currentPage}" />

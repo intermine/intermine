@@ -127,12 +127,7 @@ function resultsCountCallback(size) {
 }
 
 function getColumnSummary(tableName, columnName, columnDisplayName) {
-    document.getElementById('summary_loaded').style.display = "none";
-    document.getElementById('summary_loading').style.display = "block";
-    if(jQuery.browser.msie != true) {
-      jQuery('#summary').center();
-    }
-    jQuery('#summary').show(300);
+    var dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
         var uniqueCountQid = str[1];
@@ -154,9 +149,6 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
             headerText = '<tr><th>Min</th><th>Max</th><th>Sample Mean</th><th>Standard Deviation</th></tr>';
         }
 
-        document.getElementById('summary_loading').style.display = "none";
-        document.getElementById('summary_loaded').style.display = "block";
-
         var bodyText = '';
 
         for (rowIndex = 0; rowIndex < rows.length; rowIndex++) {
@@ -169,7 +161,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
             bodyText += '</tr>';
         }
 
-        var html = '<div class="box">                                         \
+        var content = '<div class="box">                                         \
                       <div class="summaryhead">                                     \
                         <h3>Column Summary for ' + columnDisplayName + '</h3>          \
                       </div>                                                  \
@@ -182,13 +174,12 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                       </table>';
 
         if (summaryRowsCount > 10) {
-            html += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
+            content += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
         } else {
-            html += '</div>';
+            content += '</div>';
         }
 
-        var summaryLoadedElement = document.getElementById('summary_loaded');
-        summaryLoadedElement.innerHTML = html;
+        dialog.setContent(content);
         setTimeout("updateCountInColumnSummary()", 200);
         setTimeout("updateUniqueCountInColumnSummary(" + uniqueCountQid + ")", 300);
    });
@@ -760,9 +751,6 @@ function switchJoin(element) {
          item.id = item.id.replace(pathName, newPathName);
        }
      });
-   	 AjaxServices.getSortOrderMap(function(sortMap) {
-   		reDrawSorters(sortMap);
-   	 });
    	 reDrawConstraintLogic();
    });
    if(jQuery(element).attr('src').indexOf('hollow')>-1) {
