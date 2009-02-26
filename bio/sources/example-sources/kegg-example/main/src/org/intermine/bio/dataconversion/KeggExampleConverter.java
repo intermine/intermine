@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.sql.Database;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
@@ -43,8 +42,8 @@ public class KeggExampleConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public KeggExampleConverter(Database database, Model model, ItemWriter writer) {
-        super(database, model, writer, "GenomeNet", "KEGG PATHWAY");
+    public KeggExampleConverter(Model model, ItemWriter writer) {
+        super(writer, model, "GenomeNet", "KEGG PATHWAY");
     }
 
     /**
