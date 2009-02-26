@@ -13,7 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,22 +20,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.intermine.dataconversion.FileConverter;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemHelper;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * BioGrid human data converter.
  *
  * @author Dominik Grimm
  */
-public class BioGridHumanConverter extends FileConverter 
+public class BioGridHumanConverter extends BioFileConverter
 {
-    private static Map<String, String> masterList = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     protected IdResolverFactory resolverFactory;
 
@@ -46,7 +37,7 @@ public class BioGridHumanConverter extends FileConverter
      * @param model the Model to use when making Items
      */
     public BioGridHumanConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model, "BioGRID", "BioGRID data set");
     }
 
     /**
@@ -66,12 +57,10 @@ public class BioGridHumanConverter extends FileConverter
 
     private class BioGridHumanHandler
     {
-        //private data fields
         private ItemWriter writer;
         private BufferedReader in;
         private Map<String, Item> genes = new HashMap<String, Item>();
         private Map<String, String> organismMap = new HashMap<String, String>();
-        //private List
         private List<String> values = new Vector<String>();
         private List<List<String>> valueRows = new Vector<List<String>>();
         private Set<String> storedItems = new HashSet<String>();
@@ -135,10 +124,7 @@ public class BioGridHumanConverter extends FileConverter
                     valueRows.add(values);
                 }
             }
-            initDatasources();
-
             storeInteractingGenes();
-
         }
 
         private void storeInteractingGenes() throws ObjectStoreException {
@@ -158,7 +144,7 @@ public class BioGridHumanConverter extends FileConverter
 
                         organismMap.put(values.get(5), organismARefId);
 
-                        writer.store(ItemHelper.convert(organism));
+                        store(organism);
                     } else {
                         organismARefId = organismMap.get(values.get(5));
                     }
@@ -172,7 +158,7 @@ public class BioGridHumanConverter extends FileConverter
 
                         organismMap.put(values.get(6), organismARefId);
 
-                        writer.store(ItemHelper.convert(organism2));
+                        store(organism2);
                     } else {
                         organismBRefId = organismMap.get(values.get(6));
                     }
@@ -190,12 +176,12 @@ public class BioGridHumanConverter extends FileConverter
                                 pub.setAttribute("pubMedId", publications[k]);
                                 itemId = pub.getIdentifier();
                                 pubs.put(publications[k], itemId);
-                                writer.store(ItemHelper.convert(pub));
+                                store(pub);
                         }
                         experiment.setReference("publication", itemId);
                     }
 
-                    writer.store(ItemHelper.convert(experiment));
+                    store(experiment);
 
                     Item gene = getGene(values.get(0));
 
@@ -208,32 +194,22 @@ public class BioGridHumanConverter extends FileConverter
                     interaction.setReference("gene", gene.getIdentifier());
                     interaction.setReference("experiment", experiment.getIdentifier());
 
-                    ReferenceList geneList = new ReferenceList("interactingGenes",
-                            new ArrayList<String>());
-
-                    geneList.addRefId(gene2.getIdentifier());
-
-                    interaction.addCollection(geneList);
+                    interaction.addToCollection("interactingGenes", gene2);
 
                     /* store all interaction-related items */
                     if (!storedItems.contains(gene.getAttribute("symbol").getValue())) {
                         gene.setReference("organism", organismARefId);
-                        writer.store(ItemHelper.convert(gene));
+                        store(gene);
                         storedItems.add(gene.getAttribute("symbol").getValue());
                     }
                     if (!storedItems.contains(gene2.getAttribute("symbol").getValue())) {
                         gene2.setReference("organism", organismBRefId);
-                        writer.store(ItemHelper.convert(gene2));
+                        store(gene2);
                         storedItems.add(gene2.getAttribute("symbol").getValue());
                     }
 
-                    // add dataset
-                    ReferenceList evidenceColl
-                        = new ReferenceList("evidence", new ArrayList<String>());
-                    interaction.addCollection(evidenceColl);
-                    evidenceColl.addRefId(masterList.get("dataset"));
-
-                    writer.store(ItemHelper.convert(interaction));
+                    //interaction.addToCollection(masterList.get("dataset"));
+                    store(interaction);
             }
         }
 
@@ -247,22 +223,5 @@ public class BioGridHumanConverter extends FileConverter
             return item;
         }
 
-        private void initDatasources() throws ObjectStoreException {
-            if (!masterList.containsKey("datasource")) {
-                    Item datasource = createItem("DataSource");
-                    datasource.setAttribute("name", "BioGRID");
-                    Item dataSet = createItem("DataSet");
-                    dataSet.setAttribute("title", "BioGRID data set");
-                    dataSet.setReference("dataSource", datasource.getIdentifier());
-                    writer.store(ItemHelper.convert(dataSet));
-                    masterList.put("dataset", dataSet.getIdentifier());
-                    writer.store(ItemHelper.convert(datasource));
-                    masterList.put("datasource", datasource.getIdentifier());
-            }
-        }
-
-        protected Item createItem(String className) {
-            return BioGridHumanConverter.this.createItem(className);
-        }
     }
 }
