@@ -1091,7 +1091,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         set.add("hello");
         set.add("goodbye");
         set.add("CompanyA");
-        set.add(new Integer(5));
         q1.setConstraint(new BagConstraint(new QueryField(c1, "name"), ConstraintOp.IN, set));
         return q1;
     }
@@ -1474,26 +1473,6 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         }
         bag.add("a string with quotes: '\"");
 
-        bag.add(new Short((short) 1000));
-        bag.add(new Short((short) 1000));
-        bag.add(new Integer(2000));
-        bag.add(new Long(3000L));
-        bag.add(new Long(3100L));
-        bag.add(new Float(4000.0));
-        bag.add(new BigDecimal(10000.0));
-        bag.add(new Date(999999));
-        bag.add(new Date(100));
-        bag.add(new Boolean(true));
-        bag.add(new Boolean(false));
-        Employee employee = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
-        employee.setId(new Integer(5000));
-        bag.add(employee);
-        Manager manager = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
-        manager.setId(new Integer(5001));
-        bag.add(manager);
-        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company.setId(new Integer(6000));
-        bag.add(company);
         q.setConstraint(new BagConstraint(new QueryField(qc, "name"), constraintOp, bag));
         return q;
     }

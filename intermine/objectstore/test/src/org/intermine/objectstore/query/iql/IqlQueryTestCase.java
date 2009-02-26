@@ -96,15 +96,10 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         bag1.add("hello");
         bag1.add("goodbye");
         bag1.add("CompanyA");
-        bag1.add(new Integer(5));
         fq = new IqlQuery("SELECT DISTINCT Company FROM org.intermine.model.testmodel.Company AS Company WHERE Company.name IN ?", null);
         fq.setParameters(Collections.singletonList(bag1));
         results.put("BagConstraint", fq);
         Set bag2 = new HashSet();
-        bag2.add("hello");
-        bag2.add("goodbye");
-        bag2.add("CompanyA");
-        bag2.add(new Integer(5));
         bag2.add(data.get("CompanyA"));
         fq = new IqlQuery("SELECT DISTINCT Company FROM org.intermine.model.testmodel.Company AS Company WHERE Company IN ?", null);
         fq.setParameters(Collections.singletonList(bag2));
@@ -204,7 +199,7 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         fq.setParameters(Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
         results.put("QueryClassBagDynamic", fq);
         res = new HashSet();
-        Set bag = new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}));
+        Set bag = new HashSet(Arrays.asList(new Object[] {data.get("EmployeeB1")}));
         //fq = new IqlQuery("SELECT a1_ FROM (org.intermine.model.testmodel.Broke, org.intermine.model.testmodel.Employable) AS a1_ WHERE a1_ IN ?", null);
         //fq.setParameters(Collections.singletonList(bag));
         //res.add(fq);

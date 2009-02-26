@@ -342,6 +342,35 @@ public class DynamicUtil
         return retval;
     }
 
+    /**
+     * Returns true if sup is a superclass of sub (or the same), taking into account dynamic
+     * classes.
+     *
+     * @param sup the supposed superclass
+     * @param sub the supposed subclass
+     * @return a boolean
+     */
+    public static boolean isAssignableFrom(Class sup, Class sub) {
+        Set<Class> classes = decomposeClass(sup);
+        for (Class clazz : classes) {
+            if (!clazz.isAssignableFrom(sub)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if obj is an instance of clazz, taking into account dynamic classes.
+     *
+     * @param obj the Object
+     * @param clazz the Class
+     * @return a boolean
+     */
+    public static boolean isInstance(Object obj, Class clazz) {
+        return isAssignableFrom(clazz, obj.getClass());
+    }
+
     private static class ClassNameComparator implements Comparator<Class>
     {
         public int compare(Class a, Class b) {
