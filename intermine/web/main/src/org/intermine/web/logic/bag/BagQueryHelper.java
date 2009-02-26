@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.QueryField;
 
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.web.logic.ClassKeyHelper;
 
@@ -99,12 +100,18 @@ public class BagQueryHelper
             }
 
             QueryField qf = new QueryField(qc, fld.getName());
+            List filteredBag = new ArrayList();
+            for (Object o : lowerCaseInput) {
+                if (DynamicUtil.isInstance(o, qf.getType())) {
+                    filteredBag.add(o);
+                }
+            }
             if (qf.getType().equals(String.class)) {
                 QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
                 // constrain field to be in a bag
-                cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, lowerCaseInput));
+                cs.addConstraint(new BagConstraint(qe, ConstraintOp.IN, filteredBag));
             } else {
-                cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, lowerCaseInput));
+                cs.addConstraint(new BagConstraint(qf, ConstraintOp.IN, filteredBag));
             }
 
             q.addToSelect(qf);
