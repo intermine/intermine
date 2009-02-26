@@ -32,6 +32,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-personalized-1.6rc2.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 <script type="text/javascript">
   jQuery.noConflict();
 </script>

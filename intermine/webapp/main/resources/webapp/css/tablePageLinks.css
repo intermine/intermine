@@ -1,6 +1,9 @@
 span.tablePageLinks {
   font-size: 1em;
   color: #666;
+  white-space: nowrap;
   float:left;
-  padding:5px 5px 0 5px;
+}
+span.tablePageLinks a{
+  float:left;
 }

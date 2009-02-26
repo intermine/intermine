@@ -7,6 +7,7 @@
 <tiles:importAttribute/>
 
 <!-- tablePageLinks -->
+<span class="tablePageLinks">
       <c:choose>
       <c:when test="${!resultsTable.firstPage}">
         <c:if test="${short != 'true'}">
@@ -16,11 +17,11 @@
         </c:if>
         <html:link action="/${currentPage}?table=${param.table}&amp;bagName=${bagName}&amp;page=${resultsTable.page-1}&amp;size=${resultsTable.pageSize}&amp;trail=${param.trail}">
           &lt;&nbsp;<fmt:message key="results.previous"/>
-        </html:link>&nbsp;|&nbsp;
+        </html:link><span style="float:left">&nbsp;|&nbsp;</span>
       </c:when>
       <c:otherwise>
-        <c:if test="${short != 'true'}">&lt;&lt;&nbsp;<fmt:message key="results.first"/></c:if>
-        &lt;&nbsp;<fmt:message key="results.previous"/>&nbsp;|&nbsp;
+        <span style="float:left"><c:if test="${short != 'true'}">&lt;&lt;&nbsp;<fmt:message key="results.first"/></c:if>
+        &lt;&nbsp;<fmt:message key="results.previous"/>&nbsp;|&nbsp;</span>
       </c:otherwise>
     </c:choose>
     <c:choose>
@@ -45,4 +46,5 @@
       </c:otherwise>
     </c:choose>
     </c:if>
+</span>
 <!-- /tablePageLinks.jsp -->

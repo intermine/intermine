@@ -138,7 +138,7 @@
                   <%-- test whether already selected and highlight if needed --%>
                   <c:set var="cellClass" value="${resultElement.id}"/>
                       
-                  <%-- highlight cell if selected or if whole column selected and element isn't de-selected --%>
+                  <%-- highlight cell if selected or if whole column selected and element isnt de-selected --%>
                   <c:choose>
                     <c:when test="${pagedResults.allSelected == -1}">
                       <c:if test="${!empty pagedResults.selectionIds[resultElement.id] && pagedResults.allSelected == -1 && empty bagName}">
@@ -254,26 +254,6 @@
     </c:if>
 
 </table>
-<%--  The Summary table --%>
-<div id="summary" >
-    <div align="right" id="handle">
-      <img style="float:right";
-           src="images/close.png" title="Close"
-           onclick="javascript:jQuery('#summary').hide(300);"
-           onmouseout="this.style.cursor='normal';"
-           onmouseover="this.style.cursor='pointer';"/>
-    </div>
-    <div id="summary_loading"><img src="images/wait18.gif" title="loading icon">&nbsp;Loading...</div>
-    <div id="summary_loaded" style="display:none;"></div>
-</div>
-<script language="javascript">
-  <!--//<![CDATA[
-  jQuery(document).ready(function(){
-   jQuery('#summary').draggable({handle:'#handle'});
-  });
-   //new Draggable('summary',{handle:'handle'});
-  //]]>-->
-</script>
 
 <c:if test="${empty bagName && empty inlineTable}">
    <div style="margin-top: 10px;">

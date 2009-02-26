@@ -96,17 +96,21 @@
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" />
 <link rel="stylesheet" href="css/tablePageLinks.css" type="text/css" >
 <script type="text/javascript" src="js/toolbar.js"></script>
-
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function () {
+        jQuery(".tb_button").click(function () { 
+            toggleToolBarMenu(this);
+        });
+    })
+</script>
 <div id="tool_bar_div">
-<ul id="button_bar" onclick="toggleToolBarMenu(event);">
-<li id="tool_bar_li_createlist"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Create List" border="0" id="tool_bar_button_createlist" class="tool_bar_button"></li>
-<li id="tool_bar_li_addtolist"><img style="cursor: pointer;" src="images/icons/null.gif" width="91" height="25" alt="Add to List" border="0" id="tool_bar_button_addtolist" class="tool_bar_button"></li>
-<li id="tool_bar_li_addcolumn"><img style="cursor: pointer;" src="images/icons/null.gif" width="90" height="25" alt="Export" border="0" id="tool_bar_button_addcolumn" class="tool_bar_button"></li>
-<li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li>
+<ul id="button_bar">
+    <li id="tool_bar_li_createlist"class="tb_button"><img src="images/create.png" width="13" height="13" alt="Create"><html:link linkName="#">Create List</html:link></li>
+    <li id="tool_bar_li_addtolist"class="tb_button"><img src="images/add.png" width="15" height="13" alt="Add"><html:link linkName="#">Add to List</html:link></li>
+    <li id="tool_bar_li_addcolumn" class="tb_button"><img src="images/addcol.png" width="9" height="13" alt="Addcol"><html:link linkName="#">Add Column</html:link></li>
+    <li id="tool_bar_li_export" class="tb_button"><img src="images/export.png" width="12" height="13" alt="Export"><html:link linkName="#">Export</html:link></li>
 
-<li class="tool_bar_separator"><span>&nbsp;//&nbsp;</span></li>
-
-<li class="tool_bar_link">
+    <li class="tool_bar_link" style="padding:2px">
 <html:form action="/changeTableSize">
 
   <%-- Page size controls --%>
@@ -126,12 +130,10 @@
   </noscript>
 </html:form>
 <li class="tool_bar_link">
-    <span class="tablePageLinks">
-    <tiles:insert page="/tablePageLinks.jsp">
-      <tiles:put name="short" value="false" />
-      <tiles:put name="currentPage" value="results" />
-    </tiles:insert>
-    </span>
+  <tiles:insert page="/tablePageLinks.jsp">
+    <tiles:put name="short" value="false" />
+     <tiles:put name="currentPage" value="results" />
+   </tiles:insert>
 </li>
 </ul>
 </div>
@@ -140,7 +142,7 @@
 <html:form action="/saveBag" >
 <input type="hidden" name="operationButton"/>
 
-<div id="tool_bar_item_createlist" style="visibility:hidden;width:350px" class="tool_bar_item" >
+<div id="tool_bar_item_createlist" style="display:none;width:350px" class="tool_bar_item" >
       <em>(with selected items)</em>
 <%-- FIXME: selectedIds has gone, we need a new plan:   $ { pagedResults.selectedIds.length} --%>
       <fmt:message key="bag.new"/><br/>
@@ -156,7 +158,7 @@
   <a href="javascript:hideMenu('tool_bar_item_createlist')" ><fmt:message key="confirm.cancel"/></a>
 </div>
 <%-- Add to existing list --%>
-<div id="tool_bar_item_addtolist" style="visibility:hidden;width:300px" class="tool_bar_item" >
+<div id="tool_bar_item_addtolist" style="display:none;width:300px" class="tool_bar_item" >
    <c:choose>
    <c:when test="${!empty PROFILE.savedBags && (empty param.bagName || PROFILE.savedBags.size > 1)}">
           <fmt:message key="bag.existing"/>
@@ -181,7 +183,7 @@
 </div>
 
 <%-- Export --%>
-<div id="tool_bar_item_export" style="visibility:hidden;width:370px" class="tool_bar_item">
+<div id="tool_bar_item_export" style="display:none;width:370px" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
     <tiles:get name="export.tile"/>
@@ -199,7 +201,7 @@
       </div> <%-- end of main results table body div --%>
     </html:form>
 
-<div id="tool_bar_item_addcolumn" style="visibility:hidden;font-size:0.7em" class="tool_bar_item">
+<div id="tool_bar_item_addcolumn" style="display:none;font-size:0.7em" class="tool_bar_item">
     <tiles:insert name="addColumn.tile">
       <tiles:put name="table" value="${param.table}" />
       <tiles:put name="trail" value="${param.trail}" />
