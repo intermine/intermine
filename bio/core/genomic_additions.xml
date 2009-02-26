@@ -2,14 +2,12 @@
 <classes>
 
     <class name="CDS" is-interface="true">
-        <reference name="gene" referenced-type="Gene"
-                   reverse-reference="CDSs"/>
-        <reference name="protein" referenced-type="Protein"/>
+      <reference name="gene" referenced-type="Gene" reverse-reference="CDSs"/>
+      <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
     </class>
 
     <class name="Exon" is-interface="true">
-        <collection name="transcripts" referenced-type="Transcript"
-                    reverse-reference="exons" ordered="true"/>
+      <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons" ordered="true"/>
     </class>
 
     <class name="Enhancer" is-interface="true">
@@ -19,32 +17,33 @@
     </class>
 
     <class name="Gene" is-interface="true">
-       <attribute name="ncbiGeneNumber" type="java.lang.String"/>
-       <collection name="UTRs" referenced-type="UTR" reverse-reference="gene" ordered="true"/>
-        <collection name="CDSs" referenced-type="CDS" reverse-reference="gene" ordered="true"/>
-        <collection name="publications" referenced-type="Publication" ordered="true"/>
+      <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+      <collection name="UTRs" referenced-type="UTR" reverse-reference="gene" ordered="true"/>
+      <collection name="CDSs" referenced-type="CDS" reverse-reference="gene" ordered="true"/>
+      <collection name="publications" referenced-type="Publication" ordered="true"/>
     </class>
 
     <class name="Intron" is-interface="true">
-        <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns" ordered="true"/>
+      <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns" ordered="true"/>
     </class>
-
+    
     <class name="UTR" is-interface="true">
-        <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
-        <reference name="MRNA" referenced-type="MRNA" reverse-reference="UTRs"/>
+      <reference name="gene" referenced-type="Gene" reverse-reference="UTRs"/>
+      <reference name="MRNA" referenced-type="MRNA" reverse-reference="UTRs"/>
     </class>
 
     <class name="Transcript" is-interface="true">
-        <attribute name="exonCount" type="java.lang.Integer"/>
-        <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
-        <collection name="introns" referenced-type="Intron" ordered="true" reverse-reference="transcripts"/>
-        <collection name="exons" referenced-type="Exon" reverse-reference="transcripts" ordered="true"/>
+      <attribute name="exonCount" type="java.lang.Integer"/>
+      <reference name="protein" referenced-type="Protein" reverse-reference="transcripts"/>
+      <collection name="introns" referenced-type="Intron" ordered="true" reverse-reference="transcripts"/>
+      <collection name="exons" referenced-type="Exon" reverse-reference="transcripts" ordered="true"/>
     </class>
 
     <class name="NcRNA" is-interface="true"/>
 
     <class name="Protein" is-interface="true">
-        <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein" ordered="true"/>
+      <collection name="CDSs" referenced-type="CDS" reverse-reference="protein" ordered="true"/>
+      <collection name="transcripts" referenced-type="Transcript" reverse-reference="protein" ordered="true"/>
     </class>
 
     <class name="ProteinBindingSite" is-interface="true"/>
@@ -54,17 +53,17 @@
     <class name="TransposableElementInsertionSite" is-interface="true"/>
 
     <class name="InsertionSite" is-interface="true">
-        <collection name="genes" referenced-type="Gene" ordered="true"/>
+      <collection name="genes" referenced-type="Gene" ordered="true"/>
     </class>
 
     <class name="MRNA" extends="Transcript"  is-interface="true">
-        <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
-        <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-        <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA" ordered="true"/>
+      <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
+      <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
+      <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA" ordered="true"/>
     </class>
 
     <class name="SequenceVariant" is-interface="true">
-        <collection name="genes" referenced-type="Gene" ordered="true"/>
+      <collection name="genes" referenced-type="Gene" ordered="true"/>
     </class>
 
     <class name="TransposableElement" is-interface="true">
