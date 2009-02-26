@@ -65,7 +65,7 @@ public class SetCollectionCounts
      * @throws IllegalAccessException if a field cannot be accessed
      */
     void setCollectionCountField(Class c, String collectionName, String countFieldName)
-        throws ObjectStoreException, IllegalAccessException {
+    throws ObjectStoreException, IllegalAccessException {
         Query q = new Query();
 
         QueryClass qc = new QueryClass(c);

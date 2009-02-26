@@ -80,7 +80,7 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      */
     protected Location getLocationFromHeader(String header, LocatedSequenceFeature lsf,
                                              Organism organism)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         final String regexp = ".*loc=(\\S+):(\\S+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);

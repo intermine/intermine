@@ -71,7 +71,7 @@ public abstract class OverlapUtil
      */
     public static void createOverlaps(final ObjectStore os, LocatedSequenceFeature subject,
             List classNamesToIgnore, boolean ignoreSelfMatches, ObjectStoreWriter osw, Map summary)
-        throws ObjectStoreException, ClassNotFoundException {
+    throws ObjectStoreException, ClassNotFoundException {
         Model model = os.getModel();
 
         Map classesToIgnore = new HashMap();

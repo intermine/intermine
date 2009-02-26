@@ -45,7 +45,7 @@ import org.obo.datamodel.OBOSession;
 public class OboConverter extends DataConverter
 {
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
-    
+
     protected String dagFilename;
     protected String termClass;
     protected int uniqueId = 0;
@@ -120,7 +120,7 @@ public class OboConverter extends DataConverter
     public void setOboTerms(Collection oboTerms) {
         this.oboTerms = oboTerms;
     }
-    
+
     /**
      * @param oboRelations the OboRelations to set
      */
@@ -214,7 +214,7 @@ public class OboConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
     protected void configureSynonymItem(OboTermSynonym syn, Item item, OboTerm term)
-        throws ObjectStoreException {
+    throws ObjectStoreException {
         item.setAttribute("name", syn.getName());
         item.setAttribute("type", syn.getType());
     }
@@ -244,5 +244,5 @@ public class OboConverter extends DataConverter
                      + oboRelation.getChildTermId());
         }
     }
-   
+
 }

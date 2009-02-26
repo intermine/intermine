@@ -137,7 +137,8 @@ public class FlyAtlasConverter extends BioFileConverter
      * Set up the items that are common to all orthologues/paralogues
      * @throws ObjectStoreException if an error occurs in storing
      */
-    protected void setupItems() throws ObjectStoreException {
+    protected void setupItems()
+    throws ObjectStoreException {
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
 

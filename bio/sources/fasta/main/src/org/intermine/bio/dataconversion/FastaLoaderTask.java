@@ -176,7 +176,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @throws BuildException if an ObjectStore method fails
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute()
+    throws BuildException {
         if (fastaTaxonId == null) {
             throw new RuntimeException("fastaTaxonId needs to be set");
         }

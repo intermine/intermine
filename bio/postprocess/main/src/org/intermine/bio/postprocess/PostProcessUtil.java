@@ -51,7 +51,7 @@ public class PostProcessUtil
      * @throws IllegalAccessException if problems with reflection
      */
     public static InterMineObject cloneInterMineObject(InterMineObject obj)
-        throws IllegalAccessException {
+    throws IllegalAccessException {
         return PostProcessUtil.cloneInterMineObject(obj, false);
     }
 

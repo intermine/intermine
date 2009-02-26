@@ -456,7 +456,8 @@ public class GFF3Converter
      * @return return/create item of class seqClsName for given identifier
      * @throws ObjectStoreException if the Item can't be stored
      */
-    private Item getSeq(String id) throws ObjectStoreException {
+    private Item getSeq(String id)
+    throws ObjectStoreException {
         // the seqHandler may have changed the id used, e.g. if using an IdResolver
         String identifier = sequenceHandler.getSeqIdentifier(id);
 
