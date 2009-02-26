@@ -460,11 +460,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q1.addFrom(c1);
         q1.addToSelect(c1);
         Set set = new LinkedHashSet();
-        set.add("hello");
-        set.add("goodbye");
-        set.add("CompanyA");
         set.add(data.get("CompanyA"));
-        set.add(new Integer(5));
         q1.setConstraint(new BagConstraint(c1, ConstraintOp.IN, set));
         return q1;
     }
@@ -715,7 +711,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
         q.addFrom(qc);
         q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
+        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeB1")}))));
         q.setDistinct(false);
         return q;
     }

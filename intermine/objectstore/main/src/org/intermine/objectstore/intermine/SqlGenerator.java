@@ -1048,8 +1048,9 @@ public class SqlGenerator
      *
      * @param con a Constraint
      * @return a boolean
+     * @throws ObjectStoreException when a bag contains elements of the wrong type
      */
-    protected static boolean completelyTrue(Constraint con) {
+    protected static boolean completelyTrue(Constraint con) throws ObjectStoreException {
         if (con instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) con;
             if (cs.getOp() == ConstraintOp.AND) {
@@ -1094,7 +1095,13 @@ public class SqlGenerator
                 Class type = bc.getQueryNode().getType();
                 Iterator bagIter = bc.getBag().iterator();
                 while (bagIter.hasNext() && empty) {
-                    empty = !type.isInstance(bagIter.next());
+                    Object bagItem = bagIter.next();
+                    if (!DynamicUtil.isInstance(bagItem, type)) {
+                        throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
+                                + "> contains element of wrong type ("
+                                + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
+                    }
+                    empty = false;
                 }
                 return empty;
             }
@@ -1107,8 +1114,9 @@ public class SqlGenerator
      *
      * @param con a Constraint
      * @return a boolean
+     * @throws ObjectStoreException when a bag contains elements of the wrong type
      */
-    protected static boolean completelyFalse(Constraint con) {
+    protected static boolean completelyFalse(Constraint con) throws ObjectStoreException {
         if (con instanceof ConstraintSet) {
             ConstraintSet cs = (ConstraintSet) con;
             if (cs.getOp() == ConstraintOp.AND) {
@@ -1153,7 +1161,13 @@ public class SqlGenerator
                 Class type = bc.getQueryNode().getType();
                 Iterator bagIter = bc.getBag().iterator();
                 while (bagIter.hasNext() && empty) {
-                    empty = !type.isInstance(bagIter.next());
+                    Object bagItem = bagIter.next();
+                    if (!DynamicUtil.isInstance(bagItem, type)) {
+                        throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
+                                + "> contains element of wrong type ("
+                                + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
+                    }
+                    empty = false;
                 }
                 return empty;
             }
@@ -1673,7 +1687,7 @@ public class SqlGenerator
             //int highest = Integer.MIN_VALUE;
             while (bagIter.hasNext()) {
                 Object bagItem = bagIter.next();
-                if (type.isInstance(bagItem)) {
+                if (DynamicUtil.isInstance(bagItem, type)) {
                     if (bagItem instanceof InterMineObject) {
                         Integer bagValue = ((InterMineObject) bagItem).getId();
                         filteredBag.add(bagValue);
@@ -1686,6 +1700,9 @@ public class SqlGenerator
                     //        highest = Math.max(((Integer) bagItem).intValue(), highest);
                     //    }
                     }
+                } else {
+                    throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
+                            + "of wrong type (" + bagItem.getClass().getName() + ")");
                 }
             }
             if (filteredBag.isEmpty()) {

@@ -804,9 +804,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
         Set bag = new HashSet();
         bag.add(new Integer(3));
         BagConstraint bc = new BagConstraint(qf, ConstraintOp.IN, bag);
-        assertTrue(SqlGenerator.completelyFalse(bc));
-        bag.add("hello");
-        assertFalse(SqlGenerator.completelyFalse(bc));
+        try {
+            SqlGenerator.completelyFalse(bc);
+            fail("Expected exception");
+        } catch (ObjectStoreException e) {
+        }
     }
 
     private void assertArrayEquals(boolean arg1[], boolean arg2[]) {
