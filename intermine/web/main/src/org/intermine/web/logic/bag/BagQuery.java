@@ -116,12 +116,12 @@ public class BagQuery
             if (o instanceof String) {
                 o = ((String) o).toLowerCase();
                 lowerCaseBag.add(o);
-                try {
-                    lowerCaseBag.add(new Integer((String) o));
-                } catch (NumberFormatException e) {
+                //try {
+                //    lowerCaseBag.add(new Integer((String) o));
+                //} catch (NumberFormatException e) {
                     //LOG.info("Couldn't parse string \"" + o + "\" into integer");
                     // Wasn't a number
-                }
+                //}
             } else {
                 lowerCaseBag.add(o);
             }
