@@ -121,30 +121,49 @@ sub make_link(){
 	symlink ($dir, "$link") or die "can't create $link";
 }
 
-#get taxon Ids from file
+#get taxon Ids from file - deprecated.  maybe.
 sub config_species(){
-	my ($file,$trigger) = @_;
-	my %data;
-
-	open(F,"<$file") or die "$!";
-	while(<F>){
-		my @f = split/\t/;
-		if($f[0] =~ /^$trigger/g) {
-			#for 2 value configs i.e. get_go_annoatation
-			if($f[2]){
-				chomp $f[3];
-				$data{$f[1]}{$f[2]}=$f[3];
-			}
-			#for everything else
-			else{
-				chomp $f[1];
-				$data{$f[1]}=$f[1];
-			}
-		}
-	}
-	close(F) or die "$!";
-	return %data;
+    my ($file,$trigger) = @_;
+    my %data;
+    
+    open(F,"<$file") or die "$!";
+    while(<F>){
+        my @f = split/\t/;
+        if($f[0] =~ /^$trigger/g) {
+            #for 2 value configs i.e. get_go_annoatation
+            if($f[2]){
+                chomp $f[3];
+                $data{$f[1]}{$f[2]}=$f[3];
+            }
+            #for everything else
+            else{
+                chomp $f[1];
+                $data{$f[1]}=$f[1];
+            }
+        }
+    }
+    close(F) or die "$!";
+    return %data;
 }
+
+
+#get taxon Ids from file                                                                                                                                                                                      sub get_organisms(){
+    my ($file,$trigger) = @_;
+    my @organisms;
+
+    open(F,"<$file") or die "$!";
+    while(<F>){
+        my @f = split/\t/;
+        if($f[0] =~ /^$trigger/g) {
+            chomp $f[1];
+            push(@organisms, $f[1]); 
+        }
+    }
+    close(F) or die "$!";
+    return @organisms;
+}
+
+
 
 #get taxon Ids from file
 sub get_taxonIds(){
