@@ -37,14 +37,11 @@ public class PdbConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                              .getResourceAsStream("1AZE.pdb"));
-
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         PdbConverter converter = new PdbConverter(itemWriter, Model.getInstanceByName("genomic"));
-        File f = new File("1AZE.pdb");
-        converter.setCurrentFile(f);
-        converter.process(reader);
+        //File datadir = new File ("resources/");
+        File datadir = new File ("./test/resources/");
+        converter.process(datadir);
         converter.close();
         // uncomment to create a new target items files
         //writeItemsFile(itemWriter.getItems(), "PdbConverterTest_tgt.xml");
