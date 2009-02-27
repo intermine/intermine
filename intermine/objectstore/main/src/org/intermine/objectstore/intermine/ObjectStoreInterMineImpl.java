@@ -36,6 +36,7 @@ import java.util.WeakHashMap;
 import org.apache.log4j.Logger;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -1665,7 +1666,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param q the Query for which to create the precomputed tables
      * @param indexes a Collection of QueryOrderables for which to create indexes
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
-     * the precomputed table's SELECT list.
+     * the precomputed table's SELECT list. If the indexes parameter is null, then indexes will
+     * be created for every field as well
      * @param category a String describing the category of the precomputed tables
      * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
@@ -1691,7 +1693,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @param indexes a Collection of QueryNodes for which to create indexes - they must all exist
      * in the SELECT list of the query
      * @param allFields true if all fields of QueryClasses in the SELECT list should be included in
-     * the precomputed table's SELECT list.
+     * the precomputed table's SELECT list. If the indexes parameter is null, then indexes will
+     * be created for every field as well
      * @param category a String describing the category of the precomputed tables
      * @return the names of the new precomputed tables
      * @throws ObjectStoreException if anything goes wrong
@@ -1745,9 +1748,40 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             + " present in the SELECT list of query " + q, e);
                 }
                 stringIndexes.add(all);
-                LOG.info("Creating precomputed table for query " + q + " with indexes "
-                        + stringIndexes);
+            } else if (allFields && (indexes == null)) {
+                for (QuerySelectable qs : q.getSelect()) {
+                    String alias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(qs)
+                            .toLowerCase());
+                    if (qs instanceof QueryClass) {
+                        Collection<FieldDescriptor> fields = model
+                            .getFieldDescriptorsForClass(qs.getType()).values();
+                        Map<String, TypeUtil.FieldInfo> fieldInfos = TypeUtil.getFieldInfos(qs
+                                .getType());
+                        for (FieldDescriptor field : fields) {
+                            String fieldName = field.getName();
+                            Class fieldType = fieldInfos.get(fieldName).getType();
+                            if (InterMineObject.class.isAssignableFrom(fieldType)) {
+                                String fieldAlias = DatabaseUtil.getColumnName(field).toLowerCase();
+                                stringIndexes.add(alias + fieldAlias);
+                            } else if (String.class.isAssignableFrom(fieldType)) {
+                                String fieldAlias = DatabaseUtil.getColumnName(field).toLowerCase();
+                                stringIndexes.add(alias + fieldAlias);
+                                stringIndexes.add("lower(" + alias + fieldAlias + ")");
+                            } else if (!Collection.class.isAssignableFrom(fieldType)) {
+                                String fieldAlias = DatabaseUtil.getColumnName(field).toLowerCase();
+                                stringIndexes.add(alias + fieldAlias);
+                            }
+                        }
+                    } else {
+                        stringIndexes.add(alias);
+                        if (String.class.equals(qs.getType())) {
+                            stringIndexes.add("lower(" + alias + ")");
+                        }
+                    }
+                }
             }
+            LOG.info("Creating precomputed table for query " + q + " with indexes "
+                    + stringIndexes);
             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
             List<String> retval = new ArrayList<String>();
             try {
