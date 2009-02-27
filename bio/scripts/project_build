@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Run the FlyMine production build and dump the database occasionally.
+# Run an InterMine production build and dump the database occasionally.
 # The project.xml in the current directory controls which actions to
 # run/merge/postprocess.
 # The database to dump will be found by reading the properties from $HOME/.intermine/<mine_name>.properties
@@ -603,7 +603,12 @@ sub get_actions
   my $handler = ProjectXML::Hander->new();
   my $parser = XML::Parser::PerlSAX->new(Handler => $handler);
 
+  
   $parser->parse(Source => { SystemId => $project_file });
+
+  if (!defined $handler->{actions}) {
+      die "invalid project.xml file, unable to continue build";
+  }
 
   my @actions = @{$handler->{actions}};
 
