@@ -1,4 +1,3 @@
-
 #!/usr/bin/perl
 
 # translates data from ensembl database to intermine items XML file

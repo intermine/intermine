@@ -140,22 +140,12 @@ sub make_item
 
   my $classname = "";
   if (defined $args{classname}) {
-    if ($args{classname} =~ m;^http://;) {
-      $classname = $args{classname};
-    } else {
-      $classname = $self->{model}->package_name() . '.' . $args{classname};
-    }
+    $classname = $args{classname};
   }
 
- 
-
   my $implements = "";
- if (defined $args{implements}) {
-   if ($args{implements} =~ m;^http://;) {
-      $implements = $args{implements};
-    } else {
-      $implements = $self->{model}->package_name() . '.' . $args{implements};
-    }
+  if (defined $args{implements}) {
+    $implements = $args{implements};
   }
 
   return new InterMine::Item(classname => $classname, implements => $implements,
