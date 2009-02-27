@@ -126,9 +126,6 @@ sub start_element
   if ($args->{Name} eq "model") {
     $self->{model}{model_name} = $nameattr;
     my $package_name = $args->{Attributes}{'package'};
-    if (!defined $package_name) {
-        $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
-    }
     $self->{model}{package_name} = $package_name;
   } else {
     my $model = $self->{model};
@@ -220,27 +217,6 @@ sub _process
   for my $class (@{$self->{classes}}) {
     my $classname = $class->name();
     $self->{class_hash}{$classname} = $class;
-  }
-}
-
-sub _namespace_to_package_name
-{
-  my $out_name = shift;
-
-  if ($out_name =~ m@http://(?:www\.)(.*?)/(.*)?/(.*)?\#@) {
-    my $domain = $1;
-    my @domain_bits = split /\./, $domain;
-    my $out_name = join '.', reverse @domain_bits;
-
-    if (defined $2) {
-      $out_name .= ".$2";
-    }
-    if (defined $3) {
-      $out_name .= ".$3";
-    }
-    return $out_name;
-  } else {
-    die "cannot understand namespace: $out_name\n";
   }
 }
 

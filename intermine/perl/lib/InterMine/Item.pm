@@ -448,10 +448,6 @@ sub as_xml
   my $classname = $self->{':classname'} || "";
   my $implements = $self->{':implements'} || "";
 
-  $classname = _package_name_to_namespace($classname);
-  my @implements_list = split ' ', $implements;
-  $implements = join ' ', map { _package_name_to_namespace($_) } @implements_list;
-
   $writer->startTag("item", id => $ID_PREFIX . $id,
                     class => $classname, implements => $implements);
 
@@ -480,28 +476,6 @@ sub as_xml
   }
 
   $writer->endTag();
-}
-
-sub _package_name_to_namespace
-{
-  my $package_name = shift;
-
-  if ($package_name =~ m/^\s*$/) {
-    return "";
-  }
-
-  if ($package_name =~ m/([^\.]+)\.([^\.]+)\.(.*)\.(.*)/) {
-    my $tld = $1;
-    my $domain = $2;
-    my $pack_bits = $3;
-    my $class_name = $4;
-
-    $pack_bits =~ s@\.@/@g;
-
-    return "http://www.$domain.$tld/$pack_bits#$class_name";
-  } else {
-    die "cannot understand package name: $package_name\n";
-  }
 }
 
 1;
