@@ -72,7 +72,7 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase_rnai/current"/>
     </source>
-    <source name="arbeitman-items-xml" type="arbeitman-items-xml">
+    <source name="arbeitman-items-xml" type="arbeitman-items-xml" dump="true">
       <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
@@ -116,7 +116,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr">
+    <source name="anoph-expr" type="anoph-expr" dump="true">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
