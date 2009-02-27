@@ -125,7 +125,10 @@ sub start_element
 
   if ($args->{Name} eq "model") {
     $self->{model}{model_name} = $nameattr;
-    my $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
+    my $package_name = $args->{Attributes}{'package'};
+    if (!defined $package_name) {
+        $package_name = InterMine::Model::_namespace_to_package_name($args->{Attributes}{namespace});
+    }
     $self->{model}{package_name} = $package_name;
   } else {
     my $model = $self->{model};
