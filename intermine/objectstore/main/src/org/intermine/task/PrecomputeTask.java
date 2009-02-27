@@ -141,15 +141,7 @@ public class PrecomputeTask extends Task
 
                 if (resultsInfo.getRows() >= minRows) {
                     LOG.info("precomputing " + key + " - " + query);
-                    Collection indexes = new ArrayList();
-                    Iterator qoListIter = query.getSelect().iterator();
-                    while (qoListIter.hasNext()) {
-                        QuerySelectable qo = (QuerySelectable) qoListIter.next();
-                        if (qo instanceof QueryOrderable) {
-                            indexes.add(qo);
-                        }
-                    }
-                    precomputeQuery(os, query, indexes);
+                    precomputeQuery(os, query);
                 }
             }
         }
@@ -163,7 +155,7 @@ public class PrecomputeTask extends Task
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
      */
-    private static void precomputeQuery(ObjectStore os, Query query, Collection indexes)
+    private static void precomputeQuery(ObjectStore os, Query query)
         throws BuildException {
         if (testMode) {
             testQueries.add(query);
@@ -172,13 +164,12 @@ public class PrecomputeTask extends Task
         long start = System.currentTimeMillis();
 
         try {
-            ((ObjectStoreInterMineImpl) os).precompute(query, indexes, true, "PrecomputeTask");
+            ((ObjectStoreInterMineImpl) os).precompute(query, null, true, "PrecomputeTask");
         } catch (ObjectStoreException e) {
-            throw new BuildException("Exception while precomputing query: " + query
-                    + " with indexes " + indexes, e);
+            throw new BuildException("Exception while precomputing query: " + query, e);
         }
 
-        LOG.info("precompute(indexes) of took "
+        LOG.info("Precompute took "
                  + (System.currentTimeMillis() - start) / 1000
                  + " seconds for: " + query);
     }

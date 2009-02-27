@@ -269,9 +269,7 @@ public class PrecomputedTableManager
             BestQuery bq = QueryOptimiser.optimise(sql, null, this, con,
                     QueryOptimiserContext.DEFAULT);
             sql = "CREATE TABLE " + pt.getName() + " AS " + bq.getBestQueryString();
-            Exception e = new Exception();
-            e.fillInStackTrace();
-            LOG.info("Creating new precomputed table " + sql, e);
+            LOG.info("Creating new precomputed table " + sql);
             stmt.execute(sql);
 
             String orderByField = pt.getOrderByField();
