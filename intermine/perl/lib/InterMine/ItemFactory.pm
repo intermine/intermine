@@ -111,7 +111,7 @@ sub new
     die "-model argument missing in ItemFactory constructor\n";
   }
   my $model = $opts{model};
-  my $self = { id_counter => 0, %opts, name_space => $model->name_space() };
+  my $self = { id_counter => 0, %opts, package_name => $model->package_name() };
 
   bless $self, $class;
   return $self;
@@ -147,9 +147,11 @@ sub make_item
     }
   }
 
+ 
+
   my $implements = "";
-  if (defined $args{implements}) {
-    if ($args{implements} =~ m;^http://;) {
+ if (defined $args{implements}) {
+   if ($args{implements} =~ m;^http://;) {
       $implements = $args{implements};
     } else {
       $implements = $self->{model}->package_name() . '.' . $args{implements};
