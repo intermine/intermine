@@ -94,9 +94,11 @@
 
   <class name="AppliedProtocol"
     is-interface="true">
+    <attribute name="step" type="java.lang.Integer" />
     <attribute name="name" type="java.lang.String" />
-    <!-- parameter values -->
+    <!-- parameter values 
     <attribute name="label" type="java.lang.String" />
+-->
     <reference name="protocol"
       referenced-type="Protocol"
       reverse-reference="appliedProtocols" />

@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -114,6 +115,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer protocolId;
         private String itemIdentifier;     // e.g. "0_12"
         private Integer intermineObjectId;
+        private Integer step;              // the level in the dag for the AP
+
         // the output data associated to this applied protocol
         private List<Integer> outputs = new ArrayList<Integer>();
         private List<Integer> inputs = new ArrayList<Integer>();
@@ -428,7 +431,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     }
                     // and set actual submission id
                     // we can either be at a first applied protocol (submissionId > 0)..
-                    actualSubmissionId = submissionId;                    
+                    actualSubmissionId = submissionId;
                 } else {
                     // ..or already down the dag, and we use the stored id. 
                     submissionId = actualSubmissionId;
@@ -482,7 +485,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     node.inputs.add(dataId);
                     if (submissionId > 0) {
                         // initial data
-                        // the rest of the map (for dag with levels > 1) is filled through outputs
                         addToMap (submissionDataMap, submissionId, dataId);
                         addToMap (inputsMap, submissionId, dataId);
                     }
@@ -504,13 +506,35 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             count++;
         }
         LOG.info("created " + appliedProtocolMap.size() 
-                + "(" + count + " applied data points) DAG nodes in map");
+                + "(" + count + " applied data points) DAG nodes (= applied protocols) in map");
 
         res.close();
 
         // now traverse the DAG, and associate submission with all the applied protocols
         traverseDag();
+        // set the dag level as an attribute to applied protocol
+        setAppliedProtocolSteps(connection);
     }
+
+    /**
+     * 
+     * to set the step attribute for the applied protocols
+     * 
+     */
+    private void setAppliedProtocolSteps(Connection connection)
+    throws ObjectStoreException {
+        Iterator<Integer> ap = appliedProtocolMap.keySet().iterator();
+        while (ap.hasNext()) {
+            Integer thisAPId = ap.next();
+            Attribute attr = new Attribute();
+            attr.setName("step");
+            attr.setValue(appliedProtocolMap.get(thisAPId).step.toString());
+
+            getChadoDBConverter().store(attr,
+                    appliedProtocolIdMap.get(thisAPId));
+        }
+    }
+
 
     /**
      * Return the rows needed to construct the DAG of the data/protocols.
@@ -547,13 +571,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void traverseDag()
     throws SQLException, ObjectStoreException {
-
         List<Integer> currentIterationAP = firstAppliedProtocols;
         List<Integer> nextIterationAP = new ArrayList<Integer>();
+        Integer step = 1; // DAG level
 
         while (currentIterationAP.size() > 0) {
-            nextIterationAP = buildADagLevel (currentIterationAP);
+            nextIterationAP = buildADagLevel (currentIterationAP, step);
             currentIterationAP = nextIterationAP;
+            step++;
         }
     }
 
@@ -569,13 +594,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols)
+    private List<Integer> buildADagLevel(List<Integer> previousAppliedProtocols, Integer step)
     throws SQLException, ObjectStoreException {
         List<Integer> nextIterationProtocols = new ArrayList<Integer>();
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
             List<Integer> outputs = new ArrayList<Integer>();
             Integer currentId = pap.next();
+
+            // add the DAG level here only if these are the first AP
+            if (step == 1) {
+                appliedProtocolMap.get(currentId).step = step;
+            }
+
             outputs.addAll(appliedProtocolMap.get(currentId).outputs);
             Integer submissionId = appliedProtocolMap.get(currentId).submissionId;
             Iterator<Integer> od = outputs.iterator();
@@ -600,7 +631,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 while (nap.hasNext()) {
                     Integer currentAPId = nap.next();
                     // and fill the map with the chado experiment_id
+                    // and the DAG level
                     appliedProtocolMap.get(currentAPId).submissionId = submissionId;
+                    appliedProtocolMap.get(currentAPId).step = step + 1;
+
                     nextIterationProtocols.add(currentAPId);
 
                     // and set the reference from applied protocol to the submission
