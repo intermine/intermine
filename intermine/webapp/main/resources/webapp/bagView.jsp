@@ -27,7 +27,7 @@
 //]]>-->
 </script>
 
-<html:form action="/modifyBag">
+<html:form action="/modifyBag" styleId="modifyTemplateForm">
   <tiles:insert name="wsBagTable.tile">
     <tiles:put name="wsListId" value="all_bag"/>
     <tiles:put name="scope" value="all"/>
