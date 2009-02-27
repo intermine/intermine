@@ -18,10 +18,6 @@ div.wsListSpinner{
 .wsList {
 	padding:0px;}
 
-.wsList li,.wsList ul {
-	padding:0px;margin:0px;
-	list-style-type:none;}
-
 .wsLine {
 	padding:10px;
 	border-bottom: #F5F0FF solid 1px;}
@@ -56,29 +52,46 @@ div.wsLine p.description a{
 }
 
 div.filterBar {
-	padding: 0px;
-	height:78px;
-	margin:10px 0px 10px 0px;
+	padding: 10px;
+	margin:10px 0px 0 0px;
 	font-weight: bold;}
 	
-div.filterBar label {
-    font-style: italic; 
-    color: white; 
-    font-weight: normal; 
-    position: relative; 
-}	
-
-ul.filterActions ,ul.filterActions li{
-	margin:0px; padding:0px;
-	list-style: none;white-space: nowrap;}
-
-ul.filterActions li{
-	float:left;
-	vertical-align: baseline;}
-
 .templateTitle {
   padding: 4px;}	
 
 .templateDescription {
   margin-top: 5px;padding: 4px;
   font-style: italic; font-size: 90%;}
+
+div#filter_tool_bar {
+    text-align: right;
+    clear:both;
+    padding:5px 10px; 
+    border-right:1px solid #9F67AD;
+    border-left:1px solid #9F67AD;
+    border-bottom:1px solid #9F67AD;
+}
+
+ul#actions_menu, ul#actions_menu li {
+    list-style: none;
+    float:left;
+    margin:0;
+}
+
+ul#actions_menu {
+    background-color:#FFF;
+    vertical-align:bottom;
+}
+
+ul#actions_menu li {
+    vertical-align:bottom;
+    margin-right:10px;
+    color:#049;
+}
+
+ul#actions_menu li img {
+   margin-right:5px;
+   height:12px;
+}
+ul#actions_menu li checkbox {
+}

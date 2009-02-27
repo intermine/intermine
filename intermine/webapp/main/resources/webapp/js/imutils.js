@@ -309,3 +309,17 @@ function getSelectValues(id) {
 	}		
 	return ret;
 }
+
+function findPosition(obj) {
+	var curleft = curtop = 0;
+	var offs = obj.offsetParent
+	if (obj.offsetParent) {
+		curleft = obj.offsetLeft;
+		curtop = obj.offsetTop;
+		while (obj = obj.offsetParent) {
+			curleft += obj.offsetLeft;
+			curtop += obj.offsetTop;
+		}
+	}
+	return [curleft,curtop];
+}

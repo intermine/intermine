@@ -34,15 +34,5 @@ function hideMenu(id,pos) {
         jQuery("#"+id.replace(/item/,'li')).removeClass('tb_button_active');
     }
 }
-function findPosition(obj) {
-	var curleft = curtop = 0;
-	if (obj.offsetParent) {
-		curleft = obj.offsetLeft;
-		curtop = obj.offsetTop;
-		while (obj = obj.offsetParent) {
-			curleft += obj.offsetLeft;
-			curtop += obj.offsetTop;
-		}
-	}
-	return [curleft,curtop];
-}
+
+// Uses findPosition(obj) defined in imutils.js

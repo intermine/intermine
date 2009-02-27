@@ -679,11 +679,9 @@ function validateBagOperations(formName, operation) {
 
     var bagName = '';
     var frm = document.forms[formName];
-
     if (frm.newBagName) {
         bagName = frm.newBagName.value;
     }
-
     var selectedBags = [];
     var i = 0;
     var j = 0;
@@ -704,8 +702,7 @@ function validateBagOperations(formName, operation) {
     AjaxServices.validateBagOperations(
       bagName, selectedBags, operation, function(errMsg) {
           if (errMsg != '') {
-              new Insertion.Bottom('error_msg',errMsg + '<br/>');
-              jQuery('#error_msg').fadeIn(2000);
+              Boxy.alert(errMsg, null, {title: 'Error', modal: false});
           } else {
               frm.listsButton.value = operation;
               frm.submit();

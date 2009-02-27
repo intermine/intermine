@@ -44,108 +44,139 @@
 
 <c:set var="ws_input_id" value="${wsListId}_${type}_filter_text"/>
 <c:set var="ws_input_aspect" value="${wsListId}_${type}_filter_aspect"/>
+<c:set var="textForBox" value="${WEB_PROPERTIES['lists.input.example']}" />
+
+<script type="text/javascript" charset="utf-8">
+// jQuery(document).ready(function(){
+//     jQuery('#actions_button').click(function() {
+//         var posArray = findPosition(this);
+//         jQuery('#actions_menu').css('left', posArray[0] +"px");
+//         jQuery('#actions_menu').css('top', posArray[1] + 20 +"px");
+//         jQuery('#actions_menu').toggle();
+//     });
+//     // document.onClick(function(){
+//     //     jQuery('#actions_menu').hide();
+//     // })
+// });
+
+function clearBagName(element) {
+    if(element.value == '${textForBox}'){
+        element.value='';
+        element.style.fontStyle = 'normal';
+        element.style.color = '';
+    }
+}
+</script>
 
 <div class="filterBar">
-  <div style="padding-left: 15px; padding-right: 15px; padding-top: 15px;" class="topRow">
-	<ul class="filterActions">
-	  <li>Search:&nbsp;</li>
-	  <li><input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
-	           onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
-	           onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
-	           onKeyPress="return disableEnterKey(event);"
-	           disabled="true"
-	           value="${initialFilterText}"/></li>
-	</ul>
-	
-	<div style="float:right">
-	        <span style="vertical-align:top;">Actions:&nbsp;</span>
-	<c:choose>
-	<c:when test="${type == 'template'}">
-	  <html:image property="export" value="export" styleId="export_button" src="theme/export.png"  title="Export selected Templates"/>
-	  <html:hidden property="pageName" value="templates"/>
-	  <html:hidden property="templateButton" value="export"/>
-	</c:when>
-	<c:otherwise>
-	
-	<c:set var="textForBox" value="${WEB_PROPERTIES['lists.input.example']}" />
-	
-	<script language="javascript">
-	  function clearBagName(element) {
-	     if(element.value == '${textForBox}'){
-	             element.value='';
-	             element.style.fontStyle = 'normal';
-	             element.style.color = '';
-	     }
-	  }
-	</script>
-	<html:text property="newBagName" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
-	<img src="theme/union.png" onclick="validateBagOperations('modifyBagForm', 'union')" title="union" style="vertical-align: middle;"/>
-	<img src="theme/intersect.png" onclick="validateBagOperations('modifyBagForm', 'intersect')" title="intersect" style="vertical-align: middle;"/>
-	<img src="theme/substract.png" onclick="validateBagOperations('modifyBagForm', 'subtract')" title="subtract" style="vertical-align: middle;"/>
-	<img src="theme/copy.png" onclick="validateBagOperations('modifyBagForm', 'copy')" title="copy" style="vertical-align: middle;"/>  
-	<html:hidden property="listsButton" value="" styleId="listsButton"/>
-	</c:otherwise>
-	</c:choose>
-	</div>
-  </div>
+            Search:&nbsp;
+            <input type="text" id="${ws_input_id}" name="newName_${name}" size="20" 
+                onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
+                onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
+                onKeyPress="return disableEnterKey(event);"
+                disabled="true"
+                value="${initialFilterText}"/>
+            
+        	<c:if test="${! empty PROFILE.username || type == 'template'}">
+        	  Filter:&nbsp;
+        	</c:if>  
+        	<c:if test="${! empty PROFILE.username}">
+        	  <a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" title="Show Only Favourites" style="vertical-align: middle;"/></a>
+        	  <a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only" style="vertical-align: middle;"/></a>
+        	  <c:if test="${type == 'bag'}">
+        	    <script type="text/javascript">
+        	        function filterByTag(tag) {
+        	            filterByUserTag('${type}', '${wsListId}', tag);
+        	        }
+        	    </script>
+        	    <tiles:insert name="tagSelect.tile">
+        	            <tiles:put name="type" value="${type}" />
+        	            <tiles:put name="selectId" value="tagSelect" />
+        	            <tiles:put name="onChangeFunction" value="filterByTag" />
+        	    </tiles:insert>
+        	  </c:if>
+        	</c:if>
 
-  <div style="clear:both; padding-left:15px; padding-right:15px; padding-bottom: 15px; padding-top: 5px;" class="bottomRow">
-	<div style="float: left; width: 80%;">
-	<c:if test="${! empty PROFILE.username || type == 'template'}">
-	  <span>Filter:&nbsp;</span>
-	</c:if>  
-	<c:if test="${! empty PROFILE.username}">
-	  <a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" title="Show Only Favourites" style="vertical-align: middle;"/></a>
-	  <a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only" style="vertical-align: middle;"/></a>
-	  <c:if test="${type == 'bag'}">
-	    <script type="text/javascript">
-	        function filterByTag(tag) {
-	            filterByUserTag('${type}', '${wsListId}', tag);
-	        }
-	    </script>
-	    <span style="vertical-align: middle;">
-	    <tiles:insert name="tagSelect.tile">
-	            <tiles:put name="type" value="${type}" />
-	            <tiles:put name="selectId" value="tagSelect" />
-	            <tiles:put name="onChangeFunction" value="filterByTag" />
-	    </tiles:insert></span>
-	  </c:if>
-	</c:if>
-	
-	<c:if test="${type == 'template'}">
-	<%-- aspects --%>
-	  <select onchange="javascript:filterAspect('${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect" style="">
-	  <c:if test="${aspect == null}">
-	    <option value="" selected>-- all categories --</option>
-	  </c:if>
-	  <c:forEach items="${ASPECTS}" var="entry">
-	    <c:set var="set" value="${entry.value}"/>
-	    <option value="${set.name}"
-	      <c:if test="${aspect.name == set.name}">
-	        selected
-	      </c:if>
-	    >${set.name}</option>
-	  </c:forEach> 
-	</select>
-	</c:if>
-	  &nbsp;&nbsp;<a href="#" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
-	    <img src="theme/reset.png" title="Reset search" style="vertical-align: middle;"/>
-	  </a>
-	<input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
-	<input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
-    </div>
-
-	<div class="rightBottomCell" style="float: right;">
-		<c:if test="${! empty userShowDescription}">
-		 <c:set var="checkboxChecked" value="checked" />
-		</c:if>
-		<input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" 
-		 onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
-		 &nbsp;<label for="showCheckbox">Show descriptions</label>
-	</div>
-  </div>
+        	<c:if test="${type == 'template'}">
+        	<%-- aspects --%>
+        	  <select onchange="javascript:filterAspect('${type}', '${wsListId}')" id="${ws_input_aspect}" class="aspectSelect" style="">
+        	  <c:if test="${aspect == null}">
+        	    <option value="" selected>-- all categories --</option>
+        	  </c:if>
+        	  <c:forEach items="${ASPECTS}" var="entry">
+        	    <c:set var="set" value="${entry.value}"/>
+        	    <option value="${set.name}"
+        	      <c:if test="${aspect.name == set.name}">
+        	        selected
+        	      </c:if>
+        	    >${set.name}</option>
+        	  </c:forEach> 
+        	</select>
+        	</c:if>
+ 	        <input type="button" name="reset" value="Reset" id="reset_button" onclick="javascript:return clearFilter('${type}', '${wsListId}')">
+        	<input type="hidden" name="filterAction_${wsListId}_${type}" id="filterAction_${wsListId}_${type}"/>
+        	<input type="hidden" name="filterScope_${wsListId}_${type}" id="filterScope_${wsListId}_${type}" value="${scope}"/>
 </div>
 
+<div id="filter_tool_bar">
+    <!-- <html:link styleId="actions_button" linkName="#">List Actions (Union, Intersection,..)&nbsp;<img src="images/arrow_down.png" width="10" height="8" alt="Arrow Down"></html:link> -->
+    <ul id="actions_menu">
+        <li><strong>Actions:</strong></li>
+    <c:choose>
+    <c:when test="${type == 'template'}">
+        <li>
+            <html:link linkName="#" onclick="document.forms['modifyTemplateForm'].submit()" styleId="export_button"><img src="images/export.png" width="11" height="12" alt="Export">Export selected</html:link>
+            <html:hidden property="pageName" value="templates"/>
+            <html:hidden property="templateButton" value="export"/>
+        </li>
+    </c:when>
+    <c:otherwise>
+    <li>
+        <a href="#operations" title="Union" onclick="jQuery('#listsButton').val('union')" class="boxy"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
+    </li>
+    <li>
+        <a href="#operations" title="Intersect" onclick="jQuery('#listsButton').val('intersect')" class="boxy"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
+    </li>
+    <li>
+        <a href="#operations" title="Subtract" onclick="jQuery('#listsButton').val('substract')" class="boxy"><img src="images/substract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
+    </li>
+    <li>
+        <a href="#operations" title="Copy" onclick="jQuery('#listsButton').val('copy')" class="boxy"><img src="images/copy.png" width="16" height="16" alt="Copy">Copy</a>
+    </li>
+    </c:otherwise>
+    </c:choose>
+    <li>&nbsp;&nbsp;&nbsp;</li>
+    <li><b>Options:</b></li>
+    <li>
+      <c:if test="${! empty userShowDescription}">
+        <c:set var="checkboxChecked" value="checked" />
+      </c:if>
+      <input type="checkbox" <c:out value="${checkboxChecked}" /> id="showCheckbox" 
+      onclick="showDescriptions('<c:out value="${wsListId}" />', '<c:out value="${type}" />', this.checked)">
+    </li>
+    <li>
+      <label for="showCheckbox">Show descriptions</label>
+    </li>
+    </ul>
+    <br clear="both"/>
+</div>
+<html:hidden property="listsButton" value="" styleId="listsButton"/>
+<%-- Need a dummy because boxy puts it outside of the form --%>
+<html:hidden property="newBagName" value="" styleId="newBagName"/>
+<div id="operations" style="display:none">
+    Enter a new List name:<br>
+    <html:text styleId="dummy_text" property="" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
+    <html:submit property="submit" value="Save" onclick="submitBagOperation()"/>
+</div>
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function(){
+        jQuery(".boxy").boxy();
+    });
+    function submitBagOperation() {
+       jQuery("#newBagName").val(jQuery("#dummy_text").val());
+       validateBagOperations('modifyBagForm',jQuery('#listsButton').val());
+    }
+</script>
 <script type="text/javascript">
   <%-- turn off autocomplete because of a Gecko bug:
        http://geekswithblogs.net/shahedul/archive/2006/08/14/87910.aspx --%>
