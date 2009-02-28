@@ -185,7 +185,14 @@ public class FlyAtlasConverter extends BioFileConverter
         assays.put("tag", createAssay("Thoracicoabdominal ganglion"));
         assays.put("car", createAssay("Adult carcass"));
         assays.put("sg", createAssay("Salivary gland"));
-
+        assays.put("l_sg", createAssay("Larval Salivary gland"));
+        assays.put("l_mid", createAssay("Larval midgut"));
+        assays.put("l_tub", createAssay("Larval tubule"));
+        assays.put("l_hind", createAssay("Larval hindgut"));
+        assays.put("l_fat", createAssay("Larval fat body"));
+        assays.put("larvae", createAssay("Larvae"));
+        assays.put("sptv", createAssay("Virgin spermatheca"));
+        assays.put("sptm", createAssay("Mated spermatheca"));
 
     }
 
