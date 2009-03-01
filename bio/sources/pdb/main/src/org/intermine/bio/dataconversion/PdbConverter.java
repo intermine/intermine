@@ -48,7 +48,7 @@ public class PdbConverter extends BioDirectoryConverter
     private Map<String, String> synonyms = new HashMap();
     private Set<String> taxonIds = null;
     private Map<String, String> organisms = new HashMap();
-
+    private Map<String, String> proteins = new HashMap();
     /**
      * Create a new PdbConverter object.
      * @param writer the ItemWriter to store the objects in
@@ -100,6 +100,7 @@ public class PdbConverter extends BioDirectoryConverter
         for (File dir : directoriesToProcess) {
             String taxonId = dir.getName();
             File[] filesToProcess = dir.listFiles();
+            proteins = new HashMap();
             for (File f : filesToProcess) {
               if (f.getName().endsWith(".pdb")) {
                   processPDBFile(f, taxonId);
@@ -131,10 +132,10 @@ public class PdbConverter extends BioDirectoryConverter
         String idCode = (String) structure.getHeader().get("idCode");
         proteinStructure.setAttribute("identifier", idCode);
 
-        Map<String, String> proteins = new HashMap();
+
         List<String> dbrefs = pdbBuffReader.getDbrefs();
         for (String accnum: dbrefs) {
-            String proteinRefId = getProtein(proteins, accnum, taxonId);
+            String proteinRefId = getProtein(accnum, taxonId);
             createSynonym(proteinRefId, "accession", accnum);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
@@ -199,7 +200,7 @@ public class PdbConverter extends BioDirectoryConverter
         return refId;
     }
 
-    private String getProtein(Map<String, String> proteins, String accession, String taxonId)
+    private String getProtein(String accession, String taxonId)
     throws SAXException {
         String refId = proteins.get(accession);
         if (refId == null) {
