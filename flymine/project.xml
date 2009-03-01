@@ -137,7 +137,7 @@
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
-    <source name="protein_structure" type="protein_structure">
+    <source name="protein_structure" type="protein_structure" dump="true">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
     <source name="pdb" type="pdb">
