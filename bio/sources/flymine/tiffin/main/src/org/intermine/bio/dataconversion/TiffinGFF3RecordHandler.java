@@ -60,7 +60,6 @@ public class TiffinGFF3RecordHandler extends GFF3RecordHandler
             synonym.setAttribute("value", name);
             synonym.setAttribute("type", "identifier");
             synonym.setAttribute("isPrimary", "true");
-            synonym.setReference("source", getDataSource());
             synonym.setReference("subject", motif);
             addItem(synonym);
         }
