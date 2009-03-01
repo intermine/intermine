@@ -141,7 +141,7 @@
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
     <source name="pdb" type="pdb">
-      <property name="src.data.dir" location="/shared/data/pdb/current"/>
+      <property name="src.data.dir" location="/shared/data/pdb/release-16-temp"/>
       <property name="pdb.organisms" value="7227"/>      
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
