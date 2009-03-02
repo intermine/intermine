@@ -163,14 +163,8 @@ public class AjaxServices
             TemplateQuery template = templates.get(templateName);
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
-            List<QuerySelectable> indexes = new ArrayList<QuerySelectable>();
-            List<QueryNode> indexNodes = new ArrayList<QueryNode>();
-            for (QuerySelectable qs : indexes) {
-                if (qs instanceof QueryNode) {
-                    indexNodes.add((QueryNode) qs);
-                }
-            }
-            Query query = TemplateHelper.getPrecomputeQuery(template, indexNodes, null);
+            List indexes = new ArrayList();
+            Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
 
             try {
                 if (!os.isPrecomputed(query, "template")) {

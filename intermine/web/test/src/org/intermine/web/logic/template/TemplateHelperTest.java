@@ -47,17 +47,17 @@ public class TemplateHelperTest extends TestCase
         Iterator i = templates.keySet().iterator();
         TemplateQuery t = (TemplateQuery) templates.get("employeeByName");
         String expIql =
-            "SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
-        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\"><node path=\"Employee\" type=\"Employee\"></node></query>";
+            "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.age AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name Employee.age\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
         PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml)).values().iterator().next();
         MainHelper.makeQuery(pathQuery, new HashMap(), pathToQueryNode, null, null, false);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
         assertEquals(expIql, precomputeQuery);
-        assertTrue(indexes.size() == 2);
+        //assertTrue(indexes.size() == 2);
         System.out.println("pathToQueryNode: " + pathToQueryNode);
-        List expIndexes = Arrays.asList(new Object[] {pathToQueryNode.get("Employee"), pathToQueryNode.get("Employee.name")});
+        List expIndexes = Arrays.asList(new Object[] {pathToQueryNode.get("Employee"), pathToQueryNode.get("Employee.name"), pathToQueryNode.get("Employee.age")});
         assertEquals(expIndexes.toString(), indexes.toString());
     }
 
@@ -110,7 +110,7 @@ public class TemplateHelperTest extends TestCase
 */
     public void testGetPrecomputeQuery() throws Exception {
         TemplateQuery t = (TemplateQuery) templates.get("employeesFromCompanyAndDepartment");
-        assertEquals("SELECT DISTINCT a1_, a3_, a2_, a3_.name AS a4_, a2_.name AS a5_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_) ORDER BY a1_.name, a1_.age, a3_.name, a2_.name", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
+        assertEquals("SELECT DISTINCT a1_, a3_, a2_, a3_.name AS a4_, a2_.name AS a5_, a1_.name AS a6_, a1_.age AS a7_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Company AS a3_ WHERE (a1_.department CONTAINS a2_ AND a2_.company CONTAINS a3_) ORDER BY a1_.name, a1_.age, a3_.name, a2_.name", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
     }
 
     public void testBugWhereTrue() throws Exception {
@@ -128,7 +128,7 @@ public class TemplateHelperTest extends TestCase
             (TemplateQuery) binding.unmarshal(reader, new HashMap()).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
-        assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
+        assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
     }
 
     public void testGetPrecomputeLookup() throws Exception {
@@ -145,7 +145,7 @@ public class TemplateHelperTest extends TestCase
         TemplateQuery t =
             (TemplateQuery) binding.unmarshal(reader, new HashMap()).values().iterator().next();
         Query precomputeQuery = TemplateHelper.getPrecomputeQuery(t, new ArrayList());
-        assertEquals("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
+        assertEquals("SELECT DISTINCT a1_, a1_.name AS a2_, a1_.title AS a3_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
                      precomputeQuery.toString());
     }
 }
