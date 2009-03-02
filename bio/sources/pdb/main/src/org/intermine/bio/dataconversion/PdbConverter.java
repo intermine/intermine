@@ -114,7 +114,7 @@ public class PdbConverter extends BioDirectoryConverter
      *
      * @param taxonIds a space-separated list of taxonIds
      */
-    public void setPDBOrganisms(String taxonIds) {
+    public void setPdbOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
