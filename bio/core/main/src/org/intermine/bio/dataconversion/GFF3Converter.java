@@ -131,15 +131,31 @@ public class GFF3Converter
 
         opCount = 0;
         start = System.currentTimeMillis();
+        boolean duplicates = false;
+        Set<String> processedIds = new HashSet<String>();
+        Set<String> duplicatedIds = new HashSet<String>();
         for (Iterator i = GFF3Parser.parse(bReader); i.hasNext();) {
             record = (GFF3Record) i.next();
-            process(record);
+
+            if (processedIds.contains(record.getId())) {
+                duplicates = true;
+                duplicatedIds.add(record.getId());
+            } else {
+                processedIds.add(record.getId());
+            }
+            if (!duplicates) {
+                process(record);
+            }
             opCount++;
-            if (opCount % 10000 == 0) {
+            if (opCount % 1000 == 0) {
                 now = System.currentTimeMillis();
                 LOG.info("processed " + opCount + " lines --took " + (now - start) + " ms");
                 start = System.currentTimeMillis();
             }
+        }
+        if (duplicates) {
+            LOG.error("Duplicated IDs in GFF file: " + duplicatedIds);
+            throw new IllegalArgumentException("Duplicated IDs in GFF file: " + duplicatedIds);
         }
     }
 
