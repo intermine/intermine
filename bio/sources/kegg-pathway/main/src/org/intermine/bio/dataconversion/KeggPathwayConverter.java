@@ -48,6 +48,10 @@ public class KeggPathwayConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap();
     private Set<String> taxonIds = new HashSet();
 
+    protected Map<String, String> pathwayIdentifiers = new HashMap<String, String>();
+    protected Map<String, Item> pathwaysNotStored = new HashMap<String, Item>();
+    protected Map<String, String> organismIdentifiers = new HashMap<String, String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -137,8 +141,13 @@ public class KeggPathwayConverter extends BioFileConverter
             if (currentFile.getName().startsWith("map_title")) {
                 String mapIdentifier = line[0];
                 String mapName = line[1];
-                Item pathway = getAndStoreItemOnce("Pathway", "identifier", mapIdentifier);
+                Item pathway = pathwaysNotStored.remove(mapIdentifier);
+                if (pathway == null) {
+                    pathway = createItem("Pathway");
+                    pathway.setAttribute("identifier", mapIdentifier);
+                }
                 pathway.setAttribute("name", mapName);
+                pathwayIdentifiers.put(mapIdentifier, pathway.getIdentifier());
                 store(pathway);
             } else if (matcher.find()) {
                 String organism = matcher.group(1);
@@ -165,14 +174,33 @@ public class KeggPathwayConverter extends BioFileConverter
                     ReferenceList referenceList = new ReferenceList("pathways");
                     String [] mapArray = mapIdentifiers.split(" ");
                     for (int i = 0; i < mapArray.length; i++) {
-                        referenceList.addRefId(getAndStoreItemOnce("Pathway", "identifier",
-                                                                   mapArray[i]).getIdentifier());
+                        String pathwayId = pathwayIdentifiers.get(mapArray[i]);
+                        if (pathwayId == null) {
+                            Item pathway = createItem("Pathway");
+                            pathway.setAttribute("identifier", mapArray[i]);
+                            pathwaysNotStored.put(mapArray[i], pathway);
+                            pathwayId = pathway.getIdentifier();
+                            pathwayIdentifiers.put(mapArray[i], pathwayId);
+                        }
+                        referenceList.addRefId(pathwayId);
                     }
                     getGene(geneName, organism, referenceList);
                 }
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void close() throws ObjectStoreException {
+        for (Item pathway : pathwaysNotStored.values()) {
+            store(pathway);
+        }
+        pathwaysNotStored.clear();
+    }
+
+    private Map<String, String> geneCollectionCheck = new HashMap<String, String>();
 
     private Item getGene(String geneCG, String organism, ReferenceList referenceList)
         throws ObjectStoreException {
@@ -196,10 +224,26 @@ public class KeggPathwayConverter extends BioFileConverter
         if (gene == null) {
             gene = createItem("Gene");
             gene.setAttribute(config.get(organism)[1], identifier);
-            gene.setReference("organism", getAndStoreItemOnce("Organism", "taxonId", taxonId));
+            String organismId = organismIdentifiers.get(taxonId);
+            if (organismId == null) {
+                Item organismItem = createItem("Organism");
+                organismItem.setAttribute("taxonId", taxonId);
+                organismId = organismItem.getIdentifier();
+                store(organismItem);
+                organismIdentifiers.put(taxonId, organismId);
+            }
+            gene.setReference("organism", organismId);
             gene.addCollection(referenceList);
             geneItems.put(identifier, gene);
             store(gene);
+            geneCollectionCheck.put(identifier, referenceList.getRefIds().toString());
+        } else {
+            if (!referenceList.getRefIds().toString().equals(geneCollectionCheck.get(identifier))) {
+                throw new IllegalArgumentException("Not storing Gene for a second time: " + geneCG
+                        + ", " + identifier + ", but collections differ: "
+                        + referenceList.getRefIds() + " versus "
+                        + geneCollectionCheck.get(identifier));
+            }
         }
         return gene;
     }
