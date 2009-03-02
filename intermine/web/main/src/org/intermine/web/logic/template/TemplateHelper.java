@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
@@ -547,6 +548,11 @@ public class TemplateHelper
             while (indexIter.hasNext()) {
                 String path = indexIter.next();
                 query.addToSelect(pathToQueryNode.get(path));
+            }
+            for (QueryOrderable qo : query.getOrderBy()) {
+                if ((qo instanceof QuerySelectable) && (!query.getSelect().contains(qo))) {
+                    query.addToSelect((QuerySelectable) qo);
+                }
             }
             indexes.addAll(query.getSelect());
         }
