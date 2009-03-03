@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -223,7 +224,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
                 Map<Path, Integer> desc = (Map<Path, Integer>) column;
                 for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
                     template.set(descEntry.getValue().intValue(),
-                            new ResultElement(row.get(columnNo),
+                            new ResultElement((FastPathObject) row.get(columnNo),
                                 descEntry.getKey(), false));
                 }
             }

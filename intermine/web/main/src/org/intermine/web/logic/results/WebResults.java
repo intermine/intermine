@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -356,7 +357,7 @@ implements WebTable
                     }
                     int columnIndex = columnIndexInteger.intValue();
                     MultiRowValue origO = initialList.get(columnIndex);
-                    Object o = (origO == null ? null : origO.getValue());
+                    FastPathObject o = (FastPathObject) (origO == null ? null : origO.getValue());
                     int rowspan = -1;
                     if (origO == null) {
                         rowspan = 1;
@@ -380,13 +381,7 @@ implements WebTable
                         // special case for columns that contain objects
                         path = new Path(model, type);
                     }
-                    if (o instanceof Collection) {
-                        if (((Collection) o).isEmpty()) {
-                            o = null;
-                        } else {
-                            o = ((Collection) o).iterator().next();
-                        }
-                    }
+
                     // Three cases:
                     // 1) attribute has a value so create a result element
                     // 2) we have an object but attribute is null -> create a ResultElement with
