@@ -11,15 +11,16 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.xml.full.Item;
 
 /**
- * holder class for each entry in uniprot xml
+ * holder class representing an entry in uniprot xml
  * @author julie
  *
  */
@@ -33,13 +34,16 @@ public class UniprotEntry
     private List<String> pubs = new ArrayList();
     private List<String> comments = new ArrayList();
     private List<String> keywords = new ArrayList();
-    // TODO demote this to regular list.  linked list only to make tests pass.
-    private LinkedList<String> accessions = new LinkedList();
+    private List<String> accessions = new ArrayList();
     private List<String> descriptions = new ArrayList();
     private List<String> isoforms = new ArrayList();
-    private Map<String, String> genes = new HashMap();
+    private Map<String, String> geneNames = new HashMap();  // type, value eg primary, UBI3
+    // other gene identifiers are stored in dbrefs map
 
-    private boolean isDuplicate = false, isIsoform = false;
+    // map of gene designation to dbref
+    private Map<String, Map<String, String>> geneDesignationToDbrefs = new HashMap();
+
+    private boolean isDuplicate = false, isIsoform = false, hasMultipleGenes = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession;
     private String seqRefId, md5checksum;
@@ -47,6 +51,11 @@ public class UniprotEntry
     // temporary object that holds attribute value until the item is stored on the next line of XML
     private String temp = null;
     private Item feature = null;
+
+    // only used if entry has multiple genes
+    private List<UniprotGene> geneEntries = new ArrayList();
+    private UniprotGene geneEntry = null; // <gene><name> ... being processed
+
 
     /**
      * constructor used for non-isoform entries
@@ -99,10 +108,15 @@ public class UniprotEntry
      *  comments
      *  domains
      *  features
+     *
+     *  difficulties with genes only arise when there are multiple genes for one protein.  in that
+     *  case the XML contains many identifiers for several genes, and it becomes difficult to
+     *  match each gene to the corresponding identifiers
      */
     public void reset() {
         temp = null;
         feature = null;
+        geneEntry = null;
     }
 
     private void addRefId(List list, String refId) {
@@ -186,11 +200,46 @@ public class UniprotEntry
     /**
      * add dbref to list.  these will be processed later for gene identifiers
      * eg <dbReference type="FlyBase" id="FBgn0004889" key="52">
+     *
+     * if a protein has multiple genes, the gene designation is needed too.
+     * <dbReference type="SGD" id="S000004157" key="95">
+     *   <property type="gene designation" value="RPS31"/>
+     * </dbReference>
+     *
      * @param type datasource
      * @param id identifier
      */
     public void addDbref(String type, String id) {
+        if (hasMultipleGenes) {
+            dbrefs.clear();
+            /* since the data is on a different line in the XML, there is a chance badly formed
+             * data could cause the wrong identifier to be matched with the wrong gene.  this
+             * id will be checked on the next line to ensure we still have the same name/value
+             * pair */
+            addAttribute(id);
+        }
         dbrefs.put(type, id);
+    }
+
+    /**
+     * geneDesignation is required in the case of a single protein having multiple gene identifiers.
+     * the geneDesignation (often the "primary" name, but it can be a synonym) is used to match
+     * the dbref entries to the correct gene.
+     *
+     * this is only important when multiple identifiers are assigned, as in the case of yeast.
+     * @param geneDesignation "gene designation" for this gene.  usually the "primary" name
+     */
+    public void addGeneDesignation(String geneDesignation) {
+        // safety check
+        Collection<String> values = dbrefs.values();
+        if (!values.contains(temp)) {
+            throw new RuntimeException("error processing multiple genes - " + temp);
+        }
+        if (geneDesignationToDbrefs.get(geneDesignation) == null) {
+            geneDesignationToDbrefs.put(geneDesignation, dbrefs);
+        } else {
+            geneDesignationToDbrefs.get(geneDesignation).putAll(dbrefs);
+        }
     }
 
     /**
@@ -226,15 +275,54 @@ public class UniprotEntry
      * @param value value of variable, eg FBgn, CG
      */
     public void addGene(String type, String value) {
-        genes.put(type, value);
+        if (hasMultipleGenes) {
+            if (geneEntry == null) {
+                geneEntry = new UniprotGene();
+            }
+            geneEntry.addGene(type, value);
+        } else {
+            geneNames.put(type, value);
+        }
+    }
+
+    /**
+     * used when making a dummy entry only.  when a protein is parsed that has multiple genes,
+     * a dummy entry is created for each gene so the identifiers can be assigned correctly.
+     * @param geneNames list of identifiers, type to value
+     */
+    public void setGeneNames(Map<String, String> geneNames) {
+        this.geneNames = geneNames;
     }
 
     /**
      * @return map of types (eg ORF) and gene names
      */
-    public Map<String, String> getGenes() {
-        return genes;
+    public Map<String, String> getGeneNames() {
+        return geneNames;
     }
+
+    /**
+     * @return list of genes that need to be processed for this uniprot entry.  this list should
+     * be empty for proteins that have a single gene.  in those cases, the values for the single
+     * gene are in the geneNames and dbrefs collections.
+     */
+    public List<Map<String, String>> getGeneEntries() {
+        Iterator<UniprotEntry.UniprotGene> it = geneEntries.iterator();
+        List<Map<String, String>> identifiers = new ArrayList();
+        while (it.hasNext()) {
+            UniprotGene uniprotGene = it.next();
+            identifiers.add(uniprotGene.getGenes());
+        }
+        return identifiers;
+    }
+
+    /**
+     * @return map of "gene designation" values (usually the "primary" value) to dbref entries
+     */
+    public Map<String, Map<String, String>> getGeneDesignationsToDbrefs() {
+        return geneDesignationToDbrefs;
+    }
+
 
     /**
      * some proteins don't have accessions.  i don't know why but we don't want them
@@ -417,8 +505,6 @@ public class UniprotEntry
         return descriptions;
     }
 
-
-
     /**
      * @return list of all the synonyms for this entry, including name and accessions
      */
@@ -485,8 +571,6 @@ public class UniprotEntry
         return isoforms;
     }
 
-
-
     /**
      * @param dbrefs the dbrefs to set
      */
@@ -525,7 +609,7 @@ public class UniprotEntry
     /**
      * @param accessions the accessions to set
      */
-    public void setAccessions(LinkedList<String> accessions) {
+    public void setAccessions(List<String> accessions) {
         this.accessions = accessions;
     }
 
@@ -534,6 +618,27 @@ public class UniprotEntry
      */
     public void setDescriptions(List<String> descriptions) {
         this.descriptions = descriptions;
+    }
+
+    /**
+     * @return true if this entry contains more than one gene
+     */
+    public boolean hasMultipleGenes() {
+        return hasMultipleGenes;
+    }
+
+    /**
+     * @param hasMultipleGenes true if this entry contains more than one gene
+     */
+    public void setHasMultipleGenes(boolean hasMultipleGenes) {
+        this.hasMultipleGenes = hasMultipleGenes;
+
+        if (hasMultipleGenes) {
+            UniprotGene uniprotGene = new UniprotGene();
+            geneEntries.add(uniprotGene);
+            // first gene has already been parsed, so add these identifiers to new object
+            uniprotGene.geneIdentifiers.putAll(geneNames);
+        }
     }
 
     /**
@@ -564,6 +669,44 @@ public class UniprotEntry
         entry.setDomains(domains);
         entry.setPubs(pubs);
         entry.setKeywords(keywords);
+        entry.setHasMultipleGenes(hasMultipleGenes);
         return entry;
+    }
+
+
+    /**
+     * class representing a gene in a uniprot entry
+     * used for holding multiple identifiers for a single gene.  only used
+     * when there are multiple genes, otherwise the identifiers are held in
+     * the converter
+     * @author julie
+     */
+    public class UniprotGene
+    {
+        /* same as geneNames map above, but we need one map per gene in cases where there is
+         * more than one gene per protein */
+        protected Map<String, String> geneIdentifiers = new HashMap();
+
+        /**
+         * constructor
+         */
+        public UniprotGene() {
+            // nothing to do
+        }
+
+        /**
+         * @param type type of variable, eg. ORF, primary
+         * @param value value of variable, eg FBgn, CG
+         */
+        protected void addGene(String type, String value) {
+            geneIdentifiers.put(type, value);
+        }
+
+        /**
+         * @return map of types (eg ORF) and gene names
+         */
+        protected Map<String, String> getGenes() {
+            return geneIdentifiers;
+        }
     }
 }
