@@ -6,7 +6,6 @@
   <item id="3_2" class="Protein">
     <attribute name="primaryAccession" value="P26675"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
-    <reference name="organism" ref_id="4_1"/>
   </item>
   <item id="2_1" class="ProteinStructure">
     <attribute name="atm" value="EXPDTA    NMR, 1 STRUCTURES&#10;MODEL      1&#10;ATOM      1  N   MET A   1      11.739   3.234   3.588     1     0&#10;ATOM      2  CA  MET A   1      12.086   1.892   3.129     1     0&#10;ATOM      3  C   MET A   1      11.454   1.573   1.758     1     0&#10;ATOM      4  O   MET A   1      10.885   2.442   1.096     1     0&#10;ATOM      5  CB  MET A   1      11.740   0.866   4.234     1     0&#10;ATOM      6  CG  MET A   1      10.249   0.737   4.605     1     0&#10;ATOM      7  SD  MET A   1       9.179  -0.157   3.438     1     0&#10;ATOM      8  CE  MET A   1       7.781  -0.560   4.517     1     0&#10;ENDMDL&#10;"/>
@@ -21,24 +20,20 @@
   <item id="3_1" class="Protein">
     <attribute name="primaryAccession" value="P29354"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
-    <reference name="organism" ref_id="4_1"/>
   </item>
   <item id="0_1" class="DataSource">
 <attribute name="name" value="PDB"/>
 </item>
-<item id="5_1" class="Synonym">
+<item id="4_1" class="Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="P29354"/>
 <reference name="subject" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_2" class="Synonym">
+<item id="4_2" class="Synonym">
 <attribute name="type" value="accession"/>
 <attribute name="value" value="P26675"/>
 <reference name="subject" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_1" class="Organism">
-  <attribute name="taxonId" value="7227"/>
 </item>
 </items>
