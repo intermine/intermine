@@ -147,7 +147,7 @@ sub config_species(){
 }
 
 
-#get taxon Ids from file                                                                                                                                                                                      sub get_organisms(){
+sub get_organisms(){
     my ($file,$trigger) = @_;
     my @organisms;
 
@@ -169,7 +169,7 @@ sub config_species(){
 sub get_taxonIds(){
     my ($file,$trigger) = @_;
     # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>                                                                                                                 
-    open(F,"<$file") or die "$!";
+    open(F,"<$file") or die "$! [$file]";
     my @projectxml = <F>;
     my @lines = grep(/$trigger/, @projectxml);
     close(F) or die "$!";
