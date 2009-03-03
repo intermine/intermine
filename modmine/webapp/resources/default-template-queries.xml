@@ -951,16 +951,6 @@
 				</node>
 			</query>
 		</template>
-		<template name="lastSubs" title="Recent submissions" longDescription="Submissions ordered by experiment date" comment="">
-			<query name="lastSubs" model="genomic" view="Submission.title Submission.experimentDate" sortOrder="Submission.experimentDate desc">
-				<node path="Submission" type="Submission">
-				</node>
-				<node path="Submission.experimentDate" type="Date">
-					<constraint op="&gt;" value="java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse java.lang.RuntimeException: Failed to parse Mon May 05 00:00:00 BST 2008 as a Date as a Date as a Date as a Date as a Date as a Date as a Date" description="" identifier="" editable="true" code="A">
-					</constraint>
-				</node>
-			</query>
-		</template>
 		<template name="MRNA_To_Gene_Type_Converter" title="MRNA to gene type converter" longDescription="" comment="">
 			<query name="MRNA_To_Gene_Type_Converter" model="genomic" view="MRNA.id MRNA.gene.id" sortOrder="MRNA.id asc">
 				<node path="MRNA" type="MRNA">
