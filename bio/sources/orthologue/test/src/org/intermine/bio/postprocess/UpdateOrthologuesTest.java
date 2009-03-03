@@ -171,13 +171,10 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         objProtein.addGenes(objGene);
         System.out.println("setUpData: objGenes= " + objGene);
         
-//        objTranslation.setGene(objGene);
-
         Protein subProtein = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         subProtein.setId(SUB_PROTEIN_ID);
         System.out.println("setUpData: subGene = " + subGene);
         subProtein.addGenes(subGene);
-        //        subTranslation.setGene(subGene);
 
         String clsName = TypeUtil.unqualifiedName(relClass.getName());
         if (clsName.equals("Homologue")) {
@@ -222,27 +219,4 @@ public class UpdateOrthologuesTest extends XMLTestCase {
         os.flushObjectById();
         return results;
     }
-
-
-    // work out if two InterMineObjects are equal regardless of their ids by testing equivalence
-    // of attributes and ids of reference and collection objects
-//     private boolean assertEqualsNoId(InterMineObject a, InterMineObject b) throws IllegalAccessException {
-//         Map infos = new HashMap();
-//         Iterator clsIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
-//         while (clsIter.hasNext()) {
-//             fieldInfos.putAll(TypeUtil.getFieldInfos((Class) clsIter.next()));
-//         }
-
-//         Iterator fieldIter = fieldInfos.keySet().iterator();
-//         while (fieldIter.hasNext()) {
-//             String fieldName = (String) fieldIter.next();
-//             if (!fieldName.equals("id")) {
-
-//                 TypeUtil.setFieldValue(newObj, fieldName,
-//                                        TypeUtil.getFieldProxy(obj, fieldName));
-//             }
-//         }
-
-//     }
-
 }
