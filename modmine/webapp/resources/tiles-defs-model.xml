@@ -6,6 +6,9 @@
 <definition name="submissionDisplayer.tile" path="/model/submissionDisplayer.jsp"
           controllerUrl="/initSubmissionDisplayer.do"/>
 
+<definition name="submissionProtocolsDisplayer.tile" path="/model/submissionProtocolsDisplayer.jsp"
+          controllerUrl="/initSubmissionProtocolsDisplayer.do"/>
+
 <definition name="attributeLinkDisplayer.tile" path="/model/attributeLinkDisplayer.jsp"
           controllerUrl="/initAttributeLinkDisplayer.do"/>
 

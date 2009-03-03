@@ -43,3 +43,7 @@
 
 <action path="/initSubmissionDisplayer"
   type="org.modmine.web.SubmissionDisplayerController" />
+
+<action path="/initSubmissionProtocolsDisplayer"
+  type="org.modmine.web.SubmissionProtocolsController" />
+  
