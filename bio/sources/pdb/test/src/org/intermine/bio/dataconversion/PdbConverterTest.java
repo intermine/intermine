@@ -39,9 +39,8 @@ public class PdbConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         PdbConverter converter = new PdbConverter(itemWriter, Model.getInstanceByName("genomic"));
-        File datadir = new File("../pdb/test/resources/");
-        //File datadir = new File ("resources/"); - ant
-        //File datadir = new File ("./test/resources/"); - eclipse
+        File tmp = new File(getClass().getClassLoader().getResource("PdbConverterTest_tgt.xml").toURI());
+        File datadir = tmp.getParentFile();
         converter.process(datadir);
         converter.close();
         // uncomment to create a new target items files

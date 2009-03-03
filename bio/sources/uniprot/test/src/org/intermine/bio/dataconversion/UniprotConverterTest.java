@@ -40,10 +40,9 @@ public class UniprotConverterTest extends MockItemsTestCase
     }
 
     public void testProcess() throws Exception {
-
-        File datadir = new File("../sources/uniprot/test/resources");   // bruiser
-        // File datadir = new File ("resources/");        - ant
-        // File datadir = new File ("./test/resources/"); - eclipse
+        // use test file to get /resources directory. there is probably a better way to do this somehow
+        File tmp = new File(getClass().getClassLoader().getResource("UniprotConverterTest_tgt.xml").toURI());
+        File datadir = tmp.getParentFile();
         converter.setCreateinterpro("true");
         converter.setUniprotOrganisms("7227");
         converter.process(datadir);
