@@ -13,6 +13,7 @@ package org.intermine.web.logic.results;
 import java.io.Serializable;
 import java.util.Set;
 
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
@@ -28,7 +29,7 @@ import org.intermine.util.Util;
 public class ResultElement implements Serializable
 {
     protected Object field;
-    protected Object imObj;
+    protected FastPathObject imObj;
     protected String htmlId;
     private final boolean keyField;
     private final Path path;
@@ -40,13 +41,13 @@ public class ResultElement implements Serializable
      * @param path the Path
      * @param isKeyField should be true if this is an identifying field
      */
-    public ResultElement(Object imObj, Path path, boolean isKeyField) {
+    public ResultElement(FastPathObject imObj, Path path, boolean isKeyField) {
         this.imObj = imObj;
         this.keyField = isKeyField;
         this.path = path;
         if (imObj != null) {
             try {
-                field = TypeUtil.getFieldValue(imObj, path.getEndFieldDescriptor().getName());
+                field = imObj.getFieldValue(path.getEndFieldDescriptor().getName());
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -127,7 +128,7 @@ public class ResultElement implements Serializable
      *
      * @return the InterMineObject
      */
-    public Object getObject() {
+    public FastPathObject getObject() {
         return imObj;
     }
 

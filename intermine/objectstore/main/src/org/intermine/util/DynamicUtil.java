@@ -111,7 +111,8 @@ public class DynamicUtil
     }
 
     /**
-     * Create a new object given a class.
+     * Create a new object given a class (not an interface).  To create an object from interfaces
+     * use createObject(Set classes).
      *
      * @param clazz the class of the object to instantiate
      * @return the object
