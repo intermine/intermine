@@ -46,6 +46,9 @@
     <longdisplayers>
       <displayer src="submissionDisplayer.tile"/>
     </longdisplayers>
+    <longdisplayers>
+      <displayer src="submissionProtocolsDisplayer.tile"/>
+    </longdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.SubmissionData">
