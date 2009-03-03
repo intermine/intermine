@@ -66,7 +66,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
-    private Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
+    protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
     // we don't configure anything by default, so the process methods do their default actions
     private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
@@ -134,6 +134,16 @@ public class SequenceProcessor extends ChadoProcessor
         }
     }
 
+    /**
+     * Initialise FeatureMap with features that have already been processed.  This is optional, it
+     * permits subclasses to avoid processing the same features in multiple runs.  
+     * @param initialMap map of chado feature id to FeatureData objects
+     */
+    protected void initialiseFeatureMap(Map<Integer, FeatureData> initialMap) {
+        featureMap.putAll(initialMap);
+    }
+    
+    
     /**
      * Return the config Map.
      * @param taxonId return the configuration for this organism
@@ -248,6 +258,10 @@ public class SequenceProcessor extends ChadoProcessor
                                            String md5checksum, String chadoType,
                                            Integer organismId)
     throws ObjectStoreException {
+
+        if (featureMap.containsKey(featureId)) {
+            return false;
+        }
 
         FeatureData fdat =
             makeFeatureData(featureId, chadoType, uniqueName, name, md5checksum, seqlen,
@@ -364,9 +378,19 @@ public class SequenceProcessor extends ChadoProcessor
                 }
             }
         }
-        featureMap.put(featureId, fdat);
+        addToFeatureMap(featureId, fdat);
 
         return true;
+    }
+
+    /**
+     * Add feature data to FeatureMap, can be overidden by subclasses that need to store some
+     * features in additional maps.
+     * @param featureId the chado feature id
+     * @param fdat feature information
+     */
+    protected void addToFeatureMap(Integer featureId, FeatureData fdat) {
+        featureMap.put(featureId, fdat);
     }
 
     /**
