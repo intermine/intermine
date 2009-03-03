@@ -30,7 +30,7 @@ div#submissionResults {
   font-size: 1.2em;
   background-color: #DFA;
   padding: 5px;
-  width: 450px;
+  width: 500px;
 }
 
 
@@ -58,9 +58,7 @@ div#submissionResults {
         <th>Feature type</th>
         <th>Count</th>
         <th>View data</th>
-        <th>tab delimited</th>
-        <th>gff</th>
-        <th>sequence</th>
+        <th colspan="3">Export</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
