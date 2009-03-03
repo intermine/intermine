@@ -31,7 +31,7 @@ import org.intermine.xml.full.Item;
 public class FlyAtlasConverter extends BioFileConverter
 {
     private Item expt, org;
-    private Map assays = new HashMap();
+    protected Map<String, Item> assays = new HashMap<String, Item>();
 
     /**
      * Constructor
