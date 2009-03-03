@@ -206,7 +206,8 @@ public class PdbConverter extends BioDirectoryConverter
         if (refId == null) {
             Item item = createItem("Protein");
             item.setAttribute("primaryAccession", accession);
-            item.setReference("organism", getOrganism(taxonId));
+            // TODO is there some way we can be certain of this taxonId for this protein?
+            // item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
             proteins.put(accession, refId);
             try {
