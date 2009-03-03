@@ -62,6 +62,8 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> ontologies = new HashMap();
     private Map<String, String> keywords = new HashMap();
     private Map<String, String> genes = new HashMap();
+    // don't allow duplicate identifiers
+    private List<String> geneIdentifiers = new ArrayList();
 
     private boolean createInterpro = false;
     private Set<String> taxonIds = null;
@@ -401,10 +403,10 @@ public class UniprotConverter extends DirectoryConverter
             while (iter.hasNext()) {
                 // create a dummy entry and add identifiers for specific gene
                 // this entry will be used by the gene methods
-                Map<String, String> geneIdentifiers = iter.next();
+                Map<String, String> identifierMap = iter.next();
                 UniprotEntry geneEntry = new UniprotEntry();
-                geneEntry.setGeneNames(geneIdentifiers);
-                geneEntry.setDbrefs(getValidDbrefs(entry, geneIdentifiers));
+                geneEntry.setGeneNames(identifierMap);
+                geneEntry.setDbrefs(getValidDbrefs(entry, identifierMap));
                 createGene(entry, taxonId, geneFields, uniqueIdentifierField);
             }
         }
@@ -415,7 +417,9 @@ public class UniprotConverter extends DirectoryConverter
     private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
                               String uniqueIdentifierField)
     throws SAXException {
-        String uniqueIdentifier = getGeneIdentifier(entry, taxonId, uniqueIdentifierField);
+        List<String> geneSynonyms = new ArrayList();
+        String uniqueIdentifier = getGeneIdentifier(entry, taxonId, uniqueIdentifierField,
+                                                    geneSynonyms);
         if (uniqueIdentifier == null) {
             return null;
         }
@@ -425,7 +429,7 @@ public class UniprotConverter extends DirectoryConverter
             gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
             geneFields.remove(uniqueIdentifier);
             for (String geneField : geneFields) {
-                String identifier = getGeneIdentifier(entry, taxonId, geneField);
+                String identifier = getGeneIdentifier(entry, taxonId, geneField, geneSynonyms);
                 if (identifier == null) {
                     LOG.error("Couldn't process gene, no " + geneField);
                     continue;
@@ -439,12 +443,16 @@ public class UniprotConverter extends DirectoryConverter
                 throw new SAXException(e);
             }
             geneRefId = gene.getIdentifier();
+            for (String identifier : geneSynonyms) {
+                getSynonym(geneRefId, "identifier", identifier, "false", entry.getDatasetRefId());
+            }
             genes.put(uniqueIdentifier, geneRefId);
         }
         return geneRefId;
     }
 
-    private String getGeneIdentifier(UniprotEntry entry, String taxonId, String identifierType) {
+    private String getGeneIdentifier(UniprotEntry entry, String taxonId, String identifierType,
+                                     List<String> geneSynonyms) {
 
         String identifierValue = null;
         // how to get the identifier, eg. dbref OR name
@@ -470,9 +478,20 @@ public class UniprotConverter extends DirectoryConverter
             LOG.error("error processing line in config file for organism " + taxonId);
             return null;
         }
+        geneSynonyms.add(identifierValue);
+
         if (taxonId.equals("7227")) {
             identifierValue = resolveGene(taxonId, identifierValue);
         }
+
+        if (geneIdentifiers.contains(identifierValue)) {
+            LOG.error("not assigning duplicate identifier:  " + identifierValue);
+
+            identifierValue = null;
+        } else {
+            geneIdentifiers.add(identifierValue);
+        }
+
         return identifierValue;
     }
 
@@ -497,14 +516,14 @@ public class UniprotConverter extends DirectoryConverter
     // ONLY used for proteins with multiple genes
     // using all identifiers, find dbrefs with valid "gene designation" values
     private Map<String, String> getValidDbrefs(UniprotEntry entry,
-                                               Map<String, String> geneIdentifiers) {
+                                               Map<String, String> identifierMap) {
         Map<String, String> validDbrefs = new HashMap();
 
         // dbref "gene designations" have to match any one of the values in the geneIdentifiers list
         Map<String, Map<String, String>> geneDesignationsToDbrefs
             = entry.getGeneDesignationsToDbrefs();
 
-        Collection<String> identifiers = geneIdentifiers.values();
+        Collection<String> identifiers = identifierMap.values();
 
         for (Map.Entry<String, Map<String, String>> dbrefs : geneDesignationsToDbrefs.entrySet()) {
             String geneDesignation = dbrefs.getKey();
@@ -612,7 +631,7 @@ public class UniprotConverter extends DirectoryConverter
                 entry.addPub(getPub(attrs.getValue("id")));
             } else if (qName.equals("comment") && attrs.getValue("type") != null
                             && !attrs.getValue("type").equals("")) {
-                    entry.addAttribute(attrs.getValue("type"));
+                entry.addAttribute(attrs.getValue("type"));
             } else if (qName.equals("text") && stack.peek().equals("comment")
                             && entry.processing()) {
                 attName = "text";
