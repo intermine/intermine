@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
@@ -39,8 +40,10 @@ public class UniprotConverterTest extends MockItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File datadir = new File ("resources/");
-        //File datadir = new File ("./test/resources/");
+
+        File datadir = new File("../sources/uniprot/test/resources");   // bruiser
+        // File datadir = new File ("resources/");        - ant
+        // File datadir = new File ("./test/resources/"); - eclipse
         converter.setCreateinterpro("true");
         converter.setUniprotOrganisms("7227");
         converter.process(datadir);
