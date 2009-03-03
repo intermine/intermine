@@ -246,6 +246,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void processFeatures(Connection connection,
             Map<Integer, SubmissionDetails> submissionMap)
     throws Exception {
+
+        // hold features that should only be processed once across all submissions, initialise
+        // processor with this map each time
+        Map <Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
+
         for (Map.Entry<Integer, SubmissionDetails> entry: submissionMap.entrySet()) {
 
             Map<Integer, FeatureData> subFeatureMap = new HashMap<Integer, FeatureData>();
@@ -255,13 +260,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labItemIdentifier = submissionDetails.labItemIdentifier;
 
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
+            LOG.info("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
                         labItemIdentifier, thisSubmissionDataIds);
+            processor.initialiseCommonFeatures(commonFeaturesMap);
 
             processor.process(connection);
+            
+            // all features related to this submission
             subFeatureMap.putAll(processor.getFeatureMap());
+            
+            // features common across many submissions
+            commonFeaturesMap.putAll(processor.getCommonFeaturesMap());
+
+            LOG.info("COMMON FEATURES: " + commonFeaturesMap.size());
 
             if (subFeatureMap.keySet().size() == 0) {
                 LOG.error("FEATMAP: submission " + chadoExperimentId     
@@ -270,8 +284,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } 
 
             LOG.debug("FEATMAP: submission " + chadoExperimentId + "|"    
-                    + "featureMap keys: " + subFeatureMap.keySet().size()
-                    + " values: " + subFeatureMap.values().size());
+                    + "featureMap: " + subFeatureMap.keySet().size());
 
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subFeatureMap, queryList);

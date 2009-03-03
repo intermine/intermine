@@ -18,12 +18,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -38,6 +42,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
+    private Set<String> chromosomeInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
 
@@ -52,6 +57,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "binding_site", "protein_binding_site", "TF_binding_site",
          "transcript_region", "histone_binding_site"
     );
+
+    private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
     /**
      * Create a new ModEncodeFeatureProcessor.
@@ -70,6 +77,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
+        for (String chromosomeType : getChromosomeFeatureTypes()) {
+            chromosomeInterMineTypes.add(TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
+        }
     }
 
     /**
@@ -81,6 +91,30 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected List<String> getFeatures() {
         return FEATURES;
     }
+
+
+    /**
+     * Get a map of features that are expected to be common between submissions.  This map can be
+     * used to initialise this processor for a subsequent run.  The feature types added to this map
+     * are governed by the addToFeatureMap method in this class.
+     * @return a map of chado feature id to FeatureData objects
+     */
+    protected Map<Integer, FeatureData> getCommonFeaturesMap() {
+        return commonFeaturesMap;
+    }
+
+
+    /**
+     * Initialise SequenceProcessor with features that have alredy been processed and put the same
+     * features data into a commonFeaturesMap that tracks features (e.g. Chromosomes) that appear
+     * in multiple submissions but should only be processed once. 
+     * @param initialMap map of chado feature id to FeatureData objects
+     */
+    protected void initialiseCommonFeatures(Map<Integer, FeatureData> initialMap) {
+        super.initialiseFeatureMap(initialMap);
+        commonFeaturesMap.putAll(initialMap);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -128,6 +162,21 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
         processLocationTable(connection, matchESTLocRes);
         
+    }
+
+    /**
+     * Override method that adds completed features to featureMap.  Also put features that will
+     * appear in multiple submissions in a map made available at the end of processing.
+     * @param featureId the chado feature id
+     * @param fdat feature information
+     */
+    protected void addToFeatureMap(Integer featureId, FeatureData fdat) {
+        super.addToFeatureMap(featureId, fdat);
+        // We know chromosomes will be common between submissions so add them here
+        if (chromosomeInterMineTypes.contains(fdat.getInterMineType()) 
+                && !commonFeaturesMap.containsKey(featureId)) {
+            commonFeaturesMap.put(featureId, fdat);
+        }
     }
 
     
