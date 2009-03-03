@@ -1596,7 +1596,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected String fixIdentifier(FeatureData fdat, String identifier) {
-        if (StringUtils.isBlank(identifier)){
+        if (StringUtils.isBlank(identifier)) {
             return identifier;
         } else {
             return  XmlUtil.fixEntityNames(identifier);
