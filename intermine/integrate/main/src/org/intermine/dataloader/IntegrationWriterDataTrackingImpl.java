@@ -280,6 +280,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 if (type == SOURCE) {
                     if (writtenObjects.contains(newId)) {
                         // There are duplicate objects
+                        if (!ignoreDuplicates) {
+                            // Yes, this *can* happen, if two items in the tgt-items-database have
+                            // the same item.identifier.
+                            throw new IllegalArgumentException("Duplicate objects exist. Storing "
+                                    + "again to id " + newId + " object from source " + o);
+                        }
                         duplicateObjects.add(newId);
                         isDuplicates = true;
                     } else {
@@ -354,6 +360,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (type == SOURCE) {
                 if (writtenObjects.contains(newObj.getId())) {
                     // There are duplicate objects
+                    if (!ignoreDuplicates) {
+                        throw new IllegalArgumentException("Duplicate objects exist. Storing "
+                                + "again to id " + newId + " object from source " + o);
+                    }
                     duplicateObjects.add(newObj.getId());
                     isDuplicates = true;
                 } else {
