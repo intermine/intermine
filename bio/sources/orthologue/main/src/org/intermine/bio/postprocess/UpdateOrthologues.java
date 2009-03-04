@@ -30,7 +30,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
-import org.intermine.util.TypeUtil;
 
 /**
  * Orthologues from INPARANOID are attched to Proteins not Genes, this class
@@ -131,7 +130,7 @@ public class UpdateOrthologues extends PostProcessor
                 try {
                     InterMineObject newO = PostProcessUtil.cloneInterMineObject(o);
                     // set reference to Gene
-                    TypeUtil.setFieldValue(newO, newRef, gene);
+                    newO.setFieldValue(newRef, gene);
                     osw.store(newO);
                     updated++;
                 } catch (IllegalAccessException e) {
@@ -141,7 +140,7 @@ public class UpdateOrthologues extends PostProcessor
                 try {
                     // create new [Ortho|Para]logue and set reference to Gene
                     InterMineObject newO = PostProcessUtil.copyInterMineObject(o);
-                    TypeUtil.setFieldValue(newO, newRef, gene);
+                    newO.setFieldValue(newRef, gene);
                     osw.store(newO);
                     created++;
                 } catch (IllegalAccessException e) {

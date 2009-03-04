@@ -45,7 +45,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.DatabaseUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Fill in additional references/collections in genomic model
@@ -159,7 +158,7 @@ public class CreateReferences
             try {
                 // clone so we don't change the ObjectStore cache
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(thisDestObject);
-                TypeUtil.setFieldValue(tempObject, createFieldName, thisSourceObject);
+                tempObject.setFieldValue(createFieldName, thisSourceObject);
                 count++;
                 if (count % 10000 == 0) {
                     LOG.info("Created " + count + " references in " + destinationClass.getName()
@@ -272,10 +271,9 @@ public class CreateReferences
                     try {
                         InterMineObject tempObject =
                             PostProcessUtil.cloneInterMineObject(lastDestObject);
-                        Set oldCollection = (Set) TypeUtil.getFieldValue(tempObject,
-                                createFieldName);
+                        Set oldCollection = (Set) tempObject.getFieldValue(createFieldName);
                         newCollection.addAll(oldCollection);
-                        TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
+                        tempObject.setFieldValue(createFieldName, newCollection);
                         count += newCollection.size();
                         osw.store(tempObject);
                    } catch (IllegalAccessException e) {
@@ -300,7 +298,7 @@ public class CreateReferences
         if (!manyToMany && lastDestObject != null) {
             // clone so we don't change the ObjectStore cache
             InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(lastDestObject);
-            TypeUtil.setFieldValue(tempObject, createFieldName, newCollection);
+            tempObject.setFieldValue(createFieldName, newCollection);
             count += newCollection.size();
             osw.store(tempObject);
         }
@@ -382,11 +380,11 @@ public class CreateReferences
                 // clone so we don't change the ObjectStore cache
                 MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
                 if (fivePrimeUTR != null) {
-                    TypeUtil.setFieldValue(tempMRNA, "fivePrimeUTR", fivePrimeUTR);
+                    tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
                     fivePrimeUTR = null;
                 }
                 if (threePrimeUTR != null) {
-                    TypeUtil.setFieldValue(tempMRNA, "threePrimeUTR", threePrimeUTR);
+                    tempMRNA.setFieldValue("threePrimeUTR", threePrimeUTR);
                     threePrimeUTR = null;
                 }
                 osw.store(tempMRNA);
@@ -405,8 +403,8 @@ public class CreateReferences
         if (lastMRNA != null) {
             // clone so we don't change the ObjectStore cache
             MRNA tempMRNA = (MRNA) PostProcessUtil.cloneInterMineObject(lastMRNA);
-            TypeUtil.setFieldValue(tempMRNA, "fivePrimeUTR", fivePrimeUTR);
-            TypeUtil.setFieldValue(tempMRNA, "threePrimeUTR", threePrimeUTR);
+            tempMRNA.setFieldValue("fivePrimeUTR", fivePrimeUTR);
+            tempMRNA.setFieldValue("threePrimeUTR", threePrimeUTR);
             osw.store(tempMRNA);
             count++;
         }

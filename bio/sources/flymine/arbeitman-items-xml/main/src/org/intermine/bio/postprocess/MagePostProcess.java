@@ -34,7 +34,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.sql.DatabaseUtil;
-import org.intermine.util.TypeUtil;
 
 import org.intermine.model.bio.CDNAClone;
 import org.intermine.model.bio.Gene;
@@ -149,7 +148,7 @@ public class MagePostProcess extends PostProcessor
                 if (lastGene != null) {
                     // clone so we don't change the ObjectStore cache
                     Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
-                    TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+                    tempGene.setFieldValue("microArrayResults", newCollection);
                     osw.store(tempGene);
                     count++;
                 }
@@ -164,7 +163,7 @@ public class MagePostProcess extends PostProcessor
         if (lastGene != null) {
             // clone so we don't change the ObjectStore cache
             Gene tempGene = (Gene) PostProcessUtil.cloneInterMineObject(lastGene);
-            TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+            tempGene.setFieldValue("microArrayResults", newCollection);
             osw.store(tempGene);
             count++;
         }
@@ -240,7 +239,7 @@ public class MagePostProcess extends PostProcessor
                     // clone so we don't change the ObjectStore cache
                     CDNAClone tempClone = (CDNAClone) PostProcessUtil
                         .cloneInterMineObject(lastClone);
-                    TypeUtil.setFieldValue(tempClone, "results", newCollection);
+                    tempClone.setFieldValue("results", newCollection);
                     osw.store(tempClone);
                     count++;
                 }
@@ -255,7 +254,7 @@ public class MagePostProcess extends PostProcessor
         if (lastClone != null) {
             // clone so we don't change the ObjectStore cache
             CDNAClone tempClone = (CDNAClone) PostProcessUtil.cloneInterMineObject(lastClone);
-            TypeUtil.setFieldValue(tempClone, "results", newCollection);
+            tempClone.setFieldValue("results", newCollection);
             osw.store(tempClone);
             count++;
         }
@@ -331,7 +330,7 @@ public class MagePostProcess extends PostProcessor
                     // clone so we don't change the ObjectStore cache
                     ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil
                         .cloneInterMineObject(lastComSeq);
-                    TypeUtil.setFieldValue(tempProbeSet, "results", newCollection);
+                    tempProbeSet.setFieldValue("results", newCollection);
                     osw.store(tempProbeSet);
                     count++;
                 }
@@ -346,7 +345,7 @@ public class MagePostProcess extends PostProcessor
         if (lastComSeq != null) {
             // clone so we don't change the ObjectStore cache
             ProbeSet tempProbeSet = (ProbeSet) PostProcessUtil.cloneInterMineObject(lastComSeq);
-            TypeUtil.setFieldValue(tempProbeSet, "results", newCollection);
+            tempProbeSet.setFieldValue("results", newCollection);
             osw.store(tempProbeSet);
             count++;
         }

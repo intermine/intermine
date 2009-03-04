@@ -118,10 +118,11 @@ public class DynamicUtil
      * @return the object
      * @throws IllegalArgumentException if an error occurs
      */
-    public static FastPathObject createObject(Class clazz) throws IllegalArgumentException {
-        FastPathObject retval = null;
+    public static <C extends FastPathObject> C createObject(Class<C> clazz)
+    throws IllegalArgumentException {
+        C retval = null;
         try {
-            retval = (FastPathObject) clazz.newInstance();
+            retval = clazz.newInstance();
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
