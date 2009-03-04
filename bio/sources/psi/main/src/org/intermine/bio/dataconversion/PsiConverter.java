@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +53,7 @@ public class PsiConverter extends BioFileConverter
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
     private Map<String, String[]> config = new HashMap();
+    private Set<String> taxonIds = null;
 
     /**
      * Constructor
@@ -120,6 +122,16 @@ public class PsiConverter extends BioFileConverter
                 LOG.error(msg);
             }
         }
+    }
+
+    /**
+     * Sets the list of taxonIds that should be imported if using split input files.
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setIntactOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
+        LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
     /**
@@ -209,7 +221,8 @@ public class PsiConverter extends BioFileConverter
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                if (!taxId.equals("-1") && !taxId.equals("-2")) {
+                if (taxonIds.contains(taxId) || ((taxonIds == null || taxonIds.isEmpty())
+                                && !taxId.equals("-1") && !taxId.equals("-2"))) {
                     try {
                         gene = getGene(taxId);
                     } catch (ObjectStoreException e) {
@@ -517,7 +530,7 @@ public class PsiConverter extends BioFileConverter
 
                     String start = interactorHolder.start;
                     String end = interactorHolder.end;
-                    if (!start.equals("0") || !end.equals("0")) {
+                    if (start != null && end != null && (!start.equals("0") || !end.equals("0"))) {
                         Item location = createItem("Location");
                         location.setAttribute("start", start);
                         location.setAttribute("end", end);
@@ -525,6 +538,8 @@ public class PsiConverter extends BioFileConverter
                         location.setReference("subject", region.getIdentifier());
                         region.setReference("location", location);
                         store(location);
+                    } else {
+                        LOG.info("no region for " + regionIdentifier);
                     }
                     store(region);
                 }
@@ -559,7 +574,8 @@ public class PsiConverter extends BioFileConverter
         throws ObjectStoreException, SAXException {
 
             if (config.get(taxonId) == null) {
-                throw new RuntimeException("taxonId not found: " + taxonId);
+                LOG.error("gene not processed.  configuration not found for taxonId: " + taxonId);
+                return null;
             }
 
             String field = config.get(taxonId)[0];
