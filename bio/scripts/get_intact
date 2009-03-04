@@ -13,7 +13,13 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($logdir,$logname,$home,$file);
 if(@ARGV!=4){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+#	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+
+ $logdir="/shared/data/download_logs/";
+ $logname="temp_log.txt"; 
+ $home="/shared/data";
+ $file="./resources/get_scripts.config";
+
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
@@ -30,7 +36,7 @@ my $password = "-anonymous\@";
 
 # get the list of organisms from the config file - this is the five letter
 # abbreviation used as the start of intact filenames. 
-my %organisms = &config_species($file,"intact");
+my @organisms = &get_organisms($file,"intact");
 
 #### Access EBI ftp server
 my $connection = &ftp_connect($ebi_server,$username,$password);
@@ -64,12 +70,13 @@ if(&checkdir_exists($download_dir)==1){
 	my @psi_files = $connection->ls();
 
 	for my $psi_file (@psi_files) {
-		#find what organism the file represents and check if we are interested in it
+            #find what organism the file represents and check if we are interested in it
+            
 	    my $start = substr($psi_file, 0, index($psi_file, "_"));
-		if (grep {$start eq $_} keys %organisms) {
-	        &ftp_download($connection,$download_dir,$psi_file);
-			$log_buffer .= "$psi_file\n";
-	    }
+            if (grep {$start eq $_} @organisms) {
+                &ftp_download($connection,$download_dir,$psi_file);
+                $log_buffer .= "$psi_file\n";
+	    }             
 	}
 	
 	my $current_link = "$home/psi/intact/current";
@@ -132,7 +139,22 @@ sub update_files(){
 	system "chmod -R a+r,g+w $new_dir";
 }	
 
+# TODO use the method in DataDownloader.pm instead
+sub get_organisms(){
+    my ($file,$trigger) = @_;
+    my @organisms;
 
+    open(F,"<$file") or die "$!";
+    while(<F>){
+        my @f = split/\t/;
+        if($f[0] =~ /^$trigger/g) {
+            chomp $f[1];
+            push(@organisms, $f[1]); 
+        }
+    }
+    close(F) or die "$!";
+    return @organisms;
+}
 
 
 
