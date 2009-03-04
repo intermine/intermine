@@ -1702,7 +1702,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     private String getGenesProteinsQuery() {
         String partOfConstraints = makePartOfConstraints("fr1type.name");
-        return " UNION SELECT 0, f1.feature_id AS feature1_id, f3.feature_id AS  feature2_id, "
+        return " UNION ALL SELECT 0, f1.feature_id AS feature1_id, f3.feature_id AS  feature2_id, "
             + "               'producedby' "
             + "   FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
             + "        feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
