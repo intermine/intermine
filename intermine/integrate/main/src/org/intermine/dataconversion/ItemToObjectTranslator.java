@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Item;
 import org.intermine.model.fulldata.Attribute;
@@ -252,8 +253,7 @@ public class ItemToObjectTranslator extends Translator
     /**
      * {@inheritDoc}
      */
-    public Object translateFromDbObject(Object o)
-    throws MetaDataException {
+    public Object translateFromDbObject(Object o) throws MetaDataException {
         long time1 = System.currentTimeMillis();
         if (!(o instanceof Item)) {
             return o;
@@ -282,7 +282,7 @@ public class ItemToObjectTranslator extends Translator
         }
         long time2 = System.currentTimeMillis();
         timeSpentSizing += time2 - time1;
-        Object obj;
+        FastPathObject obj;
         try {
             obj = DynamicUtil.instantiateObject(
                     ItemHelper.generateClassNames(item.getClassName(), model),
@@ -293,7 +293,7 @@ public class ItemToObjectTranslator extends Translator
         }
 
         try {
-            TypeUtil.setFieldValue(obj, "id", identifierToId(item.getIdentifier()));
+            obj.setFieldValue("id", identifierToId(item.getIdentifier()));
         } catch (IllegalArgumentException e) {
         }
         time1 = System.currentTimeMillis();
@@ -319,7 +319,7 @@ public class ItemToObjectTranslator extends Translator
                         throw new IllegalArgumentException("An attribute (name " + attr.getName()
                                 + ") for item with id " + item.getIdentifier() + " was null");
                     }
-                    TypeUtil.setFieldValue(obj, attr.getName(), value);
+                    obj.setFieldValue(attr.getName(), value);
                 }
             }
 
@@ -343,7 +343,7 @@ public class ItemToObjectTranslator extends Translator
                     refName = StringUtil.decapitalise(refName);
                 }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refName) != null) {
-                    TypeUtil.setFieldValue(obj, refName, new ProxyReference(os, identifier,
+                    obj.setFieldValue(refName, new ProxyReference(os, identifier,
                                 InterMineObject.class));
                 } else {
                     String message = "Reference not found in model: "
@@ -377,7 +377,7 @@ public class ItemToObjectTranslator extends Translator
                     refsName = StringUtil.decapitalise(refsName);
                 }
                 if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
-                    TypeUtil.setFieldValue(obj, refsName, os.executeSingleton(q));
+                    obj.setFieldValue(refsName, os.executeSingleton(q));
                 } else {
                     String message = "Collection not found in model: "
                         + DynamicUtil.decomposeClass(obj.getClass())

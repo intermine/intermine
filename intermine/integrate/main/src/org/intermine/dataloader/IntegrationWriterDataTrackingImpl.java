@@ -180,7 +180,11 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
     public void reset() {
         super.reset();
+        skeletons = new IntPresentSet();
         pureObjects = new IntPresentSet();
+        writtenObjects = new IntPresentSet();
+        duplicateObjects = new IntPresentSet();
+        isDuplicates = false;
     }
 
     /**

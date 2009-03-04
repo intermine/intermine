@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.dataloader.Source;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -43,7 +44,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.TypeUtil;
 
 /**
  * Provides an implementation of an objectstore that explicitly materialises all the collections
@@ -197,11 +197,11 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                     // super-bag for use in a single query.
                     QuerySelectable node = (QuerySelectable) q.getSelect().get(0);
                     if (node instanceof QueryClass) {
-                        Map froms = new HashMap();
+                        Map<FastPathObject, Map> froms = new HashMap<FastPathObject, Map>();
                         Set toIds = new TreeSet();
                         Iterator rowIter = retval.iterator();
                         while (rowIter.hasNext()) {
-                            Object o = ((ResultsRow) rowIter.next()).get(0);
+                            FastPathObject o = (FastPathObject) ((ResultsRow) rowIter.next()).get(0);
                             Map fromColls = new HashMap();
                             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(o
                                     .getClass());
@@ -211,7 +211,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                 String fieldName = (String) fieldEntry.getKey();
                                 FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
                                 if (field.relationType() == FieldDescriptor.M_N_RELATION) {
-                                    Object sr = TypeUtil.getFieldValue(o, fieldName);
+                                    Object sr = o.getFieldValue(fieldName);
                                     if (sr instanceof SingletonResults) {
                                         Query existingQ = ((SingletonResults) sr).getQuery();
                                         if ((existingQ.getFrom().size() == 1)
@@ -236,7 +236,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                             .ONE_ONE_RELATION)
                                         || (field.relationType() == FieldDescriptor
                                             .N_ONE_RELATION)) {
-                                    Object proxyObj = TypeUtil.getFieldProxy(o, fieldName);
+                                    Object proxyObj = o.getFieldProxy(fieldName);
                                     if (proxyObj instanceof ProxyReference) {
                                         Integer id = ((ProxyReference) proxyObj).getId();
                                         fromColls.put(fieldName, id);
@@ -308,10 +308,8 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         // Now we have fetched all the objects in from the database. We now need to
                         // populate every object in our froms Map
 
-                        Iterator fromIter = froms.entrySet().iterator();
-                        while (fromIter.hasNext()) {
-                            Map.Entry fromEntry = (Map.Entry) fromIter.next();
-                            Object objToPopulate = fromEntry.getKey();
+                        for (Map.Entry<FastPathObject, Map> fromEntry : froms.entrySet()) {
+                            FastPathObject objToPopulate = fromEntry.getKey();
                             Map collectionsToPopulate = (Map) fromEntry.getValue();
                             Iterator collectionIter = collectionsToPopulate.entrySet().iterator();
                             while (collectionIter.hasNext()) {
@@ -359,15 +357,14 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                                         }
                                         substituteCollection.add(objToAdd);
                                     }
-                                    TypeUtil.setFieldValue(objToPopulate, collectionName,
+                                    objToPopulate.setFieldValue(collectionName,
                                             substituteCollection);
                                 } else {
                                     Integer id = (Integer) contents;
                                     InterMineObject objToAdd = (InterMineObject)
                                         idToObj.get(id);
                                     if (objToAdd != null) {
-                                        TypeUtil.setFieldValue(objToPopulate, collectionName,
-                                                objToAdd);
+                                        objToPopulate.setFieldValue(collectionName, objToAdd);
                                     }
                                 }
                             }
