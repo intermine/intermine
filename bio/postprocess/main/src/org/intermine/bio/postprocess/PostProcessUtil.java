@@ -70,26 +70,17 @@ public class PostProcessUtil
     }
 
 
-    private static InterMineObject cloneInterMineObject(InterMineObject obj,
-                                                        boolean copyCollections)
-    throws IllegalAccessException {
-        InterMineObject newObj = (InterMineObject)
-        DynamicUtil.createObject(DynamicUtil.decomposeClass(obj.getClass()));
-        Map fieldInfos = new HashMap();
-        Iterator clsIter = DynamicUtil.decomposeClass(obj.getClass()).iterator();
-        while (clsIter.hasNext()) {
-            fieldInfos.putAll(TypeUtil.getFieldInfos((Class) clsIter.next()));
-        }
+    private static <O extends InterMineObject> O cloneInterMineObject(O obj,
+            boolean copyCollections) throws IllegalAccessException {
+        Class<O> clazz = (Class<O>) obj.getClass();
+        O newObj = DynamicUtil.createObject(clazz);
 
-        Iterator fieldIter = fieldInfos.keySet().iterator();
-        while (fieldIter.hasNext()) {
-            String fieldName = (String) fieldIter.next();
-            Object value = TypeUtil.getFieldProxy(obj, fieldName);
+        for (String fieldName : TypeUtil.getFieldInfos(obj.getClass()).keySet()) {
+            Object value = obj.getFieldProxy(fieldName);
             if (copyCollections && (value instanceof Collection)) {
-                TypeUtil.setFieldValue(newObj, fieldName,
-                    new HashSet((Collection) value));
+                newObj.setFieldValue(fieldName, new HashSet((Collection) value));
             } else {
-                TypeUtil.setFieldValue(newObj, fieldName, value);
+                newObj.setFieldValue(fieldName, value);
             }
         }
         return newObj;

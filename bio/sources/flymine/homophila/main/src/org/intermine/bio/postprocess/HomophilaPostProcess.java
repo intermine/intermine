@@ -40,7 +40,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Annotate drosophila genes with diseases related via homophila. The evidence of the annotations
@@ -116,9 +115,9 @@ public class HomophilaPostProcess extends PostProcessor
             try {
                 InterMineObject tempObject = PostProcessUtil.cloneInterMineObject(gene);
                 Set<Disease> oldCollection =
-                    (Set<Disease>) TypeUtil.getFieldValue(tempObject, "omimDiseases");
+                    (Set<Disease>) tempObject.getFieldValue("omimDiseases");
                 newCollection.addAll(oldCollection);
-                TypeUtil.setFieldValue(tempObject, "omimDiseases", newCollection);
+                tempObject.setFieldValue("omimDiseases", newCollection);
                 osw.store(tempObject);
 
                 // Create annotation

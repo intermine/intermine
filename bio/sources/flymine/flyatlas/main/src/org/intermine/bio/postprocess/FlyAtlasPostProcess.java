@@ -32,7 +32,6 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.TypeUtil;
 import org.intermine.postprocess.PostProcessor;
 
 /**
@@ -122,7 +121,7 @@ public class FlyAtlasPostProcess extends PostProcessor
                         throw new RuntimeException("Failed to clone InterMineObject: "
                                                    + lastGene, e);
                     }
-                    TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+                    tempGene.setFieldValue("microArrayResults", newCollection);
                     osw.store(tempGene);
                     count++;
                 }
@@ -142,7 +141,7 @@ public class FlyAtlasPostProcess extends PostProcessor
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to clone InterMineObject: " + lastGene, e);
             }
-            TypeUtil.setFieldValue(tempGene, "microArrayResults", newCollection);
+            tempGene.setFieldValue("microArrayResults", newCollection);
             osw.store(tempGene);
             count++;
         }

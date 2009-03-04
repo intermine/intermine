@@ -19,7 +19,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.util.TypeUtil;
 
 import org.intermine.model.bio.Transcript;
 
@@ -85,9 +84,9 @@ public class SetCollectionCounts
 
             InterMineObject o = (InterMineObject) rr.get(0);
 
-            Collection collection = (Collection) TypeUtil.getFieldValue(o, collectionName);
+            Collection collection = (Collection) o.getFieldValue(collectionName);
 
-            TypeUtil.setFieldValue(o, countFieldName, new Integer(collection.size()));
+            o.setFieldValue(countFieldName, new Integer(collection.size()));
 
             osw.store(o);
         }

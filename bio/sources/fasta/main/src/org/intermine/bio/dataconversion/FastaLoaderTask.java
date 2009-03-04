@@ -35,7 +35,6 @@ import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
-import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
@@ -276,9 +275,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         String md5checksum = Util.getMd5checksum(sequence);
         flymineSequence.setResidues(sequence);
         flymineSequence.setLength(bioJavaSequence.length());
-        if (TypeUtil.getSetter(sequenceClass, "md5checksum") != null) {
-            flymineSequence.setMd5checksum(md5checksum);
-        }
+        flymineSequence.setMd5checksum(md5checksum);
         Class<?> c;
         try {
             c = Class.forName(className);
@@ -291,19 +288,30 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         String attributeValue = getIdentifier(bioJavaSequence);
 
         try {
-            TypeUtil.setFieldValue(imo, classAttribute, attributeValue);
+            imo.setFieldValue(classAttribute, attributeValue);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error setting: " + className + "."
                                                + classAttribute + " to: " + attributeValue
                                                + ". Does the attribute exist?");
         }
-        TypeUtil.setFieldValue(imo, "sequence", flymineSequence);
-        imo.setOrganism(organism);
-        if (TypeUtil.getSetter(c, "length") != null) {
-            TypeUtil.setFieldValue(imo, "length", new Integer(flymineSequence.getLength()));
+        try {
+            imo.setFieldValue("sequence", flymineSequence);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error setting: " + className + ".sequence to: "
+                    + attributeValue + ". Does the attribute exist?");
         }
-        if (TypeUtil.getSetter(c, "md5checksum") != null) {
-            TypeUtil.setFieldValue(imo, "md5checksum", md5checksum);
+        imo.setOrganism(organism);
+        try {
+            imo.setFieldValue("length", new Integer(flymineSequence.getLength()));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error setting: " + className + ".length to: "
+                    + flymineSequence.getLength() + ". Does the attribute exist?");
+        }
+        try {
+            imo.setFieldValue("md5checksum", md5checksum);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error setting: " + className + ".md5checksum to: "
+                    + md5checksum + ". Does the attribute exist?");
         }
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
