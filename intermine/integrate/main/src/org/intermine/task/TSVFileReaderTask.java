@@ -124,7 +124,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
                     if (rowValue.length() > 0) {
                         Class fieldClass = (Class) fieldClasses.get(columnIndex);
                         Object typedObject = TypeUtil.stringToObject(fieldClass, rowValue);
-                        TypeUtil.setFieldValue(o, columnAD.getName(), typedObject);
+                        o.setFieldValue(columnAD.getName(), typedObject);
                     }
                 }
             }

@@ -274,13 +274,13 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
                                 target = ((ProxyReference) target).getObject();
                             }
                             InterMineObject targetsReferent = (InterMineObject)
-                                TypeUtil.getFieldValue(target, reverseRef.getName());
+                                target.getFieldValue(reverseRef.getName());
                             if ((targetsReferent != null) && (!targetsReferent.equals(dest))) {
                                 invalidateObjectById(targetsReferent.getId());
-                                TypeUtil.setFieldValue(targetsReferent, fieldName, null);
+                                targetsReferent.setFieldValue(fieldName, null);
                                 store(targetsReferent);
                             }
-                            TypeUtil.setFieldValue(target, reverseRef.getName(), dest);
+                            target.setFieldValue(reverseRef.getName(), dest);
                             store(target);
                         }*/
                         dest.setFieldValue(fieldName, target);

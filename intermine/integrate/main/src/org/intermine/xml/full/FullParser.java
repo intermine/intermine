@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
@@ -85,9 +86,9 @@ public class FullParser
      * @throws ClassNotFoundException if one of the items has a class that isn't in the model
      */
     public static List<InterMineObject> realiseObjects(Collection<Item> items, Model model,
-                                                       boolean useIdentifier, boolean abortOnError)
-        throws ClassNotFoundException {
-        Map objMap = new LinkedHashMap(); // map from id to outline object
+            boolean useIdentifier, boolean abortOnError) throws ClassNotFoundException {
+        // map from id to outline object
+        Map<String, FastPathObject> objMap = new LinkedHashMap<String, FastPathObject>();
 
         List result = new ArrayList();
         for (Item item : items) {
@@ -108,7 +109,7 @@ public class FullParser
         }
 
         for (Item item : items) {
-            Object instance = null;
+            FastPathObject instance = null;
             // simple objects don't have identifiers so can't be put in the objMap, need to
             // create again in this loop to get an instance
             if (item.getIdentifier() == null) {
@@ -149,7 +150,7 @@ public class FullParser
      * @return a populated object
      */
     protected static Object populateObject(Item item, Map objMap, boolean useIdentifier,
-            boolean abortOnError, Object obj) {
+            boolean abortOnError, FastPathObject obj) {
         try {
             // Set the data for every given attribute except id
             Iterator attrIter = item.getAttributes().iterator();
@@ -168,14 +169,14 @@ public class FullParser
                 }
                 Class attrClass = info.getType();
                 if (!attr.getName().equalsIgnoreCase("id")) {
-                    TypeUtil.setFieldValue(obj, attr.getName(),
-                                           TypeUtil.stringToObject(attrClass, attr.getValue()));
+                    obj.setFieldValue(attr.getName(),
+                            TypeUtil.stringToObject(attrClass, attr.getValue()));
                 }
             }
 
             if (useIdentifier) {
-                TypeUtil.setFieldValue(obj, "id", TypeUtil.stringToObject(Integer.class,
-                                                                          item.getIdentifier()));
+                obj.setFieldValue("id", TypeUtil.stringToObject(Integer.class,
+                            item.getIdentifier()));
             }
 
             // Set the data for every given reference
@@ -198,7 +199,7 @@ public class FullParser
                     LOG.warn("no field " + ref.getName() + " in object: " + obj);
                 } else {
                     try {
-                        TypeUtil.setFieldValue(obj, ref.getName(), refObj);
+                        obj.setFieldValue(ref.getName(), refObj);
                     } catch (IllegalArgumentException e) {
                         if (abortOnError) {
                             throw e;
@@ -213,7 +214,7 @@ public class FullParser
             Iterator colIter = item.getCollections().iterator();
             while (colIter.hasNext()) {
                 ReferenceList refList = (ReferenceList) colIter.next();
-                Collection col = (Collection) TypeUtil.getFieldValue(obj, refList.getName());
+                Collection col = (Collection) obj.getFieldValue(refList.getName());
                 for (Iterator i = refList.getRefIds().iterator(); i.hasNext();) {
                     col.add(objMap.get(i.next()));
                 }
