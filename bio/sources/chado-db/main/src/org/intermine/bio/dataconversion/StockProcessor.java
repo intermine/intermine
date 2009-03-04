@@ -88,9 +88,7 @@ public class StockProcessor extends ChadoProcessor
             }
             Item organismItem = getChadoDBConverter().getOrganismItem(organismData.getTaxonId());
             Item stock = makeStock(stockUniqueName, stockDescription, stockType,
-                                   stockCenterUniquename);
-            stock.setReference("organism", organismItem);
-            getChadoDBConverter().store(stock);
+                    stockCenterUniquename, organismItem);
             stocks.add(stock);
             lastFeatureId = featureId;
         }
@@ -111,7 +109,7 @@ public class StockProcessor extends ChadoProcessor
     }
 
     private Item makeStock(String uniqueName, String description, String stockType,
-                           String stockCenterUniqueName) {
+            String stockCenterUniqueName, Item organismItem) throws ObjectStoreException {
         if (stockItems.containsKey(uniqueName)) {
             return stockItems.get(uniqueName);
         } else {
@@ -120,13 +118,15 @@ public class StockProcessor extends ChadoProcessor
             stock.setAttribute("secondaryIdentifier", description);
             stock.setAttribute("type", stockType);
             stock.setAttribute("stockCenter", stockCenterUniqueName);
+            stock.setReference("organism", organismItem);
             stockItems.put(uniqueName, stock);
+            getChadoDBConverter().store(stock);
             return stock;
         }
     }
 
     private void storeStocks(Map<Integer, FeatureData> features, Integer lastFeatureId,
-                             List<Item> stocks) throws ObjectStoreException {
+            List<Item> stocks) throws ObjectStoreException {
         FeatureData featureData = features.get(lastFeatureId);
         if (featureData == null) {
             throw new RuntimeException("can't find feature data for: " + lastFeatureId);
