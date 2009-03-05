@@ -37,7 +37,7 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testSetModel() throws Exception {
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
                                                   new HashSet(), new HashSet(), new HashSet());
         try {
             Model model1 = new Model("model1", "package.name", Collections.singleton(cld));
@@ -53,9 +53,9 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testInterfaceDescriptors() throws Exception {
-        ClassDescriptor int1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor int2 = new ClassDescriptor("Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld = new ClassDescriptor("Class1", "Interface1 Interface2", false,
+        ClassDescriptor int1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor int2 = new ClassDescriptor("package.name.Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", "package.name.Interface1 package.name.Interface2", false,
                                                   new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {int1, int2, cld}));
@@ -68,9 +68,9 @@ public class ClassDescriptorTest extends TestCase
 
     public void testImplementsNotExists() throws Exception {
         // construct class implementing Interface3 which does not exist
-        ClassDescriptor int1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor int2 = new ClassDescriptor("Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld = new ClassDescriptor("Class1", "Interface1 Interface3", false,
+        ClassDescriptor int1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor int2 = new ClassDescriptor("package.name.Interface2", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", "package.name.Interface1 package.name.Interface3", false,
                                                   new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {int1, int2, cld}));
@@ -82,23 +82,23 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testInterfaceNotImplemented() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", "package.name", Collections.singleton(cld1));
         assertTrue(cld1.getSubDescriptors().size() == 0);
     }
 
     public void testSuperClassExists() throws Exception {
-        ClassDescriptor superCld = new ClassDescriptor("superCld", null, false,
+        ClassDescriptor superCld = new ClassDescriptor("package.name.superCld", null, false,
                                                        new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld = new ClassDescriptor("cld", "superCld", false,  new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.cld", "package.name.superCld", false,  new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
         assertEquals(superCld, cld.getSuperclassDescriptor());
     }
 
     public void testSuperClassNotExists() throws Exception {
-        ClassDescriptor superCld = new ClassDescriptor("superCld", null, false,
+        ClassDescriptor superCld = new ClassDescriptor("package.name.superCld", null, false,
                                                        new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld = new ClassDescriptor("cld", "anotherCld", false,  new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.cld", "package.name.anotherCld", false,  new HashSet(), new HashSet(), new HashSet());
         try {
             Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld})));
             fail("Expected MetaDataException");
@@ -108,9 +108,9 @@ public class ClassDescriptorTest extends TestCase
 
     public void testSuperClassWrongType() throws Exception {
         // test where superclass is not an interface, subclass is
-        ClassDescriptor superCld = new ClassDescriptor("superCld", null, false,
+        ClassDescriptor superCld = new ClassDescriptor("package.name.superCld", null, false,
                                                        new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor interface1 = new ClassDescriptor("interface1", "superCld", true,  new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor interface1 = new ClassDescriptor("package.name.interface1", "package.name.superCld", true,  new HashSet(), new HashSet(), new HashSet());
         try {
             Model model2 = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {interface1, superCld})));
             fail("Expected MetaDataException");
@@ -119,9 +119,9 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testMultipleSuperClass() throws Exception {
-        ClassDescriptor superCld1 = new ClassDescriptor("superCld1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor superCld2 = new ClassDescriptor("superCld2", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld = new ClassDescriptor("cld", "superCld1 superCld2", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor superCld1 = new ClassDescriptor("package.name.superCld1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor superCld2 = new ClassDescriptor("package.name.superCld2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.cld", "package.name.superCld1 package.name.superCld2", false, new HashSet(), new HashSet(), new HashSet());
         try {
             Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld, superCld1, superCld2})));
             fail("Expected: MetaDataException");
@@ -133,7 +133,7 @@ public class ClassDescriptorTest extends TestCase
         Set attributes = getAttributes();
         Set refs = getReferences();
         Set cols = getCollections();
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
                                                   attributes, refs, cols);
         cld.setAllFieldDescriptors();
         assertNotNull(cld.getFieldDescriptorByName("atd1"));
@@ -147,11 +147,11 @@ public class ClassDescriptorTest extends TestCase
     public void testGetAllAttributeDescriptors() throws Exception {
         // three superclass levels with one attribute each, getAllAttributeDescriptors on cld3 should return all 3
         AttributeDescriptor atb1 = new AttributeDescriptor("att1", "java.lang.String");
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, Collections.singleton(atb1), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, Collections.singleton(atb1), new HashSet(), new HashSet());
         AttributeDescriptor atb2 = new AttributeDescriptor("att2", "java.lang.String");
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, Collections.singleton(atb2), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, Collections.singleton(atb2), new HashSet(), new HashSet());
         AttributeDescriptor atb3 = new AttributeDescriptor("att3", "java.lang.String");
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2", false, Collections.singleton(atb3), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class2", false, Collections.singleton(atb3), new HashSet(), new HashSet());
 
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
 
@@ -162,10 +162,10 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testGetSubDescriptors() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Class1", false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class1", false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld4 = new ClassDescriptor("package.name.Class4", "package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
 
         Model model2 = new Model("test2", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
 
@@ -176,10 +176,10 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testGetImplementorDescriptors() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Interface1", false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld4 = new ClassDescriptor("Class4", "Class2", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Interface1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Interface1", false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld4 = new ClassDescriptor("package.name.Class4", "package.name.Class2", false, new HashSet(), new HashSet(), new HashSet());
 
         Model model2 = new Model("test2", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3, cld4})));
 
@@ -209,9 +209,9 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        ClassDescriptor cld3 = new ClassDescriptor("Class3", "Class2 Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", "package.name.Class2 package.name.Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class3\" extends=\"Class2 Interface1\" is-interface=\"false\">"
             + "</class>";
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
@@ -219,8 +219,8 @@ public class ClassDescriptorTest extends TestCase
     }
 
     public void testToString2() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", "Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Interface1", null, true, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", "package.name.Interface1", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         String expected = "<class name=\"Class2\" extends=\"Interface1\" is-interface=\"false\">"
             + "</class>";
         Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));

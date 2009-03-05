@@ -77,7 +77,8 @@ public class CollectionDescriptor extends ReferenceDescriptor
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<collection name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
+        sb.append("<collection name=\"" + name + "\" referenced-type=\""
+                + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append("/>");
         return sb.toString();

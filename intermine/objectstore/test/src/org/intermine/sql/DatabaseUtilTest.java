@@ -109,7 +109,7 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetTableNameOne() throws Exception {
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Model model1 = new Model("test1", "package.name", new HashSet(Arrays.asList(new Object[] {cld})));
 
@@ -117,7 +117,7 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetTableNameTwo() throws Exception {
-        ClassDescriptor cld = new ClassDescriptor("Array", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = new ClassDescriptor("package.name.Array", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Model model1 = new Model("test1", "package.name", new HashSet(Arrays.asList(new Object[] {cld})));
 
@@ -131,13 +131,13 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetIndirectionTableNameRef() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", "ref1");
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "package.name.Class2", "ref1");
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", "Class1", null);
+        ReferenceDescriptor ref1 = new ReferenceDescriptor("ref1", "package.name.Class1", null);
         Set refs = new HashSet(Arrays.asList(new Object[] {ref1}));
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), refs, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs, new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", "package.name", clds);
@@ -150,11 +150,11 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetIndirectionTableNameNull() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", null);
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "package.name.Class2", null);
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", "package.name", clds);
@@ -167,13 +167,13 @@ public class DatabaseUtilTest extends TestCase
     }
 
     public void testGetIndirectionTableNameCol() throws Exception {
-        CollectionDescriptor col1 = new CollectionDescriptor("col1", "Class2", "col2");
+        CollectionDescriptor col1 = new CollectionDescriptor("col1", "package.name.Class2", "col2");
         Set cols = new HashSet(Arrays.asList(new Object[] {col1}));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), cols);
 
-        CollectionDescriptor col2 = new CollectionDescriptor("col2", "Class1", "col1");
+        CollectionDescriptor col2 = new CollectionDescriptor("col2", "package.name.Class1", "col1");
         cols = new HashSet(Arrays.asList(new Object[] {col2}));
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), cols);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), cols);
 
         Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
         Model model = new Model("test", "package.name", clds);
