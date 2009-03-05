@@ -35,6 +35,7 @@ import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
@@ -307,11 +308,14 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new IllegalArgumentException("Error setting: " + className + ".length to: "
                     + flymineSequence.getLength() + ". Does the attribute exist?");
         }
-        try {
-            imo.setFieldValue("md5checksum", md5checksum);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error setting: " + className + ".md5checksum to: "
-                    + md5checksum + ". Does the attribute exist?");
+
+        if (TypeUtil.getSetter(c, "md5checksum") != null) { 
+            try {
+                imo.setFieldValue("md5checksum", md5checksum);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Error setting: " + className + ".md5checksum to: "
+                                                   + md5checksum + ". Does the attribute exist?");
+            }
         }
 
         extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
