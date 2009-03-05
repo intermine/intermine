@@ -3,7 +3,7 @@
 # translates data from ensembl database to intermine items XML file
 
 BEGIN {
-    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');    
+    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');    
 }
 
 use strict;
