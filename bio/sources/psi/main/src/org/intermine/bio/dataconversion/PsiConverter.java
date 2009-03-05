@@ -221,8 +221,8 @@ public class PsiConverter extends BioFileConverter
                 // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                if (taxonIds.contains(taxId) || ((taxonIds == null || taxonIds.isEmpty())
-                                && !taxId.equals("-1") && !taxId.equals("-2"))) {
+                if (((taxonIds == null || taxonIds.isEmpty())
+                                && !taxId.equals("-1") && !taxId.equals("-2")) || taxonIds.contains(taxId))  {
                     try {
                         gene = getGene(taxId);
                     } catch (ObjectStoreException e) {
