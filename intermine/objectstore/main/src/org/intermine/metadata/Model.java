@@ -114,6 +114,14 @@ public class Model
 
         // 1. Put all ClassDescriptors in model.
         for (ClassDescriptor cld : orderedClds) {
+            String cldName = cld.getName();
+            int lastDotPos = cldName.lastIndexOf(".");
+            String cldPackage = (lastDotPos == -1 ? "" : cldName.substring(0, lastDotPos));
+            if ((!"org.intermine.model.InterMineObject".equals(cldName))
+                    && (!packageName.equals(cldPackage))) {
+                throw new IllegalArgumentException("Class " + cldName + " is not in model package "
+                        + packageName);
+            }
             cldMap.put(cld.getName(), cld);
 
             // create maps of ClassDescriptor to empty sets for subclasses and implementors

@@ -164,7 +164,8 @@ public class ReferenceDescriptor extends FieldDescriptor
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<reference name=\"" + name + "\" referenced-type=\"" + referencedType + "\"")
+        sb.append("<reference name=\"" + name + "\" referenced-type=\""
+                + referencedType.substring(referencedType.lastIndexOf(".") + 1) + "\"")
             .append(reverseRefName != null ? " reverse-reference=\"" + reverseRefName + "\"" : "")
             .append("/>");
         return sb.toString();

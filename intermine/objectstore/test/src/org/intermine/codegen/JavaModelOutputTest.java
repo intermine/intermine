@@ -283,16 +283,16 @@ public class JavaModelOutputTest extends TestCase
         AttributeDescriptor atd1 = new AttributeDescriptor("atd1", "java.lang.String");
         assertEquals("java.lang.String", mo.getType(atd1));
 
-        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
-        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "Class2", null);
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
+        CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set refs = new HashSet(Collections.singleton(rfd1));
         Set cols = new HashSet(Collections.singleton(cod1));
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), refs, cols);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs, cols);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
         Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
 
-        assertEquals("Class2", mo.getType(rfd1));
-        assertEquals("java.util.Set<Class2>", mo.getType(cod1));
+        assertEquals("package.name.Class2", mo.getType(rfd1));
+        assertEquals("java.util.Set<package.name.Class2>", mo.getType(cod1));
     }
 
     public void testGenerateMultiInheritanceLegal() throws Exception {

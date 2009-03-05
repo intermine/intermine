@@ -714,11 +714,24 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public String toString() {
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
-        sb.append("<class name=\"" + className + "\"")
-            .append(superClassNames.size() > 0
-                    ? " extends=\"" + StringUtil.join(superClassNames, " ") + "\""
-                    : "")
-            .append(" is-interface=\"" + isInterface + "\">");
+        sb.append("<class name=\"" + className.substring(className.lastIndexOf(".") + 1) + "\"");
+        if (superClassNames.size() > 0) {
+            sb.append(" extends=\"");
+            boolean needComma = false;
+            for (String superClassName : superClassNames) {
+                if (needComma) {
+                    sb.append(" ");
+                }
+                needComma = true;
+                if ("java.lang.Object".equals(superClassName)) {
+                    sb.append(superClassName);
+                } else {
+                    sb.append(superClassName.substring(superClassName.lastIndexOf(".") + 1));
+                }
+            }
+            sb.append("\"");
+        }
+        sb.append(" is-interface=\"" + isInterface + "\">");
         Set<FieldDescriptor> l = new LinkedHashSet<FieldDescriptor>();
         l.addAll(getAttributeDescriptors());
         l.addAll(getReferenceDescriptors());
