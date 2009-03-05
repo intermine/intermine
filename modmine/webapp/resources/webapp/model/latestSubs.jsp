@@ -61,16 +61,6 @@ dateStyle="short"
 
 <table cellspacing="4"><tr>
 
-<%--
-		<td style="height: 80px; padding: 4px"><a
-			href="http://sam.modencode.org/modweb/">
-		<img src="http://sam.modencode.org/modweb/images/ark/d_s.png" class="aspectIcon"
-			title="Click here to view the  Data Category" width="40px"
-			height="40px" /> </a></td>
-
-<im:querylink text="Fly" showArrow="true" showImage="fly" skipBuilder="true">
-
---%>
 <td>		
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
@@ -87,12 +77,9 @@ dateStyle="short"
   </node>
   </query>
 </im:querylink>
-		
-		
-				
 		</td>
-<td>
 
+<td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
     view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
@@ -109,6 +96,7 @@ dateStyle="short"
   </query>
 </im:querylink>
 </td>
+
 <td>
 <!-- 
 <im:querylink text="   All submissions" showArrow="true" skipBuilder="true">

@@ -49,7 +49,7 @@
  ${item.key.name}
     </html:link>
 
-
+<%--
 
 <br>
       <c:forEach items="${counts}" var="nr">
@@ -79,6 +79,8 @@
         </c:when>
       </c:choose>
 
+--%>
+
 </td>
 
 
@@ -103,6 +105,33 @@
       </tr>
 </c:forEach>
 </table>
+
+
+
+
+<br>
+      <c:forEach items="${counts}" var="nr">
+        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
+          <c:set var="nrSubs" value="${nr.value}" />
+        </c:if>
+      </c:forEach> 
+        <hr>
+        <im:querylink text="All ${nrSubs} submissions" showArrow="true" skipBuilder="true">
+            <query name="" model="genomic"
+              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
+              sortOrder="Project.labs.submissions.title">
+            <node path="Project" type="Project">
+            </node>
+            <node path="Project.surnamePI" type="String">
+            <constraint op="=" value="${item.key.surnamePI}" description=""
+              identifier="" code="A">
+            </constraint>
+            </node>
+            </query>
+          </im:querylink>
+
+
+
 </c:otherwise>
 </c:choose>
  </td>
