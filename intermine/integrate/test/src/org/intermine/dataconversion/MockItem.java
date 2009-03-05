@@ -206,10 +206,10 @@ public class MockItem {
     public String getMockReferences() {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "\t<reference name=\"" + entry.getKey() + "\">" + ENDL;
+            xml += "\t<reference name=\"" + entry.getKey() + "\">";
             MockItem item = entry.getValue();
             xml += item.referencedItemXML();
-            xml += "\t</reference>" + ENDL;
+            xml += "</reference>" + ENDL;
         }
         return xml;
     }
@@ -228,7 +228,7 @@ public class MockItem {
             for (MockItem item : c) {
                 xml += item.referencedItemXML();
             }
-            xml += "\t</collection>" + ENDL;
+            xml += "</collection>" + ENDL;
         }
         return xml;
     }
@@ -253,7 +253,7 @@ public class MockItem {
     public String getPrettyReferences() {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"\\>"
+            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"/>"
                 + ENDL;
         }
         return xml;
@@ -269,10 +269,10 @@ public class MockItem {
         Arrays.sort(key);
         for (int i = 0; i < key.length; i++) {
             List<MockItem> c = collections.get(key[i]);
-            xml += "<collection name=\"" + key[i] + "\">" + ENDL;
+            xml += "\t<collection name=\"" + key[i] + "\">";
             for (MockItem item : c) {
-                xml += "\t<reference name=\"" + item.getMockClassName() + "\" ref_id=\""
-                + item.getIdentifier() + "\">" + ENDL;
+                xml += "\t\t<reference name=\"" + item.getMockClassName() + "\" ref_id=\""
+                + item.getIdentifier() + "\"/>";
             }
             xml += "</collection>" + ENDL;
         }
