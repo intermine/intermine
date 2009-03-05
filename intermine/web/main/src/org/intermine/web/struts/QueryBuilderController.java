@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -95,6 +96,9 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("loopPaths", listToMap(findLoopConstraints(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
 
+        
+        Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
+        
         // sort order
         Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         // create a map of fields to direction
@@ -104,9 +108,6 @@ public class QueryBuilderController extends TilesAction
                 sortOrderMap.put(path.toStringNoConstraints(), sortOrder.get(path));
             }
         }
-
-        Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
-
         // select list
         Map<String, String> viewStrings = new LinkedHashMap<String, String>();
         for (Path viewPath: pathView) {
@@ -115,16 +116,17 @@ public class QueryBuilderController extends TilesAction
             // outer joins not allowed
             if (!query.isValidOrderPath(viewPathString)) {
                 sortState = "disabled";
-            //if already sorted get the direction
-            } else if (sortOrderMap.containsKey(viewPathString)) {
-                sortState = sortOrderMap.get(viewPathString);
-            //default
-            } else if (sortOrderMap.size() <= 0 && viewStrings.size() <= 0) {
-                sortState = "asc";
-            }
-            else {
-                sortState = "none";
-            }
+                // if already sorted get the direction
+            } else
+                if (sortOrderMap.containsKey(viewPathString)) {
+                    sortState = sortOrderMap.get(viewPathString);
+                    // default
+                } else
+                    if (sortOrderMap.size() <= 0 && viewStrings.size() <= 0) {
+                        sortState = "asc";
+                    } else {
+                        sortState = "none";
+                    }
             viewStrings.put(viewPathString, sortState);
         }
         request.setAttribute("viewStrings", viewStrings);
@@ -295,7 +297,7 @@ public class QueryBuilderController extends TilesAction
             Path path = iter.next();
             String pathString = path.toStringNoConstraints();
             if (path.endIsAttribute()) {
-                linkPaths.put(pathString, pathString.substring(0, pathString.lastIndexOf(".")));
+                linkPaths.put(pathString, path.getPrefix().toStringNoConstraints());
             } else {
                 linkPaths.put(pathString, pathString);
             }

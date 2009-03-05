@@ -13,13 +13,6 @@
 <a name="showing"></a>
 
 <script type="text/javascript" src="js/view.js"></script>
-<script type="text/javascript">
-  jQuery(document).ready(function () {
-   	AjaxServices.getSortOrderMap(function(sortMap) {
-   		reDrawSorters(sortMap);
-   	});
-  });
-</script>
 
 <div class="heading viewTitle">
   <fmt:message key="view.notEmpty.description"/>

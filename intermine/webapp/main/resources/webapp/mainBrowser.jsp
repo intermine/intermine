@@ -9,8 +9,6 @@
 <!-- mainBrowser.jsp -->
 
 <html:xhtml/>
-<script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 <script type="text/javascript">
   <!--
   function toggleNode(id, path) {

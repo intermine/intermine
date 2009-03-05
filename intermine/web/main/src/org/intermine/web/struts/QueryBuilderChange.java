@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -393,7 +394,7 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
 
         // This call will work out the default join style between prefix and path
-        path = MainHelper.toPathDefaultJoinStyle(os.getModel(), prefix, path);
+        path = query.toPathDefaultJoinStyle(prefix, path);
         // Now correct the join style deferring to any existing information in the query
         path = query.getCorrectJoinStyle(path);
 
@@ -547,7 +548,7 @@ public class QueryBuilderChange extends DispatchAction
         //   join type
         
         // This call will work out the default join style between prefix and path
-        String fullPathName = MainHelper.toPathDefaultJoinStyle(model, prefix, pathName);
+        String fullPathName = query.toPathDefaultJoinStyle(prefix, pathName);
         
         // Now correct the join style deferring to any existing information in the query
         fullPathName = query.getCorrectJoinStyle(fullPathName);
@@ -558,10 +559,10 @@ public class QueryBuilderChange extends DispatchAction
             || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
             for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
-                Path pathToAdd = new Path(model, path.toString() + "." + fc.getFieldExpr());
-                if (pathToAdd.getEndClassDescriptor() == null
-                                && !view.contains(pathToAdd)
-                                && (fc.getDisplayer() == null && fc.getShowInSummary())) {
+                Path pathToAdd = new Path(model, query
+                .toPathDefaultJoinStyle(path.toString() + "." + fc.getFieldExpr()));
+                if (pathToAdd.getEndClassDescriptor() == null && !view.contains(pathToAdd)
+                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addViewPaths(Collections.singletonList(pathToAdd));
                 }
             }

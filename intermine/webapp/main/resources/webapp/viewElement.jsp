@@ -76,8 +76,8 @@
     <%-- sort button --%>
     <c:set var="btnName" value="${fn:replace(pathString,':','_')}"/>
     <img id="btn_${fn:replace(btnName,'.','_')}" onclick="javascript:updateSortOrder('${pathString}');"
-         width="17" height="16" title="Sort by this column" src="images/sort_disabled.png"
-         title="Click to sort results by this field"/>
+         width="17" height="16" title="Sort by this column" src="images/sort_${viewStrings[pathString]}.png"
+         title="Click to sort results by this field" class="sortbutton"/>
 
     <c:if test="${!iePre7}">
       <c:out value="<noscript>" escapeXml="false"/>

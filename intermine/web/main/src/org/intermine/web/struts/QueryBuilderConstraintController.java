@@ -119,10 +119,8 @@ public class QueryBuilderConstraintController extends TilesAction
             // of object/reference/collection
             String nodeType;
             boolean useBags;
-            if (node.isAttribute() && (node.getPathString().indexOf('.')) >= 0) {
-                nodeType = (query.getNodes().get(
-                        node.getPathString().substring(0,
-                        node.getPathString().lastIndexOf(".")))).getType();
+            if (node.isAttribute() && (node.getParent() != null)) {
+                nodeType = (query.getNodes().get(node.getPrefix())).getType();
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
                 //fetch AutoCompleter from servletContext
@@ -137,7 +135,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 request.setAttribute("fieldDescriptor", node.getFieldName());
 
             } else {
-                if ((node.getPathString().indexOf('.')) >= 0) {
+                if (node.getParent() != null) {
                     nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
                                 node.getPathString(), query));
                 } else {
