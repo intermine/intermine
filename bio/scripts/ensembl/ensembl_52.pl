@@ -28,7 +28,6 @@ my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
 
 my $start_time = time();
 
-my $release;
 my $model_file = "../../../$mine_name/dbmodel/build/main/genomic_model.xml";
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
@@ -45,9 +44,6 @@ my $config_file = '../../sources/ensembl/resources/ensembl_config.properties';
 parse_config(read_file($config_file));
 
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
-if ($release) {
-  $properties_file .= ".$release";
-}
 
 foreach my $taxon_id(keys %organisms) {
     
