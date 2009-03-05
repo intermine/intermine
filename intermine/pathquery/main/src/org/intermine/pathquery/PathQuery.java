@@ -25,7 +25,10 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.util.CollectionUtil;
@@ -342,6 +345,71 @@ public class PathQuery
         }
     }
 
+    /**
+     * Convert a path and prefix to a path.
+     * @param prefix the prefix (eg null or Department.company)
+     * @param path the path (eg Company, Company.departments)
+     *
+     * @return the new path
+     */
+    public String toPathDefaultJoinStyle(String prefix, String path) {
+        if (prefix != null) {
+            if (path.indexOf(".") == -1) {
+                path = prefix;
+            } else {
+                path = prefix + "." + path.substring(path.indexOf(".") + 1);
+            }
+        }
+        return toPathDefaultJoinStyle(path);
+    }
+
+    /**
+     * Given a path through the model set each join to outer/normal according to the defaults:
+     *  - collections and references are outer joins
+     * e.g. Company.departments.name -> Company:departments.name
+     * @param path the path to resolve
+     * @return the new path
+     */
+    public String toPathDefaultJoinStyle(String path) {
+        
+        // this will validate the path so we don't have to here
+        Path dummyPath = new Path(model, path);
+                
+        String parts[] = path.split("[.:]");
+
+        StringBuffer currentPath = new StringBuffer();
+        currentPath.append(parts[0]);
+        String clsName = model.getPackageName() + "." + parts[0];
+
+
+        for (int i = 1; i < parts.length; i++) {
+            String thisPart = parts[i];
+
+            ClassDescriptor cld = model.getClassDescriptorByName(clsName);
+
+            FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
+            if (fld.isCollection()
+                || fld.isReference()
+                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null || ((getNode(
+                                dummyPath.getPrefix().toStringNoConstraints()).getConstraints() == null) || (getNode(
+                                dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+                                .size() <= 0)))) {
+                currentPath.append(":");
+            } else {
+                currentPath.append(".");
+            }
+            
+            currentPath.append(thisPart);
+            // if an attribute this will be the end of the path, otherwise get the class of this
+            // path element
+            if (!fld.isAttribute()) {
+                ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
+                clsName = rfd.getReferencedClassName();
+            }
+        }
+        return currentPath.toString();
+    }
+    
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class

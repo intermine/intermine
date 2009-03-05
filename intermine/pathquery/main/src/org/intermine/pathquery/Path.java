@@ -420,7 +420,7 @@ public class Path
         
         return elements.get(elements.size() - 1);
     }
-
+    
 
     /**
      * {@inheritDoc}
