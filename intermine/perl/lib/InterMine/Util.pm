@@ -117,4 +117,13 @@ sub get_java_type_name
   return $name;
 }
 
+# remove whitespace from the start and end of the string
+sub trim($)
+{
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	return $string;
+}
+
 1;
