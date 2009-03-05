@@ -74,7 +74,7 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
             separator = Exporter.UNIX_SEPARATOR;
         }
         List<String> headers = null;
-        if (form.getIncludeHeaders()) {
+        if (form != null && form.getIncludeHeaders()) {
             headers = getHeaders(pt);
         }
         Exporter exporter = getExporter(out, separator, headers);
