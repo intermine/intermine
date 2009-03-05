@@ -65,7 +65,7 @@ public class MainHelperTest extends TestCase {
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryRunner bagQueryRunner;
-    
+
     public MainHelperTest(String arg) {
         super(arg);
     }
@@ -80,17 +80,6 @@ public class MainHelperTest extends TestCase {
         bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, Collections.EMPTY_LIST);
     }
 
-    // Method converts path to default join styles: outer joins for collections, normal join otherwise
-    public void testDefaultJoinStyles() {
-        Model model = TestUtil.getModel();
-        assertEquals("Company:departments", MainHelper.toPathDefaultJoinStyle(model, "Company.departments"));
-        assertEquals("Company:departments.manager", MainHelper.toPathDefaultJoinStyle(model, "Company.departments.manager"));
-        assertEquals("Company:departments.manager", MainHelper.toPathDefaultJoinStyle(model, "Company.departments:manager"));
-        
-        assertEquals("CEO.company:departments:employees.name", MainHelper.toPathDefaultJoinStyle(model, "CEO.company:departments:employees.name"));
-        assertEquals("Company.name", MainHelper.toPathDefaultJoinStyle(model, "Company.name"));
-    }
-    
     // Method gets the last index of a '.' or a ':'
     public void testGetLastJoinIndex() {
         assertEquals(3, MainHelper.getLastJoinIndex("CEO.company"));
@@ -99,7 +88,7 @@ public class MainHelperTest extends TestCase {
         assertEquals(11, MainHelper.getLastJoinIndex("CEO:company.department"));
         assertEquals(-1, MainHelper.getLastJoinIndex("CEO"));
     }
-    
+
     // Method gets the first index of a '.' or a ':'
     public void testGetFirstJoinIndex() {
         assertEquals(3, MainHelper.getFirstJoinIndex("CEO.company"));
@@ -108,15 +97,15 @@ public class MainHelperTest extends TestCase {
         assertEquals(3, MainHelper.getFirstJoinIndex("CEO:company.department"));
         assertEquals(-1, MainHelper.getFirstJoinIndex("CEO"));
     }
-    
+
     public void testContainsPath() {
         assertTrue(MainHelper.containsJoin("Company.department"));
         assertTrue(MainHelper.containsJoin("Company:department"));
         assertTrue(MainHelper.containsJoin("Company:department.name"));
-        assertFalse(MainHelper.containsJoin("Company"));        
+        assertFalse(MainHelper.containsJoin("Company"));
     }
-    
-    
+
+
     public void testGetTypeForPath() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery query = new PathQuery(model);
@@ -236,7 +225,7 @@ public class MainHelperTest extends TestCase {
         q.addToSelect(qc1);
         q.addFrom(qc1);
         q.addToOrderBy(new QueryField(qc1, "name"));
-        
+
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false).toString());
     }
 
@@ -423,7 +412,7 @@ public class MainHelperTest extends TestCase {
         assertEquals(expNEQConstraint, resNEQConstraint);
     }
 
- 
+
     // test that loop constraint queries are generated correctly
     public void testLoopConstraint() throws Exception {
         Map queries = readQueries();
@@ -433,14 +422,14 @@ public class MainHelperTest extends TestCase {
         String iql = "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a2_.company CONTAINS a1_) ORDER BY a1_.name";
         assertEquals("Expected: " + iql + ", got: " + got, iql, got);
     }
- 
-    
+
+
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
         Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is));
         return ret;
     }
-    
+
     public void test1() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee\"></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_",
@@ -649,7 +638,7 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a3_.name AS a4_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_, org.intermine.model.testmodel.Employee AS a3_ WHERE (a1_.departments CONTAINS a2_ AND a2_.employees CONTAINS a3_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC");
     }
 
-    
+
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
         try {
             Map parsed = PathQueryBinding.unmarshal(new StringReader(web));
