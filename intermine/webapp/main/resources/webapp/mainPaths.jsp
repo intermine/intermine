@@ -69,22 +69,6 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               </c:forEach>
             </c:if>
-            <c:set var="isClickable" value="false"/>
-            <c:forEach items="${clickableNodes}" var="clickable">
-              <c:if test="${node.pathString == clickable}">
-                 <c:set var="isClickable" value="true"/>
-              </c:if>
-            </c:forEach>
-            <c:if test="${isClickable == 'true' && !loopPaths[node]}">
-              <c:choose>
-                <c:when test="${node.isOuterJoin}">
-                 <img src="images/join_hollow.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
-                </c:when>
-                <c:otherwise>
-                 <img src="images/join_full.png" id="join_arrow_${node.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
-                </c:otherwise>
-              </c:choose>
-            </c:if>
             <im:viewableSpan path="${node.pathString}" viewPaths="${viewPaths}" test="${!empty node.fieldName}" idPrefix="query">
               <span class="attributeField"><c:out value="${node.fieldName}"/></span>
             </im:viewableSpan>
@@ -140,6 +124,14 @@
                 </html:link>
               </c:otherwise>
              </c:choose>
+             <c:choose>
+              <c:when test="${node.isOuterJoin && !node.attribute && !empty node.parent}">
+                [outter]&nbsp;
+              </c:when>
+              <c:when test="${!node.isOuterJoin && !node.attribute && !empty node.parent}">
+                [inner]&nbsp;
+              </c:when>
+            </c:choose>
             </c:if>
             <c:if test="${lockedPaths[node.pathString]}">
               <img border="0" src="images/discross.gif" width="13" height="13"

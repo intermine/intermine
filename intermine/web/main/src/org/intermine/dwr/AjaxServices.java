@@ -1104,35 +1104,6 @@ public class AjaxServices
     }
     
     /**
-     * Get the map of sort orders
-     * @return a map from Path String to sort direction
-     */
-    public Map<String, String> getSortOrderMap() {
-        HttpSession session = WebContextFactory.get().getSession();
-        List<Path> pathView = SessionMethods.getEditingView(session);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        // create a map of fields to direction
-        Map<String, String> sortOrderMap = new HashMap<String, String>();
-        Map<Path, String> currentSortOrder = query.getSortOrder();
-        for (Path viewPath: pathView) {
-            String viewPathString = viewPath.toStringNoConstraints();
-            String sortState = new String();
-            // outer joins not allowed
-            if (!query.isValidOrderPath(viewPathString)) {
-                sortState = "disabled";
-            // if already sorted get the direction
-            } else if (currentSortOrder.containsKey(viewPath)) {
-                sortState = currentSortOrder.get(viewPath);
-            // default
-            } else {
-                sortState = "none";
-            }
-            sortOrderMap.put(viewPathString, sortState);
-        }
-        return sortOrderMap;
-    }
-    
-    /**
      * Reset the sort order
      */
     public void clearSortOrder() {
@@ -1141,30 +1112,6 @@ public class AjaxServices
         query.resetOrderBy();
     }
     
-    /**
-     * Swap between inner/outer join modes
-     * @param pathName the path for which to change the join type
-     * @return a String representing the updated path
-     * @throws Exception an exception
-     */
-    public String setOuterJoin(String pathName)
-    throws Exception {
-        HttpSession session = WebContextFactory.get().getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-
-        query = query.clone();
-
-        // this should remove any invalid order by elements
-        String newPathString = query.flipJoinStyle(pathName);
-        
-        // this call sets a default order (if possible) if the order by is now empty
-        PathQueryHelper.setDefaultSortOrder(query);
-        
-        session.setAttribute(Constants.QUERY, query);
-
-        return newPathString;
-    }
-
     /**
      * Get the news
      * @param rssURI the URI of the rss feed

@@ -22,40 +22,31 @@ function reorderOnServer() {
     recordCurrentOrder();
 }
 
-
 // called from viewElement.jsp
 function updateSortOrder(pathString) {
 	 if(jQuery('#btn_' + pathString.replace(/[\.:]/g,'_')).attr('src').match('none')) {
         AjaxServices.addToSortOrder(pathString, 'asc', function() {
-        	AjaxServices.getSortOrderMap(function(sortMap) {
-        		reDrawSorters(sortMap);
-        	})
+       		reDrawSorter(pathString,'asc');
         });
 	 } else if(jQuery('#btn_' + pathString.replace(/[\.:]/g,'_')).attr('src').match('asc')) {
         AjaxServices.addToSortOrder(pathString, 'desc', function() {
-        	AjaxServices.getSortOrderMap(function(sortMap) {
-        		reDrawSorters(sortMap);
-        	})
+       		reDrawSorter(pathString,'desc');
         });
 	 } else if(jQuery('#btn_' + pathString.replace(/[\.:]/g,'_')).attr('src').match('desc')) {
 	    AjaxServices.addToSortOrder(pathString, 'asc', function() {
-	    	AjaxServices.getSortOrderMap(function(sortMap) {
-	    		reDrawSorters(sortMap);
-	    	})
+    		reDrawSorter(pathString,'asc');
 	    });	
 	 } else {
 	 	return;
 	 }
 }
 
-function reDrawSorters(sortMap) {
-	for(name in sortMap) {
-		jQuery('#btn_' + name.replace(/[\.:]/g,'_')).attr('src','images/sort_'+sortMap[name]+'.png');
-		
-		if (sortMap[name] == 'disabled') {
-			jQuery('#btn_' + name.replace(/[\.:]/g,'_')).unbind('click').click(function() {new Boxy("<p>Sorting is disabled on outer join columns.</p>", {title: "Sorting disabled", draggable: false}); });
-		} else {
-			jQuery('#btn_' + name.replace(/[\.:]/g,'_')).unbind('click').click(function() { updateSortOrder(name); });
-		}
-	}
+function reDrawSorter(name,order) {
+	jQuery('.sortbutton').each(function(index) {
+        if(this.id == 'btn_' + name.replace(/[\.:]/g,'_')) {
+        	jQuery(this).attr('src','images/sort_'+order+'.png');
+        } else if(this.id.indexOf("disabled")<0){
+            jQuery(this).attr('src','images/sort_none.png');
+        }
+    });
 }

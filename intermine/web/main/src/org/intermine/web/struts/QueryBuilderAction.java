@@ -25,6 +25,7 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -68,6 +69,16 @@ public class QueryBuilderAction extends InterMineAction
         //boolean editable = false;
         String editingConstraintEditable = request.getParameter("editingConstraintEditable");
         boolean editable = Boolean.parseBoolean(editingConstraintEditable);
+        
+        String joinType = mf.getJoinType();
+        
+        // this should remove any invalid order by elements
+        if (joinType != null && joinType.length() != 0) {
+            if ((node.isOuterJoin()) && (!joinType.equals("outter"))
+                || ((!node.isOuterJoin()) && (!joinType.equals("inner")))) {
+                query.flipJoinStyle(node.getPathString());
+            }
+        }
 
         if (cindex != null) {
             // We're updating an existing constraint, just remove the old one
@@ -118,9 +129,9 @@ public class QueryBuilderAction extends InterMineAction
             if (node.isAttribute()) {
                 referenceNode = node.getParent();
             }
-            if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
-                query.flipJoinStyle(referenceNode.getPathString());
-            }
+            // if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
+            // query.flipJoinStyle(referenceNode.getPathString());
+            // }
         } else if (request.getParameter("bag") != null) {
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf.getBagOp()));
             Object constraintValue = mf.getBagValue();

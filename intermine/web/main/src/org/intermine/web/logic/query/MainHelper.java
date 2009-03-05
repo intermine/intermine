@@ -1209,69 +1209,6 @@ public class MainHelper
     }
 
     /**
-     * Convert a path and prefix to a path.
-     *
-     * @param model the model this path conforms to
-     * @param prefix the prefix (eg null or Department.company)
-     * @param path the path (eg Company, Company.departments)
-     * @return the new path
-     */
-    public static String toPathDefaultJoinStyle(Model model, String prefix, String path) {
-        if (prefix != null) {
-            if (path.indexOf(".") == -1) {
-                path = prefix;
-            } else {
-                path = prefix + "." + path.substring(path.indexOf(".") + 1);
-            }
-        }
-        return toPathDefaultJoinStyle(model, path);
-    }
-
-    /**
-     * Given a path through the model set each join to outer/normal according to the defaults:
-     *  - collections are outer joins
-     *  - references are normal joins
-     * e.g. Company.departments.name -> Company:departments.name
-     * @param model the model this path conforms to
-     * @param path the path to resolve
-     * @return the new path
-     */
-    public static String toPathDefaultJoinStyle(Model model, String path) {
-        
-        // this will validate the path so we don't have to here
-        Path dummyPath = new Path(model, path);
-        
-        String parts[] = path.split("[.:]");
-
-        StringBuffer currentPath = new StringBuffer();
-        currentPath.append(parts[0]);
-        String clsName = model.getPackageName() + "." + parts[0];
-
-
-        for (int i = 1; i < parts.length; i++) {
-            String thisPart = parts[i];
-
-            ClassDescriptor cld = model.getClassDescriptorByName(clsName);
-
-            FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
-            if (fld.isCollection()) {
-                currentPath.append(":");
-            } else {
-                currentPath.append(".");
-            }
-            
-            currentPath.append(thisPart);
-            // if an attribute this will be the end of the path, otherwise get the class of this
-            // path element
-            if (!fld.isAttribute()) {
-                ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
-                clsName = rfd.getReferencedClassName();
-            }
-        }
-        return currentPath.toString();
-    }
-
-    /**
      * Return the indexOf the last join in a path denoted by '.' or ':', return -1 if neither
      * join type exists in the path
      * @param path the path string to operate on

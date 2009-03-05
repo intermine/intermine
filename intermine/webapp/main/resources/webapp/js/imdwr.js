@@ -738,7 +738,7 @@ function validateBagName(formName) {
    });
 }
 
-function switchJoin(element) {
+/*function switchJoin(element) {
    var pathName = element.id.replace('join_arrow_','');
    var elementid = element.id;
    AjaxServices.setOuterJoin(pathName,function(newPathName){
@@ -755,7 +755,7 @@ function switchJoin(element) {
    } else {
    	 jQuery(element).attr('src','images/join_hollow.png');
    }
-}
+}*/
 
 function setConstraintLogic(expression) {
   AjaxServices.setConstraintLogic(expression, function() {
