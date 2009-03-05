@@ -62,6 +62,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
+    private Map<String, String> genes = new HashMap();
 
     /**
      * Constructor
@@ -103,7 +104,6 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, String> genes = new HashMap();
         private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
         private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
         private InteractionHolder holder;
