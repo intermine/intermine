@@ -28,7 +28,7 @@
 			stylename="plainbox">
 			<tiles:insert name="latestSubs.tile" />
 		</im:boxarea> 
-<%--
+
     <im:boxarea title="Query Builder"
       titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
       stylename="gradientbox">
@@ -55,7 +55,7 @@
       <br clear="right" />
     </im:boxarea>
     </div>
---%>
+
 		</td>
 
 
