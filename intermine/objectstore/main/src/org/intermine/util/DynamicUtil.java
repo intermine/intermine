@@ -115,6 +115,7 @@ public class DynamicUtil
      * use createObject(Set classes).
      *
      * @param clazz the class of the object to instantiate
+     * @param <C> The type of the object that is expected
      * @return the object
      * @throws IllegalArgumentException if an error occurs
      */
