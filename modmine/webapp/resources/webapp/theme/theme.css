@@ -19,15 +19,16 @@ a {
 }   
 
 #rightcolumn {
-    margin-left:335px;
+#    margin-left:335px;
+    margin-left:5px;
 }
 
 .plainbox {
-	padding:10px; border:1px solid #000;
+	padding:2px; border:1px solid #000;
 	background:#F0F0F0;}
 
 .gradientbox {
-	padding:10px; 
+	padding:2px; 
 	border:1px solid #000;background: url('gray_grad.png') repeat-x;}
 
 ul#nav a{
@@ -190,6 +191,7 @@ table.internal td {
     /*background-color: #F18620; #F5F0FF  */
     padding:5px;}
     
-#rightcolumn {
-	margin-left:333px;
-	}    
+/* disclosure style is default style of <disclosure> element*/
+.body, .disclosure {
+  margin:5px 6px 5x 6px;
+  font-size: 12px; color: #333;}
