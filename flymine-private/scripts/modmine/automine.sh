@@ -468,7 +468,7 @@ then
 else
 # new build, all the sources
 # get the most up to date sources ..
-../bio/scripts/get_all_modmine.sh
+../bio/scripts/get_all_modmine.sh\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 # .. and build modmine
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
