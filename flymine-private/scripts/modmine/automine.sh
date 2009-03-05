@@ -31,6 +31,7 @@ REPORTPATH=file:///shared/data/modmine/subs/reports/
 
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
 SOURCES=modmine-static,modencode-metadata
+#SOURCES=modencode-metadata
 
 # TODO add check that modmine in path
 MINEDIR=$PWD
@@ -156,10 +157,6 @@ DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | aw
 CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 MINEDB=`grep -a db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
-
-
-
-#USER=`whoami`
 LOADLOG="$DATADIR/$USER.$REL-ld.log"
 
 echo
@@ -211,15 +208,21 @@ touch $LOADLOG
 
 if [ $WGET = "y" ]
 then
-#	if [ $INFILE = "undefined" ]
-#	then
 		echo
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
+
+# TODO: at the moment timestamp is not working, see mail to eo.
+# http server needs to return last modified time to the wget HEAD request, and this is not happening.
+
 		#wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
 #		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
-		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citations*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+#		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citation*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+
+		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -X download,citation,*stanzas* -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+
+#		wget -r -nd -N -P$WGETDIR $FTPURL -I extracted -X download,citation,*stanzas* -A chadoxml -k --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
 		#r recursive
 		#nd the directories structure is NOT recreated locally
@@ -347,7 +350,7 @@ echo "`date "+%y%m%d.%H%M"` $sub" >> $LOADLOG
 
 DCCID=`echo $sub | cut -f 1 -d.`
 
-echo $DCCID
+#echo $DCCID
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
@@ -464,6 +467,10 @@ then
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 else
 # new build, all the sources
+# get the most up to date sources ..
+../bio/scripts/get_all_modmine.sh
+|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+# .. and build modmine
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
