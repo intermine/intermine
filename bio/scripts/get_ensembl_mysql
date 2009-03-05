@@ -13,12 +13,14 @@ use InterMine::DataDownloader;
 
 
 #Define ARGVs
-my ($data_dir,$organisms);
-if(@ARGV!=2){
-    die "Wrong number of arguments.\nPlease supply the organism name and the download directory\n eg /data/ensembl mus_musculus \nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus ";
+my ($data_dir,$organisms,$database_name);
+if(@ARGV!=3){
+    die "Wrong number of arguments:  ORGANISM_NAME DATA_DIRECTORY WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
 }else{
-    $organisms = $ARGV[1];
+
     $data_dir = $ARGV[0];
+    $organisms = $ARGV[1];
+    $database_name = $ARGV[2];
 }
 
 # ensembl ftp site
@@ -50,7 +52,7 @@ my @organism_names = split(/,/, $organisms);
 for my $organism_name (@organism_names) {
         
     # TODO download variation db too
-    my $species_prefix = $organism_name . "_core_";
+    my $species_prefix = $organism_name . "_" . $database_name . "_";
 
     my $species_dir = "";
 
