@@ -127,4 +127,17 @@ public class PathNode extends Node
         return 2 * super.hashCode()
             + 3 * constraints.hashCode();
     }
+    
+    /**
+     * Return the name of the last reference / collection before the attribute. Used to display
+     * the sentence about outter/inner joins in the query builder.
+     * @return the last reference name
+     */
+    public String getLastReferenceName() {
+        if(isAttribute()) {
+            return getParent().getFriendlyName();
+        } else {
+            return getFriendlyName();
+        }
+    }
 }
