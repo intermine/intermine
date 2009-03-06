@@ -76,7 +76,7 @@
       <property name="src.data.dir" location="/shared/data/psi/intact/2009-02-24"/>
     </source>
 
-    <source name="biogrid" type="biogrid">
+    <source name="biogrid" type="biogrid" dump="true">
       <property name="src.data.dir" location="/shared/data/biogrid/2009-02-25"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>

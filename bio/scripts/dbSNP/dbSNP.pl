@@ -28,6 +28,12 @@ if (@ARGV != 3) {
 
 my ($mine_name, $taxon_id, $data_destination) = @ARGV;
 
+# FIXME
+#my $config_file = '../../sources/ensembl/resources/ensembl_config.properties';
+#parse_config(read_file($config_file));
+
+my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
+
 my $host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
 my $dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
 my $user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
@@ -43,8 +49,7 @@ my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
      -pass => $pass);
 
 $host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
-$dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file)\
-    ;
+$dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
 $user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
 $pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
 
@@ -160,28 +165,42 @@ for (my $i=1; $i<=24; $i++) {
     my $output = new IO::File(">$outfile");
     my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
     $writer->startTag('items');
-    for my $item (@items_to_write) {
+    for my $item (@items) {
         $item->as_xml($writer);
     }
     $writer->endTag('items');
     $writer->end();
     $output->close();
-    
-    sub make_item{
-        my $implements = shift;
-        my $item = $item_factory->make_item(implements => $implements);
-        push @items_to_write, $item;
-        return $item;
-    }
-    
-    sub make_item_chromosome{
-        my %opts = @_;
-        my $item = $item_factory->make_item(implements => 'Chromosome');
-        $item->setPref(refId => $opts{id});
-        push @items_to_write, $item;
-        return $item;
-    }
-
 }
+sub make_item{
+    my $implements = shift;
+    my $item = $item_factory->make_item(implements => $implements);
+    push @items, $item;
+    return $item;
+}
+
+sub make_item_chromosome{
+    my %opts = @_;
+    my $item = $item_factory->make_item(implements => 'Chromosome');
+    $item->setPref(refId => $opts{id});
+    push @items, $item;
+    return $item;
+}
+
+# read in the config file
+sub read_file {
+    my($filename) = shift;
+    my @lines = ();
+    open(FILE, "< $filename") or die "Can't open $filename : $!";
+    while(<FILE>) {
+        s/#.*//;            # ignore comments by erasing them
+        next if /^(\s)*$/;  # skip blank lines
+        chomp;              # remove trailing newline characters
+        push @lines, $_;    # push the data line onto the array
+    }
+    close FILE;
+    return @lines;  
+}
+
 
 exit 0;
