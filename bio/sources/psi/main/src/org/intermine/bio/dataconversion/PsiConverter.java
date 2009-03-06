@@ -562,7 +562,9 @@ public class PsiConverter extends BioFileConverter
             String start = ih.start;
             String end = ih.end;
 
-            if (start != null && end != null && (!start.equals("0") || !end.equals("0"))) {
+            if (start != null && end != null && (!start.equals("0") || !end.equals("0"))
+                            && !start.equals(end)) {
+
                 /*
                  * Per kmr's instructions, or else the bioseg postprocess will fail.
                  *  -- Start needs to be 1 if it is zero
