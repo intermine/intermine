@@ -527,12 +527,10 @@ public class PsiConverter extends BioFileConverter
                     }
                     region.setAttribute("primaryIdentifier", regionIdentifier);
 
-                    String start = interactorHolder.start;
-                    String end = interactorHolder.end;
-                    if (start != null && end != null && (!start.equals("0") || !end.equals("0"))) {
+                    if (locationValid(interactorHolder)) {
                         Item location = createItem("Location");
-                        location.setAttribute("start", start);
-                        location.setAttribute("end", end);
+                        location.setAttribute("start", interactorHolder.start);
+                        location.setAttribute("end", interactorHolder.end);
                         location.setReference("object", interactorHolder.geneRefId);
                         location.setReference("subject", region.getIdentifier());
                         region.setReference("location", location);
@@ -555,6 +553,50 @@ public class PsiConverter extends BioFileConverter
                     throw new RuntimeException("Couldn't store experiment: ", e);
                 }
             }
+        }
+
+        private boolean locationValid(InteractorHolder ih) {
+
+            boolean isValid = false;
+
+            String start = ih.start;
+            String end = ih.end;
+
+            if (start != null && end != null && (!start.equals("0") || !end.equals("0"))) {
+                /*
+                 * Per kmr's instructions, or else the bioseg postprocess will fail.
+                 *  -- Start needs to be 1 if it is zero
+                 *  -- start/end should be switched if start > end.
+                */
+
+                int c;
+                try {
+                    Integer a = new Integer(start);
+                    Integer b = new Integer(end);
+                    c = a.compareTo(b);
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+
+                if (c == 0) {
+                    return false;
+                } else if (c > 0) {
+                    String tmp = start;
+                    start = end;
+                    end = tmp;
+                }
+
+                if (start.equals("0")) {
+                    start = "1";
+                }
+
+                ih.start = start;
+                ih.end = end;
+                isValid = true;
+            } else {
+                isValid = false;
+            }
+            return isValid;
         }
 
         private String buildName(List<String> primaryIdentifiers, String identifier) {
