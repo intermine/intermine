@@ -1,33 +1,34 @@
 <project type="bio">
   <property name="target.model" value="genomic"/>
-  <property name="common.os.prefix" value="common"/>
-  <property name="intermine.properties.file" value="snpmine.properties"/>
-  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
-
-   <sources>
-
+    <property name="common.os.prefix" value="common"/>
+    <property name="intermine.properties.file" value="snpmine.properties"/>
+    <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+   <property name="source.location" location="../bio/sources/"/>
+  <sources>
     <source name="dbSNP" type="intermine-items-large-xml-file" dump="true">
-      <property name="src.data.dir" location="/data/dg353/"/>
-      <property name="src.data.dir.includes" value="Chromosome*.xml"/>
-    </source>
-    
-    <source name="go" type="go" dump="true">
+          <property name="src.data.dir" location="/shared/data/snpmine/"/>
+          <property name="src.data.dir.includes" value="Chromosome*.xml"/>
+     </source>
+  <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
-
-    <source name="go-annotation" type="go-annotation" dump="true">
-      <property name="ontologyfile" location="/shared/data/heightmine/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/heightmine/go-annotation/current"/>
-      <property name="src.data.dir.includes" value="gene_association_hs"/>
+    <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
+      <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-
+<!-- why were we using heightmine data?
+      <source name="go-annotation" type="go-annotation" dump="true">
+          <property name="ontologyfile" location="/shared/data/heightmine/go-annotation/gene_ontology.obo"/>
+          <property name="src.data.dir" location="/shared/data/heightmine/go-annotation/current"/>
+          <property name="src.data.dir.includes" value="gene_association_hs"/>
+      </source>
+-->
   </sources>
-
   <post-processing>
     <!--<post-process name="create-references"/>-->
     <post-process name="do-sources"/>
     <post-process name="summarise-objectstore"/>
   </post-processing>
-
 </project>
 
