@@ -1348,6 +1348,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+
     private void processAppliedData(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getAppliedDataResultSet(connection);
@@ -1355,12 +1356,30 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             String name = res.getString("name");
-            String value = res.getString("value");
             String heading = res.getString("heading");
-            Item submissionData = getChadoDBConverter().createItem("SubmissionData");
+            String value = null;
+            
+            // check if this datum has an official name:
+            ResultSet oName = getOfficialName(connection, dataId); 
+            String officialName=null;            
+            while (oName.next()){
+                officialName=oName.getString(1);
+            }
 
+            // if there is one, use it instead of the value
+            if (!StringUtils.isEmpty(officialName)){
+                value = officialName;
+            } else {
+                value = res.getString("value");
+            }
+            
+            Item submissionData = getChadoDBConverter().createItem("SubmissionData");
+            
             if (name != null && !name.equals("")) {
                 submissionData.setAttribute("name", name);
+            }
+            if ((name == null || name.equals("")) && heading!= null && heading.contains(" Name")) {
+                submissionData.setAttribute("name", heading.replace(" Name", ""));
             }
             if (!StringUtils.isEmpty(value)) {
                 submissionData.setAttribute("value", value);
@@ -1376,13 +1395,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             appliedDataMap.put(dataId, aData);
 
             LOG.debug("ADMAP put: data_id " + dataId + "|" + intermineObjectId + " imobjid");
-
             count++;
         }
         LOG.info("created " + count + " SubmissionData");
         res.close();
     }
-
 
     /**
      * Return the rows needed for data from the applied_protocol_data table.
@@ -1404,7 +1421,148 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
+    
+    /**
+     * Return the rows needed for data from the applied_protocol_data table.
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getOfficialName(Connection connection, Integer dataId)
+    throws SQLException {
+        String query =
+            "SELECT a.value " 
+            + " from attribute a, data_attribute da "
+            + " where a.attribute_id=da.attribute_id "
+            + " and da.data_id=" + dataId
+            + " and a.heading='official name'";
 
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+       
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /*
+     * an attempt to get data and attribute all together
+     * it's bugged
+     * 
+     */
+    private void processAppliedDataBad(Connection connection)
+    throws SQLException, ObjectStoreException {
+        Long bT = System.currentTimeMillis();        
+        ResultSet res = getAppliedDataResultSetAll(connection);
+        LOG.info("TIME applied data QUERY" + ":   "  + (System.currentTimeMillis() - bT));
+
+        String value = null;
+        String name = null;
+        String heading = null;
+
+        int count = 0;
+        Integer prevDataId=-1;
+        Item prevSubmissionData = null;
+
+        while (res.next()) {
+            Item submissionData = null;
+            Integer dataId = new Integer(res.getInt("data_id"));
+
+            if (dataId != prevDataId){
+                submissionData = getChadoDBConverter().createItem("SubmissionData");
+                if (prevDataId>-1){
+                    // store previous item and add to object and maps
+                    Integer intermineObjectId = getChadoDBConverter().store(prevSubmissionData);
+
+                    AppliedData aData = new AppliedData();
+                    aData.intermineObjectId = intermineObjectId;
+                    aData.itemIdentifier = prevSubmissionData.getIdentifier();
+                    appliedDataMap.put(dataId, aData);
+
+                    LOG.debug("ADMAP put: data_id " + dataId + "|" + intermineObjectId + " imobjid");
+                } 
+
+                // new item                
+                name = res.getString("name");
+                value = res.getString("value");
+                heading = res.getString("heading");
+                LOG.info("DADEBUG 2: " + heading+name+value);
+
+                if (name != null && !name.equals("")) {
+                    submissionData.setAttribute("name", name);
+                }
+                if ((name == null || name.equals("")) && heading!= null && heading.contains(" Name")) {
+                    submissionData.setAttribute("name", heading.replace(" Name", ""));
+                }
+                if (!StringUtils.isEmpty(value)) {
+                    submissionData.setAttribute("value", value);
+                }
+                submissionData.setAttribute("type", heading);
+            }
+
+            String aHeading = res.getString("aHeading");
+            if (!StringUtils.isEmpty(aHeading)){
+                String aName = res.getString("aName");
+                String aValue = res.getString("aValue");
+                Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
+                if (aName != null && !aName.equals("")) {
+                    dataAttribute.setAttribute("name", aName);
+                }
+                if (!StringUtils.isEmpty(aValue)) {
+                    dataAttribute.setAttribute("value", aValue);
+                }
+                dataAttribute.setAttribute("type", aHeading);
+
+                // setting references to dataSubmission
+                dataAttribute.setReference("submissionData", submissionData.getIdentifier());
+                // store it and add to object and maps
+                Integer intermineObjectId = getChadoDBConverter().store(dataAttribute);
+
+                if (aHeading == "official name"){
+                    value = aValue;   
+                    submissionData.setAttribute("value", value);
+                    LOG.info("DADEBUG 5: " + aValue + "|" + submissionData.getAttribute(value));                    
+                }
+            }
+            prevSubmissionData = submissionData;
+            prevDataId = dataId;
+            count++;            
+        }
+        LOG.info("created " + count + " SubmissionData");
+        res.close();
+
+        Integer intermineObjectId = getChadoDBConverter().store(prevSubmissionData);
+        AppliedData aData = new AppliedData();
+        aData.intermineObjectId = intermineObjectId;
+        aData.itemIdentifier = prevSubmissionData.getIdentifier();
+        appliedDataMap.put(prevDataId, aData);
+        LOG.debug("ADMAP put: data_id " + prevDataId + "|" + intermineObjectId + " imobjid");
+    }
+
+    /**
+     * Return the rows needed for data from the applied_protocol_data table.
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getAppliedDataResultSetAll(Connection connection)
+    throws SQLException {
+        String query =
+            "select d.data_id, d.heading, d.name, d.value "
+            + " , a.attribute_id, a.heading as aHeading, a.name as aName, a.value as aValue "
+            + " from data d LEFT JOIN data_attribute da " 
+            + " ON (d.data_id = da.data_id) "
+            + " LEFT JOIN attribute a "
+            + " on (da.attribute_id = a.attribute_id) ";
+
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    
     /**
      * =====================
      *    DATA ATTRIBUTES
