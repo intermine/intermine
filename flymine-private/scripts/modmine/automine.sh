@@ -59,7 +59,7 @@ NAMESTAMP=undefined     # used to name the acceptance tests
 INTERACT=n     #          y: step by step interaction
 WGET=y         #          use wget to get files from ftp
 VAL1=n         #          y: validate 1! entry
-
+GAM=y          #          y: run get_all_modmine (only in F mode)
 
 INCR=y
 FULL=n
@@ -71,7 +71,7 @@ progname=$0
 function usage () {
 	cat <<EOF
 
-Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [g] [i] [-s] [-t] [-w] [-v] [-x]
+Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [g] [i] [-s] [-t] [-w] [-v] [-x]
 	-F: full (modmine) rebuild
 	-M: test build (metadata only)
 	-R: restart full build after failure
@@ -79,6 +79,7 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-f file_name] [g] [i] [-s] [-t] 
 	-u: validation mode: one entry only
 	-a: append to chado
 	-b: build a back-up of modchado-$REL
+	-e: don't update the sources (don't run get_all_modmine). Valid only in F mode
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -108,7 +109,7 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVabf:gistuvwx" opt; do
+while getopts ":FMRVabfe:gistuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
@@ -119,6 +120,7 @@ while getopts ":FMRVabf:gistuvwx" opt; do
 	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
+	e )  echo; echo "don't update all sources (get_all_modmine is not run)" ; GAM=n;;
 	f )  echo; INFILE=$OPTARG; WGET=n; echo "Using given list of chadoxml files (wget won't be run):"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
@@ -468,8 +470,11 @@ then
 else
 # new build, all the sources
 # get the most up to date sources ..
+if [ $GAM = "y" ]
+then
 ../bio/scripts/get_all_modmine.sh\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+fi
 # .. and build modmine
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
