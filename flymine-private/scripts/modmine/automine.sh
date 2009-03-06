@@ -109,7 +109,7 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVabfe:gistuvwx" opt; do
+while getopts ":FMRVabef:gistuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
