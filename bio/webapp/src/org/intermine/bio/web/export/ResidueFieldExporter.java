@@ -65,7 +65,7 @@ public class ResidueFieldExporter implements FieldExporter
      */
     public void exportField(InterMineObject object, String fieldName, ObjectStore os,
                             HttpServletResponse response)
-        throws ExportException {
+    throws ExportException {
         if (!(object instanceof Sequence)) {
             throw new IllegalArgumentException("ResidueFieldExporter can only export "
                                                + "Sequence.residues fields");
