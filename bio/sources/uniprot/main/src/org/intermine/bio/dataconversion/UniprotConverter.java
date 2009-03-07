@@ -444,7 +444,7 @@ public class UniprotConverter extends DirectoryConverter
             }
             geneRefId = gene.getIdentifier();
             for (String identifier : geneSynonyms) {
-                getSynonym(geneRefId, "identifier", identifier, "false", entry.getDatasetRefId());
+                getSynonym(geneRefId, "identifier", identifier, null, entry.getDatasetRefId());
             }
             genes.put(uniqueIdentifier, geneRefId);
         }
@@ -873,7 +873,9 @@ public class UniprotConverter extends DirectoryConverter
             item.setAttribute("type", type);
             item.setAttribute("value", value);
             item.addToCollection("dataSets", datasetRefId);
-            item.setAttribute("isPrimary", isPrimary);
+            if (isPrimary != null) {
+                item.setAttribute("isPrimary", isPrimary);
+            }
             refId = item.getIdentifier();
             try {
                 store(item);
