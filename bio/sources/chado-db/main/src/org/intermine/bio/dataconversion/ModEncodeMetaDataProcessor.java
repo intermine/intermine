@@ -1897,7 +1897,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Biosample #", "biosampleNr");
         // data: parameter value attributes
         FIELD_NAME_MAP.put("Unit", "unit");
-        FIELD_NAME_MAP.put("Characteristics", "characteristics");
+        //FIELD_NAME_MAP.put("Characteristics", "characteristics");
         // data: the real thing?
         FIELD_NAME_MAP.put("Hybridization Name", "hybridizationName");
         FIELD_NAME_MAP.put("Array Data File", "arrayDataFile");
