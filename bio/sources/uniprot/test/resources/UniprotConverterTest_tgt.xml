@@ -84,7 +84,6 @@
 <collection name="synonyms"><reference ref_id="11_2"/><reference ref_id="11_3"/><reference ref_id="11_4"/></collection>
 </item>
 <item id="11_5" class="Synonym">
-<attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000002"/>
 <reference name="subject" ref_id="10_2"/>
@@ -116,7 +115,6 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="11_1" class="Synonym">
-<attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000001"/>
 <reference name="subject" ref_id="10_1"/>
