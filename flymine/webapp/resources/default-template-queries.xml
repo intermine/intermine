@@ -811,76 +811,6 @@
     </node>
   </query>
 </template>
-<template name="Disease_GeneOrthologue" title="Disease [Human] --&gt; Genes + D. melanogaster homologues." longDescription="For a given human disease, show all human genes that have been annotated with it, and the homologous genes in Drosophila. (Data Source: Homophila)." comment="">
-  <query name="Disease_GeneOrthologue" model="genomic" view="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations.dataSets.dataSource.name" sortOrder="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId asc">
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations.dataSets.dataSource" description="Omim Disease &gt; dataSource">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim Disease">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.secondaryIdentifier" type="String">
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
-    </node>
-    <node path="Gene.transcripts.translation" type="Translation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes" type="Gene">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" type="Disease">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description" type="String">
-      <constraint op="LIKE" value="%Spinocerebellar ataxia%" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations" type="Annotation">
-    </node>
-  </query>
-</template>
-<template name="Disease_GeneOrthologueEValue" title="Disease [Human] --&gt; Genes + D. melanogaster homologues (filter on blast E-Value)." longDescription="For a given human disease, show all human genes that have been annotated with it, and the homologous genes in Drosophila with a certain E-Value, according to Homophila. (The lower the E-Value, the better the match). (Data Source: Homophila)." comment="">
-  <query name="Disease_GeneOrthologueEValue" model="genomic" view="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.dataSets.title" sortOrder="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.secondaryIdentifier" type="String">
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
-    </node>
-    <node path="Gene.transcripts.translation" type="Translation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes" type="Gene">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" type="Disease">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description" type="String">
-      <constraint op="LIKE" value="%Spinocerebellar ataxia%" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations" type="Annotation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
-      <constraint op="&lt;" value="0.01" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Domain_Proteins" title="Protein domain --&gt; Proteins from a specific organism." longDescription="For a particular domain (or list of domains) give the proteins (from a specific organism) which have these domains. (Data Source: UniProt)." comment="">
   <query name="Domain_Proteins" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.proteinDomains.name Protein.proteinDomains.primaryIdentifier Protein.proteinDomains.type" sortOrder="Protein.genes.symbol asc" constraintLogic="A and C">
     <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
@@ -1953,116 +1883,6 @@
     </node>
   </query>
 </template>
-<template name="Gene_OrthologueDisease" title="Gene [D. melanogaster] --&gt; Human homologue + Disease associated with this homologue." longDescription="For a given Drosophila gene, show the homologous human gene (and the BlastMatch E-Value) and any associated disease, according to Homophila." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_OrthologueDisease" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG6235" description="Seach for blast matches for gene:" identifier="Gene.class" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
-    </node>
-    <node path="Gene.transcripts.translation" type="Translation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_OrthologueDiseaseEValue" title="Gene [D. melanogaster] --&gt; Human homologue + Disease associated with this homologue (filter on blast E-Value)." longDescription="For a given Drosophila gene, show the homologous human genes with a certain E-Value, and any associated disease, according to Homophila. (The lower the E-Value, the better the match)." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_OrthologueDiseaseEValue" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG6235" description="" identifier="Gene.class" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
-    </node>
-    <node path="Gene.transcripts.translation" type="Translation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
-      <constraint op="&lt;" value="0.0010" description="" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="C">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_OrthologueDiseaseRNAi_new" title="Gene [D. melanogaster] --&gt; Human homologue with disease (filter on blast E-Value) + C. elegans orthologue with RNAi phenotype." longDescription="For a given Drosophila gene, show disease-associated human homologues as well as the RNAi phenotypes of C. elegans orthologues. (Data Source: Homophila, InParanoid, WormBase)." comment="070607 Updated to work with gene class - Philip">
-  <query name="Gene_OrthologueDiseaseRNAi_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.homologues.homologue.primaryIdentifier Gene.homologues.type Gene.homologues.homologue.rnaiResults.name Gene.homologues.homologue.rnaiResults.code Gene.homologues.homologue.rnaiResults.observed" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and D and A and C">
-    <pathDescription pathString="Gene.homologues" description="Homologue">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
-    </pathDescription>
-    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.rnaiResults" description="C. elegans orthologue &gt; RNAi result">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="C. elegans">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG6235" description="For the following Drosophila gene:" identifier="Gene.class" editable="true" code="D">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
-    </node>
-    <node path="Gene.transcripts.translation" type="Translation">
-    </node>
-    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
-    </node>
-    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
-      <constraint op="&lt;" value="0.0010" description="find human orthologues from Homophila, with the following Blastmatch E-Value (the lower the E-Value, the better the match):" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.homologues" type="Homologue">
-    </node>
-    <node path="Gene.homologues.homologue" type="Gene">
-    </node>
-    <node path="Gene.homologues.homologue.organism" type="Organism">
-    </node>
-    <node path="Gene.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.homologue.rnaiResults" type="RNAiPhenotype">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="C">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Gene_OrthologueGO_new" title="Gene --&gt; Orthologues + GO terms of these orthologues." longDescription="Show GO terms applied to orthologues of a specific gene. (Data Source: InParanoid, Drosophila Consortium, GO Consortium)." comment="13/03/07 added orthologue organismDbId. Philip 070607 updated to work with gene class Philip">
   <query name="Gene_OrthologueGO_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title Gene.homologues.homologue.goAnnotation.name Gene.homologues.homologue.goAnnotation.identifier Gene.homologues.homologue.goAnnotation.qualifier Gene.homologues.homologue.goAnnotation.dataSets.title Gene.homologues.homologue.goAnnotation.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.homologues" description="Homologue">
@@ -2940,16 +2760,6 @@
       </constraint>
     </node>
     <node path="Gene.homologues" type="Homologue">
-    </node>
-  </query>
-</template>
-<template name="Gene_TranscriptTranslation" title="Gene -&gt; Transcripts + Translation of the transcripts." longDescription="For a given gene, give all its transcripts with their respective lengths. For each transcript, give its translation with its respective length." comment="">
-  <query name="Gene_TranscriptTranslation" model="genomic" view="Gene.secondaryIdentifier Gene.transcripts.primaryIdentifier Gene.transcripts.length Gene.transcripts.translation.symbol Gene.transcripts.translation.length" sortOrder="Gene.secondaryIdentifier asc">
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="Pabp2" description="" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.transcripts" type="MRNA">
     </node>
   </query>
 </template>
@@ -5065,36 +4875,6 @@
     </node>
   </query>
 </template>
-<template name="Translation_To_Gene_Type_Converter" title="Translation to gene type converter" longDescription="" comment="">
-  <query name="Translation_To_Gene_Type_Converter" model="genomic" view="Translation.id Translation.gene.id" sortOrder="Translation.id asc">
-    <node path="Translation" type="Translation">
-    </node>
-    <node path="Translation.id" type="Integer">
-      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Translation_To_Protein_Type_Converter" title="Translation to protein type converter" longDescription="" comment="">
-  <query name="Translation_To_Protein_Type_Converter" model="genomic" view="Translation.id Translation.gene.proteins.id" sortOrder="Translation.id asc">
-    <node path="Translation" type="Translation">
-    </node>
-    <node path="Translation.id" type="Integer">
-      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Translation_To_Transcript_Type_Converter" title="Translation to transcript type converter" longDescription="" comment="">
-  <query name="Translation_To_Transcript_Type_Converter" model="genomic" view="Translation.id Translation.gene.transcripts.id" sortOrder="Translation.id asc">
-    <node path="Translation" type="Translation">
-    </node>
-    <node path="Translation.id" type="Integer">
-      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="UnalignedESTclusters" title="EST cluster type [A. gambiae] --&gt; All unaligned EST clusters." longDescription="Show all A. gambiae clusters which have no match to the genome. (Data Source: VectorBase)." comment="">
   <query name="UnalignedESTclusters" model="genomic" view="ESTCluster.primaryIdentifier ESTCluster.dataSets.dataSource.name" sortOrder="ESTCluster.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="ESTCluster.chromosome" description="Chromosome">
@@ -5826,11 +5606,7 @@
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Pathway_GenesOrtholEST" type="template">
   </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptTranslation_1" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Probe_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Genomics" objectIdentifier="Gene_TranscriptTranslation" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="ESTclone_LocationOverlappingGene" type="template">
   </tag>
@@ -6352,8 +6128,6 @@
   </tag>
   <tag name="im:converter" objectIdentifier="Gene_To_Protein_Type_Converter" type="template">
   </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Protein_Type_Converter" type="template">
-  </tag>
   <tag name="im:converter" objectIdentifier="Gene_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Protein_To_MRNA_Type_Converter" type="template">
@@ -6368,8 +6142,6 @@
   </tag>
   <tag name="im:converter" objectIdentifier="Gene_To_MRNA_Type_Converter" type="template">
   </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Gene_Type_Converter" type="template">
-  </tag>
   <tag name="im:converter" objectIdentifier="Transcript_To_Protein_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="MRNA_To_Protein_Type_Converter" type="template">
@@ -6377,8 +6149,6 @@
   <tag name="im:converter" objectIdentifier="Protein_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Transcript_To_Gene_Type_Converter" type="template">
-  </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="MRNA_To_Gene_Type_Converter" type="template">
   </tag>
@@ -6830,8 +6600,6 @@
   </tag>
   <tag name="im:public" objectIdentifier="Pathway_GenesOrtholEST" type="template">
   </tag>
-  <tag name="im:public" objectIdentifier="Gene_TranscriptTranslation_1" type="template">
-  </tag>
   <tag name="im:public" objectIdentifier="Gene_allGOTerms" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="PL FlyTF_novelTFs" type="bag">
@@ -6841,8 +6609,6 @@
   <tag name="im:public" objectIdentifier="Protein_PDBStructure" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="Technique_PDBstructure" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_TranscriptTranslation" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="PL classI" type="bag">
   </tag>

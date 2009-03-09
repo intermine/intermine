@@ -519,23 +519,17 @@
   </tag>
   <tag name="im:converter" objectIdentifier="Gene_To_Protein_Type_Converter" type="template">
   </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Protein_Type_Converter" type="template">
-  </tag>
   <tag name="im:converter" objectIdentifier="Gene_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Protein_To_MRNA_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Protein_To_Gene_Type_Converter" type="template">
   </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Gene_Type_Converter" type="template">
-  </tag>
   <tag name="im:converter" objectIdentifier="Transcript_To_Protein_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Protein_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:converter" objectIdentifier="Transcript_To_Gene_Type_Converter" type="template">
-  </tag>
-  <tag name="im:converter" objectIdentifier="Translation_To_Transcript_Type_Converter" type="template">
   </tag>
   <tag name="im:preferredBagType" objectIdentifier="org.intermine.model.bio.Gene" type="class">
   </tag>
