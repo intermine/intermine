@@ -26,6 +26,8 @@ if (@ARGV != 3) {
     die "usage: mine_name taxonId data_destination \n eg. flymine 7227 /data/ensembl \n";  
 }
 
+my $start_time = time();
+
 my ($mine_name, $taxon_id, $data_destination) = @ARGV;
 
 # FIXME
@@ -73,10 +75,12 @@ my %sourceMap;
 my %statesMap;
 my %typeMap;
 
+my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
+my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
+
 for (my $i=1; $i<=24; $i++) { 
     my @items_to_write = ();
-    my @files;
-    my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
+    my @files;    
     my $slice;
     switch($i) {
         case [1..22] {
@@ -87,17 +91,19 @@ for (my $i=1; $i<=24; $i++) {
             $slice = $slice_adaptor->fetch_by_region('chromosome','Y');                 
         }
     }
-    my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
-    #get adaptor to VariationFeature object
+
+    # get adaptor to VariationFeature object
     my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
-    #return ALL variations defined in $slice
-    my $counter = 1;
+    # return ALL variations defined in $slice
+    # my $counter = 1;
     
-    my $chromosome_item = make_item_chromosome(id => $i);
+    # don't need to set the id, unless we use a shell script
+    # my $chromosome_item = make_item_chromosome(id => $i);
+    my $chromosome_item = make_item("Chromosome");
     $chromosome_item->set('primaryIdentifier', $slice->seq_region_name);
     
     foreach my $vf (@{$vfs}){
-        print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
+        #print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
         my @alleles = split('[/.-]', $vf->allele_string);
         if(!$alleles[0]) {
             $alleles[0]='-';
@@ -160,7 +166,13 @@ for (my $i=1; $i<=24; $i++) {
         }
     }
 
+    my $end_time = time();
+    my $action_time = $end_time - $start_time;
+    print "processing the files for chromosome $i took $action_time seconds.  now creating the XML file... \n";
+    
+
     #write xml filea
+    $start_time = time();
     my $outfile =$data_destination . 'Chromosome'.$i.'.xml';
     my $output = new IO::File(">$outfile");
     my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
@@ -171,6 +183,11 @@ for (my $i=1; $i<=24; $i++) {
     $writer->endTag('items');
     $writer->end();
     $output->close();
+
+    $end_time = time();
+    $action_time = $end_time - $start_time;
+    print "creating the XML file for Chromosome $i took $action_time seconds.\n";
+
 }
 sub make_item{
     my $implements = shift;

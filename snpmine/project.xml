@@ -3,9 +3,9 @@
     <property name="common.os.prefix" value="common"/>
     <property name="intermine.properties.file" value="snpmine.properties"/>
     <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
-   <property name="source.location" location="../bio/sources/"/>
-  <sources>
-    <source name="dbSNP" type="intermine-items-large-xml-file" dump="true">
+     <property name="source.location" location="../bio/sources/"/>
+    <sources>
+    <source name="snp" type="snp">
           <property name="src.data.dir" location="/shared/data/snpmine/"/>
           <property name="src.data.dir.includes" value="Chromosome*.xml"/>
      </source>
