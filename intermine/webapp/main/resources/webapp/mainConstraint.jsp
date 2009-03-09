@@ -58,7 +58,7 @@ options displayConstraint.optionsList
     <h3><fmt:message key="query.joinHeading"  /></h3> <%--2. Join type--%>
     <ol style="list-style:none">
         <li><html:radio property="joinType" value="inner" styleId="inner" /><label for="inner">&nbsp;<fmt:message key="query.innerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.type}"/></fmt:message></label></li>
-        <li><html:radio property="joinType" value="outter" styleId="outter"/><label for="outter">&nbsp;<fmt:message key="query.outterJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.lastReferenceName}"/></fmt:message></label></li>
+        <li><html:radio property="joinType" value="outer" styleId="outer"/><label for="outer">&nbsp;<fmt:message key="query.outerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.lastReferenceName}"/></fmt:message></label></li>
     </ol>
     <%--<c:choose>
     <c:when test="${editingNode.isOuterJoin}">
@@ -205,7 +205,7 @@ styleClass="${datePickerClass}"/>
 <script type="text/javascript">
 jQuery('.date-pick').datepicker(
     {
-        buttonImage: 'images/calendar.png', 
+        buttonImage: 'images/calendar.png',
         buttonImageOnly: true,
         dateFormat: 'yy-mm-dd',
         showOn: "both",
@@ -265,7 +265,7 @@ selected
 <p style="text-align: left;">
     <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
     <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
-    <html:text property="attributeValue" styleId="attribute2" 
+    <html:text property="attributeValue" styleId="attribute2"
     value="${editingConstraintValue}"
     onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
     <c:if test="${!empty options}">
@@ -439,7 +439,7 @@ swapInputs('subclass');
 <tiles:put name="onChangeFunction" value="filterByTag" />
 <tiles:put name="selectId" value="bag3" />
 <tiles:put name="disabled" value="true" />
-</tiles:insert>                
+</tiles:insert>
 <html:submit property="bag"  styleId="bagSubmit" disabled="true">
 <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 </html:submit>
