@@ -195,17 +195,19 @@ sub set
             if (!defined $current_rev_ref || $current_rev_ref != $self) {
               $other_item->set($field->reverse_reference_name(), $self);
             }
-          } else {
-            if ($field->is_many_to_many()) {
-              $other_item->_add_to_collection($field->reverse_reference_name(), $self);
-            }
+        #  } else {
+        #   if ($field->is_many_to_many()) {
+        #      $other_item->_add_to_collection($field->reverse_reference_name(), $self);
+        #   }    
           }
+        
         } else {
           die "collection '$name' in class '", $self->to_string(),
             "' must contain items of type: ", $field->referenced_type_name(),
             " not: ", $self->to_string();
         }
       }
+
     } else {
       if (ref $field ne 'InterMine::Model::Reference') {
         die "tried to set field '$name' in class '", $self->to_string(),
@@ -215,10 +217,10 @@ sub set
       if (!defined $self->{$name} || $self->{$name} != $value) {
         $self->{$name} = $value;
 
-        if ($field->is_many_to_one()) {
+        #if ($field->is_many_to_one()) {
           # add this Item to the collection in the other Item
-          $value->_add_to_collection($field->reverse_reference_name(), $self);
-        }
+        #  $value->_add_to_collection($field->reverse_reference_name(), $self);
+        #}
       }
     }
   } else {
