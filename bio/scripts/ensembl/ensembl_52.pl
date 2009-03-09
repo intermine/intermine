@@ -169,6 +169,7 @@ foreach my $taxon_id(keys %organisms) {
     }
     $writer->endTag('items');
     $writer->end();
+    $output->close();
     $end_time = time();
     $action_time = $end_time - $start_time;
     print "creating the XML file for $taxon_id took $action_time seconds.\n";
