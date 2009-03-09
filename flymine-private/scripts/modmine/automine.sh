@@ -115,7 +115,7 @@ while getopts ":FMRVabef:gistuvwx" opt; do
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
 #   I )  echo; echo "Incremental modMine realease"; INCR=y;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
-	R )  echo; echo "Restart full realease"; RESTART=y; INCR=n; STAG=n;;
+	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n;;
 	V )  echo; echo "Validating all submission (1 by 1)"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
@@ -128,7 +128,7 @@ while getopts ":FMRVabef:gistuvwx" opt; do
 	t )  echo; echo "No acceptance test run" ; TEST=n;;
 	v )  echo; echo "Verbose mode" ; V=-v;;
 	w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
-	x )  echo; echo "modMine will NOT be built" ; BUILD=n; STAG=n; WGET=n;;
+	x )  echo; echo "modMine will NOT be built" ; BUILD=n; STAG=n; BUP=n; WGET=n;;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
