@@ -42,7 +42,7 @@
       }
     });
     return false;
-  } 
+  }
   //-->
 </script>
 
@@ -62,7 +62,7 @@
     <c:forEach var="entry" items="${qNodes}" varStatus="status">
       <div>
         <div style="white-space: nowrap">
-          <div> 
+          <div>
             <c:set var="node" value="${entry.value}"/>
             <c:if test="${node.indentation > 0}">
               <c:forEach begin="1" end="${node.indentation}">
@@ -126,7 +126,7 @@
              </c:choose>
              <c:choose>
               <c:when test="${node.isOuterJoin && !node.attribute && !empty node.parent}">
-                [outter]&nbsp;
+                [outer]&nbsp;
               </c:when>
               <c:when test="${!node.isOuterJoin && !node.attribute && !empty node.parent}">
                 [inner]&nbsp;
