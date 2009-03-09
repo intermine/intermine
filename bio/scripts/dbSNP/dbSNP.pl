@@ -77,11 +77,13 @@ my %typeMap;
 
 my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
 my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
+my $count = 0;
 
 for (my $i=1; $i<=24; $i++) { 
     my @items_to_write = ();
     my @files;    
     my $slice;
+    $count = 0;
     switch($i) {
         case [1..22] {
             $slice = $slice_adaptor->fetch_by_region('chromosome',$i);                  
@@ -186,13 +188,14 @@ for (my $i=1; $i<=24; $i++) {
 
     $end_time = time();
     $action_time = $end_time - $start_time;
-    print "creating the XML file for Chromosome $i took $action_time seconds.\n";
+    print "creating the XML file for chromosome $i took $action_time seconds and created $count items\n";
 
 }
 sub make_item{
     my $implements = shift;
     my $item = $item_factory->make_item(implements => $implements);
     push @items, $item;
+    $count++;
     return $item;
 }
 
