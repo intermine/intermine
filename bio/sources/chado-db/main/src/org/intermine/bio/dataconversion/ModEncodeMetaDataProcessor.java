@@ -862,11 +862,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *    LAB
      * ==============
      *
-     * Labs are loaded statically. A map is built between submissionId and
+     * Labs are also loaded statically (affiliation is not given in the chado file).
+     * A map is built between submissionId and
      * lab's name and used for the references. 2 maps store intermine
      * objectId and itemId, with key the lab name.
-     * Note: the lab and the project are now put in the chadoxml now, as surnames,
-     * and we could use those instead.
+     * TODO: do project and lab together (1 query, 1 process)
      * 
      * @param connection
      * @throws SQLException
@@ -889,13 +889,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         while (i.hasNext()) {
             Integer thisExp = i.next();
             String prov = submissionLabMap.get(thisExp);  
+            String project = submissionProjectMap.get(thisExp);  
 
             if (labIdMap.containsKey(prov)) {
                 continue;
             }
             LOG.debug("PROV: " + prov);            
             Item lab = getChadoDBConverter().createItem("Lab");
-            lab.setAttribute("name", prov);
+//            lab.setAttribute("name", prov);
+            lab.setAttribute("surname", prov);
+            lab.setReference("project", projectIdRefMap.get(project));
+            
             Integer intermineObjectId = getChadoDBConverter().store(lab);
             storeInLabMaps(lab, prov, intermineObjectId);
         }
@@ -904,8 +908,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * Return the rows needed from the lab table.
-     * We use the surname of the Principal Investigator (person ranked 0)
-     * as the lab name.
      * This is a protected method so that it can be overridden for testing
      *
      * @param connection the db connection
@@ -916,13 +918,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException {
         String query =
 
-            "SELECT distinct a.experiment_id, a.value||' '||b.value as value"
-            + " FROM experiment_prop a, experiment_prop b"
-            + " where a.experiment_id = b.experiment_id"
-            + " and b.name = 'Person Last Name'"
-            + " and a.name = 'Person First Name'"
-            + " and a.rank = 0"
-            + " and b.rank = 0";
+            "SELECT distinct a.experiment_id, a.name, a.value "
+            + " FROM experiment_prop a "
+            + " where a.name = 'Lab'";
+
+//        "SELECT distinct a.experiment_id, a.value||' '||b.value as value"
+//        + " FROM experiment_prop a, experiment_prop b"
+//        + " where a.experiment_id = b.experiment_id"
+//        + " and b.name = 'Person Last Name'"
+//        + " and a.name = 'Person First Name'"
+//        + " and a.rank = 0"
+//        + " and b.rank = 0";
 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();

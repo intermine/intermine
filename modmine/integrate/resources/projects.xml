@@ -734,7 +734,7 @@
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1099" class="" implements="Lab">
-		<attribute name="surname" value="White"/>
+		<attribute name="surname" value="RWhite"/>
 		<attribute name="name" value="Robert White"/>
 		<attribute name="affiliation" value="University of Cambridge"/>
 		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
