@@ -161,7 +161,7 @@
     </source>
 -->
     <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/release-16-temp/"/>
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/release-16/"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="taxonId" value="7227"/>
