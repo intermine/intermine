@@ -170,27 +170,32 @@ public class GFF3Record
             } else {
                 attName = attVal.substring(0, spaceIndx);
                 attributeString = attVal.substring(spaceIndx + 1).trim();
-                while (attributeString.length() > 0) {
-                    if (attributeString.startsWith("\"")) {
-                        attributeString = attributeString.substring(1);
-                        int quoteIndx = attributeString.indexOf("\"");
-                        if (quoteIndx > 0) {
-                            valList.add(attributeString.substring(0, quoteIndx));
-                            attributeString = attributeString.substring(quoteIndx + 1).trim();
-                            if (attributeString.startsWith(",")) {
-                                attributeString = attributeString.substring(1).trim();
+
+                if (!attributeString.equals("\"\"")) {
+                    while (attributeString.length() > 0) {
+                        if (attributeString.startsWith("\"")) {
+                            attributeString = attributeString.substring(1);
+                            int quoteIndx = attributeString.indexOf("\"");
+                            if (quoteIndx > 0) {
+                                valList.add(attributeString.substring(0, quoteIndx));
+                                attributeString = attributeString.substring(quoteIndx + 1).trim();
+                                if (attributeString.startsWith(",")) {
+                                    attributeString = attributeString.substring(1).trim();
+                                }
+                            } else {
+                                throw new IOException("unmatched quote in this line: " + line
+                                                      + " (reading attribute: " + attName + ", "
+                                                      + attributeString + ")");
                             }
                         } else {
-                            throw new IOException("unmatched quote in this line: " + line);
-                        }
-                    } else {
-                        int commaIndx = attributeString.indexOf(",");
-                        if (commaIndx == -1) {
-                            valList.add(attributeString);
-                            attributeString = "";
-                        } else {
-                            valList.add(attributeString.substring(0, commaIndx));
-                            attributeString = attributeString.substring(commaIndx + 1).trim();
+                            int commaIndx = attributeString.indexOf(",");
+                            if (commaIndx == -1) {
+                                valList.add(attributeString);
+                                attributeString = "";
+                            } else {
+                                valList.add(attributeString.substring(0, commaIndx));
+                                attributeString = attributeString.substring(commaIndx + 1).trim();
+                            }
                         }
                     }
                 }
