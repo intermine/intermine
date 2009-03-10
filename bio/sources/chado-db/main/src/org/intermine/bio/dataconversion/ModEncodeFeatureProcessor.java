@@ -55,7 +55,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "five_prime_UTR", "three_prime_untranslated_region",
          "three_prime_UTR", "origin_of_replication",
          "binding_site", "protein_binding_site", "TF_binding_site",
-         "transcript_region", "histone_binding_site"
+         "transcript_region", "histone_binding_site", "copy_number_variation"
     );
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
