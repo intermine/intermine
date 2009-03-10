@@ -25,7 +25,7 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="chado-db-flybase-others" type="chado-db">
+    <source name="chado-db-flybase-others" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -504,22 +504,6 @@
            items DB, then into the final objectstore -->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
-    <!--
-    <source name="ensembl-homo-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="9606"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/shared/data/ensembl/homo_sapiens/ens46"/>
-    </source>
-    <source name="ensembl-mus-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="10090"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/shared/data/ensembl/mus_musculus/ens46"/>
-    </source>
-    <source name="vienna-prot" type="vienna-prot">
-      <property name="src.data.dir" location="/home/mnw21/vienna-prot/data"/>
-    </source>-->
   </sources>
 
   <post-processing>
