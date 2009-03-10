@@ -222,7 +222,7 @@ then
 
 #		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citation*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
-		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -X download,citation,*stanzas* -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+		wget -r -nd -t3 -l1 -N -P$WGETDIR $FTPURL -X download,citation -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
 #		wget -r -nd -N -P$WGETDIR $FTPURL -I extracted -X download,citation,*stanzas* -A chadoxml -k --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
@@ -234,6 +234,7 @@ then
 		#a append to log
 		#-X list of directories to exclude
     #-N timestamping
+    #-t number of tries
 		echo $TIMESTAMP
 
 		#---------------------------------------
