@@ -6,6 +6,8 @@
     extends="ProteinBindingSite" is-interface="true"/>
   <class name="TranscriptRegion"
     extends="Region" is-interface="true"/>
+  <class name="CopyNumberVariation"
+    extends="SequenceVariant" is-interface="true"/>
 
   <class name="Project"
     is-interface="true">
