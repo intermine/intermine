@@ -2,22 +2,72 @@ html, body {
     color: #000000;background-color: #FFF;}
 
 a {
-    color: #00e;}
+    color: #333;}
     
 body {
 	background:#FFF url('top_gradient.png') repeat-x;
 }
 
-/* =CUSTOMISABLE LOOK
+h1, h2, h3, h1 a, h1 a:visited, label {
+    color:#333;
+}
+h1 a:hover,h1 a:visited:hover  {
+    color:#333;
+    text-decoration: underline;
+}
+
+
+/* =HEADER
+--------------------------*/
+div#header h1, 
+div#header h1 a, 
+div#header h1 a:link,
+div#header h1 a:visited, 
+div#header p {
+    color:#000;
+}
+
+/*div.title h1 {
+    color: #000;}
+*/
+.box .title {
+  clear:both;
+  padding: 5px;
+  text-align: left; font-weight: normal; font-size: 14px; font-weight: bold;
+  background: #eee;}
+
+/*.title a:link{
+    color:#FFF;}
+*/
+#topnav {
+    background-color: #000;
+}
+
+#pagecontent {
+  border-left:1px solid #000;
+  border-right:1px solid #000;
+  border-bottom:1px solid #000;
+}
+
+#loginbar  a:link, #loginbar a:visited, #loginbar{
+	color:#000;}
+
+/* =BODY
 --------------------------*/
 
 .plainbox {
-	padding:10px; border:1px solid #000;
-	background:#F0F0F0;}
+    border:1px solid #000;
+	background:#F0F0F0;
+	padding:10px;}
 
 .gradientbox {
 	padding:10px; 
-	border:1px solid #000;background: url('gray_grad.png') repeat-x;}
+	border:1px solid #000;
+	background: url('gray_grad.png') repeat-x;}
+
+
+/* =NAVIGATION
+--------------------------*/
 
 ul#nav a{
 	text-decoration:none; color: #FFF; font-weight:bold;	background-image:url('corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
@@ -47,7 +97,9 @@ ul#nav li{
 	text-align: center;background:#9E9E9E url('corner_t_l.png') no-repeat;}
 
 .submenu{
-	background:#000;}
+	background:#000;
+	border-left:1px solid #000;
+	border-right:1px solid #000;}
 
 .submenu_mymine{
 	background:#9B89A7;}
@@ -58,86 +110,125 @@ ul#submenulist li a {
 ul#submenulist li a:hover {
 	color:#FFF;text-decoration: underline;font-weight: bold;}
 
+/* =MEGATILE SEARCH
+--------------------------*/
+
 div.filterBar {
     background:#000;color:white;}
+
+div#filter_tool_bar {
+    background-color:#FFF;
+    border-right:1px solid #000;
+    border-left:1px solid #000;
+    border-bottom:1px solid #000;
+}
 
 .imbox {
     padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
     font-size:0.8em; background:#000; color:white;}
 
-#loginbar  a:link, #loginbar a:visited, #loginbar{
-	color:#000;}
-	
+
+/* =TOOLBOX RESULTS
+--------------------------*/
+
 .listtoolbox {
-  background-image: url('widget_bg.png');
+  background-image: url('gray_grad.png');
   border:1px solid #888;
 }
 
-.tool_bar_link, .tool_bar_separator {
-    background-color: #CCC;
+.widgetcontainer {
+  border:1px solid #888;
+  background: #FFF url('gray_grad.png') repeat-x top;
+}
+#tool_bar_div {
+    background-color:#CACACA;
+}
+.tb_button {
+  border:1px solid #CACACA;
+}
+.tb_button:hover {
+  margin-right:0;
+  border-bottom:1px solid #000;
+  border-right:1px solid #000;
+}
+.tb_button_active {
+  border:1px solid #000;
 }
 
-/* =/CUSTOMISABLE LOOK
+
+/* =WIDGET
 --------------------------*/
 
-/**************************************/
-
-#header #title h1 a
-{
-    color: #000;
-}
-
-#header p
-{
-    color: black;
-}
-
-.box .title {
-  padding: 5px;
-  text-align: left;
-  font-weight: normal;
-  font-size: 14px;
-  font-weight: bold;
-  background: #eee;
-  border-top: 1px solid #888;
-  border-bottom: 1px solid #888;
-}
-
-.debt {
-  color: red;
-}
-.address {
-  font-weight: bold;
-}
-.highlightCell{
-  background-color: #D4D4D4;
-}
-
 .widget {
-    padding:15px;
-    text-align: center;
-    width: 450px;
-    background-color: #D4D4D4;    
-}
+    max-height:400px;width: 450px;padding:15px;
+    text-align: center; background-color: #F5F0FF;}
+
+.widget p {
+	font-size:10px;	}
+
+.widget_slide {
+	margin-top:10px; max-height:350px;
+    overflow-x:none;overflow-y:auto;overflow: auto;}
 
 #bagDescriptionDiv{
-	background-color: #D4D4D4;
-	height:50px;
-	width:70%;
-	text-align:left;
-}
+    background-color: #F5F0FF;}
+
 #bagDescriptionDiv:hover{
-	background-color: #D4D4D4;
-}
+	background-color: #E6FFB3;}
 
 #textarea {
-	background-color: #D4D4D4;
-}
+    background-color: #F5F0FF;}
 
 .blueBg {
-	background-color:#D4D4D4;
-	text-align:center;
-	padding: 20px;
-	margin:20px;
-	width:350px;
+	padding: 20px;margin:20px;width:350px;
+	background-color:#F5F0FF;text-align:center;}
+
+table.dbsources {
+    padding:0px;
+	margin:10px 20px 10px 20px;}
+
+table.dbsources th  {
+	padding: 6px 6px 6px 12px;
+	text-align: left;
+	font-weight: bold;
+	border-right:1px solid #FFF;
+	color: white;
+	background-color: #000;}
+
+table.dbsources td {
+	padding: 6px 6px 6px 12px;
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	background: #fff;}
+
+table.dbsources td.leftcol {
+	border-left: 1px solid #000;}
+	
+/* =RESULTS TABLES
+-----------------------*/
+table.results tr th {
+    background-color: #000;font-size: 12px;color:#FFF;
 }
+table.results tr td.highlightCell {
+ 	border-right:1px solid #FFF;background-color: #888;}
+
+table.results tfoot tr td {
+  color:#FFF;
+  background-color: #000;
+}
+
+table.results tr.even TD{
+  background-color: #CACACA;}
+
+table.results tr.odd TD{
+  border-right:1px solid #CACACA;
+  border-bottom:1px solid #CACACA;}
+
+table.results tr td.highlightObject {
+  background-color: #888;
+}
+
+/*    .columnHeader {
+      background: #353B40;
+    }*/
+
