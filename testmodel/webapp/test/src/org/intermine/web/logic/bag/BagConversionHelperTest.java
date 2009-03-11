@@ -65,7 +65,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         context = getActionServlet().getServletContext();
         TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map tqs = tqb.unmarshal(new StringReader(template), null);
+        Map tqs = tqb.unmarshal(new StringReader(template), null, 1);
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(tq));
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");

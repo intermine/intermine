@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSessionEvent;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Added to each session to monitor activation events.
@@ -44,7 +45,8 @@ public class SessionActivationListener implements HttpSessionActivationListener,
         }
         // Save current query as string
         if (session.getAttribute(Constants.QUERY) != null) {
-            String queryXml = ((PathQuery) session.getAttribute(Constants.QUERY)).toXml();
+            String queryXml = ((PathQuery) session.getAttribute(Constants.QUERY))
+                .toXml(ProfileManager.LATEST_VERSION_NUMBER);
             session.setAttribute("ser-query", queryXml);
         }
         // Rehydrate serialised stuff on first request

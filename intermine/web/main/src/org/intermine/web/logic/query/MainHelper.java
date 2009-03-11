@@ -706,17 +706,13 @@ public class MainHelper
         if (c.getOp() == ConstraintOp.IS_NOT_NULL
             || c.getOp() == ConstraintOp.IS_NULL) {
             return new SimpleConstraint((QueryEvaluable) qn, c.getOp());
+        } else if (qn.getType().equals(String.class)) {
+            return makeQueryStringConstraint(qn, c);
+        } else if (qn.getType().equals(Date.class)) {
+            return makeQueryDateConstraint(qn, c);
         } else {
-            if (qn.getType().equals(String.class)) {
-                return makeQueryStringConstraint(qn, c);
-            } else {
-                if (qn.getType().equals(Date.class)) {
-                    return makeQueryDateConstraint(qn, c);
-                } else {
-                    return new SimpleConstraint((QueryField) qn, c.getOp(),
-                                                new QueryValue(c.getValue()));
-                }
-            }
+            return new SimpleConstraint((QueryField) qn, c.getOp(),
+                    new QueryValue(c.getValue()));
         }
     }
 
@@ -771,7 +767,7 @@ public class MainHelper
      */
     private static SimpleConstraint makeQueryStringConstraint(QueryNode qn, Constraint c) {
         QueryExpression qf = new QueryExpression(QueryExpression.LOWER, (QueryField) qn);
-        String lowerCaseValue = ((String) c.getValue()).toLowerCase();
+        String lowerCaseValue = Util.wildcardUserToSql(((String) c.getValue()).toLowerCase());
 
         // notes:
         //   - we always turn EQUALS into a MATCHES(LIKE) constraint and rely on Postgres
@@ -782,18 +778,14 @@ public class MainHelper
         //     backslash must be quoted with a backslash)
         if (c.getOp().equals(ConstraintOp.EQUALS)) {
             return new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
-        } else {
-            if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
+        } else if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
                 return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
-                                            new QueryValue(lowerCaseValue));
-            } else {
-                if (c.getOp().equals(ConstraintOp.CONTAINS)) {
-                    return new SimpleConstraint(qf, ConstraintOp.MATCHES,
-                                                new QueryValue("%" + lowerCaseValue + "%"));
-                } else {
-                    return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
-                }
-            }
+                        new QueryValue(lowerCaseValue));
+        } else if (c.getOp().equals(ConstraintOp.CONTAINS)) {
+            return new SimpleConstraint(qf, ConstraintOp.MATCHES,
+                    new QueryValue("%" + lowerCaseValue + "%"));
+        } else {
+            return new SimpleConstraint(qf, c.getOp(), new QueryValue(lowerCaseValue));
         }
     }
 
@@ -801,10 +793,10 @@ public class MainHelper
     /**
      * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be
      * ignored.  Example webapp constraints and the coresponding object store constraints:
-     * "<= 2008-01-02"  -->  "<= 2008-01-02 23:59:59"
-     * " < 2008-01-02"  -->  " < 2008-01-02 00:00:00"
-     * " > 2008-01-02"  -->   "> 2008-01-02 23:59:59"
-     * ">= 2008-01-02"  -->   "> 2008-01-02 00:00:00"
+     * "&lt;= 2008-01-02"  --&gt;  "&gt;= 2008-01-02 23:59:59"
+     * " &gt; 2008-01-02"  --&gt;  " &lt; 2008-01-02 00:00:00"
+     * " &gt; 2008-01-02"  --&gt;   "&gt; 2008-01-02 23:59:59"
+     * "&gt;= 2008-01-02"  --&gt;   "&gt; 2008-01-02 00:00:00"
      * @param qn the QueryNode in the new query
      * @param c the webapp constraint
      * @return a new object store constraint

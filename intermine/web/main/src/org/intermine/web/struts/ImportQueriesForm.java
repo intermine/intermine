@@ -27,6 +27,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -62,8 +63,10 @@ public class ImportQueriesForm extends ValidatorForm
             if (!xml.startsWith("<queries>")) {
                 xml = "<queries>" + xml + "</queries>";
             }
-            
-            map = PathQueryBinding.unmarshal(new StringReader(xml));
+
+            // TODO: Assumes we are loading the latest version format.
+            map = PathQueryBinding.unmarshal(new StringReader(xml),
+                    ProfileManager.LATEST_VERSION_NUMBER);
             MainHelper.checkPathQueries(map, savedBags);
         }
         return map;

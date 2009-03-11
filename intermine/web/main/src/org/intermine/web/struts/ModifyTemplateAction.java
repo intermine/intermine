@@ -15,6 +15,7 @@ import java.util.Map;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -146,9 +147,11 @@ public class ModifyTemplateAction extends InterMineAction
             String xml = null;
 
             if (publicTemplates.get(name) != null) {
-                xml = ((TemplateQuery) publicTemplates.get(name)).toXml();
+                xml = ((TemplateQuery) publicTemplates.get(name))
+                    .toXml(ProfileManager.LATEST_VERSION_NUMBER);
             } else if (myTemplates.get(name) != null) {
-                xml = ((TemplateQuery) myTemplates.get(name)).toXml();
+                xml = ((TemplateQuery) myTemplates.get(name))
+                    .toXml(ProfileManager.LATEST_VERSION_NUMBER);
             }
             if (xml != null) {
                 xml = XmlUtil.indentXmlSimple(xml);

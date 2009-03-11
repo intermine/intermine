@@ -33,7 +33,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
         assertEquals(prefix + "/template/results?" +
         		"name=template1&cons1=Gene.name&op1=LOOKUP&value1=zen&" +
-        		"extra1=Drosophila%3Fmelanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
+        		"extra1=Drosophila_melanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
     }
 
     private PathQuery getExtraValueQuery() {

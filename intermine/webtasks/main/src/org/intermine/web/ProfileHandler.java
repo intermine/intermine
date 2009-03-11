@@ -57,6 +57,7 @@ class ProfileHandler extends DefaultHandler
     private Map<Integer, InterMineObject> idObjectMap;
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
+    private int version;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -76,10 +77,11 @@ class ProfileHandler extends DefaultHandler
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
+     * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                          ObjectStoreWriter osw, boolean abortOnError) {
-        this(profileManager, idUpgrader, null, null, new HashSet(), osw, abortOnError);
+                          ObjectStoreWriter osw, boolean abortOnError, int version) {
+        this(profileManager, idUpgrader, null, null, new HashSet(), osw, abortOnError, version);
     }
 
     /**
@@ -93,11 +95,11 @@ class ProfileHandler extends DefaultHandler
      * @param osw an ObjectStoreWriter to the production database, to write bags
      * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
      * problem and continue if possible (used by read-userprofile-xml).
+     * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                          String defaultUsername, String defaultPassword, Set tags,
-                          ObjectStoreWriter osw,
-                          boolean abortOnError) {
+            String defaultUsername, String defaultPassword, Set tags, ObjectStoreWriter osw,
+            boolean abortOnError, int version) {
         super();
         this.profileManager = profileManager;
         this.idUpgrader = idUpgrader;
@@ -107,6 +109,7 @@ class ProfileHandler extends DefaultHandler
         this.tags = tags;
         this.osw = osw;
         this.abortOnError = abortOnError;
+        this.version = version;
     }
 
     /**
@@ -118,12 +121,13 @@ class ProfileHandler extends DefaultHandler
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
      * @param osw an ObjectStoreWriter to the production database, to write bags
+     * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-                          String defaultUsername, String defaultPassword, Set tags,
-                          ObjectStoreWriter osw) {
+            String defaultUsername, String defaultPassword, Set tags, ObjectStoreWriter osw,
+            int version) {
         this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags,
-             osw, true);
+             osw, true, version);
     }
 
     /**
@@ -167,11 +171,11 @@ class ProfileHandler extends DefaultHandler
         }
         if (qName.equals("template-queries")) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags);
+            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, version);
         }
         if (qName.equals("queries")) {
             savedQueries = new LinkedHashMap();
-            subHandler = new SavedQueryHandler(savedQueries, savedBags);
+            subHandler = new SavedQueryHandler(savedQueries, savedBags, version);
         }
         if (qName.equals("tags")) {
             subHandler = new TagHandler(username, tags);

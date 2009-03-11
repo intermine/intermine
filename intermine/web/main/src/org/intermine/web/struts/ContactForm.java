@@ -21,6 +21,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Form bean representing feedback form.
@@ -218,7 +219,8 @@ public class ContactForm extends ValidatorForm
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         if (query != null) {
             msg += "\n\n---- Current query: ----\n\n";
-            msg += PathQueryBinding.marshal(query, "", query.getModel().getName());
+            msg += PathQueryBinding.marshal(query, "", query.getModel().getName(),
+                    ProfileManager.LATEST_VERSION_NUMBER);
         }
         return msg;
     }

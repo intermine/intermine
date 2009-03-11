@@ -18,6 +18,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -57,7 +58,8 @@ public class TemplatesImportAction extends InterMineAction
         int deleted = 0, imported = 0, renamed = 0;
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                 SessionMethods.getSearchRepository(servletContext));
-        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags);
+        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
+                ProfileManager.LATEST_VERSION_NUMBER);
 
         try {
             profile.disableSaving();

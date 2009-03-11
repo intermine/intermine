@@ -17,7 +17,6 @@ import java.util.Map;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
-import org.intermine.util.Util;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
@@ -146,7 +145,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         ret += "value" + index + "=";
         // value could be  treated to be sql valid before, 
         // so we have to find original untreated string
-        String value = encode(Util.wildcardSqlToUser(objectToString(valueObject)));
+        String value = encode(objectToString(valueObject));
         ret += format(value, highlighted);
         return ret;
     }
@@ -162,7 +161,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     private String extraToString(Object extraValue, int index, boolean highlighted) {
         String ret = "";
         ret += "extra" + index + "=";  
-        ret += format(encode(Util.wildcardSqlToUser(objectToString(extraValue))), 
+        ret += format(encode(objectToString(extraValue)), 
                 highlighted);
         return ret;
     }

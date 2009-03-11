@@ -36,8 +36,9 @@ public class TemplateQueryBinding
      *
      * @param template the TemplateQuery
      * @param writer the XMLStreamWriter to write to
+     * @param version the version number of the XML format
      */
-    public static void marshal(TemplateQuery template, XMLStreamWriter writer) {
+    public static void marshal(TemplateQuery template, XMLStreamWriter writer, int version) {
         try {
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
@@ -54,7 +55,7 @@ public class TemplateQueryBinding
             }
 
             PathQueryBinding.marshal(template, template.getName(), template.getModel()
-                    .getName(), writer);
+                    .getName(), writer, version);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -66,14 +67,15 @@ public class TemplateQueryBinding
      *
      * @param template the TemplateQuery
      * @return the corresponding XML String
+     * @param version the version number of the XML format
      */
-    public String marshal(TemplateQuery template) {
+    public String marshal(TemplateQuery template, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            marshal(template, writer);
+            marshal(template, writer, version);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
@@ -84,16 +86,17 @@ public class TemplateQueryBinding
     /**
      * Parse TemplateQuerys from XML
      * @param reader the saved templates
-     * @return a Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
+     * @param version the version of the xml format, an attribute of the ProfileManager
+     * @return a Map from template name to TemplateQuery
      */
     public Map<String, TemplateQuery> unmarshal(Reader reader, 
-            Map<String, InterMineBag> savedBags) {
+            Map<String, InterMineBag> savedBags, int version) {
         Map<String, TemplateQuery> templates = new LinkedHashMap();
 
         try {
             SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates,
-                    savedBags));
+                    savedBags, version));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

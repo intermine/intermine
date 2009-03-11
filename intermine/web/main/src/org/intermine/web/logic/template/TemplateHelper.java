@@ -311,10 +311,11 @@ public class TemplateHelper
      * will be a <code>template-queries</code> element.
      *
      * @param templates  map from template name to TemplateQuery
+     * @param version the version number of the XML format
      * @return  all template queries serialised as XML
      * @see  TemplateQuery
      */
-    public static String templateMapToXml(Map templates) {
+    public static String templateMapToXml(Map templates, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         Iterator iter = templates.values().iterator();
@@ -323,7 +324,7 @@ public class TemplateHelper
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("template-queries");
             while (iter.hasNext()) {
-                TemplateQueryBinding.marshal((TemplateQuery) iter.next(), writer);
+                TemplateQueryBinding.marshal((TemplateQuery) iter.next(), writer, version);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -339,13 +340,14 @@ public class TemplateHelper
      *
      * @param xml         the template queries in xml format
      * @param savedBags   Map from bag name to bag
+     * @param version the version of the xml format, an attribute on ProfileManager
      * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */
-    public static Map xmlToTemplateMap(String xml, Map<String, InterMineBag> savedBags)
-    throws Exception {
+    public static Map xmlToTemplateMap(String xml, Map<String, InterMineBag> savedBags,
+            int version) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
-        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags);
+        return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags, version);
     }
 
     /**

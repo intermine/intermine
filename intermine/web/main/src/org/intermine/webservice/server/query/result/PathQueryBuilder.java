@@ -17,36 +17,38 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 
 /**
- * PathQueryBuilder builds PathQuery object from xml and validates it. 
+ * PathQueryBuilder builds PathQuery object from xml and validates it.
  *
  * @author Jakub Kulaviak
  **/
-public class PathQueryBuilder 
+public class PathQueryBuilder
 {
 
     private PathQuery pathQuery;
 
     /**
-     * PathQueryBuilder constructor. 
+     * PathQueryBuilder constructor.
      * @param xml xml string from which will be PathQuery constructed
-     * @param schemaUrl url of XML Schema file, validation is performed according this file 
-     * @param savedBags previously saved bags  
+     * @param schemaUrl url of XML Schema file, validation is performed according this file
+     * @param savedBags previously saved bags
      */
     public PathQueryBuilder(String xml, String schemaUrl, Map<String, InterMineBag> savedBags) {
         buildQuery(xml, schemaUrl, savedBags);
     }
 
-    private void buildQuery(String xml, String schemaUrl, 
+    private void buildQuery(String xml, String schemaUrl,
             Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
             try {
-                pathQuery = ServletMethods.fromXml(xml, savedBags);                
+                pathQuery = ServletMethods.fromXml(xml, savedBags,
+                        ProfileManager.LATEST_VERSION_NUMBER);
             } catch (Exception ex) {
                 String msg = "XML is well formatted but contains invalid model data. "
                         + "Check that your constraints are correct "
@@ -74,7 +76,7 @@ public class PathQueryBuilder
     }
 
     /**
-     * Returns parsed PathQuery. 
+     * Returns parsed PathQuery.
      * @return parsed PathQuery
      */
     public PathQuery getQuery() {

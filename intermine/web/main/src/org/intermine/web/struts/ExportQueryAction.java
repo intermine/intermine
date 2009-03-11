@@ -23,6 +23,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -144,6 +145,7 @@ public class ExportQueryAction extends InterMineAction
 
     private String getQueryXML(String name, PathQuery query) {
         String modelName = query.getModel().getName();
-        return PathQueryBinding.marshal(query, (name != null ? name : ""), modelName);
+        return PathQueryBinding.marshal(query, (name != null ? name : ""), modelName,
+                ProfileManager.LATEST_VERSION_NUMBER);
     }
 }

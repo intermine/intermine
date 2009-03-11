@@ -12,7 +12,6 @@ package org.intermine.web.logic.results;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +42,7 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagQueryResult;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.flatouterjoins.MultiRow;
 import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
@@ -353,7 +353,8 @@ implements WebTable
                                 + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
                                 + parentColumnName + "\", query: \""
                                 + PathQueryBinding.marshal(pathQuery, "",
-                                    pathQuery.getModel().getName()) + "\"");
+                                    pathQuery.getModel().getName(),
+                                    ProfileManager.LATEST_VERSION_NUMBER) + "\"");
                     }
                     int columnIndex = columnIndexInteger.intValue();
                     MultiRowValue origO = initialList.get(columnIndex);
@@ -400,7 +401,8 @@ implements WebTable
                             + parentColumnName
                             + "\", query: \""
                             + PathQueryBinding.marshal(pathQuery, "",
-                                            pathQuery.getModel().getName())
+                                            pathQuery.getModel().getName(),
+                                            ProfileManager.LATEST_VERSION_NUMBER)
                             + "\", columnIndex: \"" + columnIndex
                             + "\", initialList: \"" + initialList + "\"", e);
                     }

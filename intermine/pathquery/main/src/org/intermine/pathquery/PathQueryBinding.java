@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
+import org.intermine.util.Util;
 import org.xml.sax.InputSource;
 
 /**
@@ -37,15 +38,16 @@ public class PathQueryBinding
      * @param query the PathQuery
      * @param queryName the name of the query
      * @param modelName the model name
+     * @param version the version number of the xml format, an attribute of the ProfileManager
      * @return the corresponding XML String
      */
-    public static String marshal(PathQuery query, String queryName, String modelName) {
+    public static String marshal(PathQuery query, String queryName, String modelName, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            marshal(query, queryName, modelName, writer);
+            marshal(query, queryName, modelName, writer, version);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
@@ -60,9 +62,10 @@ public class PathQueryBinding
      * @param queryName the name of the query
      * @param modelName the model name
      * @param writer the xml stream writer to write to
+     * @param version the version number of the xml format, an attribute of the ProfileManager
      */
     public static void marshal(PathQuery query, String queryName, String modelName,
-                               XMLStreamWriter writer) {
+            XMLStreamWriter writer, int version) {
         try {
             writer.writeStartElement("query");
             writer.writeAttribute("name", queryName);
@@ -94,6 +97,9 @@ public class PathQueryBinding
                         outputValue = c.getDisplayValue();    
                     } else {
                         outputValue = c.getValue();
+                    }
+                    if ((outputValue instanceof String) && (version < 1)) {
+                        outputValue = Util.wildcardUserToSql((String) outputValue);
                     }
                     writer.writeAttribute("value", "" + outputValue);
                     if (c.getDescription() != null) {
@@ -148,12 +154,13 @@ public class PathQueryBinding
     /**
      * Parse PathQueries from XML
      * @param reader the saved queries
+     * @param version the version of the xml, an attribute on the profile manager
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader) {
+    public static Map<String, PathQuery> unmarshal(Reader reader, int version) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries));
+            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, version));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -163,14 +170,14 @@ public class PathQueryBinding
     /**
      * Parses PathQuery from XML.
      * @param reader reader containing XML
+     * @param version the version of the xml, an attribute on the profile manager
      * @return PathQuery
      */
-    public static PathQuery unmarshalPathQuery(Reader reader) {
-        Map<String, PathQuery> map = unmarshal(reader);
+    public static PathQuery unmarshalPathQuery(Reader reader, int version) {
+        Map<String, PathQuery> map = unmarshal(reader, version);
         if (map.size() != 0) {
             return map.values().iterator().next();
         }
         return null;
     }
 }
-

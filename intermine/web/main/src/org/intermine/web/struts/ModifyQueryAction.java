@@ -27,6 +27,7 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
 
 /**
@@ -147,7 +148,8 @@ public class ModifyQueryAction extends InterMineAction
             String name = mqf.getSelectedQueries()[i];
             PathQuery query = map.get(name).getPathQuery();
             String modelName = query.getModel().getName();
-            String xml = PathQueryBinding.marshal(query, name, modelName);
+            String xml = PathQueryBinding.marshal(query, name, modelName,
+                    ProfileManager.LATEST_VERSION_NUMBER);
             xml = XmlUtil.indentXmlSimple(xml);
             out.println(xml);
         }

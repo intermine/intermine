@@ -14,7 +14,4 @@
     <typedef
         name="write-userprofile-xml"
         classname="org.intermine.web.task.ProfileWriteTask"/>
-    <typedef
-        name="set-userprofile-version"
-        classname="org.intermine.web.task.SetUserProfileVersionTask"/>
 </antlib>

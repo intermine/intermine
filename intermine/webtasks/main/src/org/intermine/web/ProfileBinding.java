@@ -67,10 +67,11 @@ public class ProfileBinding
      * @param profile the UserProfile
      * @param os the ObjectStore to use when looking up the ids of objects in bags
      * @param writer the XMLStreamWriter to write to
+     * @param version the version number of the xml format, an attribute of the profile manager
      */
-    public static void marshal(Profile profile, ObjectStore os,
-                               XMLStreamWriter writer) {
-        marshal(profile, os, writer, true, true, true, true, true, false);
+    public static void marshal(Profile profile, ObjectStore os, XMLStreamWriter writer,
+            int version) {
+        marshal(profile, os, writer, true, true, true, true, true, false, version);
     }
 
     /**
@@ -84,15 +85,11 @@ public class ProfileBinding
      * @param writeBags write saved bags
      * @param writeTags write saved tags
      * @param onlyConfigTags if true, only save tags that contain a ':'
+     * @param version the version number of the xml format, an attribute of the profile manager
      */
-    public static void marshal(Profile profile, ObjectStore os,
-                               XMLStreamWriter writer,
-                               boolean writeUserAndPassword,
-                               boolean writeQueries,
-                               boolean writeTemplates,
-                               boolean writeBags,
-                               boolean writeTags,
-                               boolean onlyConfigTags) {
+    public static void marshal(Profile profile, ObjectStore os, XMLStreamWriter writer,
+            boolean writeUserAndPassword, boolean writeQueries, boolean writeTemplates,
+            boolean writeBags, boolean writeTags, boolean onlyConfigTags, int version) {
         try {
             writer.writeStartElement("userprofile");
 
@@ -148,7 +145,7 @@ public class ProfileBinding
                     Map.Entry entry = (Map.Entry) i.next();
                     SavedQuery query = (SavedQuery) entry.getValue();
 
-                    SavedQueryBinding.marshal(query, writer);
+                    SavedQueryBinding.marshal(query, writer, version);
                 }
             }
             writer.writeEndElement();
@@ -159,7 +156,7 @@ public class ProfileBinding
                     Map.Entry entry = (Map.Entry) i.next();
                     TemplateQuery template = (TemplateQuery) entry.getValue();
 
-                    TemplateQueryBinding.marshal(template, writer);
+                    TemplateQueryBinding.marshal(template, writer, version);
                 }
             }
             writer.writeEndElement();
@@ -293,15 +290,16 @@ public class ProfileBinding
      * @param password default password
      * @param tags a set to populate with user tags
      * @param osw an ObjectStoreWriter for the production database, to write bags
+     * @param version the version of the XML format, an attribute on the ProfileManager
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
-            String password, Set tags, ObjectStoreWriter osw) {
+            String password, Set tags, ObjectStoreWriter osw, int version) {
         try {
             IdUpgrader idUpgrader = IdUpgrader.ERROR_UPGRADER;
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, idUpgrader, username, password, tags,
-                                   osw, false);
+                new ProfileHandler(profileManager, idUpgrader, username, password, tags, osw, false,
+                        version);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

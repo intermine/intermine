@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.ClassKeyHelper;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
 
@@ -56,7 +57,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
         
         TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null);
+        Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null, ProfileManager.LATEST_VERSION_NUMBER);
         runner = new BagQueryRunner(os, classKeys, bagQueryConfig, new ArrayList<TemplateQuery>(tqs.values()));
     }
 
