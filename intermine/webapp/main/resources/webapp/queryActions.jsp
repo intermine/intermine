@@ -9,7 +9,7 @@
     </div>
     <div class="body actions" align="right">
       <p><html:form action="/viewAction" styleId="submitform">
-        <html:image property="action" src="theme/show_results.jpg">
+        <html:image property="action" src="images/show_results.png">
           <fmt:message key="view.showresults"/>
         </html:image>
       </html:form><p/>
