@@ -97,7 +97,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         + "</constraint>"
         + "</node>"
         + "</query>";
-        assertEquals(expectedXml, pathQuery.toXml());
+        assertEquals(expectedXml, pathQuery.toXml(1));
     }
 
     public void testMakePathQueryForCollection() throws Exception {
@@ -121,8 +121,8 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         		    "</constraint>" +
         		"</node>" +
         		"</query>";
-        System.out.println(pathQuery.toXml());
-        assertEquals(expectedXml, pathQuery.toXml());
+        System.out.println(pathQuery.toXml(1));
+        assertEquals(expectedXml, pathQuery.toXml(1));
     }
     
 }

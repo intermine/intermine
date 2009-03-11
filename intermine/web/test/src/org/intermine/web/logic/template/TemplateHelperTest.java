@@ -29,6 +29,7 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.struts.TemplateForm;
 
@@ -40,7 +41,7 @@ public class TemplateHelperTest extends TestCase
         super.setUp();
         TemplateQueryBinding binding = new TemplateQueryBinding();
         Reader reader = new InputStreamReader(TemplateHelper.class.getClassLoader().getResourceAsStream("default-template-queries.xml"));
-        templates = binding.unmarshal(reader, new HashMap());
+        templates = binding.unmarshal(reader, new HashMap(), ProfileManager.LATEST_VERSION_NUMBER);
     }
 
     public void testPrecomputeQuery() throws Exception {
@@ -50,7 +51,7 @@ public class TemplateHelperTest extends TestCase
             "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.age AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name Employee.age\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map pathToQueryNode = new HashMap();
-        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml)).values().iterator().next();
+        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml), ProfileManager.LATEST_VERSION_NUMBER).values().iterator().next();
         MainHelper.makeQuery(pathQuery, new HashMap(), pathToQueryNode, null, null, false);
         List indexes = new ArrayList();
         String precomputeQuery = TemplateHelper.getPrecomputeQuery(t, indexes).toString();
@@ -79,7 +80,7 @@ public class TemplateHelperTest extends TestCase
         expected.setEdited(true);
 
         TemplateQuery actual = TemplateHelper.templateFormToTemplateQuery(tf, template, new HashMap());
-        assertEquals(expected.toXml(), actual.toXml());
+        assertEquals(expected.toXml(ProfileManager.LATEST_VERSION_NUMBER), actual.toXml(ProfileManager.LATEST_VERSION_NUMBER));
     }
 
 /*    public void testTemplateFormToTemplateQueryIdBag() throws Exception {
@@ -125,7 +126,7 @@ public class TemplateHelperTest extends TestCase
                 + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
                 + "</node></query></template>");
         TemplateQuery t =
-            (TemplateQuery) binding.unmarshal(reader, new HashMap()).values().iterator().next();
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), ProfileManager.LATEST_VERSION_NUMBER).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         assertEquals("SELECT DISTINCT a1_, a1_.age AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE (a1_.age != 10 AND a1_.age != 30) ORDER BY a1_.name, a1_.age", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
@@ -143,7 +144,7 @@ public class TemplateHelperTest extends TestCase
         "</template>");
         List indexes = new ArrayList();
         TemplateQuery t =
-            (TemplateQuery) binding.unmarshal(reader, new HashMap()).values().iterator().next();
+            (TemplateQuery) binding.unmarshal(reader, new HashMap(), ProfileManager.LATEST_VERSION_NUMBER).values().iterator().next();
         Query precomputeQuery = TemplateHelper.getPrecomputeQuery(t, new ArrayList());
         assertEquals("SELECT DISTINCT a1_, a1_.name AS a2_, a1_.title AS a3_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
                      precomputeQuery.toString());

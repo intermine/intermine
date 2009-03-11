@@ -38,10 +38,11 @@ public class TemplateQueryHandler extends PathQueryHandler
      * Constructor
      * @param templates Map from template name to TemplateQuery
      * @param savedBags Map from bag name to bag
+     * @param version the version of the XML, an attribute on the profile manager
      */
     public TemplateQueryHandler(Map<String, TemplateQuery> templates, 
-            Map<String, InterMineBag> savedBags) {
-        super(new HashMap());
+            Map<String, InterMineBag> savedBags, int version) {
+        super(new HashMap(), version);
         this.templates = templates;
         reset();
     }

@@ -73,7 +73,8 @@ public class ProfileManagerBinding
                 LOG.info("Writing profile: " + profile.getUsername());
                 long startTime = System.currentTimeMillis();
 
-                ProfileBinding.marshal(profile, profileManager.getObjectStore(), writer);
+                ProfileBinding.marshal(profile, profileManager.getObjectStore(), writer,
+                        profileManager.getVersion());
 
                 long totalTime = System.currentTimeMillis() - startTime;
                 LOG.info("Finished writing profile: " + profile.getUsername()
@@ -154,6 +155,7 @@ class ProfileManagerHandler extends DefaultHandler
     private ObjectStoreWriter osw;
     private boolean abortOnError;
     private long startTime = 0;
+    private int version;
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
 
     /**
@@ -182,29 +184,19 @@ class ProfileManagerHandler extends DefaultHandler
         throws SAXException {
         if (qName.equals("userprofiles")) {
             String value = attrs.getValue(MetadataManager.PROFILE_FORMAT_VERSION);
-            saveProfileVersion(value, profileManager.getProfileObjectStoreWriter());
+            if (value == null) {
+                version = 0;
+            } else {
+                version = Integer.parseInt(value);
+            }
         }
         if (qName.equals("userprofile")) {
             startTime = System.currentTimeMillis();
-            profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError);
+            profileHandler = new ProfileHandler(profileManager, idUpgrader, osw, abortOnError,
+                    version);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
-        }
-    }
-
-    /**
-     * @see ProfileManagerBinding#getProfileVersion()
-     */
-    private void saveProfileVersion(String value, ObjectStoreWriter osw) {
-        if (value == null) {
-            value = ProfileManagerBinding.ZERO_PROFILE_VERSION;
-        }
-        Database dat = ((ObjectStoreWriterInterMineImpl) osw).getDatabase();
-        try {
-            MetadataManager.store(dat, MetadataManager.PROFILE_FORMAT_VERSION, value);
-        } catch (SQLException ex) {
-            throw new RuntimeException("Saving profile format version to database failed.", ex);
         }
     }
 

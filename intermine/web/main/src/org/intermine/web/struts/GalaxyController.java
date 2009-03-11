@@ -27,6 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.util.URLGenerator;
 
 /**
@@ -52,7 +53,8 @@ public class GalaxyController extends TilesAction
 
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String queryXML = PathQueryBinding.marshal(query, "tmpName", os.getModel().getName());
+        String queryXML = PathQueryBinding.marshal(query, "tmpName", os.getModel().getName(),
+                ProfileManager.LATEST_VERSION_NUMBER);
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
         Properties webProperties = InterMineAction.getWebProperties(request);
         StringBuffer stringUrl = new StringBuffer(webProperties.getProperty("project.sitePrefix") 

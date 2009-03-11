@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.sql.SQLException;
 
 import net.sourceforge.iharder.Base64;
 
@@ -29,9 +30,11 @@ import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -66,6 +69,10 @@ public class ProfileManager
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
     private String superuser = null;
+    /** Number determining format of queries in the database */
+    protected int version;
+    /** Number of the latest format version */
+    public static final int LATEST_VERSION_NUMBER = 1;
 
     /**
      * Construct a ProfileManager for the webapp
@@ -76,6 +83,40 @@ public class ProfileManager
         this.os = os;
         superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         this.osw = userProfileOS;
+        try {
+            String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) osw)
+                .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
+            if (versionString == null) {
+                version = 0;
+            } else {
+                version = Integer.parseInt(versionString);
+            }
+            if (version == 0) {
+                // Check to see if we can upgrade
+                Query q = new Query();
+                QueryClass qc = new QueryClass(SavedQuery.class);
+                q.addFrom(qc);
+                q.addToSelect(qc);
+                List results = osw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                if (results.isEmpty()) {
+                    q = new Query();
+                    qc = new QueryClass(SavedTemplateQuery.class);
+                    q.addFrom(qc);
+                    q.addToSelect(qc);
+                    results = osw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                    if (results.isEmpty()) {
+                        // We can safely upgrade the database
+                        MetadataManager.store(((ObjectStoreInterMineImpl) osw).getDatabase(),
+                                MetadataManager.PROFILE_FORMAT_VERSION, "" + LATEST_VERSION_NUMBER);
+                        version = LATEST_VERSION_NUMBER;
+                    }
+                }
+            }
+        } catch (ObjectStoreException e) {
+            throw new IllegalStateException("Error upgrading version number in database", e);
+        } catch (SQLException e) {
+            throw new IllegalStateException("Error reading version number from database", e);
+        }
     }
 
     /**
@@ -92,6 +133,15 @@ public class ProfileManager
      */
     public ObjectStoreWriter getProfileObjectStoreWriter() {
         return osw;
+    }
+
+    /**
+     * Returns the version number of the data format in the database for this ProfileManager.
+     *
+     * @return an int
+     */
+    public int getVersion() {
+        return version;
     }
 
     /**
@@ -210,10 +260,11 @@ public class ProfileManager
             SavedQuery query = (SavedQuery) i.next();
             try {
                 Map queries =
-                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags);
+                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
+                            version);
                 if (queries.size() == 0) {
                     queries =
-                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()));
+                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), version);
                         MainHelper.checkPathQueries(queries, savedBags);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
@@ -236,7 +287,7 @@ public class ProfileManager
             SavedTemplateQuery template = (SavedTemplateQuery) i.next();
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr, savedBags);
+                Map templateMap = templateBinding.unmarshal(sr, savedBags, version);
                 String templateName = (String) templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
@@ -323,7 +374,7 @@ public class ProfileManager
                     Map.Entry entry = (Map.Entry) i.next();
                     query = (org.intermine.web.logic.query.SavedQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(SavedQueryBinding.marshal(query));
+                    savedQuery.setQuery(SavedQueryBinding.marshal(query, version));
                     savedQuery.setUserProfile(userProfile);
                     osw.store(savedQuery);
                 } catch (Exception e) {
@@ -340,7 +391,7 @@ public class ProfileManager
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
                     }
-                    savedTemplate.setTemplateQuery(templateBinding.marshal(template));
+                    savedTemplate.setTemplateQuery(templateBinding.marshal(template, version));
                     savedTemplate.setUserProfile(userProfile);
                     osw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);

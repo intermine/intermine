@@ -30,6 +30,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.WebResultsExecutor;
@@ -39,14 +40,12 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that sets the current Query for
- * the session from a saved Query.
+ * the session from some random XML the user has passed in, and maybe executes it.
  *
  * @author Kim Rutherford
  */
 public class LoadQueryAction extends DispatchAction
 {
-
-
     /**
      * Load a query from path query XML passed as a request parameter.
      * @param mapping The ActionMapping used to select this instance
@@ -70,7 +69,8 @@ public class LoadQueryAction extends DispatchAction
         String exportFormat = request.getParameter("exportFormat");
 
 
-        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml));
+        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
+                ProfileManager.LATEST_VERSION_NUMBER);
         MainHelper.checkPathQueries(queries, profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
 

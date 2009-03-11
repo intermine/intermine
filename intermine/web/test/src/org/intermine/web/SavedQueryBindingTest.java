@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.query.SavedQueryBinding;
 
@@ -35,9 +36,9 @@ public class SavedQueryBindingTest extends TestCase
         PathQuery query = new PathQuery(model);
         SavedQuery sq = new SavedQuery("hello", created, query);
 
-        String xml = SavedQueryBinding.marshal(sq);
+        String xml = SavedQueryBinding.marshal(sq, ProfileManager.LATEST_VERSION_NUMBER);
         SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml),
-                                                                  new HashMap()).values().iterator().next();
+                new HashMap(), ProfileManager.LATEST_VERSION_NUMBER).values().iterator().next();
 
         assertEquals(sq, sq2);
     }

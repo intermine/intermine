@@ -140,7 +140,8 @@ public class DumpDefaultTemplatesTask extends Task
         throws Exception {
 
         log("Writing tags and templates...");
-        ProfileBinding.marshal(superProfile, os, writer, false, false, true, false, true, true);
+        ProfileBinding.marshal(superProfile, os, writer, false, false, true, false, true, true,
+                ProfileManager.LATEST_VERSION_NUMBER);
         log("Done.");
     }
 }

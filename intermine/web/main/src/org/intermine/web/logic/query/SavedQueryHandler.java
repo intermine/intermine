@@ -33,9 +33,10 @@ public class SavedQueryHandler extends PathQueryHandler
      * Constructor
      * @param queries Map from saved query name to SavedQuery
      * @param savedBags Map from bag name to bag
+     * @param version the version of the xml, an attribute on the profile manager
      */
-    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags) {
-        super(new HashMap<String, PathQuery> ());
+    public SavedQueryHandler(Map<String, SavedQuery> queries, Map savedBags, int version) {
+        super(new HashMap<String, PathQuery> (), version);
         this.queries = queries;
     }
 

@@ -25,9 +25,7 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to handle button presses on the main tile

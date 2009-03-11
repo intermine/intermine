@@ -55,16 +55,7 @@ public class ConstraintValueParser
                 // Is the expression valid? We need a non-zero length string at least
                 throw new ParseValueException("Please supply a valid wildcard expression.");
             } else {
-                String trimmedValue = value.trim();
-                if (constraintOp == ConstraintOp.EQUALS
-                    || constraintOp == ConstraintOp.NOT_EQUALS
-                    || constraintOp == ConstraintOp.MATCHES
-                    || constraintOp == ConstraintOp.DOES_NOT_MATCH
-                    || constraintOp == ConstraintOp.CONTAINS) {
-                    parsedValue = Util.wildcardUserToSql(trimmedValue);
-                } else {
-                    parsedValue = trimmedValue;
-                }
+                parsedValue = value.trim();
             }
         } else {
             try {

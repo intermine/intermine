@@ -354,15 +354,16 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     /**
      * Convert a template query to XML.
      *
+     * @param version the version number of the XML format
      * @return this template query as XML.
      */
-    public String toXml() {
+    public String toXml(int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
-            TemplateQueryBinding.marshal(this, writer);
+            TemplateQueryBinding.marshal(this, writer, version);
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }

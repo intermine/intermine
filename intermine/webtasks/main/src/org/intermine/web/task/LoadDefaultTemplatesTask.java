@@ -141,7 +141,7 @@ public class LoadDefaultTemplatesTask extends Task
             Set<Tag> tags = new HashSet();
             osw = new ObjectStoreWriterInterMineImpl(os);
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
-                    profileDest.getPassword(), tags, osw);
+                    profileDest.getPassword(), tags, osw, ProfileManager.LATEST_VERSION_NUMBER);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();

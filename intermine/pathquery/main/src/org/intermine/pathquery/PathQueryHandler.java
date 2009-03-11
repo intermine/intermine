@@ -22,6 +22,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -43,13 +44,16 @@ public class PathQueryHandler extends DefaultHandler
     private List<String> viewStrings = new ArrayList();
     private Map<String, String> pathStringDescriptions = new HashMap<String, String>();
     private Map<String, String> sortOrder = new LinkedHashMap();
+    protected int version;
 
     /**
      * Constructor
      * @param queries Map from query name to PathQuery
+     * @param version the version of the xml, an attribute on the profile manager
      */
-    public PathQueryHandler(Map<String, PathQuery> queries) {
+    public PathQueryHandler(Map<String, PathQuery> queries, int version) {
         this.queries = queries;
+        this.version = version;
     }
 
     /**
@@ -137,7 +141,11 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 if (constraintOp != ConstraintOp.IS_NULL
                         && constraintOp != ConstraintOp.IS_NOT_NULL) {
-                    constraintValue = TypeUtil.stringToObject(c, attrs.getValue("value"));
+                    String stringValue = attrs.getValue("value");
+                    if ((version < 1) && (stringValue != null)) {
+                        stringValue = Util.wildcardSqlToUser(stringValue);
+                    }
+                    constraintValue = TypeUtil.stringToObject(c, stringValue);
                 }
             }
             String editable = attrs.getValue("editable");

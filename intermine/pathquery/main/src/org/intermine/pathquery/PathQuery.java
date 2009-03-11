@@ -1358,18 +1358,21 @@ public class PathQuery
     /**
      * Serialise this query in XML format.
      * @param name query name to put in xml
+     * @param version the version number of the XML format
      * @return PathQuery in XML format
      */
-    public String toXml(String name) {
-        return PathQueryBinding.marshal(this, name, model.getName());
+    public String toXml(String name, int version) {
+        return PathQueryBinding.marshal(this, name, model.getName(), version);
     }
 
     /**
      * Serialise to XML with no name.
+     *
+     * @param version the version number of the XML format
      * @return the XML
      */
-    public String toXml() {
-        return PathQueryBinding.marshal(this, "", model.getName());
+    public String toXml(int version) {
+        return PathQueryBinding.marshal(this, "", model.getName(), version);
     }
 
     /**

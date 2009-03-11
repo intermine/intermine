@@ -26,11 +26,12 @@ public class ServletMethods
     /**
      * Rematerialise single query from XML.
      * @param xml PathQuery XML
-     * @return a PathQuery object
      * @param savedBags Map from bag name to bag
+     * @param version the version of the XML, an attribute of ProfileManager
+     * @return a PathQuery object
      */
-    public static PathQuery fromXml(String xml, Map<String, InterMineBag> savedBags) {
-        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(xml));
+    public static PathQuery fromXml(String xml, Map<String, InterMineBag> savedBags, int version) {
+        Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(xml), version);
         MainHelper.checkPathQueries(queries, savedBags);
         return (PathQuery) queries.values().iterator().next();
     }
