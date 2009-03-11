@@ -29,7 +29,7 @@ public class PathQueryTest extends TestCase
         super.setUp();
         model = Model.getInstanceByName("testmodel");
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryTest.xml");
-        expected = PathQueryBinding.unmarshal(new InputStreamReader(is));
+        expected = PathQueryBinding.unmarshal(new InputStreamReader(is), 1);
     }
 
     public PathQueryTest(String arg) {
@@ -411,8 +411,8 @@ public class PathQueryTest extends TestCase
         q.addView(view);
         q.addConstraint("Department.employees", Constraints.eq("DepartmentA1"), "A", "Manager");
         assertEquals(e.getAllConstraints(), q.getAllConstraints());
-        assertEquals(e.toXml(), q.toXml());
-        assertEquals(e.toXml("test"), q.toXml("test"));
+        assertEquals(e.toXml(1), q.toXml(1));
+        assertEquals(e.toXml("test", 1), q.toXml("test", 1));
     }
 
     public void testGetAllConstraints() {
@@ -1051,7 +1051,7 @@ public class PathQueryTest extends TestCase
     }
     
     public void testFlipJoinLogic() {
-        Map parsed = PathQueryBinding.unmarshal(new StringReader("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.name asc\" constraintLogic=\"A or B\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.name\" type=\"String\"><constraint op=\"=\" value=\"DepartmentA1\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Department.employees\" type=\"Employee\"></node><node path=\"Department.employees.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA1\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>"));
+        Map parsed = PathQueryBinding.unmarshal(new StringReader("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.name asc\" constraintLogic=\"A or B\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.name\" type=\"String\"><constraint op=\"=\" value=\"DepartmentA1\" description=\"\" identifier=\"\" code=\"B\"></constraint></node><node path=\"Department.employees\" type=\"Employee\"></node><node path=\"Department.employees.name\" type=\"String\"><constraint op=\"=\" value=\"EmployeeA1\" description=\"\" identifier=\"\" code=\"A\"></constraint></node></query>"), 1);
         PathQuery pq = (PathQuery) parsed.get("test");
         assertEquals("A or B", pq.getConstraintLogic());
         pq.flipJoinStyle("Department.employees");
