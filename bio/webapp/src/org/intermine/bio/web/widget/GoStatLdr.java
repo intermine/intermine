@@ -15,10 +15,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -47,6 +48,8 @@ public class GoStatLdr extends EnrichmentWidgetLdr
     private InterMineBag bag;
     private String namespace;
     private Collection<String> organismsLower = new ArrayList<String>();
+    private Model model;
+
     /**
      * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
      * or cellular_component)
@@ -57,7 +60,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         namespace = extraAttribute;
         organisms = BioUtil.getOrganisms(os, bag, false);
-
+        model = os.getModel();
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
@@ -83,8 +86,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGoAnnotation = null;
         QueryClass qcGo = null;
         try {
-            qcGoAnnotation = new QueryClass(Class.forName("GOAnnotation"));
-            qcGo = new QueryClass(Class.forName("OntologyTerm"));
+            qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
+                                                          + ".GOAnnotation"));
+            qcGo = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
             return null;
