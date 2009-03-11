@@ -10,7 +10,7 @@
 
 <div class="body">
 
-<table cellpadding="0" cellspacing="5" border="0" class="dbsources">
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr>
     <th>Lab</th>
     <th>Affiliation</th>
