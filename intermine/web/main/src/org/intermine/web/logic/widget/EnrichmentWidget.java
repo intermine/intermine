@@ -86,9 +86,10 @@ public class EnrichmentWidget extends Widget
                                                                                           });
 
             resultMaps = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
-
-            int analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
-
+            int analysedTotal = 0;
+            if (!resultMaps.isEmpty()) {
+                analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
+            }
             setNotAnalysed(bag.getSize() - analysedTotal);
 
         } catch (ObjectStoreException e) {
