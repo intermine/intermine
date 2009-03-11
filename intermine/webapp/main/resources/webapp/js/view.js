@@ -45,7 +45,7 @@ function reDrawSorter(name,order) {
 	jQuery('.sortbutton').each(function(index) {
         if(this.id == 'btn_' + name.replace(/[\.:]/g,'_')) {
         	jQuery(this).attr('src','images/sort_'+order+'.png');
-        } else if(this.id.indexOf("disabled")<0){
+        } else if(jQuery(this).attr('src').indexOf("disabled")<0){
             jQuery(this).attr('src','images/sort_none.png');
         }
     });
