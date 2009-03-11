@@ -65,7 +65,7 @@
             <tiles:put name="showCount" value="false"/>
           </tiles:insert>
         </div>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/templates.do" styleClass="fp_button"><img src="theme/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" height="22px" width="153px" /></html:link><br clear="right"/>
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/templates.do" styleClass="fp_button"><img src="images/search_with_templates.png" id="search_with_templates" title="Click here to Search using Template Queries" height="47px" width="122px" /></html:link><br clear="right"/>
       </im:boxarea>
 
       <im:boxarea title="Lists" titleLink="/${WEB_PROPERTIES['webapp.path']}/bag.do" stylename="gradientbox">
@@ -88,8 +88,8 @@
           <%--<tiles:put name="height" value="100"/>--%>
         </tiles:insert>
         </div>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" styleClass="fp_button"><img src="theme/view_lists.png" id="view_lists" title="Click here to View Lists" height="22px" width="115px" /></html:link><br clear="right"/><br/>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button"><img src="theme/create_lists.png" id="create_lists" title="Click here to Upload Lists" height="22px" width="120px" /></html:link><br clear="right"/>
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view" styleClass="fp_button"><img src="images/view_lists.png" id="view_lists" title="Click here to View Lists" height="47px" width="122px" /></html:link><br clear="right"/><br/>
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button"><img src="images/create_lists.png" id="create_lists" title="Click here to Upload Lists" height="47px" width="122px" /></html:link><br clear="right"/>
       </im:boxarea>
 
       <im:boxarea title="Query Builder" titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" stylename="gradientbox">
@@ -107,7 +107,7 @@
             <fmt:message key="begin.importQuery"/>
           </a>
         </div>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button"><img src="theme/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="22px" width="120px" /></html:link><br clear="right"/>
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button"><img src="images/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="47px" width="122px" /></html:link><br clear="right"/>
       </im:boxarea>
 </div>
 

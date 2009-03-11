@@ -89,7 +89,6 @@ p#version {
     position:absolute;
     top:0;
     right:0;
-    background-color: #5C0075; 
     color: #FFF; font: 0.7em Arial,sans-serif;
     white-space:nowrap;
 }
@@ -310,10 +309,6 @@ div#navtrail a:link, div#navtrail a:visited{
  }
 
 
-table.results tfoot tr td {
-    background-color: #eee;
-}
-
 /* =SPAN
 -------------------------*/
 .errors {
@@ -378,7 +373,7 @@ table.results tfoot tr td {
 
 .roundcorners h1, .gradientbox h1, .plainbox h1{
     margin:0; padding:0px;
-    color:#5C0075; font-size:1.5em;}
+    font-size:1.5em;}
 
 .imbox h3{float:left;font-size:1.4em;color:white;}
 

@@ -66,10 +66,8 @@ div.filterBar {
 div#filter_tool_bar {
     text-align: right;
     clear:both;
+    background-color:#FFF;
     padding:5px 10px; 
-    border-right:1px solid #9F67AD;
-    border-left:1px solid #9F67AD;
-    border-bottom:1px solid #9F67AD;
 }
 
 ul#actions_menu, ul#actions_menu li {

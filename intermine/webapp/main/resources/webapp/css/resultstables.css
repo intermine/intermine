@@ -1,6 +1,4 @@
 /* =TD £TABLE */
-td.resBar {
-    background-image:url('../theme/res_bar_middle.gif');}
 
 /* =DIV £OBJECTDETAILSTEMPLATETABLE
 -------------------------------------- */
@@ -25,13 +23,6 @@ td.resBar {
   border:1px solid #CCC;
 }
 
-#handle {
-    height:25px;
-    background-image: url('../theme/heading-bg.gif');
-    background-repeat: repeat-x;
-    cursor:move;
-    border-top:1px solid #CCC;
-}
 .summaryhead {
     font-weight: bold;
     padding:5px;
@@ -87,36 +78,11 @@ table.results th, table.results td {
 
 /* =TH £TABLE,£BAGDETAILS*/
 table.results th {
-  background: #927F97;font-size: 12px;color:#FFF; padding:0;}
+  font-size: 12px; padding:0;}
 
 /* =TD £TABLE,£BAGDETAILS*/
 table.results td td {
   border: 1px solid #CCC;
-}
-
-/* =TD £TABLE,£BAGDETAILS*/
-table.results tr.even TD{
-  background-color: #FBEBFF;}
-
-table.results tr.odd TD{
-  border-right:1px solid #FBEBFF;
-  border-bottom:1px solid #FBEBFF;}
-
-/* =TD, TH £TABLE,£BAGDETAILS*/
-table.results th.checkbox,table.results td.checkbox{
-}
-  
-table.results tr td.highlightCell { 
-	background-color: #FFCBFF;
-	border-right:1px solid #FFF;
-}
-
-table.results tr td.noHighlightObject {
-    /* none */
-}
-
-table.results tr td.highlightObject {
-    background-color: #ee6;
 }
 
 table.theadbuttons tr td {
@@ -127,6 +93,5 @@ table.theadbuttons tr td {
 }
 
 .columnHeader {
-  background: #927F97;
   padding:10px 15px 10px 15px;
 }

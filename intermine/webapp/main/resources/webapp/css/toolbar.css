@@ -30,11 +30,8 @@ ul#button_bar li img {
 }
 .tb_button:hover {
   margin-right:0;
-  border-bottom:1px solid #5C0075;
-  border-right:1px solid #5C0075;
 }
 .tb_button_active {
-  border:1px solid #5C0075;
 }
 .tool_bar_item {
     _width:350px;
