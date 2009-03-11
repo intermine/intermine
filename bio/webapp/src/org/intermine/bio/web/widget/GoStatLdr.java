@@ -93,11 +93,15 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-        QueryField qfGoTerm = new QueryField(qcGoAnnotation, "name");
+
         QueryField qfGeneId = new QueryField(qcGene, "id");
+
         QueryField qfNamespace = new QueryField(qcGo, "namespace");
         QueryField qfGoTermId = new QueryField(qcGo, "identifier");
+        QueryField qfGoTerm = new QueryField(qcGo, "name");
+
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+
         QueryField qfProteinId = new QueryField(qcProtein, "id");
 
         QueryField qfPrimaryIdentifier = null;
@@ -120,7 +124,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
 
         // gene.goAnnotation CONTAINS GOAnnotation
-        QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "allGoAnnotation");
+        QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "goAnnotation");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
 
         String[] ids = getOntologies();
@@ -135,7 +139,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
 
         // goannotation contains go term
-        QueryObjectReference qor2 = new QueryObjectReference(qcGoAnnotation, "property");
+        QueryObjectReference qor2 = new QueryObjectReference(qcGoAnnotation, "ontologyTerm");
         cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcGo));
 
         // can't be a NOT relationship!
@@ -188,6 +192,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                 q.addToGroupBy(qfGoTerm);
             }
         }
+        LOG.error(" == " + q);
         return q;
     }
 

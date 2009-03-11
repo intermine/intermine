@@ -322,104 +322,116 @@ public abstract class WebUtil
         int sampleTotal = calcTotal(os, ldr, false);    // objects annotated in bag
 
         // sample query
-        Results r = os.execute(ldr.getSampleQuery(false), 20000, true, true, true);
-        Iterator iter = r.iterator();
-        HashMap<String, Long> countMap = new HashMap<String, Long>();
-        HashMap<String, String> idMap = new HashMap<String, String>();
+        Query q = ldr.getSampleQuery(false);
 
-        while (iter.hasNext()) {
+        Results r = null;
 
-            // extract results
-            ResultsRow rr =  (ResultsRow) iter.next();
-
-            // id of item
-            String id = (String) rr.get(0);
-
-            // count of item
-            Long count = (Long) rr.get(1);
-
-            // id & count
-            countMap.put(id, count);
-
-            // id & label
-            idMap.put(id, (String) rr.get(2));
-
-        }
-
-        // run population query
-        List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
-        if (rAll == null) {
-            rAll = os.execute(ldr.getPopulationQuery(false), 20000, true, true, true);
-            rAll = new ArrayList(rAll);
-            statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
-        }
-
-        HashMap<String, BigDecimal> resultsMap = new HashMap<String, BigDecimal>();
-        Iterator itAll = rAll.iterator();
-
-        // loop through results again to calculate p-values
-        while (itAll.hasNext()) {
-
-            ResultsRow rrAll =  (ResultsRow) itAll.next();
-
-            String id = (String) rrAll.get(0);
-
-            if (countMap.containsKey(id)) {
-
-                Long countBag = countMap.get(id);
-                Long countAll = (java.lang.Long) rrAll.get(1);
-
-                // (k,n,M,N)
-                double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
-                                                     countAll.intValue(), populationTotal);
-
-                try {
-                    resultsMap.put(id, new BigDecimal(p));
-                } catch (Exception e) {
-                    String msg = p + " isn't a double.  calculated for " + id + " using "
-                    + " k: "  + countBag
-                    + ", n: " + sampleTotal
-                    + ", M: " + countAll
-                    + ", N: " + populationTotal
-                    + ".  k query: "
-                    + ldr.getSampleQuery(false).toString()
-                    + ".  n query: "
-                    + ldr.getSampleQuery(true).toString()
-                    + ".  M query: "
-                    + ldr.getPopulationQuery(false).toString()
-                    + ".  N query: "
-                    + ldr.getPopulationQuery(true).toString();
-
-                    throw new RuntimeException(msg, e);
-                }
-            }
-        }
-
-        Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
-
-        if (!errorCorrection.equals("None")) {
-            adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
-        } else {
-            // TODO move this to the ErrorCorrection class
-            BigDecimal max = new BigDecimal(maxValue.doubleValue());
-            for (String id : resultsMap.keySet()) {
-                BigDecimal pvalue = resultsMap.get(id);
-                if (pvalue.compareTo(max) <= 0) {
-                    adjustedResultsMap.put(id, pvalue);
-                }
-            }
-        }
-
-        SortableMap sortedMap = new SortableMap(adjustedResultsMap);
-        sortedMap.sortValues();
-
+        HashMap<String, Long> countMap = new HashMap();
+        HashMap<String, String> idMap = new HashMap();
+        HashMap<String, BigDecimal> resultsMap = new HashMap();
         Map dummy = new HashMap();
-        dummy.put("widgetTotal", new Integer(sampleTotal));
+        SortableMap sortedMap = new SortableMap();
+
+        // if the model has changed, the query might not be valid
+        if (q != null) {
+            r = os.execute(q, 20000, true, true, true);
+
+            Iterator iter = r.iterator();
+
+            while (iter.hasNext()) {
+
+                // extract results
+                ResultsRow rr =  (ResultsRow) iter.next();
+
+                // id of item
+                String id = (String) rr.get(0);
+
+                // count of item
+                Long count = (Long) rr.get(1);
+
+                // id & count
+                countMap.put(id, count);
+
+                // id & label
+                idMap.put(id, (String) rr.get(2));
+
+            }
+
+            // run population query
+            List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
+            if (rAll == null) {
+                rAll = os.execute(ldr.getPopulationQuery(false), 20000, true, true, true);
+                rAll = new ArrayList(rAll);
+                statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
+            }
+
+            Iterator itAll = rAll.iterator();
+
+            // loop through results again to calculate p-values
+            while (itAll.hasNext()) {
+
+                ResultsRow rrAll =  (ResultsRow) itAll.next();
+
+                String id = (String) rrAll.get(0);
+
+                if (countMap.containsKey(id)) {
+
+                    Long countBag = countMap.get(id);
+                    Long countAll = (java.lang.Long) rrAll.get(1);
+
+                    // (k,n,M,N)
+                    double p = Hypergeometric.calculateP(countBag.intValue(), sampleTotal,
+                                                         countAll.intValue(), populationTotal);
+
+                    try {
+                        resultsMap.put(id, new BigDecimal(p));
+                    } catch (Exception e) {
+                        String msg = p + " isn't a double.  calculated for " + id + " using "
+                        + " k: "  + countBag
+                        + ", n: " + sampleTotal
+                        + ", M: " + countAll
+                        + ", N: " + populationTotal
+                        + ".  k query: "
+                        + ldr.getSampleQuery(false).toString()
+                        + ".  n query: "
+                        + ldr.getSampleQuery(true).toString()
+                        + ".  M query: "
+                        + ldr.getPopulationQuery(false).toString()
+                        + ".  N query: "
+                        + ldr.getPopulationQuery(true).toString();
+
+                        throw new RuntimeException(msg, e);
+                    }
+                }
+            }
+
+            Map<String, BigDecimal> adjustedResultsMap = new HashMap<String, BigDecimal>();
+
+            if (!errorCorrection.equals("None")) {
+                adjustedResultsMap = calcErrorCorrection(errorCorrection, maxValue, resultsMap);
+            } else {
+                // TODO move this to the ErrorCorrection class
+                BigDecimal max = new BigDecimal(maxValue.doubleValue());
+                for (String id : resultsMap.keySet()) {
+                    BigDecimal pvalue = resultsMap.get(id);
+                    if (pvalue.compareTo(max) <= 0) {
+                        adjustedResultsMap.put(id, pvalue);
+                    }
+                }
+            }
+            sortedMap = new SortableMap(adjustedResultsMap);
+            sortedMap.sortValues();
+            dummy.put("widgetTotal", new Integer(sampleTotal));
+        } else {
+            // no results
+            dummy.put("widgetTotal", new Integer(0));
+        }
 
         maps.add(0, sortedMap);
         maps.add(1, countMap);
         maps.add(2, idMap);
         maps.add(3, dummy);
+
         return maps;
     }
 
@@ -458,6 +470,10 @@ public abstract class WebUtil
             q = ldr.getPopulationQuery(true);
         } else {
             q = ldr.getSampleQuery(true);
+        }
+        if (q == null) {
+            // bad query, model probably changed.  no results
+            return 0;
         }
         Object[] o = os.executeSingleton(q).toArray();
         if (o.length == 0) {
