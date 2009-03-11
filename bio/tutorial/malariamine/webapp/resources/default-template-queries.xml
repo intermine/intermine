@@ -109,63 +109,12 @@
     </node>
   </query>
 </template>
-
-<template name="Gene_allGOTerms" title="Gene --&gt; GO terms and parents of those terms." longDescription="Given a gene show the associated GO terms, and the all parents to the top of the directed graph.  If 'isPrimaryAssignment' is 'true' then that GO term was actually assigned to the gene.  Likewise if it is false then the GO term is some more general parent term." comment="">
-  <query name="Gene_allGOTerms" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.allGoAnnotation.property.namespace Gene.allGoAnnotation.property.name Gene.allGoAnnotation.property.identifier Gene.allGoAnnotation.goEvidenceCodes.code Gene.allGoAnnotation.qualifier Gene.allGoAnnotation.isPrimaryAssignment" sortOrder="Gene.secondaryIdentifier asc">
-    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.property" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="gene.38179" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.allGoAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.allGoAnnotation.property" type="GOTerm">
-    </node>
-  </query>
-</template>
-<template name="Gene_GO" title="Gene --&gt; GO terms." longDescription="Search for GO annotations for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.property.namespace Gene.goAnnotation.property.name Gene.goAnnotation.property.identifier Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier" sortOrder="Gene.primaryIdentifier asc">
-    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.property" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="gene.38179" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.property" type="GOTerm">
-    </node>
-  </query>
-</template>
 <template name="Gene_Identifiers" title="Gene --&gt; All identifiers." longDescription="Show all identifiers for a gene, given an identifier." comment="07:02:07:Updated to work from gene identifier - Rachel.">
   <query name="Gene_Identifiers" model="genomic" view="Gene.secondaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.name" sortOrder="Gene.secondaryIdentifier asc">
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.secondaryIdentifier" type="String">
       <constraint op="=" value="gene.38179" description="Gene.secondaryIdentifier" identifier="Gene.secondaryIdentifier" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="Gene_particularGoannotation" title="Gene + GO term name --&gt; Gene with the GO term name." longDescription="Show if the following gene has the following GO term." comment="">
-  <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="C and A">
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="gene.38179" description="For the gene(s):" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%membrane%" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
       </constraint>
     </node>
   </query>
@@ -198,44 +147,6 @@
     </node>
     <node path="Gene.id" type="Integer">
       <constraint op="=" value="0" description="Gene.id" identifier="Gene.id" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GO_name_Gene" title="GO term name/id --&gt; Genes in one specific organism." longDescription="Search for genes in one specific organism that have been asociated with a particular GO annotation." comment="">
-  <query name="GO_name_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.qualifier" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.goAnnotation.property" type="GOTerm">
-      <constraint op="LOOKUP" value="*membrane*" description="annotated with Goterm/id:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GOname_GOidentifier" title="GO term name --&gt; GO term identifier." longDescription="Find the GO identifier for a specific term." comment="">
-  <query name="GOname_GOidentifier" model="genomic" view="GOTerm.name GOTerm.identifier GOTerm.description" sortOrder="GOTerm.name asc">
-    <node path="GOTerm" type="GOTerm">
-    </node>
-    <node path="GOTerm.name" type="String">
-      <constraint op="LIKE" value="%blastoderm%" description="" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GOtermidentifier_name" title="GO term identifier --&gt; GO term name." longDescription="Give the GO term name for a particular GO term identifier. (Data Source: GO)" comment="">
-  <query name="GOtermidentifier_name" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description" sortOrder="GOTerm.identifier asc">
-    <node path="GOTerm" type="GOTerm">
-    </node>
-    <node path="GOTerm.identifier" type="String">
-      <constraint op="=" value="GO:0020011" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -296,46 +207,6 @@
     </node>
   </query>
 </template>
-<template name="Protein_GOterms" title="Protein --&gt; GO terms." longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." comment="06.06.07 updated to work from protein class - Philip">
-  <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.property.namespace Protein.genes.goAnnotation.property.identifier Protein.genes.goAnnotation.property.name" sortOrder="Protein.primaryAccession asc">
-    <pathDescription pathString="Protein.genes" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="CALM_PLAF7" description="" identifier="Protein.class" editable="true" code="A">
-      </constraint>
-    </node>
-    <node path="Protein.genes" type="Gene">
-    </node>
-    <node path="Protein.genes.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Protein.genes.goAnnotation.property" type="GOTerm">
-    </node>
-  </query>
-</template>
-<template name="Protein_GOtermsSpecificOntology" title="Protein --&gt; GO terms from a specific GO ontology." longDescription="Show the GO annotations for a protein or proteins from a specifc GO ontology (cellular_component, molecular_function, biological_process)." comment="">
-  <query name="Protein_GOtermsSpecificOntology" model="genomic" view="Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.property.namespace Protein.genes.goAnnotation.property.identifier Protein.genes.goAnnotation.property.name" sortOrder="Protein.primaryAccession asc" constraintLogic="A and B">
-    <pathDescription pathString="Protein.genes" description="Gene">
-    </pathDescription>
-    <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
-    </pathDescription>
-    <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="Q8IAY6" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
-      </constraint>
-    </node>
-    <node path="Protein.genes" type="Gene">
-    </node>
-    <node path="Protein.genes.goAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Protein.genes.goAnnotation.property" type="GOTerm">
-    </node>
-    <node path="Protein.genes.goAnnotation.property.namespace" type="String">
-      <constraint op="=" value="cellular\_component" description="from the GO ontology:" identifier="" editable="true" code="B" extraValue="D. melanogaster">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Protein_To_Gene_Type_Converter" title="Protein to gene type converter" longDescription="" comment="">
   <query name="Protein_To_Gene_Type_Converter" model="genomic" view="Protein.id Protein.genes.id" sortOrder="Protein.id asc">
     <node path="Protein" type="Protein">
@@ -379,70 +250,6 @@
 </template-queries>
 <tags>
   <tag name="im:public" objectIdentifier="Gene_Protein" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_GeneWithannotation" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.allGoAnnotation" type="collection">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GO" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.GOTerm" type="class">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GenesOrganism" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="ProteinGeneGO" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="geneGoOrthologues" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.Gene" type="class">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermPointMutation" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOterm2GeneProteinInteraction" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGOterm_GenesTEinsertionsite" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAN_Gene_GoTerms" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="org.intermine.model.bio.GOAnnotation" type="class">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermTEinsertionsite" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOname_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_gotermDrosDelDeletion" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="geneGoOrthologuesMoreSpecific" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.goAnnotation" type="collection">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOterm2microarrayresult1" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="AAAA_Symbol_toCG" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_name_Gene" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Protein_GOterms" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_OrthologueGO" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GeneSymbol_Identifier" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GOname_GOidentifier" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_GO" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="gene2goTermwithEvidence" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="GO_GeneOrganism" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_particularGoannotation" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="AAO_OrthologuesWithGO2" type="template">
   </tag>
