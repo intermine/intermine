@@ -102,7 +102,7 @@ public class PathQueryUnmarshalTest extends  TestCase
         String path = "PathQueryBindingUnmarshal/" + fileName;
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         Model model = Model.getInstanceByName("testmodel");
-        PathQuery ret = PathQueryBinding.unmarshal(new InputStreamReader(is)).values().iterator().next();
+        PathQuery ret = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).values().iterator().next();
         return ret;
     }    
 }
