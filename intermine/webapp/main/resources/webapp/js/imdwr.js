@@ -143,7 +143,9 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
             }
         }
         var headerText;
-        if(rows[0].length == 2){
+        if (rows[0] == null) {
+        	headerText = '<tr><th>No results found in this column</th></tr>';        	
+        } else if(rows[0].length == 2){
             headerText = '<tr><th>Value</th><th>Count</th></tr>';
         } else {
             headerText = '<tr><th>Min</th><th>Max</th><th>Sample Mean</th><th>Standard Deviation</th></tr>';
