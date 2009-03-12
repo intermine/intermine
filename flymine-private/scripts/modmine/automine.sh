@@ -113,10 +113,9 @@ while getopts ":FMRVabef:gistuvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n;;
-#   I )  echo; echo "Incremental modMine realease"; INCR=y;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n;;
-	V )  echo; echo "Validating all submission (1 by 1)"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	V )  echo; echo "Validating all submission (1 by 1)"; VALIDATING=y; META=y; INCR=n; BUP=n;;
 	u )  echo; echo "Validating 1 submission only"; VALIDATING=y; VAL1=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Build a back-up of the database." ; BUP=y;;
@@ -136,15 +135,12 @@ done
 
 shift $(($OPTIND - 1))
 
-if [ -n "$1" ]
-then
-	if [ $VALIDATING = "y" ]
-	then
-		REL=val
-	else
-		REL=$1
-	fi
-fi
+# set release (default dev)
+ if [ -n "$1" ]
+ then
+ 		REL=$1
+ fi
+
 
 
 #
@@ -424,7 +420,12 @@ fi #VAL=y
 #go back to the chado directory
 cd $NEWDIR
 done
+# TODO: check why this exit was here..
+
+if [ $VALIDATING = "y" ]
+then
 exit;
+fi
 
 else
 echo
