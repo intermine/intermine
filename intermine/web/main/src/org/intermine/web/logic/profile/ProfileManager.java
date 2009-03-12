@@ -91,6 +91,10 @@ public class ProfileManager
             } else {
                 version = Integer.parseInt(versionString);
             }
+            if ((version < 0) || (version > LATEST_VERSION_NUMBER)) {
+                throw new IllegalStateException("Could not recognise userprofile format version "
+                        + version + ", maybe you need to update InterMine");
+            }
             if (version == 0) {
                 // Check to see if we can upgrade
                 Query q = new Query();
