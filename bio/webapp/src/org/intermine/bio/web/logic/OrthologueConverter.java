@@ -151,7 +151,7 @@ public class OrthologueConverter implements BagConverter
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        String query = pathQuery.toXml();
+        String query = pathQuery.toXml(ProfileManager.LATEST_VERSION_NUMBER);
         String encodedurl = URLEncoder.encode(query, "UTF-8");
         String[] values = new String[]
             {
