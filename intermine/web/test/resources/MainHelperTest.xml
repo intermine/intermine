@@ -20,7 +20,7 @@
     <node path="Employee.department" type="Department">
     </node>
     <node path="Employee.department.name" type="String">
-      <constraint op="=" value="DepartmentA%" description="" identifier="" code="A">
+      <constraint op="=" value="DepartmentA*" description="" identifier="" code="A">
       </constraint>
     </node>
   </query>
