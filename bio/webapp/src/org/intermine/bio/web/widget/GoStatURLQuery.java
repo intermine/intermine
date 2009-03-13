@@ -51,30 +51,30 @@ public class GoStatURLQuery implements WidgetURLQuery
             pathStrings = "Protein.genes.primaryAccession,Protein.genes.primaryIdentifier,"
                 + "Protein.genes.name,Protein.genes.organism.name,"
                 + "Protein.primaryIdentifier,Protein.primaryAccession"
-                + "Protein.genes.allGoAnnotation.identifier,"
-                + "Protein.genes.allGoAnnotation.name,"
-                + "Protein.genes.allGoAnnotation.actualGoTerms.name,"
-                + "Protein.genes.allGoAnnotation.actualGoTerms.identifier";
+                + "Protein.genes.goAnnotation.relationships.childTerm.identifier,"
+                + "Protein.genes.goAnnotation.relationships.childTerm.identifier,"
+                + "Protein.genes.goAnnotation.relationships.parentTerm.identifier,"
+                + "Protein.genes.goAnnotation.relationships.parentTerm.identifier";
         } else {
             pathStrings = "Gene.secondaryIdentifier,Gene.primaryIdentifier,"
                 + "Gene.name,Gene.organism.name"
-                + "Gene.allGoAnnotation.identifier,"
-                + "Gene.allGoAnnotation.name,"
-                + "Gene.allGoAnnotation.actualGoTerms.name,"
-                + "Gene.allGoAnnotation.actualGoTerms.identifier";
+                + "Gene.goAnnotation.relationships.childTerm.identifier,"
+                + "Gene.goAnnotation.relationships.childTerm.name,"
+                + "Gene.goAnnotation.relationships.parentTerm.identifier,"
+                + "Gene.goAnnotation.relationships.parentTerm.name";
         }
         q.setView(pathStrings);
         q.setOrderBy(pathStrings);
 
         q.addConstraint(bagType, Constraints.in(bag.getName()));
         // can't be a NOT relationship!
-        String pathString = (bagType.equals("Protein") ? "Protein.genes.allGoAnnotation.qualifier"
-                                                         : "Gene.allGoAnnotation.qualifier");
+        String pathString = (bagType.equals("Protein") ? "Protein.genes.goAnnotation.qualifier"
+                                                         : "Gene.goAnnotation.qualifier");
         q.addConstraint(pathString, Constraints.isNull());
 
         // go term
-        pathString = (bagType.equals("Protein") ? "Protein.genes.allGoAnnotation.property"
-                                                  : "Gene.allGoAnnotation.property");
+        pathString = (bagType.equals("Protein") ? "Protein.genes" : "Gene");
+        pathString += ".goAnnotation.relationships.childTerm.identifier";
         q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
