@@ -302,11 +302,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException, ObjectStoreException {
         ResultSet res = getDataFeatureResultSet(connection, queryList);
 
-        ReferenceList collection = new ReferenceList();
-        collection.setName("features");
+//        ReferenceList collection = new ReferenceList();
+//        collection.setName("features");
 
         Integer oldId = 0;
         Integer collectionSize = 0;
+        ReferenceList collection = null;
+        
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -316,6 +318,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
+
+            if (dataId != oldId) {
+                collection = new ReferenceList();
+                collection.setName("features");                
+            }
+            
+            
             String featureItemId = featureData.getItemIdentifier();
             FeatureData fd = featureData;
             LOG.info("dataId " + oldId + " FD " + fd.getInterMineType() + ": " 
@@ -325,8 +334,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if ((oldId == 0) || (dataId == oldId)) {
                 collection.addRefId(featureItemId);
                 collectionSize++;
-                oldId = dataId;
-                continue;
             } 
 
             if (res.isLast() || dataId != oldId) {
@@ -337,6 +344,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 oldId = dataId;
                 collectionSize = 0;
             }
+            oldId = dataId;
         }
     }
 
@@ -1432,6 +1440,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * Return the rows needed for data from the applied_protocol_data table.
      *
      * @param connection the db connection
+     * @param dataId the dataId
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
