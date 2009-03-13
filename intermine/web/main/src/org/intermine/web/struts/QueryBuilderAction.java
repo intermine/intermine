@@ -79,7 +79,8 @@ public class QueryBuilderAction extends InterMineAction
         
         // Select the join style for the path in the query
         // this should remove any invalid order by elements
-        if (joinType != null && joinType.length() != 0) {
+        if (mf.getUseJoin() != null && mf.getJoinType().equals("true") && joinType != null
+            && joinType.length() != 0) {
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
             Path path = new Path(model, node.getPathString());
