@@ -75,15 +75,14 @@ my %sourceMap;
 my %statesMap;
 my %typeMap;
 
-my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
-my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
 my $count = 0;
 
 for (my $i=1; $i<=24; $i++) { 
-    my @items_to_write = ();
+    my @items = ();
     my @files;    
     my $slice;
     $count = 0;
+    my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
     switch($i) {
         case [1..22] {
             $slice = $slice_adaptor->fetch_by_region('chromosome',$i);                  
@@ -94,6 +93,7 @@ for (my $i=1; $i<=24; $i++) {
         }
     }
 
+    my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
     # get adaptor to VariationFeature object
     my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
     # return ALL variations defined in $slice
