@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Locale;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,12 +21,16 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.config.WebConfig;
 
 /**
  * Action to handle button presses on the main tile
@@ -55,6 +60,8 @@ public class QueryBuilderAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         QueryBuilderForm mf = (QueryBuilderForm) form;
 
@@ -70,12 +77,19 @@ public class QueryBuilderAction extends InterMineAction
         
         String joinType = mf.getJoinType();
         
+        // Select the join style for the path in the query
         // this should remove any invalid order by elements
         if (joinType != null && joinType.length() != 0) {
-            if ((node.isOuterJoin()) && (!joinType.equals("outter"))
-                || ((!node.isOuterJoin()) && (!joinType.equals("inner")))) {
-                query.flipJoinStyle(node.getPathString());
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model = os.getModel();
+            Path path = new Path(model, node.getPathString());
+            String rootPath = null;
+            if (path.endIsAttribute()) {
+                rootPath = path.getPrefix().toStringNoConstraints();
+            } else {
+                rootPath = path.toStringNoConstraints();
             }
+            query.updateJoinStyle(rootPath, joinType.equals("outter"));
         }
 
         if (cindex != null) {

@@ -170,25 +170,42 @@ public class PathQuery
 
     /**
      * Change the join style of a path in the query. All children will also be updated.
+     * The path must not end by an attribute.
      *
      * @param path a path with the old join style
      * @return the path, flipped
      */
     public String flipJoinStyle(String path) {
+        int lastDotIndex = path.lastIndexOf('.');
+        int lastColonIndex = path.lastIndexOf(':');
+        if (lastDotIndex > lastColonIndex) {
+            return updateJoinStyle(path, true);
+        } else {
+            return updateJoinStyle(path, false);
+        }
+    }
+    
+    /**
+     * Change the join style of a path in the query. All children will also be updated.
+     * The path must not end by an attribute.
+     *
+     * @param path a path with the old join style
+     * @param outter whether the update should result in an outter join
+     * @return the path, flipped
+     */
+    public String updateJoinStyle(String path, boolean outter) {
         String oldPath = getCorrectJoinStyle(path);
         if (!oldPath.equals(path)) {
             throw new IllegalArgumentException("Path not found in query: " + path);
         }
 
-        int lastDotIndex = path.lastIndexOf('.');
-        int lastColonIndex = path.lastIndexOf(':');
         String newPathString;
-        if (lastDotIndex > lastColonIndex) {
-            newPathString = path.substring(0, lastDotIndex) + ':'
-                + path.substring(lastDotIndex + 1);
+        if (outter) {
+            newPathString = path.substring(0, path.lastIndexOf('.')) + ':'
+                + path.substring(path.lastIndexOf('.') + 1);
         } else {
-            newPathString = path.substring(0, lastColonIndex) + '.'
-                + path.substring(lastColonIndex + 1);
+            newPathString = path.substring(0, path.lastIndexOf(':')) + '.'
+                + path.substring(path.lastIndexOf(':') + 1);
         }
 
         List<Path> newView = new ArrayList<Path>();
