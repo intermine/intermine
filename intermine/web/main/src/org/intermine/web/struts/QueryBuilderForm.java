@@ -42,6 +42,7 @@ public class QueryBuilderForm extends ActionForm
     protected String subclassValue;
     protected String loopQueryOp, loopQueryValue;
     protected String joinType;
+    protected String useJoin;
 
     protected String path;
     protected String operator = "and";
@@ -303,6 +304,20 @@ public class QueryBuilderForm extends ActionForm
     }
 
     /**
+     * @return the useJoin
+     */
+    public String getUseJoin() {
+        return useJoin;
+    }
+
+    /**
+     * @param useJoin the useJoin to set
+     */
+    public void setUseJoin(String useJoin) {
+        this.useJoin = useJoin;
+    }
+
+    /**
      * Get the editable flag (when building a template).
      * @return whether this constraint is editable
      */
@@ -396,5 +411,6 @@ public class QueryBuilderForm extends ActionForm
         editable = false;
         operator = SessionMethods.getDefaultOperator(request.getSession());
         joinType = "inner";
+        useJoin = null;
     }
 }

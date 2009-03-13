@@ -56,6 +56,7 @@ options displayConstraint.optionsList
         <li><html:radio property="joinType" value="inner" styleId="inner" /><label for="inner">&nbsp;<fmt:message key="query.innerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.type}"/></fmt:message></label></li>
         <li><html:radio property="joinType" value="outer" styleId="outer"/><label for="outer">&nbsp;<fmt:message key="query.outerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.lastReferenceName}"/></fmt:message></label></li>
     </ol>
+    <html:hidden property="useJoin" value="true"/>
   </c:if>
 <h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
 
