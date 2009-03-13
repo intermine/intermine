@@ -468,6 +468,9 @@ initConstraintForm(0,
     </script>
 
 </div>
+<div style="text-align:right">
+    <input type="button" onclick="window.location.href='<html:rewrite action="/query"/>?cancel'" value="<fmt:message key="query.cancelConstraint"/>"/>
+</div>
 <%--    <div class="body" style="text-align:right">
     <span id="cancelButton"></span>
     <script language="JavaScript">

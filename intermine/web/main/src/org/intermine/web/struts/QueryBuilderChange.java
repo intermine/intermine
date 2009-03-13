@@ -83,7 +83,9 @@ public class QueryBuilderChange extends DispatchAction
         String path = request.getParameter("path");
 
         removeNode(pathQuery, path);
-        pathQuery.removeFromView(path);
+        if (pathQuery.getView().size() > 0) {
+            pathQuery.removeFromView(path);
+        }
         pathQuery.syncLogicExpression(SessionMethods.getDefaultOperator(session));
 
         // set prefix and path back to start of the path, so model browser has focus on the top
@@ -184,7 +186,9 @@ public class QueryBuilderChange extends DispatchAction
                             }
                         }
                     }
-                    pathQuery.setView(newView);
+                    if(newView.size()>0) {
+                        pathQuery.setView(newView);
+                    }
                     //pathQuery.setOrderBy(newSortOrder);
                     
                     if (pathQuery.getSortOrder() != null) {
