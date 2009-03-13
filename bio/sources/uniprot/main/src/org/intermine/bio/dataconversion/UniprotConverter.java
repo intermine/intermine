@@ -622,7 +622,9 @@ public class UniprotConverter extends DirectoryConverter
                             && stack.peek().equals("dbReference")
                             && attrs.getValue("type").equals("entry name")) {
                 String domain = entry.getAttribute();
-                entry.addDomainRefId(getInterpro(domain, attrs.getValue("value")));
+                if (domain.startsWith("IPR")) {
+                    entry.addDomainRefId(getInterpro(domain, attrs.getValue("value")));
+                }
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
                 taxonId = attrs.getValue("id");
                 entry.setTaxonId(taxonId);
@@ -651,6 +653,11 @@ public class UniprotConverter extends DirectoryConverter
                 }
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 attName = attrs.getValue("type");
+            } else if (qName.equals("dbreference") || qName.equals("comment")
+                            || qName.equals("feature") || qName.equals("isoform")
+                            || qName.equals("gene")) {
+                // set temporary holder variables to null
+                entry.reset();
             }
 
             if (qName.equals("gene")) {
@@ -700,11 +707,6 @@ public class UniprotConverter extends DirectoryConverter
                 entry.addAccession(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
                 entry.addAttribute(attValue.toString());
-            } else if (qName.equals("dbreference") || qName.equals("comment")
-                            || qName.equals("feature") || qName.equals("isoform")
-                            || qName.equals("gene")) {
-                // set temporary holder variables to null
-                entry.reset();
             }
         }
 

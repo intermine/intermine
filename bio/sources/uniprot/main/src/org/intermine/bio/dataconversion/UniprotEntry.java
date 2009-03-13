@@ -129,6 +129,7 @@ public class UniprotEntry
      */
     public void addDomainRefId(String refId) {
         addRefId(domains, refId);
+        reset();
     }
 
     /**
