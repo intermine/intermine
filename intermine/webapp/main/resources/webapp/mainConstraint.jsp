@@ -49,7 +49,8 @@ options displayConstraint.optionsList
 </div>
 
 <div class="body">
-  <c:if test="${(! editingPath.onlyAttribute) && (loopQueryOJ != true)}" >
+<%--${loopQueryOJ != true}--%>
+  <c:if test="${(!editingPath.onlyAttribute)||(editingNode.parent != null && !editingNode.attribute)}" >
     <h3><fmt:message key="query.joinHeading" /></h3> <%--1. Join type--%>
     <ol style="list-style:none">
         <li><html:radio property="joinType" value="inner" styleId="inner" /><label for="inner">&nbsp;<fmt:message key="query.innerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.type}"/></fmt:message></label></li>
