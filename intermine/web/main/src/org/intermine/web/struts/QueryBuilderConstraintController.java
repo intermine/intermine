@@ -34,6 +34,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -89,12 +90,15 @@ public class QueryBuilderConstraintController extends TilesAction
             SessionMethods.moveToRequest("editingConstraintOperand", request);
             SessionMethods.moveToRequest("editingConstraintExtraValue", request);
 
+            // Set up the Path, used to distinguish between outter-joinable nodes
+            request.setAttribute("editingPath", new Path(model, node.getPathString()));
+
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                         null, classKeys));
             // we can't create loop constraints on outer join paths, nodes on this path may already
             // be constrained to inner joins - get current style for query
             String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
-            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
+//            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
                 // loop query arguments
                 ArrayList paths = new ArrayList();
                 Iterator iter = query.getNodes().values().iterator();
@@ -113,7 +117,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 request.setAttribute("loopQueryOJ", node.isOuterJoin());
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
-            }
+//            }
 
             // work out the parent class of node if it is a key field or the class
             // of object/reference/collection

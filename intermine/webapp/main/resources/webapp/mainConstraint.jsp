@@ -15,6 +15,7 @@ editingNode the PathNode of the field we are constraining
 displayConstraint a DisplayConstraint object
 loopQueryPaths a list of PathNodes that are a compatible type to the current node
 loopQueryOps ClassConstraint.VALID_OPS
+editingPath a Path object
 
 Calculated:
 constraint
@@ -27,12 +28,6 @@ options displayConstraint.optionsList
 <!-- mainConstraint.jsp -->
 
 <html:xhtml/>
-<%--<c:choose>--%>
-<c:if test="${editingNode != null}">
-</c:if>
-<%--   <c:otherwise><i>No Constraints</i></c:otherwise>
-</c:choose> --%>
-
 <div id="constraint" style="display:none">
     <html:form action="/mainAction" styleId="mainForm">
     <html:hidden styleId="addType" property="addType" value=""/>
@@ -54,22 +49,13 @@ options displayConstraint.optionsList
 </div>
 
 <div class="body">
-    <c:if test="${!editingNode.attribute && ! empty editingNode.parent}" >
-    <h3><fmt:message key="query.joinHeading"  /></h3> <%--2. Join type--%>
+  <c:if test="${(! editingPath.onlyAttribute) && (loopQueryOJ != true)}" >
+    <h3><fmt:message key="query.joinHeading" /></h3> <%--1. Join type--%>
     <ol style="list-style:none">
         <li><html:radio property="joinType" value="inner" styleId="inner" /><label for="inner">&nbsp;<fmt:message key="query.innerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.type}"/></fmt:message></label></li>
         <li><html:radio property="joinType" value="outer" styleId="outer"/><label for="outer">&nbsp;<fmt:message key="query.outerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.lastReferenceName}"/></fmt:message></label></li>
     </ol>
-    <%--<c:choose>
-    <c:when test="${editingNode.isOuterJoin}">
-    <img src="images/join_hollow.png" id="join_arrow_${editingNode.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
-</c:when>
-<c:otherwise>
-<img src="images/join_full.png" id="join_arrow_${editingNode.pathString}" alt="Switch join" title="Switch join" style="v-align:bottom;cursor:pointer" onClick="switchJoin(this);" class="joinLink"/>
-</c:otherwise>
-</c:choose>--%>
-</c:if>
-
+  </c:if>
 <h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
 
 <!-- ATTRIBUTE TOGGLE -->
@@ -292,11 +278,6 @@ selected
     </fmt:message>
 </span>
 </p>
-<p>
-    <c:if test="${editingNode.reference}">
-    <H3>Warning</H3>Outer joins are not compatible with References. The outer join will be reverted to an inner join for this node.
-</c:if>
-</p>
 <c:choose>
 <c:when test="${haveExtraConstraint}">
 <p style="text-align: left;">
@@ -367,9 +348,6 @@ swapInputs('subclass');
         <fmt:message key="query.filterLoopQuery"/><%--Filter query results on the query loop.--%>
     </a>
 </h4>
-<c:if test="${loopQueryOJ == true}">
-<span class="smallnote"><b>Warning:</b> outer joins are not compatible with loop constraints. The outer join will be reverted to an inner join for this node</span>
-</c:if>
 <p style="text-align: left;">
     <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>
     <html:select property="loopQueryOp" styleId="loopQuery1" disabled="true">
@@ -397,13 +375,7 @@ swapInputs('subclass');
 
 <c:if test="${(!empty bags) || (!editingNode.collection && !editingNode.reference &&
     !empty editingNode.parent && editingNode.type != 'boolean')}">
-<div id="optionstoggle" style="background-color:#1863B8;color:#FFF;padding:5px;margin:
-
-
-
-
-
-15px 0"><img id='bagToggle' src="images/undisclosed.gif"/>&nbsp;<strong>Advanced Options</strong></div>
+<div id="optionstoggle" style="background-color:#1863B8;color:#FFF;padding:5px;margin:15px 0;cursor:pointer;"><img id='advanced_toggle' src="images/undisclosed.gif"/>&nbsp;<strong>Advanced Options</strong></div>
 <div id="options${editingNode.fieldName}" style="display:none; background-color:#00F3FF;padding:5px">
 
     <c:if test="${!empty bags}">
