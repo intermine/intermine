@@ -200,12 +200,20 @@ public class PathQuery
         }
 
         String newPathString;
-        if (outter) {
-            newPathString = path.substring(0, path.lastIndexOf('.')) + ':'
-                + path.substring(path.lastIndexOf('.') + 1);
+        int lastDotIndex = path.lastIndexOf('.');
+        int lastColonIndex = path.lastIndexOf(':');
+        int lastIndex = 0;
+        if(lastDotIndex > lastColonIndex) {
+            lastIndex = lastDotIndex;
         } else {
-            newPathString = path.substring(0, path.lastIndexOf(':')) + '.'
-                + path.substring(path.lastIndexOf(':') + 1);
+            lastIndex = lastColonIndex;
+        }
+        if (outter) {
+            newPathString = path.substring(0, lastIndex) + ':'
+                + path.substring(lastIndex + 1);
+        } else {
+            newPathString = path.substring(0, lastIndex) + '.'
+                + path.substring(lastIndex + 1);
         }
 
         List<Path> newView = new ArrayList<Path>();

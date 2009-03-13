@@ -89,7 +89,7 @@ public class QueryBuilderAction extends InterMineAction
             } else {
                 rootPath = path.toStringNoConstraints();
             }
-            query.updateJoinStyle(rootPath, joinType.equals("outter"));
+            query.updateJoinStyle(rootPath, joinType.equals("outer"));
         }
 
         if (cindex != null) {
