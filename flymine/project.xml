@@ -35,7 +35,7 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
     <!-- uniprot must be processed immediately after chado -->
-    <source name="uniprot" type="uniprot" dump="true">
+    <source name="uniprot" type="uniprot" >
       <property name="uniprot.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
@@ -72,7 +72,7 @@
     <source name="rnai" type="rnai">
       <property name="src.data.dir" location="/shared/data/wormbase_rnai/current"/>
     </source>
-    <source name="arbeitman-items-xml" type="arbeitman-items-xml" dump="true">
+    <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/shared/data/mage/arbeitman/arbeitman-tgt-items.xml"/>
     </source>
     <source name="bdgp-clone" type="bdgp-clone">
@@ -117,7 +117,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr" dump="true">
+    <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
@@ -137,7 +137,7 @@
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
-    <source name="protein_structure" type="protein_structure" dump="true">
+    <source name="protein_structure" type="protein_structure">
       <property name="src.data.dir" location="/shared/data/kenji/data/all/"/>
     </source>
     <source name="pdb" type="pdb">
@@ -147,7 +147,7 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
-    <source name="go" type="go" dump="true">
+    <source name="go" type="go" >
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
@@ -472,7 +472,7 @@
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
 
-    <source name="psi-intact" type="psi" dump="true">
+    <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 4932"/>
     </source>
@@ -497,7 +497,7 @@
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
-    <source name="update-publications" type="update-publications" dump="true">
+    <source name="update-publications" type="update-publications">
       <!-- this source finds the publication ids (pubmed ids) in the
            objectstore, retrieves the details of the publication from Entrez
            into an InterMine format XML file, loads that file into a target
@@ -507,19 +507,19 @@
   </sources>
 
   <post-processing>
-    <post-process name="create-utr-references"/>
-    <post-process name="create-references" dump="true"/>
+    <post-process name="create-utr-references" dump="true"/>
+    <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <!--<post-process name="create-overlap-relations-flymine"/>-->
-    <post-process name="do-sources" dump="true"/>
+    <post-process name="do-sources" />
     <post-process name="create-intron-features">
       <property name="organisms" value="7165,7460"/>
     </post-process>
     <post-process name="create-bioseg-location-index"/>
-    <post-process name="create-overlap-view" dump="true" />
+    <post-process name="create-overlap-view" />
 
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
