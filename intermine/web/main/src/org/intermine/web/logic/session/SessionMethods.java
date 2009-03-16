@@ -963,8 +963,8 @@ public class SessionMethods
      */
     public static WebResultsExecutor getWebResultsExecutor(ServletContext servletContext,
             Profile profile) {
-        List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
-        (getProfileManager(servletContext).getSuperuserProfile());
+        List<TemplateQuery> conversionTemplates = BagConversionHelper
+            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
         WebResultsExecutor ret = new WebResultsExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext), 
@@ -985,8 +985,8 @@ public class SessionMethods
      */
     public static PathQueryExecutor getPathQueryExecutor(HttpSession session) {
         ServletContext servletContext = session.getServletContext();
-        List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates
-            (getProfileManager(servletContext).getSuperuserProfile());
+        List<TemplateQuery> conversionTemplates = BagConversionHelper
+            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
         PathQueryExecutor ret = new PathQueryExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext), 

@@ -37,6 +37,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
  * style results are required.  
+ *
  * @author Richard Smith
  * @author Jakub Kulaviak
  */
@@ -54,6 +55,7 @@ public class WebResultsExecutor
     /**
      * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
      * execute it.
+     *
      * @param os the ObjectStore to run the query in
      * @param classKeys key fields for classes in the data model
      * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
@@ -77,6 +79,7 @@ public class WebResultsExecutor
     /**
      * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
      * appropriate for displaying a web table.
+     *
      * @param pathQuery the query to execute
      * @return results in a format appropriate for display in a web page table
      * @throws ObjectStoreException if problem running query
@@ -88,6 +91,7 @@ public class WebResultsExecutor
     /**
      * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
      * appropriate for displaying a web table.
+     *
      * @param pathQuery the query to execute
      * @param pathToBagQueryResult will be populated with results from bag queries used in any
      * LOOKUP constraints
@@ -121,13 +125,4 @@ public class WebResultsExecutor
 
         return webResults;
     }
-
-//    public ResultsInfo estimate(PathQuery pq) {
-//        return null;
-//    }
-//
-//    public int count(PathQuery pq) {
-//        return 0;
-//
-//    }
 }

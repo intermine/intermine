@@ -49,8 +49,7 @@ public class PathQueryExecutor
     /**
      * Sets batch size.
      * 
-     * @param size
-     *            batch size
+     * @param size batch size
      */
     public void setBatchSize(int size) {
         this.batchSize = size;
@@ -59,18 +58,12 @@ public class PathQueryExecutor
     /**
      * Constructor with necessary objects.
      * 
-     * @param os
-     *            the ObjectStore to run the query in
-     * @param classKeys
-     *            key fields for classes in the data model
-     * @param bagQueryConfig
-     *            bag queries to run when interpreting LOOKUP constraints
-     * @param profile
-     *            the user executing the query - for access to saved lists
-     * @param conversionTemplates
-     *            templates used for converting bag query results between types
-     * @param searchRepository
-     *            global search repository to fetch saved bags from
+     * @param os the ObjectStore to run the query in
+     * @param classKeys key fields for classes in the data model
+     * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
+     * @param profile the user executing the query - for access to saved lists
+     * @param conversionTemplates templates used for converting bag query results between types
+     * @param searchRepository global search repository to fetch saved bags from
      */
     public PathQueryExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
@@ -88,8 +81,7 @@ public class PathQueryExecutor
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
      * 
-     * @param pathQuery
-     *            path query to be executed
+     * @param pathQuery path query to be executed
      * @return results
      */
     public ExportResultsIterator execute(PathQuery pathQuery) {
@@ -106,14 +98,10 @@ public class PathQueryExecutor
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
      * 
-     * @param pathQuery
-     *            path query to be executed
-     * @param start
-     *            index of first result which will be retrieved. It can be very
-     *            slow, it fetches results from database from index 0 and just
-     *            throws away all before start index.
-     * @param limit
-     *            maximum number of results
+     * @param pathQuery path query to be executed
+     * @param start index of first result which will be retrieved. It can be very slow, it fetches
+     * results from database from index 0 and just throws away all before start index.
+     * @param limit maximum number of results
      * @return results
      */
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
@@ -132,7 +120,6 @@ public class PathQueryExecutor
  * but is very slow, it just throws away all results before the start index.
  * 
  * @author Jakub Kulaviak
- *
  */
 class ResultIterator extends ExportResultsIterator 
 {
