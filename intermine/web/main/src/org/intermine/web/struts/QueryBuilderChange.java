@@ -186,7 +186,7 @@ public class QueryBuilderChange extends DispatchAction
                             }
                         }
                     }
-                    if(newView.size()>0) {
+                    if (newView.size() > 0) {
                         pathQuery.setView(newView);
                     }
                     //pathQuery.setOrderBy(newSortOrder);
