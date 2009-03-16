@@ -321,6 +321,13 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
             toAdd.add(substitute);
         } else {
             for (QuerySelectable s : select) {
+                while (s instanceof PathExpressionField) {
+                    PathExpressionField pef = (PathExpressionField) s;
+                    s = pef.getQope().getSelect().get(pef.getFieldNumber());
+                    if (s == pef.getQope().getDefaultClass()) {
+                        s = pef.getQope();
+                    }
+                }
                 if (s == defaultClass) {
                     toAdd.add(substitute);
                 } else if (s instanceof QueryCollectionPathExpression) {

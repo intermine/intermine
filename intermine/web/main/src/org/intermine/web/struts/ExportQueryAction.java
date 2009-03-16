@@ -10,17 +10,19 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashMap;
 import java.util.Map;
-
-import org.intermine.objectstore.query.Query;
 
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -108,10 +110,16 @@ public class ExportQueryAction extends InterMineAction
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
                 .getSearchRepository(servletContext));
-            Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
-                    null);
+            Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+            Query osQuery = MainHelper.makeQuery(query, allBags, pathToQueryNode,
+                    (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
+                    null, false,
+                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
+                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
+                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
             String iql = osQuery.toString();
             response.getWriter().println(iql);
+            //response.getWriter().println("\npathToQueryNode: " + pathToQueryNode);
         } else if (format.equals("sql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
