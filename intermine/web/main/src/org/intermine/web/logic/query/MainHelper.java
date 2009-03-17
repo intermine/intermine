@@ -480,6 +480,12 @@ public class MainHelper
                             cs.addConstraint(new BagConstraint(qf, c.getOp(), bag.getOsb()));
                         }
                     } else if (node.isAttribute()) { //assume, for now, that it's a SimpleConstraint
+                        if (c.getOp() == ConstraintOp.LOOKUP) {
+                            throw new IllegalArgumentException("LOOKUP constraints cannot be "
+                                    + "placed on attributes (" + finalPath + ") - place it on the "
+                                    + "surrounding class (" + finalPath.substring(0, finalPath
+                                            .lastIndexOf("."))  + ") instead.");
+                        }
                         cs.addConstraint(makeAttributeConstraint(qn, c));
                     } else if (node.isReference() && (c.getOp() == ConstraintOp.IS_NOT_NULL
                                 || c.getOp() == ConstraintOp.IS_NULL)) {
