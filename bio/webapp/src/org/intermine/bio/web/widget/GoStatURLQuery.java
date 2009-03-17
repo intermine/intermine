@@ -75,7 +75,7 @@ public class GoStatURLQuery implements WidgetURLQuery
         // go term
         pathString = (bagType.equals("Protein") ? "Protein.genes" : "Gene");
         pathString += ".goAnnotation.ontologyTerm.relations.parentTerm.identifier";
-        q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
+        q.addConstraint(pathString, Constraints.eq(key), "C", "GOTerm");
 
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
