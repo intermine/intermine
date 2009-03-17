@@ -157,7 +157,7 @@ public class PathQueryAPI
                     .getProperty("webapp.userprofile.os.alias");
                 ObjectStoreWriter userProfileOs = ObjectStoreWriterFactory
                     .getObjectStoreWriter(userProfileAlias);
-                ProfileManager profileManager = new ProfileManager(getObjectStore(), userProfileOs);
+                profileManager = new ProfileManager(getObjectStore(), userProfileOs);
             } catch (ObjectStoreException e) {
                 throw new IllegalArgumentException("Error creating profile manager", e);
             }
