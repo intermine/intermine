@@ -82,8 +82,8 @@ public class InitialiserPlugin implements PlugIn
 
     ProfileManager profileManager;
 
-    private static final List<String> PUBLIC_TAG_LIST =
-        Arrays.asList(new String[] {TagNames.IM_PUBLIC});
+    /** The list of tags that mark something as public */
+    public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
 
     /**
      * Init method called at Servlet initialisation
@@ -143,27 +143,14 @@ public class InitialiserPlugin implements PlugIn
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
 
         final TagManager tagManager = SessionMethods.getTagManager(servletContext);
-        AbstractMap<String, TemplateQuery> templateSearchableMap =
-            new AbstractMap<String, TemplateQuery>() {
-            @Override
-            public Set<Map.Entry<String, TemplateQuery>> entrySet() {
-                return new SearchFilterEngine()
-                .filterByTags(superProfile.getSavedTemplates(),
-                              PUBLIC_TAG_LIST, TagTypes.TEMPLATE, superProfile.getUsername(),
-                              tagManager).entrySet();
-            }
-        };
+        Map<String, TemplateQuery> templateSearchableMap = new SearchFilterEngine()
+            .filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST, TagTypes.TEMPLATE,
+                    superProfile.getUsername(), tagManager);
         searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
 
-        AbstractMap<String, InterMineBag> bagSearchableMap =
-            new AbstractMap<String, InterMineBag>() {
-            @Override
-            public Set<Map.Entry<String, InterMineBag>> entrySet() {
-                return new SearchFilterEngine().filterByTags(superProfile.getSavedBags(),
-                       PUBLIC_TAG_LIST, TagTypes.BAG, superProfile.getUsername(),
-                       tagManager).entrySet();
-            }
-        };
+        Map<String, InterMineBag> bagSearchableMap = new SearchFilterEngine()
+            .filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST, TagTypes.BAG,
+                    superProfile.getUsername(), tagManager);
         searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
 
         searchRepository.setProfile(superProfile);
