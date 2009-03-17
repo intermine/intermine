@@ -51,17 +51,17 @@ public class GoStatURLQuery implements WidgetURLQuery
             pathStrings = "Protein.genes.primaryAccession,Protein.genes.primaryIdentifier,"
                 + "Protein.genes.name,Protein.genes.organism.name,"
                 + "Protein.primaryIdentifier,Protein.primaryAccession"
-                + "Protein.genes.goAnnotation.relationships.childTerm.identifier,"
-                + "Protein.genes.goAnnotation.relationships.childTerm.identifier,"
-                + "Protein.genes.goAnnotation.relationships.parentTerm.identifier,"
-                + "Protein.genes.goAnnotation.relationships.parentTerm.identifier";
+                + "Protein.genes.goAnnotation.relations.childTerm.identifier,"
+                + "Protein.genes.goAnnotation.relations.childTerm.name,"
+                + "Protein.genes.goAnnotation.relations.parentTerm.identifier,"
+                + "Protein.genes.goAnnotation.relations.parentTerm.name";
         } else {
             pathStrings = "Gene.secondaryIdentifier,Gene.primaryIdentifier,"
                 + "Gene.name,Gene.organism.name"
-                + "Gene.goAnnotation.relationships.childTerm.identifier,"
-                + "Gene.goAnnotation.relationships.childTerm.name,"
-                + "Gene.goAnnotation.relationships.parentTerm.identifier,"
-                + "Gene.goAnnotation.relationships.parentTerm.name";
+                + "Gene.goAnnotation.relations.childTerm.identifier,"
+                + "Gene.goAnnotation.relations.childTerm.name,"
+                + "Gene.goAnnotation.relations.parentTerm.identifier,"
+                + "Gene.goAnnotation.relations.parentTerm.name";
         }
         q.setView(pathStrings);
         q.setOrderBy(pathStrings);
@@ -74,7 +74,7 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         // go term
         pathString = (bagType.equals("Protein") ? "Protein.genes" : "Gene");
-        pathString += ".goAnnotation.relationships.childTerm.identifier";
+        pathString += ".goAnnotation.relations.parentTerm.identifier";
         q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
