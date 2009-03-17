@@ -84,11 +84,17 @@ public class GoStatLdr extends EnrichmentWidgetLdr
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcGoAnnotation = null;
-        QueryClass qcGo = null;
+        QueryClass qcGoChild = null;
+        QueryClass qcGoParent = null;
+        QueryClass qcRelations = null;
+
         try {
             qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
                                                           + ".GOAnnotation"));
-            qcGo = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
+            qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
+            qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
+            qcRelations = new QueryClass(Class.forName(model.getPackageName()
+                                                       + ".OntologyRelation"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
             return null;
@@ -97,17 +103,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-
         QueryField qfGeneId = new QueryField(qcGene, "id");
-
-        QueryField qfNamespace = new QueryField(qcGo, "namespace");
-        QueryField qfGoTermId = new QueryField(qcGo, "identifier");
-        QueryField qfGoTerm = new QueryField(qcGo, "name");
-
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-
         QueryField qfProteinId = new QueryField(qcProtein, "id");
-
         QueryField qfPrimaryIdentifier = null;
         QueryField qfId = null;
 
@@ -118,49 +116,76 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
             qfId = qfGeneId;
         }
+
+        // gene.goAnnotation.ontologyTerm.relations.childTerm.identifier
+        QueryField qfNamespace = new QueryField(qcGoParent, "namespace");
+        QueryField qfParentGoIdentifier = new QueryField(qcGoParent, "identifier");
+        QueryField qfParentGoName = new QueryField(qcGoParent, "name");
+
+        // gene.goAnnotation.ontologyTerm.identifier
+        //QueryField qfGoIdentifier = new QueryField(qcGo, "identifier");
+        //QueryField qfGoName = new QueryField(qcGo, "name");
+
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        if (keys != null) {
-            cs.addConstraint(new BagConstraint(qfGoTermId, ConstraintOp.IN, keys));
-        }
-
-        QueryExpression qf1 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
-        cs.addConstraint(new BagConstraint(qf1, ConstraintOp.IN, organismsLower));
-
         // gene.goAnnotation CONTAINS GOAnnotation
-        QueryCollectionReference qcr1 = new QueryCollectionReference(qcGene, "goAnnotation");
-        cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcGoAnnotation));
+        QueryCollectionReference c1 = new QueryCollectionReference(qcGene, "goAnnotation");
+        cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcGoAnnotation));
 
+        // ignore the big three ontologies
         String[] ids = getOntologies();
-        QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER, qfGoTermId);
+        QueryExpression c2 = new QueryExpression(QueryExpression.LOWER, qfParentGoIdentifier);
         for (int i = 0; i < ids.length; i++) {
-            cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.NOT_EQUALS,
+            cs.addConstraint(new SimpleConstraint(c2, ConstraintOp.NOT_EQUALS,
                                                   new QueryValue(ids[i])));
         }
 
-        // gene is from organism
-        QueryObjectReference qor1 = new QueryObjectReference(qcGene, "organism");
-        cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcOrganism));
+        // GO terms selected by user = gene.goAnnotation.ontologyTerm.identifier
+        if (keys != null) {
+            cs.addConstraint(new BagConstraint(qfParentGoIdentifier, ConstraintOp.IN, keys));
+        }
 
         // goannotation contains go term
-        QueryObjectReference qor2 = new QueryObjectReference(qcGoAnnotation, "ontologyTerm");
-        cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcGo));
+        QueryObjectReference c3 = new QueryObjectReference(qcGoAnnotation, "ontologyTerm");
+        cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcGoChild));
+
+        // goannotation contains go terms
+        QueryCollectionReference c4 = new QueryCollectionReference(qcGoChild, "relations");
+        cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcRelations));
+
+
+        QueryObjectReference c5 = new QueryObjectReference(qcRelations, "parentTerm");
+        cs.addConstraint(new ContainsConstraint(c5, ConstraintOp.CONTAINS, qcGoParent));
+
+        // goterm.relations include parent and child relationships
+        // we are only interested in when this goterm is a child
+        QueryObjectReference c6 = new QueryObjectReference(qcRelations, "childTerm");
+        cs.addConstraint(new ContainsConstraint(c6, ConstraintOp.CONTAINS, qcGoChild));
+
+        // go term is of the specified namespace
+        QueryExpression c7 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
+        cs.addConstraint(new SimpleConstraint(c7, ConstraintOp.EQUALS,
+                                              new QueryValue(namespace.toLowerCase())));
+
+        // organisms in bag = organism.names
+        // constrained only for memory reasons
+        QueryExpression c8 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
+        cs.addConstraint(new BagConstraint(c8, ConstraintOp.IN, organismsLower));
 
         // can't be a NOT relationship!
         cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
 
-        // go term is of the specified namespace
-        QueryExpression qf3 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
-        cs.addConstraint(new SimpleConstraint(qf3, ConstraintOp.EQUALS,
-                                              new QueryValue(namespace.toLowerCase())));
+        // gene is from organism
+        QueryObjectReference c9 = new QueryObjectReference(qcGene, "organism");
+        cs.addConstraint(new ContainsConstraint(c9, ConstraintOp.CONTAINS, qcOrganism));
 
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, bag.getOsb()));
         }
 
         if (bagType.equals("Protein")) {
-            QueryCollectionReference qcr2 = new QueryCollectionReference(qcProtein, "genes");
-            cs.addConstraint(new ContainsConstraint(qcr2, ConstraintOp.CONTAINS, qcGene));
+            QueryCollectionReference c10 = new QueryCollectionReference(qcProtein, "genes");
+            cs.addConstraint(new ContainsConstraint(c10, ConstraintOp.CONTAINS, qcGene));
         }
 
         Query q = new Query();
@@ -168,7 +193,10 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         q.addFrom(qcGene);
         q.addFrom(qcGoAnnotation);
         q.addFrom(qcOrganism);
-        q.addFrom(qcGo);
+        q.addFrom(qcGoParent);
+        q.addFrom(qcGoChild);
+        q.addFrom(qcRelations);
+
         if (bagType.equals("Protein")) {
             q.addFrom(qcProtein);
         }
@@ -177,9 +205,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         if (action.equals("analysed")) {
             q.addToSelect(qfId);
         } else if (action.equals("export")) {
-            q.addToSelect(qfGoTermId);
+            q.addToSelect(qfParentGoIdentifier);
             q.addToSelect(qfPrimaryIdentifier);
-            q.addToOrderBy(qfGoTermId);
+            q.addToOrderBy(qfParentGoIdentifier);
         } else if (action.endsWith("Total")) {
             q.addToSelect(qfId);
             Query subQ = q;
@@ -188,15 +216,15 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             q.addToSelect(new QueryFunction());
         } else {    // calculating enrichment
             q.setDistinct(false);
-            q.addToSelect(qfGoTermId);
-            q.addToGroupBy(qfGoTermId);
+            q.addToSelect(qfParentGoIdentifier);
+            q.addToGroupBy(qfParentGoIdentifier);
             q.addToSelect(new QueryFunction());
             if (action.equals("sample")) {
-                q.addToSelect(qfGoTerm);
-                q.addToGroupBy(qfGoTerm);
+                q.addToSelect(qfParentGoName);
+                q.addToGroupBy(qfParentGoName);
             }
         }
-        LOG.error(" == " + q);
+        //LOG.error(" == " + q);
         return q;
     }
 

@@ -77,8 +77,7 @@ public class Hypergeometric
         // TODO maybe we don't have to call this each time?
         getFactorials(bigN);
         for (int i = n; i >= k; i--) {
-            p +=
-                Math.exp(logChoose(bigM, i) + logChoose(bigN - bigM, n - i) - logChoose(bigN, n));
+            p += Math.exp(logChoose(bigM, i) + logChoose(bigN - bigM, n - i) - logChoose(bigN, n));
         }
         return p;
     }
