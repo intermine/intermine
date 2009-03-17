@@ -368,6 +368,38 @@ public class QueryBuilderChange extends DispatchAction
         session.setAttribute("editingTemplateConstraint", Boolean.TRUE);
         return mapping.findForward("query");
     }
+    
+    /**
+     * Edit a constraint's join style settings for a path
+     *
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception
+     *                if the application business logic throws
+     */
+    public ActionForward editJoinStyle(ActionMapping mapping,
+                                                @SuppressWarnings("unused") ActionForm form,
+                                                HttpServletRequest request,
+                                                @SuppressWarnings("unused")
+                                                   HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        String path = request.getParameter("path");
+        Node node = query.getNodes().get(path);
+        if (node == null) {
+            node = query.addNode(path);
+        }
+        session.setAttribute("joinStylePath", path);
+        return mapping.findForward("query");
+    }
 
     /**
      * Add a Node to the query
@@ -728,6 +760,22 @@ public class QueryBuilderChange extends DispatchAction
         throws Exception {
         QueryBuilderController.populateRequest(request, response);
         return mapping.findForward("queryPaths");
+    }
+
+    /**
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward ajaxEditJoinStyle(ActionMapping mapping,
+                                           @SuppressWarnings("unused") ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+                    throws Exception {
+        editJoinStyle(mapping, form, request, response);
+        return mapping.findForward("mainConstraint");
     }
 
 }

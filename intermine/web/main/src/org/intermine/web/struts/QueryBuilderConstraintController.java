@@ -91,7 +91,8 @@ public class QueryBuilderConstraintController extends TilesAction
             SessionMethods.moveToRequest("editingConstraintExtraValue", request);
 
             // Set up the Path, used to distinguish between outter-joinable nodes
-            request.setAttribute("editingPath", new Path(model, node.getPathString()));
+            Path editingPath = new Path(model, node.getPathString());
+            request.setAttribute("editingPath", editingPath);
 
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                         null, classKeys));
@@ -194,6 +195,14 @@ public class QueryBuilderConstraintController extends TilesAction
                 }
             }
         }
+        // ONLY EDITING JOIN STYLE
+        else if (session.getAttribute("joinStylePath") != null) {
+            request.setAttribute("editingPath", new Path(model, (String) session
+                            .getAttribute("joinStylePath")));
+            request.setAttribute("joinStyleOnly", "true");
+            session.removeAttribute("joinStylePath");
+        }
+        
         return null;
     }
 }
