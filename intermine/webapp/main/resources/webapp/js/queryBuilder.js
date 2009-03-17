@@ -40,6 +40,18 @@ function swapInputs(open) {
             }
         }
     }
+    // If we've got a loop query, disable the join type selection
+    if(open == 'loopQuery') {
+        jQuery('#inner').attr("checked", true);
+    	//jQuery('#useJoin').attr("disabled", true);
+    	jQuery('#outer').attr("disabled", true);
+    	jQuery('#inner').attr("disabled", true);
+    	jQuery('#joinStyleSubmit').attr("disabled", true);
+    } else {
+        jQuery('#outer').attr("disabled", false);
+        jQuery('#inner').attr("disabled", false);
+        jQuery('#joinStyleSubmit').attr("disabled", false);
+    }
 }
 
 
