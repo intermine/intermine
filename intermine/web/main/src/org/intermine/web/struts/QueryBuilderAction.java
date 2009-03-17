@@ -203,6 +203,8 @@ public class QueryBuilderAction extends InterMineAction
             if (referenceNode.isReference() && referenceNode.isOuterJoin()) {
                 query.flipJoinStyle(referenceNode.getPathString());
             }
+        } else if (mf.getUseJoin() != null) {
+            // already delt with that
         } else {
             throw new IllegalArgumentException("Unrecognised action: " + request.getParameterMap());
         }

@@ -21,7 +21,7 @@
       onSuccess: function() {
         new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true, closeable: false});
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true});
           }
         });
       }
@@ -36,7 +36,22 @@
       onSuccess: function() {
         new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
           {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
-             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true, closeable: false});
+             new Boxy(jQuery('#constraint'), {title: "Constraint for " + path, modal: true});
+          }
+        });
+      }
+    });
+    return false;
+  }
+
+  function editJoinStyle(path) {
+    new Ajax.Updater('mainConstraint', '<html:rewrite action="/mainChange"/>',
+      {parameters:'method=ajaxEditJoinStyle&path='+path,
+       asynchronous:true, evalScripts:true,
+      onSuccess: function() {
+        new Ajax.Updater('main-paths', '<html:rewrite action="/mainChange"/>',
+          {parameters:'method=ajaxRenderPaths', asynchronous:true, evalScripts:true, onSuccess: function() {
+            new Boxy(jQuery('#constraint'), {title: "Switch Join Style " + path, modal: true});
           }
         });
       }
@@ -126,10 +141,22 @@
              </c:choose>
              <c:choose>
               <c:when test="${node.isOuterJoin && !node.attribute && !empty node.parent}">
-                [outer]&nbsp;
+             <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
+             <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
+                         onclick="return editJoinStyle('${node.pathString}')"
+                         title="${editConstraintTitle}">
+                <img border="0" src="images/join_outer.png" width="13" height="13"
+                     title="Outer join"/>
+             </html:link>
               </c:when>
               <c:when test="${!node.isOuterJoin && !node.attribute && !empty node.parent}">
-                [inner]&nbsp;
+             <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
+             <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
+                         onclick="return editJoinStyle('${node.pathString}')"
+                         title="${editConstraintTitle}">
+                <img border="0" src="images/join_inner.png" width="13" height="13"
+                     title="Inner join"/>
+             </html:link>
               </c:when>
             </c:choose>
             </c:if>

@@ -190,10 +190,10 @@ public class PathQuery
      * The path must not end by an attribute.
      *
      * @param path a path with the old join style
-     * @param outter whether the update should result in an outter join
+     * @param outer whether the update should result in an outter join
      * @return the path, flipped
      */
-    public String updateJoinStyle(String path, boolean outter) {
+    public String updateJoinStyle(String path, boolean outer) {
         String oldPath = getCorrectJoinStyle(path);
         if (!oldPath.equals(path)) {
             throw new IllegalArgumentException("Path not found in query: " + path);
@@ -202,13 +202,8 @@ public class PathQuery
         String newPathString;
         int lastDotIndex = path.lastIndexOf('.');
         int lastColonIndex = path.lastIndexOf(':');
-        int lastIndex = 0;
-        if(lastDotIndex > lastColonIndex) {
-            lastIndex = lastDotIndex;
-        } else {
-            lastIndex = lastColonIndex;
-        }
-        if (outter) {
+        int lastIndex = (lastDotIndex > lastColonIndex ? lastDotIndex : lastColonIndex);
+        if (outer) {
             newPathString = path.substring(0, lastIndex) + ':'
                 + path.substring(lastIndex + 1);
         } else {
@@ -226,7 +221,7 @@ public class PathQuery
         
         PathNode node = getNode(path);
         if (node != null) {
-            node.setOuterJoin(!node.isOuterJoin());
+            node.setOuterJoin(outer);
         }
 
         Map<String, PathNode> origNodes = getNodes();

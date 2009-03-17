@@ -31,7 +31,14 @@ options displayConstraint.optionsList
 <div id="constraint" style="display:none">
     <html:form action="/mainAction" styleId="mainForm">
     <html:hidden styleId="addType" property="addType" value=""/>
-    <html:hidden property="path" value="${editingNode.pathString}"/>
+    <c:choose>
+      <c:when test="${!empty editingNode.pathString}">
+        <html:hidden property="path" value="${editingNode.pathString}"/>
+      </c:when>
+      <c:otherwise>
+        <html:hidden property="path" value="${editingPath}"/>
+      </c:otherwise>
+    </c:choose>
     <html:hidden property="editingConstraintEditable" value="${editingConstraintEditable}"/>
     <c:if test="${editingConstraintIndex != null}">
     <html:hidden property="cindex" value="${editingConstraintIndex}"/>
@@ -49,17 +56,9 @@ options displayConstraint.optionsList
 </div>
 
 <div class="body">
-<%--${loopQueryOJ != true}--%>
-  <c:if test="${(!editingPath.onlyAttribute)||(editingNode.parent != null && !editingNode.attribute)}" >
-    <h3><fmt:message key="query.joinHeading" /></h3> <%--1. Join type--%>
-    <ol style="list-style:none">
-        <li><html:radio property="joinType" value="inner" styleId="inner" /><label for="inner">&nbsp;<fmt:message key="query.innerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.type}"/></fmt:message></label></li>
-        <li><html:radio property="joinType" value="outer" styleId="outer"/><label for="outer">&nbsp;<fmt:message key="query.outerJoin"><fmt:param value="${editingNode.parent.type}"/><fmt:param value="${editingNode.lastReferenceName}"/></fmt:message></label></li>
-    </ol>
-    <html:hidden property="useJoin" value="true"/>
-  </c:if>
-<h3><fmt:message key="query.constraintHeading"/></h3> <%--2. Choose a filter--%>
-
+<c:if test="${empty joinStyleOnly}" >
+  <h3><fmt:message key="query.constraintHeading"/></h3> <%--1. Choose a filter--%>
+</c:if>
 <!-- ATTRIBUTE TOGGLE -->
 <c:if test="${displayConstraint.attribute || ! empty keyFields}">
 <h4>
@@ -421,8 +420,8 @@ swapInputs('subclass');
 </c:if>
 
 
-<c:if test="${!editingNode.collection && !editingNode.reference &&
-    !empty editingNode.parent && editingNode.type != 'boolean'}">
+<c:if test="${(!editingNode.collection && !editingNode.reference &&
+    !empty editingNode.parent && editingNode.type != 'boolean')}">
     <!-- NULL OR NOT -->
     <h5><fmt:message key="query.or"/></h5>
 
@@ -445,6 +444,38 @@ swapInputs('subclass');
 </c:if>
 </div>
 </c:if>
+<%--${loopQueryOJ != true}--%>
+  <c:if test="${(!editingPath.onlyAttribute)}" >
+    <h3><fmt:message key="query.joinHeading" /></h3> <%--2. Join type--%>
+    <ol style="list-style:none">
+      <li>
+        <html:radio property="joinType" value="inner" styleId="inner" />
+        <label for="inner">&nbsp;
+           <fmt:message key="query.innerJoin">
+              <fmt:param value="${editingPath.startClassDescriptor.unqualifiedName}"/>
+              <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
+           </fmt:message>                 
+           <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
+        </label>
+      </li>
+      <li>
+        <html:radio property="joinType" value="outer" styleId="outer"/>
+        <label for="outer">&nbsp;
+          <fmt:message key="query.outerJoin">
+            <fmt:param value="${editingPath.startClassDescriptor.unqualifiedName}"/>
+            <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
+          </fmt:message>
+          <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
+        </label>
+      </li>
+    </ol>
+    <html:hidden property="useJoin" value="true"/>
+    <c:if test="${! empty joinStyleOnly}">
+    <html:submit property="joinStyle" styleId="joinStyleSubmit" >
+      <fmt:message key="query.submitConstraint"/><%-- Submit button --%>
+    </html:submit>
+    </c:if>
+  </c:if>
 </div>
 
 <script type="text/javascript">
@@ -468,14 +499,12 @@ initConstraintForm(0,
     </script>
 
 </div>
-<div style="text-align:right">
-    <input type="button" onclick="window.location.href='<html:rewrite action="/query"/>?cancel'" value="<fmt:message key="query.cancelConstraint"/>"/>
-</div>
-<%--    <div class="body" style="text-align:right">
+<%--
+<div class="body" style="text-align:right">
     <span id="cancelButton"></span>
     <script language="JavaScript">
         <!--
-            <c:if test="${param.deletePath}">
+        <c:if test="${param.deletePath}">
             <c:set var="deletePath" value="${param.deletePath}"/>
         </c:if>
         <c:choose>
@@ -488,8 +517,8 @@ initConstraintForm(0,
 </c:choose>
 //-->
 </script>
-</div>--%>
-
+</div>
+--%>
 </c:if>
 </html:form>
 </div>
