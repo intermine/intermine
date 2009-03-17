@@ -302,13 +302,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException, ObjectStoreException {
         ResultSet res = getDataFeatureResultSet(connection, queryList);
 
-//        ReferenceList collection = new ReferenceList();
-//        collection.setName("features");
-
-        Integer oldId = 0;
+        Integer prevId = 0;    // previous id in the loop
         Integer collectionSize = 0;
         ReferenceList collection = null;
-        
+      
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -319,32 +316,40 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
 
-            if (dataId != oldId) {
-                collection = new ReferenceList();
-                collection.setName("features");                
-            }
-            
-            
+            // get feature data
             String featureItemId = featureData.getItemIdentifier();
-            FeatureData fd = featureData;
-            LOG.info("dataId " + oldId + " FD " + fd.getInterMineType() + ": " 
-                    + fd.getChadoFeatureName());
+            LOG.debug("dataId " + prevId + " -> " + dataId + " FD "
+                    + featureData.getInterMineType() + ": " 
+                    + featureData.getChadoFeatureName());
 
-            //            if (res.isFirst() || dataId == oldId) {
-            if ((oldId == 0) || (dataId == oldId)) {
+            if (!dataId.equals(prevId)) {
+                if (prevId != 0) {
+                    // store previous collection
+                    LOG.info("STORING collection for dataId " + prevId + ": " 
+                            + appliedDataMap.get(prevId).intermineObjectId 
+                            + " size:" + collectionSize); 
+                    getChadoDBConverter().store(collection, 
+                            appliedDataMap.get(prevId).intermineObjectId);                    
+                }
+                collection = new ReferenceList();
+                collection.setName("features");
                 collection.addRefId(featureItemId);
                 collectionSize++;
+            }
+
+            if (dataId.equals(prevId)) {
+                collection.addRefId(featureItemId);
+                collectionSize++;                
+                LOG.debug("dataId ADDREF " + dataId + "|" + featureItemId + "|" + collectionSize);
             } 
 
-            if (res.isLast() || dataId != oldId) {
-                LOG.debug("STORING collection for dataId " + oldId + ": " 
-                        + appliedDataMap.get(oldId).intermineObjectId + " size:" + collectionSize); 
+            if (res.isLast()) {
+                LOG.info("STORING collection for dataId " + dataId + ": " 
+                        + " size:" + collectionSize); 
                 getChadoDBConverter().store(collection, 
-                        appliedDataMap.get(oldId).intermineObjectId);
-                oldId = dataId;
-                collectionSize = 0;
+                        appliedDataMap.get(dataId).intermineObjectId);
             }
-            oldId = dataId;
+            prevId = dataId;
         }
     }
 
