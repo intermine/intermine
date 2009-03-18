@@ -21,7 +21,7 @@ my @parts = $path->parts();
 
 is(scalar(@parts), 3, $path_string . ' has three parts');
 
-is($parts[0]->name(), 'org.intermine.model.testmodel.Department',
+is($parts[0]->name(), 'Department',
    'class name of start of path');
 is(ref $parts[0], 'InterMine::Model::ClassDescriptor',
    'start of path is a class descriptor');

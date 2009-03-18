@@ -55,18 +55,15 @@ my $xml_exp = q[
       <attribute name="age" value="50" />
    </item>
    <item id="0_3" class="" implements="Department">
-      <collection name="employees">
-         <reference ref_id="0_1" />
-         <reference ref_id="0_2" />
-      </collection>
+       <collection name="employees">
+          <reference ref_id="0_1" />
+          <reference ref_id="0_2" />
+       </collection>
       <attribute name="name" value="big department" />
       <reference name="company" ref_id="0_4" />
    </item>
    <item id="0_4" class="" implements="Company">
       <attribute name="name" value="big company" />
-      <collection name="departments">
-         <reference ref_id="0_3" />
-      </collection>
    </item>
 </items>
 ];
