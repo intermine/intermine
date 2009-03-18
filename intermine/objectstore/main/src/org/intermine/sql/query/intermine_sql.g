@@ -140,6 +140,10 @@ constraint:
         | ! ( #( CONSTRAINT abstract_value GT ))=> 
             #( CONSTRAINT dleft:abstract_value GT dright:abstract_value )
             { #constraint = #(#[CONSTRAINT], #dright, #[LT, "<"], #dleft); }
+        | ! ( #( CONSTRAINT abstract_value "not" "like" ))=>
+            #( CONSTRAINT eleft:abstract_value "not" elike:"like" eright:abstract_value )
+            { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
+                #(#[CONSTRAINT], #eleft, #elike, #eright) ); }
         | #( CONSTRAINT abstract_value comparison_op abstract_value )
     ;
 
@@ -260,7 +264,7 @@ subquery_constraint: #( SUBQUERY_CONSTRAINT abstract_value sql ) ;
 
 inlist_constraint: #( INLIST_CONSTRAINT abstract_value ( constant )+ );
 
-comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "like";
+comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "like" | "not" "like";
 
 abstract_constraint_list: ( abstract_constraint )+ ;
 
@@ -491,7 +495,7 @@ not_constraint: "not"! safe_abstract_constraint
 
 paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
 
-constraint_set: (and_constraint_set)=> and_constraint_set | or_constraint_set;
+constraint_set: (safe_abstract_constraint "and")=> and_constraint_set | or_constraint_set;
 
 or_constraint_set: 
         safe_abstract_constraint ("or"! safe_abstract_constraint)+
@@ -516,7 +520,7 @@ inlist_constraint: (abstract_value "in" )=> abstract_value "in"! OPEN_PAREN! con
         { #inlist_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #([INLIST_CONSTRAINT, "INLIST_CONSTRAINT"], inlist_constraint)); }
     ;
 
-comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "like";
+comparison_op: EQ | LT | GT | NOT_EQ | LE | GE | GORNULL | "not" "like" | "like";
 
 null_comparison: "is"! "null"! | "is"! "not" "null"!;
 

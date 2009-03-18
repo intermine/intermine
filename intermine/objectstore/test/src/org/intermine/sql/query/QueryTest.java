@@ -1174,4 +1174,22 @@ public class QueryTest extends TestCase
         eq.addWhere(new Constraint(f, Constraint.LT, c));
         assertEquals(eq, q);
     }
+
+    public void testWeirdBug1() throws Exception {
+        String sql = "SELECT DISTINCT a1_.id AS a1_id, a4_.id AS a4_id, a6_.id AS a6_id, a8_.id AS a8_id, a7_.id AS a7_id, a14_.id AS a14_id, a9_.id AS a9_id, a10_.id AS a10_id, a12_.id AS a12_id, a1_.primaryIdentifier AS orderbyfield4, a4_.pubMedId AS orderbyfield5, a6_.name AS orderbyfield6, a8_.primaryIdentifier AS orderbyfield7, a7_.type AS orderbyfield8, a14_.title AS orderbyfield9, a9_.name AS orderbyfield10, a9_.observed AS orderbyfield11, a10_.pubMedId AS orderbyfield12, a12_.name AS orderbyfield13 "
+                + "FROM Gene AS a1_, RNAiScreenHit AS a2_, RNAiScreen AS a3_, Publication AS a4_, DataSet AS a5_, DataSource AS a6_, Homologue AS a7_, Gene AS a8_, RNAiPhenotype AS a9_, Publication AS a10_, DataSet AS a11_, DataSource AS a12_, Organism AS a13_, DataSet AS a14_, Organism AS a15_, AnalysisResultDataSets AS indirect0, AnnotationPublications AS indirect1, AnalysisResultDataSets AS indirect2, DataSetsHomologue AS indirect3 "
+                + "WHERE a1_.id = a2_.geneId AND LOWER(a2_.intermine_result) NOT LIKE 'not screened' AND a2_.rnaiScreenId = a3_.id AND a3_.publicationId = a4_.id AND a2_.id = indirect0.DataSets AND indirect0.AnalysisResult = a5_.id AND a5_.dataSourceId = a6_.id AND a1_.id = a7_.geneId AND a7_.homologueId = a8_.id AND a8_.id = a9_.subjectId AND a9_.id = indirect1.Publications AND indirect1.Annotation = a10_.id AND a9_.id = indirect2.DataSets AND indirect2.AnalysisResult = a11_.id AND a11_.dataSourceId = a12_.id AND a8_.organismId = a13_.id AND LOWER(a13_.name) LIKE 'caenorhabditis elegans' AND LOWER(a7_.type) LIKE 'orthologue' AND a7_.id = indirect3.DataSets AND indirect3.Homologue = a14_.id AND a1_.organismId = a15_.id AND LOWER(a15_.name) LIKE 'drosophila melanogaster' AND a1_.id = 355180125 "
+                + "ORDER BY a1_.primaryIdentifier, a4_.pubMedId, a6_.name, a8_.primaryIdentifier, a7_.type, a14_.title, a9_.name, a9_.observed, a10_.pubMedId, a12_.name, a1_.id, a4_.id, a6_.id, a8_.id, a7_.id, a14_.id, a9_.id, a10_.id, a12_.id LIMIT 1000";
+        Query q = new Query(sql);
+        assertEquals(sql, q.toString());
+    }
+
+    public void testRubbishAtEnd() throws Exception {
+        String sql = "SELECT a FROM a LIMIT 10 kjhalkj lkjhkajsh kjh kjh kjh";
+        try {
+            Query q = new Query(sql);
+            fail("Expected exception");
+        } catch (Exception e) {
+        }
+    }
 }
