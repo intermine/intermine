@@ -21,6 +21,7 @@
       <collection name="UTRs" referenced-type="UTR" reverse-reference="gene" ordered="true"/>
       <collection name="CDSs" referenced-type="CDS" reverse-reference="gene" ordered="true"/>
       <collection name="publications" referenced-type="Publication" ordered="true"/>
+      <collection name="flankingRegions" referenced-type="GeneFlankingRegion" reverse-reference="gene"/>
     </class>
 
     <class name="Intron" is-interface="true">
@@ -83,4 +84,11 @@
 
     <class name="Chromosome" is-interface="true"
            extends="GenomeRegion"/>
+
+    <class name="GeneFlankingRegion" is-interface="true"
+           extends="LocatedSequenceFeature">
+      <attribute name="distance" type="java.lang.String"/>
+      <attribute name="direction" type="java.lang.String"/>
+      <reference name="gene" referenced-type="Gene" reverse-reference="flankingRegions"/>
+    </class>
 </classes>
