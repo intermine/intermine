@@ -42,6 +42,7 @@ public class GFF3Exporter implements Exporter
     private boolean headerPrinted = false;
     private IntPresentSet exportedIds = new IntPresentSet();
     private List<String> attributesNames;
+    private String sourceName;
 
     /**
      * Constructor.
@@ -53,11 +54,12 @@ public class GFF3Exporter implements Exporter
      *  as corresponding columns in results table
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
-            List<String> attributesNames) {
+            List<String> attributesNames, String sourceName) {
         this.out = out;
         this.featureIndexes = indexes;
         this.soClassNames = soClassNames;
         this.attributesNames = attributesNames;
+        this.sourceName = sourceName;
     }
 
     /**
@@ -98,7 +100,7 @@ public class GFF3Exporter implements Exporter
             attributes.put(attributesNames.get(i), formatElementValue(el));
         }
 
-        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames,
+        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames, sourceName,
                 attributes);
 
         if (gff3Record == null) {

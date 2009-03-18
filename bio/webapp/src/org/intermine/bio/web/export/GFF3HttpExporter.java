@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -37,6 +38,7 @@ import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
@@ -69,6 +71,10 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
                 LocatedSequenceFeature.class);
 
+        // get the project title to be written in GFF3 records
+        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String sourceName = props.getProperty("project.title");
+        
         Exporter exporter;
         try {
             PrintWriter writer = HttpExportUtil.
@@ -77,7 +83,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                     serializedSortOrderToMap(form.getPathsString()).keySet());
             removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer,
-                    indexes, getSoClassNames(servletContext), paths);
+                    indexes, getSoClassNames(servletContext), paths, sourceName);
             ExportResultsIterator iter = null;
             try {
                 iter = getResultRows(pt, request);

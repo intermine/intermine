@@ -41,6 +41,7 @@ public abstract class GFF3Util
      * @return the GFF3Record or null if this lsf has no Chromosome or no Chromosome location
      */
     public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, Map soClassNameMap,
+                                            String sourceName,
                                             Map<String, List<String>> extraAttributes) {
         Set classes = DynamicUtil.decomposeClass(lsf.getClass());
 
@@ -104,7 +105,7 @@ public abstract class GFF3Util
             recordAttribute.put("ID", idList);
         }
 
-        return new GFF3Record(sequenceID, "FlyMine", type, start, end, null, strand, null,
+        return new GFF3Record(sequenceID, sourceName, type, start, end, null, strand, null,
                               recordAttribute);
     }
 }
