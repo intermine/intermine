@@ -25,6 +25,7 @@ package org.intermine.sql.query;
 import java.util.*;
 import java.io.*;
 
+import antlr.Token;
 import antlr.collections.AST;
 //import antlr.debug.misc.ASTFrame;
 
@@ -157,9 +158,26 @@ public class Query implements SQLStringable
 
             processSqlStatementAST(ast);
         } catch (antlr.RecognitionException e) {
-            IllegalArgumentException e2 = new IllegalArgumentException();
-            e2.initCause(e);
-            throw e2;
+            try {
+                InputStream is = new ByteArrayInputStream(sql.getBytes());
+                SqlLexer lexer = new SqlLexer(is);
+                StringBuilder lex = new StringBuilder();
+                boolean needComma = false;
+                Token nextToken = lexer.nextToken();
+                while (nextToken.getType() != Token.EOF_TYPE) {
+                    if (needComma) {
+                        lex.append(", ");
+                    }
+                    needComma = true;
+                    lex.append("[" + nextToken.getType() + ", " + nextToken.getText() + "]");
+                    nextToken = lexer.nextToken();
+                }
+                IllegalArgumentException e2 = new IllegalArgumentException(lex.toString());
+                e2.initCause(e);
+                throw e2;
+            } catch (antlr.TokenStreamException e3) {
+                throw new IllegalArgumentException(e);
+            }
         } catch (antlr.TokenStreamException e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
