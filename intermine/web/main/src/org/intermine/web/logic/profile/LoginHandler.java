@@ -76,8 +76,6 @@ public abstract class LoginHandler extends InterMineAction
         for (Iterator iter = mergeQueries.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry) iter.next();
             SavedQuery query = (SavedQuery) entry.getValue();
-            String name = makeUniqueQueryName((String) entry.getKey(), profile.getHistory()
-                    .keySet());
             profile.saveHistory(query);
         }
         // Merge anonymous bags
@@ -91,7 +89,7 @@ public abstract class LoginHandler extends InterMineAction
                 String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
                         .keySet());
                 if (!((String) entry.getKey()).equals(name)) {
-                    renamedBags.put((String) entry.getKey(), name);
+                    renamedBags.put(entry.getKey(), name);
                 }
                 bag.setName(name, uosw);
                 profile.saveBag(name, bag);
@@ -105,7 +103,7 @@ public abstract class LoginHandler extends InterMineAction
     /**
      * Retrieves profile (creates or gets from ProfileManager) and saves it to session.
      *
-     * @param session http session 
+     * @param session http session
      * @param pm profile manager
      * @param username user name
      * @param password password
@@ -130,10 +128,10 @@ public abstract class LoginHandler extends InterMineAction
     }
 
     private String makeUniqueQueryName(String name, Set names) {
-        String original = name;
+        String newName = name;
         int i = 1;
-        while (names.contains(name)) {
-            name = original + "_" + i;
+        while (names.contains(newName)) {
+            newName =  name + "_" + i;
             i++;
         }
         return name;
