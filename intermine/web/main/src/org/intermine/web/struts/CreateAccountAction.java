@@ -13,11 +13,6 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +21,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author Xavier Watkins
@@ -61,9 +60,9 @@ public class CreateAccountAction extends LoginHandler
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         try {
             MailUtils.email(username, password, webProperties);
-            recordError(new ActionMessage("createAccount.success"), request);
+            SessionMethods.recordMessage("You have successfully created an account.", session);
         } catch (Exception e) {
-            recordError(new ActionMessage("createAccount.badmail"), request);
+            SessionMethods.recordError("Failed to send confirmation email", session);
         }
 
 
@@ -77,9 +76,7 @@ public class CreateAccountAction extends LoginHandler
          * md5.digest(); String encoded = HexBin.encode(array); } catch
          * (NoSuchAlgorithmException e) { }
          */
-
         doLogin(servletContext, request, response, session, pm, username, password);
-
         return mapping.findForward("mymine");
     }
 
