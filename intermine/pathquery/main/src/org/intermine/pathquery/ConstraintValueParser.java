@@ -17,7 +17,6 @@ import java.util.Date;
 import org.intermine.objectstore.query.ConstraintOp;
 
 import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
 
 import java.text.ParseException;
 
