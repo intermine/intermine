@@ -88,12 +88,10 @@
   </div>
   <div class="body aspectStartingPoints">
     <p><fmt:message key="aspect.starting.points.helptext"/></p>
-<c:if test="${!empty startingPoints && fn:length(startingPoints) > 1}">
     <c:forEach items="${startingPoints}" var="classname" varStatus="status">
       <im:unqualify className="${classname}" var="name"/>
       <a href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"  /> "rel="NOFOLLOW" >${name}</a><c:if test="${!status.last}">,</c:if>
     </c:forEach>
-</c:if>
   </div>
 
 </im:box>
