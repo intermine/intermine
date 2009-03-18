@@ -122,11 +122,16 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
         } else  {
-            Query subQ = q;
-            subQ.addToSelect(qfProtId);
-            subQ.addToSelect(qfName);
 
+            // subquery
+            Query subQ = q;
+            // used for count
+            subQ.addToSelect(qfProtId);
+            // feature name
+            subQ.addToSelect(qfName);
+            // needed so we can select this field in the parent query
             QueryField qfType = new QueryField(subQ, qfName);
+
             q = new Query();
             q.setDistinct(false);
             q.addFrom(subQ);

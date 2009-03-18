@@ -52,7 +52,7 @@ public class ImportQueriesAction extends InterMineAction
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getSearchRepository(servletContext));
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
@@ -62,7 +62,7 @@ public class ImportQueriesAction extends InterMineAction
             && ((request.getParameter("query_builder") != null && request
                 .getParameter("query_builder").equals("yes")) || profile.getUsername() == null)) {
             // special case to redirect straight to the query builder
-            PathQuery pathQuery = (PathQuery) queries.values().iterator().next();
+            PathQuery pathQuery = queries.values().iterator().next();
             if (!pathQuery.isValid()) {
                 recordError(new ActionError("errors.importFailed",
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
@@ -70,35 +70,34 @@ public class ImportQueriesAction extends InterMineAction
             SessionMethods.loadQuery(pathQuery, session,
                                      response);
             return mapping.findForward("query");
-        } else {
-            if (!profile.isLoggedIn()) {
-                ActionMessages actionMessages = getErrors(request);
-                actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
-                                   new ActionMessage("import.queries.notloggedin"));
-                saveErrors(request, actionMessages);
-                return mapping.findForward("importQueries");
-            }
-            try {
-                profile.disableSaving();
-                Iterator iter = queries.keySet().iterator();
-                StringBuffer sb = new StringBuffer();
-                while (iter.hasNext()) {
-                    String queryName = (String) iter.next();
-                    PathQuery query = (PathQuery) queries.get(queryName);
-                    queryName = validateQueryName(queryName, profile);
-                    SessionMethods.saveQuery(session, queryName, query);
-                    if (sb.length() > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(queryName);
+        }
+        if (!profile.isLoggedIn()) {
+            ActionMessages actionMessages = getErrors(request);
+            actionMessages.add(ActionMessages.GLOBAL_MESSAGE,
+                               new ActionMessage("import.queries.notloggedin"));
+            saveErrors(request, actionMessages);
+            return mapping.findForward("importQueries");
+        }
+        try {
+            profile.disableSaving();
+            Iterator iter = queries.keySet().iterator();
+            StringBuffer sb = new StringBuffer();
+            while (iter.hasNext()) {
+                String queryName = (String) iter.next();
+                PathQuery query = queries.get(queryName);
+                queryName = validateQueryName(queryName, profile);
+                SessionMethods.saveQuery(session, queryName, query);
+                if (sb.length() > 0) {
+                    sb.append(", ");
                 }
-                recordMessage(new ActionMessage("query.imported", sb.toString()), request);
-                return new ForwardParameters(mapping.findForward("mymine"))
-                .addParameter("subtab", "saved").forward();
-
-            } finally {
-                profile.enableSaving();
+                sb.append(queryName);
             }
+            recordMessage(new ActionMessage("query.imported", sb.toString()), request);
+            return new ForwardParameters(mapping.findForward("mymine"))
+            .addParameter("subtab", "saved").forward();
+
+        } finally {
+            profile.enableSaving();
         }
     }
 

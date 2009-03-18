@@ -142,9 +142,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 request.setAttribute(Globals.ERROR_KEY, messages);
                 processForwardConfig(request, response,
                                      new ActionForward(LOGON_PATH + ".do", true));
-
-
-
             }
         } catch (Exception e) {
             request.getSession().invalidate(); // safer?

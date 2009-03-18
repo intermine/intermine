@@ -40,20 +40,13 @@ public abstract class LoginHandler extends InterMineAction
      * Abstract class containing the methods for login in and copying current
      * history, bags,... into profile
      *
-     * @param servletContext
-     *            The servlet context
-     * @param request
-     *            The HttpServletRequest
-     * @param response
-     *            The HttpServletResponse
-     * @param session
-     *            The session
-     * @param pm
-     *            The profile manager
-     * @param username
-     *            The username
-     * @param password
-     *            The password
+     * @param servletContext The servlet context
+     * @param request The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @param session The session
+     * @param pm The profile manager
+     * @param username The username
+     * @param password The password
      * @return the map containing the renamed bags the user created before they were logged in
      */
     public Map doLogin(ServletContext servletContext, HttpServletRequest request,
