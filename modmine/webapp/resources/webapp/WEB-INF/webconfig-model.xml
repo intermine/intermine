@@ -45,8 +45,7 @@
     </fields>
     <longdisplayers>
       <displayer src="submissionDisplayer.tile"/>
-    </longdisplayers>
-    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="submissionProtocolsDisplayer.tile"/>
     </longdisplayers>
   </class>
