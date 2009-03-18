@@ -73,12 +73,12 @@ public class QueryBuilderAction extends InterMineAction
         //boolean editable = false;
         String editingConstraintEditable = request.getParameter("editingConstraintEditable");
         boolean editable = Boolean.parseBoolean(editingConstraintEditable);
-        
+
         String joinType = mf.getJoinType();
-        
+
         // Select the join style for the path in the query
         // this should remove any invalid order by elements
-        if (mf.getUseJoin().equals("true") && mf.getUseJoin() != null && joinType != null
+        if (mf.getUseJoin() != null && mf.getUseJoin().equals("true") && joinType != null
             && joinType.length() != 0) {
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
