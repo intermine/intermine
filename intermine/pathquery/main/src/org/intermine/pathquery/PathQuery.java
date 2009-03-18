@@ -410,10 +410,11 @@ public class PathQuery
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
             if (fld.isCollection()
                 || fld.isReference()
-                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null || ((getNode(
-                                dummyPath.getPrefix().toStringNoConstraints()).getConstraints() == null) || (getNode(
-                                dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
-                                .size() <= 0)))) {
+                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null
+                    || ((getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+                            == null)
+                        || (getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+                            .size() <= 0)))) {
                 currentPath.append(":");
             } else {
                 currentPath.append(".");

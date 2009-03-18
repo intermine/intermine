@@ -409,6 +409,17 @@ public class Path
     }
 
     /**
+     * Returns the second to last ClassDescriptor in the path. That is, the one before the one
+     * returned by getLastClassDescriptor.
+     *
+     * @return the ClassDescriptor
+     */
+    public ClassDescriptor getSecondLastClassDescriptor() {
+        List<ClassDescriptor> l = getElementClassDescriptors();
+        return l.get(l.size() - 2);
+    }
+
+    /**
      * Return the last string element of this path, throw an exception of there is only one element,
      * i.e. for 'Company.departments.manager' return 'manager'.
      * @return the last string element of the path 

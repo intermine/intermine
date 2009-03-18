@@ -452,7 +452,7 @@ swapInputs('subclass');
         <html:radio property="joinType" value="inner" styleId="inner" />
         <label for="inner">&nbsp;
            <fmt:message key="query.innerJoin">
-              <fmt:param value="${editingPath.startClassDescriptor.unqualifiedName}"/>
+              <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
               <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
            </fmt:message>                 
            <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
@@ -462,7 +462,7 @@ swapInputs('subclass');
         <html:radio property="joinType" value="outer" styleId="outer"/>
         <label for="outer">&nbsp;
           <fmt:message key="query.outerJoin">
-            <fmt:param value="${editingPath.startClassDescriptor.unqualifiedName}"/>
+            <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
             <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
           </fmt:message>
           <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
