@@ -26,12 +26,12 @@ my $comp_cd = $model->get_classdescriptor_by_name("Company");
 ok($comp_cd->valid_field('secretarys'));
 
 is($comp_cd->get_field_by_name('secretarys')->referenced_classdescriptor()->name(),
-   'org.intermine.model.testmodel.Secretary');
+   'Secretary');
 
 # from this class
 ok($comp_cd->valid_field('departments'));
 
 is($comp_cd->get_field_by_name('departments')->referenced_classdescriptor()->name(),
-   'org.intermine.model.testmodel.Department');
+   'Department');
 
 is(scalar($comp_cd->fields()), 8);

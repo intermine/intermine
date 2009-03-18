@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 9;
 
 use XML::Writer;
 use InterMine::Model;
@@ -34,11 +34,6 @@ $company->set("name", "big company");
 $dept->set("company", $company);
 
 my @company_depts = @{$company->get("departments")};
-
-ok(scalar(@company_depts) == 1);
-
-ok($company_depts[0]->get("name") eq "big department");
-
 
 my $emp3 = $factory->make_item("CEO");
 $emp3->set("name", "eric (ceo)");
