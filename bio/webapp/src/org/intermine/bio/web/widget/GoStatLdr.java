@@ -62,8 +62,11 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         organisms = BioUtil.getOrganisms(os, bag, false);
         model = os.getModel();
         for (String s : organisms) {
-            organismsLower.add(s.toLowerCase());
+            if (s != null) {
+                organismsLower.add(s.toLowerCase());
+            }
         }
+
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
