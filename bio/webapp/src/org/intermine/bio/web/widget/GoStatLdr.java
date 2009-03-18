@@ -103,6 +103,8 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
+        QueryField qfParentGoId = new QueryField(qcRelations, "parentTermId");
+        QueryField qfChildGoId = new QueryField(qcRelations, "childTermId");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
@@ -117,14 +119,10 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             qfId = qfGeneId;
         }
 
-        // gene.goAnnotation.ontologyTerm.relations.childTerm.identifier
+        // gene.goAnnotation.ontologyTerm.relations.parentTerm.identifier
         QueryField qfNamespace = new QueryField(qcGoParent, "namespace");
         QueryField qfParentGoIdentifier = new QueryField(qcGoParent, "identifier");
         QueryField qfParentGoName = new QueryField(qcGoParent, "name");
-
-        // gene.goAnnotation.ontologyTerm.identifier
-        //QueryField qfGoIdentifier = new QueryField(qcGo, "identifier");
-        //QueryField qfGoName = new QueryField(qcGo, "name");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -215,16 +213,47 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
         } else {    // calculating enrichment
+
+            /*
+            these need to be uniquified because there are duplicates.
+            2 go terms can have multiple entries which just the relationship type being
+            different.
+
+            the first query gets all of the gene --> go term relationships unique
+            the second query then counts the genes per each go term
+            */
+
+            // subquery
+            Query subq = q;
+            subq.addToSelect(qfParentGoIdentifier);
+            subq.addToGroupBy(qfParentGoIdentifier);
+
+            subq.addToGroupBy(qfParentGoId);
+            subq.addToGroupBy(qfChildGoId);
+
+            QueryField qfName = new QueryField(subq, qfParentGoName);
+            if (action.equals("sample")) {
+                subq.addToSelect(qfParentGoName);
+                subq.addToGroupBy(qfParentGoName);
+            }
+
+            // needed so we can select this field in the parent query
+            QueryField qfIdentifier = new QueryField(subq, qfParentGoIdentifier);
+
+            // main query
+            q = new Query();
             q.setDistinct(false);
-            q.addToSelect(qfParentGoIdentifier);
-            q.addToGroupBy(qfParentGoIdentifier);
+            q.addFrom(subq);
+            q.addToSelect(qfIdentifier);
             q.addToSelect(new QueryFunction());
             if (action.equals("sample")) {
-                q.addToSelect(qfParentGoName);
-                q.addToGroupBy(qfParentGoName);
+                q.addToSelect(qfName);
+                q.addToGroupBy(qfName);
             }
+            q.addToGroupBy(qfIdentifier);
+
         }
-        //LOG.error(" == " + q);
+        LOG.error(" == " + q);
         return q;
     }
 
