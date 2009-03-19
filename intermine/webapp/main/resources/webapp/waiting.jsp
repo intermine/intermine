@@ -9,8 +9,9 @@
   <head>
     <title><fmt:message key="waiting.title"/></title>
     <link rel="stylesheet" type="text/css" href="css/webapp.css"/>
-    <link rel="stylesheet" type="text/css" href="theme/theme.css"/>
     <link rel="stylesheet" type="text/css" href="css/waiting.css"/>
+    <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
+    <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
     <noscript>
       <meta http-equiv="Refresh" content="${POLL_REFRESH_SECONDS}; URL=<html:rewrite action="${POLL_ACTION_NAME}?qid=${param.qid}"/>">
     </noscript>
