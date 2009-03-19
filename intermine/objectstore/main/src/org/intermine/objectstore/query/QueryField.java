@@ -44,9 +44,12 @@ public class QueryField implements QueryEvaluable
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }
+        if (qc == null) {
+            throw new NullPointerException("QueryClass parameter is null");
+        }
         if ("class".equals(fieldName)) {
             this.qc = qc;
-            this.fieldName = fieldName;
+            this.fieldName = "class";
             secondFieldName = null;
             type = Class.class;
         } else {
@@ -131,6 +134,9 @@ public class QueryField implements QueryEvaluable
      * @param qcb the QueryClassBag
      */
     public QueryField(QueryClassBag qcb) {
+        if (qcb == null) {
+            throw new NullPointerException("QueryClassBag parameter is null");
+        }
         this.qc = qcb;
         this.fieldName = "id";
         this.secondFieldName = null;
