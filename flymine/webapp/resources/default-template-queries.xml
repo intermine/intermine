@@ -5,6 +5,106 @@
   <queries>
   </queries>
 <template-queries>
+<template name="_indirectphysicalinteractions" title="Find Known Indirect Physical Interactions Between Bait and Prey" longDescription="Identifies when Bait and Prey are known to physically interact with a common protein." comment="">
+  <query name="_indirectphysicalinteractions" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.interactions.experiment.interactionDetectionMethod.name Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.interactions.experiment.interactionDetectionMethod.name Gene.interactions.interactingGenes.interactions.experiment.publication.pubMedId Gene.interactions.interactingGenes.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.interactions.interactingGenes.symbol" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C and D and E and F and G and H">
+    <pathDescription pathString="Gene.interactions.interactingGenes.interactions.interactingGenes" description="Prey">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.interactingGenes" description="Common interactor">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG31196" description="Bait" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="C" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes" type="Gene">
+      <constraint op="!=" value="Gene" description="" identifier="" code="E">
+      </constraint>
+      <constraint op="LOOKUP" value="CG3935" description="Prey List" identifier="" editable="true" code="D" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes.organism" type="Organism">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="H">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="G">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="F">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="_irina260209_orthologues_test" title="Find Known Physical Interactions Between Orthologues of Bait and Prey" longDescription="" comment="">
+  <query name="_irina260209_orthologues_test" model="genomic" view="Gene.name Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.name Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.symbol Gene.homologues.homologue.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.symbol Gene.homologues.homologue.organism.name Gene.homologues.homologue.interactions.interactingGenes.name Gene.homologues.homologue.interactions.interactingGenes.primaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.secondaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.symbol Gene.homologues.homologue.interactions.interactingGenes.organism.name Gene.homologues.homologue.interactions.experiment.publication.pubMedId Gene.homologues.homologue.interactions.experiment.publication.title Gene.homologues.homologue.interactions.experiment.interactionDetectionMethod.name Gene.homologues.homologue.interactions.dataSets.dataSource.name" sortOrder="Gene.name asc" constraintLogic="A and B and C and D and E">
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue" description="Prey">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.experiment.interactionDetectionMethod" description="Detection Method">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.dataSets.dataSource" description="Data source">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes.organism" description="Prey Orthologue Organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes" description="Prey Orthologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.experiment.publication" description="Publication">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Bait Orthologue Organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Bait Orthologue">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="gluon" description="Bait" identifier="Bait" editable="true" code="E" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.interactions" type="Interaction">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue" type="Gene">
+      <constraint op="LOOKUP" value="barren" description="Prey" identifier="Prey" editable="true" code="D" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="A_IdentifierSynonym_Object" title="Identifier or synonym --&gt; Database object." longDescription="Find an entry in the database using any identifier or synonym." comment="This is the template that the quick search runs.  If the name is changed it also has to be changed for the quick search configuration - Rachel. Removed tags so no longer displayed - just used for quick search now.  Rachel.">
   <query name="A_IdentifierSynonym_Object" model="genomic" view="Synonym.subject.primaryIdentifier Synonym.value Synonym.subject.organism.name" sortOrder="Synonym.subject.primaryIdentifier asc">
     <node path="Synonym" type="Synonym">
@@ -55,7 +155,7 @@
     </node>
   </query>
 </template>
-<template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="Show the chromosomal location and sequence for all genes from a particular organism." comment="">
+<template name="AllGene_Chromosome" title="All genes in organism --&gt; All chromosomal locations." longDescription="For a specified organism, show the chromosomal location and sequence length for all genes." comment="">
   <query name="AllGene_Chromosome" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.strand Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.length Gene.primaryIdentifier Gene.symbol" sortOrder="Gene.chromosome.primaryIdentifier asc">
     <pathDescription pathString="Gene.chromosomeLocation" description="Chromosome location">
     </pathDescription>
@@ -65,14 +165,28 @@
     </pathDescription>
     <node path="Gene" type="Gene">
     </node>
-    <node path="Gene.objects" type="Location">
-    </node>
-    <node path="Gene.objects.object" type="Chromosome">
-    </node>
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
       <constraint op="=" value="Drosophila melanogaster" description="Show the chromosome location and gene sequences for all genes from organism:" identifier="Organism.name" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="allGO_GeneOrganism_1" title="GO term name/id [and children of this term] --&gt; Genes in one specific organism." longDescription="Find all genes that are associated with a particular GO term in a specific organism. This template will return genes that have been assigned the given GO term as well as genes that have a more specific GO term." comment="">
+  <query name="allGO_GeneOrganism_1" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.actualGoTerms.identifier Gene.allGoAnnotation.actualGoTerms.name Gene.allGoAnnotation.qualifier Gene.allGoAnnotation.goEvidenceCodes.code Gene.allGoAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.allGoAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.allGoAnnotation.property" type="GOTerm">
+      <constraint op="LOOKUP" value="GO:0051707" description="that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
   </query>
@@ -107,7 +221,7 @@
     </node>
   </query>
 </template>
-<template name="AmpliconScreen_RNAiResults" title="Amplicon [D. melanogaster] + RNAi screen --&gt; RNAi screen results." longDescription="Find all screen results for a specific amplicon from a specific DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
+<template name="AmpliconScreen_RNAiResults" title="Amplicon [D. melanogaster] + RNAi screen --&gt; RNAi screen results." longDescription="Find all screen results for a specified amplicon from a specified DRSC RNAi screen. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
   <query name="AmpliconScreen_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc" constraintLogic="A and B">
     <node path="RNAiScreenHit" type="RNAiScreenHit">
     </node>
@@ -207,8 +321,14 @@
     </node>
   </query>
 </template>
-<template name="BDGPterm_Gene" title="BDGP expression term [D. melanogaster] --&gt; Genes." longDescription="For a specific ImaGo term, show all the D. melanogaster genes that are associated with it, according to the BDGP in situ project. (Data Source: BDGP)." comment="">
+<template name="BDGPterm_Gene" title="BDGP expression term [D. melanogaster] --&gt; Genes." longDescription="For a specified ImaGo term, show all the D. melanogaster genes that are associated with it according to the BDGP in situ project. (Data Source: BDGP)." comment="">
   <query name="BDGPterm_Gene" model="genomic" view="Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.dataSet.title" sortOrder="Gene.mRNAExpressionResults.mRNAExpressionTerms.name asc" constraintLogic="C and D and A">
+    <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="ImaGo term">
+    </pathDescription>
+    <pathDescription pathString="Gene.mRNAExpressionResults.dataSet" description="Dataset">
+    </pathDescription>
+    <pathDescription pathString="Gene.mRNAExpressionResults" description="Gene">
+    </pathDescription>
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.mRNAExpressionResults" type="MRNAExpressionResult">
@@ -220,7 +340,7 @@
     <node path="Gene.mRNAExpressionResults.mRNAExpressionTerms" type="MRNAExpressionTerm">
     </node>
     <node path="Gene.mRNAExpressionResults.mRNAExpressionTerms.name" type="String">
-      <constraint op="CONTAINS" value="maternal" description="" identifier="" editable="true" code="D" extraValue="">
+      <constraint op="CONTAINS" value="neuron" description="" identifier="" editable="true" code="D" extraValue="">
       </constraint>
     </node>
     <node path="Gene.mRNAExpressionResults.dataSet" type="DataSet">
@@ -441,7 +561,7 @@
     </node>
   </query>
 </template>
-<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="Show the genes, with their transcripts and exons, located between two points on a chromosome.  Give the location of the exons." comment="">
+<template name="ChromLocation_GeneTranscriptExon" title="Chromosomal location --&gt; All genes + Transcripts + Exons." longDescription="For a specified organism and chromosomal location show all genes, transcripts and exons." comment="">
   <query name="ChromLocation_GeneTranscriptExon" model="genomic" view="Chromosome.primaryIdentifier Chromosome.exons.gene.primaryIdentifier Chromosome.exons.gene.symbol Chromosome.exons.transcripts.primaryIdentifier Chromosome.exons.primaryIdentifier Chromosome.exons.objects.start Chromosome.exons.objects.end Chromosome.exons.objects.strand" sortOrder="Chromosome.primaryIdentifier asc" constraintLogic="D and A and C and B">
     <pathDescription pathString="Chromosome.exons" description="Exon">
     </pathDescription>
@@ -455,14 +575,14 @@
     </pathDescription>
     <node path="Chromosome" type="Chromosome">
     </node>
-    <node path="Chromosome.primaryIdentifier" type="String">
-      <constraint op="=" value="2L" description="Show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
-      </constraint>
-    </node>
     <node path="Chromosome.organism" type="Organism">
     </node>
     <node path="Chromosome.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="from:" identifier="" editable="true" code="B">
+      <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Chromosome.primaryIdentifier" type="String">
+      <constraint op="=" value="2L" description="show the genes, transcripts and exons located on chromosome:" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Chromosome.exons" type="Exon">
@@ -526,10 +646,10 @@
   </query>
 </template>
 <template name="ChromLocation_TFBindingSiteLocationGeneFactor" title="Chromosomal location [D. melanogaster] --&gt; All TF binding sites." longDescription="For a particular D. melanogaster chromosomal location, show all REDfly TF binding sites with their locations and associated genes and transcription factors. (Data Source: REDfly)." comment="">
-  <query name="ChromLocation_TFBindingSiteLocationGeneFactor" model="genomic" view="TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.primaryIdentifier TFBindingSite.gene.primaryIdentifier TFBindingSite.factor.primaryIdentifier TFBindingSite.gene.regulatoryRegions.dataSets.dataSource.name" sortOrder="TFBindingSite.chromosome.primaryIdentifier asc" constraintLogic="A and C and B and D">
-    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor">
-    </pathDescription>
+  <query name="ChromLocation_TFBindingSiteLocationGeneFactor" model="genomic" view="TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.primaryIdentifier TFBindingSite.gene.primaryIdentifier TFBindingSite.gene.name TFBindingSite.factor.primaryIdentifier TFBindingSite.factor.name TFBindingSite.gene.regulatoryRegions.dataSets.dataSource.name" sortOrder="TFBindingSite.chromosome.primaryIdentifier asc" constraintLogic="A and C and B and D">
     <pathDescription pathString="TFBindingSite.evidence" description="Original publication">
+    </pathDescription>
+    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor">
     </pathDescription>
     <pathDescription pathString="TFBindingSite.gene" description="Regulated gene">
     </pathDescription>
@@ -623,9 +743,9 @@
   <query name="Chromosome_GeneInsertionLocation" model="genomic" view="Gene.chromosome.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.chromosome.primaryIdentifier asc">
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="P-element insertion &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures" description="P-element insertion">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="P-element insertion &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Dataset">
     </pathDescription>
@@ -641,7 +761,7 @@
     </node>
   </query>
 </template>
-<template name="Chromosome_IntergenicSequence" title="Chromosome --&gt; All intergenic regions." longDescription="For a particular chromosome show all intergenic regions with their chromosomal locations and lengths. (Data Source: FlyMine)." comment="">
+<template name="Chromosome_IntergenicSequence" title="Chromosome --&gt; All intergenic regions." longDescription="For a specified chromosome show all intergenic regions with their chromosomal locations and lengths. (Data Source: FlyMine)." comment="">
   <query name="Chromosome_IntergenicSequence" model="genomic" view="IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.chromosomeLocation.object.primaryIdentifier IntergenicRegion.length IntergenicRegion.primaryIdentifier IntergenicRegion.dataSets.dataSource.name" sortOrder="IntergenicRegion.chromosomeLocation.start asc" constraintLogic="A and B">
     <pathDescription pathString="IntergenicRegion.chromosomeLocation.object" description="Chromosome">
     </pathDescription>
@@ -729,9 +849,9 @@
     </pathDescription>
     <pathDescription pathString="Chromosome.features.chromosomeLocation" description="Predicted binding site &gt; chromosome location ">
     </pathDescription>
-    <pathDescription pathString="Chromosome.features.evidence" description="Dataset">
-    </pathDescription>
     <pathDescription pathString="Chromosome.features" description="Predicted binding site">
+    </pathDescription>
+    <pathDescription pathString="Chromosome.features.evidence" description="Dataset">
     </pathDescription>
     <node path="Chromosome" type="Chromosome">
     </node>
@@ -760,7 +880,7 @@
   </query>
 </template>
 <template name="DatasetGiot_ProteinInteractions" title="Dataset [Giot et al] --&gt; High confidence protein interactions (filter on confidence value)." longDescription="Show the set of high-confidence interactions from the Giot et al dataset (or filter this dataset on confidence score). (DataSource:IntAct)." comment="">
-  <query name="DatasetGiot_ProteinInteractions" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.name Interaction.confidence Interaction.gene.primaryIdentifier Interaction.interactingGenes.primaryIdentifier" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
+  <query name="DatasetGiot_ProteinInteractions" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.name Interaction.confidence Interaction.gene.primaryIdentifier Interaction.gene.name Interaction.interactingGenes.primaryIdentifier Interaction.interactingGenes.name" sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
     <pathDescription pathString="Interaction.interactingGenes" description="Interacting gene">
     </pathDescription>
     <pathDescription pathString="Interaction.experiment.publication" description="Experiment publication">
@@ -783,21 +903,81 @@
     </node>
   </query>
 </template>
-<template name="demo3" title="Another demo" longDescription="asdfasdf asdf asfd" comment="">
-  <query name="demo3" model="genomic" view="Gene.symbol Gene.length Gene.chromosome.secondaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.symbol asc">
+<template name="Disease_GeneOrthologue" title="Disease [Human] --&gt; Genes + D. melanogaster homologues." longDescription="For a given human disease, show all human genes that have been annotated with it, and the homologous genes in Drosophila. (Data Source: Homophila)." comment="">
+  <query name="Disease_GeneOrthologue" model="genomic" view="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations.dataSets.dataSource.name" sortOrder="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId asc">
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations.dataSets.dataSource" description="Omim Disease &gt; dataSource">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim Disease">
+    </pathDescription>
     <node path="Gene" type="Gene">
     </node>
-    <node path="Gene.symbol" type="String">
-      <constraint op="=" value="eve" description="" identifier="Gene" editable="true" code="A">
+    <node path="Gene.secondaryIdentifier" type="String">
+    </node>
+    <node path="Gene.transcripts" type="MRNA">
+    </node>
+    <node path="Gene.transcripts.translation" type="Translation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes" type="Gene">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" type="Disease">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description" type="String">
+      <constraint op="LIKE" value="%Spinocerebellar ataxia%" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations" type="Annotation">
+    </node>
+  </query>
+</template>
+<template name="Disease_GeneOrthologueEValue" title="Disease [Human] --&gt; Genes + D. melanogaster homologues (filter on BLAST E-Value)." longDescription="For a specified human disease, show all associated human genes and their Drosophila homologues as identified with BLAST. Results are filtered by a specified E-Value, the lower the E-Value, the better the match. (Data Source: Homophila)." comment="">
+  <query name="Disease_GeneOrthologueEValue" model="genomic" view="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.dataSets.title" sortOrder="Gene.transcripts.translation.subjects.EValue asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.secondaryIdentifier" type="String">
+    </node>
+    <node path="Gene.transcripts" type="MRNA">
+    </node>
+    <node path="Gene.transcripts.translation" type="Translation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes" type="Gene">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" type="Disease">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description" type="String">
+      <constraint op="CONTAINS" value="breast cancer" description="" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations" type="Annotation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
+      <constraint op="&lt;" value="1.0E-40" description="" identifier="" editable="true" code="B" extraValue="">
       </constraint>
     </node>
   </query>
 </template>
 <template name="Domain_Proteins" title="Protein domain --&gt; Proteins from a specific organism." longDescription="For a particular domain (or list of domains) give the proteins (from a specific organism) which have these domains. (Data Source: UniProt)." comment="">
   <query name="Domain_Proteins" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.proteinDomains.name Protein.proteinDomains.primaryIdentifier Protein.proteinDomains.type" sortOrder="Protein.genes.symbol asc" constraintLogic="A and C">
-    <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
-    </pathDescription>
     <pathDescription pathString="Protein.genes" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
     </pathDescription>
     <node path="Protein" type="Protein">
     </node>
@@ -915,6 +1095,24 @@
     </node>
   </query>
 </template>
+<template name="ECnumber_gene_protein" title="Enzyme Commission number --&gt; Genes and Proteins in a specified organism." longDescription="For a specified Enzyme Commission (EC)number show the corresponding genes and proteins in a particular organism." comment="">
+  <query name="ECnumber_gene_protein" model="genomic" view="Protein.ecNumber Protein.genes.organism.name Protein.genes.name Protein.genes.primaryIdentifier Protein.genes.symbol Protein.primaryAccession Protein.primaryIdentifier" sortOrder="Protein.genes.name asc" constraintLogic="A and B">
+    <node path="Protein" type="Protein">
+    </node>
+    <node path="Protein.ecNumber" type="String">
+      <constraint op="=" value="1.2.1.%" description="For Enzyme Commission number" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Protein.genes" type="Gene">
+    </node>
+    <node path="Protein.genes.organism" type="Organism">
+    </node>
+    <node path="Protein.genes.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show the genes and proteins in:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="ESTaccession_ClusterChromosomelocation" title="EST accession [A. gambiae] --&gt; EST clusters." longDescription="For a particular EST accession show the clusters it belongs to and the chromosomal locations (data available for A. gambiae only). (Data Source: VectorBase)." comment="">
   <query name="ESTaccession_ClusterChromosomelocation" model="genomic" view="EST.primaryIdentifier EST.ESTClusters.primaryIdentifier EST.ESTClusters.chromosome.primaryIdentifier EST.ESTClusters.chromosomeLocation.start EST.ESTClusters.chromosomeLocation.end EST.ESTClusters.chromosomeLocation.strand EST.dataSets.dataSource.name" sortOrder="EST.primaryIdentifier asc">
     <pathDescription pathString="EST.evidence" description="Data set">
@@ -937,9 +1135,9 @@
   <query name="ESTclone_clusterLocation" model="genomic" view="EST.synonyms.value EST.primaryIdentifier EST.ESTClusters.primaryIdentifier EST.ESTClusters.chromosome.primaryIdentifier EST.ESTClusters.chromosomeLocation.start EST.ESTClusters.chromosomeLocation.end EST.ESTClusters.chromosomeLocation.strand EST.dataSets.dataSource.name" sortOrder="EST.synonyms.value asc">
     <pathDescription pathString="EST.evidence" description="Data set">
     </pathDescription>
-    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
-    </pathDescription>
     <pathDescription pathString="EST.ESTClusters" description="EST cluster">
+    </pathDescription>
+    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
     </pathDescription>
     <pathDescription pathString="EST.ESTClusters.chromosomeLocation" description="EST cluster &gt; chromosome location">
     </pathDescription>
@@ -959,9 +1157,9 @@
   <query name="ESTclone_LocationDMorthologuePathway_new" model="genomic" view="EST.primaryIdentifier EST.ESTClusters.primaryIdentifier EST.ESTClusters.chromosome.primaryIdentifier EST.ESTClusters.chromosomeLocation.start EST.ESTClusters.chromosomeLocation.end EST.ESTClusters.chromosomeLocation.strand EST.ESTClusters.overlappingFeatures.primaryIdentifier EST.dataSets.dataSource.name EST.ESTClusters.overlappingFeatures.homologues.homologue.primaryIdentifier EST.ESTClusters.overlappingFeatures.homologues.dataSets.title EST.ESTClusters.overlappingFeatures.homologues.homologue.pathways.name EST.ESTClusters.overlappingFeatures.homologues.homologue.pathways.identifier EST.ESTClusters.overlappingFeatures.homologues.homologue.pathways.dataSets.title" sortOrder="EST.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="EST.ESTClusters" description="EST cluster">
     </pathDescription>
-    <pathDescription pathString="EST.ESTClusters.chromosomeLocation" description="EST cluster &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="EST.ESTClusters.overlappingFeatures.homologues.homologue.pathways" description="Overlapping gene &gt; homologue &gt; pathway">
+    </pathDescription>
+    <pathDescription pathString="EST.ESTClusters.chromosomeLocation" description="EST cluster &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="EST.ESTClusters.overlappingFeatures.homologues.homologue" description="Overlapping gene &gt; homologue">
     </pathDescription>
@@ -995,9 +1193,9 @@
   <query name="ESTclone_LocationOverlappingGene" model="genomic" view="EST.synonyms.value EST.primaryIdentifier EST.ESTClusters.primaryIdentifier EST.ESTClusters.chromosome.primaryIdentifier EST.ESTClusters.chromosomeLocation.start EST.ESTClusters.chromosomeLocation.end EST.ESTClusters.chromosomeLocation.strand EST.ESTClusters.overlappingFeatures.primaryIdentifier EST.dataSets.dataSource.name" sortOrder="EST.synonyms.value asc">
     <pathDescription pathString="EST.evidence" description="Data set">
     </pathDescription>
-    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
-    </pathDescription>
     <pathDescription pathString="EST.ESTClusters" description="EST cluster">
+    </pathDescription>
+    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
     </pathDescription>
     <pathDescription pathString="EST.ESTClusters.chromosomeLocation" description="EST cluster &gt; chromosome location">
     </pathDescription>
@@ -1059,13 +1257,13 @@
   <query name="ESTclone_LocationOverlappingGeneStructure" model="genomic" view="EST.synonyms.value EST.primaryIdentifier EST.ESTClusters.primaryIdentifier EST.ESTClusters.chromosome.primaryIdentifier EST.ESTClusters.chromosomeLocation.start EST.ESTClusters.chromosomeLocation.end EST.ESTClusters.chromosomeLocation.strand EST.ESTClusters.overlappingFeatures.primaryIdentifier EST.synonyms.dataSets.dataSource.name EST.ESTClusters.overlappingFeatures.proteins.structures.identifier EST.ESTClusters.overlappingFeatures.proteins.structures.dataSets.dataSource.name" sortOrder="EST.synonyms.value asc">
     <pathDescription pathString="EST.evidence" description="Data set">
     </pathDescription>
-    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
-    </pathDescription>
     <pathDescription pathString="EST.ESTClusters" description="EST cluster">
     </pathDescription>
-    <pathDescription pathString="EST.ESTClusters.overlappingFeatures.proteins.structures" description="Protein structure">
+    <pathDescription pathString="EST.synonyms" description="EST clone identifier">
     </pathDescription>
     <pathDescription pathString="EST.ESTClusters.chromosomeLocation" description="EST cluster &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="EST.ESTClusters.overlappingFeatures.proteins.structures" description="Protein structure">
     </pathDescription>
     <pathDescription pathString="EST.ESTClusters.chromosome" description="EST cluster &gt; chromosome">
     </pathDescription>
@@ -1089,9 +1287,9 @@
     </pathDescription>
     <pathDescription pathString="ESTCluster.overlappingFeatures.homologues.homologue.pathways" description="Homologous gene &gt; pathway">
     </pathDescription>
-    <pathDescription pathString="ESTCluster.overlappingFeatures.homologues" description="Homologue">
-    </pathDescription>
     <pathDescription pathString="ESTCluster.overlappingFeatures.homologues.homologue" description="Homologous gene">
+    </pathDescription>
+    <pathDescription pathString="ESTCluster.overlappingFeatures.homologues" description="Homologue">
     </pathDescription>
     <node path="ESTCluster" type="ESTCluster">
     </node>
@@ -1159,6 +1357,84 @@
     </node>
     <node path="Exon.id" type="Integer">
       <constraint op="=" value="0" description="Exon.id" identifier="Exon.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Find Known Physical Interactions Between Bait and Prey" title="Find Known Physical Interactions Between Bait and Prey" longDescription="For Johanna" comment="">
+  <query name="Find Known Physical Interactions Between Bait and Prey" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.name Gene.symbol Gene.interactions.interactingGenes.name Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.interactions.experiment.publication.pubMedId Gene.interactions.interactingGenes.interactions.experiment.publication.title Gene.interactions.interactingGenes.interactions.experiment.interactionDetectionMethod.name" sortOrder="Gene.name asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Gene.interactions.dataSets.dataSource" description="Datasource">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.interactingGenes" description="Prey">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.experiment" description="Experiment">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.experiment.interactionDetectionMethod" description="Detection Method">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.experiment.publication" description="Publication">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="awd" description="Bait" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+      <constraint op="LOOKUP" value="comm3" description="prey" identifier="" editable="true" code="C" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Find Known Physical Interactions Between orthologues of Bait and Prey" title="Find Known Physical Interactions Between Orthologues of Bait and Prey" longDescription="For Johanna" comment="">
+  <query name="Find Known Physical Interactions Between orthologues of Bait and Prey" model="genomic" view="Gene.name Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.name Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.organism.name Gene.homologues.homologue.interactions.interactingGenes.primaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.secondaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.organism.name Gene.homologues.homologue.interactions.experiment.publication.pubMedId Gene.homologues.homologue.interactions.experiment.publication.title Gene.homologues.homologue.interactions.experiment.interactionDetectionMethod.name Gene.homologues.homologue.interactions.dataSets.dataSource.name" sortOrder="Gene.name asc" constraintLogic="A and B and C and D and E">
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue" description="Prey">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.experiment.interactionDetectionMethod" description="Detection Method">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.dataSets.dataSource" description="Data source">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes.organism" description="Prey Orthologue Organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes" description="Prey Orthologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.interactions.experiment.publication" description="Publication">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Bait Orthologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Bait Orthologue Organism">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="gluon" description="Bait" identifier="Bait" editable="true" code="E" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.interactions" type="Interaction">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue" type="Gene">
+      <constraint op="LOOKUP" value="barren" description="Prey" identifier="Prey" editable="true" code="D" extraValue="D. melanogaster">
       </constraint>
     </node>
   </query>
@@ -1233,13 +1509,13 @@
 </template>
 <template name="flyreg_info" title="REDfly TF binding site --&gt; Gene + Transcription factor + Chromosomal location + Sequence + PubmedID." longDescription="For a particular transcription factor binding site from REDfly, give the gene, factor, chromosomal location, sequence and pubmed id. (Data Source: REDfly)." comment="">
   <query name="flyreg_info" model="genomic" view="TFBindingSite.primaryIdentifier TFBindingSite.length TFBindingSite.gene.primaryIdentifier TFBindingSite.factor.primaryIdentifier TFBindingSite.chromosome.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.sequence.residues TFBindingSite.publications.pubMedId TFBindingSite.dataSets.dataSource.name" sortOrder="TFBindingSite.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor">
-    </pathDescription>
     <pathDescription pathString="TFBindingSite.evidence" description="Data source">
     </pathDescription>
-    <pathDescription pathString="TFBindingSite.sequence" description="Transcription factor binding site &gt; sequence ">
+    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor">
     </pathDescription>
     <pathDescription pathString="TFBindingSite.gene" description="Associated gene">
+    </pathDescription>
+    <pathDescription pathString="TFBindingSite.sequence" description="Transcription factor binding site &gt; sequence ">
     </pathDescription>
     <pathDescription pathString="TFBindingSite.chromosomeLocation" description="Transcription factor binding site &gt; chromosome location">
     </pathDescription>
@@ -1292,7 +1568,7 @@
   </query>
 </template>
 <template name="Gene1Gene2_Interaction" title="Gene1 + Gene2 --&gt; Interactions." longDescription="Show all known interactions between two specific genes. (Data Source: IntAct, BioGrid). " comment="">
-  <query name="Gene1Gene2_Interaction" model="genomic" view="Gene.primaryIdentifier Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.name Gene.interactions.type.name Gene.interactions.confidenceText Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C">
+  <query name="Gene1Gene2_Interaction" model="genomic" view="Gene.primaryIdentifier Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.name Gene.interactions.type.name Gene.interactions.confidenceText Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C and B">
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="wg" description="" identifier="" editable="true" code="A" extraValue="">
       </constraint>
@@ -1303,19 +1579,41 @@
       <constraint op="LOOKUP" value="CG9375" description="" identifier="" editable="true" code="C" extraValue="">
       </constraint>
     </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_1CDSsequence" title="Gene --&gt; 1 CDS + sequence" longDescription="Show the CDS and its sequence for all genes from a particular organism. This template contains an additional constraint to limit the result to one CDS per sequence (e.g all -PA CDS from D. melanogaster)." comment="">
+  <query name="Gene_1CDSsequence" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.CDSs.primaryIdentifier Gene.CDSs.sequence.residues Gene.CDSs.MRNA.translation.sequence.residues" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show CDS from organism:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.CDSs" type="CDS">
+    </node>
+    <node path="Gene.CDSs.primaryIdentifier" type="String">
+      <constraint op="CONTAINS" value="PA" description="that have this constraint in their primary identifier:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
   </query>
 </template>
 <template name="gene_adjacentgenes_allflyatlas" title="Gene [D. melanogaster] --&gt; Adjacent genes + FlyAtlas data." longDescription="For a particular gene or set of genes give the upstream and downstream adjacent genes and show the FlyAtlas data for these genes. " comment="06.06.07 updated to work from gene class - Philip">
   <query name="gene_adjacentgenes_allflyatlas" model="genomic" view="Gene.secondaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.secondaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name Gene.upstreamIntergenicRegion.adjacentGenes.secondaryIdentifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.affyCall Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
     <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults" description="Downstream adjacent gene &gt; microarray result">
     </pathDescription>
-    <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes" description="Downstream adjacent gene">
-    </pathDescription>
     <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Downstream adjacent gene &gt; microarray assay">
     </pathDescription>
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Upstream adjacent gene &gt; microarray assay">
+    <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes" description="Downstream adjacent gene">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults" description="Upstream adjacent gene &gt; microarray result">
+    </pathDescription>
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Upstream adjacent gene &gt; microarray assay">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes" description="Upstream adjacent gene">
     </pathDescription>
@@ -1381,6 +1679,24 @@
     </node>
   </query>
 </template>
+<template name="Gene_allGOTerms" title="Gene --&gt; GO terms and parents of those terms." longDescription="Given a gene show the associated GO terms, and the all parents to the top of the directed graph.  If 'isPrimaryAssignment' is 'true' then that GO term was actually assigned to the gene.  Likewise if it is false then the GO term is some more general parent term." comment="">
+  <query name="Gene_allGOTerms" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.allGoAnnotation.property.namespace Gene.allGoAnnotation.property.name Gene.allGoAnnotation.property.identifier Gene.allGoAnnotation.goEvidenceCodes.code Gene.allGoAnnotation.qualifier Gene.allGoAnnotation.isPrimaryAssignment" sortOrder="Gene.secondaryIdentifier asc">
+    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation.property" description="GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.allGoAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.allGoAnnotation.property" type="GOTerm">
+    </node>
+  </query>
+</template>
 <template name="Gene_BDGP" title="Gene [D. melanogaster] --&gt; BDGP in situ data." longDescription="For a certain D. melanogaster gene, show the results from the BDGP in situ project. (Data Source: BDGP)." comment="">
   <query name="Gene_BDGP" model="genomic" view="Gene.name Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.dataSet.dataSource.name" sortOrder="Gene.name asc" constraintLogic="A and C and B">
     <node path="Gene" type="Gene">
@@ -1403,10 +1719,16 @@
     </node>
   </query>
 </template>
-<template name="Gene_BDGPFlyFish" title="Gene [D. melanogaster] --&gt; FlyFish + BDGP in situ data." longDescription="For a given D. melanogaster gene, show all the results from the FlyFISH and the BDGP in situ projects. (Data Source: BDGP, FlyFISH)." comment="">
-  <query name="Gene_BDGPFlyFish" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.dataSet.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+<template name="Gene_BDGPFlyFish" title="Gene [D. melanogaster] --&gt; FlyFish + BDGP in situ data." longDescription="For a specified D. melanogaster gene, show all results from the FlyFISH and the BDGP in situ projects. (Data Source: BDGP, FlyFISH)." comment="">
+  <query name="Gene_BDGPFlyFish" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.dataSet.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.mRNAExpressionResults.mRNAExpressionTerms" description="Expression term">
+    </pathDescription>
+    <pathDescription pathString="Gene.mRNAExpressionResults.dataSet.dataSource" description="Data source">
+    </pathDescription>
+    <pathDescription pathString="Gene.mRNAExpressionResults" description="Embryo">
+    </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="derailed" description="" identifier="" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="hunchback" description="" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -1421,9 +1743,9 @@
   <query name="gene_downstreamAdjacentgene_FlyAtlas_new" model="genomic" view="Gene.secondaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.secondaryIdentifier Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C and D and E">
     <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults" description="Downstream adjacent gene &gt; microarray result">
     </pathDescription>
-    <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Downstream adjacent gene &gt; microarray assay">
-    </pathDescription>
     <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes" description="Downstream adjacent gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.downstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Downstream adjacent gene &gt; microarray assay">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG10009" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
@@ -1461,52 +1783,28 @@
     </node>
   </query>
 </template>
-<template name="Gene_DRSCOrthologueRNAiPhenotype_new" title="Gene [D. melanogaster] --&gt; RNAi screen results + C. elegans orthologues with RNAi results." longDescription="Show papers decribing RNAi screens where the following D. melanogaster gene was analyzed. Show C. elegans orthologues for this gene and papers describing RNAi results for those orthologues. (Data Source: DRSC, InParanoid, WormBase)." comment="070607 Updated to work with gene class - Philip">
-  <query name="Gene_DRSCOrthologueRNAiPhenotype_new" model="genomic" view="Gene.primaryIdentifier Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.dataSets.dataSource.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.type Gene.homologues.dataSets.title Gene.homologues.homologue.annotations.name Gene.homologues.homologue.annotations.observed Gene.homologues.homologue.annotations.publications.pubMedId Gene.homologues.homologue.annotations.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="C and D and A and B and E">
-    <pathDescription pathString="Gene.homologues" description="C. elegans homologue">
-    </pathDescription>
-    <pathDescription pathString="Gene.rnaiResults.analysis.publication" description="D. melanogaster gene &gt; RNAi result &gt; publication">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="C. elegans homologue">
-    </pathDescription>
+<template name="Gene_DrosophilaOrthologues" title="Gene [D. melanogaster] --&gt; Orthologues in other Drosophila species" longDescription="For a particular Drosophila gene or list of genes show the orthologues in the other Drosophila species." comment="">
+  <query name="Gene_DrosophilaOrthologues" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.organism.name Gene.homologues.homologue.CDSs.MRNA.translation.primaryIdentifier Gene.homologues.homologue.CDSs.MRNA.translation.sequence.residues" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG3997" description="" identifier="Gene.class" editable="true" code="D">
-      </constraint>
-    </node>
-    <node path="Gene.rnaiResults" type="RNAiScreenHit">
-    </node>
-    <node path="Gene.rnaiResults.result" type="String">
-      <constraint op="!=" value="Not Screened" description="" identifier="" code="E" extraValue="">
+      <constraint op="LOOKUP" value="zen" description="Show the Drosophila orthologues for gene(s): " identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Gene.homologues" type="Homologue">
     </node>
     <node path="Gene.homologues.homologue" type="Gene">
     </node>
-    <node path="Gene.homologues.homologue.annotations" type="RNAiPhenotype">
-    </node>
     <node path="Gene.homologues.homologue.organism" type="Organism">
     </node>
     <node path="Gene.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.type" type="String">
-      <constraint op="=" value="orthologue" description="" identifier="" code="B" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="From:" identifier="" code="C">
+      <constraint op="CONTAINS" value="Drosophila" description="" identifier="" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
   </query>
 </template>
-<template name="Gene_DRSCScreenHit" title="Gene [D. melanogaster] --&gt; RNAi screen results." longDescription="Find RNAi screen results from the DRSC for a particular D. melanogaster gene. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data source: DRSC)." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_DRSCScreenHit" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.amplicon.primaryIdentifier Gene.rnaiResults.result Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.rnaiScreen.publication.firstAuthor Gene.rnaiResults.rnaiScreen.name Gene.rnaiResults.rnaiScreen.analysisDescription Gene.rnaiResults.rnaiScreen.cellLine" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+<template name="Gene_DRSCScreenHit" title="Gene [D. melanogaster] --&gt; RNAi screen results." longDescription="Find RNAi screen results from the DRSC for a specified D. melanogaster gene. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data source: DRSC)." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_DRSCScreenHit" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.rnaiResults.amplicon.primaryIdentifier Gene.rnaiResults.result Gene.rnaiResults.rnaiScreen.publication.pubMedId Gene.rnaiResults.rnaiScreen.publication.firstAuthor Gene.rnaiResults.rnaiScreen.name Gene.rnaiResults.rnaiScreen.analysisDescription Gene.rnaiResults.rnaiScreen.cellLine" sortOrder="Gene.rnaiResults.result desc" constraintLogic="A and B">
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG3997" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      <constraint op="LOOKUP" value="cnn" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Gene.rnaiResults" type="RNAiScreenHit">
@@ -1579,6 +1877,34 @@
     </node>
   </query>
 </template>
+<template name="Gene_FlyAtlasGO" title="Gene [D. melanogaster] --&gt; FlyAtlas + GO." longDescription="For a given D. melanogaster gene, show the FlyAtlas results and the GO terms applied to the gene." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_FlyAtlasGO" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.assays.name Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.microArrayResults.material.primaryIdentifier Gene.microArrayResults.dataSets.title Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation" description="GO term">
+    </pathDescription>
+    <pathDescription pathString="Gene.microArrayResults" description="Microarray result">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets" description="Probe">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG9652" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.taxonId" type="Integer">
+      <constraint op="=" value="7227" description="" identifier="" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.microArrayResults" type="FlyAtlasResult">
+    </node>
+  </query>
+</template>
 <template name="Gene_FlyFish" title="Gene [D. melanogaster] --&gt; FlyFish data." longDescription="For a certain gene from Drosophila melanogaster, show the mRNA embryonic localisation results from FlyFish." comment="">
   <query name="Gene_FlyFish" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.mRNAExpressionResults.stageRange Gene.mRNAExpressionResults.expressed Gene.mRNAExpressionResults.mRNAExpressionTerms.name Gene.mRNAExpressionResults.dataSet.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
     <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
@@ -1607,16 +1933,36 @@
     </node>
   </query>
 </template>
-<template name="Gene_Homologues" title="Gene --&gt; Homologues." longDescription="For a given gene, show all predicted orthologues and inparalogues with the Inparanoid score (if available). (Data Source: InParanoid, Drosophila Consortium). " comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip">
-  <query name="Gene_Homologues" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
+<template name="Gene_GO" title="Gene --&gt; GO terms." longDescription="Search for GO annotations for a particular gene." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_GO" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.property.namespace Gene.goAnnotation.property.name Gene.goAnnotation.property.identifier Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.qualifier" sortOrder="Gene.primaryIdentifier asc">
+    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation.property" description="GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.property" type="GOTerm">
+    </node>
+  </query>
+</template>
+<template name="Gene_Homologues" title="Gene --&gt; Homologues." longDescription="For a specified gene, show all predicted orthologues and inparalogues with the Inparanoid score (if available). (Data Source: InParanoid, Drosophila Consortium). " comment="07:02:07:Updated to work from gene identifier - Rachel. 13/03/07 added orthologue organismDbId. Philip">
+  <query name="Gene_Homologues" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.homologues" description="Homologue">
     </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
+    <pathDescription pathString="Gene.homologues.dataSets" description="Dataset">
     </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
     </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
+    </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG3936" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
+      <constraint op="LOOKUP" value="hedgehog" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Gene.homologues" type="Homologue">
@@ -1645,9 +1991,9 @@
   <query name="Gene_Inparalogue" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.homologues" description="Homologue">
     </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
-    </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG3936" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
@@ -1663,9 +2009,9 @@
 </template>
 <template name="Gene_Insertion" title="Gene [Drosophila] --&gt; Transposon insertions." longDescription="For a particular Drosophila gene, search for overlapping insertions. (Data Source: FlyBase)." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_Insertion" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.name Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.chromosomeLocation.strand Gene.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc">
-    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Insertion &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures" description="Insertion">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Insertion &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Dataset">
     </pathDescription>
@@ -1674,6 +2020,22 @@
       </constraint>
     </node>
     <node path="Gene.overlappingFeatures" type="TransposableElementInsertionSite">
+    </node>
+  </query>
+</template>
+<template name="Gene_Interaction" title="Gene --&gt; Interactions" longDescription="For a specified gene show the known physical and genetic interactions.(Datasources - IntAct &amp; BioGrid)." comment="">
+  <query name="Gene_Interaction" model="genomic" view="Gene.symbol Gene.secondaryIdentifier Gene.interactions.interactionType Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.experiment.interactionDetectionMethod.name Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" sortOrder="Gene.interactions.interactionType asc">
+    <pathDescription pathString="Gene.interactions.dataSets.dataSource" description="Data Source">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.interactingGenes" description="Interacting Gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.experiment.interactionDetectionMethod" description="Detection Method">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.experiment.publication" description="Publication">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="pros" description="Find interaction for:" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
     </node>
   </query>
 </template>
@@ -1753,9 +2115,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.evidence" description="Dataset">
     </pathDescription>
-    <pathDescription pathString="Gene.transcripts.introns" description="Intron">
-    </pathDescription>
     <pathDescription pathString="Gene.transcripts.introns.chromosomeLocation" description="Intron &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.introns" description="Intron">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG10016" description="Show transcripts and introns for gene:" identifier="" editable="true" code="A">
@@ -1785,15 +2147,151 @@
   <query name="Gene_Orthologue" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.inParanoidScore Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.homologues" description="Homologue">
     </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
-    </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG3936" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_OrthologueDisease" title="Gene [D. melanogaster] --&gt; Human homologue + Disease associated with this homologue." longDescription="For a specified Drosophila gene, show the homologous human gene (and the BlastMatch E-Value) and any associated disease, according to Homophila." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_OrthologueDisease" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.EValue Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId" sortOrder="Gene.transcripts.translation.subjects.EValue asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="hunchback" description="Seach for blast matches for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.transcripts" type="MRNA">
+    </node>
+    <node path="Gene.transcripts.translation" type="Translation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_OrthologueDiseaseEValue" title="Gene [D. melanogaster] --&gt; Human homologue + Disease associated with this homologue (filter on blast E-Value)." longDescription="For a given Drosophila gene, show the homologous human genes with a certain E-Value, and any associated disease, according to Homophila. (The lower the E-Value, the better the match)." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_OrthologueDiseaseEValue" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG6235" description="" identifier="Gene.class" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.transcripts" type="MRNA">
+    </node>
+    <node path="Gene.transcripts.translation" type="Translation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
+      <constraint op="&lt;" value="0.0010" description="" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_OrthologueDiseaseRNAi_new" title="Gene [D. melanogaster] --&gt; Human homologue with disease (filter on blast E-Value) + C. elegans orthologue with RNAi phenotype." longDescription="For a given Drosophila gene, show disease-associated human homologues as well as the RNAi phenotypes of C. elegans orthologues. (Data Source: Homophila, InParanoid, WormBase)." comment="070607 Updated to work with gene class - Philip">
+  <query name="Gene_OrthologueDiseaseRNAi_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.translation.subjects.subject.genes.symbol Gene.transcripts.translation.subjects.subject.genes.omimDiseases.omimId Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description Gene.homologues.homologue.primaryIdentifier Gene.homologues.type Gene.homologues.homologue.rnaiResults.name Gene.homologues.homologue.rnaiResults.code Gene.homologues.homologue.rnaiResults.observed" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and D and A and C">
+    <pathDescription pathString="Gene.homologues" description="Homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects" description="Blast">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes" description="Human gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" description="Omim disease">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.rnaiResults" description="C. elegans orthologue &gt; RNAi result">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="C. elegans">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG6235" description="For the following Drosophila gene:" identifier="Gene.class" editable="true" code="D">
+      </constraint>
+    </node>
+    <node path="Gene.transcripts" type="MRNA">
+    </node>
+    <node path="Gene.transcripts.translation" type="Translation">
+    </node>
+    <node path="Gene.transcripts.translation.subjects" type="BlastMatch">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.subject" type="Protein">
+    </node>
+    <node path="Gene.transcripts.translation.subjects.EValue" type="Double">
+      <constraint op="&lt;" value="0.0010" description="find human orthologues from Homophila, with the following Blastmatch E-Value (the lower the E-Value, the better the match):" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.organism" type="Organism">
+    </node>
+    <node path="Gene.homologues.homologue.organism.name" type="String">
+      <constraint op="=" value="Caenorhabditis elegans" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.rnaiResults" type="RNAiPhenotype">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Gene_OrthologueGO_new" title="Gene --&gt; Orthologues + GO terms of these orthologues." longDescription="Show GO terms applied to orthologues of a specific gene. (Data Source: InParanoid, Drosophila Consortium, GO Consortium)." comment="13/03/07 added orthologue organismDbId. Philip 070607 updated to work with gene class Philip">
+  <query name="Gene_OrthologueGO_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.homologues.type Gene.homologues.homologue.organism.name Gene.homologues.dataSets.title Gene.homologues.homologue.goAnnotation.name Gene.homologues.homologue.goAnnotation.identifier Gene.homologues.homologue.goAnnotation.qualifier Gene.homologues.homologue.goAnnotation.dataSets.title Gene.homologues.homologue.goAnnotation.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.homologues" description="Homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.goAnnotation" description="Homologue &gt; GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG6235" description="" identifier="" editable="true" code="B" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.homologues.type" type="String">
       <constraint op="=" value="orthologue" description="" identifier="" code="A">
@@ -1847,9 +2345,9 @@
 </template>
 <template name="Gene_OrthologueRNAi_new" title="Gene --&gt; C. elegans orthologue + RNAi phenotype of the orthologue." longDescription="For a particular gene, search for the C. elegans orthologue and its RNAi phenotype. (Data Source: InParanoid, WormBase)." comment="">
   <query name="Gene_OrthologueRNAi_new" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.type Gene.homologues.dataSets.title Gene.homologues.homologue.rnaiResults.code Gene.homologues.homologue.rnaiResults.name Gene.homologues.homologue.rnaiResults.observed Gene.homologues.homologue.rnaiResults.analysis.publication.pubMedId Gene.homologues.homologue.rnaiResults.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
-    <pathDescription pathString="Gene.homologues.homologue.rnaiResults.analysis.publication" description="RNAi phenotype &gt; publication">
-    </pathDescription>
     <pathDescription pathString="Gene.homologues" description="C. elegans homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.rnaiResults.analysis.publication" description="RNAi phenotype &gt; publication">
     </pathDescription>
     <pathDescription pathString="Gene.rnaiResults.analysis.publication" description="RNAi experiment &gt; publication">
     </pathDescription>
@@ -1887,9 +2385,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Overlapping gene  &gt; chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Overlapping feature &gt; chromosome gene">
-    </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures" description="Overlapping gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Overlapping feature &gt; chromosome gene">
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Dataset">
     </pathDescription>
@@ -1901,13 +2399,27 @@
     </node>
   </query>
 </template>
+<template name="Gene_particularGoannotation" title="Gene + GO term name --&gt; Gene with the GO term name." longDescription="Show if the following gene has the following GO term." comment="">
+  <query name="Gene_particularGoannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.name" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="C and A">
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG9015" description="For the gene(s):" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="LIKE" value="%transcription factor%" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="Gene_PointMutationLocation" title="Gene [D. melanogaster] --&gt; Point mutations." longDescription="For a particular D. melanogaster gene, search for overlapping point mutations with their chromosomal coordinates. (Data Source: FlyBase). " comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_PointMutationLocation" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.chromosome.primaryIdentifier Gene.overlappingFeatures.chromosomeLocation.start Gene.overlappingFeatures.chromosomeLocation.end Gene.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.overlappingFeatures.chromosome" description="Point mutation &gt; chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Point mutation &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Point mutation &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Dataset">
     </pathDescription>
@@ -1923,9 +2435,9 @@
   <query name="Gene_pointMutationsInExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.exons.overlappingFeatures" description="Point mutation">
     </pathDescription>
-    <pathDescription pathString="Gene.exons" description="Exon">
-    </pathDescription>
     <pathDescription pathString="Gene.chromosomeLocation" description="Gene &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.exons" description="Exon">
     </pathDescription>
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
@@ -1953,9 +2465,9 @@
   <query name="Gene_Probe" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.probeSets.primaryIdentifier Gene.probeSets.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
     <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.probeSets" description="Probe">
     </pathDescription>
@@ -2019,6 +2531,26 @@
     </node>
   </query>
 </template>
+<template name="Gene_ProteinPFAMdomain" title="Gene --&gt; Protein + PFam domain" longDescription="For a particular gene or list of genes give the protein and any PFam domains for that protein." comment="">
+  <query name="Gene_ProteinPFAMdomain" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.proteinDomains.primaryIdentifier" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and C">
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="zen" description="Give the protein and PFam domains for gene(s):" identifier="" editable="true" code="C" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+    <node path="Gene.proteins" type="Protein">
+    </node>
+    <node path="Gene.proteins.proteinDomains" type="ProteinDomain">
+    </node>
+    <node path="Gene.proteins.proteinDomains.synonyms" type="Synonym">
+    </node>
+    <node path="Gene.proteins.proteinDomains.synonyms.source" type="DataSource">
+    </node>
+    <node path="Gene.proteins.proteinDomains.synonyms.source.name" type="String">
+      <constraint op="CONTAINS" value="PFAM" description="" identifier="" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="Gene_ProteinStructure" title="Gene --&gt; Protein + Regions with 3-D structure." longDescription="For a particular gene show any regions of its protein for which there is a 3-D structure (predicted or experimentally determined. Data available for D. melanogaster and A. gambiae. (Data Source: PDB, Kenji Mizuguchi)." comment="">
   <query name="Gene_ProteinStructure" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryAccession Gene.proteins.structures.start Gene.proteins.structures.end Gene.proteins.structures.identifier Gene.proteins.structures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc">
     <node path="Gene" type="Gene">
@@ -2033,9 +2565,9 @@
 </template>
 <template name="Gene_RegionLocation" title="Gene [D. melanogaster] --&gt; CRMs." longDescription="For a specific gene from D. melanogaster, show its Cis-Regulatory Modules, their chromosomal locations and lengths. (Data Source: REDfly)" comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_RegionLocation" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.regulatoryRegions.primaryIdentifier Gene.regulatoryRegions.chromosome.primaryIdentifier Gene.regulatoryRegions.chromosomeLocation.start Gene.regulatoryRegions.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.regulatoryRegions.gene.regulatoryRegions.evidence" description="Dataset">
-    </pathDescription>
     <pathDescription pathString="Gene.regulatoryRegions.evidence" description="Original publication">
+    </pathDescription>
+    <pathDescription pathString="Gene.regulatoryRegions.gene.regulatoryRegions.evidence" description="Dataset">
     </pathDescription>
     <pathDescription pathString="Gene.regulatoryRegions.chromosome" description="Regulatory region chromosome">
     </pathDescription>
@@ -2113,9 +2645,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.rnaiResults" description="C. elegans RNAi phenotype">
     </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
-    </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="B0025.2" description="Search for RNAi phenotypes and predicted orthologues for gene" identifier="" editable="true" code="A" extraValue="C. elegans">
@@ -2147,9 +2679,9 @@
   <query name="Gene_TFBindingSiteLocationFactor" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.regulatoryRegions.primaryIdentifier Gene.regulatoryRegions.chromosomeLocation.object.primaryIdentifier Gene.regulatoryRegions.chromosomeLocation.start Gene.regulatoryRegions.chromosomeLocation.end Gene.regulatoryRegions.length Gene.regulatoryRegions.factor.primaryIdentifier Gene.regulatoryRegions.factor.symbol Gene.regulatoryRegions.publications.pubMedId Gene.regulatoryRegions.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
     <pathDescription pathString="Gene.regulatoryRegions.evidence" description="Transcription factor binding site &gt; data source">
     </pathDescription>
-    <pathDescription pathString="Gene.regulatoryRegions.chromosomeLocation.object" description="Transcription factor binding site &gt; chromosome">
-    </pathDescription>
     <pathDescription pathString="Gene.regulatoryRegions.factor" description="Transcription factor">
+    </pathDescription>
+    <pathDescription pathString="Gene.regulatoryRegions.chromosomeLocation.object" description="Transcription factor binding site &gt; chromosome">
     </pathDescription>
     <pathDescription pathString="Gene.regulatoryRegions" description="Transcription factor binding site">
     </pathDescription>
@@ -2205,13 +2737,13 @@
   <query name="Gene_Tiffin" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.primaryIdentifier Gene.upstreamIntergenicRegion.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.chromosomeLocation.start Gene.upstreamIntergenicRegion.chromosomeLocation.end Gene.upstreamIntergenicRegion.chromosomeLocation.strand Gene.upstreamIntergenicRegion.overlappingFeatures.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.start Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.end Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C and B">
     <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosomeLocation" description="Intergenic region &gt; chromosome location">
     </pathDescription>
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosome" description="Intergenic region &gt; chromosome">
-    </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion" description="Upstream intergenic region">
     </pathDescription>
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation" description="Predicted binding site &gt; chromosome location">
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosome" description="Intergenic region &gt; chromosome">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures" description="Predicted binding site">
+    </pathDescription>
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation" description="Predicted binding site &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.motif" description="Predicted binding site &gt; motif">
     </pathDescription>
@@ -2517,12 +3049,12 @@
     </node>
   </query>
 </template>
-<template name="Gene_To_Publications" title="Gene --&gt; Publications." longDescription="Returns a list of publications that reference a selected gene. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="06.06.07 updated to work from gene class - Philip">
-  <query name="Gene_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.publications.pubMedId Gene.publications.title Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year" sortOrder="Gene.primaryIdentifier asc">
+<template name="Gene_To_Publications" title="Gene --&gt; Publications." longDescription="Returns a list of publications that reference a specified gene. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_To_Publications" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.publications.pubMedId Gene.publications.title Gene.publications.firstAuthor Gene.publications.journal Gene.publications.year" sortOrder="Gene.publications.year desc">
     <pathDescription pathString="Gene.publications" description="Publication">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="Find the publications referencing gene:" identifier="Gene.class" editable="true" code="A">
+      <constraint op="LOOKUP" value="brat" description="Find the publications referencing gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
       </constraint>
     </node>
   </query>
@@ -2541,9 +3073,9 @@
   <query name="Gene_to_upstream_intergenic" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.primaryIdentifier Gene.upstreamIntergenicRegion.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.chromosomeLocation.start Gene.upstreamIntergenicRegion.chromosomeLocation.end Gene.upstreamIntergenicRegion.length Gene.upstreamIntergenicRegion.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosomeLocation" description="Upstream intergenic region &gt; chromosome location">
     </pathDescription>
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosome" description="Chromosome">
-    </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion" description="Upstream intergenic region">
+    </pathDescription>
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosome" description="Chromosome">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.evidence" description="Dataset">
     </pathDescription>
@@ -2575,9 +3107,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.transcripts.exons.evidence" description="Dataset">
     </pathDescription>
-    <pathDescription pathString="Gene.transcripts.introns" description="Intron">
-    </pathDescription>
     <pathDescription pathString="Gene.transcripts.exons" description="Exon">
+    </pathDescription>
+    <pathDescription pathString="Gene.transcripts.introns" description="Intron">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="bib" description="" identifier="Gene.secondaryIdentifier" editable="true" code="A" extraValue="">
@@ -2629,9 +3161,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.transcripts" description="Homologue &gt; transcript">
     </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
-    </pathDescription>
     <pathDescription pathString="Gene.homologues.homologue.organism" description="Homologue &gt; organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Homologue">
     </pathDescription>
     <node path="Gene" type="Gene">
       <constraint op="LOOKUP" value="CG12399" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
@@ -2641,13 +3173,25 @@
     </node>
   </query>
 </template>
+<template name="Gene_TranscriptTranslation" title="Gene -&gt; Transcripts + Translation of the transcripts." longDescription="For a specified gene, give all its transcripts with their respective lengths. For each transcript, give its translation and respective length." comment="">
+  <query name="Gene_TranscriptTranslation" model="genomic" view="Translation.MRNA.gene.primaryIdentifier Translation.MRNA.gene.symbol Translation.MRNA.primaryIdentifier Translation.MRNA.symbol Translation.MRNA.length Translation.primaryIdentifier Translation.symbol Translation.length" sortOrder="Translation.symbol asc">
+    <node path="Translation" type="Translation">
+    </node>
+    <node path="Translation.MRNA" type="MRNA">
+    </node>
+    <node path="Translation.MRNA.gene" type="Gene">
+      <constraint op="LOOKUP" value="Pabp2" description="Gene" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="Gene_transposableElementsOverlappingExons" title="Gene [D. melanogaster] --&gt; Transposon insertions overlapping exons." longDescription="For a particular gene show the transposon insertions that overlap its exons. (Data Source: FlyBase)." comment="">
   <query name="Gene_transposableElementsOverlappingExons" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.exons.primaryIdentifier Gene.exons.overlappingFeatures.primaryIdentifier Gene.exons.overlappingFeatures.symbol Gene.exons.overlappingFeatures.chromosomeLocation.start Gene.exons.overlappingFeatures.chromosomeLocation.end Gene.exons.overlappingFeatures.chromosomeLocation.strand Gene.exons.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
     <pathDescription pathString="Gene.exons.overlappingFeatures" description="Transposable element">
     </pathDescription>
-    <pathDescription pathString="Gene.exons" description="Exon">
-    </pathDescription>
     <pathDescription pathString="Gene.chromosomeLocation" description="Gene &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.exons" description="Exon">
     </pathDescription>
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
@@ -2679,9 +3223,9 @@
 </template>
 <template name="Gene_upstreamAdjacent_FlyAtlas_new" title="Gene [D. melanogaster] --&gt; upstream adjacent gene + FlyAtlas data" longDescription="For a particular gene or set of genes, give the upstream adjacent gene and FlyAtlas data that satisifies certain constraints.  " comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_upstreamAdjacent_FlyAtlas_new" model="genomic" view="Gene.secondaryIdentifier Gene.upstreamIntergenicRegion.adjacentGenes.secondaryIdentifier Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays.name Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.mRNASignal Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.enrichment" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C and D">
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults" description="Upstream adjacent gene &gt; microArrayResults">
-    </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults.assays" description="Upstream adjacent gene &gt; microarray assay">
+    </pathDescription>
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes.microArrayResults" description="Upstream adjacent gene &gt; microArrayResults">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.adjacentGenes" description="Upstream adjacent gene">
     </pathDescription>
@@ -2711,9 +3255,9 @@
 </template>
 <template name="Gene_upstreamRegulatoryRegions" title="Gene [D. melanogaster] --&gt; Regulatory elements in the upstream intergenic region." longDescription="For a particular gene, show any regulatory elements found in its upstream intergenic region and the chromosome location of these regions. Regulatory elements can include: CRMs and TF binding sites from REDfly, enhancers from FlyBase and predicted sites from Tiffin. (Data Source: REDfly, Tiffin, FlyBase)." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_upstreamRegulatoryRegions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.overlappingFeatures.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.start Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.end Gene.upstreamIntergenicRegion.overlappingFeatures.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
-    <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation" description="Gene &gt; Upstream intergenic region &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures" description="Gene &gt; Upsteam intergenic region">
+    </pathDescription>
+    <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation" description="Gene &gt; Upstream intergenic region &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.upstreamIntergenicRegion.overlappingFeatures.chromosome" description="Gene &gt; Upstream intergenic region &gt; Chromosome">
     </pathDescription>
@@ -2797,8 +3341,10 @@
     </node>
   </query>
 </template>
-<template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show all the orthologues between two organisms. (Data Source: Inparanoid, Drosophila Consortium)." comment="">
-  <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore Homologue.dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc" constraintLogic="A and B and C">
+<template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." comment="">
+  <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.inParanoidScore Homologue.dataSets.title" sortOrder="Homologue.gene.primaryIdentifier asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Homologue.dataSets" description="Dataset">
+    </pathDescription>
     <pathDescription pathString="Homologue.gene" description="Organism1 &gt; gene">
     </pathDescription>
     <pathDescription pathString="Homologue.homologue" description="Organism2 &gt; gene">
@@ -2963,80 +3509,6 @@
     </node>
   </query>
 </template>
-<template name="geneticInteractionsOrganism1_geneticInteractionsOrganism2" title="All pairs of interacting genes in organism1 --&gt; All pairs of interacting genes in organism2." longDescription="For a particular organism show all genes which interact whose orthologous genes in a second organism also interact." comment="updated 16.9.08">
-  <query name="geneticInteractionsOrganism1_geneticInteractionsOrganism2" model="genomic" view="Gene.organism.name Gene.secondaryIdentifier Gene.symbol Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.type.name Gene.interactions.role Gene.interactions.experiment.publication.pubMedId Gene.homologues.homologue.organism.name Gene.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.symbol Gene.homologues.homologue.interactions.interactingGenes.secondaryIdentifier Gene.homologues.homologue.interactions.interactingGenes.symbol Gene.homologues.homologue.interactions.type.name Gene.homologues.homologue.interactions.role Gene.homologues.homologue.interactions.experiment.publication.pubMedId" sortOrder="Gene.organism.name asc" constraintLogic="A and C and D and B and E and F and G">
-    <pathDescription pathString="Gene.homologues.homologue.interactions.type" description="Organism 2 &gt; genetic interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.interactions.type" description="Organism 1 &gt; genetic interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.interactions.interactingGenes" description="Organism 1 &gt; interacting gene 2">
-    </pathDescription>
-    <pathDescription pathString="Gene.organism" description="Organism 1">
-    </pathDescription>
-    <pathDescription pathString="Gene.interactions" description="Organism 1 &gt; genetic interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.interactions.interactingGenes" description="Organism 2 &gt; gene 2 orthologue">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.interactions.experiment.publication" description="Organism 2 &gt; genetic interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.interactions" description="Organism 2 &gt; genetic interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.interactions.experiment.publication" description="Organism 1 &gt; genetic Interaction">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue" description="Organism 2 &gt; gene 1 orthologue">
-    </pathDescription>
-    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism 2">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Show genetic interactions for organism:" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.homologues" type="Homologue">
-    </node>
-    <node path="Gene.homologues.type" type="String">
-      <constraint op="=" value="orthologue" description="" identifier="" code="C" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.homologue" type="Gene">
-    </node>
-    <node path="Gene.homologues.homologue.organism" type="Organism">
-    </node>
-    <node path="Gene.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Caenorhabditis elegans" description="whose orthologues have also been shown to genetically interact in organism:" identifier="" editable="true" code="D" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.homologue.interactions" type="Interaction">
-    </node>
-    <node path="Gene.homologues.homologue.interactions.interactionType" type="String">
-      <constraint op="=" value="genetic" description="" identifier="" code="E">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.homologue.interactions.interactingGenes" type="Gene">
-    </node>
-    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues" type="Homologue">
-    </node>
-    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.type" type="String">
-      <constraint op="=" value="orthologue" description="" identifier="" code="F">
-      </constraint>
-    </node>
-    <node path="Gene.homologues.homologue.interactions.interactingGenes.homologues.homologue" type="Gene">
-      <constraint op="=" value="Gene.interactions.interactingGenes" description="" identifier="" code="G">
-      </constraint>
-    </node>
-    <node path="Gene.interactions" type="Interaction">
-    </node>
-    <node path="Gene.interactions.interactionType" type="String">
-      <constraint op="=" value="genetic" description="" identifier="" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.interactions.interactingGenes" type="Gene">
-    </node>
-  </query>
-</template>
 <template name="GeneTissue_FlyAtlas" title="Gene [D. melanogaster] + Tissue [D. melanogaster] --&gt; FlyAtlas data." longDescription="For a given D. melanogaster gene, show expression data for a particular tissue from FlyAtlas.(Data Source: FlyAtlas)." comment="06.06.07 updated to work from gene class - Philip">
   <query name="GeneTissue_FlyAtlas" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.microArrayResults.material.primaryIdentifier Gene.microArrayResults.assays.name Gene.microArrayResults.presentCall Gene.microArrayResults.enrichment Gene.microArrayResults.affyCall Gene.microArrayResults.dataSets.title" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and C and A and D">
     <pathDescription pathString="Gene.microArrayResults.assays" description="Microarray assay">
@@ -3077,12 +3549,216 @@
     </node>
   </query>
 </template>
+<template name="Go_GeneOrthologues" title="GO term name (and children of this term) --&gt; Genes in organism1 + Orthologues in organism2." longDescription="For a specified GO term (and children of this term, find all the genes in a particular organism that have an orthologue in another organism. (Data Source: GO, Drosophila Consortium, InParanoid). " comment="">
+  <query name="Go_GeneOrthologues" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.homologues.homologue.organism.shortName Gene.homologues.homologue.primaryIdentifier Gene.homologues.type" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and C and A">
+    <pathDescription pathString="Gene.homologues" description="Orthologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Orthologue">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.organism" type="Organism">
+    </node>
+    <node path="Gene.homologues.homologue.organism.name" type="String">
+      <constraint op="=" value="Anopheles gambiae str. PEST" description="and that have an orthologue in the following organism:" identifier="" editable="true" code="C" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="CONTAINS" value="transcription" description="Go Term" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GO_name_Gene" title="GO term name/id --&gt; Genes in one specific organism." longDescription="Search for genes in a specified organism that is associated with a particular GO annotation." comment="">
+  <query name="GO_name_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name" sortOrder="Gene.symbol asc" constraintLogic="B and C">
+    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="CONTAINS" value="DNA binding" description="Go term" identifier="" editable="true" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GOInteraction_Genes" title="GO term + Interacting gene [D. melanogaster] --&gt; Genes." longDescription="List all D. melanogaster genes that are associated with a certain GO term and that have been found to interact with a specific gene. (Data Source: GO, BioGRID, IntAct)." comment="">
+  <query name="GOInteraction_Genes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.qualifier" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C and E and B and D">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="E" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.allGoAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.allGoAnnotation.property" type="GOTerm">
+      <constraint op="LOOKUP" value="transcription factor activity" description="List all genes that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.allGoAnnotation.qualifier" type="String">
+      <constraint op="IS NULL" value="null" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+      <constraint op="LOOKUP" value="gl" description="" identifier="" editable="true" code="B" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism.shortName" type="String">
+      <constraint op="=" value="D. melanogaster" description="" identifier="" code="D" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GOname_GOidentifier" title="GO term name --&gt; GO term identifier." longDescription="Find the GO identifier for a specific term." comment="">
+  <query name="GOname_GOidentifier" model="genomic" view="GOTerm.name GOTerm.identifier GOTerm.description" sortOrder="GOTerm.name asc">
+    <node path="GOTerm" type="GOTerm">
+    </node>
+    <node path="GOTerm.name" type="String">
+      <constraint op="LIKE" value="%blastoderm%" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GOterm_genesDrosDelDeletion" title="GO term name [D. melanogaster] --&gt; All genes with DrosDel deletions." longDescription="Show all D. melanogaster genes that have been annotated with a particular GO term and the DrosDel deletions which would delete these genes.  Show whether the deletion is available. (Data Source: GO, FlyBase, DrosDel)." comment="">
+  <query name="GOterm_genesDrosDelDeletion" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="LIKE" value="%ion channel%" description="Show all genes with deletions that are annotated with the following GO term:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
+    </node>
+  </query>
+</template>
+<template name="GOterm_GenesInsertions" title="GO term name [D. melanogaster] --&gt; All genes with insertions." longDescription="Show all D. melanogaster genes that have been annotated with a particular GO term and that have insertions. (Data Source: GO, FlyBase)." comment="">
+  <query name="GOterm_GenesInsertions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.symbol Gene.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures" description="Insertion">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Insertion &gt; data set">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="LIKE" value="%neuropeptide receptor%" description="Show all genes that have insertions and that have been annotated with the following GO term:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.overlappingFeatures" type="TransposableElementInsertionSite">
+    </node>
+  </query>
+</template>
+<template name="GOtermidentifier_name" title="GO term identifier --&gt; GO term name." longDescription="Give the GO term name for a particular GO term identifier. (Data Source: GO)" comment="">
+  <query name="GOtermidentifier_name" model="genomic" view="GOTerm.identifier GOTerm.name GOTerm.description" sortOrder="GOTerm.identifier asc">
+    <node path="GOTerm" type="GOTerm">
+    </node>
+    <node path="GOTerm.identifier" type="String">
+      <constraint op="=" value="GO:0007350" description="" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="INDAC_GeneLocation" title="INDAC long oligo --&gt; Genes [D. melanogaster]." longDescription="For a particular INDAC long oligo, search for corresponding D. melanoster genes and show their chromosomal coordinates." comment="">
   <query name="INDAC_GeneLocation" model="genomic" view="MicroarrayOligo.primaryIdentifier MicroarrayOligo.transcript.primaryIdentifier MicroarrayOligo.transcript.gene.secondaryIdentifier MicroarrayOligo.transcript.gene.symbol MicroarrayOligo.transcript.gene.chromosome.primaryIdentifier MicroarrayOligo.transcript.gene.chromosomeLocation.start MicroarrayOligo.transcript.gene.chromosomeLocation.end" sortOrder="MicroarrayOligo.primaryIdentifier asc">
     <node path="MicroarrayOligo" type="MicroarrayOligo">
     </node>
     <node path="MicroarrayOligo.primaryIdentifier" type="String">
       <constraint op="=" value="1000030702" description="Search for genes corresponding to INDAC long oligo:" identifier="MicroarrayOligo.primaryIdentifier" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="indirectphysicalinteractions_final" title="indirectphysicalinteractions version 1.0" longDescription="" comment="">
+  <query name="indirectphysicalinteractions_final" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.interactions.experiment.interactionDetectionMethod.name Gene.interactions.experiment.interactionDetectionMethod.identifier Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.interactions.experiment.interactionDetectionMethod.name Gene.interactions.interactingGenes.interactions.experiment.interactionDetectionMethod.identifier Gene.interactions.interactingGenes.interactions.experiment.publication.pubMedId Gene.interactions.interactingGenes.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.interactions.interactingGenes.secondaryIdentifier Gene.interactions.interactingGenes.interactions.interactingGenes.symbol" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="B and C and D and E and F and G and H and A">
+    <node path="Gene" type="Gene">
+      <constraint op="LOOKUP" value="CG31196" description="" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="B" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="C" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes" type="Gene">
+      <constraint op="!=" value="Gene" description="" identifier="" code="E">
+      </constraint>
+      <constraint op="LOOKUP" value="CG3935" description="Prey list" identifier="" editable="true" code="D" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes.organism" type="Organism">
+    </node>
+    <node path="Gene.interactions.interactingGenes.interactions.interactingGenes.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="F" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="G" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="H" extraValue="">
       </constraint>
     </node>
   </query>
@@ -3119,9 +3795,9 @@
 </template>
 <template name="Intergenic_RegRegion" title="Intergenic region [D. melanogaster] --&gt; Regulatory elements." longDescription="For the following intergenic region from D. melanogaster, show all regulatory elements with their chromosomal locations and lengths. Regulatory elements can include: CRMs and TF binding sites from REDfly, enhancers from FlyBase and predicted sites from Tiffin. (Data Source: FlyBase, REDfly, Tiffin)." comment="templates duplicates results when intergenic identifier is in output">
   <query name="Intergenic_RegRegion" model="genomic" view="IntergenicRegion.primaryIdentifier IntergenicRegion.overlappingFeatures.primaryIdentifier IntergenicRegion.overlappingFeatures.chromosomeLocation.start IntergenicRegion.overlappingFeatures.chromosomeLocation.end IntergenicRegion.overlappingFeatures.length IntergenicRegion.overlappingFeatures.dataSets.title" sortOrder="IntergenicRegion.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="IntergenicRegion.overlappingFeatures" description="Regulatory region">
-    </pathDescription>
     <pathDescription pathString="IntergenicRegion.overlappingFeatures.chromosomeLocation" description="Regulatory region &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="IntergenicRegion.overlappingFeatures" description="Regulatory region">
     </pathDescription>
     <pathDescription pathString="IntergenicRegion.overlappingFeatures.evidence" description="Regulatory region &gt; data source">
     </pathDescription>
@@ -3153,9 +3829,9 @@
 </template>
 <template name="InterProDomain_ProteinGene_new" title="Protein Domain --&gt; Proteins + Genes coding for these proteins." longDescription="Show all genes from a particular organism that code for a certain InterPro protein. (InterPro data are available for D. melanogaster, A. gambiae, C. elegans). (Data Source: UniProt)." comment="">
   <query name="InterProDomain_ProteinGene_new" model="genomic" view="Protein.proteinDomains.name Protein.proteinDomains.primaryIdentifier Protein.proteinDomains.type Protein.primaryIdentifier Protein.primaryAccession Protein.genes.primaryIdentifier Protein.proteinDomains.dataSets.title" sortOrder="Protein.proteinDomains.name asc" constraintLogic="B and C and A and D">
-    <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
-    </pathDescription>
     <pathDescription pathString="Protein.genes" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
     </pathDescription>
     <node path="Protein" type="Protein">
     </node>
@@ -3181,16 +3857,18 @@
     </node>
   </query>
 </template>
-<template name="miRNA_Targets" title="miRNA [D. melanogaster]--&gt; Targets." longDescription="Find all transcripts targeted by a specific D. melanogaster miRNA as predicted by the miRanda algorithm. Show the location of the target sites, the score for each site and the p-value. (Data Source: Sanger Institute)." comment="">
-  <query name="miRNA_Targets" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.miRNAtargets.target.primaryIdentifier Gene.miRNAtargets.target.gene.primaryIdentifier Gene.miRNAtargets.target.symbol Gene.miRNAtargets.pvalue Gene.miRNAtargets.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-    <pathDescription pathString="Gene.miRNAtargets.target.gene" description="miRNA &gt; target transcript &gt; gene">
-    </pathDescription>
+<template name="miRNA_Targets" title="miRNA [D. melanogaster]--&gt; Targets." longDescription="For specified miRNA(s), find all predicted target transcripts. Show the location of the target sites, the score for each site and the p-value. (Data Source: Sanger Institute)." comment="">
+  <query name="miRNA_Targets" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.miRNAtargets.target.primaryIdentifier Gene.miRNAtargets.target.gene.primaryIdentifier Gene.miRNAtargets.target.symbol Gene.miRNAtargets.pvalue Gene.miRNAtargets.dataSets.dataSource.name" sortOrder="Gene.miRNAtargets.pvalue asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.miRNAtargets.target" description="miRNA &gt; target transcript">
     </pathDescription>
-    <pathDescription pathString="Gene.miRNAtargets" description="miRNA &gt; target">
+    <pathDescription pathString="Gene.miRNAtargets.target.gene" description="miRNA &gt; target transcript &gt; gene">
+    </pathDescription>
+    <pathDescription pathString="Gene.miRNAtargets.dataSets.dataSource" description="Data source">
+    </pathDescription>
+    <pathDescription pathString="Gene.miRNAtargets" description="targemiRNA &gt; target transcript">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="let-7" description="Find all targets of the following miRNA gene:" identifier="" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="mir-79" description="Find all targets of the following miRNA gene:" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.organism" type="Organism">
@@ -3319,9 +3997,9 @@
     </pathDescription>
     <pathDescription pathString="Gene.chromosome" description="Chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Point mutation &gt; chromosome location">
-    </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.chromosomeLocation" description="Point mutation &gt; chromosome location">
     </pathDescription>
     <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Dataset">
     </pathDescription>
@@ -3353,7 +4031,84 @@
     </node>
   </query>
 </template>
-
+<template name="Organism_GoTerm_Gene" title="Organism + GO term [with particular evidence code] --&gt; Genes." longDescription="Show genes from a particular organism annotated with a particular GO term with a particular evidence code." comment="">
+  <query name="Organism_GoTerm_Gene" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.goEvidenceCodes.code" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show genes from organism:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="=" value="protein binding" description="annotated with GO term:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation.goEvidenceCodes" type="GOEvidenceCode">
+    </node>
+    <node path="Gene.goAnnotation.goEvidenceCodes.code" type="String">
+      <constraint op="=" value="IPI" description="goEvidenceCodes.code" identifier="goEvidenceCodes.code" editable="true" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Organism_GoTerm_GeneWithannotation" title="Organism + GO term [with particular evidence code] --&gt; Genes + 'with' annotation." longDescription="Show genes from a particular organism annotated with a particular GO term and GO evidence code which also have a 'with' annotation (The 'with' field holds an additional identifier for annotations using certain evidence codes)" comment="">
+  <query name="Organism_GoTerm_GeneWithannotation" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.goEvidenceCodes.code Gene.goAnnotation.with.primaryIdentifier" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and B and C">
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show genes and 'with' annotations from organism:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="=" value="protein binding" description="Annotated with GO term:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.goAnnotation.goEvidenceCodes" type="GOEvidenceCode">
+    </node>
+    <node path="Gene.goAnnotation.goEvidenceCodes.code" type="String">
+      <constraint op="=" value="IPI" description="goEvidenceCodes.code" identifier="goEvidenceCodes.code" editable="true" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="organism_GOtermsOrthologues" title="Organism --&gt; GO terms + Orthologues in one specific organism." longDescription="Show the GO terms for all genes in a particular organism which have an orthologue in another organism." comment="">
+  <query name="organism_GOtermsOrthologues" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.goAnnotation.identifier Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.secondaryIdentifier Gene.homologues.homologue.symbol" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Orthologue">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show GO anotation for organism:" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.organism" type="Organism">
+    </node>
+    <node path="Gene.homologues.homologue.organism.name" type="String">
+      <constraint op="=" value="Homo sapiens" description="for genes which have an orthologue in:" identifier="" editable="true" code="B" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="C" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="Organism_Interactions" title="Organism --&gt; All interactions." longDescription="Show all interactions (genetic and protein interactions) for a particular organism. Data available for D. melanogaster, C. elegans and S. cerevisiae (Data Source: BioGRID, IntAct)." comment="">
   <query name="Organism_Interactions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.name Gene.interactions.type.name Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.title" sortOrder="Gene.primaryIdentifier asc">
     <node path="Gene" type="Gene">
@@ -3380,6 +4135,80 @@
     </node>
   </query>
 </template>
+<template name="Organism_interologues" title="Organism --&gt; Interologues" longDescription="For a specified organism, show all pairs of physically interacting genes whose orthologues or inParalogues (co-orthologues) are also been shown to physically interact. (Data Sources: Biogrid, IntAct, Inparanoid). " comment="">
+  <query name="Organism_interologues" model="genomic" view="Gene.homologues.homologue.organism.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.interactions.interactingGenes.homologues.homologue.symbol Gene.organism.name Gene.primaryIdentifier Gene.symbol Gene.homologues.type Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.homologues.type" sortOrder="Gene.homologues.homologue.symbol asc" constraintLogic="(B or G) and A and (I or F) and J and C and D and E and H and K">
+    <pathDescription pathString="Gene.interactions.interactingGenes.homologues" description="Gene 2 homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues" description="Gen 1 homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.interactingGenes" description="Gene 2 homologue">
+    </pathDescription>
+    <pathDescription pathString="Gene.organism" description="Organism 2">
+    </pathDescription>
+    <pathDescription pathString="Gene.interactions.interactingGenes.homologues.homologue" description="Gene 2">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism 1">
+    </pathDescription>
+    <pathDescription pathString="Gene.homologues.homologue" description="Gene 1">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+      <constraint op="!=" value="Gene.homologues.homologue.organism" description="" identifier="" code="H">
+      </constraint>
+    </node>
+    <node path="Gene.homologues" type="Homologue">
+    </node>
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="B" extraValue="D. melanogaster">
+      </constraint>
+      <constraint op="=" value="inParalogue" description="" identifier="" code="G" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.homologues.homologue.organism" type="Organism">
+      <constraint op="LOOKUP" value="Drosophila melanogaster" description=" For the following organism, show the interologues." identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions" type="Interaction">
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="D" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.homologues.homologue.interactions.interactingGenes" type="Gene">
+      <constraint op="=" value="Gene.interactions.interactingGenes.homologues.homologue" description="" identifier="" code="E">
+      </constraint>
+    </node>
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues" type="Homologue">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.homologue.organism" type="Organism">
+      <constraint op="=" value="Gene.homologues.homologue.organism" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="I" extraValue="">
+      </constraint>
+      <constraint op="=" value="inParalogue" description="" identifier="" code="F" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
+      <constraint op="=" value="Gene.organism" description="" identifier="" code="K">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="J" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
 <template name="Organism_Protein" title="Organism --&gt; All proteins." longDescription="Show all the proteins from a particular organism." comment="">
   <query name="Organism_Protein" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession" sortOrder="Protein.primaryIdentifier asc">
     <node path="Protein" type="Protein">
@@ -3392,9 +4221,11 @@
     </node>
   </query>
 </template>
-<template name="Organism_ProteinDomain_new" title="Organism --&gt; All proteins with a specific protein domain." longDescription="Show proteins from a particular organism that have a particular protein domain or family." comment="">
-  <query name="Organism_ProteinDomain_new" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.proteinDomains.name Protein.proteinDomains.primaryIdentifier Protein.proteinDomains.type" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
+<template name="Organism_ProteinDomain_new" title="Organism --&gt; All proteins with a specific protein domain." longDescription="Show proteins from a specified organism that have a particular protein domain or family." comment="">
+  <query name="Organism_ProteinDomain_new" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.genes.primaryIdentifier Protein.genes.symbol Protein.proteinDomains.name Protein.proteinDomains.primaryIdentifier Protein.proteinDomains.type" sortOrder="Protein.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Protein.proteinDomains" description="Protein domain">
+    </pathDescription>
+    <pathDescription pathString="Protein.genes" description="Gene">
     </pathDescription>
     <node path="Protein" type="Protein">
     </node>
@@ -3407,32 +4238,45 @@
     <node path="Protein.proteinDomains" type="ProteinDomain">
     </node>
     <node path="Protein.proteinDomains.name" type="String">
-      <constraint op="=" value="Homeobox" description="Which contain the domain:" identifier="" editable="true" code="B" extraValue="">
+      <constraint op="CONTAINS" value="Homeobox" description="Which contain the domain:" identifier="" editable="true" code="B">
       </constraint>
     </node>
   </query>
 </template>
-<template name="Organism_Transcript" title="Organism --&gt; All transcripts." longDescription="For a particular organism, show all its transcripts. (Data Source: FlyBase, Ensembl)." comment="">
-  <query name="Organism_Transcript" model="genomic" view="Transcript.primaryIdentifier Transcript.length Transcript.dataSets.dataSource.name" sortOrder="Transcript.primaryIdentifier asc">
-    <pathDescription pathString="Transcript.evidence" description="Dataset">
+<template name="OrganismGoterm_genesPointMutations" title="GO term name [D. melanogaster] --&gt; Genes + Point mutations." longDescription="Show all D. melanogaster genes that have been annotated with a particular GO term and the point mutations which overlap these genes. (Data Source: GO Consortium, FlyBase)." comment="">
+  <query name="OrganismGoterm_genesPointMutations" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.name Gene.overlappingFeatures.primaryIdentifier Gene.overlappingFeatures.dataSets.dataSource.name" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.goAnnotation" description="Go annotation">
     </pathDescription>
-    <node path="Transcript" type="Transcript">
+    <pathDescription pathString="Gene.overlappingFeatures" description="Point mutation">
+    </pathDescription>
+    <pathDescription pathString="Gene.overlappingFeatures.evidence" description="Point mutation &gt; dataset">
+    </pathDescription>
+    <node path="Gene" type="Gene">
     </node>
-    <node path="Transcript.organism" type="Organism">
+    <node path="Gene.organism" type="Organism">
     </node>
-    <node path="Transcript.organism.name" type="String">
-      <constraint op="=" value="Apis mellifera" description="Restrict to organism:" identifier="Organism.name" editable="true" code="A" extraValue="">
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show genes and overlapping point mutations from:" identifier="" editable="true" code="A">
       </constraint>
+    </node>
+    <node path="Gene.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Gene.goAnnotation.name" type="String">
+      <constraint op="LIKE" value="%ion channel%" description="which have been annotated with:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Gene.overlappingFeatures" type="PointMutation">
     </node>
   </query>
 </template>
-
-<template name="Pathway_Genes" title="KEGG pathway --&gt; D. melanogaster genes." longDescription="For a particular KEGG pathway, list all the D. melanogaster genes that are involved. (Data Source: KEGG)." comment="">
-  <query name="Pathway_Genes" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.secondaryIdentifier Pathway.genes.symbol" sortOrder="Pathway.identifier asc">
+<template name="Pathway_Genes" title="KEGG pathway --&gt; D. melanogaster genes." longDescription="For a specified KEGG pathway, list all the D. melanogaster genes that are involved. (Data Source: KEGG)." comment="">
+  <query name="Pathway_Genes" model="genomic" view="Pathway.identifier Pathway.name Pathway.genes.primaryIdentifier Pathway.genes.symbol" sortOrder="Pathway.identifier asc">
+    <pathDescription pathString="Pathway.genes" description="Gene">
+    </pathDescription>
     <node path="Pathway" type="Pathway">
     </node>
     <node path="Pathway.name" type="String">
-      <constraint op="=" value="Pentose phosphate pathway" description="Pathway name:" identifier="" editable="true" code="A">
+      <constraint op="CONTAINS" value="Citrate cycle (TCA cycle)" description="Pathway name:" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
   </query>
@@ -3503,7 +4347,7 @@
     </node>
   </query>
 </template>
-<template name="Phenotype_Alleles" title="Phenotype [D. melanogaster] --&gt; Alleles." longDescription="Find all D. melanogaster alleles that have a phenotype in a specific anatomical structure and that are from a certain allele class. (Data Source: FlyBase)" comment="">
+<template name="Phenotype_Alleles" title="Phenotype [D. melanogaster] --&gt; Alleles." longDescription="Find all D. melanogaster alleles that have a phenotype in a specified anatomical structure and that are from a certain allele class. (Data Source: FlyBase)" comment="">
   <query name="Phenotype_Alleles" model="genomic" view="Gene.alleles.phenotypeAnnotations.anatomyTerm.name Gene.alleles.phenotypeAnnotations.anatomyTerm.identifier Gene.alleles.primaryIdentifier Gene.alleles.secondaryIdentifier Gene.alleles.alleleClass Gene.primaryIdentifier Gene.symbol" sortOrder="Gene.alleles.phenotypeAnnotations.anatomyTerm.name asc" constraintLogic="A and B and C">
     <node path="Gene" type="Gene">
     </node>
@@ -3514,7 +4358,7 @@
     <node path="Gene.alleles.phenotypeAnnotations.anatomyTerm" type="AnatomyTerm">
     </node>
     <node path="Gene.alleles.phenotypeAnnotations.anatomyTerm.name" type="String">
-      <constraint op="=" value="eye disc" description="Find all alleles that have a phenotype in the following body part:" identifier="" editable="true" code="A">
+      <constraint op="CONTAINS" value="neuron" description="Find all alleles that have a phenotype in the following body part:" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.alleles.organism" type="Organism">
@@ -3541,13 +4385,13 @@
     </node>
   </query>
 </template>
-<template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For a particular Affymetrix probeset show the gene." comment="">
+<template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For specified Affymetrix probeset(s) show the corresponding gene." comment="">
   <query name="Probe_Gene" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
     </pathDescription>
-    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
-    </pathDescription>
     <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
     </pathDescription>
     <pathDescription pathString="Gene.probeSets" description="Probe">
     </pathDescription>
@@ -3567,7 +4411,7 @@
     </node>
   </query>
 </template>
-<template name="Probe_Genes" title="Affymetrix probeset --&gt; Gene(s) [D. melanogaster]." longDescription="For a particular Affymetrix probeset show the gene(s) and the locations of all probes. (Data Source: Ensembl)." comment="">
+<template name="Probe_Genes" title="Affymetrix probeset --&gt; Genes [D. melanogaster]." longDescription="For specified Affymetrix probeset(s) show the corresponding genes and the locations of all probes. (Data Source: Ensembl)." comment="">
   <query name="Probe_Genes" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.length Gene.probeSets.locations.object.primaryIdentifier Gene.probeSets.locations.start Gene.probeSets.locations.end Gene.probeSets.dataSets.title Gene.probeSets.dataSets.dataSource.name" sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
     </pathDescription>
@@ -3615,9 +4459,9 @@
   <query name="Protein12_GeneTFBindingSite" model="genomic" view="TFBindingSite.factor.name TFBindingSite.primaryIdentifier TFBindingSite.gene.regulatoryRegions.factor.name TFBindingSite.gene.regulatoryRegions.primaryIdentifier TFBindingSite.gene.primaryIdentifier TFBindingSite.gene.symbol" sortOrder="TFBindingSite.factor.name asc" constraintLogic="A and B and E and F and C and D">
     <pathDescription pathString="TFBindingSite.gene.regulatoryRegions.factor" description="Transcription factor 2 ">
     </pathDescription>
-    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor 1">
-    </pathDescription>
     <pathDescription pathString="TFBindingSite.evidence" description="Transcription factor 1 &gt; data set">
+    </pathDescription>
+    <pathDescription pathString="TFBindingSite.factor" description="Transcription factor 1">
     </pathDescription>
     <pathDescription pathString="TFBindingSite.gene" description="Regulated gene">
     </pathDescription>
@@ -3685,6 +4529,46 @@
   <query name="protein_GeneInteractions" model="genomic" view="Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.interactions.role Protein.genes.interactions.interactingGenes.primaryIdentifier Protein.genes.interactions.interactingGenes.symbol Protein.genes.interactions.type.name Protein.genes.interactions.experiment.publication.pubMedId Protein.genes.interactions.dataSets.dataSource.name" sortOrder="Protein.primaryIdentifier asc">
     <node path="Protein" type="Protein">
       <constraint op="LOOKUP" value="128UP_DROME" description="" identifier="" editable="true" code="A" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Protein_GOterms" title="Protein --&gt; GO terms." longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." comment="06.06.07 updated to work from protein class - Philip">
+  <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.property.namespace Protein.genes.goAnnotation.property.identifier Protein.genes.goAnnotation.property.name" sortOrder="Protein.primaryAccession asc">
+    <pathDescription pathString="Protein.genes" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
+    </pathDescription>
+    <node path="Protein" type="Protein">
+      <constraint op="LOOKUP" value="P09089" description="" identifier="Protein.class" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Protein.genes" type="Gene">
+    </node>
+    <node path="Protein.genes.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Protein.genes.goAnnotation.property" type="GOTerm">
+    </node>
+  </query>
+</template>
+<template name="Protein_GOtermsSpecificOntology" title="Protein --&gt; GO terms from a specific GO ontology." longDescription="Show the GO annotations for a protein or proteins from a specifc GO ontology (cellular_component, molecular_function, biological_process)." comment="">
+  <query name="Protein_GOtermsSpecificOntology" model="genomic" view="Protein.primaryAccession Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.property.namespace Protein.genes.goAnnotation.property.identifier Protein.genes.goAnnotation.property.name" sortOrder="Protein.primaryAccession asc" constraintLogic="A and B">
+    <pathDescription pathString="Protein.genes" description="Gene">
+    </pathDescription>
+    <pathDescription pathString="Protein.genes.goAnnotation.property" description="GO annotation">
+    </pathDescription>
+    <node path="Protein" type="Protein">
+      <constraint op="LOOKUP" value="P04755" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      </constraint>
+    </node>
+    <node path="Protein.genes" type="Gene">
+    </node>
+    <node path="Protein.genes.goAnnotation" type="GOAnnotation">
+    </node>
+    <node path="Protein.genes.goAnnotation.property" type="GOTerm">
+    </node>
+    <node path="Protein.genes.goAnnotation.property.namespace" type="String">
+      <constraint op="=" value="cellular\_component" description="from the GO ontology:" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
   </query>
@@ -3831,56 +4715,58 @@
     </node>
   </query>
 </template>
-<template name="ProteinInteraction_OrthologueOrganism_new" title="All pairs of interacting proteins in organism1 --&gt; Orthologues in organism2." longDescription="For all pairs of interacting proteins in a particular organism, show the corresponding pairs of genes and the orthologues of these genes in another organism." comment="updated 16.9.08 by Adrian. Do not precompute - rns">
-  <query name="ProteinInteraction_OrthologueOrganism_new" model="genomic" view="Protein.organism.name Protein.genes.secondaryIdentifier Protein.genes.interactions.interactingGenes.secondaryIdentifier Protein.genes.interactions.interactingGenes.homologues.homologue.organism.name Protein.genes.homologues.homologue.secondaryIdentifier Protein.genes.interactions.interactingGenes.homologues.homologue.secondaryIdentifier" sortOrder="Protein.organism.name asc" constraintLogic="A and B and C and D">
-    <pathDescription pathString="Protein.genes.interactions.interactingGenes.homologues.homologue" description="Organism2 &gt; orthologue of interacting protein 2">
+<template name="ProteinInteraction_OrthologueOrganism_new" title="All pairs of interacting proteins in organism 1 --&gt; Orthologues in organism 2." longDescription="For a specified organism, show the pairs of physically interacting genes and the corresponding pair of orthologues in another organism. Organism1 can be D. melanogaster, S. cerevisiae, H. sapiens, or C. elegans.(Data sources: BioGrid, IntAct, Inparonoid)" comment="">
+  <query name="ProteinInteraction_OrthologueOrganism_new" model="genomic" view="Gene.organism.name Gene.primaryIdentifier Gene.symbol Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.homologues.homologue.organism.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.interactions.interactingGenes.homologues.homologue.symbol" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and G and A and I and J and C and D">
+    <pathDescription pathString="Gene.interactions.interactingGenes" description="Organism 1 &gt; Gene 2">
     </pathDescription>
-    <pathDescription pathString="Protein.organism" description="Organism1">
+    <pathDescription pathString="Gene.organism" description="Organism 1">
     </pathDescription>
-    <pathDescription pathString="Protein.genes.interactions.interactingGenes" description="interacting protein2 &gt; gene">
+    <pathDescription pathString="Gene.interactions.interactingGenes.homologues.homologue" description="Organism 2 &gt; Gene 2">
     </pathDescription>
-    <pathDescription pathString="Protein.genes.homologues.homologue.organism" description="Organism2">
+    <pathDescription pathString="Gene.homologues.homologue" description="Organism 2 &gt; Gene 1">
     </pathDescription>
-    <pathDescription pathString="Protein.genes" description="Interacting protein1 &gt; gene">
+    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism 2">
     </pathDescription>
-    <pathDescription pathString="Protein.genes.interactions.interactingGenes.homologues.homologue.organism" description="Organism2">
-    </pathDescription>
-    <pathDescription pathString="Protein.genes.homologues.homologue" description="Organism2 &gt; orthologue of interacting protein1">
-    </pathDescription>
-    <node path="Protein" type="Protein">
+    <node path="Gene" type="Gene">
     </node>
-    <node path="Protein.organism" type="Organism">
-    </node>
-    <node path="Protein.organism.name" type="String">
-      <constraint op="=" value="Saccharomyces cerevisiae" description="For the following organism, for all pairs of interacting proteins, show the corresponding pair of genes." identifier="" editable="true" code="A" extraValue="">
+    <node path="Gene.organism" type="Organism">
+      <constraint op="LOOKUP" value="Caenorhabditis elegans" description="Organism 1. For the following organism, for all pairs of interacting proteins, show the corresponding pair of genes." identifier="" editable="true" code="G" extraValue="">
       </constraint>
     </node>
-    <node path="Protein.genes" type="Gene">
+    <node path="Gene.homologues" type="Homologue">
     </node>
-    <node path="Protein.genes.homologues" type="Homologue">
-    </node>
-    <node path="Protein.genes.homologues.homologue" type="Gene">
-    </node>
-    <node path="Protein.genes.homologues.homologue.organism" type="Organism">
-      <constraint op="=" value="Protein.genes.interactions.interactingGenes.homologues.homologue.organism" description="" identifier="" code="C">
+    <node path="Gene.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
-    <node path="Protein.genes.interactions" type="Interaction">
+    <node path="Gene.homologues.homologue" type="Gene">
     </node>
-    <node path="Protein.genes.interactions.interactingGenes" type="Gene">
-    </node>
-    <node path="Protein.genes.interactions.interactingGenes.homologues" type="Homologue">
-    </node>
-    <node path="Protein.genes.interactions.interactingGenes.homologues.homologue" type="Gene">
-    </node>
-    <node path="Protein.genes.interactions.interactingGenes.homologues.homologue.organism" type="Organism">
-    </node>
-    <node path="Protein.genes.interactions.interactingGenes.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="For the following organism, show the orthogue for each of the pair of interacting genes found in organism 1." identifier="" editable="true" code="B">
+    <node path="Gene.homologues.homologue.organism" type="Organism">
+      <constraint op="LOOKUP" value="Drosophila melanogaster" description="Organism 2. For the following organism, show the orthogues of the pair of interacting genes in organism 1." identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
-    <node path="Protein.genes.interactions.interactionType" type="String">
-      <constraint op="=" value="physical" description="" identifier="" code="D" extraValue="">
+    <node path="Gene.interactions" type="Interaction">
+    </node>
+    <node path="Gene.interactions.interactingGenes" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues" type="Homologue">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.homologue" type="Gene">
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.homologue.organism" type="Organism">
+      <constraint op="=" value="Gene.homologues.homologue.organism" description="" identifier="" code="C">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.homologues.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="I" extraValue="">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
+      <constraint op="=" value="Gene.organism" description="" identifier="" code="D">
+      </constraint>
+    </node>
+    <node path="Gene.interactions.interactionType" type="String">
+      <constraint op="=" value="physical" description="" identifier="" code="J" extraValue="">
       </constraint>
     </node>
   </query>
@@ -4157,7 +5043,7 @@
     </node>
   </query>
 </template>
-<template name="TiffinBSmotif_genes" title="Tiffin motif [D. melanogaster]--&gt; Tiffin sites in upstream intergenic regions of genes." longDescription="For a particular motif predicted by Tiffin, show all the actual predicted sites corresponding to this motif that occur within an upstream intergenic region of a gene. Show the actual location of each site. (Data Source: Tiffin)." comment="">
+<template name="TiffinBSmotif_genes" title="Tiffin motif [D. melanogaster]--&gt; Tiffin sites in upstream intergenic regions of genes." longDescription="For a specified Tiffin motif, show all the actual predicted sites corresponding to this motif that occur within an upstream intergenic region of a gene. Show the actual location of each site. (Data Source: Tiffin)." comment="">
   <query name="TiffinBSmotif_genes" model="genomic" view="Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.chromosome.primaryIdentifier Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.start Gene.upstreamIntergenicRegion.overlappingFeatures.chromosomeLocation.end Gene.upstreamIntergenicRegion.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.upstreamIntergenicRegion.overlappingFeatures.dataSets.title" sortOrder="Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.upstreamIntergenicRegion.chromosomeLocation" description="Intergenic region &gt; chromosome location">
     </pathDescription>
@@ -4195,9 +5081,9 @@
 </template>
 <template name="TiffinBSmotif_locations" title="Tiffin motif --&gt; Chromosomal locations." longDescription="For a particular Tiffin motif, show the chromosomal locations of all the predicted sites corresponding to this motif." comment="">
   <query name="TiffinBSmotif_locations" model="genomic" view="Motif.primaryIdentifier Motif.predictedBindingSites.primaryIdentifier Motif.predictedBindingSites.chromosome.primaryIdentifier Motif.predictedBindingSites.chromosomeLocation.start Motif.predictedBindingSites.chromosomeLocation.end Motif.predictedBindingSites.chromosomeLocation.strand" sortOrder="Motif.primaryIdentifier asc">
-    <pathDescription pathString="Motif.predictedBindingSites.chromosome" description="Tiffin motif &gt; Predicted site &gt; chromosome">
-    </pathDescription>
     <pathDescription pathString="Motif.predictedBindingSites.chromosomeLocation" description="Tiffin motif &gt; Predicted site &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Motif.predictedBindingSites.chromosome" description="Tiffin motif &gt; Predicted site &gt; chromosome">
     </pathDescription>
     <pathDescription pathString="Motif.predictedBindingSites" description="Tiffin motif &gt; Predicted site">
     </pathDescription>
@@ -4287,7 +5173,7 @@
     </node>
   </query>
 </template>
-<template name="TimeCourseDataSpecificStage_genes" title="Microarray Time course data from Arbeitman et al. (filter on specific stage) --&gt; Genes [D. melanogaster]." longDescription="Show expression data from the Arbeitman et al data set for a specific developmental stage.  Note that the reference sample in this experiment is pooled mRNA representing all stages of the life cycle." comment="">
+<template name="TimeCourseDataSpecificStage_genes" title="Microarray Time course data from Arbeitman et al. (filter on specific stage) --&gt; Genes [D. melanogaster]." longDescription="For a specified developmental stage,  show the expression data from the Arbeitman et al data set. Note that the reference sample in this experiment is pooled mRNA representing all stages of the life cycle." comment="">
   <query name="TimeCourseDataSpecificStage_genes" model="genomic" view="Gene.secondaryIdentifier Gene.microArrayResults.type Gene.microArrayResults.value Gene.microArrayResults.isControl Gene.microArrayResults.assays.sample2 Gene.microArrayResults.assays.sample1 Gene.microArrayResults.assays.experiment.name Gene.microArrayResults.assays.experiment.publication.pubMedId" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="B and C">
     <pathDescription pathString="Gene.microArrayResults.assays.experiment.publication" description="Microarray experiment">
     </pathDescription>
@@ -4315,7 +5201,7 @@
     </node>
   </query>
 </template>
-<template name="TimeCourseDataSpecificStageRatio_genes" title="Microarray Time course data from Arbeitman et al. (filter on specific stage and ratio) --&gt; Genes [D. melanogaster]." longDescription="Show genes expressed at a specific developmental stage according to the Arbeitman et al data set;  filter this set on the median signal ratio.  Note that the reference sample in this experiment is pooled mRNA representing all stages of the life cycle." comment="">
+<template name="TimeCourseDataSpecificStageRatio_genes" title="Microarray Time course data from Arbeitman et al. (filter on specific stage and ratio) --&gt; Genes [D. melanogaster]." longDescription="For a specified developmental stage, show the genes expressed according to the Arbeitman et al data set;  filter this set on the median signal ratio.  Note that the reference sample in this experiment is pooled mRNA representing all stages of the life cycle." comment="">
   <query name="TimeCourseDataSpecificStageRatio_genes" model="genomic" view="Gene.secondaryIdentifier Gene.microArrayResults.type Gene.microArrayResults.value Gene.microArrayResults.isControl Gene.microArrayResults.assays.sample2 Gene.microArrayResults.assays.sample1 Gene.microArrayResults.assays.experiment.name Gene.microArrayResults.assays.experiment.publication.pubMedId" sortOrder="Gene.secondaryIdentifier asc" constraintLogic="B and C and D">
     <pathDescription pathString="Gene.microArrayResults.assays.experiment.publication" description="Microarray experiment">
     </pathDescription>
@@ -4348,7 +5234,7 @@
   </query>
 </template>
 <template name="Tissue_Flyatlas" title="Tissue [D. melanogaster] --&gt; FlyAtlas data." longDescription="Show gene expression in the following tissue from D. melanogaster and the Affymetrix probes that were used to obtain these data.(Data Source: FlyAtlas)." comment="">
-  <query name="Tissue_Flyatlas" model="genomic" view="FlyAtlasResult.assays.name FlyAtlasResult.mRNASignal FlyAtlasResult.mRNASignalSEM FlyAtlasResult.presentCall FlyAtlasResult.enrichment FlyAtlasResult.affyCall FlyAtlasResult.genes.primaryIdentifier FlyAtlasResult.genes.symbol FlyAtlasResult.material.primaryIdentifier FlyAtlasResult.dataSets.title" sortOrder="FlyAtlasResult.assays.name asc" constraintLogic="A and C and B and D and E">
+  <query name="Tissue_Flyatlas" model="genomic" view="FlyAtlasResult.assays.name FlyAtlasResult.mRNASignal FlyAtlasResult.mRNASignalSEM FlyAtlasResult.presentCall FlyAtlasResult.enrichment FlyAtlasResult.affyCall FlyAtlasResult.genes.primaryIdentifier FlyAtlasResult.genes.symbol FlyAtlasResult.material.primaryIdentifier FlyAtlasResult.dataSets.title" sortOrder="FlyAtlasResult.enrichment desc" constraintLogic="A and C and B and D and E">
     <pathDescription pathString="FlyAtlasResult.genes" description="Gene">
     </pathDescription>
     <pathDescription pathString="FlyAtlasResult.genes.probeSets" description="Probe">
@@ -4362,11 +5248,11 @@
       </constraint>
     </node>
     <node path="FlyAtlasResult.presentCall" type="Integer">
-      <constraint op="&gt;" value="0" description="that were detectably expressed in the following number of arrays (out of 4):" identifier="" editable="true" code="C">
+      <constraint op="&gt;=" value="3" description="that were detectably expressed in the following number of arrays (out of 4):" identifier="" editable="true" code="C" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="FlyAtlasResult.enrichment" type="Double">
-      <constraint op="&gt;" value="1.0" description="with the following enrichment" identifier="" editable="true" code="B">
+      <constraint op="&gt;" value="2.0" description="with the following enrichment" identifier="" editable="true" code="B" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="FlyAtlasResult.mRNASignal" type="Double">
@@ -4381,7 +5267,7 @@
     </node>
   </query>
 </template>
-<template name="Transcript_INDAC" title="Transcript --&gt; INDAC long oligo." longDescription="Give details (including the sequence) of the INDAC microarray long oligo for a particular transcript." comment="06.06.07 updated to work from transcript class - Philip">
+<template name="Transcript_INDAC" title="Transcript --&gt; INDAC long oligo." longDescription="For specified transcript(s) show the corresponding INDAC microarray long oligo, along with its tm, length and sequence." comment="06.06.07 updated to work from transcript class - Philip">
   <query name="Transcript_INDAC" model="genomic" view="Transcript.primaryIdentifier Transcript.microarrayOligos.primaryIdentifier Transcript.microarrayOligos.tm Transcript.microarrayOligos.length Transcript.microarrayOligos.sequence.residues" sortOrder="Transcript.primaryIdentifier asc">
     <node path="Transcript" type="Transcript">
       <constraint op="LOOKUP" value="CG10000-RA" description="Give details of the INDAC microarray long oligo for the transcript:" identifier="Transcript.class" editable="true" code="A">
@@ -4409,7 +5295,7 @@
     </node>
   </query>
 </template>
-<template name="TranscriptionFactor_Genes" title="TranscriptionFactor --&gt; Genes that have binding sites for this factor." longDescription="Show genes directly regulated by a particular transcription factor." comment="this is redundant since we have Protein_TFBindingSiteChromosomeGene, no?">
+<template name="TranscriptionFactor_Genes" title="TranscriptionFactor --&gt; Genes that have binding sites for this factor." longDescription="For specified transcription factor(s) show the genes associated binding sites" comment="this is redundant since we have Protein_TFBindingSiteChromosomeGene, no?">
   <query name="TranscriptionFactor_Genes" model="genomic" view="Gene.regulatoryRegions.factor.secondaryIdentifier Gene.regulatoryRegions.factor.symbol Gene.secondaryIdentifier Gene.symbol Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand" sortOrder="Gene.regulatoryRegions.factor.secondaryIdentifier asc">
     <pathDescription pathString="Gene.chromosomeLocation" description="Regulated gene &gt; chromosome location">
     </pathDescription>
@@ -4427,7 +5313,7 @@
     </node>
   </query>
 </template>
-<template name="Transcriptionfactor_TFBindingSiteChromosomeGene" title="Transcription factor [D. melanogaster] --&gt; TF binding sites." longDescription="For a particular D. melanogaster transcription factor, show its binding sites with their chromosomal locations and the genes that are directly regulated by that transcription factor (ie the genes where the sites are located in). (Data Source: Redfly)." comment="06.06.07 updated to work from gene class - Philip">
+<template name="Transcriptionfactor_TFBindingSiteChromosomeGene" title="Transcription factor [D. melanogaster] --&gt; TF binding sites." longDescription="For specified D. melanogaster transcription factor(s), show the binding sites, chromosomal locations and the genes where the sites are located. (Data Source: Redfly)." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Transcriptionfactor_TFBindingSiteChromosomeGene" model="genomic" view="TFBindingSite.factor.primaryIdentifier TFBindingSite.factor.symbol TFBindingSite.primaryIdentifier TFBindingSite.chromosomeLocation.object.primaryIdentifier TFBindingSite.chromosomeLocation.start TFBindingSite.chromosomeLocation.end TFBindingSite.gene.primaryIdentifier TFBindingSite.gene.symbol TFBindingSite.dataSets.title" sortOrder="TFBindingSite.factor.primaryIdentifier asc" constraintLogic="A and C and B">
     <pathDescription pathString="TFBindingSite.factor" description="Transcription factor">
     </pathDescription>
@@ -4442,7 +5328,7 @@
     <node path="TFBindingSite" type="TFBindingSite">
     </node>
     <node path="TFBindingSite.factor" type="Gene">
-      <constraint op="LOOKUP" value="CG8365" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      <constraint op="LOOKUP" value="E(spl)" description="" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="TFBindingSite.factor.organism" type="Organism">
@@ -4459,6 +5345,36 @@
     </node>
     <node path="TFBindingSite.dataSets.title" type="String">
       <constraint op="=" value="REDfly Drosophila transcription factor binding sites" description="" identifier="" code="B" extraValue="">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Translation_To_Gene_Type_Converter" title="Translation to gene type converter" longDescription="" comment="">
+  <query name="Translation_To_Gene_Type_Converter" model="genomic" view="Translation.id Translation.gene.id" sortOrder="Translation.id asc">
+    <node path="Translation" type="Translation">
+    </node>
+    <node path="Translation.id" type="Integer">
+      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Translation_To_Protein_Type_Converter" title="Translation to protein type converter" longDescription="" comment="">
+  <query name="Translation_To_Protein_Type_Converter" model="genomic" view="Translation.id Translation.gene.proteins.id" sortOrder="Translation.id asc">
+    <node path="Translation" type="Translation">
+    </node>
+    <node path="Translation.id" type="Integer">
+      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="Translation_To_Transcript_Type_Converter" title="Translation to transcript type converter" longDescription="" comment="">
+  <query name="Translation_To_Transcript_Type_Converter" model="genomic" view="Translation.id Translation.gene.transcripts.id" sortOrder="Translation.id asc">
+    <node path="Translation" type="Translation">
+    </node>
+    <node path="Translation.id" type="Integer">
+      <constraint op="=" value="0" description="Translation.id" identifier="Translation.id" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -4484,6 +5400,7 @@
   </query>
 </template>
 </template-queries>
+
 
 <tags>
   <tag name="im:aspect:Interactions" objectIdentifier="interactionsForOrganism" type="template">
