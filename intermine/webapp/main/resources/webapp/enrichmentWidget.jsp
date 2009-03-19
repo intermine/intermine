@@ -96,20 +96,20 @@ Reference population: <c:out value='${referencePopulation}'/>.
 	
 <html:form action="/widgetAction" target="_top">
 <div id="tool_bar_div">
-<ul id="button_bar"  onclick="toggleToolBarMenu(event);">
-	<li id="tool_bar_li_display"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
+<ul id="button_bar" >
+	<li id="tool_bar_li_display" class="tb_button"><img style="cursor: pointer;" src="images/icons/null.gif" width="62" height="25" alt="Display" border="0" id="tool_bar_button_display" class="tool_bar_button"></li>
 	<!-- <li id="tool_bar_li_export"><img style="cursor: pointer;" src="images/icons/null.gif" width="64" height="25" alt="Export" border="0" id="tool_bar_button_export" class="tool_bar_button"></li> -->
 </ul>
 </div>
 
 <%-- display --%>
-<div id="tool_bar_item_display" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_display" style="display:none;" class="tool_bar_item">
     <a href="javascript:document.widgetForm.submit();">Display checked items in results table</a>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_export')" >Cancel</a>
 </div>
 <%-- Export --%>
-<div id="tool_bar_item_export" style="visibility:hidden" class="tool_bar_item">
+<div id="tool_bar_item_export" style="display:none;" class="tool_bar_item">
     <c:set var="tableName" value="${param.table}" scope="request"/>
     <c:set var="tableType" value="results" scope="request"/>
     <c:set var="pagedTable" value="${resultsTable}" scope="request"/>
