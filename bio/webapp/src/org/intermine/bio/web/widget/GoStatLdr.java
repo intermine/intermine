@@ -106,8 +106,8 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
-        QueryField qfParentGoId = new QueryField(qcGoParent, "id");
-        QueryField qfChildGoId = new QueryField(qcGoChild, "id");
+        QueryField qfParentGoId = new QueryField(qcGoParent, "identifier");
+        QueryField qfChildGoId = new QueryField(qcGoChild, "identifier");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
@@ -228,16 +228,12 @@ public class GoStatLdr extends EnrichmentWidgetLdr
 
             // subquery
             Query subq = q;
+            subq.addToSelect(qfId);
             subq.addToSelect(qfParentGoIdentifier);
-            subq.addToGroupBy(qfParentGoIdentifier);
-
-            subq.addToGroupBy(qfParentGoId);
-            subq.addToGroupBy(qfChildGoId);
 
             QueryField qfName = null;
             if (action.equals("sample")) {
                 subq.addToSelect(qfParentGoName);
-                subq.addToGroupBy(qfParentGoName);
                 qfName = new QueryField(subq, qfParentGoName);
             }
 
