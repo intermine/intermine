@@ -1,22 +1,18 @@
 var lastOpen;
 
 function toggleToolBarMenu(button) {
-    toggleToolBarMenu(button,null);
-}
-
-function toggleToolBarMenu(button,pos) {
 	if(button == null) {
 	    return;
 	}
 	if (lastOpen) {
-	    hideMenu(lastOpen,pos);
+	    hideMenu(lastOpen);
 	}
 	var item_name = "#"+jQuery(button).attr('id').replace(/li/,'item');
 	if (jQuery(item_name).is(":visible")) {
-		hideMenu(item_name,pos);
+		hideMenu(item_name);
 		return;
 	}
-	if(pos!='widget') {
+	if(jQuery(button).attr('id').indexOf('widget') < 0) {
         jQuery(button).addClass('tb_button_active');
 	}
 	var posArray = findPosition(button);
@@ -26,11 +22,8 @@ function toggleToolBarMenu(button,pos) {
 	lastOpen = jQuery(item_name).attr('id');
 }
 function hideMenu(id) {
-    hideMenu(id,null);
-}
-function hideMenu(id,pos) {
 	jQuery("#"+id).hide();
-	if(pos!='widget') {
+	if(jQuery("#"+id).attr('id').indexOf('widget') < 0) {
         jQuery("#"+id.replace(/item/,'li')).removeClass('tb_button_active');
     }
 }
