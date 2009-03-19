@@ -146,6 +146,10 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 IntergenicRegionUtil ig = new IntergenicRegionUtil(getObjectStoreWriter());
                 LOGGER.info("Starting IntergenicRegionUtil.createIntergenicRegionFeatures()");
                 ig.createIntergenicRegionFeatures();
+            } else if ("create-gene-flanking-features".equals(operation)) {
+                CreateFlankingRegions cfr = new CreateFlankingRegions(getObjectStoreWriter());
+                LOGGER.info("Starting CreateFlankingRegions.createFlankingFeatures()");
+                cfr.createFlankingFeatures();
             } else if ("create-intron-features".equals(operation)) {
                 IntronUtil iu = new IntronUtil(getObjectStoreWriter());
                 configureDynamicAttributes(iu);
