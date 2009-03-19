@@ -141,13 +141,15 @@
                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-    </source>
+    </source> 
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
     <post-process name="transfer-sequences"/>
     <post-process name="create-references" dump="true"/>
     <post-process name="create-intergenic-region-features"/>
+    <post-process name="create-gene-flanking-features"/>
+
     <post-process name="do-sources"/>
 
     <post-process name="synonym-update"/>
