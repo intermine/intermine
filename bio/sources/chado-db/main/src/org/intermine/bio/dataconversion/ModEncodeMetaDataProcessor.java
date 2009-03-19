@@ -1159,6 +1159,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String heading = res.getString("name");
             String value = res.getString("value");
+            int rank = res.getInt("rank");
+
+            // TODO this is a temporary hack to make sure we get properly matched Experiment.factors
+            if (heading.startsWith("Experimental Factor") && (rank != 0)) {
+                continue;
+            }
+            
             String fieldName = FIELD_NAME_MAP.get(heading);
             if (fieldName == null) {
                 LOG.error("NOT FOUND in FIELD_NAME_MAP: " + heading + " [experiment]");
@@ -1184,7 +1191,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getExperimentPropResultSet(Connection connection)
     throws SQLException {
         String query =
-            "SELECT ep.experiment_id, ep.name, ep.value "
+            "SELECT ep.experiment_id, ep.name, ep.value, ep.rank "
             + "from experiment_prop ep ";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
