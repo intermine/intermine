@@ -124,6 +124,9 @@ public class QueryField implements QueryEvaluable
         }
         this.qc = q;
         this.fieldName = (String) q.getAliases().get(v);
+        if (this.fieldName == null) {
+            throw new NullPointerException("Field not found in subquery");
+        }
         this.secondFieldName = null;
         this.type = v.getType();
     }
