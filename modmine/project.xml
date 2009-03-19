@@ -96,7 +96,7 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="dmel-all-three_prime_UTR-*.fasta"/>
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
-      <property name="fasta.dataSourceName" value="WormBase"/>
+      <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
     <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
