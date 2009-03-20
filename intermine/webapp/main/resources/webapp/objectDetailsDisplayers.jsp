@@ -24,7 +24,7 @@
     </c:if>
     <c:forEach items="${WEBCONFIG.types[cld.name].longDisplayers}" var="displayer">
 
-    <c:if test="${empty showOnLeft || (showOnLeft == displayer.showOnLeft)}">
+    <c:if test="${(empty showOnLeft && displayer.showOnLeft == 'false') || (showOnLeft == displayer.showOnLeft)}">
       <c:set var="object_bk" value="${object}"/>
       <c:set var="object" value="${displayObject.object}" scope="request"/>
       <c:set var="cld" value="${cld}" scope="request"/>
