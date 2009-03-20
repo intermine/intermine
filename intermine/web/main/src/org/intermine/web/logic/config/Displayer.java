@@ -24,6 +24,8 @@ public class Displayer
     private String src;
     private String aspects = "";
     private Map params = new HashMap();
+    private String showOnLeft = "false";
+
 
     /**
      * Set the source of this displayer
@@ -119,6 +121,20 @@ public class Displayer
      */
     public String toString(String elementName) {
         return "<" + elementName + " src=\"" + src + "\"/>";
+    }
+
+    /**
+     * @return the showOnLeft
+     */
+    public String getShowOnLeft() {
+        return showOnLeft;
+    }
+
+    /**
+     * @param showOnLeft if true, show this displayer under the summary
+     */
+    public void setShowOnLeft(String showOnLeft) {
+        this.showOnLeft = showOnLeft;
     }
 }
 

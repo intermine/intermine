@@ -37,7 +37,7 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private LinkedHashMap<String, FieldConfig> fieldConfigMap = 
+    private LinkedHashMap<String, FieldConfig> fieldConfigMap =
         new LinkedHashMap<String, FieldConfig>();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
@@ -92,6 +92,9 @@ public class Type
      */
     public void addLongDisplayer(Displayer disp) {
         longDisplayers.add(disp);
+
+        // TODO we don't have displayers tied to aspects anymore.
+        // this should be removed
         String aspects[];
         if (StringUtils.isEmpty(disp.getAspects())) {
             aspects = new String[]{""};
