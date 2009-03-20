@@ -35,8 +35,10 @@ public abstract class GFF3Util
 
     /**
      * Create a GFF3Record from a LocatedSequenceFeature.
+     *
      * @param lsf the LocatedSequenceFeature
      * @param soClassNameMap a Map from FlyMine class names to SO term names
+     * @param sourceName the name of the data source encoded in the GFF, so the name of your project
      * @param extraAttributes name/value pairs to add to the attribute field of the GFF3Record
      * @return the GFF3Record or null if this lsf has no Chromosome or no Chromosome location
      */
