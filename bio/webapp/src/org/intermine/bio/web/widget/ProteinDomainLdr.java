@@ -1,4 +1,4 @@
-package org.flymine.web.widget;
+package org.intermine.bio.web.widget;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
