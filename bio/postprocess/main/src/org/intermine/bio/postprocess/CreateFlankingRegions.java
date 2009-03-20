@@ -162,7 +162,7 @@ public class CreateFlankingRegions
                 
                 location.setStrand(strand);
                 location.setObject(chr);
-                location.setSubject(gene);
+                location.setSubject(region);
 
                 region.setLength(new Integer((location.getEnd() - location.getStart()) + 1));
                 
