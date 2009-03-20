@@ -14,7 +14,6 @@
 
 <table cellpadding="0" cellspacing="0" >
 <tr>
-  <td><img src="theme/res_bar_left.gif"></td>
   <%-- Paging controls --%>
   <td class="resBar">
     <span style="padding-top:15px">
@@ -77,7 +76,6 @@
       </c:otherwise>
     </c:choose>
   </td>
-  <td><img src="theme/res_bar_right.gif"/></td>
 </tr>
 </table>
 
