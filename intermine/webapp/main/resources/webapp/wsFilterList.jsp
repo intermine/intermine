@@ -124,8 +124,15 @@ function clearBagName(element) {
         <li><strong>Actions:</strong></li>
     <c:choose>
     <c:when test="${type == 'template'}">
+    <script language="javascript">
+      jQuery("document").ready(function(){
+        jQuery("#export_button").click(function(){
+          jQuery("#modifyTemplateForm").submit();
+        });
+      });
+    </script>
         <li>
-            <html:link linkName="#" onclick="document.forms['modifyTemplateForm'].submit()" styleId="export_button"><img src="images/export.png" width="11" height="12" alt="Export">Export selected</html:link>
+            <html:submit property="export" value="Export selected"/>
             <html:hidden property="pageName" value="templates"/>
             <html:hidden property="templateButton" value="export"/>
         </li>
