@@ -68,12 +68,12 @@ public class GFF3UtilTest extends TestCase
         soClassNameMap.put("Exon", "exon");
         soClassNameMap.put("Chromosome", "chromosome");
 
-        GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, extraAttributes);
+        GFF3Record gff3Gene = GFF3Util.makeGFF3Record(gene, soClassNameMap, "FlyMine", extraAttributes);
 
-        GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap,
+        GFF3Record gff3Exon = GFF3Util.makeGFF3Record(exon, soClassNameMap, "FlyMine",
                                                       new HashMap<String, List<String>>());
         GFF3Record gff3Chromosome =
-            GFF3Util.makeGFF3Record(chromosome, soClassNameMap, new HashMap());
+            GFF3Util.makeGFF3Record(chromosome, soClassNameMap, "FlyMine", new HashMap());
 
         System.err.println (gff3Gene);
         System.err.println (gff3Exon);

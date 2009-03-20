@@ -30,11 +30,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
-import org.obo.dataadapter.OBOAdapter;
-import org.obo.dataadapter.OBOFileAdapter;
-import org.obo.dataadapter.OBOSerializationEngine;
-import org.obo.dataadapter.SimpleLinkFileAdapter;
-import org.obo.datamodel.OBOSession;
 
 /**
  * Convert tree of OboTerms into Items.
