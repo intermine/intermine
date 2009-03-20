@@ -157,7 +157,7 @@ public class CreateFlankingRegions
                 
                 // if the region hangs off the start or end of a chromosome set it to finish
                 // at the end of the chromosome
-                location.setStart(Math.max(start, 0));
+                location.setStart(Math.max(start, 1));
                 location.setEnd(Math.min(end, chr.getLength()));
                 
                 location.setStrand(strand);
