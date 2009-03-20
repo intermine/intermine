@@ -69,16 +69,18 @@ table.results {
   font-size: small;}
 
 /* =TD, =TH £TABLE,£BAGDETAILS*/
-table.results th, table.results td {
+table.results th {
+  border-right:1px solid #FFF;
+  border-bottom:1px solid #FFF;
+  white-space:nowrap;
+  font-size: 12px;
+}
+table.results td {
   white-space:nowrap;
   padding: 4px; 
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;
-  background: #fff;}
-
-/* =TH £TABLE,£BAGDETAILS*/
-table.results th {
-  font-size: 12px; padding:0;}
+}
 
 /* =TD £TABLE,£BAGDETAILS*/
 table.results td td {
@@ -94,4 +96,5 @@ table.theadbuttons tr td {
 
 .columnHeader {
   padding:10px 15px 10px 15px;
+  vertical-align:bottom;
 }

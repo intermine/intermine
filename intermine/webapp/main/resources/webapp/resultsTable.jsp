@@ -56,11 +56,8 @@
 
       <c:choose>
         <c:when test="${column.visible}">
-          <th align="center" valign="top" >
-            <div id="${column.index}" class="columnHeader">          
+          <th align="center" class="columnHeader">
           <c:if test="${column.selectable && empty inlineTable}">
-            <%--<c:set var="colcount" value="${colcount+1}"/>
-              <th align="center" class="checkbox">--%>
               <c:set var="disabled" value="false"/>
               <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
@@ -71,9 +68,7 @@
                              disabled="${disabled}">
                 <c:out value="${column.columnId}"/>
               </html:multibox>
-            <%--</th>--%>
           </c:if>
-              <%--<im:abbreviate value="${columnDisplayName}" length="20"/>--%>
               ${columnDisplayName}
               <im:typehelp type="${column.path}" fullPath="true"/>
               <%-- summary --%>
@@ -82,8 +77,6 @@
                 <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
                    title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
               </c:if>
-            </div>
-            </div>
           </th>
         </c:when>
         <c:otherwise>
