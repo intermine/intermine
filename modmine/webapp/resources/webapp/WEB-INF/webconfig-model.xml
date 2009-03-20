@@ -619,6 +619,13 @@
                                  typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
 
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
