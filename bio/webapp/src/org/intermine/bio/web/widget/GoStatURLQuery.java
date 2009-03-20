@@ -73,12 +73,11 @@ public class GoStatURLQuery implements WidgetURLQuery
         q.addConstraint(pathString, Constraints.isNull());
 
         // go term
-        pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm.identifier";
-        q.addConstraint(pathString, Constraints.eq(key), "C", "OntologyTerm");
+        pathString = prefix + ".goAnnotation.ontologyTerm.relations.childTerm";
+        q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
 
-        LOG.error("~~WIDGET QUERY:" + q);
         return q;
     }
 }
