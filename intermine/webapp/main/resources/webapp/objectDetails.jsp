@@ -119,7 +119,7 @@
                         </span>
                       </c:when>
                       <c:otherwise>
-                      <im:value>${entry.value}</im:value> 
+                      <im:value>${entry.value}</im:value>
                       </c:otherwise>
                     </c:choose>
                   </td>
@@ -150,7 +150,7 @@
 
       <td valign="top" width="66%">
 
-        <%-- Long displayers not tied to a particular aspect --%>
+        <%-- Long displayers --%>
         <tiles:insert page="/objectDetailsDisplayers.jsp">
           <tiles:put name="placement" value=""/>
           <tiles:put name="displayObject" beanName="object"/>
@@ -221,9 +221,20 @@
 <c:if test="${!empty object}">
   <im:vspacer height="12"/>
 
+
+        <%-- Long displayers to show on left --%>
+        <tiles:insert page="/objectDetailsDisplayers.jsp">
+          <tiles:put name="placement" value=""/>
+          <tiles:put name="displayObject" beanName="object"/>
+          <tiles:put name="heading" value="false"/>
+          <tiles:put name="showOnLeft" value="true"/>
+        </tiles:insert>
+
 <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
 <c:set var="templateIdPrefix" value="objectDetailsTemplate${objectType}"/>
 <c:set var="miscId" value="objectDetailsMisc${objectType}"/>
+
+
 
 <div class="heading">Further Information by Category&nbsp;&nbsp;&nbsp;<span style="font-size:0.8em;">
  (<a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'expand', '${miscId}', true);">expand all <img src="images/disclosed.gif"/></a> / <a href="javascript:toggleAll(${aspectCount}, '${templateIdPrefix}', 'collapse', '${miscId}', true);">collapse all <img src="images/undisclosed.gif"/></a>)</span></div>
