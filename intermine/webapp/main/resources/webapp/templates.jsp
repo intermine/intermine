@@ -9,7 +9,7 @@
 <html:xhtml/>
 
 <div class="body">
-      <html:form action="/modifyTemplate">
+      <html:form action="/modifyTemplate" styleId="modifyTemplateForm">
         <tiles:insert name="wsTemplateTable.tile">
           <tiles:put name="wsListId" value="all_templates"/>
           <tiles:put name="scope" value="all"/>
