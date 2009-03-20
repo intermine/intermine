@@ -22,7 +22,7 @@
       </div>
       <div class="body">
     </c:if>
-    <c:forEach items="${WEBCONFIG.types[cld.name].longDisplayers}" var="displayer">
+    <c:forEach items="${WEBCONFIG.types[cld.name].aspectDisplayers[placement]}" var="displayer">
 
     <c:if test="${(empty showOnLeft && displayer.showOnLeft == 'false') || (showOnLeft == displayer.showOnLeft)}">
       <c:set var="object_bk" value="${object}"/>

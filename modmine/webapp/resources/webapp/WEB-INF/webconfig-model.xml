@@ -272,7 +272,8 @@
 
   <class className="org.intermine.model.bio.GOAnnotation">
     <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier" showInInlineCollection="false" showInResults="true"/>
+      <fieldconfig fieldExpr="ontologyTerm.identifier" />
+      <fieldconfig fieldExpr="ontologyTerm.name" />
       <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
       <fieldconfig fieldExpr="qualifier"/>
     </fields>
@@ -303,6 +304,15 @@
   <class className="org.intermine.model.bio.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
+    </fields>
+  </class>
+
+
+    <class className="org.intermine.model.bio.Interaction">
+   <fields>
+     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
+     <fieldconfig fieldExpr="shortName"/>
+     <fieldconfig fieldExpr="interactionType"/>
     </fields>
   </class>
 
