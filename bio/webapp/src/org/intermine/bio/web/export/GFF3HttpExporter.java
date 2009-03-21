@@ -36,6 +36,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -79,8 +80,16 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         try {
             PrintWriter writer = HttpExportUtil.
                 getPrintWriterForClient(request, response.getOutputStream());
-            List<String> paths = new LinkedList<String>(StringUtil.
+            List<String> paths = new LinkedList<String>();
+            if (form != null) {
+                paths.addAll(StringUtil.
                     serializedSortOrderToMap(form.getPathsString()).keySet());
+            } else {
+                // if no form provided take the paths from the PagedTable columns
+                for (Column col : pt.getColumns()) {
+                    paths.add(col.getPath().toStringNoConstraints());
+                }
+            }
             removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer,
                     indexes, getSoClassNames(servletContext), paths, sourceName);
