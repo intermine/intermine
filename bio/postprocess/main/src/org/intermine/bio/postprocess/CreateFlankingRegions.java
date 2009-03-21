@@ -135,9 +135,9 @@ public class CreateFlankingRegions
                 region.setChromosome(chr);
                 region.setChromosomeLocation(location);
                 region.setOrganism(gene.getOrganism());
-                
-                // TODO deal with ends of chromosome
-                
+                region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + " " 
+                        + direction);  
+
                 // this should be some clever algorithm
                 int start, end;
                 
