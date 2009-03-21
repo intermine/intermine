@@ -47,3 +47,8 @@
 <action path="/initSubmissionProtocolsDisplayer"
   type="org.modmine.web.SubmissionProtocolsController" />
   
+<action path="/submissionOverlapsAction" name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsAction" input="objectDetails">
+      <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+</action>
+  
