@@ -61,7 +61,7 @@
     <icon-image>model/images/geneOntology.png</icon-image>
     <large-image>model/images/geneOntology.png</large-image>
     <intro-text>
-      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt;, &lt;i&gt;C. elegans&lt;/i&gt; and &lt;i&gt;A. gambiae&lt;/i&gt;.  The GO annotations are 'attached' to
+      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;.  The GO annotations are 'attached' to
       Genes and so each Gene has a reference (link) to a list of its GO
       annotations (if available).
     </intro-text>
@@ -69,21 +69,6 @@
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
 
-  <aspect name="Gene Expression">
-    <subtitle></subtitle>
-    <icon-image>model/images/marray.gif</icon-image>
-    <large-image>model/images/marray.gif</large-image>
-    <intro-text>
-      &lt;p&gt;
-      Microarray-based gene expression data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt; from FlyAtlas, as well as from selected data sets.
-      &lt;/p&gt;    
-    </intro-text>
-    <tile-name>model/microarray.jsp</tile-name>
-    <aspect-source name="ArrayExpress" url="http://www.ebi.ac.uk/arrayexpress/"/>
-    <aspect-source name="FlyAtlas" url="http://www.flyatlas.org/"/>
-  </aspect>
-
-	
   <aspect name="Literature">
     <subtitle></subtitle>
     <icon-image>model/images/book.png</icon-image>
