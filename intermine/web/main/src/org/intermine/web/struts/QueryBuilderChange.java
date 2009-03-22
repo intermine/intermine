@@ -428,8 +428,10 @@ public class QueryBuilderChange extends DispatchAction
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
+        String prefixWithSubs = getPrefixWithSubclasses(prefix, query, os.getModel());
+        
         // This call will work out the default join style between prefix and path
-        path = query.toPathDefaultJoinStyle(prefix, path);
+        path = query.toPathDefaultJoinStyle(prefixWithSubs, path);
         // Now correct the join style deferring to any existing information in the query
         path = query.getCorrectJoinStyle(path);
 
@@ -582,8 +584,13 @@ public class QueryBuilderChange extends DispatchAction
         // - there may be several new components added, each one should get the correct default
         //   join type
         
+
+        // If prefix contains joins there may be subclasses that don't appear in the path, add
+        // them here.
+        String prefixWithSubs = getPrefixWithSubclasses(prefix, query, model);
+        
         // This call will work out the default join style between prefix and path
-        String fullPathName = query.toPathDefaultJoinStyle(prefix, pathName);
+        String fullPathName = query.toPathDefaultJoinStyle(prefixWithSubs, pathName);
         
         // Now correct the join style deferring to any existing information in the query
         fullPathName = query.getCorrectJoinStyle(fullPathName);
@@ -778,4 +785,25 @@ public class QueryBuilderChange extends DispatchAction
         return mapping.findForward("mainConstraint");
     }
 
+    // Inspect query to find if prefix is already constrained to a subclass, add subclass
+    // constraints to the prefix string - e.g. Department.employees[Manager]
+    private String getPrefixWithSubclasses(String prefix, PathQuery query, Model model) {
+        String prefixString = prefix;
+        if (MainHelper.containsJoin(prefix)) {
+            String prefixJoinStyle = query.getCorrectJoinStyle(prefix);
+            PathNode prefixNode = query.getNode(prefixJoinStyle);
+            String parentType = prefixNode.getParentType();
+
+            ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
+            ReferenceDescriptor rfd =
+                prefixCld.getReferenceDescriptorByName(prefixNode.getFieldName());
+
+            String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
+            String prefixType = prefixNode.getType();
+            if (!prefixType.equals(refType)) {
+                prefixString += "[" + prefixType + "]";
+            }
+        }
+        return prefixString;
+    }
 }

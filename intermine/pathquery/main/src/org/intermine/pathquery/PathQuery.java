@@ -407,6 +407,16 @@ public class PathQuery
 
             ClassDescriptor cld = model.getClassDescriptorByName(clsName);
 
+            // cope with sub types specified by [type] in the path, extract the subType and use
+            // this to check for fields in the model
+            String subType = null;
+            
+            if (thisPart.indexOf("[") >= 0) {
+                String tmp = thisPart;
+                thisPart = tmp.substring(0, tmp.indexOf("["));
+                subType = tmp.substring(tmp.indexOf("[") + 1, tmp.indexOf("]"));
+            }
+            
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
             if (fld.isCollection()
                 || fld.isReference()
@@ -424,8 +434,13 @@ public class PathQuery
             // if an attribute this will be the end of the path, otherwise get the class of this
             // path element
             if (!fld.isAttribute()) {
-                ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
-                clsName = rfd.getReferencedClassName();
+                if (subType != null) {
+                    // subclass, so find actual class
+                    clsName = model.getClassDescriptorByName(subType).getName();
+                } else {
+                    ReferenceDescriptor rfd = (ReferenceDescriptor) fld;
+                    clsName = rfd.getReferencedClassName();
+                }
             }
         }
         return currentPath.toString();

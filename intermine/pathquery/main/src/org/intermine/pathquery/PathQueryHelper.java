@@ -34,7 +34,7 @@ public class PathQueryHelper
         // add the first valid view element to the sort order list
         for (Path path : query.getView()) {
             if (query.getSortOrder().isEmpty() && query.isValidOrderPath(path.toString())) {
-                query.addOrderBy(path.toString());
+                query.addOrderBy(path.toStringNoConstraints());
                 return;
             }
         }
