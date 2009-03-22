@@ -146,11 +146,11 @@ table.results tfoot tr td {
 }
 
 table.results tr.even TD{
-  background-color: #5DECC9;}
+  background-color: #B9E6F9;}
 
 table.results tr.odd TD{
-  border-right:1px solid #5DECC9;
-  border-bottom:1px solid #5DECC9;}
+  border-right:1px solid #B9E6F9;
+  border-bottom:1px solid #B9E6F9;}
 
 table.results tr td.highlightObject {
   background-color: #ee6;
