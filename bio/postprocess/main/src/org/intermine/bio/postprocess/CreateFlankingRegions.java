@@ -123,6 +123,12 @@ public class CreateFlankingRegions
                 // TODO what do we do if strand not set?
                 int geneStart = geneLoc.getStart().intValue();
                 int geneEnd = geneLoc.getEnd().intValue();
+                int chrLength = chr.getLength().intValue();
+                
+                // gene touches a chromosome end so there isn't a flanking region
+                if ((geneStart <= 1) || (geneEnd >= chrLength)) {
+                    continue;
+                }
                 
                 GeneFlankingRegion region = (GeneFlankingRegion) DynamicUtil
                 .createObject(Collections.singleton(GeneFlankingRegion.class));
@@ -135,7 +141,7 @@ public class CreateFlankingRegions
                 region.setChromosome(chr);
                 region.setChromosomeLocation(location);
                 region.setOrganism(gene.getOrganism());
-                region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + " " 
+                region.setPrimaryIdentifier(gene.getPrimaryIdentifier() + " " + distance + "kb " 
                         + direction);  
 
                 // this should be some clever algorithm
