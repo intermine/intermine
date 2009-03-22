@@ -20,7 +20,8 @@
   <class className="org.intermine.model.bio.Protocol">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"
+                   showInSummary="false" showInResults="false" showInInlineCollection="false" doNotTruncate="true"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
@@ -40,13 +41,14 @@
       <fieldconfig fieldExpr="factorName"/>
       <fieldconfig fieldExpr="factorType"/>
       <fieldconfig fieldExpr="DCCid"/>
+      <fieldconfig fieldExpr="description" showInSummary="false"/>
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
     <longdisplayers>
       <displayer src="submissionDisplayer.tile"/>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="submissionProtocolsDisplayer.tile"/>
+      <displayer src="submissionProtocolsDisplayer.tile" showOnLeft="true"/>
     </longdisplayers>
   </class>
 
