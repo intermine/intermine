@@ -99,7 +99,7 @@
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/whatcanidoonthispage/whatcanido.html"/>
-       <arg value="modENCODE-mine Help"/>
+       <arg value="modMine Help"/>
        <arg value="${dist.www}/help"/>
      </exec>
 
@@ -117,7 +117,7 @@
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/tour/tour.txt"/>
-       <arg value="modENCODE-mine Tour"/>
+       <arg value="modMine Tour"/>
        <arg value="${dist.www}/help/tour"/>
      </exec>
 
@@ -136,13 +136,13 @@
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/tutorials/tutorial1/tutorial1-lists.txt"/>
-       <arg value="modENCODE-mine Tutorial 1: Creating and using lists"/>
+       <arg value="modMine Tutorial 1: Creating and using lists"/>
        <arg value="${dist.www}/help/tutorial1/"/>
      </exec>
 
      <exec executable="${common.scripts}/process_help.pl">
        <arg value="${src.www}/help/tutorials/tutorial2/tutorial2.txt"/>
-       <arg value="modENCODE-mine Tutorial 2: Using the QueryBuilder and Editing Templates"/>
+       <arg value="modMine Tutorial 2: Using the QueryBuilder and Editing Templates"/>
        <arg value="${dist.www}/help/tutorial2/"/>
      </exec>
 
