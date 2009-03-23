@@ -21,10 +21,10 @@ div#submissionProtocols h3 {
 
 <div class="body">
   <div id="submissionProtocols">
-    <p>
-    
+
+<p>
     <h3>Browse metadata for this submission:</h3>
-    
+
     <table cellpadding="0" cellspacing="0" border="0" class="results">
       
       <tr>
@@ -33,6 +33,7 @@ div#submissionProtocols h3 {
         <th>Applied Protocol</th>
         <th colspan=2">Outputs</th>
       </tr>
+       <c:set var="prevStep" value="0" />
 
       <tbody>
     <c:forEach var="row" items="${pagedResults.rows}" varStatus="status">
@@ -45,8 +46,24 @@ div#submissionProtocols h3 {
       </c:set>
 
       <c:forEach var="subRow" items="${row}" varStatus="multiRowStatus">
+       <%--
        <tr class="<c:out value="${rowClass}"/>">
+--%>
 
+        <im:instanceof instanceofObject="${subRow[0]}" 
+          instanceofClass="org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue" 
+          instanceofVariable="isFirstValue"/>
+        <c:if test="${isFirstValue == 'true'}">
+         <c:set var="step" value="${subRow[0].value.field}" scope="request"/>
+         </c:if>
+                    <c:set var="stepClass">
+                      <c:choose>
+                       <c:when test="${step % 2 == 1}">stepE</c:when>
+                       <c:otherwise>stepO</c:otherwise>
+                      </c:choose>
+                    </c:set>
+
+       <tr class="<c:out value="${stepClass}"/>">
        <c:set var="output" value="true"/>
 
        <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
@@ -56,6 +73,21 @@ div#submissionProtocols h3 {
             <c:set var="resultElement" value="${subRow[column.index].value}" scope="request"/>
 
             <c:choose>
+                <c:when test="${column.index == 0}">
+                 <c:choose>
+                   <c:when test="${resultElement.field != prevStep}">
+                    <td rowspan="${subRow[column.index].rowspan}" >${resultElement.field}
+                    </td>
+                    <c:set var="prevStep" value="${resultElement.field}"/>
+                  </c:when>
+                  <c:otherwise>
+                    <c:set var="output" value="true"/>
+                    <td rowspan="${subRow[column.index].rowspan}" >${resultElement.field}
+                    </td>
+                  </c:otherwise>
+                 </c:choose>
+                </c:when>
+            
               <c:when test="${column.index == 1  || column.index == 5}">
             
                 <c:if test="${fn:startsWith(resultElement.field,'Anonymous Datum')}">
@@ -80,8 +112,10 @@ div#submissionProtocols h3 {
                 </c:if>     
                                    
                 <c:if test="${output}">
+             
+               
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                     rowspan="${subRow[column.index].rowspan}"> 
+                     rowspan="${subRow[column.index].rowspan}"  class="<c:out value="${stepClass}"/>"> 
               
                    <c:choose>
                     <c:when test="${fn:startsWith(fn:trim(resultElement.field), 'http://')}">
@@ -106,6 +140,8 @@ div#submissionProtocols h3 {
     </tbody>
 
     </table>
+
+
     <br/>
   </div>
 </div>
