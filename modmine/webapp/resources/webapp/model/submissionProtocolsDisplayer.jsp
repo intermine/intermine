@@ -19,12 +19,40 @@ div#submissionProtocols h3 {
 }
 </style>
 
+
 <div class="body">
-  <div id="submissionProtocols">
+
+<%--
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function () {
+        jQuery("button").click(function () { 
+      jQuery("p").toggle();
+        });
+    })
+</script>
+
+<button>Toggle</button>
+  <p>Hello</p>
+  <p style="display: none">Good Bye</p>
+--%>
+
+
+<table cellspacing="0" width="100%">
+<tr>
+  <TD colspan=2 align="left" style="padding-bottom:10px">
+<script type="text/javascript" charset="utf-8">
+    jQuery(document).ready(function () {
+        jQuery("#bro").click(function () { 
+           jQuery("#submissionProtocols").toggle();
+        });
+    })
+</script>
+
+<div id="bro"> <h3>Browse metadata for this submission <img src="images/undisclosed.gif">:</h3>
+
+  <div id="submissionProtocols" style="display: none">
 
 <p>
-    <h3>Browse metadata for this submission:</h3>
-
     <table cellpadding="0" cellspacing="0" border="0" class="results">
       
       <tr>
@@ -112,8 +140,6 @@ div#submissionProtocols h3 {
                 </c:if>     
                                    
                 <c:if test="${output}">
-             
-               
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
                      rowspan="${subRow[column.index].rowspan}"  class="<c:out value="${stepClass}${rowClass}"/>"> 
               
@@ -144,4 +170,13 @@ div#submissionProtocols h3 {
 
     <br/>
   </div>
+
+
+</TD>
+</tr>
+</table>
 </div>
+
+
+</div>
+
