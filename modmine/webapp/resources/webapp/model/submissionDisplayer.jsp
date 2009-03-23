@@ -55,11 +55,6 @@ div#submissionDescription {
   width: 500px;
 }
 
-.submissionForm div {
-  font-size: 1em;
-}
-
-
 </style>
 
 <div class="body">
@@ -273,6 +268,7 @@ div#submissionDescription {
      <html:form action="/submissionOverlapsAction" method="post" enctype="multipart/form-data" >
 
        <html:hidden property="submissionTitle" value="${object.title}" />
+       <html:hidden property="submissionId" value="${object.id}" />
 
      <h3>Find overlapping features:</h3>
 
