@@ -152,7 +152,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
             q.addToSelect(objectCount);
         } else  {   // k and M
             subQ.addToSelect(qfId);
-            QueryField qfName = new QueryField(qcProteinFeature, "name");
+            QueryField qfName = new QueryField(qcProteinFeature, "shortName");
             subQ.addToSelect(qfName);
 
             QueryField qfInterProId = new QueryField(subQ, qfId);
