@@ -70,13 +70,13 @@ public class SubmissionOverlapsAction extends InterMineAction {
             String featureType = submissionOverlapsForm.getOverlapFeatureType();
             String findFeatureType = submissionOverlapsForm.getOverlapFindType();
             
-            q.addView(findFeatureType + ".primaryIdentifier");            
-            q.addView(findFeatureType + ".overlappingFeatures.secondaryIdentifier");
+            q.addView(featureType + ".secondaryIdentifier");            
+            q.addView(featureType + ".overlappingFeatures.primaryIdentifier");
             
 
-            PathNode featureNode = q.addNode(findFeatureType + ".overlappingFeatures");
-            featureNode.setType(featureType);
-            q.addConstraint(findFeatureType + ".overlappingFeatures.dataSets.title",
+            PathNode featureNode = q.addNode(featureType + ".overlappingFeatures");
+            featureNode.setType(findFeatureType);
+            q.addConstraint(featureType + ".dataSets.title",
                     Constraints.eq(submissionTitle));
             
             
