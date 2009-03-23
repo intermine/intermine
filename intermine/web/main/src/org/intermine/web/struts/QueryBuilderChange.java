@@ -792,11 +792,12 @@ public class QueryBuilderChange extends DispatchAction
         if (MainHelper.containsJoin(prefix)) {
             String prefixJoinStyle = query.getCorrectJoinStyle(prefix);
             PathNode prefixNode = query.getNode(prefixJoinStyle);
+            
             String parentType = prefixNode.getParentType();
 
             ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
-            ReferenceDescriptor rfd =
-                prefixCld.getReferenceDescriptorByName(prefixNode.getFieldName());
+            ReferenceDescriptor rfd = (ReferenceDescriptor)
+                prefixCld.getFieldDescriptorByName(prefixNode.getFieldName());
 
             String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
             String prefixType = prefixNode.getType();
