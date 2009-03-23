@@ -22,37 +22,30 @@ div#submissionProtocols h3 {
 
 <div class="body">
 
-<%--
-<script type="text/javascript" charset="utf-8">
-    jQuery(document).ready(function () {
-        jQuery("button").click(function () { 
-      jQuery("p").toggle();
-        });
-    })
-</script>
-
-<button>Toggle</button>
-  <p>Hello</p>
-  <p style="display: none">Good Bye</p>
---%>
-
-
 <table cellspacing="0" width="100%">
 <tr>
   <TD colspan=2 align="left" style="padding-bottom:10px">
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
         jQuery("#bro").click(function () { 
-           jQuery("#submissionProtocols").toggle();
+           if(jQuery("#submissionProtocols").is(":hidden")) {
+             jQuery("#oc").attr("src", "images/disclosed.gif");
+           } else {
+             jQuery("#oc").attr("src", "images/undisclosed.gif");
+           }
+           jQuery("#submissionProtocols").toggle("slow");
         });
     })
 </script>
 
-<div id="bro"> <h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif">:</h3>
+<html:link linkName="#" styleId="bro" style="cursor:pointer"> 
 
-  <div id="submissionProtocols" style="display: block">
+<h3>Browse metadata for this submission <img src="images/undisclosed.gif" id="oc"></h3>
+</html:link>
 
-<p>
+
+  <div id="submissionProtocols" style="display: none">
+    <p>
     <table cellpadding="0" cellspacing="0" border="0" class="results">
       
       <tr>
@@ -123,7 +116,10 @@ div#submissionProtocols h3 {
                   <td colspan="2" rowspan="${subRow[column.index].rowspan}" >
                     <c:choose>
                       <c:when test="${column.index == 1}">
-                        <i><c:out value="-- from previous Step"/></i>
+                        <i><c:out value="output from step ${prevStep -1} -->"/></i>
+
+<%--                        <i><c:out value="-- from previous Step"/></i>
+--%>
                       </c:when>
                       <c:otherwise>
                         <i><c:out value="--> next Step"/></i>                     
