@@ -632,7 +632,7 @@
                                  externalLinkLabel="PubMed:" />
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
-                                 link="org.flymine.web.widget.ProteinDomainURLQuery"
+                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
                                  label="Protein Domain"
                                  description="Protein Domains enriched for items in this list."
