@@ -10,7 +10,6 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -24,7 +23,7 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  */
 public class GoStatURLQuery implements WidgetURLQuery
 {
-    private static final Logger LOG = Logger.getLogger(GoStatURLQuery.class);
+    //private static final Logger LOG = Logger.getLogger(GoStatURLQuery.class);
     private ObjectStore os;
     private InterMineBag bag;
     private String key;
@@ -75,6 +74,7 @@ public class GoStatURLQuery implements WidgetURLQuery
         // go term
         pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm";
         q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
+
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
         return q;
