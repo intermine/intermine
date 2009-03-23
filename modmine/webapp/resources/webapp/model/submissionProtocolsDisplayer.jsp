@@ -48,9 +48,9 @@ div#submissionProtocols h3 {
     })
 </script>
 
-<div id="bro"> <h3>Browse metadata for this submission <img src="images/undisclosed.gif">:</h3>
+<div id="bro"> <h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif">:</h3>
 
-  <div id="submissionProtocols" style="display: none">
+  <div id="submissionProtocols" style="display: block">
 
 <p>
     <table cellpadding="0" cellspacing="0" border="0" class="results">
