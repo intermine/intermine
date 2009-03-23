@@ -29,8 +29,22 @@ public class SubmissionOverlapsForm extends ActionForm
     private String overlapFeatureType;
     private String flankingFeatureType;
     private String overlapFindType;
-
+    private String submissionId;
     
+    /**
+     * @return the submissionId
+     */
+    public String getSubmissionId() {
+        return submissionId;
+    }
+
+    /**
+     * @param submissionId the submissionId to set
+     */
+    public void setSubmissionId(String submissionId) {
+        this.submissionId = submissionId;
+    }
+
     /**
      * @return the overlapFeatureType
      */

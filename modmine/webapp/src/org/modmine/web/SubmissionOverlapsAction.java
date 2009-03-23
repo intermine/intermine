@@ -27,9 +27,6 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.WebResultsExecutor;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -65,7 +62,8 @@ public class SubmissionOverlapsAction extends InterMineAction {
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
-
+        String submissionId = submissionOverlapsForm.getSubmissionId();
+        
         PathQuery q = new PathQuery(os.getModel());
         
         if (request.getParameter("overlaps") != null) {
@@ -112,10 +110,12 @@ public class SubmissionOverlapsAction extends InterMineAction {
         String qid = SessionMethods.startQuery(clientState, session, messages,
                                                false, q);
         Thread.sleep(200);
+    
+        String trail = "|" + submissionId;
         
         return new ForwardParameters(mapping.findForward("waiting"))
         .addParameter("qid", qid)
-        //.addParameter("trail", trail)
+        .addParameter("trail", trail)
         .forward();
         
         
