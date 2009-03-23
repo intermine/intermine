@@ -72,8 +72,6 @@ public class WebSearchableListController extends TilesAction
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
         Map filteredWebSearchables;
-
-
         HttpSession session = request.getSession();
 
         if (session.getAttribute("IS_SUPERUSER") != null
@@ -122,8 +120,6 @@ public class WebSearchableListController extends TilesAction
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
-
-
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
 
         JSONWriter jsonWriter = new JSONWriter();
@@ -141,8 +137,8 @@ public class WebSearchableListController extends TilesAction
         Comparator<String> comparator = new Comparator<String>() {
 
             public int compare(String o1, String o2) {
-                WebSearchable ws1 = (WebSearchable) filteredWebSearchables.get(o1);
-                WebSearchable ws2 = (WebSearchable) filteredWebSearchables.get(o2);
+                WebSearchable ws1 = filteredWebSearchables.get(o1);
+                WebSearchable ws2 = filteredWebSearchables.get(o2);
                 if (ws1 instanceof InterMineBag && ws2 instanceof InterMineBag) {
                     InterMineBag bag1 = (InterMineBag) ws1;
                     InterMineBag bag2 = (InterMineBag) ws2;
@@ -157,22 +153,19 @@ public class WebSearchableListController extends TilesAction
             private int compareBags(InterMineBag bag1, InterMineBag bag2) {
                 if (bag1.getDateCreated() != null && bag2.getDateCreated() != null) {
                     if (!bag1.getDateCreated().equals(bag2.getDateCreated())) {
-                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());    
-                    } else {
-                        return compareByName(bag1, bag2);
+                        return bag2.getDateCreated().compareTo(bag1.getDateCreated());
                     }
-                } else {
                     return compareByName(bag1, bag2);
                 }
+                return compareByName(bag1, bag2);
             }
 
             private int compareByName(WebSearchable ws1, WebSearchable ws2) {
                 if (!ws1.getName().equals(ws2.getName())) {
                     return ws1.getName().compareTo(ws2.getName());
-                } else {
-                    // at the sort order doesn't matter, two same items
-                    return 1;
                 }
+                // at the sort order doesn't matter, two same items
+                return 1;
             }
         };
 

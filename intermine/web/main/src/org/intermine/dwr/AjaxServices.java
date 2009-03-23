@@ -296,7 +296,7 @@ public class AjaxServices
      * @param newTaggedObj name of new tagged object
      * @param type tag type
      * @param userName user name
-     * @param tagManager tag manager 
+     * @param tagManager tag manager
      */
     public static void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
             String userName, TagManager tagManager) {
@@ -306,7 +306,7 @@ public class AjaxServices
             tagManager.deleteTag(tag);
         }
     }
-    
+
     /**
      * For a given bag, set its description
      * @param bagName the bag
@@ -580,7 +580,7 @@ public class AjaxServices
             }
 
             if (profile.getUsername() != null && userTags.size() > 0) {
-                filteredWsMap = new SearchFilterEngine().filterByTags(wsMap, userTags, type, 
+                filteredWsMap = new SearchFilterEngine().filterByTags(wsMap, userTags, type,
                         profile.getUsername(), getTagManager());
             } else {
                 filteredWsMap = wsMap;
@@ -635,7 +635,7 @@ public class AjaxServices
                 Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
                 bagMap.put(imBag.getName(), imBag);
 
-                ProfileManager pm = 
+                ProfileManager pm =
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
                 PathQuery pathQuery = TypeConverter.getConversionQuery(BagConversionHelper.
                     getConversionTemplates(pm.getSuperuserProfile()),
@@ -1083,11 +1083,11 @@ public class AjaxServices
             int oldi = oldOrderList.indexOf(newi);
             newView.add(view.get(oldi));
         }
-        
+
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         pathQuery.setViewPaths(newView);
     }
-    
+
     /**
      * Add a Node from the sort order
      * @param path the Path as a String
@@ -1100,7 +1100,7 @@ public class AjaxServices
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         query.setOrderBy(path, direction);
     }
-    
+
     /**
      * Reset the sort order
      */
@@ -1109,7 +1109,7 @@ public class AjaxServices
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         query.resetOrderBy();
     }
-    
+
     /**
      * Get the news
      * @param rssURI the URI of the rss feed
@@ -1228,7 +1228,7 @@ public class AjaxServices
                 }
                 if (tagName.startsWith(TagNames.IM_PREFIX)
                         && !SessionMethods.isSuperUser(session)) {
-                    return "You cannot add tag starting at " + TagNames.IM_PREFIX + " ."
+                    return "You cannot add tag starting with " + TagNames.IM_PREFIX + " ."
                         + "It is reserved for internal needs.";
                 }
 
@@ -1329,11 +1329,11 @@ public class AjaxServices
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
     }
-    
+
     private static TagManager getTagManager() {
         return SessionMethods.getTagManager(getRequest().getSession());
     }
-    
+
     /**
      * Set the constraint logic on a query to be the given expression
      * @param expression the constraint logic for the query
@@ -1345,7 +1345,7 @@ public class AjaxServices
         query.setConstraintLogic(expression);
         query.syncLogicExpression(SessionMethods.getDefaultOperator(session));
     }
-    
+
     /**
      * Get the grouped constraint logic
      * @return a list representing the grouped constraint logic
