@@ -16,7 +16,6 @@
 <script type="text/javascript" src="js/table.js" ></script>
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <script type="text/javascript">
-<!--//<![CDATA[
   function changePageSize() {
     var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
     var pagesize = document.changeTableSizeForm.pageSize.options[document.changeTableSizeForm.pageSize.selectedIndex].value;
@@ -27,12 +26,9 @@
     }
     document.location.href=url;
   }
-
-//]]>-->
 </script>
 
 <c:set var="colcount" value="0" />
-<%--<html:form action="/saveBag" >--%>
 <table class="results" cellspacing="0" width="100%">
 
   <%-- The headers --%>
