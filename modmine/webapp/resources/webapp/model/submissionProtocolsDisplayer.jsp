@@ -40,7 +40,7 @@ div#submissionProtocols h3 {
 
 <html:link linkName="#" styleId="bro" style="cursor:pointer"> 
 
-<h3>Browse metadata for this submission <img src="images/undisclosed.gif" id="oc"></h3>
+<h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif" id="oc"></h3>
 </html:link>
 
 
@@ -171,7 +171,6 @@ div#submissionProtocols h3 {
 </TD>
 </tr>
 </table>
-</div>
 
 
 </div>
