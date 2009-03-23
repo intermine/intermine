@@ -43,20 +43,30 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String paths = "";
+        String prefix = "";
         if (bagType.equals("Gene")) {
-            paths = "Gene.proteins.primaryIdentifier,Gene.proteins.primaryAccession,"
-                + "Gene.proteins.organism.name,Gene.primaryIdentifier,"
-                + "Gene.secondaryIdentifier,Gene.proteins.proteinDomains.primaryIdentifier,"
-                + "Gene.proteins.proteinDomains.name";
+            prefix = "Gene.proteins.";
         } else if (bagType.equals("Protein")) {
-            paths = "Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name";
+            prefix = "Protein.";
         }
+
+        String paths = prefix + "primaryAccession," + prefix + "organism.name";
+
+        if (bagType.equals("Gene")) {
+            paths += ",Gene.primaryIdentifier,Gene.secondaryIdentifier,";
+        }
+
+        paths += prefix + "proteinDomains.primaryIdentifier," + prefix + "proteinDomains.name";
+
         q.setView(paths);
+
+        // bag constraint
         q.addConstraint(bagType,  Constraints.in(bag.getName()));
-        String pathString = (bagType.equals("Gene") ? "Gene.proteins.proteinDomains"
-                                                         : "Protein.proteinDomains");
-        q.addConstraint(pathString,  Constraints.lookup(key));
+
+        // constrain to domains user selected
+        q.addConstraint(prefix + ".proteinDomains",  Constraints.lookup(key));
+
+
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         q.setOrderBy(paths);

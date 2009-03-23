@@ -13,10 +13,12 @@ package org.intermine.bio.web.widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -42,6 +44,7 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
     private Collection<String> organisms;
     private InterMineBag bag;
     private Collection<String> organismsLower = new ArrayList<String>();
+    private Model model;
 
     /**
      * Create a new UniProtFeaturesLdr.
@@ -51,6 +54,7 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
      */
     public UniProtFeaturesLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
+        model = os.getModel();
         organisms = BioUtil.getOrganisms(os, bag, false);
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
@@ -66,12 +70,12 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
         QueryClass qcOrganism = new QueryClass(Organism.class);
         QueryClass qcUniProtFeature = null;
         try {
-            qcUniProtFeature = new QueryClass(Class.forName("UniProtFeature"));
+            qcUniProtFeature = new QueryClass(Class.forName(model.getPackageName()
+                                                          + ".UniProtFeature"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
             return null;
         }
-
 
         QueryField qfProtId = new QueryField(qcProtein, "id");
         QueryField qfName = new QueryField(qcUniProtFeature, "type");
@@ -142,6 +146,7 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
             }
             q.addToGroupBy(qfType);
         }
+
         return q;
     }
 }

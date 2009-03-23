@@ -77,9 +77,6 @@ public class GoStatURLQuery implements WidgetURLQuery
         q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
-
-        LOG.error(" ~~~ widget URL query:" + q);
-
         return q;
     }
 }
