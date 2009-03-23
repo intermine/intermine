@@ -44,7 +44,7 @@ div#submissionProtocols h3 {
 </html:link>
 
 
-  <div id="submissionProtocols" style="display: none">
+  <div id="submissionProtocols" style="display: block">
     <p>
     <table cellpadding="0" cellspacing="0" border="0" class="results">
       
