@@ -789,7 +789,7 @@ public class QueryBuilderChange extends DispatchAction
     // constraints to the prefix string - e.g. Department.employees[Manager]
     private String getPrefixWithSubclasses(String prefix, PathQuery query, Model model) {
         String prefixString = prefix;
-        if (MainHelper.containsJoin(prefix)) {
+        if (prefix != null && MainHelper.containsJoin(prefix)) {
             String prefixJoinStyle = query.getCorrectJoinStyle(prefix);
             PathNode prefixNode = query.getNode(prefixJoinStyle);
             
