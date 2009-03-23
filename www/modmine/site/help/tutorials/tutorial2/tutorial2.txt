@@ -31,13 +31,13 @@
         <li><p>Applying constraints to this data to define the subset of that type of data required</p></li>
         <li><p>Defining your results table by selecting the fields you want to include.</p></li>  
 
-      <p>The main modENCODE-mine QueryBuilder page is composed of several sections:</p>
+      <p>The main modMine QueryBuilder page is composed of several sections:</p>
 
        <img alt="[querybuilder_overview.png]" class="inlinegraphic" src="querybuilder_overview.png"/> 
         
 
       <ul> <li><p><b>The model browser (left)</b> allows you to browse
-        through the modENCODE-mine data model.  This displays an initial
+        through the modMine data model.  This displays an initial
         starting class and its fields with classes containing related
         information listed below.  Each class can be expanded to show
         the fields for that class and in turn, any classes related to
@@ -184,18 +184,18 @@ down and click 'Show results' to run the query. </p></li>
      
 <h1>5. Building a query from scratch</h1>
  
-      <p>To build a new query from scratch, access the modENCODE-mine
-    QueryBuilder at the bottom of the modENCODE-mine home page or by choosing
+      <p>To build a new query from scratch, access the modMine
+    QueryBuilder at the bottom of the modMine home page or by choosing
     a query starting point at the bottom of a data category page.</p>
 
 
 <h1>6. Building a template: start</h1>
 
 
-      <p>Any query that has been built using the modENCODE-mine QueryBuilder
+      <p>Any query that has been built using the modMine QueryBuilder
     can be saved as a template query, as long as it includes at least
     one editable constraint. In order to build a template you need to
-    be logged-in to modENCODE-mine. Templates that you create yourself are
+    be logged-in to modMine. Templates that you create yourself are
     saved to your 'MyMine' account.</p>
 
     <p> We will now save the query we made above as a template. First
@@ -264,7 +264,7 @@ down and click 'Show results' to run the query. </p></li>
       <p>You will be able to view and run this template both from the
     templates page and from the 'Saved templates' tab of your 'MyMine'
     account. Access your MyMine page via the tab on the menu bar on
-    every modENCODE-mine page.  For each template on your MyMine page there
+    every modMine page.  For each template on your MyMine page there
     are a set of actions, 'Run', 'Edit' and 'Export'. 'Run' will run
     the template query and give you a results page.  'Edit' allows you
     to edit the template query. 'Export' will export the template in
