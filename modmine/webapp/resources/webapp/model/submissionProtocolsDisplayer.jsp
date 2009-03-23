@@ -63,7 +63,7 @@ div#submissionProtocols h3 {
                       </c:choose>
                     </c:set>
 
-       <tr class="<c:out value="${stepClass}"/>">
+       <tr class="<c:out value="${stepClass}${rowClass}"/>">
        <c:set var="output" value="true"/>
 
        <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
@@ -115,7 +115,7 @@ div#submissionProtocols h3 {
              
                
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                     rowspan="${subRow[column.index].rowspan}"  class="<c:out value="${stepClass}"/>"> 
+                     rowspan="${subRow[column.index].rowspan}"  class="<c:out value="${stepClass}${rowClass}"/>"> 
               
                    <c:choose>
                     <c:when test="${fn:startsWith(fn:trim(resultElement.field), 'http://')}">
