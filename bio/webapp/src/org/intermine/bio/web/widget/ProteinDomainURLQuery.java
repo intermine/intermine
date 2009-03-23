@@ -22,6 +22,7 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
  */
 public class ProteinDomainURLQuery implements WidgetURLQuery
 {
+    //private static final Logger LOG = Logger.getLogger(ProteinDomainURLQuery.class);
     private InterMineBag bag;
     private String key;
     private ObjectStore os;
@@ -41,24 +42,24 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery() {
+
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String prefix = "";
-        if (bagType.equals("Gene")) {
-            prefix = "Gene.proteins.";
-        } else if (bagType.equals("Protein")) {
-            prefix = "Protein.";
-        }
+        String prefix = (bagType.equals("Protein") ? "Protein" : "Gene.proteins");
 
-        String paths = prefix + "primaryAccession," + prefix + "organism.name";
+        String paths = "";
 
         if (bagType.equals("Gene")) {
-            paths += ",Gene.primaryIdentifier,Gene.secondaryIdentifier,";
+            paths += "Gene.primaryIdentifier,Gene.secondaryIdentifier,";
         }
 
-        paths += prefix + "proteinDomains.primaryIdentifier," + prefix + "proteinDomains.shortName";
+        paths = prefix + ".primaryAccession,"
+                + prefix + ".organism.name,"
+                + prefix + ".proteinDomains.primaryIdentifier,"
+                + prefix + ".proteinDomains.shortName";
 
         q.setView(paths);
+        q.setOrderBy(paths);
 
         // bag constraint
         q.addConstraint(bagType,  Constraints.in(bag.getName()));
@@ -66,10 +67,9 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         // constrain to domains user selected
         q.addConstraint(prefix + ".proteinDomains",  Constraints.lookup(key));
 
-
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
-        q.setOrderBy(paths);
+
         return q;
     }
 }
