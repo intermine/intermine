@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -36,10 +35,11 @@ import org.intermine.web.struts.InterMineAction;
  * @author Richard Smith
  *
  */
-public class SubmissionOverlapsAction extends InterMineAction {
+public class SubmissionOverlapsAction extends InterMineAction
+{
 
-    private static final Logger LOG = Logger.getLogger(SubmissionOverlapsAction.class);
-    
+    //private static final Logger LOG = Logger.getLogger(SubmissionOverlapsAction.class);
+
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
@@ -63,16 +63,16 @@ public class SubmissionOverlapsAction extends InterMineAction {
 
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String submissionId = submissionOverlapsForm.getSubmissionId();
-        
+
         PathQuery q = new PathQuery(os.getModel());
-        
+
         if (request.getParameter("overlaps") != null) {
             String featureType = submissionOverlapsForm.getOverlapFeatureType();
             String findFeatureType = submissionOverlapsForm.getOverlapFindType();
-            
-            q.addView(findFeatureType + ".primaryIdentifier");            
+
+            q.addView(findFeatureType + ".primaryIdentifier");
             q.addView(findFeatureType + ".overlappingFeatures.secondaryIdentifier");
-            
+
             if (findFeatureType.equals("Exon")) {
                 q.addView(findFeatureType + ".gene.primaryIdentifier");
             }
@@ -81,8 +81,8 @@ public class SubmissionOverlapsAction extends InterMineAction {
             featureNode.setType(featureType);
             q.addConstraint(findFeatureType + ".overlappingFeatures.dataSets.title",
                     Constraints.eq(submissionTitle));
-            
-            
+
+
         } else if (request.getParameter("flanking") != null) {
             String direction = submissionOverlapsForm.getDirection();
             String distance = submissionOverlapsForm.getDistance();
@@ -95,29 +95,29 @@ public class SubmissionOverlapsAction extends InterMineAction {
 
             q.addConstraint("GeneFlankingRegion.distance", Constraints.eq(distance));
             q.addConstraint("GeneFlankingRegion.direction", Constraints.eq(direction));
-            q.addConstraint("GeneFlankingRegion.overlappingFeatures.dataSets.title", 
+            q.addConstraint("GeneFlankingRegion.overlappingFeatures.dataSets.title",
                     Constraints.eq(submissionTitle));
-
+            q.setConstraintLogic("A and B and C");
             q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");
 
         }
-
+        q.syncLogicExpression("and");
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages,
                                                false, q);
         Thread.sleep(200);
-    
+
         String trail = "|" + submissionId;
-        
+
         return new ForwardParameters(mapping.findForward("waiting"))
         .addParameter("qid", qid)
         .addParameter("trail", trail)
         .forward();
-        
-        
-        
+
+
+
         //return mapping.findForward("results");
     }
 }
