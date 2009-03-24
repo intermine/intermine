@@ -1208,8 +1208,7 @@ public class AjaxServices
         String tagName = tag;
         LOG.info("Called addTag(). tagName:" + tagName + " taggedObject:"
                 + taggedObject + " type: " + type);
-        String errorMsg = "Adding tag failed.";
-        String successMsg = "ok";
+
         try {
             HttpServletRequest request = getRequest();
             Profile profile = getProfile(request);
@@ -1228,8 +1227,8 @@ public class AjaxServices
                 }
                 if (tagName.startsWith(TagNames.IM_PREFIX)
                         && !SessionMethods.isSuperUser(session)) {
-                    return "You cannot add tag starting with " + TagNames.IM_PREFIX + " ."
-                        + "It is reserved for internal needs.";
+                    return "You cannot add a tag starting with " + TagNames.IM_PREFIX + ", "
+                        + "that is a reserved word.";
                 }
 
                 TagManager tagManager = getTagManager();
@@ -1241,12 +1240,12 @@ public class AjaxServices
                         getGlobalSearchRepository(servletContext);
                     tr.webSearchableTagged(type);
                 }
-                return successMsg;
+                return "ok";
             }
-            return errorMsg;
+            return "Adding tag failed.";
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
-            return errorMsg;
+            return "Adding tag failed.";
         }
     }
 
@@ -1260,8 +1259,6 @@ public class AjaxServices
     public static String deleteTag(String tagName, String tagged, String type) {
         LOG.info("Called deleteTag(). tagName:" + tagName + " taggedObject:"
                 + tagged + " type: " + type);
-        String successMsg = "ok";
-        String errorMsg = "Deleting tag failed.";
         try {
             HttpServletRequest request = getRequest();
             Profile profile  = getProfile(request);
@@ -1274,10 +1271,10 @@ public class AjaxServices
                     SearchRepository.getGlobalSearchRepository(servletContext);
                 tr.webSearchableUnTagged(type);
             }
-            return successMsg;
+            return "ok";
         } catch (Throwable e) {
             LOG.error("Deleting tag failed", e);
-            return errorMsg;
+            return "Deleting tag failed.";
         }
     }
 
