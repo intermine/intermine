@@ -1220,7 +1220,7 @@ public class AjaxServices
                     return "Already tagged with this tag.";
                 }
                 if (!TagManager.isValidTagName(tagName)) {
-                    return TagManager.getInvalidTagNameMessage();
+                    return INVALID_NAME_MSG;
                 }
                 if (tagName.startsWith(TagNames.IM_PREFIX)
                         && !SessionMethods.isSuperUser(session)) {
