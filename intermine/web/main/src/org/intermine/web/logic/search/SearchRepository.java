@@ -61,10 +61,9 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class SearchRepository
 {
     private static final Logger LOG = Logger.getLogger(SearchRepository.class);
-
-    private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap =
-        new HashMap<String, Map<String, ? extends WebSearchable>>();
-    private Map<String, Directory> directoryMap = new HashMap<String, Directory>();
+    // this is not being refreshed
+    private Map<String, Map<String, ? extends WebSearchable>> webSearchablesMap = new HashMap();
+    private Map<String, Directory> directoryMap = new HashMap();
     private final String scope;
     private Profile profile;
 
@@ -230,7 +229,7 @@ public class SearchRepository
         int indexed = 0;
 
         TagManager tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
-        
+
         while (iter.hasNext()) {
             WebSearchable webSearchable = (WebSearchable) iter.next();
 
@@ -239,7 +238,7 @@ public class SearchRepository
                               Field.Index.TOKENIZED));
             StringBuffer contentBuffer = new StringBuffer(webSearchable.getTitle() + " : "
                                                + webSearchable.getDescription());
-            List<Tag> tags = tagManager.getTags(null, webSearchable.getName(), type, 
+            List<Tag> tags = tagManager.getTags(null, webSearchable.getName(), type,
                     profile.getUsername());
             for (Tag tag: tags) {
                 String tagName = tag.getTagName();

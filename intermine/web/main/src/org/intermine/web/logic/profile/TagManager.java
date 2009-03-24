@@ -48,11 +48,8 @@ import org.intermine.util.DynamicUtil;
  */
 public class TagManager
 {
-
     private static final Logger LOG = Logger.getLogger(TagManager.class);
-
     protected ObjectStoreWriter osWriter;
-
     private HashMap<MultiKey, List<Tag>> tagCache = null;
 
     /**
@@ -71,8 +68,8 @@ public class TagManager
         try {
             tagCache = null;
             osWriter.delete(tag);
-        } catch (ObjectStoreException err) {
-            LOG.error("delete tag failed" + err);
+        } catch (ObjectStoreException e) {
+            LOG.error("delete tag failed" + e);
         }
     }
 
@@ -351,6 +348,7 @@ public class TagManager
     }
 
     /**
+     * TODO this should use the same validation method the other classes use
      * Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':', '.'
      * @param name tag name
      * @return true if the name is valid else false
@@ -362,14 +360,6 @@ public class TagManager
         Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
         Matcher m = p.matcher(name);
         return !m.find();
-    }
-
-    /**
-     * Returns tag name error message saying which signs are allowed.
-     * @return error message
-     */
-    public static String getInvalidTagNameMessage() {
-        return "Invalid name.  Names may only contain letters, numbers, spaces, and underscores.";
     }
 
     /**
