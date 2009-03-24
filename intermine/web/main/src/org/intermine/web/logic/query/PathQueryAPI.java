@@ -131,7 +131,7 @@ public class PathQueryAPI
      */
     public static Profile getProfile() {
         if (profile == null) {
-            String superuser = (String) getProperties().getProperty("superuser.account");
+            String superuser = getProperties().getProperty("superuser.account");
             if (superuser == null) {
                 throw new RuntimeException("superuser.account has not been set in properties");
             }
@@ -153,8 +153,8 @@ public class PathQueryAPI
     public static ProfileManager getProfileManager() {
         if (profileManager == null) {
             try {
-                String userProfileAlias = (String) getProperties()
-                    .getProperty("webapp.userprofile.os.alias");
+                String userProfileAlias
+                            = getProperties().getProperty("webapp.userprofile.os.alias");
                 ObjectStoreWriter userProfileOs = ObjectStoreWriterFactory
                     .getObjectStoreWriter(userProfileAlias);
                 profileManager = new ProfileManager(getObjectStore(), userProfileOs);
