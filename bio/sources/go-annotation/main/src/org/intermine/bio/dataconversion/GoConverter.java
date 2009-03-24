@@ -310,8 +310,8 @@ public class GoConverter extends FileConverter
     //------------------------- Produce a new GOAnnotation object -------------------------
     private void newGoAnnotation(PlaceHolder placeHolder) {
 
-        boolean isProductTypeValid = (placeHolder.getGeneProductWrapper().getItem().getClassName()
-                        .indexOf("Gene") >= 0);
+//        boolean isProductTypeValid = (placeHolder.getGeneProductWrapper().getItem().getClassName()
+//                        .indexOf("Gene") >= 0);
 
         // go term id
         String goId = placeHolder.getGoTerm().getAttribute("identifier").getValue();
@@ -347,8 +347,12 @@ public class GoConverter extends FileConverter
         currentGoItem.setCollection("dataSets", refIds);
 
         // add item to gene go collections
-        if (isProductTypeValid) {
+        Item item = placeHolder.getGeneProductWrapper().getItem();
+        if (item.canHaveCollection("goAnnotation")) {
             placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation",
+                                                                          currentGoItem);
+        } else if (item.canHaveCollection("annotations")) {
+            placeHolder.getGeneProductWrapper().getItem().addToCollection("annotations",
                                                                           currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
