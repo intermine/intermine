@@ -110,7 +110,8 @@ public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
-
+    private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
+        + "numbers, spaces, and underscores.";
     /**
      * Creates a favourite Tag for the given templateName
      *
@@ -243,9 +244,7 @@ public class AjaxServices
             }
             // TODO get error text from properties file
             if (!WebUtil.isValidName(newName)) {
-                String errorMsg = "<i>Invalid name.  Names may only contain letters, "
-                                  + "numbers, spaces, and underscores.</i>";
-                return errorMsg;
+                return INVALID_NAME_MSG;
             }
             if (type.equals("history")) {
                 if (profile.getHistory().get(name) == null) {
@@ -717,8 +716,7 @@ public class AjaxServices
             }
 
             if (!WebUtil.isValidName(bagName)) {
-                return "Invalid name. Names can only contain letters, numbers, spaces, "
-                + "and underscores.";
+                return INVALID_NAME_MSG;
             }
 
             if (profile.getSavedBags().get(bagName) != null) {
@@ -780,8 +778,7 @@ public class AjaxServices
                                 || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!WebUtil.isValidName(bagName)) {
-                    return "Invalid name. Names can only contain letters, numbers, spaces, "
-                    + "and underscores.";
+                    return INVALID_NAME_MSG;
                 }
             }
             return "";

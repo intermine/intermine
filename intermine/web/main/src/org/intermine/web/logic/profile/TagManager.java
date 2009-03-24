@@ -369,8 +369,7 @@ public class TagManager
      * @return error message
      */
     public static String getInvalidTagNameMessage() {
-        return "Invalid tag name. Name can contain only alphabet characters, figures, space, dot"
-            + ", colon and dash.";
+        return "Invalid name.  Names may only contain letters, numbers, spaces, and underscores.";
     }
 
     /**
