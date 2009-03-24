@@ -77,6 +77,7 @@ import org.intermine.pathquery.MetadataNode;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
@@ -335,6 +336,11 @@ public class MainHelper
         if (relevantCodes.size() == 1) {
             codeToCS.put(relevantCodes.iterator().next(), andcs);
         } else if (relevantCodes.size() > 1) {
+            if (logic == null) {
+                throw new IllegalArgumentException("Query with multiple constraints contains no "
+                        + "constraint logic. Query: " + PathQueryBinding.marshal(pathQuery,
+                            "", "", ProfileManager.LATEST_VERSION_NUMBER));
+            }
             rootcs = makeConstraintSets(logic, codeToCS, andcs);
         }
         q.setConstraint(andcs);
