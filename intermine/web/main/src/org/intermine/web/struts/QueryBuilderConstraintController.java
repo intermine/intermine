@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -84,14 +85,15 @@ public class QueryBuilderConstraintController extends TilesAction
 
             SessionMethods.moveToRequest("editingNode", request);
             PathNode node = (PathNode) request.getAttribute("editingNode");
-            SessionMethods.moveToRequest("editingConstraintIndex", request);
+            SessionMethods.moveToRequest("editingConstraitIndex", request);
             SessionMethods.moveToRequest("editingTemplateConstraint", request);
             SessionMethods.moveToRequest("editingConstraintValue", request);
             SessionMethods.moveToRequest("editingConstraintOperand", request);
             SessionMethods.moveToRequest("editingConstraintExtraValue", request);
 
-            // Set up the Path, used to distinguish between outter-joinable nodes
-            Path editingPath = new Path(model, node.getPathString());
+            // Set up the Path, used to distinguish between outer-joinable nodes
+            Path editingPath = PathQuery.makePath(model, query, node.getPathString());
+            
             request.setAttribute("editingPath", editingPath);
 
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
