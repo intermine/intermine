@@ -5,8 +5,12 @@ export INIT=/software/noarch/local/init
 
 cd ~/svn/trunk
 svn up
-cd imbuild/javadoc
-ant
 
+cd ~/svn/trunk/bio/test-all/dbmodel
+ant clean-all
+ant build-db
+
+cd ~/svn/trunk/imbuild/javadoc
+ant
 chmod -R a+rX build/javadoc/
 rsync -avc --delete build/javadoc/ flymine@www.flymine.org:/var/www/html/api/
