@@ -115,9 +115,7 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
-
-
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getSearchRepository(request.getSession().getServletContext()));
         ObjectStoreWriter userOSW = profile.getProfileManager().getProfileObjectStoreWriter();
 

@@ -54,22 +54,20 @@ public class FavouritesController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList<TemplateQuery>();
+        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
                 Constants.PROFILE_MANAGER);
-        // Only continue if the user is logged in
-        if (profile.getUsername() != null) {
-            String sup = pm.getSuperuser();
-            Profile superuserProfile = pm.getProfile(sup);
 
+        if (profile.getUsername() != null) {
+            Profile superuserProfile = pm.getSuperuserProfile();
             Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
             savedTemplates.putAll(superuserProfile.getSavedTemplates());
             savedTemplates.putAll(profile.getSavedTemplates());
             TagManager tagManager = SessionMethods.getTagManager(session);
-                
+
             List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null,
                                        TagTypes.TEMPLATE, profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
