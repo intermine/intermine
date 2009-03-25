@@ -43,10 +43,10 @@ public class Profile
     protected String username;
     protected Integer userId;
     protected String password;
-    protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
-    protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
-    protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
-    protected Map<String, String> userOptions = new TreeMap<String, String>();
+    protected Map<String, SavedQuery> savedQueries = new TreeMap();
+    protected Map<String, InterMineBag> savedBags = new TreeMap();
+    protected Map<String, TemplateQuery> savedTemplates = new TreeMap();
+    protected Map<String, String> userOptions = new TreeMap();
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
     private SearchRepository searchRepository =

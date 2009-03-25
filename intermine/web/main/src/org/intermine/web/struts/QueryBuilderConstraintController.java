@@ -100,7 +100,7 @@ public class QueryBuilderConstraintController extends TilesAction
                         null, classKeys));
             // we can't create loop constraints on outer join paths, nodes on this path may already
             // be constrained to inner joins - get current style for query
-            String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
+            //String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
 //            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
                 // loop query arguments
                 ArrayList paths = new ArrayList();
