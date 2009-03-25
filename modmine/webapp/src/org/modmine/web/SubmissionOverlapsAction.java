@@ -88,6 +88,7 @@ public class SubmissionOverlapsAction extends InterMineAction
             String distance = submissionOverlapsForm.getDistance();
             String featureType = submissionOverlapsForm.getFlankingFeatureType();
 
+            q.addView("GeneFlankingRegion.overlappingFeatures.secondaryIdentifier");
             q.addView("GeneFlankingRegion.gene.primaryIdentifier");
 
             PathNode featureNode = q.addNode("GeneFlankingRegion.overlappingFeatures");
