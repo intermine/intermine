@@ -8,6 +8,9 @@
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation" ordered="true"/>
 </class>
+<class name="Protein" is-interface="true">
+  <collection name="goAnnotation" referenced-type="GOAnnotation" ordered="true"/>
+</class>
 <class name="GOEvidenceCode" is-interface="true">
   <attribute name="code" type="java.lang.String" />
 </class>

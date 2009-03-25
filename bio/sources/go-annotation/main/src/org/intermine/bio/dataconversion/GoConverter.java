@@ -186,8 +186,8 @@ public class GoConverter extends FileConverter
             }
             String[] array = line.split("\t", -1); //keep trailing empty Strings
             if (array.length < 13) {
-                throw new IllegalArgumentException("Not enough elements (should be > 13 not " +
-                                                   array.length + ") in line: " + line);
+                throw new IllegalArgumentException("Not enough elements (should be > 13 not "
+                                                   + array.length + ") in line: " + line);
             }
 
             // We only want to create GOAnnotation objects applied to genes and proteins
@@ -351,9 +351,6 @@ public class GoConverter extends FileConverter
         if (item.canHaveCollection("goAnnotation")) {
             placeHolder.getGeneProductWrapper().getItem().addToCollection("goAnnotation",
                                                                           currentGoItem);
-        } else if (item.canHaveCollection("annotations")) {
-            placeHolder.getGeneProductWrapper().getItem().addToCollection("annotations",
-                                                                          currentGoItem);
         } else {
             LOG.debug("Skipping setting go & allGo annotation collection for a:"
                       + placeHolder.getGeneProductWrapper().getItem().getClassName()
@@ -456,20 +453,22 @@ public class GoConverter extends FileConverter
     /**
      * Create a new geneProduct of a certain type (gene or protein) of a certain organism
      *
-     * @param accession  the accession or actual identifier of the gene/protein (eg: FBgn0019981)
+     * @param identifier  the accession or actual identifier of the gene/protein (eg: FBgn0019981)
      * @param type       the type
      * @param organism the organism of the product, may be null if a protein
      * @param dataSource the id of the datasource the product is from.
      * @param createOrganism if true then reference the organism from created BioEntity
-     * @param idField the attribute of created BioEntity to put identifier in
+     * @param field the attribute of created BioEntity to put identifier in
      * @return the geneProduct
      */
-    protected ItemWrapper newProduct(String accession,
+    protected ItemWrapper newProduct(String identifier,
                                      String type,
                                      Item organism,
                                      Item dataSource,
                                      boolean createOrganism,
-                                     String idField) {
+                                     String field) {
+        String idField = field;
+        String accession = identifier;
         String clsName;
         // find gene attribute first to see if organism should be part of key
         if ("gene".equalsIgnoreCase(type)) {
@@ -583,8 +582,8 @@ public class GoConverter extends FileConverter
         return refId;
     }
 
+    // TODO put this in properties file
     private Item newDatasource(String code) throws ObjectStoreException {
-
         String title = null;
         // re-write some codes to better data source names
         if ("UniProtKB".equals(code)) {
@@ -615,8 +614,7 @@ public class GoConverter extends FileConverter
             item.setAttribute("name", title);
             datasources.put(title, item);
             String key = "GO Annotation for " + title;
-            String datasetId = newDataset(item.getIdentifier(), key);
-            item.setCollection("dataSets", new ArrayList(Collections.singleton(datasetId)));
+            item.addToCollection("dataSets", newDataset(item.getIdentifier(), key));
             store(item);
         }
         return item;
@@ -677,7 +675,6 @@ public class GoConverter extends FileConverter
         return item;
     }
 
-    // TODO set dataset
     private Item newSynonym(String subjectId, String type, String value, String datasetId) {
         Item synonym = createItem("Synonym");
         synonym.setReference("subject", subjectId);
