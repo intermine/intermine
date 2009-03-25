@@ -85,7 +85,7 @@ public class QueryBuilderConstraintController extends TilesAction
 
             SessionMethods.moveToRequest("editingNode", request);
             PathNode node = (PathNode) request.getAttribute("editingNode");
-            SessionMethods.moveToRequest("editingConstraitIndex", request);
+            SessionMethods.moveToRequest("editingConstraintIndex", request);
             SessionMethods.moveToRequest("editingTemplateConstraint", request);
             SessionMethods.moveToRequest("editingConstraintValue", request);
             SessionMethods.moveToRequest("editingConstraintOperand", request);
@@ -93,7 +93,7 @@ public class QueryBuilderConstraintController extends TilesAction
 
             // Set up the Path, used to distinguish between outer-joinable nodes
             Path editingPath = PathQuery.makePath(model, query, node.getPathString());
-            
+
             request.setAttribute("editingPath", editingPath);
 
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
@@ -110,7 +110,7 @@ public class QueryBuilderConstraintController extends TilesAction
                     // we can create a loop constraint if:
                     // - there is another node of the same type
                     // - the other node has no outer joins in its path
-                    if (anode != node && anode.getType().equals(node.getType()) 
+                    if (anode != node && anode.getType().equals(node.getType())
                             && (anode.getPathString().indexOf(":") == -1)) {
                         paths.add(anode.getPathString());
                     }
@@ -204,7 +204,7 @@ public class QueryBuilderConstraintController extends TilesAction
             request.setAttribute("joinStyleOnly", "true");
             session.removeAttribute("joinStylePath");
         }
-        
+
         return null;
     }
 }
