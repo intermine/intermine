@@ -12,8 +12,10 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
@@ -30,9 +32,13 @@ import org.xml.sax.SAXException;
  */
 public class ZfinIdentifiersConverter extends BioFileConverter
 {
+    //private static final Logger LOG = Logger.getLogger(ZfinIdentifiersConverter.class);
     protected String organismRefId;
     private Map<String, Item> genes = new HashMap();
-    private Map<String, String> synonyms = new HashMap();
+    private Set<String> synonyms = new HashSet();
+    private static final String ENSEMBL_FILE = "ensembl_1_to_1.txt";
+    private static final String HISTORY_FILE = "zdb_history.txt";
+    private static final String ALIASES_FILE = "aliases.txt";
 
     /**
      * Constructor
@@ -60,59 +66,108 @@ public class ZfinIdentifiersConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
-        /* data is in format:
-         ALIASES.TXT
-         primaryIdentifier /t tab delimited list of synonyms
+        /* data is in one of three formats --
+
+         [ALIASES.TXT]
+         primaryIdentifier /t name /t symbol /t old name
          eg, ZDB-GENE-000329-4       notch homolog 2 notch2  sb:cb884
 
-         ZDB_HISTORY.TXT
+         [ZDB_HISTORY.TXT]
          primaryidentifier /t old primaryidentifier
          ZDB-GENE-000607-4       ZDB-GENE-010129-1
 
-         ensembl_1_to_1.txt
+         [ENSEMBL_1_to_1.txt]
          #    ZDBID              SYMBOL  Ensembl(Zv7)
-          ZDB-GENE-000112-47      ppardb  ENSDARG00000009473
+         ZDB-GENE-000112-47      ppardb  ENSDARG00000009473
 
         */
 
-        boolean processingEnsembl = false;
+        String filename = null;
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            // if the first line starts with a hash, we are processing the ensembl file
-            if (line[0].startsWith("#")) {
-                processingEnsembl = true;
-                // skip first line
+            // the first column is primary identifier in all three files
+            String primaryIdentifier = line[0];
+
+            // identifier files contain non-genes.  we are only processing genes for now.
+            if (!primaryIdentifier.contains("GENE")) {
                 continue;
             }
 
-            // the first column is primary identifier in all three files
-            String primaryIdentifier = line[0];
             Item gene = getGene(primaryIdentifier);
-            gene.setReference("organism", organismRefId);
+
             String refId = gene.getIdentifier();
 
-            if (processingEnsembl) {
+            if (filename == null) {
+                if (line.length == 2 && line[1].startsWith("ZDB-")) {
+                    filename = HISTORY_FILE;
+                } else if (line.length > 2) {
+                    if (line[2].startsWith("ENSDARG")) {
+                        filename = ENSEMBL_FILE;
+                    } else {
+                        filename = ALIASES_FILE;
+                    }
+                } else {
+                    throw new RuntimeException("Bad file format.");
+                }
+            }
+
+            if (filename.equals(ENSEMBL_FILE)) {
+
                 String symbol = line[1];
                 String secondaryIdentifier = line[2];
 
-                if (secondaryIdentifier != null && !secondaryIdentifier.equals("")) {
+                if (!StringUtils.isEmpty(secondaryIdentifier)) {
                     gene.setAttribute("secondaryIdentifier", secondaryIdentifier);
                     setSynonym(refId, "identifier", secondaryIdentifier);
                 }
-                if (symbol != null && !symbol.equals("")) {
+                if (!StringUtils.isEmpty(symbol)) {
                     gene.setAttribute("symbol", symbol);
                     setSynonym(refId, "symbol", symbol);
                 }
+
+            } else if (filename.equals(HISTORY_FILE)) {
+                String synonym = line[1];
+                if (!StringUtils.isEmpty(synonym)) {
+                    setSynonym(refId, "identifier", synonym);
+                }
             } else {
+                String name = line[1];
+                String symbol = line[2];
+
+                if (!StringUtils.isEmpty(name)) {
+                    gene.setAttribute("name", name);
+                    setSynonym(refId, "name", name);
+                }
+                if (!StringUtils.isEmpty(symbol)) {
+                    gene.setAttribute("symbol", symbol);
+                    setSynonym(refId, "symbol", symbol);
+                }
+
                 // loop through the rest of the synonyms
-                for (int i = 1; i < line.length; i++) {
+                for (int i = 3; i < line.length; i++) {
                     String synonym = line[i];
                     if (!StringUtils.isEmpty(synonym)) {
                         setSynonym(refId, "identifier", synonym);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * After all files are processed, store genes.
+     *
+     * {@inheritDoc}
+     */
+    public void close()
+    throws SAXException {
+        for (Item gene : genes.values()) {
+            try {
+                store(gene);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
             }
         }
     }
@@ -124,12 +179,8 @@ public class ZfinIdentifiersConverter extends BioFileConverter
             item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
             genes.put(primaryIdentifier, item);
+            item.setReference("organism", organismRefId);
             setSynonym(item.getIdentifier(), "identifier", primaryIdentifier);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
         }
         return item;
     }
@@ -137,13 +188,12 @@ public class ZfinIdentifiersConverter extends BioFileConverter
     private void setSynonym(String subjectRefId, String type, String value)
     throws SAXException {
         String key = subjectRefId + type + value;
-        String refId = synonyms.get(key);
-        if (refId == null) {
+        if (!synonyms.contains(key)) {
             Item synonym = createItem("Synonym");
             synonym.setAttribute("type", type);
             synonym.setAttribute("value", value);
             synonym.setReference("subject", subjectRefId);
-            synonyms.put(key, refId);
+            synonyms.add(key);
             try {
                 store(synonym);
             } catch (ObjectStoreException e) {
