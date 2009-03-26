@@ -39,22 +39,22 @@ public class FormattedTextParser
     public static Iterator parseTabDelimitedReader(final Reader reader) throws IOException {
         return parseDelimitedReader(reader, false, "\t");
     }
-    
+
     /**
-     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at 
+     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at
      * the commas and returns a String[] of the bits, stripped of all quotes.
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader) 
+    public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader)
     throws IOException {
         return parseDelimitedReader(reader, true, ",");
     }
-    
-    private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes, 
-                                                 final String delim) 
+
+    private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes,
+                                                 final String delim)
     throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
 
@@ -72,31 +72,30 @@ public class FormattedTextParser
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();
-                } else {
-                    String lastLine = currentLine;
-
-                    try {
-                        currentLine = getNextNonCommentLine();
-                    } catch (IOException e) {
-                        throw new RuntimeException("error while reading from " + reader, e);
-                    }
-                    
-                    if (stripQuotes) {
-                        StrMatcher delimMatcher = null;
-                        
-                        if (delim.equals(",")) {
-                            delimMatcher = StrMatcher.commaMatcher();
-                        } else {
-                            delimMatcher = StrMatcher.tabMatcher();
-                        }
-                        StrTokenizer tokeniser
-                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
-                        tokeniser.setEmptyTokenAsNull(false);
-                        tokeniser.setIgnoreEmptyTokens(false);
-                        return tokeniser.getTokenArray();
-                    }                    
-                    return StringUtil.split(lastLine, delim);
                 }
+                String lastLine = currentLine;
+
+                try {
+                    currentLine = getNextNonCommentLine();
+                } catch (IOException e) {
+                    throw new RuntimeException("error while reading from " + reader, e);
+                }
+
+                if (stripQuotes) {
+                    StrMatcher delimMatcher = null;
+
+                    if (delim.equals(",")) {
+                        delimMatcher = StrMatcher.commaMatcher();
+                    } else {
+                        delimMatcher = StrMatcher.tabMatcher();
+                    }
+                    StrTokenizer tokeniser
+                    = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                    tokeniser.setEmptyTokenAsNull(false);
+                    tokeniser.setIgnoreEmptyTokens(false);
+                    return tokeniser.getTokenArray();
+                }
+                return StringUtil.split(lastLine, delim);
             }
 
             public void remove() {
@@ -110,13 +109,11 @@ public class FormattedTextParser
                     line = bufferedReader.readLine();
                     if (line == null) {
                         break;
-                    } else {
-                        if (!line.startsWith("#")) {
-                            break;
-                        }
+                    }
+                    if (!line.startsWith("#")) {
+                        break;
                     }
                 }
-
                 return line;
             }
         };
