@@ -13,12 +13,12 @@ package org.intermine.bio.web.widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
+import org.intermine.metadata.Model;
+import org.apache.log4j.Logger;
+import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.ProteinDomain;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -45,6 +45,8 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
+    private static final Logger LOG = Logger.getLogger(ProteinDomainLdr.class);
+    private Model model;
 
     /**
      * Create a new PublicationLdr
@@ -56,7 +58,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         this.bag = bag;
 
         organisms = BioUtil.getOrganisms(os, bag, false);
-
+        model = os.getModel();
         for (String s : organisms) {
             organismsLower.add(s.toLowerCase());
         }
@@ -72,7 +74,15 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryClass qcProteinFeature = new QueryClass(ProteinDomain.class);
+        QueryClass qcProteinFeature = null;
+        try {
+            qcProteinFeature = new QueryClass(Class.forName(model.getPackageName()
+                                                          + ".ProteinDomain"));
+        } catch (ClassNotFoundException e) {
+            LOG.error(e);
+            return null;
+        }
+
 
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfGeneId = new QueryField(qcGene, "id");
