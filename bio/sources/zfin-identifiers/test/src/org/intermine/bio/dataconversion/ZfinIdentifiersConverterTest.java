@@ -32,18 +32,25 @@ public class ZfinIdentifiersConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        String zbd_history_txt = "ZDB-GENE-050417-192\tZDB-GENE-030131-7190" + ENDL
+        String zbd_history_txt = "ZDB-GENE-111111-1111\tZDB-GENE-111111-1112" + ENDL
         + "ZDB-BAC-030131-406\tZDB-BAC-030131-7240\t" + ENDL;
+
         String ensembl = "#\tZDBID\tSYMBOL\tEnsembl(Zv7)\t" + ENDL
-        + "ZDB-GENE-000112-47\tppardb\tENSDARG00000009473\t" + ENDL
-        + "ZDB-GENE-000125-12\tigfbp2b\tENSDARG00000052470\t" + ENDL
-        + "ZDB-GENE-000125-4\tdlc\tENSDARG00000002336";
+        + "ZDB-GENE-111111-1111\tsymbol1111\tENSDARG00000001111\t" + ENDL
+        + "ZDB-GENE-222222-2222\tsymbol2222\tENSDARG00000002222\t" + ENDL;
+
+        String aliases_txt = "ZDB-GENE-222222-2222\tcalcium channel, voltage-dependent, beta 1 subunit\tsymbol2222\tsyn2222" + ENDL
+        + "ZDB-GENE-111111-1111\tSTARD3 N-terminal like\tstard3nl\twu:fa01c03" + ENDL
+        + "ZDB-GENE-111111-1111\tSTARD3 N-terminal like\tstard3nl\tzgc:86628" + ENDL;
+
 
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         BioFileConverter converter = new ZfinIdentifiersConverter(itemWriter,
                                                                    Model.getInstanceByName("genomic"));
         converter.process(new StringReader(zbd_history_txt));
+        converter.process(new StringReader(ensembl));
+        converter.process(new StringReader(aliases_txt));
         converter.close();
 
         // uncomment to write out a new target items file
