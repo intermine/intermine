@@ -46,14 +46,6 @@ my %sourceMap;
 my %statesMap;
 my %typeMap;
 
-my $datasource = 'Ensembl';
-my @items = (); 
-my $datasource_item = make_item("DataSource");
-$datasource_item->set('name', $datasource);
-my $org_item;
-my $dataset_item;
-my $count = 0;
-
 my $start_time = time();
 # TODO add date to file
 my $outfile =$data_destination . '/ensembl.xml';
@@ -61,15 +53,52 @@ my $output = new IO::File(">$outfile");
 my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
 $writer->startTag('items');
 
+my $datasource = 'Ensembl';
+my $datasource_item = make_item("DataSource");
+$datasource_item->set('name', $datasource);
+my $org_item;
+my $dataset_item;
+my $count = 0;
+
 # loop through each organism specified
 foreach my $taxon_id(keys %organisms) {
     
-    print "taxon_id |$taxon_id|\n";
+    print "processing taxon_id $taxon_id\n";
 
     # databases
-    my $dbCore = get_db("core", $taxon_id); 
-    my $dbVariation = get_db("variation", $taxon_id); 
+    #my $dbCore = get_db("core", $taxon_id); 
+    #my $dbVariation = get_db("variation", $taxon_id); 
 
+    # FIXME use get_db sub instead
+    my $host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
+    my $dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
+    my $user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
+    my $pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
+    my $species = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
+    
+    my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
+        (-host => $host,
+         -dbname => $dbname,
+         -species => $species,
+         -group => 'core',
+         -user => $user,
+         -pass => $pass);
+    
+    $host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
+    $dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
+    $user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
+    $pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
+    
+
+    #Connect to EnsEMBL variation database
+    my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
+        (-host => $host,
+         -dbname => $dbname,
+         -species => $species,
+         -group => 'variation',
+         -user => $user,
+         -pass => $pass);
+    
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
     $org_item->as_xml($writer);
@@ -90,6 +119,8 @@ foreach my $taxon_id(keys %organisms) {
     # TODO query for list of chromosomes if not specified
     # loop through every chromosome
     while (my $chromosome = shift @chromosomes) {
+
+        print "processing chromsome $chromosome\n";
         
         #get the database adaptor for Slice objects
         my $slice_adaptor = $dbCore->get_SliceAdaptor(); 
@@ -123,7 +154,7 @@ foreach my $taxon_id(keys %organisms) {
                 $snp_item->set('chromosomeStart', $vf->start);
                 $snp_item->set('chromosomeEnd', $vf->end);
                 
-                my @stateItems;
+                my @stateItems = ();
                 foreach my $state (@{$vf->get_all_validation_states}) {
                     my $state_item;
                     if($statesMap{$state}) {
@@ -139,7 +170,7 @@ foreach my $taxon_id(keys %organisms) {
                 
                 $snp_item->set('validations', [@stateItems]);
                 
-                my @typeItems;
+                my @typeItems = ();
                 foreach my $type (@{$vf->get_consequence_type}) {
                     my $type_item;
                     if($typeMap{$type}) {
@@ -155,7 +186,7 @@ foreach my $taxon_id(keys %organisms) {
                 
                 $snp_item->set('consequenceTypes', [@typeItems]);
                 
-                my @sourceItems;
+                my @sourceItems = ();
                 foreach my $source (@{$vf->get_all_sources}) {
                     my $source_item;
                     if ($sourceMap{$source}) {
@@ -192,7 +223,7 @@ foreach my $taxon_id(keys %organisms) {
 sub make_item{
     my $implements = shift;
     my $item = $item_factory->make_item(implements => $implements);
-    push @items, $item;    
+    #push @items, $item;    
     if ($item->valid_field('organism')) {
         $item->set('organism', $org_item);
     }
@@ -239,7 +270,6 @@ sub get_db {
          -group => $group,
          -user => $user,
          -pass => $pass);
-    
     return $db;
 }
 
