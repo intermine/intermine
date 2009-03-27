@@ -23,187 +23,186 @@ use Bio::EnsEMBL::Variation::DBSQL::DBAdaptor;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 if (@ARGV != 3) {
-    die "usage: mine_name taxonId data_destination \n eg. flymine 7227 /data/ensembl \n";  
+    die "usage: mine_name taxon_id data_destination \n eg. flymine 7227 /data/ensembl \n";  
 }
 
-my $start_time = time();
+my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
 
-my ($mine_name, $taxon_id, $data_destination) = @ARGV;
+# config file to determine which chromosomes to parse
+my %organisms = parse_orgs($taxon_ids);
+my $config_file = '../../sources/ensembl/resources/ensembl_config.properties';
+parse_config(read_file($config_file));
 
-# FIXME
-#my $config_file = '../../sources/ensembl/resources/ensembl_config.properties';
-#parse_config(read_file($config_file));
-
+# properties file for database info
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
 
-my $host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
-my $dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
-my $user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
-my $pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
-my $species = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
-
-my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
-    (-host => $host,
-     -dbname => $dbname,
-     -species => $species,
-     -group => 'core',
-     -user => $user,
-     -pass => $pass);
-
-$host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
-$dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
-$user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
-$pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
-
-
-#Connect to EnsEMBL variation database
-my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
-   (-host => $host,
-     -dbname => $dbname,
-     -species => $species,
-     -group => 'variation',
-     -user => $user,
-    -pass => $pass);
-
-my @items = ();
-
+# intermine
 my $model_file = "../../../$mine_name/dbmodel/build/main/genomic_model.xml";
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 
+# maps to prevent duplicate items
 my %sourceMap;
 my %statesMap;
 my %typeMap;
 
+my $datasource = 'Ensembl';
+my @items = (); 
+my $datasource_item = make_item("DataSource");
+$datasource_item->set('name', $datasource);
+my $org_item;
+my $dataset_item;
 my $count = 0;
 
-for (my $i=1; $i<=24; $i++) { 
-    my @items = ();
-    my @files;    
-    my $slice;
-    $count = 0;
-    my $slice_adaptor = $dbCore->get_SliceAdaptor(); #get the database adaptor for Slice objects
-    switch($i) {
-        case [1..22] {
-            $slice = $slice_adaptor->fetch_by_region('chromosome',$i);                  
-        } case 23 {
-            $slice = $slice_adaptor->fetch_by_region('chromosome','X');                  
-        } case 24 {
-            $slice = $slice_adaptor->fetch_by_region('chromosome','Y');                 
-        }
+my $start_time = time();
+# TODO add date to file
+my $outfile =$data_destination . '/ensembl.xml';
+my $output = new IO::File(">$outfile");
+my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
+$writer->startTag('items');
+
+# loop through each organism specified
+foreach my $taxon_id(keys %organisms) {
+    
+    print "taxon_id |$taxon_id|\n";
+
+    # databases
+    my $dbCore = get_db("core", $taxon_id); 
+    my $dbVariation = get_db("variation", $taxon_id); 
+
+    $org_item = make_item("Organism");
+    $org_item->set("taxonId", $taxon_id);
+    $org_item->as_xml($writer);
+
+    $dataset_item = make_item("DataSet");
+    $dataset_item->set('title', "$datasource data set for taxon id: $taxon_id");
+    $dataset_item->as_xml($writer);
+
+    my @chromosomes = ();
+    my $chromosomes_string = $organisms{$taxon_id};
+
+    if ($chromosomes_string) {
+        @chromosomes = parse_chromosomes($chromosomes_string);
+    } else {
+        die "You must specify the chromosomes to process in the configuration file.\n";
     }
 
-    my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
-    # get adaptor to VariationFeature object
-    my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
-    # return ALL variations defined in $slice
-    # my $counter = 1;
-    
-    # don't need to set the id, unless we use a shell script
-    # my $chromosome_item = make_item_chromosome(id => $i);
-    my $chromosome_item = make_item("Chromosome");
-    $chromosome_item->set('primaryIdentifier', $slice->seq_region_name);
-    
-    foreach my $vf (@{$vfs}){
-        #print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
-        my @alleles = split('[/.-]', $vf->allele_string);
-        if(!$alleles[0]) {
-            $alleles[0]='-';
-        }
-        if(!$alleles[1]) {
-            $alleles[1]='-';
-        }
-        if(@alleles == 2) {
-            my $snp_item = make_item('EnsemblSNP');
-            $snp_item->set('snp', $vf->variation_name);
-            $snp_item->set('allele1', $alleles[0]);
-            $snp_item->set('allele2', $alleles[1]);
-            $snp_item->set('chromosomeStart', $vf->start);
-            $snp_item->set('chromosomeEnd', $vf->end);
-            
-            my @stateItems;
-            foreach my $state (@{$vf->get_all_validation_states}) {
-                my $state_item;
-                if($statesMap{$state}) {
-                    $state_item = $statesMap{$state};
-                } else {
-                    $state_item = make_item('ValidationState');
-                    $state_item->set('state', $state);
-                    $statesMap{$state} = $state_item;
-                }
-                push(@stateItems, $state_item);
-            }	
-            
-            $snp_item->set('validations', [@stateItems]);
-            
-            my @typeItems;
-            foreach my $type (@{$vf->get_consequence_type}) {
-                my $type_item;
-                if($typeMap{$type}) {
-                    $type_item = $typeMap{$type};
-                } else {
-                    $type_item = make_item('ConsequenceType');
-                    $type_item->set('type', $type);
-                    $typeMap{$type} = $type_item;
-                }
-                push(@typeItems, $type_item);
-            }
-            
-            $snp_item->set('consequenceTypes', [@typeItems]);
-            
-            my @sourceItems;
-            foreach my $source (@{$vf->get_all_sources}) {
-                my $source_item;
-                if ($sourceMap{$source}) {
-                    $source_item = $sourceMap{$source};
-                } else {
-                    $source_item = make_item('Source');
-                    $source_item->set('source',$source);
-                    $sourceMap{$source} = $source_item;
-                }
-                push(@sourceItems, $source_item);
-            }
-            $snp_item->set('chromosome', $chromosome_item);
-            $snp_item->set('sources', [@sourceItems]);
-        }
-    }
+    # TODO query for list of chromosomes if not specified
+    # loop through every chromosome
+    while (my $chromosome = shift @chromosomes) {
+        
+        #get the database adaptor for Slice objects
+        my $slice_adaptor = $dbCore->get_SliceAdaptor(); 
+        my $slice = $slice_adaptor->fetch_by_region('chromosome',$chromosome);
+        
+        my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
+        # get adaptor to VariationFeature object
+        my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
+        # return ALL variations defined in $slice
+        
+        # don't need to set the id, unless we use a shell script
+        # my $chromosome_item = make_item_chromosome(id => $i);
+        my $chromosome_item = make_item("Chromosome");
+        $chromosome_item->set('primaryIdentifier', $slice->seq_region_name);
+        $chromosome_item->as_xml($writer);
 
+        foreach my $vf (@{$vfs}){
+            #print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
+            my @alleles = split('[/.-]', $vf->allele_string);
+            if(!$alleles[0]) {
+                $alleles[0]='-';
+            }
+            if(!$alleles[1]) {
+                $alleles[1]='-';
+            }
+            if(@alleles == 2) {
+                my $snp_item = make_item('EnsemblSNP');
+                $snp_item->set('snp', $vf->variation_name);
+                $snp_item->set('allele1', $alleles[0]);
+                $snp_item->set('allele2', $alleles[1]);
+                $snp_item->set('chromosomeStart', $vf->start);
+                $snp_item->set('chromosomeEnd', $vf->end);
+                
+                my @stateItems;
+                foreach my $state (@{$vf->get_all_validation_states}) {
+                    my $state_item;
+                    if($statesMap{$state}) {
+                        $state_item = $statesMap{$state};
+                    } else {
+                        $state_item = make_item('ValidationState');
+                        $state_item->set('state', $state);
+                        $statesMap{$state} = $state_item;
+                        $state_item->as_xml($writer);
+                    }
+                    push(@stateItems, $state_item);
+                }	
+                
+                $snp_item->set('validations', [@stateItems]);
+                
+                my @typeItems;
+                foreach my $type (@{$vf->get_consequence_type}) {
+                    my $type_item;
+                    if($typeMap{$type}) {
+                        $type_item = $typeMap{$type};
+                    } else {
+                        $type_item = make_item('ConsequenceType');
+                        $type_item->set('type', $type);
+                        $typeMap{$type} = $type_item;
+                        $type_item->as_xml($writer);
+                    }
+                    push(@typeItems, $type_item);
+                }
+                
+                $snp_item->set('consequenceTypes', [@typeItems]);
+                
+                my @sourceItems;
+                foreach my $source (@{$vf->get_all_sources}) {
+                    my $source_item;
+                    if ($sourceMap{$source}) {
+                        $source_item = $sourceMap{$source};
+                    } else {
+                        $source_item = make_item('Source');
+                        $source_item->set('source',$source);
+                        $sourceMap{$source} = $source_item;
+                        $source_item->as_xml($writer);
+                    }
+                    push(@sourceItems, $source_item);
+                }
+                $snp_item->set('chromosome', $chromosome_item);
+                $snp_item->set('sources', [@sourceItems]);
+                $snp_item->as_xml($writer);
+            }
+        }
+        
+    }
     my $end_time = time();
     my $action_time = $end_time - $start_time;
-    print "processing the files for chromosome $i took $action_time seconds.  now creating the XML file... \n";
     
-
-    #write xml filea
-    $start_time = time();
-    my $outfile =$data_destination . 'Chromosome'.$i.'.xml';
-    my $output = new IO::File(">$outfile");
-    my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
-    $writer->startTag('items');
-    for my $item (@items) {
-        $item->as_xml($writer);
-    }
+    #write xml file
     $writer->endTag('items');
     $writer->end();
     $output->close();
-
+    
     $end_time = time();
     $action_time = $end_time - $start_time;
-    print "creating the XML file for chromosome $i took $action_time seconds and created $count items\n";
-
+    print "creating the XML file took $action_time seconds and created $count items\n";
+    
 }
+
 sub make_item{
     my $implements = shift;
     my $item = $item_factory->make_item(implements => $implements);
-    push @items, $item;
-    $count++;
-    return $item;
-}
-
-sub make_item_chromosome{
-    my %opts = @_;
-    my $item = $item_factory->make_item(implements => 'Chromosome');
-    $item->setPref(refId => $opts{id});
-    push @items, $item;
+    push @items, $item;    
+    if ($item->valid_field('organism')) {
+        $item->set('organism', $org_item);
+    }
+    if ($item->valid_field('dataSets') && $implements ne 'DataSource') {
+        $item->set('dataSets', [$dataset_item]);
+    }
+    if ($item->valid_field('dataSource')) {
+        $item->set('dataSource', $datasource_item);
+    }
+    $count++; # just for reporting purposes
     return $item;
 }
 
@@ -220,6 +219,89 @@ sub read_file {
     }
     close FILE;
     return @lines;  
+}
+
+# get db info
+sub get_db {
+
+    my($group, $taxon_id) = @_;
+
+    my $host = get_property_value("db.ensembl.$taxon_id.$group.datasource.serverName", $properties_file);
+    my $dbname = get_property_value("db.ensembl.$taxon_id.$group.datasource.databaseName", $properties_file);
+    my $user = get_property_value("db.ensembl.$taxon_id.$group.datasource.user", $properties_file);
+    my $pass = get_property_value("db.ensembl.$taxon_id.$group.datasource.password", $properties_file);
+    my $species = get_property_value("db.ensembl.$taxon_id.$group.datasource.species", $properties_file);
+    
+    my $db = Bio::EnsEMBL::DBSQL::DBAdaptor->new
+        (-host => $host,
+         -dbname => $dbname,
+         -species => $species,
+         -group => $group,
+         -user => $user,
+         -pass => $pass);
+    
+    return $db;
+}
+
+# parse the config file
+sub parse_config {
+    my (@lines) = @_;
+    foreach (@lines) {
+        my $line = $_;
+        my ($taxon_id, $config) = split("\\.", $line);
+        my ($label, $value) = split("\\=", $config);
+        if ($label eq 'chromosomes' && defined $organisms{$taxon_id}) {
+            $organisms{$taxon_id} = $value;
+        }
+    }
+    return;
+}
+
+# user can specify which chromosomes to load  
+# eg 1-21,X,Y
+sub parse_chromosomes {
+    my ($chromosome_string) = shift;
+  
+    my @bits = split(",", $chromosome_string);
+    my @chromosomes = ();
+ 
+    foreach (@bits) {
+        my $bit = $_;
+        
+        # list may be a range
+        if ($bit =~ "-") {
+            my @range = split("-", $bit);
+            my $min = $range[0];
+            my $max = $range[1];
+            for (my $i = $min; $i <= $max; $i++) {
+                push(@chromosomes, $i);
+            }
+        } else {
+            push(@chromosomes, $bit);
+        }
+    }
+    return @chromosomes;
+}
+
+# TODO I don't think this is used
+sub make_synonym {
+  my ($subject, $type, $value) = @_;
+  my $key = $subject . $type . $value;
+
+  my $syn = make_item("Synonym");
+  $syn->set('subject', $subject);
+  $syn->set('type', $type);
+  $syn->set('value', $value);
+  $syn->set('isPrimary', 'true');
+}
+
+sub parse_orgs {
+    my ($taxon_ids) = @_;
+    my %orgs = ();    
+    for (split("\\,", $taxon_ids)) {
+        $orgs{$_} = "";
+    }
+    return %orgs;
 }
 
 
