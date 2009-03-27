@@ -229,13 +229,6 @@
     </longdisplayers>
   </class>
 
-   <class className="org.intermine.model.bio.OntologyTerm">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Homologue">
     <fields>
       <fieldconfig fieldExpr="type"/>
