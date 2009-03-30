@@ -11,16 +11,15 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.FullParser;
 
-public class ZfinIdentifiersConverterTest extends ItemsTestCase
+public class ZfinIdentifiersConverterTest extends MockItemsTestCase
 {
 
     private ZfinIdentifiersConverter converter;
@@ -43,7 +42,7 @@ public class ZfinIdentifiersConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "zfin_tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "zfin_tgt.xml");
 
         assertEquals(readItemSet("ZfinIdentifiersConverterTest_tgt.xml"), itemWriter.getItems());
     }
