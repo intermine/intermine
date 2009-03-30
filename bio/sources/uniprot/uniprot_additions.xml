@@ -20,8 +20,13 @@
     <collection name="comments" referenced-type="Comment" ordered="true"/>
     <collection name="keywords" referenced-type="OntologyTerm" ordered="true"/>
     <collection name="features" referenced-type="UniProtFeature" ordered="true"/>
+    <collection name="proteinDomains" referenced-type="ProteinDomain" ordered="true"/>
   </class>
   <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
+  </class>
+    <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+    <attribute name="primaryIdentifier" type="java.lang.String"/>
+    <attribute name="shortName" type="java.lang.String"/>
   </class>
 </classes>
