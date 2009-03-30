@@ -357,6 +357,16 @@ public class UniprotConverter extends DirectoryConverter
                 proteinSynonyms.add(refId);
             }
         }
+
+        // isoforms with extra identifiers
+        List<String> isoformSynonyms = entry.getIsoformSynonyms();
+        if (!isoformSynonyms.isEmpty()) {
+            for (String synonym : isoformSynonyms) {
+                refId = getSynonym(proteinRefId, "accession", synonym, "false",
+                                   datasetRefId);
+                proteinSynonyms.add(refId);
+            }
+        }
     }
 
     private void processDbrefs(Item protein, UniprotEntry entry, List<String> synonymRefIds)
@@ -704,7 +714,13 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
-                entry.addAttribute(attValue.toString());
+                // attribute should be empty, unless isoform has two <id>s
+                if (entry.getAttribute() == null) {
+                    entry.addAttribute(attValue.toString());
+                } else {
+                    // second <id> value is ignored and added as a synonym
+                    entry.addIsoformSynonym(attValue.toString());
+                }
             }
         }
 
