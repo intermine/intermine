@@ -412,8 +412,6 @@ public class UniprotConverter extends DirectoryConverter
         }
     }
 
-
-
     private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
                               String uniqueIdentifierField)
     throws SAXException {
