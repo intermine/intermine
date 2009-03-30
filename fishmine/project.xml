@@ -9,19 +9,7 @@
     <source name="zfin-identifiers" type="zfin-identifiers">
       <property name="src.data.dir" location="/shared/data/zfin/current"/>
     </source>
-
-
-    <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
-    </source>
-
-    <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/zfin"/>
-      <property name="src.data.dir.includes" value="gene_association.zfin"/>
-    </source>
-
-  
+ 
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7955"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
@@ -40,20 +28,21 @@
       <property name="fasta.loaderClassName" 
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
-<!--
+
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
 
+   <source name="interpro" type="interpro">      
+      <property name="src.data.dir" location="/shared/data/interpro/current"/>
+    </source>
+
+<!--
     <source name="ensembl" type="ensembl"> 
      <property name="src.data.dir" location="/shared/data/ensembl/current"/> 
     </source> 
-
-    <source name="interpro" type="interpro">      
-      <property name="src.data.dir" location="/shared/data/interpro/current"/>
-    </source>
-   
+    
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7955"/>
@@ -68,8 +57,6 @@
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
 
-
-
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/release-16/"/>
     </source>
@@ -81,7 +68,6 @@
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/> 
     </source>
    
-
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/2009-02-24"/>
     </source>
@@ -91,6 +77,17 @@
       <property name="src.data.dir.includes" value="*psi25.xml"/>
     </source>
 -->
+
+    <source name="go" type="go">
+      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
+    </source>
+
+    <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/zfin"/>
+      <property name="src.data.dir.includes" value="gene_association.zfin"/>
+    </source>
+
 
 
     <source name="entrez-organism" type="entrez-organism">
