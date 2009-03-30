@@ -37,6 +37,7 @@ public class UniprotEntry
     private List<String> accessions = new ArrayList();
     private List<String> descriptions = new ArrayList();
     private List<String> isoforms = new ArrayList();
+    private List<String> isoformSynonyms = new ArrayList();
     private Map<String, String> geneNames = new HashMap();  // type, value eg primary, UBI3
     // other gene identifiers are stored in dbrefs map
 
@@ -507,7 +508,9 @@ public class UniprotEntry
     }
 
     /**
-     * @return list of all the synonyms for this entry, including name and accessions
+     * used to assign sequences
+     * @return list of all the synonyms for this entry, including name and accessions but not
+     * isoform synonyms
      */
     public List getSynonyms() {
         List<String> synonyms = new ArrayList();
@@ -540,7 +543,9 @@ public class UniprotEntry
     }
 
     /**
-     * sets isIsoform to be true.  moves current primary accession to accessions list and uses
+     * sets isIsoform to be false.  This is the isoform, but it's the canonical one so it is not
+     * processed any different from a regular uniprot protein.
+     * moves current primary accession to accessions list and uses
      * new isoform accession as primary accession.
      * synonyms are made for all accessions.
      * @param accession for this isoform
@@ -570,6 +575,24 @@ public class UniprotEntry
      */
     public List<String> getIsoforms() {
         return isoforms;
+    }
+
+    /**
+     * if an isoform has two ID tags, then the first one is used and the second one is added
+     * as a synonym
+     * @param accession of the isoform
+     */
+    public void addIsoformSynonym(String accession) {
+        isoformSynonyms.add(accession);
+    }
+
+    /**
+     * if an isoform has two ID tags, then the first one is used and the second one is added
+     * as a synonym
+     * @return list of isoform synonyms
+     */
+    public List<String> getIsoformSynonyms() {
+        return isoformSynonyms;
     }
 
     /**
