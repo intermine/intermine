@@ -353,7 +353,7 @@
     <attribute name="name" value="Chromosomal Proteins"/>
     <attribute name="title" value="Genome-Wide Mapping of Chromosomal Proteins in Drosophila"/>
     <attribute name="surnamePI" value="Karpen"/>
-    <attribute name="namePI" value="Kevin"/>
+    <attribute name="namePI" value="Gary"/>
     <attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
 		<collection name="labs">
 			<reference ref_id="1072"/>
