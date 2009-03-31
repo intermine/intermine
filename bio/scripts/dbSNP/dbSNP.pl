@@ -89,7 +89,6 @@ foreach my $taxon_id(keys %organisms) {
     $user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
     $pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
     
-
     #Connect to EnsEMBL variation database
     my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
         (-host => $host,
