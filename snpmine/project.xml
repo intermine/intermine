@@ -6,24 +6,17 @@
      <property name="source.location" location="../bio/sources/"/>
     <sources>
     <source name="snp" type="snp">
-          <property name="src.data.dir" location="/shared/data/snpmine/"/>
-          <property name="src.data.dir.includes" value="Chromosome*.xml"/>
+          <property name="src.data.dir" location="/shared/data/snpmine/current/"/>
+          <property name="src.data.dir.includes" value="*.xml"/>
      </source>
-  <source name="go" type="go" dump="true">
+    <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
+      <property name="src.data.dir" location="/shared/data/go-annotation/current/human"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-<!-- why were we using heightmine data?
-      <source name="go-annotation" type="go-annotation" dump="true">
-          <property name="ontologyfile" location="/shared/data/heightmine/go-annotation/gene_ontology.obo"/>
-          <property name="src.data.dir" location="/shared/data/heightmine/go-annotation/current"/>
-          <property name="src.data.dir.includes" value="gene_association_hs"/>
-      </source>
--->
   </sources>
   <post-processing>
     <!--<post-process name="create-references"/>-->
