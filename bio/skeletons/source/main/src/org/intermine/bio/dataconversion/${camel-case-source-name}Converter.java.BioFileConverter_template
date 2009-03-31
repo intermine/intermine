@@ -11,13 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
 
@@ -27,16 +23,17 @@ import org.intermine.xml.full.Item;
  */
 public class ${camel-case-source-name}Converter extends BioFileConverter
 {
-    protected Item worm;
+    //
+    private static final String DATASET_TITLE = "Add DataSet.title here";
+    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if an error occurs in storing
      */
     public ${camel-case-source-name}Converter(ItemWriter writer, Model model) {
-
+        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
     }
 
     /**
