@@ -277,7 +277,6 @@ public class UniprotConverter extends DirectoryConverter
                 List<String> synonymRefIds = new ArrayList();
 
                 try {
-                    // FIXME case of multiple genes
                     processDbrefs(protein, entry, synonymRefIds);
 
                     /* genes */
@@ -352,8 +351,7 @@ public class UniprotConverter extends DirectoryConverter
         if (!entry.isIsoform() && entry.getMd5checksum() != null
                         && !sequences.get(entry.getMd5checksum()).isEmpty()) {
             for (String synonym : sequences.get(entry.getMd5checksum())) {
-                refId = getSynonym(proteinRefId, "accession", synonym, "false",
-                                   datasetRefId);
+                refId = getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
                 proteinSynonyms.add(refId);
             }
         }
@@ -362,8 +360,7 @@ public class UniprotConverter extends DirectoryConverter
         List<String> isoformSynonyms = entry.getIsoformSynonyms();
         if (!isoformSynonyms.isEmpty()) {
             for (String synonym : isoformSynonyms) {
-                refId = getSynonym(proteinRefId, "accession", synonym, "false",
-                                   datasetRefId);
+                refId = getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
                 proteinSynonyms.add(refId);
             }
         }
@@ -714,12 +711,24 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
+
+                String accession = attValue.toString();
+
+                // 119 isoforms have commas in their IDs
+                if (accession.contains(",")) {
+                    String[] accessions = accession.split("[, ]+");
+                    accession = accessions[0];
+                    for (int i = 1; i < accessions.length; i++) {
+                        entry.addIsoformSynonym(accessions[i]);
+                    }
+                }
+
                 // attribute should be empty, unless isoform has two <id>s
                 if (entry.getAttribute() == null) {
-                    entry.addAttribute(attValue.toString());
+                    entry.addAttribute(accession);
                 } else {
                     // second <id> value is ignored and added as a synonym
-                    entry.addIsoformSynonym(attValue.toString());
+                    entry.addIsoformSynonym(accession);
                 }
             }
         }
