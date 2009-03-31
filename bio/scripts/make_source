@@ -12,17 +12,34 @@ my $STRUCTURE_DIR = "$BIO_DIR/skeletons/source";
 my $CUSTOM_FILE_TYPE = 'custom-file';
 my $ITEMS_XML_FILE_TYPE = 'intermine-items-xml-file';
 my $LARGE_ITEMS_XML_FILE_TYPE = 'intermine-items-large-xml-file';
+my $GFF_FILE_TYPE = 'gff';
+my $DB_TYPE = 'db';
 
 sub custom_file_props;
 sub xml_items_props;
 
-my %project_properties = (
-                          $CUSTOM_FILE_TYPE => \&custom_file_props,
-                          $ITEMS_XML_FILE_TYPE => \&xml_items_props,
-                          $LARGE_ITEMS_XML_FILE_TYPE => \&large_xml_items_props,
-                         );
+my %type_properties = (
+                          $CUSTOM_FILE_TYPE => {
+			      project_props_gen => \&custom_file_props,
+			      create_main => 1,
+			      base_class => 'BioFileConverter' },
+                          $ITEMS_XML_FILE_TYPE => { 
+			      project_props_gen => \&xml_items_props,
+			      create_main => 0 },
+                          $LARGE_ITEMS_XML_FILE_TYPE => {
+			      project_props_gen => \&large_xml_items_props,
+			      create_main => 0 },
+                          $GFF_FILE_TYPE => { 
+			      project_props_gen => \&gff_props,
+			      create_main => 1,
+			      base_class => 'GFF3RecordHandler' },
+                          $DB_TYPE => { 
+			      project_props_gen => \&db_props,
+			      create_main => 1,
+			      base_class => 'BioDBConverter' }
+    );
 
-my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %project_properties;
+my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %type_properties;
 
 if (@ARGV != 2) {
   usage (<<USAGE);
@@ -43,6 +60,22 @@ converter.class = org.intermine.bio.dataconversion.${camel_case_source_name}Conv
 PROPS
 }
 
+sub gff_props
+{
+  return <<PROPS;
+have.file.gff3 = true
+gff3.handlerClassName = org.intermine.bio.dataconversion.${camel_case_source_name}GFF3RecordHandler
+PROPS
+}
+
+sub db_props
+{
+  return <<PROPS;
+have.db.tgt = true
+converter.class = org.intermine.bio.dataconversion.${camel_case_source_name}Converter
+PROPS
+}
+
 sub xml_items_props
 {
   return <<PROPS;
@@ -56,13 +89,6 @@ sub large_xml_items_props
 have.large.file.xml.tgt = true
 PROPS
 }
-
-my $create_main = 1;
-
-if ($source_type eq $ITEMS_XML_FILE_TYPE or $source_type eq $LARGE_ITEMS_XML_FILE_TYPE) {
-  $create_main = 0;
-}
-
 
 sub usage
 {
@@ -85,6 +111,16 @@ my @base_project_properties =
 
 my $project_dependencies = join ", \\\n           ", @base_project_properties;
 
+my %type_config;
+
+if (exists $type_properties{$source_type}) {
+    %type_config = %{$type_properties{$source_type}};
+} else {
+  usage ("unknown source type: $source_type");
+}
+
+my $create_main = $type_config{create_main};
+
 if ($create_main) {
   $project_dependencies .= ", \\\n           bio/sources/${source_name}/main";
 }
@@ -97,11 +133,7 @@ my %substitutions = (
                      'project-dependencies' => $project_dependencies
                     );
 
-if (exists $project_properties{$source_type}) {
-  $substitutions{'project-properties'} = &{$project_properties{$source_type}};
-} else {
-  usage ("unknown source type: $source_type");
-}
+$substitutions{'project-properties'} = &{$type_config{project_props_gen}};
 
 # check that we're in the right part of checkout
 if (!-d 'imbuild' || !-d 'intermine') {
@@ -113,7 +145,7 @@ MESSAGE
 
 # Take a string and substitute all of the keys that appear in the %substitutions
 # map with the values from the map.  eg.  the string "${source-name}" will
-# change to $source_type.
+# change to $source_name
 sub substitute
 {
   my $text = shift;
@@ -152,9 +184,19 @@ sub process
 
   $dest_path =~ s:$STRUCTURE_DIR/?::;
 
-  if (!$create_main) {
+  if ($create_main) {
+    my $base_class = $type_config{base_class};
+    if ($orig_path =~ /_template$/) {
+      my $template_string = ".${base_class}_template";
+      if ($orig_path =~ /$template_string$/) {
+        $dest_path =~ s/$template_string$//;
+      } else {
+        return;
+      }
+    }
+  } else {
     if (starts_with_main($dest_path)) {
-      return;
+        return;
     }
   }
 
