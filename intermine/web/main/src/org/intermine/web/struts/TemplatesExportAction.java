@@ -20,10 +20,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -54,11 +54,11 @@ public class TemplatesExportAction extends InterMineAction
         if (name == null) {
             if (scope == null || scope.equals("user")) {
                 xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates(),
-                        ProfileManager.LATEST_VERSION_NUMBER);
+                        PathQuery.USERPROFILE_VERSION);
             } else if (scope.equals("global")) {
                 xml = TemplateHelper.templateMapToXml(SessionMethods
                         .getSuperUserProfile(servletContext).getSavedTemplates(),
-                        ProfileManager.LATEST_VERSION_NUMBER);
+                        PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot export all templates for scope "
                                                    + scope);
@@ -67,7 +67,7 @@ public class TemplatesExportAction extends InterMineAction
             TemplateQuery t = TemplateHelper.findTemplate(servletContext, session,
                     profile.getUsername(), name, scope);
             if (t != null) {
-                xml = t.toXml(ProfileManager.LATEST_VERSION_NUMBER);
+                xml = t.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
                         + scope);

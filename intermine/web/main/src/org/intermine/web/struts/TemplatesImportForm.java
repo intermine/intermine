@@ -12,11 +12,11 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
@@ -110,7 +110,7 @@ public class TemplatesImportForm extends ValidatorForm
         try {
             Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                     SessionMethods.getSearchRepository(servletContext));
-           TemplateHelper.xmlToTemplateMap(getXml(), allBags, ProfileManager.LATEST_VERSION_NUMBER);
+           TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

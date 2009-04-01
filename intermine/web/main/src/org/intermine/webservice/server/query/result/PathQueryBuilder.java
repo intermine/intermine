@@ -17,7 +17,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 
@@ -48,7 +47,7 @@ public class PathQueryBuilder
         if (validator.getErrorsAndWarnings().size() == 0) {
             try {
                 pathQuery = ServletMethods.fromXml(xml, savedBags,
-                        ProfileManager.LATEST_VERSION_NUMBER);
+                        PathQuery.USERPROFILE_VERSION);
             } catch (Exception ex) {
                 String msg = "XML is well formatted but contains invalid model data. "
                         + "Check that your constraints are correct "

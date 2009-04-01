@@ -23,6 +23,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.profile.Profile;
@@ -141,7 +142,7 @@ public class DumpDefaultTemplatesTask extends Task
 
         log("Writing tags and templates...");
         ProfileBinding.marshal(superProfile, os, writer, false, false, true, false, true, true,
-                ProfileManager.LATEST_VERSION_NUMBER);
+                PathQuery.USERPROFILE_VERSION);
         log("Done.");
     }
 }

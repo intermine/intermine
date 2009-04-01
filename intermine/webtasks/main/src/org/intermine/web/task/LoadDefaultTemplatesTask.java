@@ -30,6 +30,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
@@ -141,7 +142,7 @@ public class LoadDefaultTemplatesTask extends Task
             Set<Tag> tags = new HashSet();
             osw = new ObjectStoreWriterInterMineImpl(os);
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
-                    profileDest.getPassword(), tags, osw, ProfileManager.LATEST_VERSION_NUMBER);
+                    profileDest.getPassword(), tags, osw, PathQuery.USERPROFILE_VERSION);
 
             if (profileDest.getSavedTemplates().size() == 0) {
                 Iterator iter = profileSrc.getSavedTemplates().values().iterator();

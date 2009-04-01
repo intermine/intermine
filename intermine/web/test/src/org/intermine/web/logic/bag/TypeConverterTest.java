@@ -41,7 +41,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.ProfileManagerTest;
 import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.template.TemplateQueryBinding;
@@ -75,7 +74,7 @@ public class TypeConverterTest extends StoreDataTestCase
                 "    </template>";
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map tqs = tqb.unmarshal(new StringReader(template), null, ProfileManager.LATEST_VERSION_NUMBER);
+        Map tqs = tqb.unmarshal(new StringReader(template), null, PathQuery.USERPROFILE_VERSION);
         TemplateQuery tq = (TemplateQuery) tqs.get("convertEmployeesToAddresses");
         conversionTemplates = new ArrayList(Collections.singleton(tq));
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");

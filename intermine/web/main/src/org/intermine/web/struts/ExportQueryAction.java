@@ -154,6 +154,6 @@ public class ExportQueryAction extends InterMineAction
     private String getQueryXML(String name, PathQuery query) {
         String modelName = query.getModel().getName();
         return PathQueryBinding.marshal(query, (name != null ? name : ""), modelName,
-                ProfileManager.LATEST_VERSION_NUMBER);
+                PathQuery.USERPROFILE_VERSION);
     }
 }

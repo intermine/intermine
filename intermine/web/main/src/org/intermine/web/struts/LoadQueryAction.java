@@ -30,7 +30,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.WebResultsExecutor;
@@ -70,7 +69,7 @@ public class LoadQueryAction extends DispatchAction
 
 
         Map<String, PathQuery> queries = PathQueryBinding.unmarshal(new StringReader(queryXml),
-                ProfileManager.LATEST_VERSION_NUMBER);
+                PathQuery.USERPROFILE_VERSION);
         MainHelper.checkPathQueries(queries, profile.getSavedBags());
         PathQuery query = (PathQuery) queries.values().iterator().next();
 

@@ -232,8 +232,8 @@ public class ProfileManagerTest extends StoreDataTestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, os, writer, ProfileManager.LATEST_VERSION_NUMBER);
-            ProfileBinding.marshal(sallyProfile, os, writer, ProfileManager.LATEST_VERSION_NUMBER);
+            ProfileBinding.marshal(bobProfile, os, writer, PathQuery.USERPROFILE_VERSION);
+            ProfileBinding.marshal(sallyProfile, os, writer, PathQuery.USERPROFILE_VERSION);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);

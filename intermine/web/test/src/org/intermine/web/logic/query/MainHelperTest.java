@@ -53,7 +53,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
 import org.intermine.web.logic.bag.BagQueryRunner;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Tests for the MainHelper class
@@ -427,7 +426,7 @@ public class MainHelperTest extends TestCase {
 
     private Map readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), ProfileManager.LATEST_VERSION_NUMBER);
+        Map ret = PathQueryBinding.unmarshal(new InputStreamReader(is), PathQuery.USERPROFILE_VERSION);
         return ret;
     }
 
@@ -642,7 +641,7 @@ public class MainHelperTest extends TestCase {
 
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
         try {
-            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), ProfileManager.LATEST_VERSION_NUMBER);
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), PathQuery.USERPROFILE_VERSION);
             PathQuery pq = (PathQuery) parsed.get("test");
             Query q = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap(), false);
             String got = q.toString();
@@ -655,7 +654,7 @@ public class MainHelperTest extends TestCase {
         int columnNo = 0;
         String summaryPath = null;
         try {
-            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), ProfileManager.LATEST_VERSION_NUMBER);
+            Map parsed = PathQueryBinding.unmarshal(new StringReader(web), PathQuery.USERPROFILE_VERSION);
             PathQuery pq = (PathQuery) parsed.get("test");
             for (String summary : summaries) {
                 try {
