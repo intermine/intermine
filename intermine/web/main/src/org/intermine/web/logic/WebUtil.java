@@ -483,15 +483,6 @@ public abstract class WebUtil
         return  ((java.lang.Long) o[0]).intValue();
     }
 
-    /**
-     * @param request request
-     * @return default context path. This context path can be used for example for
-     * generating links to web service that are not tighten to particular webapp release.
-     */
-    public static String getDefaultContextPath(HttpServletRequest request) {
-        Properties props = InterMineAction.getWebProperties(request);
-        return props.getProperty("webapp.defaultContext");
-    }
 
     /**
      * Formats column name. Replaces all dots and colons in path with '>'.
