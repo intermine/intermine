@@ -29,7 +29,7 @@
           </constraint>
         </node>
         <node path="Employee.department.name" type="String">
-          <constraint op="LIKE" value="Department%" description="" identifier="Department.name" editable="true" code="B">
+          <constraint op="LIKE" value="Department*" description="" identifier="Department.name" editable="true" code="B">
           </constraint>
         </node>
       </query>

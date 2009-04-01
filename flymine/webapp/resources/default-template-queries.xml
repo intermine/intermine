@@ -284,7 +284,7 @@
     <node path="CRM.anatomyOntology" type="AnatomyTerm">
     </node>
     <node path="CRM.anatomyOntology.name" type="String">
-      <constraint op="=" value="%neuro%" description="" identifier="" editable="true" code="A" extraValue="">
+      <constraint op="=" value="*neuro*" description="" identifier="" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="CRM.gene" type="Gene">
@@ -930,7 +930,7 @@
     <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases" type="Disease">
     </node>
     <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.description" type="String">
-      <constraint op="LIKE" value="%Spinocerebellar ataxia%" description="" identifier="" editable="true" code="A">
+      <constraint op="LIKE" value="*Spinocerebellar ataxia*" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.transcripts.translation.subjects.subject.genes.omimDiseases.annotations" type="Annotation">
@@ -1100,7 +1100,7 @@
     <node path="Protein" type="Protein">
     </node>
     <node path="Protein.ecNumber" type="String">
-      <constraint op="=" value="1.2.1.%" description="For Enzyme Commission number" identifier="" editable="true" code="A">
+      <constraint op="=" value="1.2.1.*" description="For Enzyme Commission number" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Protein.genes" type="Gene">
@@ -1300,7 +1300,7 @@
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">
-      <constraint op="=" value="TCLAG%" description="EST cluster or cluster type:" identifier="" editable="true" code="B" extraValue="">
+      <constraint op="=" value="TCLAG*" description="EST cluster or cluster type:" identifier="" editable="true" code="B" extraValue="">
       </constraint>
     </node>
     <node path="ESTCluster.overlappingFeatures" type="Gene">
@@ -1346,7 +1346,7 @@
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">
-      <constraint op="=" value="TCLAG%" description="EST cluster type:" identifier="" editable="true" code="B">
+      <constraint op="=" value="TCLAG*" description="EST cluster type:" identifier="" editable="true" code="B">
       </constraint>
     </node>
   </query>
@@ -2408,7 +2408,7 @@
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%transcription factor%" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
+      <constraint op="LIKE" value="*transcription factor*" description="show whether it/they have been annotated with the following:" identifier="" editable="true" code="C">
       </constraint>
     </node>
   </query>
@@ -3644,7 +3644,7 @@
     <node path="GOTerm" type="GOTerm">
     </node>
     <node path="GOTerm.name" type="String">
-      <constraint op="LIKE" value="%blastoderm%" description="" identifier="" editable="true" code="A">
+      <constraint op="LIKE" value="*blastoderm*" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -3664,7 +3664,7 @@
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%ion channel%" description="Show all genes with deletions that are annotated with the following GO term:" identifier="" editable="true" code="B">
+      <constraint op="LIKE" value="*ion channel*" description="Show all genes with deletions that are annotated with the following GO term:" identifier="" editable="true" code="B">
       </constraint>
     </node>
     <node path="Gene.overlappingFeatures" type="ChromosomalDeletion">
@@ -3690,7 +3690,7 @@
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%neuropeptide receptor%" description="Show all genes that have insertions and that have been annotated with the following GO term:" identifier="" editable="true" code="B">
+      <constraint op="LIKE" value="*neuropeptide receptor*" description="Show all genes that have insertions and that have been annotated with the following GO term:" identifier="" editable="true" code="B">
       </constraint>
     </node>
     <node path="Gene.overlappingFeatures" type="TransposableElementInsertionSite">
@@ -3822,7 +3822,7 @@
     <node path="ProteinDomain" type="ProteinDomain">
     </node>
     <node path="ProteinDomain.name" type="String">
-      <constraint op="=" value="%leucine%" description="Seach for names that contain a particular string - use '*' as a wildcard:" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      <constraint op="=" value="*leucine*" description="Seach for names that contain a particular string - use '*' as a wildcard:" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
   </query>
@@ -3844,7 +3844,7 @@
     <node path="Protein.proteinDomains" type="ProteinDomain">
     </node>
     <node path="Protein.proteinDomains.primaryIdentifier" type="String">
-      <constraint op="LIKE" value="IPR%" description="" identifier="" code="C">
+      <constraint op="LIKE" value="IPR*" description="" identifier="" code="C">
       </constraint>
     </node>
     <node path="Protein.proteinDomains.type" type="String">
@@ -3986,7 +3986,7 @@
       </constraint>
     </node>
     <node path="ProteinDomain.name" type="String">
-      <constraint op="=" value="%homeo%" description="that code for the following protein domain:" identifier="" editable="true" code="C">
+      <constraint op="=" value="*homeo*" description="that code for the following protein domain:" identifier="" editable="true" code="C">
       </constraint>
     </node>
   </query>
@@ -4262,7 +4262,7 @@
     <node path="Gene.goAnnotation" type="GOAnnotation">
     </node>
     <node path="Gene.goAnnotation.name" type="String">
-      <constraint op="LIKE" value="%ion channel%" description="which have been annotated with:" identifier="" editable="true" code="B">
+      <constraint op="LIKE" value="*ion channel*" description="which have been annotated with:" identifier="" editable="true" code="B">
       </constraint>
     </node>
     <node path="Gene.overlappingFeatures" type="PointMutation">
@@ -5136,7 +5136,7 @@
       </constraint>
     </node>
     <node path="Gene.microArrayResults.assays.sample2" type="String">
-      <constraint op="LIKE" value="%Embryo%" description="show data for developmental stage:" identifier="" editable="true" code="C">
+      <constraint op="LIKE" value="*Embryo*" description="show data for developmental stage:" identifier="" editable="true" code="C">
       </constraint>
     </node>
   </query>
@@ -5164,7 +5164,7 @@
       </constraint>
     </node>
     <node path="Gene.microArrayResults.assays.sample2" type="String">
-      <constraint op="LIKE" value="%Embryo%" description="show data for developmental stage:" identifier="" editable="true" code="C">
+      <constraint op="LIKE" value="*Embryo*" description="show data for developmental stage:" identifier="" editable="true" code="C">
       </constraint>
     </node>
     <node path="Gene.microArrayResults.value" type="Float">
@@ -5394,7 +5394,7 @@
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">
-      <constraint op="=" value="UCLAG%" description="EST cluster type:" identifier="" editable="true" code="B">
+      <constraint op="=" value="UCLAG*" description="EST cluster type:" identifier="" editable="true" code="B">
       </constraint>
     </node>
   </query>

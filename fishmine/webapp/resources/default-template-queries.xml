@@ -156,7 +156,7 @@
     <node path="GOTerm" type="GOTerm">
     </node>
     <node path="GOTerm.name" type="String">
-      <constraint op="LIKE" value="%blastoderm%" description="" identifier="" editable="true" code="A">
+      <constraint op="LIKE" value="*blastoderm*" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
   </query>
