@@ -151,7 +151,7 @@
     <bagdisplayers>
     </bagdisplayers>
   </class>
-
+<!--
   <class className="org.intermine.model.bio.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -163,7 +163,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-
+-->
   <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
