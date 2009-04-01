@@ -76,7 +76,7 @@ public class QueryService extends Service
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
         Model model = modelService.getModel();
         Model.addModel(model.getName(), model);
-        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml));
+        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
     }
 
     /**
@@ -85,7 +85,7 @@ public class QueryService extends Service
      * @return number of results of specified query.
      */
     public int getCount(PathQuery query) {
-        return getCount(query.toXml());
+        return getCount(query.toXml(PathQuery.USERPROFILE_VERSION));
     }
 
     /**
@@ -119,7 +119,7 @@ public class QueryService extends Service
      * @return results of specified PathQuery
      */
     public List<List<String>> getResult(PathQuery query, int maxCount) {
-        return getResultInternal(query.toXml(), maxCount).getData();
+        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), maxCount).getData();
     }
 
     /**
@@ -130,7 +130,7 @@ public class QueryService extends Service
      * @return results of specified PathQuery
      */
     public Iterator<List<String>> getResultIterator(PathQuery query, int maxCount) {
-        return getResultInternal(query.toXml(), maxCount).getIterator();
+        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), maxCount).getIterator();
     }
  
     /**
