@@ -1511,32 +1511,4 @@ public class MainHelper
         }
         return q;
     }
-
-    /**
-     * For a given PagedTable, return the corresponding PathQuery
-     * TODO this only works for bags at the moment but need to be extended to work with anything
-     * @param pagedTable the PagedTable
-     * @param model the Model
-     * @param bag the InterMineBag
-     * @return a PathQuery
-     */
-    public static PathQuery webTableToPathQuery(PagedTable pagedTable, Model model,
-                                                InterMineBag bag) {
-        PathQuery pathQuery = new PathQuery(model);
-        List columns = pagedTable.getColumns();
-        List<Path> view = new ArrayList<Path>();
-        for (Iterator iter = columns.iterator(); iter.hasNext();) {
-            Column column = (Column) iter.next();
-            view.add((Path) column.getPath());
-        }
-        pathQuery.setViewPaths(view);
-
-        String bagType = bag.getType();
-        ConstraintOp constraintOp = ConstraintOp.IN;
-        String constraintValue = bag.getName();
-        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
-        Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
-        pathQuery.addNode(bagType).getConstraints().add(c);
-        return pathQuery;
-    }
 }
