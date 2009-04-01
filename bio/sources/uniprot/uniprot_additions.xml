@@ -28,5 +28,6 @@
     <class name="ProteinDomain" extends="BioEntity" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
+    <collection name="proteins" referenced-type="Protein" ordered="true" reverse-reference="proteinDomains"/>
   </class>
 </classes>
