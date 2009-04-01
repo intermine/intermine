@@ -19,17 +19,12 @@
     <td>
       <div class="body">
         <p>
-          <a href="/malariamine">MalariaMine</a> contains <i>Plasmodium falciparum 3D7</i> genome
-          data from:
+          FishMine contains <i>D. rerio</i> genome data from:
         </p>
         <ul>
           <li>
-            <a href="http://www.genedb.org/">
-              Fasta sequences for <i>P. falciparum 3D7</i></a>
-          </li>
-          <li>
-            <a href="http://www.genedb.org/">
-              GFF3 for <i>P. falciparum 3D7</i> genome features</a>
+            <a href="http://www.zfin.org/">
+              Gene identifiers for <i>D. rerio</i></a>
           </li>
         </ul>
       </div>
@@ -38,28 +33,14 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> genes (browse)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
+            <im:querylink text="All <i>D. rerio</i> genes (browse)" skipBuilder="true">
+              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
-                  </constraint>
-                </node>
-              </query>
-            </im:querylink>
-          </li>
-          <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> gene identifiers, chromosome positions and chromosome identifiers (for export)" skipBuilder="true">
-              <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol Gene.chromosome.identifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end">
-                <node path="Gene" type="Gene">
-                </node>
-                <node path="Gene.organism" type="Organism">
-                </node>
-                <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+                  <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>

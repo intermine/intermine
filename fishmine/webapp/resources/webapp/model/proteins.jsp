@@ -9,18 +9,13 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ebi.uniprot.org/index.shtml">UniProt
-          Knowledgebase (UniProtKB)</A></DT>
+          <DT><A href="http://www.uniprot.org">UniProt Knowledgebase (UniProtKB)</A></DT>
           <DD>
-            All proteins from the <A
-            href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</A> (version 7.5) for the following organisms have
-            been loaded:
+            All proteins from the <A href="http://www.uniprot.org" target="_new">UniProt Knowledgebase</A> (version 14.9) for the following organisms have been loaded:
             <UL>
-              <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
+              <LI><I>D. rerio</I></LI>
             </UL>
-            For each protein record in UniProt for each species the following
-            information is extracted and loaded into FlyMine:
+            For each protein record in UniProt for each species the following information is extracted and loaded into FishMine:
             <UL>
               <LI>Entry name</LI>
               <LI>Primary accession number</LI>
@@ -37,12 +32,12 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>P. falciparum 3d7</i> data
+        Bulk download <i>D. rerio</i> data
       </div>
       <div class="body">
         <ul>
           <li>
-            <i>Plasmodium falciparum</i> proteins and corresponding genes:
+            <i>Danio rerio</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein Protein.genes">
@@ -51,21 +46,20 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7"
-                                description="" identifier="" code="A">
+                    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier Protein.genes.chromosomeLocation.start Protein.genes.chromosomeLocation.end">
+                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Plasmodium falciparum 3D7" description="" identifier="" code="A">
+                    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>
