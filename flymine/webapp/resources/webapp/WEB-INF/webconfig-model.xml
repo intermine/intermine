@@ -392,6 +392,7 @@
   <class className="org.intermine.model.bio.OntologyTermSynonym">
     <fields>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
