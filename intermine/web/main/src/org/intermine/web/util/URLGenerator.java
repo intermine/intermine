@@ -38,12 +38,7 @@ public class URLGenerator
      * @return base url. For example: http://localhost:8080/query 
      */
     public String getPermanentBaseURL() {
-        String contextPath;
-        if (WebUtil.getDefaultContextPath(request) != null) {
-            contextPath = "/" + WebUtil.getDefaultContextPath(request);
-        } else {
-            contextPath = request.getContextPath();
-        }
+        String contextPath = request.getContextPath();
         return generateURL(request, contextPath);
     }
     

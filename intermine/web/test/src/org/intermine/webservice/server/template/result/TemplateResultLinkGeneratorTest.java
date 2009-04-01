@@ -32,7 +32,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
         TemplateQuery tmpl = getTemplate(getExtraValueQuery());
         String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
         assertEquals(prefix + "/template/results?" +
-        		"name=template1&cons1=Gene.name&op1=LOOKUP&value1=zen&" +
+        		"name=template1&constraint1=Gene.name&op1=LOOKUP&value1=zen&" +
         		"extra1=Drosophila_melanogaster&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);
     }
 
@@ -48,9 +48,13 @@ public class TemplateResultLinkGeneratorTest extends TestCase
     public void testMultipleConstraintsLink() {
         TemplateQuery tmpl = getTemplate(getMultipleConstraintQuery());
         String link = new TemplateResultLinkGenerator().getHtmlLink("http://localhost:8080/query", tmpl);
-        assertEquals(prefix + "/template/results?" +
-                "name=template1&cons1=Gene.name&op1=CONTAINS&value1=zen&cons2=Gene.length&op2=lt&value2=100" + 
-                "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging", link);        
+        System.out.println(link);
+        String expected = prefix + "/template/results?name=template1"
+            + "&constraint1=Gene.length&op1=lt&value1=100" 
+            + "&constraint2=Gene.name&op2=CONTAINS&value2=zen"
+            + "&size=" + TemplateResultLinkGenerator.DEFAULT_RESULT_SIZE + "&layout=minelink|paging";
+        System.out.println(expected);
+        assertEquals(expected, link);        
     }
 
     private PathQuery getMultipleConstraintQuery() {

@@ -67,7 +67,10 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @return highlighted link
      */
     public String getTabLink(String baseUrl, TemplateQuery template) {
-        return getLink(baseUrl, template, false);
+        String ret = getLink(baseUrl, template, false);
+        ret += "&size=";
+        ret += format("" + DEFAULT_RESULT_SIZE, false);
+        return ret;
     }
     
     /**
@@ -84,7 +87,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     private String getLink(String baseUrl, TemplateQuery template, 
             boolean highlighted) {
         if (template.getBagNames().size() > 0) {
-            error = "This template contains list(s) constraint. The service for this "
+            error = "This template contains list constraints. The service for this "
                 + "special template is not implemented yet. Solution: Don't use list contraint.";
             return null;
         }
@@ -129,7 +132,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     }
 
     private String pathToString(String path, int index) {
-        return "cons" + index + "=" + path;
+        return "constraint" + index + "=" + path;
     }
 
     private String operationToString(ConstraintOp op, int index, boolean highlighted) {
