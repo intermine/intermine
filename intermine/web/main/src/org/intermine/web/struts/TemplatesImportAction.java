@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -59,7 +59,7 @@ public class TemplatesImportAction extends InterMineAction
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
                 SessionMethods.getSearchRepository(servletContext));
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
-                ProfileManager.LATEST_VERSION_NUMBER);
+                PathQuery.USERPROFILE_VERSION);
 
         try {
             profile.disableSaving();

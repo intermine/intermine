@@ -117,10 +117,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                             SessionMethods.getSearchRepository(sc));
                     PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
-                            ProfileManager.LATEST_VERSION_NUMBER);
+                            PathQuery.USERPROFILE_VERSION);
                     if (pq.isValid()) {
                         session.setAttribute(Constants.QUERY, ServletMethods.fromXml(queryXml,
-                                    profile.getSavedBags(), ProfileManager.LATEST_VERSION_NUMBER));
+                                    profile.getSavedBags(), PathQuery.USERPROFILE_VERSION));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);
                     }

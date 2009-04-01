@@ -71,9 +71,6 @@ public class ProfileManager
     private String superuser = null;
     /** Number determining format of queries in the database */
     protected int version;
-    /** Number of the latest format version */
-    public static final int LATEST_VERSION_NUMBER = 1;
-
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -91,7 +88,7 @@ public class ProfileManager
             } else {
                 version = Integer.parseInt(versionString);
             }
-            if ((version < 0) || (version > LATEST_VERSION_NUMBER)) {
+            if ((version < 0) || (version > PathQuery.USERPROFILE_VERSION)) {
                 throw new IllegalStateException("Could not recognise userprofile format version "
                         + version + ", maybe you need to update InterMine");
             }
@@ -111,8 +108,8 @@ public class ProfileManager
                     if (results.isEmpty()) {
                         // We can safely upgrade the database
                         MetadataManager.store(((ObjectStoreInterMineImpl) osw).getDatabase(),
-                                MetadataManager.PROFILE_FORMAT_VERSION, "" + LATEST_VERSION_NUMBER);
-                        version = LATEST_VERSION_NUMBER;
+                                MetadataManager.PROFILE_FORMAT_VERSION, "" + PathQuery.USERPROFILE_VERSION);
+                        version = PathQuery.USERPROFILE_VERSION;
                     }
                 }
             }

@@ -339,7 +339,7 @@ public class MainHelper
             if (logic == null) {
                 throw new IllegalArgumentException("Query with multiple constraints contains no "
                         + "constraint logic. Query: " + PathQueryBinding.marshal(pathQuery,
-                            "", "", ProfileManager.LATEST_VERSION_NUMBER));
+                            "", "", PathQuery.USERPROFILE_VERSION));
             }
             rootcs = makeConstraintSets(logic, codeToCS, andcs);
         }

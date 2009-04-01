@@ -53,6 +53,11 @@ public class PathQuery
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
+    /** 
+     * Version number for the userprofile and PathQuery XML format
+     */
+    public static final int USERPROFILE_VERSION = 1;
+
     /**
      * Ascending sort order.
      */

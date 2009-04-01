@@ -31,7 +31,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
@@ -152,7 +151,7 @@ public class OrthologueConverter implements BagConverter
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        String query = pathQuery.toXml(ProfileManager.LATEST_VERSION_NUMBER);
+        String query = pathQuery.toXml(PathQuery.USERPROFILE_VERSION);
         String encodedurl = URLEncoder.encode(query, "UTF-8");
         String[] values = new String[]
             {
