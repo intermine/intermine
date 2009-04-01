@@ -24,8 +24,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
-import org.intermine.sql.query.Query;
 import org.intermine.sql.query.AbstractValue;
+import org.intermine.sql.query.OrderDescending;
+import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.Table;
 
@@ -282,6 +283,9 @@ public class PrecomputedTableManager
                     boolean needComma = false;
                     StringBuilder sb = new StringBuilder();
                     for (AbstractValue ob : orderBy) {
+                        while (ob instanceof OrderDescending) {
+                            ob = ((OrderDescending) ob).getValue();
+                        }
                         if (needComma) {
                             sb.append(", ");
                         }

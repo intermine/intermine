@@ -275,4 +275,16 @@ public class PrecomputedTableManagerTest extends TestCase
             }
         }
     }
+
+    public void testOrderDescending() throws Exception {
+        Query q = new Query("SELECT employee.age FROM employee ORDER BY employee.age DESC");
+        Connection con = database.getConnection();
+        PrecomputedTableManager ptm = new PrecomputedTableManager(database);
+        try {
+            PrecomputedTable pt2 = new PrecomputedTable(q, q.getSQLString(), "precomp3", "test", con);
+            ptm.add(pt2);
+        } finally {
+            con.close();
+        }
+    }
 }
