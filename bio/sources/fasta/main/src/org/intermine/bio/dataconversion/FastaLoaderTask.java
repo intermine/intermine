@@ -309,11 +309,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
                     + flymineSequence.getLength() + ". Does the attribute exist?");
         }
 
-        if (TypeUtil.getSetter(c, "md5checksum") != null) { 
+        if (TypeUtil.getSetter(c, "md5checksum") != null) {
             try {
                 imo.setFieldValue("md5checksum", md5checksum);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Error setting: " + className + ".md5checksum to: "
+                throw new IllegalArgumentException("Error setting: " + className
+                                                   + ".md5checksum to: "
                                                    + md5checksum + ". Does the attribute exist?");
             }
         }
