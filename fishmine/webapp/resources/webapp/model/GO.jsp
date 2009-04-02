@@ -11,7 +11,7 @@
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-    GO annotation in FlyMine ...
+    GO annotation in FishMine ...
    </a>
  </h4>
 
@@ -24,17 +24,8 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      FlyMine has GO annotations for <i>Drosophila</i>,
-      <i>C. elegans</i> and <i>A. gambiae</i>.  GO annotation for
-      other organisms is also included and is accessible via orthologues.
+      FishMine has GO annotations for <i>D. rerio</i>.
       </p>
-        <ul>
-         <li><i>D. melanogaster</i> - GO annotations for <i>D. melanogaster</i> gene products assigned by <a href="http://www.flybase.org" target="_new">FlyBase</a></li><br/>
-         <li><i>A. gambiae</i> - GO annotations for <i>A. gambiae</i> gene products assigned by the <a href="http://www.ebi.ac.uk/GOA/" target="_new">GO annotation@EBI</a> project.</li><br/>
-         <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
-         <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
-         <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
-       </ul>
       </div>
 
 
@@ -93,8 +84,6 @@
     </div>
    </td>
 
-
-
     <td width="40%" valign="top">
       <div class="heading2">
         Bulk download
@@ -103,46 +92,23 @@
         <ul>
 
           <li>
-            <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
+            <im:querylink text="All gene/GO annotation pairs from <i>D. rerio</i> " skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
     </constraint>
   </node>
   <node path="Gene.goAnnotation" type="GOAnnotation">
   </node>
-  <node path="Gene.goAnnotation.property" type="GOTerm">
+  <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
   </node>
 </query>
           </im:querylink>
          </li>
-
-         <li>
-           <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
-    </constraint>
-  </node>
-  <node path="Gene.annotations" type="GOAnnotation">
-  </node>
-  <node path="Gene.goAnnotation" type="GOAnnotation">
-  </node>
-  <node path="Gene.goAnnotation.property" type="GOTerm">
-  </node>
-</query>
-
-
- </im:querylink>
-        </li>
 
         <li>
          <im:querylink text="All GO Term identifiers with names and descriptions " skipBuilder="true">

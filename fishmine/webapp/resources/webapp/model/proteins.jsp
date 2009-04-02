@@ -11,20 +11,22 @@
         <DL>
           <DT><A href="http://www.uniprot.org">UniProt Knowledgebase (UniProtKB)</A></DT>
           <DD>
-            All proteins from the <A href="http://www.uniprot.org" target="_new">UniProt Knowledgebase</A> (version 14.9) for the following organisms have been loaded:
+            All proteins from the <A href="http://www.uniprot.org" target="_new">UniProt Knowledgebase</A> (version 15.8) for the following organisms have been loaded:
             <UL>
               <LI><I>D. rerio</I></LI>
             </UL>
             For each protein record in UniProt for each species the following information is extracted and loaded into FishMine:
             <UL>
               <LI>Entry name</LI>
-              <LI>Primary accession number</LI>
-              <LI>Secondary accession number</LI>
+              <LI>Primary accession</LI>
               <LI>Protein name</LI>
               <LI>Comments</LI>
               <LI>Publications</LI>
+              <LI>Features</LI>
               <LI>Sequence</LI>
-              <LI>Gene ORF name</LI>
+              <LI>Gene</LI>
+              <LI>Protein domains</LI>
+              <LI>Keywords</LI>
             </UL>
           </DD>
         </DL>
@@ -40,7 +42,7 @@
             <i>Danio rerio</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein Protein.genes">
+                <query name="" model="genomic" view="Protein.primaryAccession Protein.genes.primaryidentifier">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
@@ -53,7 +55,7 @@
               </im:querylink>
               or
               <im:querylink text="[export/download]" skipBuilder="true">
-                <query name="" model="genomic" view="Protein.identifier Protein.name Protein.primaryAccession Protein.genes.identifier">
+                <query name="" model="genomic" view="Protein.primaryidentifier Protein.name Protein.primaryAccession Protein.genes.primaryidentifier">
                   <node path="Protein" type="Protein">
                   </node>
                   <node path="Protein.organism" type="Organism">
