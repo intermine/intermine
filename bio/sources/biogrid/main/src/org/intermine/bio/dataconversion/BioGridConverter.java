@@ -58,11 +58,12 @@ public class BioGridConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     protected IdResolverFactory resolverFactory;
-    private Map<String, String> terms = new HashMap<String, String>();
-    private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, String> organisms = new HashMap<String, String>();
-    private static final Map<String, String> PSI_TERMS = new HashMap<String, String>();
+    private Map<String, String> terms = new HashMap();
+    private Map<String, String> pubs = new HashMap();
+    private Map<String, String> organisms = new HashMap();
+    private static final Map<String, String> PSI_TERMS = new HashMap();
     private Map<String, String> genes = new HashMap();
+    private Set<String> synonyms = new HashSet();
 
     /**
      * Constructor
@@ -378,7 +379,7 @@ public class BioGridConverter extends BioFileConverter
          * @throws ObjectStoreException
          */
         private void setGene(String taxonId, InteractorHolder ih)
-        throws ObjectStoreException {
+        throws ObjectStoreException, SAXException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
@@ -410,6 +411,7 @@ public class BioGridConverter extends BioFileConverter
                 store(item);
                 refId = item.getIdentifier();
                 genes.put(identifier, refId);
+                setSynonym(refId, "identifier", identifier);
             }
 
             ih.identifier = identifier;
@@ -418,6 +420,22 @@ public class BioGridConverter extends BioFileConverter
             return;
         }
 
+        private void setSynonym(String subjectRefId, String type, String value)
+        throws SAXException {
+            String key = subjectRefId + type + value;
+            if (!synonyms.contains(key)) {
+                Item synonym = createItem("Synonym");
+                synonym.setAttribute("type", type);
+                synonym.setAttribute("value", value);
+                synonym.setReference("subject", subjectRefId);
+                synonyms.add(key);
+                try {
+                    store(synonym);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
+                }
+            }
+        }
 
         /**
          * resolve dmel genes
