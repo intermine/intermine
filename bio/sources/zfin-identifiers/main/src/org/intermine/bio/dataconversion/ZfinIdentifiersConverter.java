@@ -223,8 +223,8 @@ public class ZfinIdentifiersConverter extends BioDirectoryConverter
         if (item == null) {
             item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
-            genes.put(primaryIdentifier, item);
             item.setReference("organism", organismRefId);
+            genes.put(primaryIdentifier, item);
             setSynonym(item.getIdentifier(), "identifier", primaryIdentifier);
         }
         return item;
@@ -236,9 +236,9 @@ public class ZfinIdentifiersConverter extends BioDirectoryConverter
         if (refId == null) {
             Item item = createItem("Protein");
             item.setAttribute("primaryAccession", primaryAccession);
-            proteins.put(primaryAccession, refId);
             item.setReference("organism", organismRefId);
             refId = item.getIdentifier();
+            proteins.put(primaryAccession, refId);
             setSynonym(refId, "accession", primaryAccession);
             try {
                 store(item);

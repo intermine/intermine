@@ -21,4 +21,14 @@
     <tile-name>model/proteins.jsp</tile-name>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
+    <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
+    <intro-text>
+      Gene Ontology (GO) annotations for &lt;i&gt;Danio rerio&lt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
+    </intro-text>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
+  </aspect>
 </aspects>
