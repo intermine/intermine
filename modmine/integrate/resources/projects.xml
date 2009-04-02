@@ -484,7 +484,7 @@
 	<item id="1063" class="" implements="Lab">
 		<attribute name="surname" value="Gingeras"/>
 		<attribute name="name" value="Tom Gingeras"/>
-		<attribute name="affiliation" value="Affymetrix"/>
+		<attribute name="affiliation" value="Cold Spring Harbor Laboratory"/>
 		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
