@@ -4,12 +4,10 @@
     <icon-image>model/images/genomics.gif</icon-image>
     <large-image>model/images/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in MalariaMine are provided by
-      a variety of curated source databases.  In most cases MalariaMine includes
-      all genome features that have chromosomal locations.
+      The gene identifiers in FishMine are obtained from ZFIN.
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <aspect-source name="GeneDB" url="http://www.genedb.org"/>
+    <aspect-source name="ZFIN" url="http://www.zfin.org"/>
   </aspect>
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
