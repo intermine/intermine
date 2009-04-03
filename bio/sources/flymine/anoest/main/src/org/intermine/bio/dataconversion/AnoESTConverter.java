@@ -80,6 +80,8 @@ public class AnoESTConverter extends BioDBConverter
             //                  new ArrayList(Collections.singleton(dataSet.getIdentifier())));
             cluster.setAttribute("curated", "false");
             cluster.setReference("organism", getOrganismItem(ANOPHELES_TAXON_ID));
+            
+
             store(cluster);
 
             Item synonym =
@@ -87,7 +89,7 @@ public class AnoESTConverter extends BioDBConverter
             store(synonym);
 
             // some clusters have no location
-            if (chromosomeIdentifier != null && start > 0 && end > 0) {
+            if (chromosomeIdentifier != null && !chromosomeIdentifier.equals("mitochondrial") && start > 0 && end > 0) {
                 Item chromosomeItem = getChromosome(chromosomeIdentifier, ANOPHELES_TAXON_ID);
                 String chromosomeItemId = chromosomeItem.getIdentifier();
                 Item location = makeLocation(chromosomeItemId, cluster.getIdentifier(), start, end,
