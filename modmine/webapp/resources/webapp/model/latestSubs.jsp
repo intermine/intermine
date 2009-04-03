@@ -64,13 +64,11 @@ dateStyle="short"
 <td>		
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
+    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
-  <node path="Submission.bioEntities" type="BioEntity">
-  </node>
-  <node path="Submission.bioEntities.organism" type="Organism">
+  <node path="Submission.organism" type="Organism">
   <constraint op="LOOKUP" value="Drosophila melanogaster" description=""
     identifier="" code="A" extraValue="">
   </constraint>
@@ -82,13 +80,11 @@ dateStyle="short"
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
   <query name="" model="genomic"
-    view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.publicReleaseDate Submission.description"
+    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
     sortOrder="Submission.title">
   <node path="Submission" type="Submission">
   </node>
-  <node path="Submission.bioEntities" type="BioEntity">
-  </node>
-  <node path="Submission.bioEntities.organism" type="Organism">
+  <node path="Submission.organism" type="Organism">
   <constraint op="LOOKUP" value="Caenorhabditis elegans" description=""
     identifier="" code="A" extraValue="">
   </constraint>
