@@ -78,11 +78,6 @@
     <reference name="subject" ref_id="7_5"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
-  <item id="5_2" class="Chromosome">
-    <attribute name="primaryIdentifier" value="mitochondrial"/>
-    <reference name="organism" ref_id="3_1"/>
-    <collection name="dataSets"><reference ref_id="1_1"/></collection>
-  </item>
   <item id="1_1" class="DataSet">
     <attribute name="title" value="VectorBase AnoEST clusters"/>
     <reference name="dataSource" ref_id="0_1"/>
@@ -165,14 +160,6 @@
     <attribute name="primaryIdentifier" value="BX610490.1"/>
     <reference name="organism" ref_id="3_1"/>
     <collection name="ESTClusters"><reference ref_id="2_4"/></collection>
-    <collection name="dataSets"><reference ref_id="1_1"/></collection>
-  </item>
-  <item id="6_3" class="Location">
-    <attribute name="end" value="8552"/>
-    <attribute name="start" value="100"/>
-    <attribute name="strand" value="-1"/>
-    <reference name="object" ref_id="5_2"/>
-    <reference name="subject" ref_id="2_3"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>
   <item id="2_1" class="ESTCluster">
