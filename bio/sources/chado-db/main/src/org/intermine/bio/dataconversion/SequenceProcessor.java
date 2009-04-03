@@ -354,7 +354,9 @@ public class SequenceProcessor extends ChadoProcessor
         }
         Item uniqueNameSynonym = createSynonym(fdat, "identifier", fixedUniqueName,
                                                uniqueNameSet, null);
-        getChadoDBConverter().store(uniqueNameSynonym);
+        if (uniqueNameSynonym != null) {
+            getChadoDBConverter().store(uniqueNameSynonym);
+        }
 
         // create a synonym for name, if configured
         if (!StringUtils.isBlank(name)) {
@@ -372,7 +374,9 @@ public class SequenceProcessor extends ChadoProcessor
                             boolean nameSet = fieldValuesSet.contains(processedName);
                             Item nameSynonym =
                                 createSynonym(fdat, "name", processedName, nameSet, null);
-                            getChadoDBConverter().store(nameSynonym);
+                            if (nameSynonym != null) {
+                                getChadoDBConverter().store(nameSynonym);
+                            }
                         }
                     }
                 }
@@ -1087,8 +1091,11 @@ public class SequenceProcessor extends ChadoProcessor
                             }
                             Item synonym = createSynonym(fdat, "identifier", newFieldValue,
                                                          isPrimary, null);
-                            getChadoDBConverter().store(synonym);
-                            count++;
+                            
+                            if (synonym != null) {
+                                getChadoDBConverter().store(synonym);
+                                count++;
+                            }
                         }
                     }
                 }
@@ -1163,8 +1170,10 @@ public class SequenceProcessor extends ChadoProcessor
                             }
                             Item synonym = createSynonym(fdat, synonymType, newFieldValue,
                                                          isPrimary, null);
-                            getChadoDBConverter().store(synonym);
-                            count++;
+                            if (synonym != null) {
+                                getChadoDBConverter().store(synonym);
+                                count++;
+                            }
                         }
 
                     }
@@ -1248,8 +1257,10 @@ public class SequenceProcessor extends ChadoProcessor
                             }
                             Item synonym = createSynonym(fdat, synonymType, newFieldValue,
                                                          isPrimary, null);
-                            getChadoDBConverter().store(synonym);
-                            count++;
+                            if (synonym != null) {
+                                getChadoDBConverter().store(synonym);
+                                count++;
+                            }
                         }
 
                     } else {
@@ -1419,8 +1430,10 @@ public class SequenceProcessor extends ChadoProcessor
                             Item synonym =
                                 createSynonym(fdat, synonymTypeName, newFieldValue, setField,
                                               null);
-                            getChadoDBConverter().store(synonym);
-                            count++;
+                            if (synonym != null) {
+                                getChadoDBConverter().store(synonym);
+                                count++;
+                            }
                         }
                     }
                 }
