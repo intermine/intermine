@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
@@ -43,7 +41,6 @@ import org.apache.lucene.search.highlight.TokenGroup;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectTagUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
@@ -91,16 +88,6 @@ public class SearchRepository
      */
     public void setProfile(Profile profile) {
         this.profile = profile;
-    }
-
-    /**
-     * Get the SearchRepository for global (public) objects.
-     *
-     * @param context the servlet context
-     * @return the singleton SearchRepository object
-     */
-    public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
-        return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
 
     /**
@@ -182,7 +169,7 @@ public class SearchRepository
     /**
      * Create the lucene search index of all global webSearchable queries.
      *
-     * @param servletContext the servlet context
+     * @param type the type of websearchable to reindex (templates or lists)
      */
     private void reindex(String type) {
         directoryMap.put(type, null);
@@ -344,7 +331,7 @@ public class SearchRepository
      * @param scope "global", "user" or "both" - which scope to search
      * @param type the type of object to search ("bag", "template" ...)
      * @param profile the user profile
-     * @param context the ServletContext used to get the global SearchRepository
+     * @param globalSearchRepository the global SearchRepository
      * @param hitMap set to be a Map from WebSearchable name to score in the search
      * @param scopeMap set to be a Map from WebSearchable name to scope of the WebSearchable we
      *    match
@@ -359,7 +346,7 @@ public class SearchRepository
      */
     public static long runLeuceneSearch(String origQueryString, String scope, String type,
                                         Profile profile,
-                                        ServletContext context,
+                                        SearchRepository globalSearchRepository,
                                         Map<WebSearchable, Float> hitMap,
                                         Map<WebSearchable, String> scopeMap,
                                         Map<WebSearchable, String> highlightedTitleMap,
@@ -372,8 +359,6 @@ public class SearchRepository
         SearchRepository.LOG.info("Searching " + scope + " for "
                 + " was:" + origQueryString + " now:" + queryString + "  - type: " + type);
         long time = System.currentTimeMillis();
-        SearchRepository globalSearchRepository =
-            (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
         Map<String, ? extends WebSearchable> globalWebSearchables =
             globalSearchRepository.getWebSearchableMap(type);
         Directory globalDirectory = globalSearchRepository.getDirectory(type);

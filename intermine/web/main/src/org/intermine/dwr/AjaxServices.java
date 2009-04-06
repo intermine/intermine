@@ -512,10 +512,12 @@ public class AjaxServices
             if (filterText != null && filterText.length() > 1) {
                 wsMap = new LinkedHashMap<String, WebSearchable>();
                 Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
+                SearchRepository globalSearchRepository =
+                    SessionMethods.getGlobalSearchRepository(servletContext);
                 try {
                     long time =
                         SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
-                                                        servletContext,
+                                                        globalSearchRepository,
                                                         hitMap, scopeMap, null, highlightedDescMap);
                     LOG.info("Lucene search took " + time + " milliseconds");
                 } catch (ParseException e) {
@@ -625,7 +627,7 @@ public class AjaxServices
             String pckName =  os.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             SearchRepository searchRepository =
-                SearchRepository.getGlobalSearchRepository(servletContext);
+                SessionMethods.getGlobalSearchRepository(servletContext);
             InterMineBag imBag = null;
             int count = 0;
             try {
@@ -724,7 +726,7 @@ public class AjaxServices
             }
 
             SearchRepository searchRepository =
-                SearchRepository.getGlobalSearchRepository(servletContext);
+                SessionMethods.getGlobalSearchRepository(servletContext);
             Map<String, ? extends WebSearchable> publicBagMap =
                 searchRepository.getWebSearchableMap(TagTypes.BAG);
             if (publicBagMap.get(bagName) != null) {
@@ -827,7 +829,7 @@ public class AjaxServices
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             SearchRepository searchRepository =
-                SearchRepository.getGlobalSearchRepository(servletContext);
+                SessionMethods.getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
 
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -865,7 +867,7 @@ public class AjaxServices
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             SearchRepository searchRepository =
-                SearchRepository.getGlobalSearchRepository(servletContext);
+                SessionMethods.getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
             Map classKeys = getClassKeys(servletContext);
 
@@ -912,7 +914,7 @@ public class AjaxServices
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository searchRepository = SearchRepository
+            SearchRepository searchRepository = SessionMethods
                             .getGlobalSearchRepository(servletContext);
             InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -962,7 +964,7 @@ public class AjaxServices
            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
            Model model = os.getModel();
            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-           SearchRepository searchRepository = SearchRepository
+           SearchRepository searchRepository = SessionMethods
                            .getGlobalSearchRepository(servletContext);
            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
            Type type = webConfig.getTypes().get(model.getPackageName()
@@ -1233,7 +1235,7 @@ public class AjaxServices
 
                 ServletContext servletContext = session.getServletContext();
                 if (SessionMethods.isSuperUser(session)) {
-                    SearchRepository tr = SearchRepository.
+                    SearchRepository tr = SessionMethods.
                         getGlobalSearchRepository(servletContext);
                     tr.webSearchableTagged(type);
                 }
@@ -1265,7 +1267,7 @@ public class AjaxServices
             ServletContext servletContext = session.getServletContext();
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr =
-                    SearchRepository.getGlobalSearchRepository(servletContext);
+                    SessionMethods.getGlobalSearchRepository(servletContext);
                 tr.webSearchableUnTagged(type);
             }
             return "ok";

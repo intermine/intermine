@@ -97,7 +97,7 @@ public class BagDetailsController extends TilesAction
         if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
             || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             // scope == all or global
-            SearchRepository searchRepository = SearchRepository
+            SearchRepository searchRepository = SessionMethods
                             .getGlobalSearchRepository(servletContext);
             Map<String, ? extends WebSearchable> publicBagMap = searchRepository
                             .getWebSearchableMap(TagTypes.BAG);

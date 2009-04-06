@@ -84,7 +84,7 @@ public class QueryForGraphAction extends InterMineAction
         /* public bag - since user doesn't have it */
         if (bag == null) {
             SearchRepository searchRepository =
-                SearchRepository.getGlobalSearchRepository(servletContext);
+                SessionMethods.getGlobalSearchRepository(servletContext);
             Map<String, ? extends WebSearchable> publicBagMap =
                 searchRepository.getWebSearchableMap(TagTypes.BAG);
             bag = (InterMineBag) publicBagMap.get(bagName);

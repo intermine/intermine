@@ -59,7 +59,7 @@ public class UserTemplateAction extends InterMineDispatchAction
             profile.deleteTemplate(templateName);
             // If superuser then rebuild shared templates
             if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+                SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
                 tr.webSearchableRemoved(template);
             }
         } else {

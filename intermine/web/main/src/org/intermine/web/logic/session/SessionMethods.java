@@ -923,7 +923,7 @@ public class SessionMethods
      * @return search repository
      */
     public static SearchRepository getSearchRepository(ServletContext servletContext) {
-        return SearchRepository.getGlobalSearchRepository(servletContext);
+        return SessionMethods.getGlobalSearchRepository(servletContext);
     }
 
     /**
@@ -1005,5 +1005,15 @@ public class SessionMethods
      */
     public static Profile getProfile(HttpSession session) {
         return (Profile) session.getAttribute(Constants.PROFILE);  
+    }
+
+    /**
+     * Get the SearchRepository for global (public) objects.
+     *
+     * @param context the servlet context
+     * @return the singleton SearchRepository object
+     */
+    public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
+        return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
 }

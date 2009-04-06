@@ -109,7 +109,7 @@ public class ModifyTemplateAction extends InterMineAction
         }
 
         if (SessionMethods.isSuperUser(session)) {
-            SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+            SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
             tr.globalChange(TagTypes.TEMPLATE);
         }
         return errors;
