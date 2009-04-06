@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
@@ -219,7 +221,11 @@ public class PathQuery
         List<Path> newView = new ArrayList<Path>();
         for (Path viewPath : view) {
             String viewPathString = viewPath.toStringNoConstraints();
-            viewPathString = viewPathString.replace(path, newPathString);
+            Pattern p = Pattern.compile(path.replaceAll("\\.", "\\\\.") + "((\\.|:)\\w+)*");
+            Matcher m = p.matcher(viewPathString);
+            if(m.matches()) {
+                viewPathString = viewPathString.replace(path, newPathString);
+            }
             newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
         }
         view = newView;
@@ -1088,7 +1094,7 @@ public class PathQuery
         String bestReplacement = null;
         for (Map.Entry<String, String> dot : dots.entrySet()) {
             if (dotPath.startsWith(dot.getKey())
-                    && (bestReplacement == null || dot.getValue().startsWith(bestReplacement))) {
+                    && (bestReplacement == null || dot.getValue().startsWith(bestReplacement+"(\\.|:)"))) {
                 bestReplacement = dot.getValue();
             }
         }
