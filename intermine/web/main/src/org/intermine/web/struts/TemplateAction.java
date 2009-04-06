@@ -96,7 +96,7 @@ public class TemplateAction extends InterMineAction
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, templateType);
         Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getSearchRepository(servletContext));
+                .getGlobalSearchRepository(servletContext));
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,

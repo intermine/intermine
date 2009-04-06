@@ -109,7 +109,7 @@ public class TemplatesImportForm extends ValidatorForm
         }
         try {
             Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                    SessionMethods.getSearchRepository(servletContext));
+                    SessionMethods.getGlobalSearchRepository(servletContext));
            TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {

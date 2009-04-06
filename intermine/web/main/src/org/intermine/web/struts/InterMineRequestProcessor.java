@@ -115,7 +115,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
                     Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                            SessionMethods.getSearchRepository(sc));
+                            SessionMethods.getGlobalSearchRepository(sc));
                     PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
                             PathQuery.USERPROFILE_VERSION);
                     if (pq.isValid()) {

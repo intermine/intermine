@@ -77,7 +77,7 @@ public class FindInListAction extends InterMineAction
         String bagName = qsf.getBagName();
         Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getSearchRepository(context));
+                SessionMethods.getGlobalSearchRepository(context));
         InterMineBag bag = allBags.get(bagName);
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));

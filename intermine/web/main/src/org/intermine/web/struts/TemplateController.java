@@ -170,7 +170,7 @@ public class TemplateController extends TilesAction
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
         Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getSearchRepository(servletContext));
+                SessionMethods.getGlobalSearchRepository(servletContext));
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
         for (PathNode node : template.getEditableNodes()) {

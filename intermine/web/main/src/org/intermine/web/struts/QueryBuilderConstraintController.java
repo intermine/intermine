@@ -180,8 +180,8 @@ public class QueryBuilderConstraintController extends TilesAction
 
             if (useBags) {
                 Map<String, InterMineBag> allBags =
-                    WebUtil.getAllBags(profile.getSavedBags(), SessionMethods.getSearchRepository
-                            (servletContext));
+                    WebUtil.getAllBags(profile.getSavedBags(),
+                            SessionMethods.getGlobalSearchRepository(servletContext));
                 Map bags = WebUtil.getBagsOfType(allBags, nodeType, os.getModel());
                 if (!bags.isEmpty()) {
                         request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));

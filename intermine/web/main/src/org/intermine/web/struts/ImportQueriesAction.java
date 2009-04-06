@@ -53,7 +53,7 @@ public class ImportQueriesAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getSearchRepository(servletContext));
+                SessionMethods.getGlobalSearchRepository(servletContext));
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
 
