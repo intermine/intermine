@@ -94,7 +94,7 @@ public class ModifyDetails extends DispatchAction
             TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
             Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                    SessionMethods.getSearchRepository(servletContext));
+                    SessionMethods.getGlobalSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
             TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
         }
@@ -280,7 +280,7 @@ public class ModifyDetails extends DispatchAction
         }
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getSearchRepository(sc));
+                SessionMethods.getGlobalSearchRepository(sc));
         InterMineBag interMineIdBag = allBags.get(id);
         cc.putAttribute("interMineIdBag", interMineIdBag);
         cc.putAttribute("templateQuery", tq);

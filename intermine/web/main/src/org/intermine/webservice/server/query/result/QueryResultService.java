@@ -68,7 +68,7 @@ public class QueryResultService extends WebService
         
         HttpSession session = request.getSession();
         savedBags = WebUtil.getAllBags(SessionMethods.getProfile(session).getSavedBags(), 
-                SessionMethods.getSearchRepository(session.getServletContext()));
+                SessionMethods.getGlobalSearchRepository(session.getServletContext()));
 
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),
                 savedBags);

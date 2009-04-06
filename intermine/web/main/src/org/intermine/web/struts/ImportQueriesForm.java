@@ -136,7 +136,7 @@ public class ImportQueriesForm extends ValidatorForm
 
         try {
             Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods.getSearchRepository(
+                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods.getGlobalSearchRepository(
                         servletContext));
             if (getQueryMap(allBags).size() == 0) {
                if (errors == null) {

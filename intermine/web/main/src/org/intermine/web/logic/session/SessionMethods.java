@@ -918,13 +918,6 @@ public class SessionMethods
         return new TagManagerFactory(pm).getTagManager();
     }
 
-    /**
-     * @param servletContext servlet context
-     * @return search repository
-     */
-    public static SearchRepository getSearchRepository(ServletContext servletContext) {
-        return SessionMethods.getGlobalSearchRepository(servletContext);
-    }
 
     /**
      * @param servletContext servlet context
@@ -971,7 +964,7 @@ public class SessionMethods
                 getBagQueryConfig(servletContext),
                 profile,
                 conversionTemplates,
-                getSearchRepository(servletContext));
+                getGlobalSearchRepository(servletContext));
         return ret;
     
     }
@@ -993,7 +986,7 @@ public class SessionMethods
                 getBagQueryConfig(servletContext),
                 getProfile(session),
                 conversionTemplates,
-                getSearchRepository(servletContext));
+                getGlobalSearchRepository(servletContext));
         return ret;
     }
     

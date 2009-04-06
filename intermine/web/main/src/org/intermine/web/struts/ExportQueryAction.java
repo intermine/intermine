@@ -109,7 +109,7 @@ public class ExportQueryAction extends InterMineAction
         } else if (format.equals("iql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getSearchRepository(servletContext));
+                .getGlobalSearchRepository(servletContext));
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
             Query osQuery = MainHelper.makeQuery(query, allBags, pathToQueryNode,
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
@@ -123,7 +123,7 @@ public class ExportQueryAction extends InterMineAction
         } else if (format.equals("sql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getSearchRepository(servletContext));
+                .getGlobalSearchRepository(servletContext));
             Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);

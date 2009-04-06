@@ -83,7 +83,7 @@ public class SaveQueryAction extends InterMineAction
 
             if (query.getInfo() == null) {
                 Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
-                        SessionMethods.getSearchRepository(servletContext));
+                        SessionMethods.getGlobalSearchRepository(servletContext));
                 query.setInfo(os.estimate(MainHelper.makeQuery(query, allBags,
                                 servletContext, null)));
             }
