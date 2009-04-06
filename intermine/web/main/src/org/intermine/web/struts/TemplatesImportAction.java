@@ -89,7 +89,7 @@ public class TemplatesImportAction extends InterMineAction
             }
 
             if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr = SearchRepository.getGlobalSearchRepository(servletContext);
+                SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
                 tr.globalChange(TagTypes.TEMPLATE);
                 // InitialiserPlugin.loadGlobalTemplateQueries(getServlet().getServletContext());
             }
