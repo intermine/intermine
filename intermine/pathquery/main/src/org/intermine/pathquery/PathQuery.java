@@ -1120,6 +1120,9 @@ public class PathQuery
      * @return the PathNode that was added to the nodes Map
      */
     public PathNode addNode(String path) {
+        if (getNodes().get(path) != null) {
+            return getNodes().get(path);
+        }
         if (!getCorrectJoinStyle(path).equals(path)) {
             throw new IllegalArgumentException("Adding two join types for same path: "
                     + path + " and " + getCorrectJoinStyle(path));
