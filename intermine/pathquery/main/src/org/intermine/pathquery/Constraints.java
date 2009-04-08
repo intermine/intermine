@@ -94,16 +94,6 @@ public class Constraints
     }
 
     /**
-     * Creates constraint with the operator BETWEEN
-     * @param start the lower value
-     * @param end the upper value
-     * @return the BETWEEN constraint
-     */
-    public static Constraint between(Object start, Object end) {
-        return new Constraint(ConstraintOp.BETWEEN, start, end);
-    }
-
-    /**
      * Creates constraint with the operator IN
      * @param bag name of bag
      * @return the IN constraint
