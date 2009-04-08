@@ -165,7 +165,7 @@ public class IqlQuery
         for (QueryObjectPathExpression qope : pathList) {
             retval.append(needComma ? ", " : " PATH ");
             needComma = true;
-            retval.append(nodeToString(q, qope, null, null))
+            retval.append(nodeToString(q, qope, parameters, null))
                 .append(" AS ")
                 .append(q.getAliases().get(qope));
         }
@@ -331,7 +331,7 @@ public class IqlQuery
                 for (QueryObjectPathExpression qope : subPathList) {
                     retval.append(needComma ? ", " : " PATH ");
                     needComma = true;
-                    retval.append(nodeToString(subQ, qope, null, null))
+                    retval.append(nodeToString(subQ, qope, parameters, null))
                         .append(" AS ")
                         .append(subQ.getAliases().get(qope));
                 }
@@ -421,7 +421,7 @@ public class IqlQuery
                 for (QueryObjectPathExpression qope : pathList2) {
                     retval.append(needComma ? ", " : " PATH ");
                     needComma = true;
-                    retval.append(nodeToString(subQ, qope, null, null))
+                    retval.append(nodeToString(subQ, qope, parameters, null))
                         .append(" AS ")
                         .append(subQ.getAliases().get(qope));
                 }
