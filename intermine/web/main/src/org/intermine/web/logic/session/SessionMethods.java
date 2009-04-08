@@ -1008,5 +1008,5 @@ public class SessionMethods
      */
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-    }
+    }    
 }

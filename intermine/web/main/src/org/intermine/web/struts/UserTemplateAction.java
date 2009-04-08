@@ -23,6 +23,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -60,7 +61,7 @@ public class UserTemplateAction extends InterMineDispatchAction
             // If superuser then rebuild shared templates
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.webSearchableRemoved(template);
+                tr.webSearchableRemoved(template, TagTypes.TEMPLATE);
             }
         } else {
             recordError(new ActionMessage("errors.template.nosuchtemplate"), request);

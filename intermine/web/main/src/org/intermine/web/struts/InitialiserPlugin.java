@@ -54,20 +54,15 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Initialiser for the InterMine web application.
@@ -135,26 +130,13 @@ public class InitialiserPlugin implements PlugIn
 
         final ProfileManager pm = createProfileManager(servletContext, os);
 
+        final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+        
         // index global webSearchables
         SearchRepository searchRepository =
-            new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
+            new SearchRepository(superProfile, SearchRepository.GLOBAL);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
-
-        final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-
-        final TagManager tagManager = SessionMethods.getTagManager(servletContext);
-        Map<String, TemplateQuery> templateSearchableMap = new SearchFilterEngine()
-            .filterByTags(superProfile.getSavedTemplates(), PUBLIC_TAG_LIST, TagTypes.TEMPLATE,
-                    superProfile.getUsername(), tagManager);
-        searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
-
-        Map<String, InterMineBag> bagSearchableMap = new SearchFilterEngine()
-            .filterByTags(superProfile.getSavedBags(), PUBLIC_TAG_LIST, TagTypes.BAG,
-                    superProfile.getUsername(), tagManager);
-        searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
-
-        searchRepository.setProfile(superProfile);
-
+        
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
         loadAutoCompleter(servletContext, os);
