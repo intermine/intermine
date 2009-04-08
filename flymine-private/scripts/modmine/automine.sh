@@ -331,7 +331,10 @@ fi #if $WGET=y
 # build the chado db
 #---------------------------------------
 #
-cd $DATADIR
+cd $MINEDIR
+
+pwd
+
 
 # do a back-up?
 if [ "$BUP" = "y" ]
@@ -365,14 +368,11 @@ fi
 
 if [ $STAG = "y" ]
 then
-
-
-
-  #----------------------------------------------------------
-  # if Validating or Meta you can choode to consider updates
-  #----------------------------------------------------------
+#----------------------------------------------------------
+# if Validating or Meta you can choode to consider updates
+#----------------------------------------------------------
    cd $NEWDIR
-   if [ $DOUPS = "y" && $INCR = "n" ]
+   if [ $DOUPS = "y" -a $INCR = "n" ]
    then
     mv -f $UPDIR/*.chadoxml
    fi
@@ -380,7 +380,7 @@ then
 
 LOOPVAR="*.chadoxml"
 
-	# TODO : check newdir issues when wget source is stable
+	# use file if given
 	if [ ! $INFILE = "undefined" ]
 	then
     LOOPVAR=`cat $INFILE`
@@ -404,7 +404,7 @@ echo "================"
 #
 if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
 then
-cd $DATADIR
+cd $MINEDIR
 # rebuild skeleton chado db
 	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
 	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
