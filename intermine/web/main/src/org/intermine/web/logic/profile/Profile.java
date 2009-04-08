@@ -28,7 +28,6 @@ import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**
@@ -49,8 +48,7 @@ public class Profile
     protected Map<String, String> userOptions = new TreeMap();
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
-    private SearchRepository searchRepository =
-        new SearchRepository(this, TemplateHelper.USER_TEMPLATE);
+    private SearchRepository searchRepository;
 
     /**
      * Construct a Profile
@@ -78,8 +76,7 @@ public class Profile
         if (savedTemplates != null) {
             this.savedTemplates.putAll(savedTemplates);
         }
-        reindex(TagTypes.TEMPLATE);
-        reindex(TagTypes.BAG);
+        searchRepository = new SearchRepository(this, SearchRepository.USER);
     }
 
     /**
@@ -355,7 +352,7 @@ public class Profile
      */
     private void reindex(String type) {
         // We also take this opportunity to index the user's template queries, bags, etc.
-        searchRepository.addWebSearchables(type, getWebSearchablesByType(type));
+        searchRepository.addWebSearchables(type);
     }
 
     /**

@@ -10,6 +10,8 @@ package org.intermine.web.logic.query;
  *
  */
 
+import static org.intermine.web.struts.InitialiserPlugin.PUBLIC_TAG_LIST;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -36,8 +38,6 @@ import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateHelper;
-import static org.intermine.web.struts.InitialiserPlugin.PUBLIC_TAG_LIST;
 
 /**
  * Provides methods to obtain PathQueryExecutors and WebResultsExecutors
@@ -186,17 +186,7 @@ public class PathQueryAPI
      */
     public static SearchRepository getSearchRepository() {
         if (searchRepository == null) {
-            searchRepository = new SearchRepository(TemplateHelper.GLOBAL_TEMPLATE);
-            TagManager tagManager = new TagManagerFactory(getProfileManager()).getTagManager();
-            Map<String, TemplateQuery> templateSearchableMap = new SearchFilterEngine()
-                .filterByTags(getProfile().getSavedTemplates(), PUBLIC_TAG_LIST, TagTypes.TEMPLATE,
-                        getProfile().getUsername(), tagManager);
-            searchRepository.addWebSearchables(TagTypes.TEMPLATE, templateSearchableMap);
-            Map<String, InterMineBag> bagSearchableMap = new SearchFilterEngine()
-                .filterByTags(getProfile().getSavedBags(), PUBLIC_TAG_LIST, TagTypes.BAG,
-                        getProfile().getUsername(), tagManager);
-            searchRepository.addWebSearchables(TagTypes.BAG, bagSearchableMap);
-            searchRepository.setProfile(getProfile());
+            searchRepository = new SearchRepository(getProfile(), SearchRepository.GLOBAL);
         }
         return searchRepository;
     }

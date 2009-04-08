@@ -13,10 +13,11 @@ package org.intermine.web.logic.search;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -46,6 +47,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.profile.TagManagerFactory;
+import org.intermine.web.logic.tagging.TagNames;
 import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
@@ -65,39 +67,90 @@ public class SearchRepository
     private Profile profile;
 
     /**
+     * Global search repository type
+     */
+    public static final String GLOBAL = "global";
+
+    /**
+     * User search repository type
+     */
+    public static final String USER = "user";
+    
+    /**
      * Construct a new instance of SearchRepository.
      * @param profile the Profile to use for getting aspect tags
-     * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
+     * @param scope USER or GLOBAL from SearchRepository
      */
     public SearchRepository(Profile profile, String scope) {
-        this(scope);
-        setProfile(profile);
-    }
-
-    /**
-     * Construct a new instance of SearchRepository.
-     * @param scope USER_TEMPLATE or GLOBAL_TEMPLATE from TemplateHelper
-     */
-    public SearchRepository(String scope) {
+        if (!scope.equals(SearchRepository.GLOBAL) && !scope.equals(SearchRepository.USER)) {
+            throw new IllegalArgumentException("Unrecognised scope for SearchRepository: "
+                    + scope + ".  Expected " + SearchRepository.GLOBAL 
+                    + " or " + SearchRepository.USER);
+        }
         this.scope = scope;
+        this.profile = profile;
+        
+        populateWebSearchables(TagTypes.TEMPLATE);
+        populateWebSearchables(TagTypes.BAG);
+    }
+
+    
+    /**
+     * Initialise and index web searchables of the given type from the profile.  If scope is
+     * GLOBAL will restrict to those tagged public.
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG  
+     */
+    private void populateWebSearchables(String type) {
+        Map <String, ? extends WebSearchable> wsMap = null;
+        if (type.equals(TagTypes.TEMPLATE)) {
+            wsMap = profile.getSavedTemplates();
+        } else if (type.equals(TagTypes.BAG)) {
+            wsMap = profile.getSavedBags();
+        }
+        
+        // if this is the global search repository only objects tagged as public
+        if (scope.equals(GLOBAL)) {
+            final TagManager tagManager = 
+                new TagManagerFactory(profile.getProfileManager()).getTagManager();
+
+            wsMap = new SearchFilterEngine().filterByTags(wsMap,
+                    new ArrayList<String>(Collections.singleton(TagNames.IM_PUBLIC)), type,
+                    profile.getUsername(), tagManager);            
+        }
+        webSearchablesMap.put(type, wsMap);
+        reindex(type);
     }
 
     /**
-     * Set the Profile to use for getting aspect tags
-     * @param profile the Profile
+     * The web searchables of given type have changed, but we don't know specifically which so
+     * re-initialise whole type.
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG     
      */
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void globalChange(String type) {
+        if (scope.equals(GLOBAL)) {
+            // don't know which are public so re-populate
+            populateWebSearchables(type);
+        } else {
+            reindex(type);
+        }
+        
     }
-
+    
+    
     /**
      * Called to tell the repository that a global webSearchable has been added to
      * the superuser user profile.
      *
      * @param webSearchable the WebSearchable added
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
-    public void webSearchableAdded(WebSearchable webSearchable) {
-        reindex(getWebSearchableType(webSearchable));
+    public void webSearchableAdded(WebSearchable webSearchable, String type) {
+        if (scope.equals(USER)) {
+            reindex(type);
+        }
+        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+            populateWebSearchables(type);
+        }
     }
 
     /**
@@ -105,9 +158,15 @@ public class SearchRepository
      * the superuser user profile.
      *
      * @param webSearchable the WebSearchable removed
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
-    public void webSearchableRemoved(WebSearchable webSearchable) {
-        reindex(getWebSearchableType(webSearchable));
+    public void webSearchableRemoved(WebSearchable webSearchable, String type) {
+        if (scope.equals(USER)) {
+            reindex(type);
+        }
+        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+            populateWebSearchables(type);
+        }
     }
 
     /**
@@ -115,18 +174,15 @@ public class SearchRepository
      * the superuser user profile.
      *
      * @param webSearchable the WebSearchable updated
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
-    public void webSearchableUpdated(WebSearchable webSearchable) {
-        reindex(getWebSearchableType(webSearchable));
-    }
-
-    /**
-     * Called to tell the repository that the set of global webSearchables in the superuser
-     * profile has changed.
-     * @param type a tag type from TagTypes
-     */
-    public void globalChange(String type) {
-        reindex(type);
+    public void webSearchableUpdated(WebSearchable webSearchable, String type) {
+        if (scope.equals(USER)) {
+            reindex(type);
+        }
+        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+            populateWebSearchables(type);
+        }
     }
 
     /**
@@ -142,34 +198,55 @@ public class SearchRepository
         throw new IllegalArgumentException("unknown argument: " + webSearchable);
     }
 
-    /**
-     * Call to update the index when a Tag is added.
-     * @param tagType tag type
-     */
-    public void webSearchableTagged(String tagType) {
-        reindex(tagType);
-    }
 
     /**
-     * Call to update the index when a Tag is removed.
-     * @param tagType tag type
+     * A tag has been added or removed.  Reindex the web searchables, if global and the tag
+     * was im:public then update the main list.
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
+     * @param tagName the tag that has changed
      */
-    public void webSearchableUnTagged(String tagType) {
-        reindex(tagType);
+    public void webSearchableTagChange(String type, String tagName) {
+        // TODO will reindex the global search repository even if the tagged object isn't public
+        
+        if (scope.equals(GLOBAL) && tagName.equals(TagNames.IM_PUBLIC)) {
+            populateWebSearchables(type);
+        } else {
+            reindex(type);
+        }      
     }
-
+    
     /**
      * Called when the description of a WebSearchable changes.
      * @param webSearchable the item that has changed
      */
     public void descriptionChanged(WebSearchable webSearchable) {
+        // TODO will reindex global repository even if this object isn't public
         reindex(getWebSearchableType(webSearchable));
     }
 
     /**
+     * Return true if the web searchable is tagged as public
+     * @param webSearchable the template or bag object
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
+     * @return true if the web searchable is tagged as public
+     */
+    private boolean isWebSearchableGlobal(WebSearchable webSearchable, String type) {
+        final TagManager tagManager = 
+            new TagManagerFactory(profile.getProfileManager()).getTagManager();
+        Set<String> tagNames = tagManager.getObjectTagNames(webSearchable.getName(), 
+                type, profile.getUsername());
+        for (String tagName : tagNames) {
+            if (tagName.equals(TagNames.IM_PUBLIC)) {
+                return true;
+            }            
+        }                
+        return false;
+    }
+    
+    /**
      * Create the lucene search index of all global webSearchable queries.
      *
-     * @param type the type of websearchable to reindex (templates or lists)
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     private void reindex(String type) {
         directoryMap.put(type, null);
@@ -177,7 +254,7 @@ public class SearchRepository
 
     /**
      * Get the lucene Directory for the given type
-     * @param type a tag type from TagTypes
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      * @return the Directory
      */
     public Directory getDirectory(String type) {
@@ -197,7 +274,8 @@ public class SearchRepository
      * @param scope webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private RAMDirectory indexWebSearchables(Map webSearchableMap, String type) {
+    private RAMDirectory indexWebSearchables(Map <String, ? extends WebSearchable> webSearchableMap,
+            String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");
 
@@ -212,14 +290,11 @@ public class SearchRepository
         }
 
         // step global webSearchables, indexing a Document for each webSearchable
-        Iterator iter = webSearchableMap.values().iterator();
         int indexed = 0;
 
         TagManager tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
 
-        while (iter.hasNext()) {
-            WebSearchable webSearchable = (WebSearchable) iter.next();
-
+        for (WebSearchable webSearchable : webSearchableMap.values()) {
             Document doc = new Document();
             doc.add(new Field("name", webSearchable.getName(), Field.Store.YES,
                               Field.Index.TOKENIZED));
@@ -238,7 +313,7 @@ public class SearchRepository
             String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
             doc.add(new Field("content", content, Field.Store.NO,
                               Field.Index.TOKENIZED));
-            doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
+            //doc.add(new Field("scope", scope, Field.Store.YES, Field.Index.NO));
 
             try {
                 writer.addDocument(doc);
@@ -265,7 +340,7 @@ public class SearchRepository
 
     /**
      * Return a Map from name to WebSearchable for the given type.
-     * @param type a tag type from TagTypes
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      * @return the WebSearchable Map
      */
     public Map<String, ? extends WebSearchable> getWebSearchableMap(String type) {
@@ -284,11 +359,9 @@ public class SearchRepository
      * Add a Map from name to WebSearchable for the given type.  The Map can be retrieved later
      * with getWebSearchableMap().
      * @param type a tag type from TagTypes
-     * @param map the WebSearchable Map
      */
-    public void addWebSearchables(String type, Map<String, ? extends WebSearchable> map) {
-        webSearchablesMap.put(type, map);
-        reindex(type);
+    public void addWebSearchables(String type) {
+        populateWebSearchables(type);
     }
 
     /**
@@ -333,8 +406,6 @@ public class SearchRepository
      * @param profile the user profile
      * @param globalSearchRepository the global SearchRepository
      * @param hitMap set to be a Map from WebSearchable name to score in the search
-     * @param scopeMap set to be a Map from WebSearchable name to scope of the WebSearchable we
-     *    match
      * @param highlightedTitleMap set to be a Map from WebSearchable name to the title of the
      *    WebSearchable, marked up in HTML to highlight the matching parts
      * @param descrMap
@@ -348,7 +419,7 @@ public class SearchRepository
                                         Profile profile,
                                         SearchRepository globalSearchRepository,
                                         Map<WebSearchable, Float> hitMap,
-                                        Map<WebSearchable, String> scopeMap,
+                                        //Map<WebSearchable, String> scopeMap,
                                         Map<WebSearchable, String> highlightedTitleMap,
                                         Map<WebSearchable, String> highlightedDescMap)
         throws ParseException, IOException {
@@ -398,7 +469,7 @@ public class SearchRepository
         for (int i = 0; i < hits.length(); i++) {
             WebSearchable webSearchable = null;
             Document doc = hits.doc(i);
-            String docScope = doc.get("scope");
+            //String docScope = doc.get("scope");
             String name = doc.get("name");
 
             webSearchable = userWebSearchables.get(name);
@@ -410,7 +481,7 @@ public class SearchRepository
             }
 
             hitMap.put(webSearchable, new Float(hits.score(i)));
-            scopeMap.put(webSearchable, docScope);
+            //scopeMap.put(webSearchable, docScope);
 
             if (highlightedTitleMap != null) {
                 String highlightString = webSearchable.getTitle();

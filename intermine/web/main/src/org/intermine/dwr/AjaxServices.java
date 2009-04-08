@@ -511,14 +511,14 @@ public class AjaxServices
 
             if (filterText != null && filterText.length() > 1) {
                 wsMap = new LinkedHashMap<String, WebSearchable>();
-                Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
+                //Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
                 SearchRepository globalSearchRepository =
                     SessionMethods.getGlobalSearchRepository(servletContext);
                 try {
                     long time =
                         SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
                                                         globalSearchRepository,
-                                                        hitMap, scopeMap, null, highlightedDescMap);
+                                                        hitMap, null, highlightedDescMap);
                     LOG.info("Lucene search took " + time + " milliseconds");
                 } catch (ParseException e) {
                     LOG.error("couldn't run lucene filter", e);
@@ -1237,7 +1237,7 @@ public class AjaxServices
                 if (SessionMethods.isSuperUser(session)) {
                     SearchRepository tr = SessionMethods.
                         getGlobalSearchRepository(servletContext);
-                    tr.webSearchableTagged(type);
+                    tr.webSearchableTagChange(type, tagName);
                 }
                 return "ok";
             }
@@ -1268,7 +1268,7 @@ public class AjaxServices
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr =
                     SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.webSearchableUnTagged(type);
+                tr.webSearchableTagChange(type, tagName);
             }
             return "ok";
         } catch (Throwable e) {

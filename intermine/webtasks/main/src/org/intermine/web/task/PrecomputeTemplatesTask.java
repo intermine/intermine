@@ -275,9 +275,9 @@ public class PrecomputeTemplatesTask extends Task
         }
         LOG.warn("Profile for " + username + ", clearing template queries");
         // Adding global search repository to servletContext, unmarshal needs it
-        SearchRepository sr = new SearchRepository(TemplateHelper.ALL_TEMPLATE);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
         Profile profile = pm.getProfile(username, pm.getPassword(username));
+        SearchRepository sr = new SearchRepository(profile, SearchRepository.GLOBAL);
+        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
         return profile.getSavedTemplates(TagNames.IM_PUBLIC);
     }
 }

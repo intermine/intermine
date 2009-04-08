@@ -102,16 +102,18 @@ public class ModifyTemplateAction extends InterMineAction
                     errors.add(ActionMessages.GLOBAL_MESSAGE,
                                new ActionMessage("errors.modifyTemplate.delete"));
                 }
+                
                 profile.deleteTemplate(template);
+            }
+            
+            if (SessionMethods.isSuperUser(session)) {
+                SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
+                tr.globalChange(TagTypes.TEMPLATE);
             }
         } finally {
             profile.enableSaving();
         }
-
-        if (SessionMethods.isSuperUser(session)) {
-            SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-            tr.globalChange(TagTypes.TEMPLATE);
-        }
+        
         return errors;
     }
 

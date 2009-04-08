@@ -38,6 +38,7 @@ import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateQuery;
@@ -186,9 +187,9 @@ public class CreateTemplateAction extends InterMineAction
         if (SessionMethods.isSuperUser(session)) {
             SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
             if (editing != null) {
-                tr.webSearchableUpdated(template);
+                tr.webSearchableUpdated(template, TagTypes.TEMPLATE);
             } else {
-                tr.webSearchableAdded(template);
+                tr.webSearchableAdded(template, TagTypes.TEMPLATE);
             }
         }
 
