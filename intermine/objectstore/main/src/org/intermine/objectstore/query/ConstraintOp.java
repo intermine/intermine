@@ -58,6 +58,10 @@ public class ConstraintOp
     /** Subquery does not exist */
     public static final ConstraintOp DOES_NOT_EXIST = DOES_NOT_CONTAIN;
 
+    /** Require that a range overlaps another range */
+    public static final ConstraintOp OVERLAPS = new ConstraintOp("OVERLAPS");
+    /** Require that a range does not overlap another range */
+    public static final ConstraintOp DOES_NOT_OVERLAP = new ConstraintOp("DOES NOT OVERLAP");
 
     /** Combine constraints with the AND operation */
     public static final ConstraintOp AND = new ConstraintOp("AND");
@@ -70,9 +74,6 @@ public class ConstraintOp
 
     /** Special operation indicating a bag upload step should be used, for the webapp only. */
     public static final ConstraintOp LOOKUP = new ConstraintOp("LOOKUP");
-
-    /** Require that first argument is between second and third argument inclusive **/
-    public static final ConstraintOp BETWEEN = new ConstraintOp("BETWEEN");
 
     private ConstraintOp(String name) {
         this.name = name;

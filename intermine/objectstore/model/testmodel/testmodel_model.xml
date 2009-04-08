@@ -85,4 +85,9 @@
         <attribute name="name" type="java.lang.String"/>
         <reference name="employee" referenced-type="Employee" reverse-reference="simpleObjects"/>
     </class>
+    <class name="Range" is-interface="false">
+        <attribute name="rangeStart" type="int"/>
+        <attribute name="rangeEnd" type="int"/>
+        <reference name="parent" referenced-type="Company"/>
+    </class>
 </model>

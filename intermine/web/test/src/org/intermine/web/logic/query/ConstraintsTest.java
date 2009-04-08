@@ -68,12 +68,6 @@ public class ConstraintsTest extends TestCase
         assertEquals(e, c.toXML());
     }
 
-    public void testBetween() {
-        e = "<constraint op=\"BETWEEN\" value=\"1\" description=\"\" identifier=\"\" code=\"\" extraValue=\"2\"></constraint>";
-        c = Constraints.between(1, 2);
-        assertEquals(e, c.toXML());
-    }
-
     public void testIn() {
         e = "<constraint op=\"IN\" value=\" \" description=\"\" identifier=\"\" code=\"\" extraValue=\"\"></constraint>";
         c = Constraints.in(" ");
