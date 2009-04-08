@@ -82,8 +82,11 @@ public class TorqueModelOutput
             fos.write(generate());
         } catch (IOException e) {
             LOG.error("Failed to output torque data to file " + file.getPath());
+            throw new RuntimeException("Failed to output torque data to file " + file.getPath());
         } catch (ObjectStoreException e) {
-            LOG.error("Schema invalid");
+            LOG.error("Schema invalid while writing to file " + file.getPath(), e);
+            throw new RuntimeException("Schema invalid while writing to file " + file.getPath(),
+                    e);
         } finally {
             try {
                 if (fos != null) {
