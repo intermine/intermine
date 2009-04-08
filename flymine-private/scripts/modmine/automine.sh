@@ -8,22 +8,21 @@
 # sc 09/08
 #
 # TODO: ant failing and exiting with 0!
-#       test full release
-#       analyse after stag?
 #       if -M -f stops after stag. check
 #
 
 # see after argument parsing for all envs related to the release
 
 FTPURL=http://submit.modencode.org/submit/public/list
-EXDIRS=/pub/dcc/for_modmine/old   #comma separated, i.e. a,b,c
-MODIR=/shared/data/modmine
-REPORTS=$MODIR/subs/reports
-DATADIR=$MODIR/subs/chado
+##EXDIRS=/pub/dcc/for_modmine/old   #comma separated, i.e. a,b,c
+SUBDIR=/shared/data/modmine/subs
+REPORTS=$SUBDIR/reports
+DATADIR=$SUBDIR/chado
 NEWDIR=$DATADIR/new
-WGETDIR=$NEWDIR/wgetdir
+UPDIR=$DATADIR/update
+#WGETDIR=$NEWDIR/wgetdir
 PROPDIR=$HOME/.intermine
-SCRIPTPATH=../flymine-private/scripts/modmine/
+SCRIPTDIR=../flymine-private/scripts/modmine/
 
 #RECIPIENTS=contrino@flymine.org
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
@@ -61,6 +60,13 @@ WGET=y         #          use wget to get files from ftp
 VAL1=n         #          y: validate 1! entry
 GAM=y          #          y: run get_all_modmine (only in F mode)
 
+DOUPS=n        #          y: consider update of submissions as well when building
+               #          NB: this is used only with -V and -M switches, when the default is
+               #          not to consider updates (only new subs).
+               #          With -F switch updated subs are used anyway, with no capital switch they are not.
+STOP=n         #          y if warning in the setting of the directories for chado.
+
+
 INCR=y
 FULL=n
 META=n         # it builds a new mine with static, organism and metadata only
@@ -71,7 +77,7 @@ progname=$0
 function usage () {
 	cat <<EOF
 
-Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [g] [i] [-s] [-t] [-w] [-v] [-x]
+Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [-g] [-i] [-n] [-s] [-t] [-w] [-v] [-x]
 	-F: full (modmine) rebuild
 	-M: test build (metadata only)
 	-R: restart full build after failure
@@ -83,6 +89,7 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [g] [i] [-s] 
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
+	-n: also updated chado files will be considered
 	-s: no new loading of chado (stag is not run)
 	-t: no acceptance test run
 	-w: no new webapp will be built
@@ -123,6 +130,9 @@ while getopts ":FMRVabef:gistuvwx" opt; do
 	f )  echo; INFILE=$OPTARG; WGET=n; echo "Using given list of chadoxml files (wget won't be run):"; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
+
+  n ) echo; echo "Updated submissions will be considered as well"; DOUPS=y;;
+
 	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
 	t )  echo; echo "No acceptance test run" ; TEST=n;;
 	v )  echo; echo "Verbose mode" ; V=-v;;
@@ -142,7 +152,6 @@ shift $(($OPTIND - 1))
  fi
 
 
-
 #
 # Getting some values from the properties file.
 # NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
@@ -155,14 +164,15 @@ DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | aw
 CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 MINEDB=`grep -a db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 
-LOADLOG="$DATADIR/$USER.$REL-ld.log"
+LOADLOG="$DATADIR/$USER.$REL-ld.log"  # timestamp of stag operations
+ERRLOG="$DATADIR/$REL-$TIMESTAMP"     # general error log
 
 echo
 echo "================================="
 echo "Building modmine-$REL on $DBHOST."
 echo "================================="
 echo "Logs: $LOADLOG"
-#echo "      $DATADIR/wget.log"
+echo "      $ERRLOG"
 echo
 echo "current directory: $MINEDIR"
 echo
@@ -210,58 +220,110 @@ then
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
 
-# TODO: at the moment timestamp is not working, see mail to eo.
-# http server needs to return last modified time to the wget HEAD request, and this is not happening.
+#wget  -r -nd -t3 -l1 -N --header="accept-encoding: gzip" -P $WGETDIR $FTPURL -X download,citation -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
-		#wget -r -nd -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega -a wget.log
-#		wget -r -nd -X $EXDIRS -N -P$NEWDIR $FTPURL -A chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+wget  -r -nd -t3 -l1 -N --header="accept-encoding: gzip" $FTPURL -X download,citation -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 
-#		wget -r -nd -l1 -N -P$WGETDIR $FTPURL -R *tracks*,*citation*,*stanzas*,*download*  -k -K --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+    # NB: files are dowloaded gzipped: see next loop for decompression
+    #
+		#  r recursive
+		# nd the directories structure is NOT recreated locally
+		# -l 2 depth of recursion
+		#  np no parents: only files below a certain directory are retrieved
+		#  P destination dir
+		#  a append to log
+		# -X list of directories to exclude
+    # -N timestamping
+    # -t number of tries
 
-		wget -r -nd -t3 -l1 -N -P$WGETDIR $FTPURL -X download,citation -A chadoxml --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
-
-#		wget -r -nd -N -P$WGETDIR $FTPURL -I extracted -X download,citation,*stanzas* -A chadoxml -k --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
-
-		#r recursive
-		#nd the directories structure is NOT recreated locally
-		#-l 2 depth of recursion
-		#np no parents: only files below a certain directory are retrieved
-		#P destination dir
-		#a append to log
-		#-X list of directories to exclude
-    #-N timestamping
-    #-t number of tries
-		echo $TIMESTAMP
-
-		#---------------------------------------
-		# check if any new file, exit if not
-		#---------------------------------------
-
-		cd $NEWDIR
-
+		#-------------------------------------------------
+		# check if any NEW file, decompress and rename it
+		#-------------------------------------------------
 		for sub in *.chadoxml
 		do
-			if [ ! -L $sub ] #is not a symbolic link
-			then
+      file $sub | grep compressed > bintest
+      if [ -s bintest ]
+       then
+				DCCID=`echo $sub | cut -f 1 -d.`
+        echo "unzipping $DCCID"
+        gzip -S .chadoxml -d $sub
+        mv $DCCID $NEWDIR/$sub
 				FOUND=y
-				break
-			fi
+      fi
 		done
+
+		#-------------------------------------------------
+		# check if any UPDATED file, decompress and rename it
+		#-------------------------------------------------
+    cd $DATADIR
+		for sub in *.chadoxml
+		do
+      file $sub | grep compressed > bintest
+      if [ -s bintest ]
+       then
+				DCCID=`echo $sub | cut -f 1 -d.`
+        echo "unzipping updated file $DCCID"
+        gzip -S .chadoxml -d $sub
+        mv $DCCID $UPDIR/$sub
+				FOUND=y
+      fi
+		done
+
+		#------------------------------------------------------------------------
+		# check if any update in the ERR directory, decompress, mv and rename it
+		#------------------------------------------------------------------------
+    cd $NEWDIR/err
+		for sub in *.chadoxml
+		do
+      file $sub | grep compressed > bintest
+      if [ -s bintest ]
+       then
+				DCCID=`echo $sub | cut -f 1 -d.`
+        echo "unzipping updated error file $DCCID"
+        gzip -S .chadoxml -d $sub
+        mv $DCCID $NEWDIR/$sub
+				FOUND=y
+      fi
+		done
+
 
 		if [ "$FOUND" = "n" ]
 		then
 			echo
 			echo "no new data found on ftp. exiting."
 			echo
-
 			exit 0;
 		fi
 
-if [ $INTERACT = "y" ]
+		#------------------------------------------------------
+		# prepare directories for stag in case of FULL release
+		#------------------------------------------------------
+
+    if [ $FULL = "y" ]
+     then
+      cd $DATADIR
+      mv *.chadoxml $NEWDIR
+      mv $UPDIR/*.chadoxml $NEWDIR
+      cd $NEWDIR
+   		for sub in *.chadoxml
+   		do
+       # if found symbolic link not to err directory throw an error
+       if [ -L $sub -a ! -e $NEWDIR/err/$sub ]
+        then
+        echo "WARNING: $sub is missing from load directory" | tee -a $ERRLOG
+			  STOP=y
+       fi
+		  done
+    fi
+
+if [ $INTERACT = "y" || $STOP ="y" ]
 then
-		echo "press return to continue.."
-		read
+ cat $ERRLOG
+ echo "press return to continue.."
+ read
 fi
+
+
 
 fi #if $WGET=y
 
@@ -286,10 +348,10 @@ fi
  	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
  	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
  
- 	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
+ 	psql -d $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty_chado.sql\
  	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
  
- if [ $INTERACT = "y" ]
+ if [ $INTERACT = "y" || $STOP = "y" ]
  then
  echo "press return to continue.."
  read
@@ -304,7 +366,17 @@ fi
 if [ $STAG = "y" ]
 then
 
-cd $NEWDIR
+
+
+  #----------------------------------------------------------
+  # if Validating or Meta you can choode to consider updates
+  #----------------------------------------------------------
+   cd $NEWDIR
+   if [ $DOUPS = "y" && $INCR = "n" ]
+   then
+    mv -f $UPDIR/*.chadoxml
+   fi
+  fi
 
 LOOPVAR="*.chadoxml"
 
@@ -337,7 +409,7 @@ cd $DATADIR
 	dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
 	createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 
-	psql -d $CHADODB -h $DBHOST -U $DBUSER < $MODIR/build_empty_chado.sql\
+	psql -d $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty_chado.sql\
 	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 cd $NEWDIR
 fi
@@ -399,7 +471,7 @@ cd $MINEDIR
 # this is done because there is a problem with automount....
 ls $REPORTS > /dev/null
 
-$SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
+$SCRIPTDIR/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
 
 echo "sending mail!!"
 mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
@@ -539,7 +611,7 @@ fi
 
 # check chado for new features
 cd $MINEDIR
-$SCRIPTPATH/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
+$SCRIPTDIR/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$TIMESTAMP.html
 
 echo "sending mail!!"
 mail $RECIPIENTS -s "$TIMESTAMP report, also in $REPORTPATH/$TIMESTAMP.html" < $REPORTS/$TIMESTAMP.html
