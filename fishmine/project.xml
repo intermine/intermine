@@ -21,7 +21,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
-      <property name="fasta.synonymSource" value="UniProt"/>
+      <property name="fasta.dataSourceName" value="UniProt"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
