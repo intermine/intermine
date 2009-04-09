@@ -1092,10 +1092,12 @@ public class PathQuery
         String dotPath = path.replace(':', '.');
         Map<String, String> dots = getPathsFromDots();
         String bestReplacement = null;
-        for (Map.Entry<String, String> dot : dots.entrySet()) {
-            if (dotPath.startsWith(dot.getKey())
-                    && (bestReplacement == null || dot.getValue().startsWith(bestReplacement+"(\\.|:)"))) {
-                bestReplacement = dot.getValue();
+        for (String dot : dots.keySet()) {
+            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":"))
+                && (bestReplacement == null || dots.get(dot).startsWith(bestReplacement + ".")
+                    || dots.get(dot).startsWith(bestReplacement + ":"))) {
+                String temp = dot;
+                bestReplacement = dots.get(temp);
             }
         }
         if (bestReplacement != null) {
@@ -1113,6 +1115,21 @@ public class PathQuery
     public PathNode getNode(String path) {
         return nodes.get(path);
     }
+    
+    /**
+     * Get a PathNode by path, independantly of
+     * join style
+     * @param path the PathNode for path path
+     * @return the PathNode for path path
+     */
+    public PathNode getNodeWhateverJoin(String path) {
+        for (String existingPath : getNodes().keySet()) {
+            if (path.replaceAll(":", "\\.").equals(existingPath.replaceAll(":", "\\."))) {
+                return getNodes().get(existingPath);
+            }
+        }
+        return null;
+    }
 
     /**
      * Add a node to the query using a path, adding parent nodes if necessary
@@ -1120,8 +1137,8 @@ public class PathQuery
      * @return the PathNode that was added to the nodes Map
      */
     public PathNode addNode(String path) {
-        if (getNodes().get(path) != null) {
-            return getNodes().get(path);
+        if (getNodeWhateverJoin(path) != null) {
+            return getNodeWhateverJoin(path);
         }
         if (!getCorrectJoinStyle(path).equals(path)) {
             throw new IllegalArgumentException("Adding two join types for same path: "
