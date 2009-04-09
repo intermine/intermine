@@ -119,8 +119,8 @@ function refreshObjectTags(tagged, type) {
 		var els = document.getElementsByTagName("*");
 		for (var i = 0; i < els.length; i++) {
 			var el = els[i];
-			if (el.id.indexOf('currentTags-') == 0 
-					&& el.id.indexOf(tagged) != -1) {
+			if (el.id.indexOf('currentTags-' + tagged + '@') == 0) { 
+					//&& el.id.indexOf(tagged) != -1) {
 				var editorId = el.id.replace('currentTags-', '');
 				displayTags(editorId, type, tags);		
 			}
