@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,9 +70,11 @@ public class AspectController extends TilesAction
             .getUsername();
         String tagName = TagNames.IM_ASPECT_PREFIX + request.getParameter("name");
         List<Tag> tags = tagManager.getTags(tagName, null, "class", superuser);
-        CollectionUtils.transform(tags,
-                TransformerUtils.invokerTransformer("getObjectIdentifier"));
-        context.putAttribute("startingPoints", tags);
+        List<String> startingPoints = new ArrayList<String>();
+        for (Tag tag : tags) {
+            startingPoints.add(tag.getObjectIdentifier());
+        }
+        context.putAttribute("startingPoints", startingPoints);
         return null;
     }
 }
