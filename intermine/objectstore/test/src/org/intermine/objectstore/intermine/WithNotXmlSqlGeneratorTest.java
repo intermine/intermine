@@ -23,6 +23,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.TypeUtil;
@@ -256,8 +257,9 @@ public class WithNotXmlSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "Department", "Contractor", "CompanysContractors")));
     }
 
-    protected DatabaseSchema getSchema() {
-        return new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1);
+    protected DatabaseSchema getSchema() throws Exception {
+        //return new DatabaseSchema(model, Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false);
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.notxmlunittest")).getSchema();
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";

@@ -44,6 +44,7 @@ public class DatabaseSchema
     private Set missingTables;
     private boolean fetchFromInterMineObject;
     private int version;
+    private boolean hasBioSeg;
 
     private Set truncatedSet;
     private Map tableMasterToFieldDescriptors = new HashMap();
@@ -58,10 +59,11 @@ public class DatabaseSchema
      * @param noNotXml true if NotXML data should be omitted from every table except InterMineObject
      * @param missingTables a Set of lowercase table names which are missing
      * @param version the version number in the database
+     * @param hasBioSeg true if the database has the bioseg type installed
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List truncated, boolean noNotXml, Set missingTables,
-            int version) throws IllegalArgumentException {
+            int version, boolean hasBioSeg) throws IllegalArgumentException {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
@@ -69,6 +71,7 @@ public class DatabaseSchema
         this.flatMode = noNotXml && missingTables.contains("intermineobject");
         this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
         this.version = version;
+        this.hasBioSeg = hasBioSeg;
         for (int i = 0; i < truncated.size(); i++) {
             Class cA = ((ClassDescriptor) truncated.get(i)).getType();
             for (int o = 0; o < i; o++) {
@@ -174,6 +177,15 @@ public class DatabaseSchema
      */
     public Set getMissingTables() {
         return missingTables;
+    }
+
+    /**
+     * Returns true if the database has the bioseg type installed.
+     *
+     * @return a boolean
+     */
+    public boolean hasBioSeg() {
+        return hasBioSeg;
     }
 
     /**

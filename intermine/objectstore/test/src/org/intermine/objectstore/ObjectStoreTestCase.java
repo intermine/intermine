@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
@@ -29,6 +30,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.HasSecretarys;
 import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.Range;
 import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
@@ -594,6 +596,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { Department.class, new Long(3) },
                              { Employee.class, new Long(3) },
                              { Manager.class, new Long(2) },
+                             { Range.class, new Long(4) },
                              { Secretary.class, new Long(3) },
                              { Types.class, new Long(1) } };
         results.put("SelectClassFromInterMineObject", toList(r));
@@ -619,6 +622,21 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(data.get("CompanyB"), Arrays.asList(
                             Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))),
                             Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB")))))));
+        results.put("Range1", Arrays.asList(
+                    Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range1")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range2")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range4")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range1")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range2")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range3")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range2")).getId(), ((InterMineObject) data.get("Range4")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range2")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range3")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range4")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range1")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range2")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range3")).getId()),
+                    Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range4")).getId())));
     }
 
     /**

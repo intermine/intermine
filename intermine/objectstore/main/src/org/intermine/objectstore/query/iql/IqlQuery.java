@@ -566,6 +566,14 @@ public class IqlQuery
             parameters.addAll(subquery.getParameters());
             return (cc.getOp().equals(ConstraintOp.EXISTS) ? "EXISTS (" : "DOES NOT EXIST (")
                 + subquery.getQueryString() + ")";
+        } else if (cc instanceof OverlapConstraint) {
+            OverlapConstraint oc = (OverlapConstraint) cc;
+            return "RANGE(" + nodeToString(q, oc.getLeft().getStart(), parameters, null) + ", "
+                + nodeToString(q, oc.getLeft().getEnd(), parameters, null) + ", "
+                + nodeToString(q, oc.getLeft().getParent(), parameters, null) + ") OVERLAPS RANGE("
+                + nodeToString(q, oc.getRight().getStart(), parameters, null) + ", "
+                + nodeToString(q, oc.getRight().getEnd(), parameters, null) + ", "
+                + nodeToString(q, oc.getRight().getParent(), parameters, null) + ")";
         } else {
             throw new IllegalArgumentException("Unknown constraint type: " + cc);
         }

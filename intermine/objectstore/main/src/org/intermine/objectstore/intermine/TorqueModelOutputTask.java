@@ -93,7 +93,7 @@ public class TorqueModelOutputTask extends Task
             }
 
             schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml, missingTables,
-                    FORMAT_VERSION);
+                    FORMAT_VERSION, false);
         } catch (ClassCastException e) {
             throw new BuildException("Objectstore " + osName
                     + " is not an ObjectStoreInterMineImpl", e);

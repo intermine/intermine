@@ -383,8 +383,27 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         missingTables.add(tables[i].toLowerCase());
                     }
                 }
+                boolean hasBioSeg = false;
+                Connection c = null;
+                try {
+                    c = database.getConnection();
+                    Statement s = c.createStatement();
+                    s.execute("SELECT bioseg_create(1, 2)");
+                    hasBioSeg = true;
+                } catch (SQLException e) {
+                    // We don't have bioseg
+                    LOG.error("Database " + osAlias + " doesn't have bioseg", e);
+                } finally {
+                    if (c != null) {
+                        try {
+                            c.close();
+                        } catch (SQLException e) {
+                            // Whoops.
+                        }
+                    }
+                }
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
-                        missingTables, formatVersion);
+                        missingTables, formatVersion, hasBioSeg);
                 os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 

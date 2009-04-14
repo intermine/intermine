@@ -272,6 +272,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SubclassCollection2", subclassCollection2());
         queries.put("SelectWhereBackslash", selectWhereBackslash());
         queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
+        queries.put("Range1", range1());
     }
 
     /*
@@ -2140,7 +2141,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
-     * SELECT a1_ FROM Employee WHERE a1_.name = "Fred\Blogs"
+     * SELECT a1_ FROM Employee WHERE a1_.name = "Fred\Blog's"
      */
     public static Query selectWhereBackslash() throws Exception {
         Query q = new Query();
@@ -2168,6 +2169,24 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         qcpe.addToSelect(new PathExpressionField(qope, 0));
         qcpe.addToSelect(new PathExpressionField(qope, 1));
         q.addToSelect(qcpe);
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a2_ FROM Range AS a1_, Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)
+     */
+    public static Query range1() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Range.class);
+        QueryClass qc2 = new QueryClass(Range.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(new QueryField(qc1, "id"));
+        q.addToSelect(new QueryField(qc2, "id"));
+        OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
+        OverlapRange r2 = new OverlapRange(new QueryField(qc2, "rangeStart"), new QueryField(qc2, "rangeEnd"), new QueryObjectReference(qc2, "parent"));
+        q.setConstraint(new OverlapConstraint(r1, ConstraintOp.OVERLAPS, r2));
         q.setDistinct(false);
         return q;
     }
