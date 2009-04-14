@@ -218,4 +218,28 @@
     <attribute name="name" value="Robert"/>
     <reference name="employee" ref_id="9"/>
   </item>
+  <item id="26" class="Range">
+    <attribute name="rangeStart" value="5"/>
+    <attribute name="rangeEnd" value="20"/>
+    <attribute name="name" value="Range1"/>
+    <reference name="parent" ref_id="1"/>
+  </item>
+  <item id="27" class="Range">
+    <attribute name="rangeStart" value="15"/>
+    <attribute name="rangeEnd" value="30"/>
+    <attribute name="name" value="Range2"/>
+    <reference name="parent" ref_id="1"/>
+  </item>
+  <item id="28" class="Range">
+    <attribute name="rangeStart" value="25"/>
+    <attribute name="rangeEnd" value="40"/>
+    <attribute name="name" value="Range3"/>
+    <reference name="parent" ref_id="1"/>
+  </item>
+  <item id="29" class="Range">
+    <attribute name="rangeStart" value="3"/>
+    <attribute name="rangeEnd" value="50"/>
+    <attribute name="name" value="Range4"/>
+    <reference name="parent" ref_id="1"/>
+  </item>
 </items>

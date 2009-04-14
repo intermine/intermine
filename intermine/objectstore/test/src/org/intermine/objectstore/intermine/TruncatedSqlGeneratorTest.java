@@ -23,6 +23,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.TypeUtil;
@@ -317,10 +318,13 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectWhereBackslash", Collections.singleton("InterMineObject"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("InterMineObject", "CompanysContractors")));
+        results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
+        results2.put("Range1", new HashSet(Arrays.asList("InterMineObject")));
     }
 
-    protected DatabaseSchema getSchema() {
-        return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true, Collections.EMPTY_SET, 1);
+    protected DatabaseSchema getSchema() throws Exception {
+        //return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true, Collections.EMPTY_SET, 1, false);
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";

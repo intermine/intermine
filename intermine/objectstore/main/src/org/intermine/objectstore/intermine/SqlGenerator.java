@@ -50,6 +50,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.OverlapConstraint;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
@@ -742,7 +743,7 @@ public class SqlGenerator
                 }
             }
         } else if (!((c == null) || (c instanceof SimpleConstraint)
-                    || (c instanceof ClassConstraint))) {
+                    || (c instanceof ClassConstraint) || (c instanceof OverlapConstraint))) {
             throw new ObjectStoreException("Unknown constraint type: " + c.getClass());
         }
     }
@@ -1038,6 +1039,16 @@ public class SqlGenerator
             }
         } else if (o instanceof SubqueryExistsConstraint) {
             return new boolean[] {true, true};
+        } else if (o instanceof OverlapConstraint) {
+            OverlapConstraint oc = (OverlapConstraint) o;
+            boolean s1[] = whereHavingSafe(oc.getLeft().getStart(), q);
+            boolean s2[] = whereHavingSafe(oc.getLeft().getEnd(), q);
+            boolean s3[] = whereHavingSafe(oc.getLeft().getParent(), q);
+            boolean s4[] = whereHavingSafe(oc.getRight().getStart(), q);
+            boolean s5[] = whereHavingSafe(oc.getRight().getEnd(), q);
+            boolean s6[] = whereHavingSafe(oc.getRight().getParent(), q);
+            return new boolean[] {s1[0] && s2[0] && s3[0] && s4[0] && s5[0] && s6[0],
+                s1[1], s2[1], s3[1], s4[1], s5[1], s6[1]};
         } else {
             throw new ObjectStoreException("Unrecognised object " + o);
         }
@@ -1199,7 +1210,7 @@ public class SqlGenerator
             Query q, DatabaseSchema schema, int safeness,
             boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                & (safeness != SAFENESS_UNSAFE)) {
+                && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         if (c instanceof ConstraintSet) {
@@ -1219,6 +1230,8 @@ public class SqlGenerator
                     loseBrackets);
         } else if (c instanceof BagConstraint) {
             bagConstraintToString(state, buffer, (BagConstraint) c, q, schema, safeness);
+        } else if (c instanceof OverlapConstraint) {
+            overlapConstraintToString(state, buffer, (OverlapConstraint) c, q, schema, safeness);
         } else {
             throw (new ObjectStoreException("Unknown constraint type: " + c));
         }
@@ -1241,7 +1254,7 @@ public class SqlGenerator
             Query q, DatabaseSchema schema, int safeness,
             boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                & (safeness != SAFENESS_UNSAFE)) {
+                && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         ConstraintOp op = c.getOp();
@@ -1431,7 +1444,7 @@ public class SqlGenerator
             ContainsConstraint c, Query q, DatabaseSchema schema, int safeness,
             boolean loseBrackets) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
-                & (safeness != SAFENESS_UNSAFE)) {
+                && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown ContainsConstraint safeness: " + safeness);
         }
         QueryReference arg1 = c.getReference();
@@ -1775,6 +1788,103 @@ public class SqlGenerator
     }
 
     /**
+     * Converts an OverlapConstraint to a String suitable for putting in an SQL query.
+     *
+     * @param state the current SqlGenerator state
+     * @param buffer the StringBuffer to place text into
+     * @param c the OverlapConstraint object
+     * @param q the Query
+     * @param schema the DatabaseSchema in which to look up metadata
+     * @param safeness the constraint context safeness
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected static void overlapConstraintToString(State state, StringBuffer buffer,
+            OverlapConstraint c, Query q, DatabaseSchema schema, int safeness)
+    throws ObjectStoreException {
+        if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
+                && (safeness != SAFENESS_UNSAFE)) {
+            throw new ObjectStoreException("Unknown constraint safeness: " + safeness);
+        }
+        boolean not = (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())
+            || (ConstraintOp.NOT_IN == c.getOp())
+            || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp());
+        if (not) {
+            buffer.append("(NOT (");
+        } else if (safeness != SAFENESS_SAFE) {
+            buffer.append("(");
+        }
+
+        QueryObjectReference leftParent = c.getLeft().getParent();
+        QueryObjectReference rightParent = c.getRight().getParent();
+        buffer.append((String) state.getFieldToAlias(leftParent.getQueryClass())
+                .get(leftParent.getFieldName()))
+            .append(" = ")
+            .append((String) state.getFieldToAlias(rightParent.getQueryClass())
+                    .get(rightParent.getFieldName()))
+            .append(" AND ");
+        if (schema.hasBioSeg()) {
+            buffer.append("bioseg_create(");
+            queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+            buffer.append(", ");
+            queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+            buffer.append(") ");
+            if ((ConstraintOp.CONTAINS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
+                buffer.append("@>");
+            } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
+                buffer.append("<@");
+            } else if ((ConstraintOp.OVERLAPS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
+                buffer.append("&&");
+            } else {
+                throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
+                        + " for range");
+            }
+            buffer.append(" bioseg_create(");
+            queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+            buffer.append(", ");
+            queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+            buffer.append(")");
+        } else {
+            if ((ConstraintOp.CONTAINS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
+                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+                buffer.append(" <= ");
+                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+                buffer.append(" AND ");
+                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+                buffer.append(" >= ");
+                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+            } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
+                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+                buffer.append(" >= ");
+                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+                buffer.append(" AND ");
+                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+                buffer.append(" <= ");
+                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+            } else if ((ConstraintOp.OVERLAPS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
+                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+                buffer.append(" <= ");
+                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+                buffer.append(" AND ");
+                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+                buffer.append(" >= ");
+                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+            } else {
+                throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
+                        + " for range");
+            }
+        }
+        if (not) {
+            buffer.append("))");
+        } else if (safeness != SAFENESS_SAFE) {
+            buffer.append(")");
+        }
+    }
+
+    /**
      * Converts an Object to a String, in a form suitable for SQL.
      *
      * @param buffer a StringBuffer to add text to
@@ -1938,6 +2048,7 @@ public class SqlGenerator
 
                 buffer.append(classAlias);
                 if (aliasMap instanceof AlwaysMap) {
+                    // This is a subquery, so the classAlias only contains the alias of the subquery
                     buffer.append(".")
                         .append(DatabaseUtil.generateSqlCompatibleName(nodeF.getFieldName()))
                         .append(nodeF.getSecondFieldName() == null

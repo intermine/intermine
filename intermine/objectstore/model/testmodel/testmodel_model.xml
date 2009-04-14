@@ -88,6 +88,7 @@
     <class name="Range" is-interface="false">
         <attribute name="rangeStart" type="int"/>
         <attribute name="rangeEnd" type="int"/>
+        <attribute name="name" type="java.lang.String"/>
         <reference name="parent" referenced-type="Company"/>
     </class>
 </model>

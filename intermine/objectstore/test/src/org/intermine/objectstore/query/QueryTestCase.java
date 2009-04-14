@@ -304,6 +304,15 @@ public class QueryTestCase extends OneTimeTestCase
             SubqueryExistsConstraint cc2 = (SubqueryExistsConstraint) c2;
 
             assertEquals(msg + ": queries of subquery exists constraint are not equal", cc1.getQuery(), cc2.getQuery());
+        } else if (c1 instanceof OverlapConstraint) {
+            OverlapConstraint oc1 = (OverlapConstraint) c1;
+            OverlapConstraint oc2 = (OverlapConstraint) c2;
+            checkQueryNodes(msg + ": left start is not equal", oc1.getLeft().getStart(), oc2.getLeft().getStart(), q1, q2);
+            checkQueryNodes(msg + ": left end is not equal", oc1.getLeft().getEnd(), oc2.getLeft().getEnd(), q1, q2);
+            checkQueryReferences(msg + ": left parent is not equal", oc1.getLeft().getParent(), oc2.getLeft().getParent(), q1, q2);
+            checkQueryNodes(msg + ": right start is not equal", oc1.getRight().getStart(), oc2.getRight().getStart(), q1, q2);
+            checkQueryNodes(msg + ": right end is not equal", oc1.getRight().getEnd(), oc2.getRight().getEnd(), q1, q2);
+            checkQueryReferences(msg + ": right parent is not equal", oc1.getRight().getParent(), oc2.getRight().getParent(), q1, q2);
         } else {
             fail(msg + ": non-supported object in Query");
         }

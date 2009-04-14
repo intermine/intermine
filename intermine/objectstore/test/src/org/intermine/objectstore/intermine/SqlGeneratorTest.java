@@ -31,6 +31,7 @@ import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
@@ -415,6 +416,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "InterMineObject", "Department", "Contractor", "CompanysContractors")));
+        results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
+        results2.put("Range1", new HashSet(Arrays.asList("intermine_Range")));
     }
 
     final static String LARGE_BAG_TABLE_NAME = "large_string_bag_table";
@@ -461,7 +464,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             }
 
             // TODO: extend sql so that it can represent these
-            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type))) {
+            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type) || "Range1".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
@@ -562,7 +565,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1);
+        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false);
         try {
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, s, db, new HashMap());
             fail("Expected: ObjectStoreException");
@@ -818,7 +821,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET, 1);
+        //return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET, 1, false);
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";

@@ -287,6 +287,15 @@ public class QueryCloner
         } else if (orig instanceof SubqueryExistsConstraint) {
             SubqueryExistsConstraint origC = (SubqueryExistsConstraint) orig;
             return new SubqueryExistsConstraint(origC.getOp(), cloneQuery(origC.getQuery()));
+        } else if (orig instanceof OverlapConstraint) {
+            OverlapConstraint oc = (OverlapConstraint) orig;
+            return new OverlapConstraint((OverlapRange) cloneThing(oc.getLeft(), fromElementMap),
+                    oc.getOp(), (OverlapRange) cloneThing(oc.getRight(), fromElementMap));
+        } else if (orig instanceof OverlapRange) {
+            OverlapRange or = (OverlapRange) orig;
+            return new OverlapRange((QueryEvaluable) cloneThing(or.getStart(), fromElementMap),
+                    (QueryEvaluable) cloneThing(or.getEnd(), fromElementMap),
+                    (QueryObjectReference) cloneThing(or.getParent(), fromElementMap));
         } else if (orig instanceof Set) {
             return new HashSet((Set) orig);
         } else if (orig instanceof List) {

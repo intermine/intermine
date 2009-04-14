@@ -18,7 +18,7 @@ package org.intermine.objectstore.query;
 public class OverlapRange
 {
     protected QueryEvaluable start, end;
-    protected QueryReference parent;
+    protected QueryObjectReference parent;
 
     /**
      * Constructor for this object.
@@ -28,7 +28,7 @@ public class OverlapRange
      * @param parent the object that the range is associated with
      * @throws IllegalArgumentException if one of the parameters is invalid
      */
-    public OverlapRange(QueryEvaluable start, QueryEvaluable end, QueryReference parent)
+    public OverlapRange(QueryEvaluable start, QueryEvaluable end, QueryObjectReference parent)
     throws IllegalArgumentException {
         if (start == null) {
             throw new NullPointerException("Start parameter cannot be null");
@@ -81,7 +81,7 @@ public class OverlapRange
      *
      * @return a QueryReference
      */
-    public QueryReference getParent() {
+    public QueryObjectReference getParent() {
         return parent;
     }
 }
