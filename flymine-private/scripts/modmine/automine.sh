@@ -9,6 +9,7 @@
 #
 # TODO: ant failing and exiting with 0!
 #       if -M -f stops after stag. check
+#       improve logs!!
 #
 
 # see after argument parsing for all envs related to the release
@@ -214,7 +215,7 @@ touch $LOADLOG
 #...and get it if the remote timestamp is newer than the local
 # it will make a copy of the local (as name.chadoxml.n)
 
-if [ $WGET = "y" ]
+if [ "$WGET" = "y" ]
 then
 		echo
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
@@ -299,16 +300,16 @@ wget  -r -nd -t3 -l1 -N --header="accept-encoding: gzip" $FTPURL -X download,cit
 		# prepare directories for stag in case of FULL release
 		#------------------------------------------------------
 
-    if [ $FULL = "y" ]
+    if [ "$FULL" = "y" ]
      then
       cd $DATADIR
       mv *.chadoxml $NEWDIR
       mv $UPDIR/*.chadoxml $NEWDIR
       cd $NEWDIR
-   		for sub in *.chadoxml
+   		for sub in *.chadoxml 
    		do
        # if found symbolic link not to err directory throw an error
-       if [ -L $sub -a ! -e $NEWDIR/err/$sub ]
+       if [ -L "$sub" -a ! -e "$NEWDIR/err/$sub" ]
         then
         echo "WARNING: $sub is missing from load directory" | tee -a $ERRLOG
 			  STOP=y
@@ -316,7 +317,7 @@ wget  -r -nd -t3 -l1 -N --header="accept-encoding: gzip" $FTPURL -X download,cit
 		  done
     fi
 
-if [ $INTERACT = "y" || $STOP ="y" ]
+if [ "$INTERACT" = "y" -o "$STOP" ="y" ]
 then
  cat $ERRLOG
  echo "press return to continue.."
@@ -354,7 +355,7 @@ fi
  	psql -d $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty_chado.sql\
  	|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
  
- if [ $INTERACT = "y" || $STOP = "y" ]
+ if [ "$INTERACT" = "y" -o "$STOP" = "y" ]
  then
  echo "press return to continue.."
  read
@@ -366,8 +367,9 @@ fi
 # fill chado db
 #---------------------------------------
 
-if [ $STAG = "y" ]
+if [ "$STAG" = "y" ]
 then
+
 #----------------------------------------------------------
 # if Validating or Meta you can choode to consider updates
 #----------------------------------------------------------
@@ -376,7 +378,7 @@ then
    then
     mv -f $UPDIR/*.chadoxml
    fi
-  fi
+
 
 LOOPVAR="*.chadoxml"
 
@@ -390,7 +392,7 @@ LOOPVAR="*.chadoxml"
 #for sub in *.chadoxml
 for sub in $LOOPVAR
 do
-if [ -L $sub ] #is a symbolic link
+if [ -L "$sub" ] #is a symbolic link
 then
 continue
 fi
@@ -431,14 +433,14 @@ $DBPW -noupdate cvterm,dbxref,db,cv,feature $sub \
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 
 #if we are not validating we move away the file
-if [ $VALIDATING = "n" ]
+if [ "$VALIDATING" = "n" ]
 then
 mv $sub $DATADIR
 ln -s ../$sub $sub
 fi
 
 #if we are validating, we'll process an entry at a time
-if [ $VALIDATING = "y" ]
+if [ "$VALIDATING" = "y" ]
 then
 # to name the acceptance tests file
 NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
@@ -494,7 +496,7 @@ cd $NEWDIR
 done
 # TODO: check why this exit was here..
 
-if [ $VALIDATING = "y" ]
+if [ "$VALIDATING" = "y" ]
 then
 exit;
 fi
@@ -503,7 +505,7 @@ else
 echo
 echo "Using previously loaded chado."
 echo
-if [ $INTERACT = "y" ]
+if [ "$INTERACT" = "y" ]
 then
 echo "press return to continue.."
 read
