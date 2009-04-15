@@ -41,6 +41,7 @@ tokens {
     SUBQUERY_CONSTRAINT;
     INLIST_CONSTRAINT;
     ORDER_DESC;
+    BIOSEG_CONSTRAINT;
 }
 
 start_rule: sql ;
@@ -468,13 +469,14 @@ field_name:
         { #field_name = #([FIELD_NAME, "FIELD_NAME"], #field_name); }
     ;
 
-abstract_constraint: (gornull_constraint)=> gornull_constraint | (constraint_set)=> constraint_set | safe_abstract_constraint ;
+abstract_constraint: (gornull_constraint)=> gornull_constraint | (constraint_set)=> constraint_set | safe_abstract_constraint;
 
 safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | (subquery_constraint)=> subquery_constraint
             | (inlist_constraint)=> inlist_constraint
             | constraint
             | not_constraint
+            | bioseg_constraint
     ;
 
 constraint: (abstract_value comparison_op)=> abstract_value comparison_op abstract_value
@@ -491,6 +493,10 @@ gornull_constraint: a:IDENTIFIER DOT! b:IDENTIFIER GT! c:constant "or"! d:IDENTI
 
 not_constraint: "not"! safe_abstract_constraint
         { #not_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #not_constraint); }
+    ;
+
+bioseg_constraint: "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN! (OVERLAP | INSIDE | SURROUND) "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+        { #bioseg_constraint = #([BIOSEG_CONSTRAINT, "BIOSEG_CONSTRAINT"], #bioseg_constraint); }
     ;
 
 paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
@@ -562,6 +568,9 @@ ASTERISK: '*';
 AT_SIGN: '@';
 OPEN_PAREN: '(';
 CLOSE_PAREN: ')';
+OVERLAP: "&&";
+INSIDE: "<@";
+SURROUND: "@>";
 PLUS: '+';
 MINUS: ( '-' ( '0'..'9' )+ '.' '0'..'9' )=> '-' ( '0'..'9' )+ '.' ( '0'..'9' )+ ( 'e' ( '-' | '+' )? ( '0'..'9' )+ )? ("::real")? {_ttype = FLOAT; }
         | ( '-' '0'..'9' )=> '-' ( '0'..'9' )+ {_ttype = INTEGER; }

@@ -430,44 +430,89 @@ public class ResultsConverter
         int startingPoint;
         Map<Integer, List> idsToFetch = new HashMap();
         Set<InterMineObject> objectsToFetch = new HashSet();
-        int rowToReplace = q.getSelect().indexOf(qcpe);
+        int columnToReplace = q.getSelect().indexOf(qcpe);
         QueryClass qc = qcpe.getQueryClass();
         startingPoint = q.getSelect().indexOf(qc);
         if (startingPoint == -1) {
             throw new ObjectStoreException("Path Expression " + qcpe + " needs QueryClass "
                     + qc + " to be in the SELECT list");
         }
-        for (ResultsRow row : retval) {
-            InterMineObject o = (InterMineObject) row.get(startingPoint);
-            if (!idsToFetch.containsKey(o.getId())) {
-                idsToFetch.put(o.getId(), new ArrayList());
-                objectsToFetch.add(o);
-            }
-        }
-        Query subQ = qcpe.getQuery(objectsToFetch);
-        long startTime = System.currentTimeMillis();
-        List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
-                optimise, false, sequence, goFasterTables, goFasterCache);
-        extra.addTime(System.currentTimeMillis() - startTime);
-        boolean singleton = qcpe.isSingleton();
-        for (ResultsRow row : results) {
-            Integer id = (Integer) row.get(0);
-            List list = idsToFetch.get(id);
-            if (singleton) {
-                list.add(row.get(1));
-            } else {
-                ResultsRow newRow = new ResultsRow();
-                Iterator iter = row.iterator();
-                iter.next();
-                while (iter.hasNext()) {
-                    newRow.add(iter.next());
+        if (qcpe.isCollection()) {
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                if (!idsToFetch.containsKey(o.getId())) {
+                    idsToFetch.put(o.getId(), new ArrayList());
+                    objectsToFetch.add(o);
                 }
-                list.add(newRow);
             }
-        }
-        for (ResultsRow row : retval) {
-            InterMineObject o = (InterMineObject) row.get(startingPoint);
-            row.set(rowToReplace, idsToFetch.get(o.getId()));
+            Query subQ = qcpe.getQuery(objectsToFetch);
+            long startTime = System.currentTimeMillis();
+            List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
+                    optimise, false, sequence, goFasterTables, goFasterCache);
+            extra.addTime(System.currentTimeMillis() - startTime);
+            boolean singleton = qcpe.isSingleton();
+            for (ResultsRow row : results) {
+                Integer id = (Integer) row.get(0);
+                List list = idsToFetch.get(id);
+                if (singleton) {
+                    list.add(row.get(1));
+                } else {
+                    ResultsRow newRow = new ResultsRow();
+                    Iterator iter = row.iterator();
+                    iter.next();
+                    while (iter.hasNext()) {
+                        newRow.add(iter.next());
+                    }
+                    list.add(newRow);
+                }
+            }
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                row.set(columnToReplace, idsToFetch.get(o.getId()));
+            }
+        } else {
+            Map<Integer, Integer> objectIds = new HashMap();
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                Integer refId = null;
+                try {
+                    InterMineObject ref = (InterMineObject) o.getFieldProxy(qcpe.getFieldName());
+                    if (ref != null) {
+                        refId = ref.getId();
+                        idsToFetch.put(refId, new ArrayList());
+                        objectIds.put(o.getId(), refId);
+                        objectsToFetch.add(ref);
+                    }
+                } catch (Exception e) {
+                    throw new ObjectStoreException("Shouldn't ever happen", e);
+                }
+            }
+            Query subQ = qcpe.getQuery(objectsToFetch);
+            long startTime = System.currentTimeMillis();
+            List<ResultsRow> results = os.executeWithConnection(c, subQ, 0, Integer.MAX_VALUE,
+                    optimise, false, sequence, goFasterTables, goFasterCache);
+            extra.addTime(System.currentTimeMillis() - startTime);
+            boolean singleton = qcpe.isSingleton();
+            for (ResultsRow row : results) {
+                Integer id = (Integer) row.get(0);
+                List list = idsToFetch.get(id);
+                if (singleton) {
+                    list.add(row.get(1));
+                } else {
+                    ResultsRow newRow = new ResultsRow();
+                    Iterator iter = row.iterator();
+                    iter.next();
+                    while (iter.hasNext()) {
+                        newRow.add(iter.next());
+                    }
+                    list.add(newRow);
+                }
+            }
+            for (ResultsRow row : retval) {
+                InterMineObject o = (InterMineObject) row.get(startingPoint);
+                Integer referenceId = objectIds.get(o.getId());
+                row.set(columnToReplace, idsToFetch.get(referenceId));
+            }
         }
     }
 

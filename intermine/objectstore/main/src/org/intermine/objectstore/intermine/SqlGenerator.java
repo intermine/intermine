@@ -39,6 +39,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
 import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
 import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
@@ -676,7 +677,8 @@ public class SqlGenerator
             } else if (selectable instanceof ObjectStoreBagsForObject) {
                 tablenames.add(INT_BAG_TABLE_NAME);
             } else if (selectable instanceof QueryCollectionPathExpression) {
-                Collection<InterMineObject> empty = Collections.emptySet();
+                Collection<ProxyReference> empty = Collections.singleton(new ProxyReference(null,
+                            new Integer(1), InterMineObject.class));
                 findTableNames(tablenames, ((QueryCollectionPathExpression) selectable)
                         .getQuery(empty), schema, addInterMineObject, individualOsbs);
             } else if (selectable instanceof QueryObjectPathExpression) {
@@ -1107,7 +1109,8 @@ public class SqlGenerator
                 Iterator bagIter = bc.getBag().iterator();
                 while (bagIter.hasNext() && empty) {
                     Object bagItem = bagIter.next();
-                    if (!DynamicUtil.isInstance(bagItem, type)) {
+                    if (!(ProxyReference.class.equals(bagItem.getClass())
+                                || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
                                 + "> contains element of wrong type ("
                                 + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
@@ -1173,7 +1176,8 @@ public class SqlGenerator
                 Iterator bagIter = bc.getBag().iterator();
                 while (bagIter.hasNext() && empty) {
                     Object bagItem = bagIter.next();
-                    if (!DynamicUtil.isInstance(bagItem, type)) {
+                    if (!(ProxyReference.class.equals(bagItem.getClass())
+                                || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
                                 + "> contains element of wrong type ("
                                 + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
@@ -1700,7 +1704,8 @@ public class SqlGenerator
             //int highest = Integer.MIN_VALUE;
             while (bagIter.hasNext()) {
                 Object bagItem = bagIter.next();
-                if (DynamicUtil.isInstance(bagItem, type)) {
+                if (ProxyReference.class.equals(bagItem.getClass())
+                        || DynamicUtil.isInstance(bagItem, type)) {
                     if (bagItem instanceof InterMineObject) {
                         Integer bagValue = ((InterMineObject) bagItem).getId();
                         filteredBag.add(bagValue);

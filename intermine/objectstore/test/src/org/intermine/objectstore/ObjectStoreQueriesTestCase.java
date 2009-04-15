@@ -244,6 +244,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("CollectionPathExpression4", collectionPathExpression4());
         queries.put("CollectionPathExpression5", collectionPathExpression5());
         queries.put("CollectionPathExpression6", collectionPathExpression6());
+        queries.put("CollectionPathExpression7", collectionPathExpression7());
         queries.put("OrSubquery", orSubquery());
         queries.put("ScientificNumber", scientificNumber());
         queries.put("LowerBag", lowerBag());
@@ -1744,6 +1745,25 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         qope.addToSelect(new QueryCollectionPathExpression(qope.getDefaultClass(), "departments"));
         q.addToSelect(new PathExpressionField(qope, 0));
         q.addToSelect(new PathExpressionField(qope, 1));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a1_.department(SELECT default, a1_ FROM Company AS a1_ WHERE default.company CONTAINS a1_) AS a2_ FROM Employee AS a1_
+     */
+    public static Query collectionPathExpression7() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Employee.class);
+        q.addFrom(qc1);
+        q.addToSelect(qc1);
+        QueryCollectionPathExpression qcpe = new QueryCollectionPathExpression(qc1, "department");
+        QueryClass qc2 = new QueryClass(Company.class);
+        qcpe.addFrom(qc2);
+        qcpe.addToSelect(qcpe.getDefaultClass());
+        qcpe.addToSelect(qc2);
+        qcpe.setConstraint(new ContainsConstraint(new QueryObjectReference(qcpe.getDefaultClass(), "company"), ConstraintOp.CONTAINS, qc2));
+        q.addToSelect(qcpe);
         q.setDistinct(false);
         return q;
     }

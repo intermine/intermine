@@ -522,6 +522,13 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2")) },
                              { data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("DepartmentB1"), data.get("DepartmentB2")) } };
         results.put("CollectionPathExpression6", toList(r));
+        results.put("CollectionPathExpression7", Arrays.asList(
+                    Arrays.asList(data.get("EmployeeA1"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
+                    Arrays.asList(data.get("EmployeeA2"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
+                    Arrays.asList(data.get("EmployeeA3"), Arrays.asList(Arrays.asList(data.get("DepartmentA1"), data.get("CompanyA")))),
+                    Arrays.asList(data.get("EmployeeB1"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB")))),
+                    Arrays.asList(data.get("EmployeeB2"), Arrays.asList(Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB")))),
+                    Arrays.asList(data.get("EmployeeB3"), Arrays.asList(Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"))))));
 
         r = new Object[][] { { data.get("CompanyA") },
                              { data.get("CompanyB") },
