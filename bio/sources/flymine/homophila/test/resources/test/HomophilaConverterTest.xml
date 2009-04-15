@@ -8,7 +8,7 @@
     <attribute name="taxonId" value="9606"/>
   </item>
   <item id="5_2" class="Protein">
-    <attribute name="secondaryIdentifier" value="CG7052-PA"/>
+    <attribute name="name" value="CG7052-PA"/>
     <reference name="organism" ref_id="2_2"/>
     <collection name="dataSets"><reference ref_id="1_1"/></collection>
   </item>

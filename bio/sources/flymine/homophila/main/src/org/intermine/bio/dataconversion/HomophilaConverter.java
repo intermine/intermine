@@ -231,7 +231,7 @@ public class HomophilaConverter extends BioFileConverter
         Item translation = proteins.get(array[TRANSLATION_ID]);
         if (translation == null) {
             translation = createItem("Protein");
-            translation.setAttribute("secondaryIdentifier", array[TRANSLATION_ID]);
+            translation.setAttribute("name", array[TRANSLATION_ID]);
             translation.setReference("organism", orgDrosophila.getIdentifier());
             proteins.put(array[TRANSLATION_ID], translation);
             store(translation);
