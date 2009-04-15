@@ -250,10 +250,13 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      * Returns the Query that will fetch the data represented by this object, given a Collection
      * of objects to fetch it for.
      *
-     * @param bag a Collection of objects to fetch data for, or null to not constrain
+     * @param bag a Collection of objects to fetch data for, or null to not constrain. If the
+     * reference is a collection, then this bag should contain the objects that have the collection.
+     * If the reference is to an object, then this bag should contain the objects pointed to by
+     * the reference
      * @return a Query
      */
-    public Query getQuery(Collection<InterMineObject> bag) {
+    public Query getQuery(Collection<? extends InterMineObject> bag) {
         if (isCollection) {
             Query q = new Query();
             QueryClassBag qcb = new QueryClassBag(qc.getType(), bag);
@@ -289,6 +292,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
         } else {
             Query q = new Query();
             q.addFrom(defaultClass, "default");
+            q.addToSelect(new QueryField(defaultClass, "id"));
             for (FromElement node : additionalFromList) {
                 if (aliases.containsKey(node)) {
                     q.addFrom(node, aliases.get(node));
@@ -339,5 +343,16 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
                     + " one element on the SELECT list");
         }
         this.singleton = singleton;
+    }
+
+    /**
+     * Returns true if the reference is a collection. This class can be used for non-collection
+     * references, as it adds the feature of having a FROM list (and with that, allowing a variable
+     * number of rows).
+     *
+     * @return a boolean
+     */
+    public boolean isCollection() {
+        return isCollection;
     }
 }

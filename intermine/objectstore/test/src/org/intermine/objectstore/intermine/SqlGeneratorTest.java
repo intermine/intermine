@@ -359,6 +359,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("CollectionPathExpression5", new HashSet(Arrays.asList("InterMineObject", "Company", "Department")));
         results.put("CollectionPathExpression6", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression6", new HashSet(Arrays.asList("InterMineObject", "Company", "Department")));
+        results.put("CollectionPathExpression7", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
+        results2.put("CollectionPathExpression7", new HashSet(Arrays.asList("InterMineObject", "Company", "Department", "Employee")));
         results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE (a1_.id IN (SELECT a1_.id FROM Company AS a1_ UNION SELECT a1_.id FROM Broke AS a1_)) ORDER BY a1_.id");
         results2.put("OrSubquery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "Broke"})));
         results.put("ScientificNumber", "SELECT a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
@@ -464,7 +466,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             }
 
             // TODO: extend sql so that it can represent these
-            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type) || "Range1".equals(type))) {
+            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
