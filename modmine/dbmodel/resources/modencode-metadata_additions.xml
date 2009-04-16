@@ -76,6 +76,20 @@
       referenced-type="SubmissionData" />
     <collection name="inputs"
       referenced-type="SubmissionData" />
+
+    <collection name="experimentalFactors"
+      referenced-type="ExperimentalFactor"
+      reverse-reference="submissions" />
+
+  </class>
+
+  <class name="ExperimentalFactor"
+    is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
+    <collection name="submissions"
+      referenced-type="Submission"
+      reverse-reference="experimentalFactors" />
   </class>
 
   <class name="Protocol"  
@@ -143,7 +157,6 @@
       referenced-type="SubmissionData"/>
   </class>
 
-
   <class name="SubmissionDataAttribute"
     is-interface="true">
     <attribute name="name" type="java.lang.String" />
@@ -154,39 +167,4 @@
       reverse-reference="dataAttributes" />
 </class>
 
-
 </classes>
-
-<!-- from rns new schema? to rm ex-AP
-  <collection name="attributes"
-  referenced-type="SubmissionData"
-  reverse-reference="appliedProtocol" />
-  <collection name="appliedProtocols"
-  referenced-type="AppliedProtocol"
-  reverse-reference="protocols" />
--->
-<!-- source attributes -->
-<!-- 
-  <attribute name="source" type="java.lang.String" />
-  <attribute name="RNAId" type="java.lang.String" />
-  <attribute name="cellType" type="java.lang.String" />
-  <attribute name="biosampleNr" type="java.lang.String" />
-  <attribute name="characteristics" type="java.lang.String" />
--->
-<!-- hybridization name -->
-<!-- <attribute name="hybridizationName" type="java.lang.String" /> -->
-<!-- parameter value attributes -->
-<!-- <attribute name="unit" type="java.lang.String" />-->
-
-
-<!--  <collection name="outputs"
-  referenced-type="SubmissionData" />
--->
-<!-- 
-  <collection name="nextAppliedProtocols"
-  referenced-type="AppliedProtocol"
-  reverse-reference="previousAppliedProtocols" />
-  <collection name="previousAppliedProtocols"
-  referenced-type="AppliedProtocol"
-  reverse-reference="nextAppliedProtocols" />
--->
