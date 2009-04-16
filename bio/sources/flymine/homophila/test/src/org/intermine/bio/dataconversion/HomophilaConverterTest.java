@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -57,6 +58,11 @@ public class HomophilaConverterTest extends ItemsTestCase
         HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         converter.setDiseasefile(diseases);
         converter.setProteingenefile(proteinGene);
+        
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Protein");
+        resolverFactory.addResolverEntry("7227", "FBpp0079133", Collections.singleton("CG7052-PA"));
+        converter.resolverFactory = resolverFactory;
+        
         converter.process(new StringReader(input));
         converter.close();
 
