@@ -16,10 +16,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -59,6 +62,9 @@ public class HomophilaConverter extends BioFileConverter
     protected File diseaseFile;
     protected File proteinGeneFile;
 
+    protected IdResolverFactory resolverFactory;
+    Set<String> problemProteins = new HashSet();
+    
     /**
      * Construct a new instance of HomophilaConverter.
      *
@@ -84,6 +90,9 @@ public class HomophilaConverter extends BioFileConverter
         pub2 = createItem("Publication");
         pub2.addAttribute(new Attribute("pubMedId", "11752278"));
         store(pub2);
+        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory("protein", "7227");
     }
 
     /**
@@ -211,13 +220,17 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item newBlastMatch(String array[]) throws ObjectStoreException {
-        Item item = createItem("BlastMatch");
-        item.setReference("subject", findProtein(array).getIdentifier());
-        item.setReference("object", findTranslation(array).getIdentifier());
-        item.setAttribute("EValue", array[E_VALUE]);
-        store(item);
-        matchCount++;
-        return item;
+        Item drosophilaProtein = findTranslation(array);
+        if (drosophilaProtein != null) {
+            Item item = createItem("BlastMatch");
+            item.setReference("subject", findProtein(array));
+            item.setReference("object", drosophilaProtein);
+            item.setAttribute("EValue", array[E_VALUE]);
+            store(item);
+            matchCount++;
+            return item;
+        }
+        return null;
     }
 
     /**
@@ -228,12 +241,25 @@ public class HomophilaConverter extends BioFileConverter
      * @throws ObjectStoreException if something goes wrong
      */
     protected Item findTranslation(String array[]) throws ObjectStoreException {
-        Item translation = proteins.get(array[TRANSLATION_ID]);
+        String proteinCG = array[TRANSLATION_ID];
+        IdResolver resolver = resolverFactory.getIdResolver();
+        int resCount = resolver.countResolutions("7227", proteinCG);
+        if (resCount != 1){
+            if (!problemProteins.contains(proteinCG)) {
+                LOG.info("RESOLVER: failed to resolve protein to one identifier, ignoring protein: "
+                        + proteinCG + " count: " + resCount + " FBpp: "
+                        + resolver.resolveId("7227", proteinCG));
+                problemProteins.add(proteinCG);
+            }
+            return null;
+        }
+        String secondaryIdentifier = resolver.resolveId("7227", proteinCG).iterator().next();
+        Item translation = proteins.get(secondaryIdentifier);
         if (translation == null) {
             translation = createItem("Protein");
-            translation.setAttribute("name", array[TRANSLATION_ID]);
+            translation.setAttribute("secondaryIdentifier", secondaryIdentifier);
             translation.setReference("organism", orgDrosophila.getIdentifier());
-            proteins.put(array[TRANSLATION_ID], translation);
+            proteins.put(secondaryIdentifier, translation);
             store(translation);
         }
         return translation;
