@@ -155,10 +155,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet matchLocRes = getMatchLocResultSet(connection);
         processLocationTable(connection, matchLocRes);
         
-
-        
-        LOG.info("EST: before");
-
         ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
         processLocationTable(connection, matchESTLocRes);
         
