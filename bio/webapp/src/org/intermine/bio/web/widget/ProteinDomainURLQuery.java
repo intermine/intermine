@@ -53,10 +53,10 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
             paths += "Gene.primaryIdentifier,Gene.secondaryIdentifier,";
         }
 
-        paths = prefix + ".primaryAccession,"
+        paths += prefix + ".primaryIdentifier,"
                 + prefix + ".organism.name,"
                 + prefix + ".proteinDomains.primaryIdentifier,"
-                + prefix + ".proteinDomains.shortName";
+                + prefix + ".proteinDomains.name";
 
         q.setView(paths);
         q.setOrderBy(paths);

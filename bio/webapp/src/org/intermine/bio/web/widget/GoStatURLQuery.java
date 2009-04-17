@@ -57,8 +57,8 @@ public class GoStatURLQuery implements WidgetURLQuery
         pathStrings += prefix + ".primaryIdentifier,"
             + prefix + ".symbol,"
             + prefix + ".organism.name,"
-            + prefix + ".goAnnotation.ontologyTerm.relations.childTerm.identifier,"
-            + prefix + ".goAnnotation.ontologyTerm.relations.childTerm.name,"
+            + prefix + ".goAnnotation.ontologyTerm.identifier,"
+            + prefix + ".goAnnotation.ontologyTerm.name,"
             + prefix + ".goAnnotation.ontologyTerm.relations.parentTerm.identifier,"
             + prefix + ".goAnnotation.ontologyTerm.relations.parentTerm.name";
 
