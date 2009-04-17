@@ -513,6 +513,11 @@ fi
 
 fi # if $STAG=y
 
+if [ "$INTERACT" = "y" ]
+then
+echo "press return to continue.."
+read
+fi
 
 #---------------------------------------
 # build modmine
