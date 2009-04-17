@@ -404,9 +404,9 @@ public class PathQuery
     public String toPathDefaultJoinStyle(String path) {
         
         // this will validate the path so we don't have to here
-        Path dummyPath = new Path(model, path);
-                
-        String parts[] = path.split("[.:]");
+        Path dummyPath = makePath(model, this, path);
+        
+        String parts[] = dummyPath.toString().split("[.:]");
 
         StringBuffer currentPath = new StringBuffer();
         currentPath.append(parts[0]);
@@ -1363,14 +1363,19 @@ public class PathQuery
      * @return a new Path object
      */
     public static Path makePath(Model model, PathQuery query, String fullPathName) {
-        Map<String, String> subClassConstraintMap = new HashMap<String, String>();
-        Iterator viewPathNameIter = query.getNodes().keySet().iterator();
-        while (viewPathNameIter.hasNext()) {
-            String viewPathName = (String) viewPathNameIter.next();
-            PathNode pathNode = query.getNode(viewPathName);
-            subClassConstraintMap.put(viewPathName.replace(":", "."), pathNode.getType());
+        Path path = null;
+        if (fullPathName.indexOf("[") >= 0) {
+            path = new Path(model, fullPathName);
+        } else {
+            Map<String, String> subClassConstraintMap = new HashMap<String, String>();
+            Iterator viewPathNameIter = query.getNodes().keySet().iterator();
+            while (viewPathNameIter.hasNext()) {
+                String viewPathName = (String) viewPathNameIter.next();
+                PathNode pathNode = query.getNode(viewPathName);
+                subClassConstraintMap.put(viewPathName.replace(":", "."), pathNode.getType());
+            }
+            path = new Path(model, fullPathName, subClassConstraintMap);
         }
-        Path path = new Path(model, fullPathName, subClassConstraintMap);
         return path;
     }
 

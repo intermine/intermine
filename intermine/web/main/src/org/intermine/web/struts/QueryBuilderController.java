@@ -190,8 +190,8 @@ public class QueryBuilderController extends TilesAction
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);
                 navigation.put(token, current);
-                navigationPaths.put(token, TypeUtil.unqualifiedName(MainHelper
-                    .getTypeForPath(current, query)));
+                navigationPaths.put(token, TypeUtil.unqualifiedName(PathQuery.makePath(model,
+                                query, current).getEndType().getName()));
             }
         }
         request.setAttribute("navigation", navigation);
@@ -271,8 +271,8 @@ public class QueryBuilderController extends TilesAction
 
         while (iter.hasNext()) {
             String path = (String) iter.next();
-            String unqualifiedName = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(path,
-                                                                                        pathquery));
+            String unqualifiedName = TypeUtil.unqualifiedName(PathQuery.makePath(
+                            pathquery.getModel(), pathquery, path).getEndType().getName());
             viewPathTypes.put(path, unqualifiedName);
         }
 

@@ -82,7 +82,7 @@ public class QueryBuilderAction extends InterMineAction
             && joinType.length() != 0) {
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
-            Path path = PathQuery.makePath(model, query, node.getPathString());
+            Path path = PathQuery.makePath(model, query, mf.getPath());
             String rootPath = null;
             if (path.endIsAttribute()) {
                 rootPath = path.getPrefix().toStringNoConstraints();
