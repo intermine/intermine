@@ -306,8 +306,7 @@ public class InlineResultsTable
             Path path;
             try {
                 path = new Path(model, (String) getColumnFullNames().get(i));
-                Class endType = path.getEndType();
-                if (endType == null) {
+                if (!path.endIsAttribute()) {
                     // the end of the Path is not an attribute
                     retList.add(null);
                     continue;

@@ -1115,6 +1115,7 @@ public class MainHelper
      * @param path the path
      * @param pathQuery the path query
      * @return true if path ends with an attribute, false if not
+     * @deprecated
      */
     public static boolean isPathAttribute(String path, PathQuery pathQuery) {
         String classname = getTypeForPath(path, pathQuery);
@@ -1129,6 +1130,7 @@ public class MainHelper
      * @return the fully qualified type name
      * @throws IllegalArgumentException if the path isn't valid for the PathQuery or if any
      * arguments are null
+     * @deprecated
      */
     public static String getTypeForPath(String path, PathQuery pathQuery) {
         // find the longest path that has a type stored in the pathQuery, then use the model to find

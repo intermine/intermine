@@ -601,8 +601,8 @@ public class QueryBuilderChange extends DispatchAction
             || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
             for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
-                Path pathToAdd = new Path(model, query
-                .toPathDefaultJoinStyle(path.toString() + "." + fc.getFieldExpr()));
+                Path pathToAdd = PathQuery.makePath(model, query, query
+                                .toPathDefaultJoinStyle(path.toString() + "." + fc.getFieldExpr()));
                 if (pathToAdd.getEndClassDescriptor() == null && !view.contains(pathToAdd)
                     && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addViewPaths(Collections.singletonList(pathToAdd));
@@ -793,16 +793,18 @@ public class QueryBuilderChange extends DispatchAction
             String prefixJoinStyle = query.getCorrectJoinStyle(prefix);
             PathNode prefixNode = query.getNode(prefixJoinStyle);
             
-            String parentType = prefixNode.getParentType();
+            if (prefixNode != null) {
+                String parentType = prefixNode.getParentType();
 
-            ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
-            ReferenceDescriptor rfd = (ReferenceDescriptor)
-                prefixCld.getFieldDescriptorByName(prefixNode.getFieldName());
+                ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
+                ReferenceDescriptor rfd = (ReferenceDescriptor) prefixCld
+                                .getFieldDescriptorByName(prefixNode.getFieldName());
 
-            String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
-            String prefixType = prefixNode.getType();
-            if (!prefixType.equals(refType)) {
-                prefixString += "[" + prefixType + "]";
+                String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
+                String prefixType = prefixNode.getType();
+                if (!prefixType.equals(refType)) {
+                    prefixString += "[" + prefixType + "]";
+                }
             }
         }
         return prefixString;

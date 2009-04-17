@@ -117,7 +117,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 }
 
                 Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
-                request.setAttribute("loopQueryOJ", node.isOuterJoin());
+//                request.setAttribute("loopQueryOJ", node.isOuterJoin());
                 request.setAttribute ("loopQueryOps", attributeOps);
                 request.setAttribute ("loopQueryPaths", paths);
 //            }
@@ -143,8 +143,8 @@ public class QueryBuilderConstraintController extends TilesAction
 
             } else {
                 if (node.getParent() != null) {
-                    nodeType = TypeUtil.unqualifiedName(MainHelper.getTypeForPath(
-                                node.getPathString(), query));
+                    nodeType = TypeUtil.unqualifiedName(PathQuery.makePath(model, query,
+                                    node.getPathString()).getEndType().getName());
                 } else {
                     nodeType = node.getType();
                 }
@@ -199,8 +199,8 @@ public class QueryBuilderConstraintController extends TilesAction
         }
         // ONLY EDITING JOIN STYLE
         else if (session.getAttribute("joinStylePath") != null) {
-            request.setAttribute("editingPath", new Path(model, (String) session
-                            .getAttribute("joinStylePath")));
+            request.setAttribute("editingPath", PathQuery.makePath(model, query,
+                                (String) session.getAttribute("joinStylePath")));
             request.setAttribute("joinStyleOnly", "true");
             session.removeAttribute("joinStylePath");
         }

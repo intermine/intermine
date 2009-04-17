@@ -380,17 +380,14 @@ public class Path
 
     /**
      * If the last element in the path is an attribute, return the Class of the attribute,
-     * otherwise return null
-     * @return the Class of the last element if an attribute, or null otherwise
+     * otherwise return the parent type
+     * @return the Class of the last element if an attribute, or of its parent
      */
     public Class getEndType() {
-        if (endFld == null) {
-            return null;
-        }
-        if (endFld.isAttribute()) {
+        if (endFld != null && endFld.isAttribute()) {
             return ((AttributeDescriptor) endFld).getType().getClass();
         }
-        return null;
+        return getLastClassDescriptor().getType();
     }
 
     /**
