@@ -87,9 +87,11 @@ public class ObjectDetailsTemplateController extends TilesAction
                 
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
-        PagedTable pagedResults = new PagedTable(webResults, 10);
-        
-        context.putAttribute("resultsTable", pagedResults);
+        // if there was a problem running query ignore and don't put up results
+        if (webResults != null) {
+            PagedTable pagedResults = new PagedTable(webResults, 10);        
+            context.putAttribute("resultsTable", pagedResults);
+        }
         return null;
     }
 }
