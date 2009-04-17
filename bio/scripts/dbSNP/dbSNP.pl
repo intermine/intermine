@@ -70,33 +70,16 @@ foreach my $taxon_id(keys %organisms) {
     #my $dbVariation = get_db("variation", $taxon_id); 
 
     # FIXME use get_db sub instead
-    my $host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
-    my $dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
-    my $user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
-    my $pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
+    my $core_host = get_property_value("db.ensembl.$taxon_id.core.datasource.serverName", $properties_file);
+    my $core_dbname = get_property_value("db.ensembl.$taxon_id.core.datasource.databaseName", $properties_file);
+    my $core_user = get_property_value("db.ensembl.$taxon_id.core.datasource.user", $properties_file);
+    my $core_pass = get_property_value("db.ensembl.$taxon_id.core.datasource.password", $properties_file);
     my $species = get_property_value("db.ensembl.$taxon_id.core.datasource.species", $properties_file);
     
-    my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
-        (-host => $host,
-         -dbname => $dbname,
-         -species => $species,
-         -group => 'core',
-         -user => $user,
-         -pass => $pass);
-    
-    $host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
-    $dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
-    $user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
-    $pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
-    
-    #Connect to EnsEMBL variation database
-    my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
-        (-host => $host,
-         -dbname => $dbname,
-         -species => $species,
-         -group => 'variation',
-         -user => $user,
-         -pass => $pass);
+    my $var_host = get_property_value("db.ensembl.$taxon_id.variation.datasource.serverName", $properties_file);
+    my $var_dbname = get_property_value("db.ensembl.$taxon_id.variation.datasource.databaseName", $properties_file);
+    my $var_user = get_property_value("db.ensembl.$taxon_id.variation.datasource.user", $properties_file);
+    my $var_pass = get_property_value("db.ensembl.$taxon_id.variation.datasource.password", $properties_file);
     
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -120,11 +103,29 @@ foreach my $taxon_id(keys %organisms) {
     while (my $chromosome = shift @chromosomes) {
 
         print "processing chromsome $chromosome\n";
+
+        my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new
+            (-host => $var_host,
+             -dbname => $core_dbname,
+             -species => $species,
+             -group => 'core',
+             -user => $core_user,
+             -pass => $core_pass);
+    
         
         #get the database adaptor for Slice objects
         my $slice_adaptor = $dbCore->get_SliceAdaptor(); 
         my $slice = $slice_adaptor->fetch_by_region('chromosome',$chromosome);
         
+        #Connect to EnsEMBL variation database5C
+        my $dbVariation = Bio::EnsEMBL::Variation::DBSQL::DBAdaptor->new
+            (-host => $var_host,
+             -dbname => $var_dbname,
+             -species => $species,
+             -group => 'variation',
+             -user => $var_user,
+             -pass => $var_pass);
+    
         my $vf_adaptor = $dbVariation->get_VariationFeatureAdaptor(); 
         # get adaptor to VariationFeature object
         my $vfs = $vf_adaptor->fetch_all_by_Slice($slice); 
@@ -136,7 +137,8 @@ foreach my $taxon_id(keys %organisms) {
         $chromosome_item->set('primaryIdentifier', $slice->seq_region_name);
         $chromosome_item->as_xml($writer);
 
-        foreach my $vf (@{$vfs}){
+        # use while loop and shift instead of foreach to save memory
+        while ( my $vf = shift @{$vfs} ) {
             #print "SNP NUMBER: ".$counter++." CHR:".$i."\n";
             my @alleles = split('[/.-]', $vf->allele_string);
             if(!$alleles[0]) {
@@ -202,6 +204,9 @@ foreach my $taxon_id(keys %organisms) {
                 $snp_item->set('sources', [@sourceItems]);
                 $snp_item->as_xml($writer);
             }
+       
+            undef $dbCore;
+            undef $dbVariation;
         }
         
     }
