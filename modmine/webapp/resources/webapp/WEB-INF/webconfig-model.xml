@@ -26,6 +26,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.ExperimentalFactor">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.AppliedProtocol">
     <fields>
       <fieldconfig fieldExpr="protocol.type"/>
