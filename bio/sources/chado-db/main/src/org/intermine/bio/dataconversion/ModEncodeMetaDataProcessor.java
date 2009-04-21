@@ -316,7 +316,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException, ObjectStoreException {
         ResultSet res = getDataFeatureResultSet(connection, queryList);
 
-        Integer prevId = 0;    // previous id in the loop
+        Integer prevId = 0;              // previous id in the loop
         Integer collectionSize = 0;
         ReferenceList collection = null;
       
@@ -325,7 +325,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer featureId = new Integer(res.getInt("feature_id"));
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
-                LOG.error("FIXME: no data for feature_id: " + featureId
+                LOG.debug("Check feature type: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
@@ -340,7 +340,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (prevId != 0) {
                     // store previous collection
                     LOG.info("STORING collection for dataId " + prevId + ": " 
-                            + appliedDataMap.get(prevId).intermineObjectId 
                             + " size:" + collectionSize); 
                     getChadoDBConverter().store(collection, 
                             appliedDataMap.get(prevId).intermineObjectId);                    
@@ -348,7 +347,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 collection = new ReferenceList();
                 collection.setName("features");
                 collection.addRefId(featureItemId);
-                collectionSize++;
+                collectionSize=1;
             }
 
             if (dataId.equals(prevId)) {
@@ -1160,7 +1159,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             int rank = res.getInt("rank");
 
             // TODO this is a temporary hack to make sure we get properly matched Experiment.factors
-            if (heading.startsWith("Experimental Factor") && (rank != 0)) {
+            // EF are dealt with separately
+            if (heading.startsWith("Experimental Factor")) {
                 continue;
             }
             
@@ -1480,7 +1480,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             // if there is one, use it instead of the value
-            if (!StringUtils.isEmpty(officialName)){
+            if (!StringUtils.isEmpty(officialName)) {
                 value = officialName;
             } else {
                 value = res.getString("value");
