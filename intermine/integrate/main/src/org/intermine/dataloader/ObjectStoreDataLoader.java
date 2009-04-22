@@ -107,8 +107,8 @@ public class ObjectStoreDataLoader extends DataLoader
                 }
             }
             Properties props = PropertiesUtil.getPropertiesStartingWith("dataLoader");
-            boolean allowMultipleErrors = !("false".equals(props.getProperty(
-                            "dataLoader.allowMultipleErrors")));
+            boolean allowMultipleErrors = "true".equals(props.getProperty(
+                            "dataLoader.allowMultipleErrors"));
             long times[] = new long[20];
             for (int i = 0; i < 20; i++) {
                 times[i] = -1;
