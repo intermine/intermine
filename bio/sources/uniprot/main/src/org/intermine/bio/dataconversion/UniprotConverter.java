@@ -383,7 +383,6 @@ public class UniprotConverter extends DirectoryConverter
     // Start processing gene
     private void processGene(Item protein, UniprotEntry entry)
     throws SAXException {
-
         String taxonId = entry.getTaxonId();
         // which gene.identifier field has to be unique
         String uniqueIdentifierField = CONFIG.getUniqueIdentifier(taxonId);
@@ -465,6 +464,7 @@ public class UniprotConverter extends DirectoryConverter
         // what value to use with method, eg. "FlyBase" or "ORF"
         String value = CONFIG.getIdentifierValue(taxonId, identifierType);
 
+
         if (method == null || value == null) {
             // use default set in config file, if this organism isn't configured
             method = CONFIG.getIdentifierMethod("default", identifierType);
@@ -489,10 +489,18 @@ public class UniprotConverter extends DirectoryConverter
             identifierValue = resolveGene(taxonId, identifierValue);
         }
 
-        if (geneIdentifiers.contains(identifierValue)) {
+        /*
+         * if the protein is an isoform, this gene has already been processed so the identifier
+         * will always be a duplicate in this case.
+         */
+        if ((!entry.isIsoform() && geneIdentifiers.contains(identifierValue))
+            || entry.isDuplicateGene()) {
             LOG.error("not assigning duplicate identifier:  " + identifierValue);
-
             identifierValue = null;
+
+            // if the canonical protein is processed and the gene has a duplicate identifier, we
+            // need to flag so the gene won't be created for the isoform either.
+            entry.setDuplicateGene(true);
         } else {
             geneIdentifiers.add(identifierValue);
         }
