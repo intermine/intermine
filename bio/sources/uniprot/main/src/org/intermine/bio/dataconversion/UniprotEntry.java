@@ -58,7 +58,6 @@ public class UniprotEntry
     private List<UniprotGene> geneEntries = new ArrayList();
     private UniprotGene geneEntry = null; // <gene><name> ... being processed
 
-
     /**
      * constructor used for non-isoform entries
      */
@@ -177,6 +176,18 @@ public class UniprotEntry
             features.add(item.getIdentifier());
         }
     }
+
+    /**
+     * used to get the feature to store.  feature can't be stored until the location has been
+     * processed
+     * @return uniprot feature
+     */
+    public Item getFeature() {
+        Item currentFeature = feature;
+        feature = null; // we are storing this feature, so reset temp var
+        return currentFeature;
+    }
+
 
     /**
      * @param orientation begin or end
