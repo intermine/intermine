@@ -74,10 +74,9 @@ public class SubmissionProtocolsController extends TilesAction
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults results = executor.execute(q);
         
-        
         PagedTable pagedTable = new PagedTable(results);
-        // TODO don't set a maximum?
-        pagedTable.setPageSize(100);
+        // NB: you need to set a maximum, default is 10!
+        pagedTable.setPageSize(2000);
         request.setAttribute("pagedResults", pagedTable);
         
         return null;
