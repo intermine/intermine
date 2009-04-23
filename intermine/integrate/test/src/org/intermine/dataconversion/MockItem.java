@@ -226,7 +226,13 @@ public class MockItem {
             List<MockItem> c = collections.get(key[i]);
             xml += "\t<collection name=\"" + key[i] + "\">";
             for (MockItem item : c) {
-                xml += item.referencedItemXML();
+                if (item == null) {
+                   xml = "\t<item id=\"DUMMY\" class=\"" + className + "\">" + ENDL;
+                   xml += "item in collection doesn't exist";
+                   xml += "\t</item>" + ENDL;
+                } else {
+                    xml += item.referencedItemXML();
+                }
             }
             xml += "</collection>" + ENDL;
         }
@@ -271,8 +277,12 @@ public class MockItem {
             List<MockItem> c = collections.get(key[i]);
             xml += "\t<collection name=\"" + key[i] + "\">";
             for (MockItem item : c) {
-                xml += "\t\t<reference name=\"" + item.getMockClassName() + "\" ref_id=\""
-                + item.getIdentifier() + "\"/>";
+                if (item != null) {
+                    xml += "\t\t<reference name=\"" + item.getMockClassName() + "\" ref_id=\""
+                    + item.getIdentifier() + "\"/>";
+                } else {
+                    xml += "\t\t<reference name=\"ITEM DOESN'T EXIST\" ref_id=\"NULL\"/>";
+                }
             }
             xml += "</collection>" + ENDL;
         }
