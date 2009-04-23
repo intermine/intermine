@@ -54,6 +54,7 @@ public class PsiConverter extends BioFileConverter
     private static final String INTERACTION_TYPE = "physical";
     private Map<String, String[]> config = new HashMap();
     private Set<String> taxonIds = null;
+    private Set<String> regionPrimaryIdentifiers = new HashSet();
 
     /**
      * Constructor
@@ -519,12 +520,8 @@ public class PsiConverter extends BioFileConverter
                     }
                     region.setReference("interaction", interaction);
 
-                    String regionIdentifier = shortName + "_" + identifier;
-
-                    if (interactorHolder.start != null && !interactorHolder.start.equals("0")) {
-                        regionIdentifier += ":" + interactorHolder.start;
-                        regionIdentifier += "-" + interactorHolder.end;
-                    }
+                    String regionIdentifier = buildRegionIdentifier(interactorHolder, shortName,
+                                                                    identifier);
                     region.setAttribute("primaryIdentifier", regionIdentifier);
 
                     if (locationValid(interactorHolder)) {
@@ -612,6 +609,24 @@ public class PsiConverter extends BioFileConverter
             }
             return name;
         }
+
+        private String buildRegionIdentifier(InteractorHolder ih, String shortName,
+                                             String identifier) {
+
+            String regionIdentifier = shortName + "_" + identifier;
+            if (ih.start != null && !ih.start.equals("0")) {
+                regionIdentifier += ":" + ih.start;
+                regionIdentifier += "-" + ih.end;
+            }
+
+            int i = 0;
+            while (regionPrimaryIdentifiers.contains(regionIdentifier)) {
+                regionIdentifier += "-" + ++i;
+            }
+            regionPrimaryIdentifiers.add(regionIdentifier);
+            return regionIdentifier;
+        }
+
 
         private Item getGene(String taxonId)
         throws ObjectStoreException, SAXException {
