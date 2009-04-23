@@ -347,7 +347,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 collection = new ReferenceList();
                 collection.setName("features");
                 collection.addRefId(featureItemId);
-                collectionSize=1;
+                collectionSize = 1;
             }
 
             if (dataId.equals(prevId)) {
@@ -364,41 +364,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             prevId = dataId;
         }
-    }
-
-// TODO: remove
-    private void processDataFeatureTableOld(Connection connection, Map<Integer,
-            FeatureData> featureMap, String queryList)
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getDataFeatureResultSet(connection, queryList);
-
-        ReferenceList collection = new ReferenceList();
-        collection.setName("features");
-
-        Integer id = 0;
-        Integer collectionSize = 0;
-        while (res.next()) {
-            Integer dataId = new Integer(res.getInt("data_id"));
-            Integer featureId = new Integer(res.getInt("feature_id"));
-            FeatureData featureData = featureMap.get(featureId);
-            if (featureData == null) {
-                LOG.error("FIXME: no data for feature_id: " + featureId
-                        + " in processDataFeatureTable(), data_id =" + dataId);
-                continue;
-            }
-            id = dataId;
-            String featureItemId = featureData.getItemIdentifier();
-
-            // old ref setting
-//          Reference featureRef = new Reference("feature", featureItemId);
-//          getChadoDBConverter().store(featureRef,
-//          appliedDataMap.get(dataId).intermineObjectId);
-
-            collection.addRefId(featureItemId);
-            collectionSize++;
-        }
-        getChadoDBConverter().store(collection, appliedDataMap.get(id).intermineObjectId);
-        collectionSize = 0;
     }
 
     private ResultSet getDataFeatureResultSet(Connection connection, String queryList)
@@ -466,7 +431,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (direction.startsWith("in")) {
                         // .. the map of initial data for the submission
                         addToMap (inputsMap, submissionId, dataId);
-                        addToMap (submissionDataMap, submissionId, dataId);
+//                        LOG.info("INDATA " + submissionId + "|" + dataId); 
+//                        addToMap (submissionDataMap, submissionId, dataId);
                     }
                     // and set actual submission id
                     // we can either be at a first applied protocol (submissionId > 0)..
@@ -483,6 +449,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (direction.equalsIgnoreCase("output")) {
                         node.outputs.add(dataId);
                         addToMap (submissionDataMap, submissionId, dataId);
+//                        LOG.info("DATA last out" + submissionId + "|" + dataId); 
                     }
                 }
 
@@ -639,6 +606,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<Integer> pap = previousAppliedProtocols.iterator();
         while (pap.hasNext()) {
             List<Integer> outputs = new ArrayList<Integer>();
+            List<Integer> inputs = new ArrayList<Integer>();
             Integer currentId = pap.next();
 
             // add the DAG level here only if these are the first AP
@@ -661,9 +629,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         // this is a leaf!!
                         // we store it in a map that links it directly to the submission
                         addToMap(outputsMap, submissionId, currentOD);
+//                        LOG.info("MISS DATAout " + submissionId + "|" + currentOD); 
                     }
                 }
 
+                // to fill submission-dataId map
+                // this is needed, otherwise inputs to AP that are not outputs
+                // of a previous protocol are not considered
+                inputs.addAll(appliedProtocolMap.get(currentId).inputs);
+                Iterator<Integer> in = inputs.iterator();
+                while (in.hasNext()) {
+                    Integer currentIn = in.next();
+                    // build map submission-data
+                    addToMap (submissionDataMap, submissionId, currentIn);
+                }
+                
                 // build the list of children applied protocols chado identifiers
                 // as input for the next iteration
                 Iterator<Integer> nap = nextProtocols.iterator();
