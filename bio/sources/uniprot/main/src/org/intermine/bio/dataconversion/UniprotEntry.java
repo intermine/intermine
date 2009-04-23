@@ -45,6 +45,7 @@ public class UniprotEntry
     private Map<String, Map<String, String>> geneDesignationToDbrefs = new HashMap();
 
     private boolean isDuplicate = false, isIsoform = false, hasMultipleGenes = false;
+    private boolean duplicateGene = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession;
     private String seqRefId, md5checksum;
@@ -668,7 +669,7 @@ public class UniprotEntry
     /**
      * no:
      *  features
-     *  genes
+     *  gene items, just identifiers  - for memory purposes
      *  sequence
      *
      * @param accession for isoform
@@ -693,10 +694,10 @@ public class UniprotEntry
         entry.setDomains(domains);
         entry.setPubs(pubs);
         entry.setKeywords(keywords);
+        entry.setGeneNames(geneNames);
         entry.setHasMultipleGenes(hasMultipleGenes);
         return entry;
     }
-
 
     /**
      * class representing a gene in a uniprot entry
@@ -732,5 +733,20 @@ public class UniprotEntry
         protected Map<String, String> getGenes() {
             return geneIdentifiers;
         }
+    }
+
+    /**
+     * @return the duplicateGene
+     */
+    public boolean isDuplicateGene() {
+        return duplicateGene;
+    }
+
+
+    /**
+     * @param duplicateGene the duplicateGene to set
+     */
+    public void setDuplicateGene(boolean duplicateGene) {
+        this.duplicateGene = duplicateGene;
     }
 }
