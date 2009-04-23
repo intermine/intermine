@@ -14,10 +14,6 @@
 <attribute name="text" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="6_2" class="UniProtFeature">
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
-</item>
 <item id="11_6" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="accession"/>
@@ -29,9 +25,11 @@
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
 <reference name="organism" ref_id="9_1"/>
 </item>
-<item id="6_3" class="UniProtFeature">
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
+<item id="11_1" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000001"/>
+<reference name="subject" ref_id="10_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
@@ -50,13 +48,15 @@
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="6_2" class="UniProtFeature">
+<attribute name="begin" value="97"/>
+<attribute name="end" value="107"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
+</item>
 <item id="10_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="9_1"/>
-</item>
-<item id="6_1" class="UniProtFeature">
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
 </item>
 <item id="7_2" class="Sequence">
 <attribute name="length" value="13"/>
@@ -83,12 +83,6 @@
 <collection name="publications"><reference ref_id="3_2"/></collection>
 <collection name="synonyms"><reference ref_id="11_2"/><reference ref_id="11_3"/><reference ref_id="11_4"/></collection>
 </item>
-<item id="11_5" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="10_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="11_4" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
@@ -99,6 +93,12 @@
 <item id="7_1" class="Sequence">
 <attribute name="length" value="376"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
+</item>
+<item id="6_3" class="UniProtFeature">
+<attribute name="begin" value="111"/>
+<attribute name="end" value="127"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
 </item>
 <item id="11_2" class="Synonym">
 <attribute name="isPrimary" value="true"/>
@@ -114,11 +114,11 @@
 <item id="9_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="11_1" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="6_1" class="UniProtFeature">
+<attribute name="begin" value="79"/>
+<attribute name="end" value="91"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
 </item>
 <item id="1_1" class="Ontology">
 <attribute name="title" value="UniProtKeyword"/>
@@ -126,6 +126,12 @@
 <item id="2_1" class="DataSet">
 <attribute name="title" value="Swiss-Prot data set"/>
 <reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="11_5" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000002"/>
+<reference name="subject" ref_id="10_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_4" class="OntologyTerm">
 <attribute name="name" value="helix"/>

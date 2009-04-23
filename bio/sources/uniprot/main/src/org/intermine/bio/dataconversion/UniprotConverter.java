@@ -464,7 +464,6 @@ public class UniprotConverter extends DirectoryConverter
         // what value to use with method, eg. "FlyBase" or "ORF"
         String value = CONFIG.getIdentifierValue(taxonId, identifierType);
 
-
         if (method == null || value == null) {
             // use default set in config file, if this organism isn't configured
             method = CONFIG.getIdentifierMethod("default", identifierType);
@@ -618,7 +617,7 @@ public class UniprotConverter extends DirectoryConverter
                     entry.setMolecularWeight(strMass);
                 }
             } else if (qName.equals("feature") && attrs.getValue("type") != null) {
-                Item feature = storeFeature(attrs.getValue("type"), attrs.getValue("description"),
+                Item feature = getFeature(attrs.getValue("type"), attrs.getValue("description"),
                                             attrs.getValue("status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
@@ -667,7 +666,7 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 attName = attrs.getValue("type");
             } else if (qName.equals("dbreference") || qName.equals("comment")
-                            || qName.equals("feature") || qName.equals("isoform")
+                            || qName.equals("isoform")
                             || qName.equals("gene")) {
                 // set temporary holder variables to null
                 entry.reset();
@@ -693,6 +692,11 @@ public class UniprotConverter extends DirectoryConverter
         throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
+
+            if (qName.equals("feature") && entry.processingFeature()) {
+                storeFeature(entry);
+            }
+
             if (attName == null || attValue.toString() == null) {
                 return;
             }
@@ -719,7 +723,6 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
-
                 String accession = attValue.toString();
 
                 // 119 isoforms have commas in their IDs
@@ -973,7 +976,7 @@ public class UniprotConverter extends DirectoryConverter
         return refId;
     }
 
-    private Item storeFeature(String type, String description, String status)
+    private Item getFeature(String type, String description, String status)
     throws SAXException {
         List<String> featureTypes = CONFIG.getFeatureTypes();
         if (featureTypes.isEmpty() || featureTypes.contains(type)) {
@@ -989,14 +992,17 @@ public class UniprotConverter extends DirectoryConverter
             if (!StringUtils.isEmpty(featureDescription)) {
                 feature.setAttribute("description", featureDescription);
             }
-            try {
-                store(feature);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
             return feature;
         }
         return null;
     }
 
+    private void storeFeature(UniprotEntry entry)
+    throws SAXException {
+        try {
+            store(entry.getFeature());
+        } catch (ObjectStoreException e) {
+            throw new SAXException(e);
+        }
+    }
 }
