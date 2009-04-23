@@ -76,7 +76,7 @@ public class SubmissionProtocolsController extends TilesAction
         
         PagedTable pagedTable = new PagedTable(results);
         // NB: you need to set a maximum, default is 10!
-        pagedTable.setPageSize(2000);
+        pagedTable.setPageSize(10000);
         request.setAttribute("pagedResults", pagedTable);
         
         return null;
