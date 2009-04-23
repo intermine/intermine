@@ -323,10 +323,19 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         Synonym synonym = null;
         if (dataSource != null) {
+
             synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
             synonym.setValue(attributeValue);
-            synonym.setType(classAttribute);
             synonym.setSubject(imo);
+
+            // rename so these synonyms merge correctly
+            String synonymType = classAttribute;
+            if (classAttribute.equals("primaryAccession")) {
+                synonym.setType("accession");
+            } else if (classAttribute.equals("primaryIdentifier")) {
+                synonym.setType("identifier");
+            }
+            synonym.setType(synonymType);
         }
 
         if (StringUtils.isEmpty(dataSetTitle)) {
