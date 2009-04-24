@@ -15,7 +15,7 @@
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/go-annotation/human"/>
-      <property name="src.data.dir.includes" value="*/gene_association*"/>
+      <property name="src.data.dir.includes" value="gene_association*"/>
     </source>
   </sources>
   <post-processing>
