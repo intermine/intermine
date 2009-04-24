@@ -56,7 +56,7 @@ public class BagQuery
     private boolean isDefaultQuery;
     private Map classKeys;
     private String type;
-    
+
     /**
      * Create a new BagQuery object.
      * @param bagQueryConfig the configuration to use
@@ -127,16 +127,16 @@ public class BagQuery
             }
         }
 
-        // if this should be the default query using class key fields, create it now        
+        // if this should be the default query using class key fields, create it now
         if (isDefaultQuery) {
             Query q = BagQueryHelper.createDefaultBagQuery(type, bagQueryConfig, model,
-                                                              classKeys, lowerCaseBag);
+                                                           classKeys, lowerCaseBag);
             return addExtraConstraint(q, extraFieldValue);
-        } else {
-            IqlQuery q = new IqlQuery(queryString, packageName,
-                                      new ArrayList(Collections.singleton(lowerCaseBag)));
-            return addExtraConstraint(q.toQuery(), extraFieldValue);
         }
+        IqlQuery q = new IqlQuery(queryString, packageName,
+                                  new ArrayList(Collections.singleton(lowerCaseBag)));
+        return addExtraConstraint(q.toQuery(), extraFieldValue);
+
     }
 
     /**

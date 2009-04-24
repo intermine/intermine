@@ -40,7 +40,7 @@ function toggleForm(matchCount) {
       <c:if test="${fn:length(lowQualityMatches)>0}">
         <strong>
           <span id="lowQCount">${fn:length(lowQualityMatches)}</span>
-          low quality matches
+          synonym matches
         </strong>
         <c:set var="comCount" value="${comCount+1}"/>
       </c:if>
@@ -97,7 +97,7 @@ function toggleForm(matchCount) {
     <c:if test="${! empty lowQualityMatches}">
     <br/>
       <p>
-        <h3>Low quality matches</h3>
+        <h3>Synonym matches</h3>
     </p>
       <p>
         <c:set var="issueMap" value="${lowQualityMatches}"/>
