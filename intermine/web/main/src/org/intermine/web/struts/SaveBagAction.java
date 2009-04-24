@@ -126,18 +126,13 @@ public class SaveBagAction extends InterMineAction
                         profile.getUserId(), uosw);
                 profile.saveBag(bagName, bag);
             }
-
             osw = new ObjectStoreWriterInterMineImpl(os);
-
             pt.addSelectedToBag(osw, bag.getOsb());
-
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
         } catch (ObjectStoreException e) {
             LOG.error(e);
-            ActionMessage actionMessage =
-                new ActionMessage("An error occured while save the bag");
-            recordError(actionMessage, request);
+            recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");
         } finally {
             try {
