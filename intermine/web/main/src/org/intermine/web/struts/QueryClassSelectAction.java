@@ -62,10 +62,9 @@ public class QueryClassSelectAction extends InterMineAction
             recordError(new ActionMessage("errors.queryClassSelect.noClass"), request);
 
             return mapping.findForward("classChooser");
-        } else {
-            newQuery(className, session);
-            return mapping.findForward("query");
         }
+        newQuery(className, session);
+        return mapping.findForward("query");
     }
 
     /**
