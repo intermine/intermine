@@ -17,6 +17,7 @@
     <attribute name="md5checksum" type="java.lang.String"/>
     <collection name="publications" referenced-type="Publication" ordered="true"/>
     <collection name="comments" referenced-type="Comment" ordered="true"/>
+    <collection name="components" referenced-type="Component" ordered="true"/>
     <collection name="keywords" referenced-type="OntologyTerm" ordered="true"/>
     <collection name="features" referenced-type="UniProtFeature" ordered="true"/>
     <collection name="proteinDomains" referenced-type="ProteinDomain" ordered="true"/>
@@ -24,7 +25,10 @@
   <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>
-    <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+  <class name="Component" is-interface="false" extends="java.lang.Object">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" ordered="true" reverse-reference="proteinDomains"/>

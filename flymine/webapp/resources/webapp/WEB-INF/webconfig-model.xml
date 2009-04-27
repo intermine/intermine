@@ -26,7 +26,6 @@
     </fields>
   </class>
 
-
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -119,6 +118,12 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="text"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 

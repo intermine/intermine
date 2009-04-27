@@ -37,6 +37,7 @@ public class UniprotEntry
     private List<String> accessions = new ArrayList();
     private List<String> isoforms = new ArrayList();
     private List<String> isoformSynonyms = new ArrayList();
+    private List<String> components = new ArrayList();
     private List<String> proteinNames = new ArrayList(); // used for synonyms only
     private Map<String, String> geneNames = new HashMap();  // type, value eg primary, UBI3
     // other gene identifiers are stored in dbrefs map
@@ -64,7 +65,6 @@ public class UniprotEntry
     public UniprotEntry() {
         // constructor used for non-isoform entries
     }
-
 
     /**
      * @param primaryAccession for this entry
@@ -283,6 +283,21 @@ public class UniprotEntry
     public void addKeyword(String keyword) {
         keywords.add(keyword);
     }
+
+    /**
+     * @return list of refIds representing the keyword objects
+     */
+    public List<String> getComponents() {
+        return components;
+    }
+
+    /**
+     * @param component name of component
+     */
+    public void addComponent(String component) {
+        components.add(component);
+    }
+
 
     /**
      * @param type type of variable, eg. ORF, primary
@@ -613,6 +628,13 @@ public class UniprotEntry
     }
 
     /**
+     * @param proteinNames the proteinNames to set
+     */
+    public void setProteinNames(List<String> proteinNames) {
+        this.proteinNames = proteinNames;
+    }
+
+    /**
      * @param dbrefs the dbrefs to set
      */
     public void setDbrefs(Map<String, String> dbrefs) {
@@ -654,7 +676,6 @@ public class UniprotEntry
         this.accessions = accessions;
     }
 
-
     /**
      * @return true if this entry contains more than one gene
      */
@@ -676,37 +697,6 @@ public class UniprotEntry
         }
     }
 
-    /**
-     * no:
-     *  features
-     *  gene items, just identifiers  - for memory purposes
-     *  sequence
-     *
-     * @param accession for isoform
-     * @return cloned uniprot entry, an isoform of original entry
-     */
-    public UniprotEntry clone(String accession) {
-        UniprotEntry entry = new UniprotEntry(accession);
-        entry.setIsoform(true);
-        entry.setDatasetRefId(datasetRefId);
-        entry.setLength(length);
-        entry.setMolecularWeight(molecularWeight);
-        entry.setDuplicate(false);
-        entry.setTaxonId(taxonId);
-        entry.setName(name);
-        entry.setFragment(isFragment);
-        entry.setUniprotAccession(uniprotAccession);
-        entry.setMd5checksum(md5checksum);
-        entry.setDbrefs(dbrefs);
-        entry.setAccessions(accessions);
-        entry.setComments(comments);
-        entry.setDomains(domains);
-        entry.setPubs(pubs);
-        entry.setKeywords(keywords);
-        entry.setGeneNames(geneNames);
-        entry.setHasMultipleGenes(hasMultipleGenes);
-        return entry;
-    }
 
     /**
      * class representing a gene in a uniprot entry
@@ -751,14 +741,12 @@ public class UniprotEntry
         return duplicateGene;
     }
 
-
     /**
      * @param duplicateGene the duplicateGene to set
      */
     public void setDuplicateGene(boolean duplicateGene) {
         this.duplicateGene = duplicateGene;
     }
-
 
     /**
      * @return the primaryIdentifier
@@ -767,11 +755,45 @@ public class UniprotEntry
         return primaryIdentifier;
     }
 
-
     /**
      * @param primaryIdentifier the primaryIdentifier to set
      */
     public void setPrimaryIdentifier(String primaryIdentifier) {
         this.primaryIdentifier = primaryIdentifier;
     }
+
+    /**
+     * no:
+     *  features
+     *  gene items, just identifiers  - for memory reasons
+     *  sequence
+     *  components - per rachel
+     *
+     * @param accession for isoform
+     * @return cloned uniprot entry, an isoform of original entry
+     */
+    public UniprotEntry clone(String accession) {
+        UniprotEntry entry = new UniprotEntry(accession);
+        entry.setIsoform(true);
+        entry.setDatasetRefId(datasetRefId);
+        entry.setLength(length);
+        entry.setMolecularWeight(molecularWeight);
+        entry.setDuplicate(false);
+        entry.setTaxonId(taxonId);
+        entry.setName(name);
+        entry.setFragment(isFragment);
+        entry.setUniprotAccession(uniprotAccession);
+        entry.setMd5checksum(md5checksum);
+        entry.setDbrefs(dbrefs);
+        entry.setAccessions(accessions);
+        entry.setComments(comments);
+        entry.setDomains(domains);
+        entry.setPubs(pubs);
+        entry.setKeywords(keywords);
+        entry.setGeneNames(geneNames);
+        entry.setProteinNames(proteinNames);
+        entry.setHasMultipleGenes(hasMultipleGenes);
+        return entry;
+    }
+
 }
