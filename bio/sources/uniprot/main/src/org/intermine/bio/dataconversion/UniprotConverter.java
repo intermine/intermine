@@ -154,14 +154,14 @@ public class UniprotConverter extends DirectoryConverter
             String taxonId = bits[0];
             if (bits.length != 3) {
                 LOG.info("Bad file found:  "  + file.getName()
-                                           + ", expected a filename like 7227_uniprot_sprot.xml");
+                         + ", expected a filename like 7227_uniprot_sprot.xml");
                 continue;
             }
             String source = bits[2].replace(".xml", "");
             // process trembl last because trembl has duplicates of sprot proteins
             if (!source.equals("sprot") && !source.equals("trembl")) {
                 LOG.info("Bad file found:  "  + file.getName()
-                                           +  " (" + bits[2] + "), expecting sprot or trembl ");
+                         +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
             int i = (source.equals("sprot") ? 0 : 1);
@@ -377,13 +377,13 @@ public class UniprotConverter extends DirectoryConverter
     throws SAXException {
         Map<String, String> dbrefs = entry.getDbrefs();
         if (dbrefs.containsKey("EC")) {
-               protein.setAttribute("ecNumber", dbrefs.get("EC"));
+            protein.setAttribute("ecNumber", dbrefs.get("EC"));
         }
         if (dbrefs.containsKey("RefSeq")) {
-               String synonym = dbrefs.get("RefSeq");
-               String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, "false",
-                                         entry.getDatasetRefId());
-               synonymRefIds.add(refId);
+            String synonym = dbrefs.get("RefSeq");
+            String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, "false",
+                                      entry.getDatasetRefId());
+            synonymRefIds.add(refId);
         }
     }
 
@@ -500,7 +500,7 @@ public class UniprotConverter extends DirectoryConverter
          * will always be a duplicate in this case.
          */
         if ((!entry.isIsoform() && geneIdentifiers.contains(identifierValue))
-            || entry.isDuplicateGene()) {
+                        || entry.isDuplicateGene()) {
             LOG.error("not assigning duplicate identifier:  " + identifierValue);
             identifierValue = null;
 
@@ -540,7 +540,7 @@ public class UniprotConverter extends DirectoryConverter
 
         // dbref "gene designations" have to match any one of the values in the geneIdentifiers list
         Map<String, Map<String, String>> geneDesignationsToDbrefs
-            = entry.getGeneDesignationsToDbrefs();
+        = entry.getGeneDesignationsToDbrefs();
 
         Collection<String> identifiers = identifierMap.values();
 
@@ -635,7 +635,7 @@ public class UniprotConverter extends DirectoryConverter
                 }
             } else if (qName.equals("feature") && attrs.getValue("type") != null) {
                 Item feature = getFeature(attrs.getValue("type"), attrs.getValue("description"),
-                                            attrs.getValue("status"));
+                                          attrs.getValue("status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
                             && entry.processingFeature() && attrs.getValue("position") != null) {
