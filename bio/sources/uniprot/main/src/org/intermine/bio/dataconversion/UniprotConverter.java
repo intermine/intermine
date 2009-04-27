@@ -212,29 +212,15 @@ public class UniprotConverter extends DirectoryConverter
                 }
 
                 Item protein = createItem("Protein");
-                protein.setAttribute("isFragment", entry.isFragment());
-                protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
-                String primaryAccession = entry.getPrimaryAccession();
-                protein.setAttribute("primaryAccession", primaryAccession);
-                String name = entry.getName();
-                protein.setAttribute("uniprotName", name);
-                // primaryIdentifier must be unique, so append isoform suffix, eg -1
-                if (entry.isIsoform()) {
-                    String[] bits = primaryAccession.split("\\-");
-                    if (bits.length == 2) {
-                        name += "-" + bits[1];
-                    }
-                }
-                protein.setAttribute("primaryIdentifier", name);
+
+                /* primaryAccession, primaryIdentifier, name, etc */
+                processIdentifiers(protein, entry);
 
                 String isCanonical = (entry.isIsoform() ? "false" : "true");
                 protein.setAttribute("isUniprotCanonical", isCanonical);
 
                 /* dataset */
                 protein.addToCollection("dataSets", entry.getDatasetRefId());
-
-                /* identifier name and description */
-                processName(protein, entry);
 
                 /* sequence */
                 if (!entry.isIsoform()) {
@@ -304,17 +290,22 @@ public class UniprotConverter extends DirectoryConverter
         protein.setAttribute("md5checksum", entry.getMd5checksum());
     }
 
-    private void processName(Item protein, UniprotEntry entry) {
-        Object[] descriptions = entry.getDescriptions().toArray();
-        if (descriptions.length > 0) {
-            String name = descriptions[0].toString();
-            protein.setAttribute("name", name);
-            String description = name;
-            for (int i = 1; i < descriptions.length; i++) {
-                description.concat(" ( " + descriptions[i].toString() + " ) ");
+    private void processIdentifiers(Item protein, UniprotEntry entry) {
+        protein.setAttribute("name", entry.getName());
+        protein.setAttribute("isFragment", entry.isFragment());
+        protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
+        String primaryAccession = entry.getPrimaryAccession();
+        protein.setAttribute("primaryAccession", primaryAccession);
+        String primaryIdentifier = entry.getPrimaryIdentifier();
+        protein.setAttribute("uniprotName", primaryIdentifier);
+        // primaryIdentifier must be unique, so append isoform suffix, eg -1
+        if (entry.isIsoform()) {
+            String[] bits = primaryAccession.split("\\-");
+            if (bits.length == 2) {
+                primaryIdentifier += "-" + bits[1];
             }
-            protein.setAttribute("description", description);
         }
+        protein.setAttribute("primaryIdentifier", primaryIdentifier);
     }
 
     private void processSynonyms(List<String> proteinSynonyms, String proteinRefId,
@@ -330,20 +321,17 @@ public class UniprotConverter extends DirectoryConverter
 
         // accessions
         for (String accession : entry.getAccessions()) {
-            refId = getSynonym(proteinRefId, "accession", accession, "false",
-                               datasetRefId);
+            refId = getSynonym(proteinRefId, "accession", accession, "false", datasetRefId);
             proteinSynonyms.add(refId);
         }
 
         // primaryIdentifier
-        refId = getSynonym(proteinRefId, "identifier", entry.getName(), "false",
-                           datasetRefId);
+        refId = getSynonym(proteinRefId, "identifier", entry.getName(), "false", datasetRefId);
         proteinSynonyms.add(refId);
 
-        // name
-        for (String name : entry.getDescriptions()) {
-            refId = getSynonym(proteinRefId, "name", name, "false",
-                               datasetRefId);
+        // name <recommendedName> or <alternateName>
+        for (String name : entry.getProteinNames()) {
+            refId = getSynonym(proteinRefId, "name", name, "false", datasetRefId);
             proteinSynonyms.add(refId);
         }
 
@@ -584,13 +572,20 @@ public class UniprotConverter extends DirectoryConverter
                 String isFragment = "false";
                 if (attrs.getValue("type") != null
                                 && attrs.getValue("type").startsWith("fragment")) {
-                        isFragment = "true";
+                    isFragment = "true";
                 }
                 entry.setFragment(isFragment);
-            } else if (qName.equals("fullName") && (stack.peek().equals("recommendedName")
-                            || stack.peek().equals("submittedName"))) {
+            } else if (qName.equals("fullName") && stack.search("protein") == 2
+                            &&  (stack.peek().equals("recommendedName")
+                                            || stack.peek().equals("submittedName"))) {
                 attName = "name";
-             } else if (qName.equals("name") && stack.peek().equals("entry")) {
+            } else if ((qName.equals("fullName") || qName.equals("shortName"))
+                            && stack.search("protein") == 2
+                            && (stack.peek().equals("alternativeName")
+                                            || stack.peek().equals("recommendedName")
+                                            || stack.peek().equals("submittedName"))) {
+                attName = "synonym";
+            } else if (qName.equals("name") && stack.peek().equals("entry")) {
                 attName = "primaryIdentifier";
             } else if (qName.equals("accession")) {
                 attName = "value";
@@ -702,9 +697,10 @@ public class UniprotConverter extends DirectoryConverter
             }
             if (qName.equals("sequence")) {
                 setSequence(entry, attValue.toString().replaceAll("\n", ""));
-            } else if (qName.equals("fullName") && (stack.peek().equals("recommendedName")
-                                                 || stack.peek().equals("submittedName"))) {
-                entry.addDescription(attValue.toString());
+            } else if (attName.equals("name")) {
+                entry.setName(attValue.toString());
+            } else if (attName.equals("synonym")) {
+                entry.addProteinName(attValue.toString());
             } else if (qName.equals("text") && stack.peek().equals("comment")) {
                 String commentText = attValue.toString();
                 if (commentText != null  & !commentText.equals("")) {
@@ -718,8 +714,8 @@ public class UniprotConverter extends DirectoryConverter
                 entry.addGene(type, name);
             } else if (qName.equals("keyword")) {
                 entry.addKeyword(getKeyword(attValue.toString()));
-            } else if (qName.equals("name") && stack.peek().equals("entry")) {
-                entry.setName(attValue.toString());
+            } else if (attName.equals("primaryIdentifier")) {
+                entry.setPrimaryIdentifier(attValue.toString());
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {

@@ -5,7 +5,12 @@
 <protein>
     <recommendedName>
       <fullName>eve's name</fullName>
+      <shortName>shortname</shortName>
     </recommendedName>
+<alternativeName>
+<fullName>alternativeName - full</fullName>
+<shortName>alternativeName - short</shortName>
+</alternativeName>
 </protein>
 <gene>
   <name type="primary">eve</name>
