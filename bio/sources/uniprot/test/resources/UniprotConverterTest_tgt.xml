@@ -1,91 +1,51 @@
 <items>
-<item id="5_3" class="OntologyTerm">
-<attribute name="name" value="DNA-binding"/>
-<reference name="ontology" ref_id="1_1"/>
-</item>
 <item id="4_2" class="Comment">
 <attribute name="text" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="11_3" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="eve's name"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="12_3" class="Component">
+<attribute name="name" value="NPP"/>
 </item>
-<item id="11_1" class="Synonym">
+<item id="12_5" class="Component">
+<attribute name="name" value="Melanotropin gamma"/>
+</item>
+<item id="11_4" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="10_1"/>
+<reference name="subject" ref_id="10_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="11_9" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="12_10" class="Component">
+<attribute name="name" value="Potential peptide"/>
 </item>
-<item id="10_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000001"/>
-<reference name="organism" ref_id="9_1"/>
+<item id="12_17" class="Component">
+<attribute name="name" value="ACTH"/>
 </item>
-<item id="11_5" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="alternativeName - full"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="12_1" class="Component">
+<attribute name="name" value="NPP"/>
 </item>
-<item id="10_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
-<reference name="organism" ref_id="9_1"/>
+<item id="12_23" class="Component">
+<attribute name="name" value="Corticotropin-like intermediary peptide"/>
 </item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
 </item>
-<item id="0_1" class="DataSource">
-<attribute name="name" value="UniProt"/>
+<item id="12_25" class="Component">
+<attribute name="name" value="CLIP"/>
 </item>
-<item id="4_1" class="Comment">
-<attribute name="text" value="Nucleus."/>
-<attribute name="type" value="subcellular location"/>
-</item>
-<item id="6_2" class="UniProtFeature">
-<attribute name="begin" value="97"/>
-<attribute name="end" value="107"/>
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
-</item>
-<item id="8_1" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="true"/>
-<attribute name="length" value="376"/>
-<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
-<attribute name="molecularWeight" value="39970"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="eve accession"/>
-<attribute name="primaryIdentifier" value="EVE_DROME"/>
-<attribute name="uniprotAccession" value="eve accession"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="organism" ref_id="9_1"/>
-<reference name="sequence" ref_id="7_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="features"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/></collection>
-<collection name="genes"><reference ref_id="10_1"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-<collection name="synonyms"><reference ref_id="11_2"/><reference ref_id="11_3"/><reference ref_id="11_4"/><reference ref_id="11_5"/><reference ref_id="11_6"/></collection>
-</item>
-<item id="7_2" class="Sequence">
-<attribute name="length" value="13"/>
-<attribute name="residues" value="JULIESEQUENCE"/>
+<item id="12_14" class="Component">
+<attribute name="name" value="Adrenocorticotropic hormone"/>
 </item>
 <item id="7_1" class="Sequence">
 <attribute name="length" value="376"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
+</item>
+<item id="11_2" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q000"/>
+<reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="6_3" class="UniProtFeature">
 <attribute name="begin" value="111"/>
@@ -93,35 +53,20 @@
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 </item>
-<item id="11_6" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="alternativeName - short"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="11_4" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="shortname"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="11_8" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="accession"/>
-<attribute name="value" value="Q000"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="4_3" class="Comment">
 <attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="9_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
+<item id="12_7" class="Component">
+<attribute name="name" value="Gamma-MSH"/>
 </item>
-<item id="8_2" class="Protein">
+<item id="12_26" class="Component">
+<attribute name="name" value="CLIP"/>
+</item>
+<item id="12_22" class="Component">
+<attribute name="name" value="Alpha-MSH"/>
+</item>
+<item id="8_1" class="Protein">
 <attribute name="isFragment" value="false"/>
 <attribute name="isUniprotCanonical" value="true"/>
 <attribute name="length" value="13"/>
@@ -136,29 +81,10 @@
 <reference name="sequence" ref_id="7_2"/>
 <collection name="comments"><reference ref_id="4_2"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="10_2"/></collection>
+<collection name="genes"><reference ref_id="10_1"/></collection>
 <collection name="keywords"><reference ref_id="5_1"/></collection>
 <collection name="publications"><reference ref_id="3_2"/></collection>
-<collection name="synonyms"><reference ref_id="11_8"/><reference ref_id="11_9"/></collection>
-</item>
-<item id="11_7" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000001"/>
-<reference name="subject" ref_id="10_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_1" class="UniProtFeature">
-<attribute name="begin" value="79"/>
-<attribute name="end" value="91"/>
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
-</item>
-<item id="11_2" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="accession"/>
-<attribute name="value" value="eve accession"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="synonyms"><reference ref_id="11_2"/><reference ref_id="11_3"/></collection>
 </item>
 <item id="1_1" class="Ontology">
 <attribute name="title" value="UniProtKeyword"/>
@@ -171,15 +97,171 @@
 <attribute name="name" value="helix"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
+<item id="12_11" class="Component">
+<attribute name="name" value="Potential peptide"/>
+</item>
 <item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
+<item id="3_2" class="Publication">
+<attribute name="pubMedId" value="1111111"/>
+</item>
+<item id="5_3" class="OntologyTerm">
+<attribute name="name" value="DNA-binding"/>
+<reference name="ontology" ref_id="1_1"/>
+</item>
+<item id="12_27" class="Component">
+<attribute name="name" value="CLIP"/>
+</item>
+<item id="12_9" class="Component">
+<attribute name="name" value="Potential peptide"/>
+</item>
+<item id="11_9" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="name"/>
+<attribute name="value" value="alternativeName - short"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_21" class="Component">
+<attribute name="name" value="Alpha-MSH"/>
+</item>
+<item id="10_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
+<reference name="organism" ref_id="9_1"/>
+</item>
+<item id="8_2" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="true"/>
+<attribute name="length" value="376"/>
+<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
+<attribute name="molecularWeight" value="39970"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="eve accession"/>
+<attribute name="primaryIdentifier" value="EVE_DROME"/>
+<attribute name="uniprotAccession" value="eve accession"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="organism" ref_id="9_1"/>
+<reference name="sequence" ref_id="7_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+<collection name="components"><reference ref_id="12_1"/><reference ref_id="12_2"/><reference ref_id="12_3"/><reference ref_id="12_4"/><reference ref_id="12_5"/><reference ref_id="12_6"/><reference ref_id="12_7"/><reference ref_id="12_8"/><reference ref_id="12_9"/><reference ref_id="12_10"/><reference ref_id="12_11"/><reference ref_id="12_12"/><reference ref_id="12_13"/><reference ref_id="12_14"/><reference ref_id="12_15"/><reference ref_id="12_16"/><reference ref_id="12_17"/><reference ref_id="12_18"/><reference ref_id="12_19"/><reference ref_id="12_20"/><reference ref_id="12_21"/><reference ref_id="12_22"/><reference ref_id="12_23"/><reference ref_id="12_24"/><reference ref_id="12_25"/><reference ref_id="12_26"/><reference ref_id="12_27"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="features"><reference ref_id="6_1"/><reference ref_id="6_2"/><reference ref_id="6_3"/></collection>
+<collection name="genes"><reference ref_id="10_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+<collection name="synonyms"><reference ref_id="11_5"/><reference ref_id="11_6"/><reference ref_id="11_7"/><reference ref_id="11_8"/><reference ref_id="11_9"/></collection>
+</item>
+<item id="11_1" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000001"/>
+<reference name="subject" ref_id="10_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_13" class="Component">
+<attribute name="name" value="Corticotropin"/>
+</item>
+<item id="12_16" class="Component">
+<attribute name="name" value="ACTH"/>
+</item>
+<item id="12_24" class="Component">
+<attribute name="name" value="CLIP"/>
+</item>
+<item id="12_19" class="Component">
+<attribute name="name" value="Melanotropin alpha"/>
+</item>
+<item id="12_8" class="Component">
+<attribute name="name" value="Gamma-MSH"/>
+</item>
+<item id="0_1" class="DataSource">
+<attribute name="name" value="UniProt"/>
+</item>
+<item id="11_5" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="accession"/>
+<attribute name="value" value="eve accession"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_7" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="name"/>
+<attribute name="value" value="shortname"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_20" class="Component">
+<attribute name="name" value="Alpha-MSH"/>
+</item>
+<item id="4_1" class="Comment">
+<attribute name="text" value="Nucleus."/>
+<attribute name="type" value="subcellular location"/>
+</item>
+<item id="6_2" class="UniProtFeature">
+<attribute name="begin" value="97"/>
+<attribute name="end" value="107"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
+</item>
+<item id="10_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000001"/>
+<reference name="organism" ref_id="9_1"/>
+</item>
+<item id="7_2" class="Sequence">
+<attribute name="length" value="13"/>
+<attribute name="residues" value="JULIESEQUENCE"/>
+</item>
+<item id="12_4" class="Component">
+<attribute name="name" value="Melanotropin gamma"/>
+</item>
+<item id="11_8" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="name"/>
+<attribute name="value" value="alternativeName - full"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
+</item>
+<item id="6_1" class="UniProtFeature">
+<attribute name="begin" value="79"/>
+<attribute name="end" value="91"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
+</item>
+<item id="12_6" class="Component">
+<attribute name="name" value="Gamma-MSH"/>
+</item>
+<item id="11_3" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L"/>
+<reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_6" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="eve's name"/>
+<reference name="subject" ref_id="8_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_15" class="Component">
+<attribute name="name" value="ACTH"/>
+</item>
+<item id="12_12" class="Component">
+<attribute name="name" value="Corticotropin"/>
+</item>
+<item id="12_18" class="Component">
+<attribute name="name" value="Melanotropin alpha"/>
+</item>
+<item id="12_2" class="Component">
+<attribute name="name" value="NPP"/>
+</item>
 <item id="5_2" class="OntologyTerm">
 <attribute name="name" value="Complete proteome"/>
 <reference name="ontology" ref_id="1_1"/>
-</item>
-<item id="3_2" class="Publication">
-<attribute name="pubMedId" value="1111111"/>
 </item>
 </items>

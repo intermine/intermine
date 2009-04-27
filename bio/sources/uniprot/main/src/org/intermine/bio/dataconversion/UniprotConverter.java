@@ -259,6 +259,11 @@ public class UniprotConverter extends DirectoryConverter
                     protein.setCollection("features", entry.getFeatures());
                 }
 
+                /* components */
+                if (!entry.getComponents().isEmpty()) {
+                    processComponents(protein, entry);
+                }
+
                 // linked so tests pass
                 List<String> synonymRefIds = new ArrayList();
 
@@ -306,6 +311,20 @@ public class UniprotConverter extends DirectoryConverter
             }
         }
         protein.setAttribute("primaryIdentifier", primaryIdentifier);
+    }
+
+    private void processComponents(Item protein, UniprotEntry entry)
+    throws SAXException {
+        for (String componentName : entry.getComponents()) {
+            Item component = createItem("Component");
+            component.setAttribute("name", componentName);
+            try {
+                store(component);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+            protein.addToCollection("components", component);
+        }
     }
 
     private void processSynonyms(List<String> proteinSynonyms, String proteinRefId,
@@ -585,6 +604,9 @@ public class UniprotConverter extends DirectoryConverter
                                             || stack.peek().equals("recommendedName")
                                             || stack.peek().equals("submittedName"))) {
                 attName = "synonym";
+            } else if ((qName.equals("fullName") || qName.equals("shortName"))
+                            && stack.search("component") == 2) {
+                attName = "component";
             } else if (qName.equals("name") && stack.peek().equals("entry")) {
                 attName = "primaryIdentifier";
             } else if (qName.equals("accession")) {
@@ -718,6 +740,8 @@ public class UniprotConverter extends DirectoryConverter
                 entry.setPrimaryIdentifier(attValue.toString());
             } else if (qName.equals("accession")) {
                 entry.addAccession(attValue.toString());
+            } else if (attName.equals("component")) {
+                entry.addComponent(attValue.toString());
             } else if (qName.equals("id") && stack.peek().equals("isoform")) {
                 String accession = attValue.toString();
 
