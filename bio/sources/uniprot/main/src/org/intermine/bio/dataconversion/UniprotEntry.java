@@ -35,9 +35,9 @@ public class UniprotEntry
     private List<String> comments = new ArrayList();
     private List<String> keywords = new ArrayList();
     private List<String> accessions = new ArrayList();
-    private List<String> descriptions = new ArrayList();
     private List<String> isoforms = new ArrayList();
     private List<String> isoformSynonyms = new ArrayList();
+    private List<String> proteinNames = new ArrayList(); // used for synonyms only
     private Map<String, String> geneNames = new HashMap();  // type, value eg primary, UBI3
     // other gene identifiers are stored in dbrefs map
 
@@ -47,7 +47,7 @@ public class UniprotEntry
     private boolean isDuplicate = false, isIsoform = false, hasMultipleGenes = false;
     private boolean duplicateGene = false;
     private String taxonId, name, isFragment;
-    private String primaryAccession, uniprotAccession;
+    private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String seqRefId, md5checksum;
 
     // temporary object that holds attribute value until the item is stored on the next line of XML
@@ -506,20 +506,6 @@ public class UniprotEntry
     }
 
     /**
-     * @param description the description to add
-     */
-    public void addDescription(String description) {
-        descriptions.add(description);
-    }
-
-    /**
-     * @return the set of descriptions
-     */
-    public List<String> getDescriptions() {
-        return descriptions;
-    }
-
-    /**
      * used to assign sequences
      * @return list of all the synonyms for this entry, including name and accessions but not
      * isoform synonyms
@@ -607,6 +593,25 @@ public class UniprotEntry
         return isoformSynonyms;
     }
 
+
+    /**
+     * the name section in uniprot can contain several names, eg. recommendedName, alternateName,
+     * etc.  all of these should be synonyms
+     * @param proteinName name for the protein, eg. recommendedName, alternateName, etc
+     */
+    public void addProteinName(String proteinName) {
+        proteinNames.add(proteinName);
+    }
+
+    /**
+     * if an isoform has two ID tags, then the first one is used and the second one is added
+     * as a synonym
+     * @return list of isoform synonyms
+     */
+    public List<String> getProteinNames() {
+        return proteinNames;
+    }
+
     /**
      * @param dbrefs the dbrefs to set
      */
@@ -649,12 +654,6 @@ public class UniprotEntry
         this.accessions = accessions;
     }
 
-    /**
-     * @param descriptions the descriptions to set
-     */
-    public void setDescriptions(List<String> descriptions) {
-        this.descriptions = descriptions;
-    }
 
     /**
      * @return true if this entry contains more than one gene
@@ -701,7 +700,6 @@ public class UniprotEntry
         entry.setDbrefs(dbrefs);
         entry.setAccessions(accessions);
         entry.setComments(comments);
-        entry.setDescriptions(descriptions);
         entry.setDomains(domains);
         entry.setPubs(pubs);
         entry.setKeywords(keywords);
@@ -759,5 +757,21 @@ public class UniprotEntry
      */
     public void setDuplicateGene(boolean duplicateGene) {
         this.duplicateGene = duplicateGene;
+    }
+
+
+    /**
+     * @return the primaryIdentifier
+     */
+    public String getPrimaryIdentifier() {
+        return primaryIdentifier;
+    }
+
+
+    /**
+     * @param primaryIdentifier the primaryIdentifier to set
+     */
+    public void setPrimaryIdentifier(String primaryIdentifier) {
+        this.primaryIdentifier = primaryIdentifier;
     }
 }
