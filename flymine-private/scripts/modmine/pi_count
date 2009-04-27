@@ -73,6 +73,12 @@ def last_lines(file, num):
      return lines
 
 
+# print a dictionary sorted by keys
+def print_sorted_dict(dict):
+    keys = dict.keys()
+    keys.sort()
+    for key in keys:
+        print key, "=", dict[key]
 
 projects = {}
 for file in os.listdir("."):
@@ -84,8 +90,10 @@ for file in os.listdir("."):
             print "searching whole file: ", sub.name
             search_lines(sub, projects)
         sub.close()
-                                
-print projects
-print "total: ", sum(projects.values())
 
+print
+print_sorted_dict(projects)
+print
+print "total: ", sum(projects.values())
+print
 
