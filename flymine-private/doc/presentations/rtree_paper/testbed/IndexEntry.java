@@ -4,4 +4,8 @@ public class IndexEntry extends Range
         this.min = min;
         this.max = max;
     }
+
+    public String toString() {
+        return min + ".." + max;
+    }
 }
