@@ -437,6 +437,7 @@ public class UniprotConverter extends DirectoryConverter
         String geneRefId = genes.get(uniqueIdentifier);
         if (geneRefId == null) {
             Item gene = createItem("Gene");
+            gene.addToCollection("dataSets", entry.getDatasetRefId());
             gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
             geneFields.remove(uniqueIdentifier);
             for (String geneField : geneFields) {

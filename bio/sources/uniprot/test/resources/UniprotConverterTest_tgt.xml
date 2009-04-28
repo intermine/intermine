@@ -130,6 +130,7 @@
 <item id="10_2" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
 <reference name="organism" ref_id="9_1"/>
+<collection name="dataSets"><reference name="DataSet" ref_id="2_1"/></collection>
 </item>
 <item id="8_2" class="Protein">
 <attribute name="isFragment" value="false"/>
@@ -207,6 +208,7 @@
 <item id="10_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="9_1"/>
+<collection name="dataSets"><reference name="DataSet" ref_id="2_1"/></collection>
 </item>
 <item id="7_2" class="Sequence">
 <attribute name="length" value="13"/>

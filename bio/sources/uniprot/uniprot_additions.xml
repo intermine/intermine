@@ -25,9 +25,14 @@
   <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>
+  <class name="Component" is-interface="true" extends="BioEntity">
+    <attribute name="name" type="java.lang.String"/>
+  </class>
+  <!--
   <class name="Component" is-interface="false" extends="java.lang.Object">
     <attribute name="name" type="java.lang.String"/>
   </class>
+  -->
   <class name="ProteinDomain" extends="BioEntity" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
