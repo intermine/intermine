@@ -408,7 +408,8 @@ public class Database implements Shutdownable
                 thread.start();
             }
             if (reportedException != null) {
-                SQLException re = new SQLException("Error while executing SQL", reportedException);
+                SQLException re = new SQLException("Error while executing SQL");
+                re.initCause(reportedException);
                 reportedException = null;
                 throw re;
             }
@@ -431,7 +432,8 @@ public class Database implements Shutdownable
         synchronized (this) {
             waiters.remove(waiter);
             if (reportedException != null) {
-                SQLException re = new SQLException("Error while executing SQL", reportedException);
+                SQLException re = new SQLException("Error while executing SQL");
+                re.initCause(reportedException);
                 reportedException = null;
                 throw re;
             }
