@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class LeafIndexPage extends IndexPage
 {
     private int maxEntries, entryCount;
@@ -20,7 +22,21 @@ public class LeafIndexPage extends IndexPage
         }
     }
 
+    public void addEntryWithoutCheck(IndexEntry entry) {
+        entries[entryCount++] = entry;
+        min = Math.min(min, entry.getMin());
+        max = Math.max(max, entry.getMax());
+    }
+
+    public int getMaxEntries() {
+        return maxEntries;
+    }
+
     public IndexEntry[] getEntries() {
         return entries;
+    }
+
+    public String toString() {
+        return "Leaf page (" + min + ".." + max + "): " + Arrays.asList(entries);
     }
 }

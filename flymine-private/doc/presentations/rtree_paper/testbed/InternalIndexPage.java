@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class InternalIndexPage extends IndexPage
 {
     private int maxPages, pageCount;
@@ -13,6 +15,13 @@ public class InternalIndexPage extends IndexPage
         pageCount = 0;
         min = Integer.MAX_VALUE;
         max = Integer.MIN_VALUE;
+    }
+
+    public InternalIndexPage(int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc,
+            SplitPage splitPage) {
+        this(maxPages, penaltyCalc, splitCalc);
+        addPage(splitPage.getLeft());
+        addPage(splitPage.getRight());
     }
 
     public void addEntry(IndexEntry entry) throws PageNeedsSplitException {
@@ -39,7 +48,29 @@ public class InternalIndexPage extends IndexPage
         }
     }
 
+    protected void addPage(IndexPage page) {
+        pages[pageCount++] = page;
+        min = Math.min(min, page.getMin());
+        max = Math.max(max, page.getMax());
+    }
+
+    public int getMaxPages() {
+        return maxPages;
+    }
+
+    public PenaltyCalculator getPenaltyCalc() {
+        return penaltyCalc;
+    }
+
+    public SplitCalculator getSplitCalc() {
+        return splitCalc;
+    }
+
     public IndexPage[] getPages() {
         return pages;
+    }
+
+    public String toString() {
+        return "Internal page (" + min + ".." + max + "): " + Arrays.asList(pages);
     }
 }
