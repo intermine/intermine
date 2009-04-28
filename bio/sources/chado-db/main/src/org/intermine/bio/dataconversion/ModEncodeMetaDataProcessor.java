@@ -1687,7 +1687,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 dataAttribute.setAttribute("type", type);
             }
 
-            // setting references to dataSubmission
+            // setting references to SubmissionData
             dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
 
             // store it and add to object and maps
