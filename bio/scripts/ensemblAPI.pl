@@ -3,7 +3,7 @@
 # translates data from ensembl database to intermine items XML file
 
 BEGIN {
-    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../../intermine/perl/lib');    
+    push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib');    
 }
 
 use strict;
@@ -28,7 +28,7 @@ my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
 
 my $start_time = time();
 
-my $model_file = "../../../$mine_name/dbmodel/build/main/genomic_model.xml";
+my $model_file = "../../$mine_name/dbmodel/build/main/genomic_model.xml";
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 
@@ -40,7 +40,7 @@ $datasource_item->set('name', $datasource);
 my $org_item;
 my $dataset_item;
 
-my $config_file = '../../sources/ensembl/resources/ensembl_config.properties';
+my $config_file = '../sources/ensembl/resources/ensembl_config.properties';
 parse_config(read_file($config_file));
 
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
