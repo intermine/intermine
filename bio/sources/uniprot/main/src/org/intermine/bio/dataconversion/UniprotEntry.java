@@ -776,6 +776,7 @@ public class UniprotEntry
         UniprotEntry entry = new UniprotEntry(accession);
         entry.setIsoform(true);
         entry.setDatasetRefId(datasetRefId);
+        entry.setPrimaryIdentifier(primaryIdentifier);
         entry.setLength(length);
         entry.setMolecularWeight(molecularWeight);
         entry.setDuplicate(false);
