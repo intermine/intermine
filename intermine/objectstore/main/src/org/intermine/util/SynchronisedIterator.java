@@ -16,17 +16,18 @@ import java.util.Iterator;
  * An Iterator that passes through to an underlying Iterator, synchronising all calls.
  *
  * @author Matthew Wakeling
+ * @param <E> The element type of the iterator
  */
-public class SynchronisedIterator implements Iterator
+public class SynchronisedIterator<E> implements Iterator<E>
 {
-    protected Iterator iterator = null;
+    protected Iterator<E> iterator = null;
 
     /**
      * Constructs a SynchronisedIterator from an Iterator.
      *
      * @param iterator an Iterator
      */
-    public SynchronisedIterator(Iterator iterator) {
+    public SynchronisedIterator(Iterator<E> iterator) {
         this.iterator = iterator;
     }
 
@@ -40,7 +41,7 @@ public class SynchronisedIterator implements Iterator
     /**
      * {@inheritDoc}
      */
-    public synchronized Object next() {
+    public synchronized E next() {
         return iterator.next();
     }
 

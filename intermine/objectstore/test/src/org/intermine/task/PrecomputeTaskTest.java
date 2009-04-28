@@ -14,15 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryTestCase;
+import java.util.Set;
 
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -30,6 +25,13 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.iql.IqlQuery;
 
 import java.io.InputStream;
 
@@ -117,12 +119,19 @@ public class PrecomputeTaskTest extends QueryTestCase
 
         assertEquals(expectedQueries.length, task.testQueries.size());
 
+        Set<String> expected = new HashSet<String>();
         for (int i = 0; i < expectedQueries.length; i++) {
-            Query generatedQuery = (Query) task.testQueries.get(i);
-            assertEquals(expectedQueries[i], "" + generatedQuery);
-            String generatedSql = SqlGenerator.generate(generatedQuery, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).getDatabase(), null, 4, Collections.EMPTY_MAP);
+            expected.add(expectedQueries[i]);
+            Query q = new IqlQuery(expectedQueries[i], null).toQuery();
+            String generatedSql = SqlGenerator.generate(q, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).getDatabase(), null, 4, Collections.EMPTY_MAP);
             assertEquals(expectedSql[i], generatedSql);
         }
+
+        Set<String> got = new HashSet<String>();
+        for (Query q : task.testQueries) {
+            got.add(q.toString());
+        }
+        assertEquals(expected, got);
     }
 
     public void testConstructQueries() throws Exception {

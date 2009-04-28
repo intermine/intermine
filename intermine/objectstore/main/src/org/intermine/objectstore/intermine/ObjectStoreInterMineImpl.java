@@ -115,7 +115,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected long statsBagTableTime = 0;
     protected long statsGenTime = 0;
     protected long statsOptTime = 0;
-    protected long statsNulTime = 0;
     protected long statsEstTime = 0;
     protected long statsExeTime = 0;
     protected long statsConTime = 0;
@@ -895,7 +894,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public synchronized void close() throws ObjectStoreException {
         LOG.info("Close called on ObjectStoreInterMineImpl with sequence = " + sequenceNumber
                 + ", time spent: Bag Tables: " + statsBagTableTime + ", SQL Gen: " + statsGenTime
-                + ", SQL Optimise: " + statsOptTime + ", Nulls: " + statsNulTime + ", Estimate: "
+                + ", SQL Optimise: " + statsOptTime + ", Estimate: "
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
         flushLogTable();
@@ -1022,9 +1021,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
             }
             long endOptimiseTime = System.currentTimeMillis();
-            sql = sql.replaceAll(" ([^ )]*) IS NULL", " ($1 IS NULL) = true");
-            sql = sql.replaceAll(" ([^ )]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
-            long postNullStuff = System.currentTimeMillis();
             if (explain) {
                 //System//.out.println(getModel().getName() + ": Executing SQL: EXPLAIN " + sql);
                 //long time = (new Date()).getTime();
@@ -1106,9 +1102,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             statsGenTime += genTime;
             long optTime = endOptimiseTime - startOptimiseTime;
             statsOptTime += optTime;
-            long nulTime = postNullStuff - endOptimiseTime;
-            statsNulTime += nulTime;
-            long estTime = preExecute - postNullStuff;
+            long estTime = preExecute - endOptimiseTime;
             statsEstTime += estTime;
             long exeTime = postExecute - preExecute;
             statsExeTime += exeTime;
@@ -1119,7 +1113,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         + "generated sql: " + generatedSql + "\n"
                         + "optimised sql: " + sql + "\n"
                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime
-                        + " ms, optimise: " + optTime + " ms, " + "replace nulls: " + nulTime
+                        + " ms, optimise: " + optTime + " ms, "
                         + " ms,  estimate: " + estTime + " ms, " + "execute: " + exeTime
                         + " ms, convert results: " + conTime + " ms, extra queries: "
                         + extra.getQueryTime() + " ms, total: "
@@ -1736,7 +1730,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         Collections.EMPTY_MAP);
             }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
-                    sql, "precomputed_table_" + tableNumber, category, c);
+                    sql, "precomp_" + tableNumber, category, c);
             Set stringIndexes = new HashSet();
             if (indexes != null && !indexes.isEmpty()) {
                 Map aliases = q.getAliases();

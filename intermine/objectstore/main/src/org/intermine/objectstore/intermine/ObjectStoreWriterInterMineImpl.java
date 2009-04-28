@@ -1137,8 +1137,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
                 sql = bestQuery.getBestQueryString();
             }
-            sql = sql.replaceAll(" ([^ ]*) IS NULL", " ($1 IS NULL) = true");
-            sql = sql.replaceAll(" ([^ ]*) IS NOT NULL", " ($1 IS NOT NULL) = true");
             Statement s = c.createStatement();
             registerStatement(s);
             try {

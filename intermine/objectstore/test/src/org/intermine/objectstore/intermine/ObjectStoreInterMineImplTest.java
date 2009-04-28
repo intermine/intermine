@@ -300,14 +300,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
             }
         }
         Map expectedIndexMap = new HashMap();
-        expectedIndexMap.put("index" + tableName + "_orderby_field", "CREATE INDEX index" + tableName + "_orderby_field ON " + tableName + " USING btree (orderby_field)");
-        expectedIndexMap.put("index" + tableName + "_nekeipurlxflgjzt", "CREATE INDEX index" + tableName + "_nekeipurlxflgjzt ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
-        expectedIndexMap.put("index" + tableName + "_lower_a3__", "CREATE INDEX index" + tableName + "_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
-        expectedIndexMap.put("index" + tableName + "_lower_a3___nulls", "CREATE INDEX index" + tableName + "_lower_a3___nulls ON " + tableName + " USING btree (((lower(a3_) IS NULL)))");
-        expectedIndexMap.put("index" + tableName + "_ipthurklcwmriwoj", "CREATE INDEX index" + tableName + "_ipthurklcwmriwoj ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
-        expectedIndexMap.put("index" + tableName + "_lower_a4__", "CREATE INDEX index" + tableName + "_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
-        expectedIndexMap.put("index" + tableName + "_lower_a4___nulls", "CREATE INDEX index" + tableName + "_lower_a4___nulls ON " + tableName + " USING btree (((lower(a4_) IS NULL)))");
-        expectedIndexMap.put("index" + tableName + "_klaykagxjszvdpvi", "CREATE INDEX index" + tableName + "_klaykagxjszvdpvi ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
+        expectedIndexMap.put(tableName + "_orderby_field", "CREATE INDEX " + tableName + "_orderby_field ON " + tableName + " USING btree (orderby_field)");
+        expectedIndexMap.put(tableName + "_a1_id__lower_a3____lower_a4__", "CREATE INDEX " + tableName + "_a1_id__lower_a3____lower_a4__ ON " + tableName + " USING btree (a1_id, lower(a3_), lower(a4_))");
+        expectedIndexMap.put(tableName + "_lower_a3__", "CREATE INDEX " + tableName + "_lower_a3__ ON " + tableName + " USING btree (lower(a3_))");
+        expectedIndexMap.put(tableName + "_lower_a3___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a3___text_pattern_ops ON " + tableName + " USING btree (lower(a3_) text_pattern_ops)");
+        expectedIndexMap.put(tableName + "_lower_a4__", "CREATE INDEX " + tableName + "_lower_a4__ ON " + tableName + " USING btree (lower(a4_))");
+        expectedIndexMap.put(tableName + "_lower_a4___text_pattern_ops", "CREATE INDEX " + tableName + "_lower_a4___text_pattern_ops ON " + tableName + " USING btree (lower(a4_) text_pattern_ops)");
         assertEquals(expectedIndexMap, indexMap);
     }
 

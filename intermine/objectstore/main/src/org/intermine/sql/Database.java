@@ -15,11 +15,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.math.BigDecimal;
 import javax.sql.DataSource;
 
@@ -43,6 +47,8 @@ public class Database implements Shutdownable
     protected DataSource datasource;
     protected String platform;
     protected String driver;
+    /** The number of worker threads to use for background SQL statements */
+    protected int parallel = 4;
 
     // Store all the properties this Database was configured with
     protected Properties settings;
@@ -67,7 +73,7 @@ public class Database implements Shutdownable
         configure(props);
         try {
             LOG.info("Creating new Database " + getURL() + "(" + toString() + ") with ClassLoader "
-                    + getClass().getClassLoader());
+                    + getClass().getClassLoader() + " and parallelism " + parallel);
         } catch (Exception e) {
             LOG.info("Creating new invalid Database with ClassLoader "
                     + getClass().getClassLoader(), e);
@@ -360,5 +366,182 @@ public class Database implements Shutdownable
      */
     public String toString() {
         return "" + settings + " " + driver + " " + platform;
+    }
+
+    private Set<SqlJob> pending = new HashSet<SqlJob>();
+    private Set<Waiter> waiters = new HashSet<Waiter>();
+    private ArrayBlockingQueue<SqlJob> queue = new ArrayBlockingQueue<SqlJob>(30);
+    private Set<Worker> workers = new HashSet<Worker>();
+    private Exception reportedException = null;
+    private int threadNo = 1;
+
+    /**
+     * Executes an SQL statement on the database in a separate thread. A certain number of worker
+     * threads controlled by the "parallel" property will operate simultaneously.
+     *
+     * @param sql an SQL string.
+     * @throws SQLException if an error has been reported by a previous operation - however, this
+     * does not cancel the current operation.
+     */
+    public void executeSqlInParallel(String sql) throws SQLException {
+        SqlJob job = new SqlJob(sql);
+        synchronized (this) {
+            pending.add(job);
+        }
+        boolean notDone = true;
+        while (notDone) {
+            try {
+                queue.put(job);
+                notDone = false;
+            } catch (InterruptedException e) {
+                // Not done
+            }
+        }
+        synchronized (this) {
+            if (workers.size() < parallel) {
+                Worker worker = new Worker(threadNo);
+                Thread thread = new Thread(worker);
+                thread.setDaemon(true);
+                thread.setName("Database background thread " + threadNo);
+                threadNo++;
+                workers.add(worker);
+                thread.start();
+            }
+            if (reportedException != null) {
+                SQLException re = new SQLException("Error while executing SQL", reportedException);
+                reportedException = null;
+                throw re;
+            }
+        }
+    }
+
+    /**
+     * Blocks until all the current pending jobs are finished. This will not block new jobs from
+     * arriving, and those new jobs do not need to be finished for this method to return.
+     *
+     * @throws SQLException if an error has been reported by a previous operation
+     */
+    public void waitForCurrentJobs() throws SQLException {
+        Waiter waiter;
+        synchronized (this) {
+            waiter = new Waiter(pending);
+            waiters.add(waiter);
+        }
+        waiter.waitUntilFinished();
+        synchronized (this) {
+            waiters.remove(waiter);
+            if (reportedException != null) {
+                SQLException re = new SQLException("Error while executing SQL", reportedException);
+                reportedException = null;
+                throw re;
+            }
+        }
+    }
+
+    private synchronized void jobIsDone(SqlJob job) {
+        pending.remove(job);
+        for (Waiter waiter : waiters) {
+            waiter.jobIsDone(job);
+        }
+    }
+
+    private synchronized void reportException(Exception e) {
+        if (reportedException == null) {
+            reportedException = e;
+        }
+    }
+
+    /**
+     * Wrap String, so that we have default equals and hashcode.
+     */
+    private class SqlJob
+    {
+        String sql;
+
+        public SqlJob(String sql) {
+            this.sql = sql;
+        }
+
+        public String getSql() {
+            return sql;
+        }
+    }
+
+    /**
+     * Worker thread.
+     */
+    private class Worker implements Runnable
+    {
+        private int threadNo;
+
+        /**
+         * Create a new worker thread object.
+         *
+         * @param threadNo the thread index of this thread
+         */
+        public Worker(int threadNo) {
+            this.threadNo = threadNo;
+        }
+
+        public void run() {
+            try {
+                while (true) {
+                    SqlJob job = null;
+                    Connection c = null;
+                    try {
+                        job = queue.take();
+                        c = getConnection();
+                        c.setAutoCommit(true);
+                        Statement s = c.createStatement();
+                        s.execute(job.getSql());
+                    } catch (SQLException e) {
+                        if (job != null) {
+                            LOG.error("Exception while executing " + job.getSql(), e);
+                        }
+                        reportException(e);
+                    } finally {
+                        if (job != null) {
+                            jobIsDone(job);
+                        }
+                        if (c != null) {
+                            c.close();
+                        }
+                    }
+                }
+            } catch (Throwable t) {
+                LOG.error("Database background thread " + threadNo + " exited unexpectedly", t);
+            } finally {
+                workers.remove(this);
+            }
+        }
+    }
+
+    /**
+     * An object to facilitate waiting for a set of operations to be finished.
+     */
+    private class Waiter
+    {
+        private Set<SqlJob> waitingOn;
+
+        public Waiter(Set<SqlJob> waitingOn) {
+            this.waitingOn = new HashSet<SqlJob>(waitingOn);
+        }
+
+        public synchronized void jobIsDone(SqlJob job) {
+            waitingOn.remove(job);
+            if (waitingOn.isEmpty()) {
+                notifyAll();
+            }
+        }
+
+        public synchronized void waitUntilFinished() {
+            while (!waitingOn.isEmpty()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    // Do nothing
+                }
+            }
+        }
     }
 }
