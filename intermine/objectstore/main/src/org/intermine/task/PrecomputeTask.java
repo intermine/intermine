@@ -13,10 +13,12 @@ package org.intermine.task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -36,6 +38,7 @@ import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.objectstore.querygen.QueryGenUtil;
+import org.intermine.util.SynchronisedIterator;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -47,13 +50,14 @@ import org.intermine.objectstore.querygen.QueryGenUtil;
 public class PrecomputeTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(PrecomputeTask.class);
+    private static final int THREAD_COUNT = 4;
 
     protected String alias;
     protected int minRows = -1;
     // set by readProperties()
 
     // used only by PrecomputeTaskTest
-    protected static List testQueries = new ArrayList();
+    protected static List<Query> testQueries = new ArrayList<Query>();
     private static boolean testMode = false;
 
     /**
@@ -114,6 +118,7 @@ public class PrecomputeTask extends Task
 
         Map pq = getPrecomputeQueries(createAllOrders, os.getModel(), properties);
         LOG.info("pq.size(): " + pq.size());
+        Set<Job> jobs = new TreeSet<Job>();
         Iterator iter = pq.entrySet().iterator();
 
         while (iter.hasNext()) {
@@ -137,23 +142,141 @@ public class PrecomputeTask extends Task
                 }
 
                 if (resultsInfo.getRows() >= minRows) {
-                    LOG.info("precomputing " + key + " - " + query);
-                    precomputeQuery(os, query);
+                    LOG.info("Will precompute " + key + " - " + query);
+                    jobs.add(new Job(os, key, query, resultsInfo.getComplete()));
+                }
+            }
+        }
+
+        Iterator<Job> jobIter = new SynchronisedIterator<Job>(jobs.iterator());
+        Map<Integer, String> threads = new TreeMap<Integer, String>();
+        List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());
+
+        synchronized (threads) {
+            for (int i = 1; i < THREAD_COUNT; i++) {
+                Thread worker = new Thread(new Worker(threads, jobIter, i, exceptions));
+                threads.put(new Integer(i), "");
+                worker.setName("PrecomputeTask extra thread " + i);
+                worker.start();
+            }
+        }
+
+        try {
+            while (jobIter.hasNext()) {
+                Job job = jobIter.next();
+                synchronized (threads) {
+                    threads.put(new Integer(0), job.getKey());
+                    LOG.info("Threads doing: " + threads);
+                }
+                job.execute(0);
+                if (!exceptions.isEmpty()) {
+                    throw new BuildException("Exception while executing in worker thread",
+                            exceptions.get(0));
+                }
+            }
+        } catch (NoSuchElementException e) {
+            // This is fine - just a consequence of concurrent access to the iterator. It means the
+            // end of the iterator has been reached, so there is no more work to do.
+        }
+        LOG.info("Thread 0 finished");
+        synchronized (threads) {
+            threads.remove(new Integer(0));
+            LOG.info("Threads doing: " + threads);
+            while (threads.size() != 0) {
+                LOG.info(threads.size() + " threads left");
+                try {
+                    threads.wait();
+                } catch (InterruptedException e) {
+                    // Do nothing
+                }
+            }
+        }
+        if (!exceptions.isEmpty()) {
+            throw new BuildException("Exception while executing in worker thread",
+                    exceptions.get(0));
+        }
+        LOG.info("All threads finished");
+    }
+
+    private static class Job implements Comparable<Job>
+    {
+        private ObjectStore os;
+        private String key;
+        private Query query;
+        private long time;
+
+        public Job(ObjectStore os, String key, Query query, long time) {
+            this.os = os;
+            this.key = key;
+            this.query = query;
+            this.time = time;
+        }
+
+        public void execute(int threadNo) throws BuildException {
+            LOG.info("Thread " + threadNo + " precomputing " + key + " - " + query);
+            precomputeQuery(os, query);
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public int compareTo(Job job) {
+            return (job.time > time ? 1 : (job.time < time ? -1
+                        : query.toString().compareTo(job.query.toString())));
+        }
+    }
+
+    private static class Worker implements Runnable
+    {
+        private Map<Integer, String> threads;
+        private Iterator<Job> jobIter;
+        private int threadNo;
+        private List<Exception> exceptions;
+
+        public Worker(Map<Integer, String> threads, Iterator<Job> jobIter, int threadNo,
+                List<Exception> exceptions) {
+            this.threads = threads;
+            this.jobIter = jobIter;
+            this.threadNo = threadNo;
+            this.exceptions = exceptions;
+        }
+
+        public void run() {
+            try {
+                while (jobIter.hasNext()) {
+                    Job job = jobIter.next();
+                    synchronized (threads) {
+                        threads.put(new Integer(threadNo), job.getKey());
+                        LOG.info("Threads doing: " + threads);
+                    }
+                    job.execute(threadNo);
+                }
+            } catch (NoSuchElementException e) {
+                // Empty
+            } catch (Exception e) {
+                // Something has gone wrong.
+                exceptions.add(e);
+            } finally {
+                LOG.info("Thread " + threadNo + " finished");
+                synchronized (threads) {
+                    threads.remove(new Integer(threadNo));
+                    LOG.info("Threads doing: " + threads);
+                    threads.notify();
                 }
             }
         }
     }
 
-
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
+     *
      * @param os the ObjectStore to precompute
      * @param query the query to precompute
      * @param indexes the index QueryNodes
      * @throws BuildException if the query cannot be precomputed.
      */
-    private static void precomputeQuery(ObjectStore os, Query query)
-        throws BuildException {
+    private static void precomputeQuery(ObjectStore os, Query query) throws BuildException {
         if (testMode) {
             testQueries.add(query);
         }
@@ -173,7 +296,7 @@ public class PrecomputeTask extends Task
 
     /**
      * Get a Map of keys (from the precomputeProperties file) to Query objects to precompute.
-     * have no objects
+     *
      * @param createAllOrders if true construct all permutations of order by for the QueryClass
      *   objects on the from list
      * @param model the Model
@@ -182,10 +305,9 @@ public class PrecomputeTask extends Task
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist
      */
-    private static Map getPrecomputeQueries(boolean createAllOrders, Model model,
-                                            Properties precomputeProperties)
-        throws BuildException {
-        Map returnMap = new TreeMap();
+    private static Map<String, List<Query>> getPrecomputeQueries(boolean createAllOrders,
+            Model model, Properties precomputeProperties) throws BuildException {
+        Map<String, List<Query>> returnMap = new TreeMap<String, List<Query>>();
 
         // TODO - read selectAllFields and createAllOrders from properties
 
@@ -201,13 +323,13 @@ public class PrecomputeTask extends Task
             if (precomputeKey.startsWith("precompute.query")) {
                 String iqlQueryString = value;
                 Query query = parseQuery(model, iqlQueryString, precomputeKey);
-                List list = new ArrayList();
+                List<Query> list = new ArrayList<Query>();
                 list.add(query);
                 returnMap.put(precomputeKey, list);
             } else {
                 if (precomputeKey.startsWith("precompute.constructquery")) {
                     try {
-                        List constructedQueries =
+                        List<Query> constructedQueries =
                             constructQueries(createAllOrders, model, value);
                         returnMap.put(precomputeKey, constructedQueries);
                     } catch (Exception e) {
@@ -215,20 +337,17 @@ public class PrecomputeTask extends Task
                     }
                 } else {
                     throw new BuildException("unknown key: '" + precomputeKey
-                                             + "' in properties file "
-                                             + getPropertiesFileName(model.getName()));
-
+                            + "' in properties file " + getPropertiesFileName(model.getName()));
                 }
             }
         }
         return returnMap;
     }
 
-
-
     /**
      * Create queries for given path.  If path has a '+' next to any class then
      * expand to include all subclasses.
+     *
      * @param createAllOrders if true construct all permutations of order by for the QueryClass
      *   objects on the from list
      * @param model the Model
@@ -237,10 +356,10 @@ public class PrecomputeTask extends Task
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    protected static List constructQueries(boolean createAllOrders, Model model, String path)
+    protected static List<Query> constructQueries(boolean createAllOrders, Model model, String path)
         throws ClassNotFoundException, IllegalArgumentException {
 
-        List queries = new ArrayList();
+        List<Query> queries = new ArrayList<Query>();
 
         // expand '+' to all subclasses in path
         Set paths = QueryGenUtil.expandPath(model, path);
@@ -261,11 +380,12 @@ public class PrecomputeTask extends Task
     /**
      * Return a List containing clones of the given Query, but with all permutations
      * of order by for the QueryClass objects on the from list.
+     *
      * @param q the Query
      * @return clones of the Query with all permutations of orderBy
      */
-    private static List getOrderedQueries(Query q) {
-        List queryList = new ArrayList();
+    private static List<Query> getOrderedQueries(Query q) {
+        List<Query> queryList = new ArrayList<Query>();
 
         Set permutations = permutations(q.getOrderBy().size());
         Iterator iter = permutations.iterator();

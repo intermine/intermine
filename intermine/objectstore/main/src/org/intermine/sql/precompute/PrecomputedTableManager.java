@@ -260,6 +260,7 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
+            con.setAutoCommit(false);
             if (indexes == null) {
                 indexes = new LinkedHashSet();
             }
@@ -303,17 +304,19 @@ public class PrecomputedTableManager
             Iterator indexIter = indexes.iterator();
             while (indexIter.hasNext()) {
                 String indexName = (String) indexIter.next();
-                addIndex(pt.getName(), indexName, con, (!indexName.equals(orderByField))
-                        && (indexName.indexOf(",") == -1));
+                addIndex(pt.getName(), indexName, con);
                 // special case for string lower() indexes - add an index that can be used by
                 // LIKE constraints
                 if (indexName.startsWith("lower(")) {
                     String newIndexName = indexName.replaceFirst("^lower\\(([^,]+)\\)(.*)",
                                                                  "lower($1) text_pattern_ops$2");
 
-                    addIndex(pt.getName(), newIndexName, con, false);
+                    addIndex(pt.getName(), newIndexName, con);
                 }
             }
+
+            con.commit();
+            con.setAutoCommit(true);
 
             LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
@@ -325,9 +328,6 @@ public class PrecomputedTableManager
             pstmt.setString(2, pt.getOriginalSql());
             pstmt.setString(3, pt.getCategory());
             pstmt.execute();
-            if (!con.getAutoCommit()) {
-                con.commit();
-            }
             LOG.info("Finished creating precomputed table " + pt.getName());
         } finally {
             if ((con != null) && (conn == null)) {
@@ -406,15 +406,28 @@ public class PrecomputedTableManager
      * @param table the name of the table
      * @param field the name of the field
      * @param con a Connection to use
-     * @param nulls whether an index should be created for null values
      */
-    protected void addIndex(String table, String field, Connection con,
-            boolean nulls) {
+    protected void addIndex(String table, String field, Connection con) {
         String simpleField = field;
         if (simpleField.charAt(0) == '"') {
             simpleField = simpleField.substring(1, simpleField.length() - 1);
         }
-        if (simpleField.length() > 16) {
+        String simpleTable = table;
+        if (simpleTable.length() > 30) {
+            MessageDigest md;
+            try {
+                md = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            md.update(simpleTable.getBytes());
+            byte[] digest = md.digest();
+            simpleTable = "";
+            for (int i = 0; i < 16; i++) {
+                simpleTable += (char) ('a' + ((((int) digest[i]) & 255) * 26 / 256));
+            }
+        }
+        if (simpleField.length() > 30) {
             MessageDigest md;
             try {
                 md = MessageDigest.getInstance("MD5");
@@ -431,31 +444,14 @@ public class PrecomputedTableManager
             simpleField = simpleField.replace(',', '_').replace(' ', '_').replace('(', '_')
                 .replace(')', '_');
         }
-        String sql = "CREATE INDEX index" + table + "_" + simpleField + " ON "
+        String sql = "CREATE INDEX " + simpleTable + "_" + simpleField + " ON "
             + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
             + ")";
         try {
             Statement stmt = con.createStatement();
             stmt.execute(sql);
-            if (!con.getAutoCommit()) {
-                con.commit();
-            }
         } catch (SQLException e) {
             LOG.error("Error while executing " + sql, e);
-        }
-        if (nulls) {
-            sql = "CREATE INDEX index" + table + "_" + simpleField + "_nulls" + " ON " + table
-                + " ((" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
-                + " IS NULL))";
-            try {
-                Statement stmt = con.createStatement();
-                stmt.execute(sql);
-                if (!con.getAutoCommit()) {
-                    con.commit();
-                }
-            } catch (SQLException e) {
-                LOG.error("Error while executing " + sql, e);
-            }
         }
     }
 

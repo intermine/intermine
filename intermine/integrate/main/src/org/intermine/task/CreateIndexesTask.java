@@ -208,6 +208,7 @@ public class CreateIndexesTask extends Task
                 for (int i = 1; i <= extraThreads; i++) {
                     Thread worker = new Thread(new Worker(threads, cldsIter, i));
                     threads.add(new Integer(i));
+                    worker.setName("CreateIndexesTask extra thread " + i);
                     worker.start();
                 }
             }
