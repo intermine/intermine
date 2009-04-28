@@ -20,7 +20,7 @@
               <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
             </UL>
             For each protein record in UniProt for each species the following
-            information is extracted and loaded into FlyMine:
+            information is extracted:
             <UL>
               <LI>Entry name</LI>
               <LI>Primary accession number</LI>
