@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
@@ -29,8 +30,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
 
-import org.apache.log4j.Logger;
-
 /**
  * Create features to represent flanking regions of configurable distance either side of gene
  * featues.  These will be used in overlap queries.
@@ -44,6 +43,18 @@ public class CreateFlankingRegions
     private DataSet dataSet;
     private DataSource dataSource;
     private Map<Integer, Chromosome> chrs = new HashMap<Integer, Chromosome>();
+
+    /**
+     * The sizes in kb of flanking regions to create.
+     */
+    private static double[] distances = new double[] {0.5, 1, 2, 5, 10};
+    
+    /**
+     * The values strings for up/down stream from a gene.
+     */
+    private static String[] directions = new String[] {"upstream", "downstream"};
+    
+    
 
     private static final Logger LOG = Logger.getLogger(CreateFlankingRegions.class);
     
@@ -112,11 +123,7 @@ public class CreateFlankingRegions
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene) 
     throws ObjectStoreException {
         
-        int[] distances = new int[] {1, 2, 5, 10};
-        String[] directions = new String[] {"upstream", "downstream"};
-        
-        
-        for (int distance : distances) {
+        for (double distance : distances) {
             for (String direction : directions) {
                 String strand = geneLoc.getStrand();
                 
@@ -148,16 +155,16 @@ public class CreateFlankingRegions
                 int start, end;
                 
                 if (direction.equals("upstream") && strand.equals("1")) {
-                    start = geneStart - (distance * 1000);
+                    start = geneStart - (int) Math.round(distance * 1000);
                     end = geneStart - 1;
                 } else if (direction.equals("upstream") && strand.equals("-1")) {
                     start = geneEnd + 1;
-                    end = geneEnd + (distance * 1000);
+                    end = geneEnd + (int) Math.round(distance * 1000);
                 } else if (direction.equals("downstream") && strand.equals("1")) {
                     start = geneEnd + 1;
-                    end = geneEnd + (distance * 1000);
+                    end = geneEnd + (int) Math.round(distance * 1000);
                 } else {  // direction.equals("downstream") && strand.equals("-1")
-                    start = geneStart - (distance * 1000);
+                    start = geneStart - (int) Math.round(distance * 1000);
                     end = geneStart - 1;
                 }
                 
