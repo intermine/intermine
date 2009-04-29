@@ -602,7 +602,8 @@ public class QueryBuilderChange extends DispatchAction
             ClassDescriptor cld = path.getEndClassDescriptor();
             for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                 Path pathToAdd = PathQuery.makePath(model, query, query
-                                .toPathDefaultJoinStyle(path.toString() + "." + fc.getFieldExpr()));
+                                .getCorrectJoinStyle(path.toString() + "." + fc.getFieldExpr()));
+                
                 if (pathToAdd.getEndClassDescriptor() == null && !view.contains(pathToAdd)
                     && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addViewPaths(Collections.singletonList(pathToAdd));
