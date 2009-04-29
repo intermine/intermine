@@ -159,12 +159,21 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
                     List<QuerySelectable> subSelect = qope.getSelect();
                     if (!subSelect.isEmpty()) {
                         qs = subSelect.get(0);
+                        if (qs.equals(qope.getDefaultClass())) {
+                            qs = qope;
+                            notFinished = false;
+                        }
                     } else {
                         notFinished = false;
                     }
                 } else if (qs instanceof PathExpressionField) {
                     PathExpressionField pef = (PathExpressionField) qs;
-                    qs = pef.getQope().getSelect().get(pef.getFieldNumber());
+                    QueryObjectPathExpression qope = pef.getQope();
+                    qs = qope.getSelect().get(pef.getFieldNumber());
+                    if (qs.equals(qope.getDefaultClass())) {
+                        qs = qope;
+                        notFinished = false;
+                    }
                 } else {
                     notFinished = false;
                 }
@@ -199,6 +208,15 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             }
         }
         return retval;
+    }
+
+    /**
+     * Allows test to access column info.
+     *
+     * @return columns
+     */
+    protected List getColumns() {
+        return columns;
     }
 
     private List<List<ResultElement>> decodeRow(List row) {
