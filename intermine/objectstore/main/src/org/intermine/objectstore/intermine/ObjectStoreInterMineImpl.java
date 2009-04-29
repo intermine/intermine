@@ -1430,7 +1430,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         try {
             if (everOptimise()) {
-                sql = QueryOptimiser.optimise(sql, db);
+                sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
+                    .getBestQueryString();
             }
             //long time = (new Date()).getTime();
             ExplainResult explain = ExplainResult.getInstance(sql, c);
@@ -1479,7 +1480,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             sql = generateSql(c, q, 0, Integer.MAX_VALUE);
             if (everOptimise()) {
-                sql = QueryOptimiser.optimise(sql, db);
+                sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
+                    .getBestQueryString();
             }
             sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             //long time = (new Date()).getTime();

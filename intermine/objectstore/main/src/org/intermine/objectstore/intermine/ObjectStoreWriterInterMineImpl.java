@@ -1129,10 +1129,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 BestQuery bestQuery;
                 if (pt != null) {
                     OptimiserCache oCache = (OptimiserCache) goFasterCacheMap.get(query);
-                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, null,
+                    bestQuery = QueryOptimiser.optimiseWith(sql, null, db, c,
                             QueryOptimiserContext.DEFAULT, Collections.singleton(pt), oCache);
                 } else {
-                    bestQuery = QueryOptimiser.optimise(sql, null, db, null,
+                    bestQuery = QueryOptimiser.optimise(sql, null, db, c,
                             QueryOptimiserContext.DEFAULT);
                 }
                 sql = bestQuery.getBestQueryString();
