@@ -1,4 +1,4 @@
-public class Range
+public class Range implements Comparable<Range>
 {
     protected int min, max;
 
@@ -8,5 +8,9 @@ public class Range
 
     public int getMax() {
         return max;
+    }
+
+    public int compareTo(Range o) {
+        return min - o.min;
     }
 }
