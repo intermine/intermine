@@ -1442,7 +1442,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             return new ResultsInfo(explain.getStart(), explain.getComplete(),
                     (int) explain.getEstimatedRows());
         } catch (SQLException e) {
-            throw new ObjectStoreException("Problem explaining SQL statement \"" + sql + "\"", e);
+            throw new ObjectStoreException("Problem explaining SQL statement \"" + sql
+                    + "\" for query \"" + q + "\"", e);
         }
     }
 
