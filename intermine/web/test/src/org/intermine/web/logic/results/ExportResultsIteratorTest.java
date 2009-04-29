@@ -258,4 +258,56 @@ public class ExportResultsIteratorTest extends TestCase
                 Arrays.asList(new ResultElement(department2, p1, false), new ResultElement(company1, p2, false)));
         assertEquals(expected, got);
     }
+
+    public void testReferenceReference() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setResultsSize(2);
+
+        // Set up some known objects in the first 3 results rows
+        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company1.setName("Company1");
+        company1.setVatNumber(101);
+        company1.setId(new Integer(1));
+
+        Department department1 = new Department();
+        department1.setName("Department1");
+        department1.setId(new Integer(2));
+        Department department2 = new Department();
+        department2.setName("Department2");
+        department2.setId(new Integer(3));
+
+        Employee e1 = new Employee();
+        e1.setName("Employee1");
+        e1.setId(4);
+        Employee e2 = new Employee();
+        e2.setName("Employee2");
+        e2.setId(5);
+
+        ResultsRow row = new ResultsRow();
+        row.add(e1);
+        row.add(department1);
+        row.add(company1);
+        os.addRow(row);
+        row = new ResultsRow();
+        row.add(e2);
+        row.add(department2);
+        row.add(company1);
+        os.addRow(row);
+
+        PathQuery pq = new PathQuery(model);
+        final Path p1 = new Path(model, "Employee.name");
+        final Path p2 = new Path(model, "Employee:department.name");
+        final Path p3 = new Path(model, "Employee:department:company.name");
+        List view = Arrays.asList(p1, p2, p3);
+        pq.setViewPaths(view);
+        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        System.out.println("Columns: " + iter.getColumns());
+        List got = new ArrayList();
+        for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
+            got.add(gotRow);
+        }
+        List expected = Arrays.asList(Arrays.asList(new ResultElement(e1, p1, false), new ResultElement(department1, p2, false), new ResultElement(company1, p3, false)),
+                Arrays.asList(new ResultElement(e2, p1, false), new ResultElement(department2, p2, false), new ResultElement(company1, p3, false)));
+        assertEquals(expected, got);
+    }
 }

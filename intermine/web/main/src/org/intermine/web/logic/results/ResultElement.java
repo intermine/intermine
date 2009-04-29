@@ -145,6 +145,9 @@ public class ResultElement implements Serializable
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
         try {
             ResultElement cell = (ResultElement) obj;
             return (Util.equals(field, cell.getField())
