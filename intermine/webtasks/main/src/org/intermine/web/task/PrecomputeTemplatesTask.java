@@ -207,7 +207,8 @@ public class PrecomputeTemplatesTask extends Task
             try {
                 resultsInfo = os.estimate(q);
             } catch (ObjectStoreException e) {
-                throw new BuildException("Exception while calling ObjectStore.estimate()", e);
+                throw new BuildException("Exception while calling ObjectStore.estimate() "
+                        + "for template " + template.getName(), e);
             }
 
             if (resultsInfo.getRows() >= minRows) {

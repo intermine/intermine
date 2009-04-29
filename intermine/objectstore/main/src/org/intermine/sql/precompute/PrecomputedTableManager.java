@@ -79,7 +79,7 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = database.getConnection();
-            con.setAutoCommit(false);
+            con.setAutoCommit(true);
             synchroniseWithDatabase(con);
         } finally {
             try {
@@ -260,7 +260,7 @@ public class PrecomputedTableManager
         Connection con = null;
         try {
             con = (conn == null ? database.getConnection() : conn);
-            con.setAutoCommit(false);
+            con.setAutoCommit(true);
             if (indexes == null) {
                 indexes = new LinkedHashSet();
             }
@@ -314,9 +314,6 @@ public class PrecomputedTableManager
                     addIndex(pt.getName(), newIndexName, con);
                 }
             }
-
-            con.commit();
-            con.setAutoCommit(true);
 
             LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
