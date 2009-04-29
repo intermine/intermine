@@ -556,7 +556,11 @@ public class TemplateHelper
                     query.addToSelect((QuerySelectable) qo);
                 }
             }
-            indexes.addAll(query.getSelect());
+            for (QuerySelectable qs : query.getSelect()) {
+                if (qs instanceof QueryNode) {
+                    indexes.add(qs);
+                }
+            }
         }
         return query;
     }
