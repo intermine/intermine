@@ -15,24 +15,20 @@
     <attribute name="uniprotName" type="java.lang.String"/>
     <attribute name="ecNumber" type="java.lang.String"/>
     <attribute name="md5checksum" type="java.lang.String"/>
-    <collection name="publications" referenced-type="Publication" ordered="true"/>
-    <collection name="comments" referenced-type="Comment" ordered="true"/>
-    <collection name="components" referenced-type="Component" ordered="true"/>
-    <collection name="keywords" referenced-type="OntologyTerm" ordered="true"/>
-    <collection name="features" referenced-type="UniProtFeature" ordered="true"/>
-    <collection name="proteinDomains" referenced-type="ProteinDomain" ordered="true"/>
+    <collection name="publications" referenced-type="Publication" />
+    <collection name="comments" referenced-type="Comment" />
+    <collection name="components" referenced-type="Component" reverse-reference="protein" />
+    <collection name="keywords" referenced-type="OntologyTerm" />
+    <collection name="features" referenced-type="UniProtFeature" />
+    <collection name="proteinDomains" referenced-type="ProteinDomain" />
   </class>
   <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
   </class>
-  <class name="Component" is-interface="true" extends="BioEntity">
-    <attribute name="name" type="java.lang.String"/>
+  <class name="Component" is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <reference name="protein" referenced-type="Protein" reverse-reference="components" />
   </class>
-  <!--
-  <class name="Component" is-interface="false" extends="java.lang.Object">
-    <attribute name="name" type="java.lang.String"/>
-  </class>
-  -->
   <class name="ProteinDomain" extends="BioEntity" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
