@@ -148,4 +148,9 @@ public class TemplateHelperTest extends TestCase
         assertEquals("SELECT DISTINCT a1_, a1_.name AS a2_, a1_.title AS a3_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title",
                      precomputeQuery.toString());
     }
+
+    public void testGetPrecomputeQuery2() throws Exception {
+        TemplateQuery t = (TemplateQuery) templates.get("InnerInsideOuter");
+        assertEquals("SELECT DISTINCT a1_, a1_.departments(SELECT default, a1_, a1_.name FROM org.intermine.model.testmodel.Manager AS a1_ WHERE default.manager CONTAINS a1_) AS a2_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Company AS a1_ ORDER BY a1_.name", TemplateHelper.getPrecomputeQuery(t, new ArrayList()).toString());
+    }
 }

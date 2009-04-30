@@ -105,6 +105,17 @@
   </query>
 </template>
 
+<template name="InnerInsideOuter" title="Inner join inside an outer join" longDescription="Inner inside outer" comment="">
+  <query name="InnerInsideOuter" model="testmodel" view="Company.name Company:departments.name Company:departments.manager.name">
+    <node path="Company.name" type="String">
+      <constraint op="=" value="flibble" description="something" identifier="flibble" editable="true" code="A"/>
+    </node>
+    <node path="Company:departments.manager.name" type="String">
+      <constraint op="=" value="flobble" description="simething" identifier="flobble" editable="true" code="B"/>
+    </node>
+  </query>
+</template>
+
   </template-queries>
 
   <tags>

@@ -792,7 +792,7 @@ public class AjaxServices
 
     /**
      * Provide a list of queries that mention a named bag
-     * @param savedQueries a saved queries map (name -> query)
+     * @param savedQueries a saved queries map (name -&gt; query)
      * @param bagName the name of a bag
      * @return the list of queries
      */
