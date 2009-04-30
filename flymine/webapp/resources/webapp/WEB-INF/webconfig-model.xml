@@ -120,13 +120,7 @@
       <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
-<!-- should be in next build (post apr 23)
-  <class className="org.intermine.model.bio.Component">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
--->
+
   <class className="org.intermine.model.bio.ComputationalResult">
     <fields>
       <fieldconfig fieldExpr="score"/>
@@ -211,6 +205,9 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
+    <bagdisplayers>
+         <displayer src="attributeLinkDisplayer.tile"/>
+       </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
