@@ -32,7 +32,9 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Constraint;
@@ -549,7 +551,32 @@ public class TemplateHelper
             Iterator<String> indexIter = indexPaths.iterator();
             while (indexIter.hasNext()) {
                 String path = indexIter.next();
-                query.addToSelect(pathToQueryNode.get(path));
+                int lastIndex = Math.max(path.lastIndexOf("."), path.lastIndexOf(":"));
+                String parentPath = path;
+                while (lastIndex != -1) {
+                    parentPath = parentPath.substring(0, lastIndex);
+                    QuerySelectable parentNode = pathToQueryNode.get(parentPath);
+                    if (parentNode instanceof QueryObjectPathExpression) {
+                        QueryObjectPathExpression qope = (QueryObjectPathExpression) parentNode;
+                        if (qope.getSelect().isEmpty()) {
+                            qope.addToSelect(qope.getDefaultClass());
+                        }
+                        qope.addToSelect(pathToQueryNode.get(path));
+                        break;
+                    } else if (parentNode instanceof QueryCollectionPathExpression) {
+                        QueryCollectionPathExpression qcpe =
+                            (QueryCollectionPathExpression) parentNode;
+                        if (qcpe.getSelect().isEmpty()) {
+                            qcpe.addToSelect(qcpe.getDefaultClass());
+                        }
+                        qcpe.addToSelect(pathToQueryNode.get(path));
+                        break;
+                    }
+                    lastIndex = Math.max(parentPath.lastIndexOf("."), parentPath.lastIndexOf(":"));
+                }
+                if (lastIndex == -1) {
+                    query.addToSelect(pathToQueryNode.get(path));
+                }
             }
             for (QueryOrderable qo : query.getOrderBy()) {
                 if ((qo instanceof QuerySelectable) && (!query.getSelect().contains(qo))) {
