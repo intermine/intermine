@@ -11,8 +11,6 @@ public class LeafIndexPage extends IndexPage
         this.maxEntries = maxEntries;
         entries = new IndexEntry[maxEntries + 1];
         entryCount = 0;
-        min = Integer.MAX_VALUE;
-        max = Integer.MIN_VALUE;
     }
 
     public void addEntry(IndexEntry entry) throws PageNeedsSplitException {
@@ -40,6 +38,16 @@ public class LeafIndexPage extends IndexPage
 
     public String toString() {
         return "Leaf page (" + min + ".." + max + "): " + Arrays.asList(entries);
+    }
+
+    public void lookup(Range range, LookupStats stats) {
+        int results = 0;
+        for (IndexEntry entry : entries) {
+            if ((entry != null) && entry.overlaps(range)) {
+                results++;
+            }
+        }
+        stats.addStats(entryCount, results);
     }
 
     public Image makeImage(int imageWidth, int minImage, int maxImage, int depth) {
