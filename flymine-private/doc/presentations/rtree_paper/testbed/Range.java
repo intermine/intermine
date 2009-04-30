@@ -2,6 +2,11 @@ public class Range implements Comparable<Range>
 {
     protected int min, max;
 
+    public Range(int min, int max) {
+        this.min = min;
+        this.max = max;
+    }
+
     public int getMin() {
         return min;
     }
@@ -11,6 +16,14 @@ public class Range implements Comparable<Range>
     }
 
     public int compareTo(Range o) {
-        return min - o.min;
+        int retval = min - o.min;
+        if (retval == 0) {
+            retval = o.max - max;
+        }
+        return retval;
+    }
+
+    public boolean overlaps(Range range) {
+        return min <= range.max && max >= range.min;
     }
 }

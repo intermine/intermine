@@ -15,8 +15,6 @@ public class InternalIndexPage extends IndexPage
         this.splitCalc = splitCalc;
         pages = new IndexPage[maxPages + 1];
         pageCount = 0;
-        min = Integer.MAX_VALUE;
-        max = Integer.MIN_VALUE;
     }
 
     public InternalIndexPage(int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc,
@@ -74,6 +72,15 @@ public class InternalIndexPage extends IndexPage
 
     public String toString() {
         return "Internal page (" + min + ".." + max + "): " + Arrays.asList(pages);
+    }
+
+    public void lookup(Range range, LookupStats stats) {
+        for (IndexPage page : pages) {
+            if ((page != null) && page.overlaps(range)) {
+                page.lookup(range, stats);
+            }
+        }
+        stats.addStats(pageCount);
     }
 
     public Image makeImage(int imageWidth, int minImage, int maxImage, int depth) {
@@ -161,7 +168,7 @@ public class InternalIndexPage extends IndexPage
                         needsDown = needsDown && needsDown2;
                     } while (needsDown);
                     int[] rowToPaint = pixels.get(row + 1);
-                    for (int x = pageLeft; x < pageRight; x++) {
+                    for (int x = pageLeft; x <= pageRight; x++) {
                         rowToPaint[x] = 0;
                     }
                     for (int i = row ; i < row + 3; i++) {
