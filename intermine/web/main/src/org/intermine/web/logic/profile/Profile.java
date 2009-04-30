@@ -208,8 +208,6 @@ public class Profile
     public void deleteTemplate(String name) {
         savedTemplates.remove(name);
         if (manager != null) {
-            TagManager tagManager = getTagManager();
-            tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
             if (!savingDisabled) {
                 manager.saveProfile(this);
                 reindex(TagTypes.TEMPLATE);
