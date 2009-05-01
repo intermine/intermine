@@ -64,6 +64,12 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.CDS">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
