@@ -143,9 +143,7 @@ public class UniprotConfig
      */
     public class ConfigEntry
     {
-
         private String uniqueIdentifier = null;
-
         private Map<String, IdentifierConfig> identifiers = new HashMap();
 
         /**
@@ -191,7 +189,11 @@ public class UniprotConfig
          * @return how to set this identifier, eg datasource or variable
          */
         protected String getIdentifierMethod(String identifier) {
-            return identifiers.get(identifier).getMethod();
+            IdentifierConfig identifierType = identifiers.get(identifier);
+            if (identifierType == null) {
+                return null;
+            }
+            return identifierType.getMethod();
         }
 
         /**
@@ -199,7 +201,11 @@ public class UniprotConfig
         * @return what value to use with method, eg "FlyBase" or "ORF"
         */
         protected String getIdentifierValue(String identifier) {
-            return identifiers.get(identifier).getValue();
+            IdentifierConfig identifierType = identifiers.get(identifier);
+            if (identifierType == null) {
+                return null;
+            }
+            return identifierType.getValue();
         }
     }
 

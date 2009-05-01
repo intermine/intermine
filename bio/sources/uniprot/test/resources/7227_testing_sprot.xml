@@ -13,44 +13,13 @@
 </alternativeName>
 <component>
 <recommendedName>
-<fullName>NPP</fullName>
-</recommendedName>
-</component>
-<component>
-<recommendedName>
-<fullName>Melanotropin gamma</fullName>
+<fullName>full component name</fullName>
+<shortName>short component name</shortName>
 </recommendedName>
 <alternativeName>
-<fullName>Gamma-MSH</fullName>
+<fullName>full component alternativeName</fullName>
+<shortName>short component alternativeName</shortName>
 </alternativeName>
-</component>
-<component>
-<recommendedName>
-<fullName>Potential peptide</fullName>
-</recommendedName>
-</component>
-<component>
-<recommendedName>
-<fullName>Corticotropin</fullName>
-</recommendedName>
-<alternativeName>
-<fullName>Adrenocorticotropic hormone</fullName>
-<shortName>ACTH</shortName>
-</alternativeName>
-</component>
-<component>
-<recommendedName>
-<fullName>Melanotropin alpha</fullName>
-</recommendedName>
-<alternativeName>
-<fullName>Alpha-MSH</fullName>
-</alternativeName>
-</component>
-<component>
-<recommendedName>
-<fullName>Corticotropin-like intermediary peptide</fullName>
-<shortName>CLIP</shortName>
-</recommendedName>
 </component>
 </protein>
 <gene>

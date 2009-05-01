@@ -412,8 +412,10 @@ public class UniprotConverter extends DirectoryConverter
             LOG.error("Couldn't process genes for " + taxonId + ", no unique identifier set");
             return;
         }
+
         // for this organism, set the following gene fields
         Set<String> geneFields = CONFIG.getGeneIdentifierFields(taxonId);
+
         if (geneFields == null) {
             LOG.error("Couldn't process genes for " + taxonId + ", configuration missing");
             return;
@@ -444,6 +446,7 @@ public class UniprotConverter extends DirectoryConverter
                               String uniqueIdentifierField)
     throws SAXException {
         List<String> geneSynonyms = new ArrayList();
+
         String uniqueIdentifier = getGeneIdentifier(entry, taxonId, uniqueIdentifierField,
                                                     geneSynonyms);
         if (uniqueIdentifier == null) {
@@ -454,8 +457,11 @@ public class UniprotConverter extends DirectoryConverter
             Item gene = createItem("Gene");
             gene.addToCollection("dataSets", entry.getDatasetRefId());
             gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
-            geneFields.remove(uniqueIdentifier);
             for (String geneField : geneFields) {
+                if (geneField.equals(uniqueIdentifierField)) {
+                    // we've already set the key field
+                    continue;
+                }
                 String identifier = getGeneIdentifier(entry, taxonId, geneField, geneSynonyms);
                 if (identifier == null) {
                     LOG.error("Couldn't process gene, no " + geneField);
@@ -473,6 +479,7 @@ public class UniprotConverter extends DirectoryConverter
             for (String identifier : geneSynonyms) {
                 getSynonym(geneRefId, "identifier", identifier, null, entry.getDatasetRefId());
             }
+            getSynonym(geneRefId, "identifier", uniqueIdentifier, null, entry.getDatasetRefId());
             genes.put(uniqueIdentifier, geneRefId);
         }
         return geneRefId;
@@ -492,8 +499,8 @@ public class UniprotConverter extends DirectoryConverter
             method = CONFIG.getIdentifierMethod("default", identifierType);
             value = CONFIG.getIdentifierValue("default", identifierType);
             if (method == null || value == null) {
-                LOG.error("error processing line in config file for organism " + taxonId);
-                return null;
+                throw new RuntimeException("error processing line in config file for organism "
+                                           + taxonId);
             }
         }
 
