@@ -1,11 +1,11 @@
 <items>
-<item id="4_2" class="Comment">
-<attribute name="text" value="I'm a duplicate!"/>
-<attribute name="type" value="similarity"/>
-</item>
 <item id="5_3" class="OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="1_1"/>
+</item>
+<item id="4_2" class="Comment">
+<attribute name="text" value="I'm a duplicate!"/>
+<attribute name="type" value="similarity"/>
 </item>
 <item id="11_9" class="Synonym">
 <attribute name="isPrimary" value="false"/>
@@ -13,10 +13,6 @@
 <attribute name="value" value="alternativeName - short"/>
 <reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="12_6" class="Component">
-<attribute name="name" value="Corticotropin-like intermediary peptide"/>
-<reference name="protein" ref_id="8_2"/>
 </item>
 <item id="11_4" class="Synonym">
 <attribute name="type" value="identifier"/>
@@ -41,10 +37,6 @@
 <attribute name="value" value="FBgn0000001"/>
 <reference name="subject" ref_id="10_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="12_4" class="Component">
-<attribute name="name" value="Corticotropin"/>
-<reference name="protein" ref_id="8_2"/>
 </item>
 <item id="8_2" class="Protein">
 <attribute name="isFragment" value="false"/>
@@ -105,11 +97,19 @@
 <reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="12_1" class="Component">
+<attribute name="name" value="full component name"/>
+<reference name="protein" ref_id="8_2"/>
+</item>
 <item id="6_2" class="UniProtFeature">
 <attribute name="begin" value="97"/>
 <attribute name="end" value="107"/>
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
+</item>
+<item id="4_1" class="Comment">
+<attribute name="text" value="Nucleus."/>
+<attribute name="type" value="subcellular location"/>
 </item>
 <item id="11_3" class="Synonym">
 <attribute name="isPrimary" value="false"/>
@@ -117,14 +117,6 @@
 <attribute name="value" value="JULIE_DROME"/>
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="12_1" class="Component">
-<attribute name="name" value="NPP"/>
-<reference name="protein" ref_id="8_2"/>
-</item>
-<item id="4_1" class="Comment">
-<attribute name="text" value="Nucleus."/>
-<attribute name="type" value="subcellular location"/>
 </item>
 <item id="7_2" class="Sequence">
 <attribute name="length" value="13"/>
@@ -153,10 +145,6 @@
 <attribute name="value" value="alternativeName - full"/>
 <reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="12_2" class="Component">
-<attribute name="name" value="Melanotropin gamma"/>
-<reference name="protein" ref_id="8_2"/>
 </item>
 <item id="10_2" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
@@ -187,17 +175,9 @@
 <attribute name="name" value="helix"/>
 <reference name="ontology" ref_id="1_1"/>
 </item>
-<item id="12_3" class="Component">
-<attribute name="name" value="Potential peptide"/>
-<reference name="protein" ref_id="8_2"/>
-</item>
 <item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
 <reference name="ontology" ref_id="1_1"/>
-</item>
-<item id="12_5" class="Component">
-<attribute name="name" value="Melanotropin alpha"/>
-<reference name="protein" ref_id="8_2"/>
 </item>
 <item id="5_2" class="OntologyTerm">
 <attribute name="name" value="Complete proteome"/>
