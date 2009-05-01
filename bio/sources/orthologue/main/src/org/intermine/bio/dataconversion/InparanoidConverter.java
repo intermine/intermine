@@ -179,7 +179,7 @@ public class InparanoidConverter extends FileConverter
 
         Item bio = null;
         boolean isGene, onFirstOrganism = true;
-        boolean abortCluster = false;
+        Set<String> abortClusters = new HashSet();
         List<BioAndScores> orgA = new ArrayList(), orgB = new ArrayList();
 
         BufferedReader br = new BufferedReader(reader);
@@ -240,7 +240,7 @@ public class InparanoidConverter extends FileConverter
                             // no peptide id found so remove whole cluster
                             // TODO this could be more selective about clusters it aborts, i.e. if
                             // the invalid id is a paralogue could still create orthologues.
-                            abortCluster = true;
+                            abortClusters.add(index);
                         }
                         
                     } else {
@@ -257,14 +257,16 @@ public class InparanoidConverter extends FileConverter
             
             
             String orgName = code.substring(3);
-            BioAndScores bands = new BioAndScores(bio.getIdentifier(), score, bootstrap,
+            BioAndScores bands = null;
+            if (!abortClusters.contains(index)) {
+                bands = new BioAndScores(bio.getIdentifier(), score, bootstrap,
                                                   isGene, orgName);
-
+            }
             // Three situations possible:
             if (!index.equals(oldIndex)) {
                 // we have finished a group, create and store homologues
                 // call twice to create in both directions (special test for first cluster)
-                if ((oldIndex != null || !onFirstOrganism) && !abortCluster) {
+                if ((oldIndex != null || !onFirstOrganism) && !abortClusters.contains(oldIndex)) {
                     createHomologues(orgA, orgB, oldIndex);
                     createHomologues(orgB, orgA, oldIndex);
                 }
@@ -273,7 +275,6 @@ public class InparanoidConverter extends FileConverter
                 onFirstOrganism = true;
                 orgA = new ArrayList();
                 orgB = new ArrayList();
-                abortCluster = false;
             } else if (!code.equals(lastCode)) {
                 // we are on the first line of the second organism in group
                 onFirstOrganism = false;
@@ -282,17 +283,19 @@ public class InparanoidConverter extends FileConverter
             }
 
             // store the bios and scores by organism
-            if (onFirstOrganism) {
-                orgA.add(bands);
-            } else {
-                orgB.add(bands);
+            if (!abortClusters.contains(index)) {
+                if (onFirstOrganism) {
+                    orgA.add(bands);
+                } else {
+                    orgB.add(bands);
+                }
             }
-
+            
             oldIndex = index;
             lastCode = code;
         }
 
-        if (lineNum > 0 && !abortCluster) {
+        if (lineNum > 0 && !abortClusters.contains(oldIndex)) {
             // make sure final group gets stored
             createHomologues(orgA, orgB, oldIndex);
             createHomologues(orgB, orgA, oldIndex);
