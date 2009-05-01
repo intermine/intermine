@@ -1,5 +1,5 @@
+<!-- inparanoid.jsp -->
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
-
 
 <TABLE width="100%">
   <tr>
@@ -253,4 +253,4 @@ bootstrapping procedure applied to the original Blast alignment). </p>
   </tr>
 </TABLE>
 
-
+<!-- /inparanoid.jsp -->

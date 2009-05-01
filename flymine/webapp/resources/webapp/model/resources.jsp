@@ -1,3 +1,4 @@
+<!-- resources.jsp -->
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
@@ -344,3 +345,4 @@
     </td>
   </tr>
 </table>
+<!-- /resources.jsp -->

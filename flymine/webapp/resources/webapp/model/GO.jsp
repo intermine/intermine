@@ -1,3 +1,4 @@
+<!-- GO.jsp -->
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 <table width="100%">
@@ -153,3 +154,4 @@
     </td>
   </tr>
 </table>
+<!-- /GO.jsp -->

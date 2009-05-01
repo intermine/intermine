@@ -30,7 +30,6 @@
               <li><i>M. musculus</i></li>
               <li><i>D. pseudoobscura</i></li>
               <li><i>S. cerevisiae</i></li>
-              <li><i>A. mellifera</i></li>
           </ul>
           <p>
             For each protein record in UniProt for each species the following
@@ -40,13 +39,14 @@
               <li>Primary accession number</li>
               <li>Secondary accession number</li>
               <li>Protein name</li>
-              <li>Gene ORF name</li>
+              <li>Gene</li>
               <li>Comments</li>
               <li>Features</li>
               <li>Keywords (Ontology terms)</li>
               <li>Protein domain assignments from Interpro - see below</li>
               <li>Publications</li>
               <li>Sequence</li>
+              <li>Components</li>
           </ul>
 
   </div>
