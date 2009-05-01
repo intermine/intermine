@@ -37,16 +37,9 @@
             </dt></li>
         <li>
           <dt>
-            <i>Anopheles gambiae</i> str. PEST -  Genome annotation release AgamP3.4 from
+            <i>Anopheles gambiae</i> -  Genome annotation release AgamP3.4 from
             <a href="http://www.ensembl.org/Anopheles_gambiae" target="_new">
               <html:img src="model/images/ensembl_logo_mini.png" title="Click here to view EnSembl's website" />
-            </a>.
-          </dt></li>
-         <li>
-          <dt>
-            <i>Apis mellifera</i> - Genome annotation release 2 from
-            <a href="http://www.ensembl.org/Apis_mellifera" target="_new">
-              <html:img src="model/images/ensembl_logo_mini.png" title="Click here to view EnSembl's website"/>
             </a>.
           </dt></li>
         </ul>
@@ -124,14 +117,14 @@
           </li>
 
           <li>
-            <im:querylink text="All <i>Anopheles gambiae </i> str. PEST gene identifiers and chromosomal positions " skipBuilder="true">
+            <im:querylink text="All <i>Anopheles gambiae</i> gene identifiers and chromosomal positions " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+    <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -153,25 +146,10 @@
                 <node path="ESTCluster.organism" type="Organism">
                 </node>
                 <node path="ESTCluster.organism.name" type="String">
-                  <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+                  <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
-            </im:querylink>
-          </li>
-
-    <li>
-            <im:querylink text="All <i>Apis mellifera</i> gene identifiers and chromosomal positions " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
-  <node path="Gene" type="Gene">
-  </node>
-  <node path="Gene.organism" type="Organism">
-  </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Apis mellifera" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
             </im:querylink>
           </li>
 

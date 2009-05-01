@@ -114,7 +114,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
   <node path="Homologue.homologue.organism" type="Organism">
   </node>
   <node path="Homologue.homologue.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" editable="true" code="B">
+    <constraint op="=" value="Anopheles gambiae" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>

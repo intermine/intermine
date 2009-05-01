@@ -151,7 +151,7 @@
   <node path="Protein.organism" type="Organism">
   </node>
   <node path="Protein.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+    <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -168,7 +168,7 @@
   <node path="ProteinDomain.proteins.organism" type="Organism">
   </node>
   <node path="ProteinDomain.proteins.organism.shortName" type="String">
-    <constraint op="=" value="A. gambiae str. PEST" description="" identifier="" code="A">
+    <constraint op="=" value="A. gambiae" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>
@@ -185,7 +185,7 @@
   <node path="ProteinDomain.proteins.organism" type="Organism">
   </node>
   <node path="ProteinDomain.proteins.organism.shortName" type="String">
-    <constraint op="=" value="A. gambiae str. PEST" description="" identifier="" code="A">
+    <constraint op="=" value="A. gambiae" description="" identifier="" code="A">
     </constraint>
   </node>
 </query>

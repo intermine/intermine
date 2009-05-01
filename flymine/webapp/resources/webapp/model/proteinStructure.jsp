@@ -78,7 +78,7 @@
     </constraint>
   </node>
   <node path="Protein.organism" type="Organism">
-    <constraint op="LOOKUP" value="Anopheles gambiae str. PEST" description="" identifier="" code="B" extraValue="">
+    <constraint op="LOOKUP" value="Anopheles gambiae" description="" identifier="" code="B" extraValue="">
     </constraint>
   </node>
 </query>

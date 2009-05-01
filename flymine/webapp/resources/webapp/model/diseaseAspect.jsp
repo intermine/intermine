@@ -1,3 +1,4 @@
+<!-- diseaseAspect.jsp -->
 <TABLE width="100%">
   <tr>
     <td valign="top">
@@ -29,3 +30,4 @@
 
   </tr>
 </TABLE>
+<!-- /diseaseAspect.jsp -->
