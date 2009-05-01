@@ -28,7 +28,7 @@
 
   </tr>
 
-  <tr><td rowspan="4" class="leftcol">
+  <tr><td rowspan="3" class="leftcol">
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
@@ -53,15 +53,7 @@
     <td> Kriventseva et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15899967" target="_new">PubMed: 15899967</a></td>
     <td> &nbsp;</td>
   </tr>
-<!--
-  <tr>
-    <td> <i>A. mellifera</i></td>
-    <td> Genome annotation - Release 2</td>
-    <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 37.2d</td>
-    <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17148474 " target="_new">PubMed: 17148474</a></td>
-    <td> &nbsp; </td>
-  </tr>
- -->
+
   <tr><td rowspan="2"  class="leftcol">
         <html:link action="/aspect?name=Comparative%20Genomics">
           <p>  <img src="model/images/comparativeGenomics.png" /></p>
