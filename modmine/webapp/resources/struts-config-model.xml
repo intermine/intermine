@@ -31,10 +31,12 @@
 
 <action path="/projects" forward="projects.page" />
 
+<!-- 
 <action path="/initLabs"
   type="org.modmine.web.LabsController" />
 
 <action path="/labs" forward="labs.page"/>
+-->
 
 <action path="/initSubmissions"
   type="org.modmine.web.SubmissionsController" />

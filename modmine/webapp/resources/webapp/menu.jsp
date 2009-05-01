@@ -35,11 +35,6 @@
       <fmt:message key="menu.projects"/>
     </a>
   </li>
-  <li id="labs"  <c:if test="${tab == 'labs'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/labs.do">
-      <fmt:message key="menu.labs"/>
-    </a>
-  </li>
   <li id="submissions"  <c:if test="${tab == 'submissions'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/submissions.do">
       <fmt:message key="menu.submissions"/>
