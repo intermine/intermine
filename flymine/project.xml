@@ -161,7 +161,7 @@
     </source>
 -->
     <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/rns/orthologues/inparanoid/current/"/>
+      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
       <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
     </source>
     <source name="flyrnai-screens" type="flyrnai-screens">
