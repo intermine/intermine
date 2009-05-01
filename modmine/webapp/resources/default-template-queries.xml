@@ -452,7 +452,7 @@
         <node path="Gene.homologues.homologue.organism" type="Organism">
         </node>
         <node path="Gene.homologues.homologue.organism.name" type="String">
-          <constraint op="=" value="Anopheles gambiae str. PEST" description="In organism:" identifier="" editable="true" code="A">
+          <constraint op="=" value="Anopheles gambiae" description="In organism:" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>

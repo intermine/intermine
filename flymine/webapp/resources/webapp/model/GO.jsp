@@ -129,7 +129,7 @@
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+    <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
     </constraint>
   </node>
   <node path="Gene.annotations" type="GOAnnotation">

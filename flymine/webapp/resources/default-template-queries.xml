@@ -1296,7 +1296,7 @@
     <node path="ESTCluster.organism" type="Organism">
     </node>
     <node path="ESTCluster.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A" extraValue="">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A" extraValue="">
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">
@@ -1342,7 +1342,7 @@
     <node path="ESTCluster.organism" type="Organism">
     </node>
     <node path="ESTCluster.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">
@@ -1648,7 +1648,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -2338,7 +2338,7 @@
     <node path="Gene.homologues.homologue.organism" type="Organism">
     </node>
     <node path="Gene.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="In organism:" identifier="organism.name" editable="true" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="In organism:" identifier="organism.name" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -3282,7 +3282,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -3414,7 +3414,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -3434,7 +3434,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -3574,7 +3574,7 @@
     <node path="Gene.homologues.homologue.organism" type="Organism">
     </node>
     <node path="Gene.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="and that have an orthologue in the following organism:" identifier="" editable="true" code="C" extraValue="">
+      <constraint op="=" value="Anopheles gambiae" description="and that have an orthologue in the following organism:" identifier="" editable="true" code="C" extraValue="">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -4306,7 +4306,7 @@
     <node path="Pathway.genes.homologues.homologue.organism" type="Organism">
     </node>
     <node path="Pathway.genes.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="and their orthologous in the following organism:" identifier="" editable="true" code="B">
+      <constraint op="=" value="Anopheles gambiae" description="and their orthologous in the following organism:" identifier="" editable="true" code="B">
       </constraint>
     </node>
     <node path="Pathway.genes.homologues.type" type="String">
@@ -4340,7 +4340,7 @@
     <node path="Pathway.genes.homologues.homologue.organism" type="Organism">
     </node>
     <node path="Pathway.genes.homologues.homologue.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="B">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="B">
       </constraint>
     </node>
     <node path="Pathway.genes.homologues.homologue.overlappingFeatures" type="ESTCluster">
@@ -4916,7 +4916,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -4936,7 +4936,7 @@
     <node path="Gene.organism" type="Organism">
     </node>
     <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="Gene.microArrayResults" type="AGambiaeLifeCycle">
@@ -5390,7 +5390,7 @@
     <node path="ESTCluster.organism" type="Organism">
     </node>
     <node path="ESTCluster.organism.name" type="String">
-      <constraint op="=" value="Anopheles gambiae str. PEST" description="" identifier="" code="A">
+      <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
       </constraint>
     </node>
     <node path="ESTCluster.primaryIdentifier" type="String">

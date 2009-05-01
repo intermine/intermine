@@ -137,28 +137,6 @@
         <attribute name="url" value="http://superfly.ucsd.edu/homophila/"/>
         <reference name="dataSource" ref_id="120"/>
     </item>
-
-
-<!-- not used
-    <item id="130" class="" implements="DataSource">
-        <attribute name="name" value="DrosDel"/>
-        <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
-        <attribute name="url" value="http://www.drosdel.org.uk/"/>
-    </item>
-    <item id="131" class="" implements="DataSet">
-        <attribute name="title" value="DrosDel P-element and Deletion collection"/>
-        <attribute name="description" value="An isogenic deficiency kit for Drosophila melanogaster"/>
-        <attribute name="version" value="FlyBase 5.1 mapping"/>
-        <attribute name="url" value="http://www.drosdel.org.uk/"/>
-        <reference name="dataSource" ref_id="130"/>
-    </item>
-
-    <item id="140" class="" implements="DataSource">
-        <attribute name="name" value="embl"/>
-        <attribute name="description" value="The EMBL genome database"/>
-        <attribute name="url" value="http://www.ebi.ac.uk/embl"/>
-    </item>
--->
     <item id="150" class="" implements="DataSource">
         <attribute name="name" value="Kenji Mizuguchi"/>
         <attribute name="description" value="Kenji Mizuguchi's group at the Department of Biochemistry"/>
@@ -213,7 +191,7 @@
         <attribute name="url" value="http://www.ensembl.org"/>
     </item>
     <item id="211" class="" implements="DataSet">
-        <attribute name="title" value="Ensembl Anopheles gambiae str. PEST [AgamP3.4]"/>
+        <attribute name="title" value="Ensembl Anopheles gambiae [AgamP3.4]"/>
         <attribute name="description" value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
