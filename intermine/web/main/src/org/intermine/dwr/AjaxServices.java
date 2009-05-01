@@ -591,8 +591,12 @@ public class AjaxServices
 
             returnList.add(callId);
 
-            SearchRepository.filterOutInvalidTemplates(filteredWsMap);
-            for (WebSearchable ws: filteredWsMap.values()) {
+            // We need a modifiable map so we can filter out invalid templates
+            LinkedHashMap<String, ? extends WebSearchable> modifiableWsMap = 
+                new LinkedHashMap(filteredWsMap);
+            
+            SearchRepository.filterOutInvalidTemplates(modifiableWsMap);
+            for (WebSearchable ws: modifiableWsMap.values()) {
                 List row = new ArrayList();
                 row.add(ws.getName());
                 if (filterText != null && filterText.length() > 1) {
@@ -1284,7 +1288,6 @@ public class AjaxServices
      * @return tags
      */
     public static Set<String> getTags(String type) {
-        LOG.info("Called getTags(). type: " + type);
         HttpServletRequest request = getRequest();
         TagManager tagManager = SessionMethods.getTagManager(request.getSession());
         Profile profile = getProfile(request);
