@@ -1,3 +1,4 @@
+<!-- literature.jsp -->
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
 
@@ -86,3 +87,4 @@ for <i>D. melanogaster</i> and <i>D. pseudoobscura</i> from FlyBase.
 
   </tr>
 </table>
+<!-- /literature.jsp -->
