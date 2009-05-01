@@ -88,7 +88,8 @@
       'contributes_to', 'colocalizes_with' and 'NOT'.
       'colocalizes_with' is used only with cellular component terms.
       'contributes_to' is used only with molecular function terms.
-      'NOT' is used with terms from any of the three ontologies. </p>
+      'NOT' is used with terms from any of the three ontologies.
+  </p>
      </div>
     </div>
    </td>
@@ -104,43 +105,39 @@
 
           <li>
             <im:querylink text="All gene/GO annotation pairs from <i>D. melanogaster</i> " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+  <node path="Gene.organism.shortName" type="String">
+    <constraint op="=" value="D. melanogaster" description="" identifier="" code="A" extraValue="">
     </constraint>
   </node>
   <node path="Gene.goAnnotation" type="GOAnnotation">
   </node>
-  <node path="Gene.goAnnotation.property" type="GOTerm">
+  <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
   </node>
 </query>
-          </im:querylink>
+</im:querylink>
          </li>
 
          <li>
            <im:querylink text="All gene/GO annotation pairs from <i>A. gambiae</i> " skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.goAnnotation.identifier Gene.goAnnotation.name Gene.goAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
-  <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae" description="" identifier="" code="A">
+  <node path="Gene.organism.shortName" type="String">
+    <constraint op="=" value="A. gambiae" description="" identifier="" code="A" extraValue="">
     </constraint>
-  </node>
-  <node path="Gene.annotations" type="GOAnnotation">
   </node>
   <node path="Gene.goAnnotation" type="GOAnnotation">
   </node>
-  <node path="Gene.goAnnotation.property" type="GOTerm">
+  <node path="Gene.goAnnotation.ontologyTerm" type="OntologyTerm">
   </node>
 </query>
-
-
  </im:querylink>
         </li>
 
