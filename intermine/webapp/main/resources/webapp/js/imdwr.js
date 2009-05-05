@@ -131,6 +131,8 @@ var dialog=null;
 function getColumnSummary(tableName, columnName, columnDisplayName) {
 	if (dialog == null) {
         dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
+	} else {
+		dialog.setContent("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...");
 	}
 	if(!dialog.isVisible()) {
 		dialog.show();
