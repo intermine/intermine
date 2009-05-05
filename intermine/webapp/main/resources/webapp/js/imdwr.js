@@ -120,8 +120,10 @@ function updateUniqueCountInColumnSummary(uniqueCountQid) {
 function resultsCountCallback(size) {
     if (size > 1) {
         var summaryUniqueCountElement = document.getElementById('summary_unique_count');
-        summaryUniqueCountElement.style.display='inline';
-        summaryUniqueCountElement.innerHTML='<p>Total unique values: ' + size + "</p>";
+        if(summaryUniqueCountElement != null) {
+            summaryUniqueCountElement.style.display='inline';
+            summaryUniqueCountElement.innerHTML='<p>Total unique values: ' + size + "</p>";
+        }
     }
     return true;
 }
@@ -133,9 +135,9 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
 	} else {
 		dialog.setContent("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...");
-	}
-	if(!dialog.isVisible()) {
-		dialog.show();
+        if(!dialog.isVisible()) {
+            dialog.show();
+        }
 	}
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
