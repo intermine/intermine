@@ -224,7 +224,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             while (res.next()) {
                 int featureId = res.getInt("feature_id");
                 int cvtermId = res.getInt("cvterm_id");
-                retVal.put(featureId, cvtermId);
+                retVal.put(new Integer(featureId), new Integer(cvtermId));
             }
         } catch (SQLException e) {
             throw new RuntimeException("problem while reading chromosome_structure_variation "
@@ -238,16 +238,16 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Add the typeId to the List that is the value in the map for the featureId, creating the
      * List if necessary.
      */
-    private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
-        List<Integer> list;
-        if (map.containsKey(featureId)) {
-            list = map.get(featureId);
-        } else {
-            list = new ArrayList<Integer>();
-            map.put(featureId, list);
-        }
-        list.add(typeId);
-    }
+//    private void addToMapList(Map<Integer, List<Integer>> map, int featureId, int typeId) {
+//        List<Integer> list;
+//        if (map.containsKey(featureId)) {
+//            list = map.get(featureId);
+//        } else {
+//            list = new ArrayList<Integer>();
+//            map.put(featureId, list);
+//        }
+//        list.add(typeId);
+//    }
 
     /**
      * Return the results of running a query for the chromosome_structure_variation feature types.
@@ -445,7 +445,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
-        processItem(feature, taxonId);
+        processItem(feature, new Integer(taxonId));
         Integer itemId = super.store(feature, taxonId);
         return itemId;
     }
@@ -459,7 +459,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws ObjectStoreException {
         Item location =
             super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
-        processItem(location, taxonId);
+        processItem(location, new Integer(taxonId));
         return location;
     }
 
@@ -472,7 +472,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws ObjectStoreException {
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
         OrganismData od = fdat.getOrganismData();
-        processItem(synonym, od.getTaxonId());
+        processItem(synonym, new Integer(od.getTaxonId()));
         return synonym;
     }
 
@@ -502,10 +502,10 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     @Override
     protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
-        MultiKeyMap map = config.get(taxonId);
+        MultiKeyMap map = config.get(new Integer(taxonId));
         if (map == null) {
             map = new MultiKeyMap();
-            config.put(taxonId, map);
+            config.put(new Integer(taxonId), map);
 
             // synomym configuration example: for features of class "Gene", if the type name of
             // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
@@ -746,18 +746,18 @@ public class FlyBaseProcessor extends SequenceProcessor
             // ignore Chromosomes from flybase - features are located on ChromosomeArms except
             // for mitochondrial features
             return null;
-        } else {
-            if (chadoFeatureType.equals("chromosome_arm")
-                || chadoFeatureType.equals("ultra_scaffold")) {
-                if (uniqueName.equals("dmel_mitochondrion_genome")) {
-                    // ignore - all features are on the Chromosome object with uniqueName
-                    // "dmel_mitochondrion_genome"
-                    return null;
-                } else {
-                    realInterMineType = "Chromosome";
-                }
-            }
         }
+        if (chadoFeatureType.equals("chromosome_arm")
+                        || chadoFeatureType.equals("ultra_scaffold")) {
+            if (uniqueName.equals("dmel_mitochondrion_genome")) {
+                // ignore - all features are on the Chromosome object with uniqueName
+                // "dmel_mitochondrion_genome"
+                return null;
+            }
+            realInterMineType = "Chromosome";
+
+        }
+
         if (chadoFeatureType.equals("golden_path_region")) {
             // For organisms other than D. melanogaster sometimes we can convert a
             // golden_path_region to an actual chromosome: if name is 2L, 4, etc
@@ -959,15 +959,14 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws ObjectStoreException {
         if (interactionExperiments.containsKey(experimentTitle)) {
             return interactionExperiments.get(experimentTitle);
-        } else {
-            Item experiment = getChadoDBConverter().createItem("InteractionExperiment");
-            experiment.setAttribute("name", experimentTitle);
-            experiment.setReference("publication", publicationItemIdentifier);
-            getChadoDBConverter().store(experiment);
-            String experimentId = experiment.getIdentifier();
-            interactionExperiments.put(experimentTitle, experimentId);
-            return experimentId;
         }
+        Item experiment = getChadoDBConverter().createItem("InteractionExperiment");
+        experiment.setAttribute("name", experimentTitle);
+        experiment.setReference("publication", publicationItemIdentifier);
+        getChadoDBConverter().store(experiment);
+        String experimentId = experiment.getIdentifier();
+        interactionExperiments.put(experimentTitle, experimentId);
+        return experimentId;
     }
 
 
@@ -1083,13 +1082,12 @@ public class FlyBaseProcessor extends SequenceProcessor
     private String getMutagen(String description) throws ObjectStoreException {
         if (mutagensMap.containsKey(description)) {
             return mutagensMap.get(description);
-        } else {
-            Item mutagen = getChadoDBConverter().createItem("Mutagen");
-            mutagen.setAttribute("description", description);
-            mutagensMap.put(description, mutagen.getIdentifier());
-            store(mutagen);
-            return mutagen.getIdentifier();
         }
+        Item mutagen = getChadoDBConverter().createItem("Mutagen");
+        mutagen.setAttribute("description", description);
+        mutagensMap.put(description, mutagen.getIdentifier());
+        store(mutagen);
+        return mutagen.getIdentifier();
     }
 
     /**
@@ -1107,13 +1105,13 @@ public class FlyBaseProcessor extends SequenceProcessor
             int start = fmin + 1;
             int end = fmax;
 
-            FeatureData subFeatureData = getFeatureMap().get(subId);
+            FeatureData subFeatureData = getFeatureMap().get(new Integer(subId));
             if (subFeatureData != null) {
                 // this is a hack - we should make sure that we only query for features that are in
                 // the feature map, ie. those for the current organism
                 int taxonId = subFeatureData.getOrganismData().getTaxonId();
 
-                makeAndStoreLocation(chrId, subFeatureData, start, end, 1, taxonId);
+                makeAndStoreLocation(new Integer(chrId), subFeatureData, start, end, 1, taxonId);
             }
         }
     }
@@ -1236,7 +1234,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             Integer featurePropId = new Integer(res.getInt("featureprop_id"));
             String pubDbId = res.getString("pub_db_identifier");
 
-            String pubicationItemIdentifier = makePublication(Integer.parseInt(pubDbId));
+            Integer n = new Integer(Integer.parseInt(pubDbId));
+            String pubicationItemIdentifier = makePublication(n);
 
             if (!retMap.containsKey(featurePropId)) {
                 retMap.put(featurePropId, new ArrayList<String>());
@@ -1352,9 +1351,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         Matcher m = FLYBASE_TERM_IDENTIFIER_PATTERN.matcher(identifier);
         if (m.matches()) {
             return identifier.substring(0, 4) + ":" + identifier.substring(4);
-        } else {
-            return identifier;
         }
+        return identifier;
     }
 
     /**
@@ -1396,37 +1394,34 @@ public class FlyBaseProcessor extends SequenceProcessor
     private String makeAnatomyTerm(String identifier) throws ObjectStoreException {
         if (anatomyTermMap.containsKey(identifier)) {
             return anatomyTermMap.get(identifier);
-        } else {
-            Item anatomyTerm = getChadoDBConverter().createItem("AnatomyTerm");
-            anatomyTerm.setAttribute("identifier", identifier);
-            getChadoDBConverter().store(anatomyTerm);
-            anatomyTermMap.put(identifier, anatomyTerm.getIdentifier());
-            return anatomyTerm.getIdentifier();
         }
+        Item anatomyTerm = getChadoDBConverter().createItem("AnatomyTerm");
+        anatomyTerm.setAttribute("identifier", identifier);
+        getChadoDBConverter().store(anatomyTerm);
+        anatomyTermMap.put(identifier, anatomyTerm.getIdentifier());
+        return anatomyTerm.getIdentifier();
     }
 
     private String makeDevelopmentTerm(String identifier) throws ObjectStoreException {
         if (developmentTermMap.containsKey(identifier)) {
             return developmentTermMap.get(identifier);
-        } else {
-            Item developmentTerm = getChadoDBConverter().createItem("DevelopmentTerm");
-            developmentTerm.setAttribute("identifier", identifier);
-            getChadoDBConverter().store(developmentTerm);
-            developmentTermMap.put(identifier, developmentTerm.getIdentifier());
-            return developmentTerm.getIdentifier();
         }
+        Item developmentTerm = getChadoDBConverter().createItem("DevelopmentTerm");
+        developmentTerm.setAttribute("identifier", identifier);
+        getChadoDBConverter().store(developmentTerm);
+        developmentTermMap.put(identifier, developmentTerm.getIdentifier());
+        return developmentTerm.getIdentifier();
     }
 
     private String makeCVTerm(String identifier) throws ObjectStoreException {
         if (cvTermMap.containsKey(identifier)) {
             return cvTermMap.get(identifier);
-        } else {
-            Item cvTerm = getChadoDBConverter().createItem("CVTerm");
-            cvTerm.setAttribute("identifier", identifier);
-            getChadoDBConverter().store(cvTerm);
-            cvTermMap.put(identifier, cvTerm.getIdentifier());
-            return cvTerm.getIdentifier();
         }
+        Item cvTerm = getChadoDBConverter().createItem("CVTerm");
+        cvTerm.setAttribute("identifier", identifier);
+        getChadoDBConverter().store(cvTerm);
+        cvTermMap.put(identifier, cvTerm.getIdentifier());
+        return cvTerm.getIdentifier();
     }
 
     /**
@@ -1595,12 +1590,12 @@ public class FlyBaseProcessor extends SequenceProcessor
      * {@inheritDoc}
      */
     @Override
-    protected String fixIdentifier(FeatureData fdat, String identifier) {
+    protected String fixIdentifier(@SuppressWarnings("unused") FeatureData fdat, String identifier)
+    {
         if (StringUtils.isBlank(identifier)) {
             return identifier;
-        } else {
-            return  XmlUtil.fixEntityNames(identifier);
         }
+        return  XmlUtil.fixEntityNames(identifier);
     }
 
     /**
@@ -1613,17 +1608,15 @@ public class FlyBaseProcessor extends SequenceProcessor
         if (type.equals("protein")) {
             if (proteinFeatureDataMap.containsKey(md5checksum)) {
                 return proteinFeatureDataMap.get(md5checksum);
-            } else {
-                FeatureData fdat =
-                    super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
-                                          organismId);
-                proteinFeatureDataMap.put(md5checksum, fdat);
-                return fdat;
             }
-        } else {
-            return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
-                                         organismId);
+            FeatureData fdat =
+                super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
+                                      organismId);
+            proteinFeatureDataMap.put(md5checksum, fdat);
+            return fdat;
         }
+        return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
+                                         organismId);
     }
 
     /**
@@ -1654,11 +1647,11 @@ public class FlyBaseProcessor extends SequenceProcessor
             } finally {
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
-        } else {
-            ChadoDBConverter converter = getChadoDBConverter();
-            DataSetStoreHook.setDataSets(getModel(), item,
-                                         converter.getDataSetItem(taxonId).getIdentifier(),
-                                         converter.getDataSourceItem().getIdentifier());
         }
+        ChadoDBConverter converter = getChadoDBConverter();
+        DataSetStoreHook.setDataSets(getModel(), item,
+                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                                     converter.getDataSourceItem().getIdentifier());
+
     }
 }

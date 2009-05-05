@@ -264,8 +264,8 @@ public class SequenceProcessor extends ChadoProcessor
         }
 
         FeatureData fdat =
-            makeFeatureData(featureId, chadoType, uniqueName, name, md5checksum, seqlen,
-                            organismId);
+            makeFeatureData(featureId.intValue(), chadoType, uniqueName, name, md5checksum, seqlen,
+                            organismId.intValue());
 
         if (fdat == null) {
             return false;
@@ -427,11 +427,10 @@ public class SequenceProcessor extends ChadoProcessor
                                           int organismId) throws ObjectStoreException {
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
         OrganismData organismData =
-            getChadoDBConverter().getChadoIdToOrgDataMap().get(organismId);
+            getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
 
-        Item feature = makeFeature(featureId, chadoType, interMineType, name, uniqueName,
-                seqlen, organismData.getTaxonId());
-
+        Item feature = makeFeature(new Integer(featureId), chadoType, interMineType, name,
+                                   uniqueName, seqlen, organismData.getTaxonId());
 
         if (feature == null) {
             return null;
@@ -528,13 +527,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected String fixFeatureType(String type) {
         if (type.equals("five_prime_untranslated_region")) {
             return "five_prime_UTR";
-        } else {
-            if (type.equals("three_prime_untranslated_region")) {
-                return "three_prime_UTR";
-            } else {
-                return type;
-            }
         }
+        if (type.equals("three_prime_untranslated_region")) {
+            return "three_prime_UTR";
+        }
+        return type;
+
+
     }
 
 
@@ -763,7 +762,8 @@ public class SequenceProcessor extends ChadoProcessor
                         // exonCount later.  Perhaps this should be configurable.
                         if (subjectFeatureData.getInterMineType().equals("Exon")) {
                             if (!countMap.containsKey(objectFeatureData.getIntermineObjectId())) {
-                                countMap.put(objectFeatureData.getIntermineObjectId(), 1);
+                                countMap.put(objectFeatureData.getIntermineObjectId(),
+                                             new Integer(1));
                             } else {
                                 Integer currentVal =
                                     countMap.get(objectFeatureData.getIntermineObjectId());
@@ -876,9 +876,9 @@ public class SequenceProcessor extends ChadoProcessor
                                 throw new RuntimeException("can't find field " + fieldName
                                                            + " in class " + cd + " configured for "
                                                            + key);
-                            } else {
-                                fds.add(fd);
                             }
+                            fds.add(fd);
+
                         }
                     }
                     if (fds.size() == 0) {
@@ -912,29 +912,29 @@ public class SequenceProcessor extends ChadoProcessor
                                                        + subjectInterMineType
                                                        + " current subject identifier: "
                                                        + subjectData.getUniqueName());
-                        } else {
-                            if (objectClassFeatureDataMap.size() == 1) {
-                                Reference reference = new Reference();
-                                reference.setName(fd.getName());
-                                FeatureData referencedFeatureData = featureDataCollection.get(0);
-                                reference.setRefId(referencedFeatureData.getItemIdentifier());
-                                getChadoDBConverter().store(reference, intermineObjectId);
+                        }
+                        if (objectClassFeatureDataMap.size() == 1) {
+                            Reference reference = new Reference();
+                            reference.setName(fd.getName());
+                            FeatureData referencedFeatureData = featureDataCollection.get(0);
+                            reference.setRefId(referencedFeatureData.getItemIdentifier());
+                            getChadoDBConverter().store(reference, intermineObjectId);
 
-                                // special case for 1-1 relations - we need to set the reverse
-                                // reference
-                                ReferenceDescriptor rd = (ReferenceDescriptor) fd;
-                                ReferenceDescriptor reverseRD = rd.getReverseReferenceDescriptor();
-                                if (reverseRD != null && !reverseRD.isCollection()) {
-                                    Reference revReference = new Reference();
-                                    revReference.setName(reverseRD.getName());
-                                    revReference.setRefId(subjectData.getItemIdentifier());
-                                    Integer refObjectId =
-                                        referencedFeatureData.getIntermineObjectId();
-                                    getChadoDBConverter().store(revReference,
-                                                                refObjectId);
-                                }
+                            // special case for 1-1 relations - we need to set the reverse
+                            // reference
+                            ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                            ReferenceDescriptor reverseRD = rd.getReverseReferenceDescriptor();
+                            if (reverseRD != null && !reverseRD.isCollection()) {
+                                Reference revReference = new Reference();
+                                revReference.setName(reverseRD.getName());
+                                revReference.setRefId(subjectData.getItemIdentifier());
+                                Integer refObjectId =
+                                    referencedFeatureData.getIntermineObjectId();
+                                getChadoDBConverter().store(revReference,
+                                                            refObjectId);
                             }
                         }
+
                     } else {
                         List<String> itemIds;
                         if (collectionsToStore.containsKey(fd.getName())) {
