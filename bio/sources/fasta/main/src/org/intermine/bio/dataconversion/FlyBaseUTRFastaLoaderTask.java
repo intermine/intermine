@@ -77,9 +77,8 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
     protected String getIdentifier(Sequence bioJavaSequence) {
         if (getClassName().endsWith(".FivePrimeUTR")) {
             return bioJavaSequence.getName() + "-5-prime-utr";
-        } else {
-            return bioJavaSequence.getName() + "-3-prime-utr";
         }
+        return bioJavaSequence.getName() + "-3-prime-utr";
     }
 
     private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {

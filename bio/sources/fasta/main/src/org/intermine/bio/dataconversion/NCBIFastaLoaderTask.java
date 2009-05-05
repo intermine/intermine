@@ -40,13 +40,12 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
         Matcher ncbiMatcher = NCBI_DB_PATTERN.matcher(seqIdentifier);
         if (ncbiMatcher.matches()) {
             return ncbiMatcher.group(3);
-        } else {
-            Matcher uniprotMatcher = UNIPROT_PATTERN.matcher(seqIdentifier);
-            if (uniprotMatcher.matches()) {
-                return uniprotMatcher.group(2);
-            } else {
-                throw new RuntimeException("can't parse FASTA identifier: " + seqIdentifier);
-            }
         }
+        Matcher uniprotMatcher = UNIPROT_PATTERN.matcher(seqIdentifier);
+        if (uniprotMatcher.matches()) {
+            return uniprotMatcher.group(2);
+        }
+        throw new RuntimeException("can't parse FASTA identifier: " + seqIdentifier);
+
     }
 }

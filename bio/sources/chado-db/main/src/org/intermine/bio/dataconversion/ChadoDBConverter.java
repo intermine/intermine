@@ -92,9 +92,8 @@ public class ChadoDBConverter extends BioDBConverter
             }
             if (od == null) {
                 throw new RuntimeException("can't find organism for: " + organismIdString);
-            } else {
-                organismsToProcess.add(od);
             }
+            organismsToProcess.add(od);
         }
     }
 

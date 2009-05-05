@@ -79,10 +79,10 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
         if (m.matches()) {
             return m.group(1) + "_CDS";
-        } else {
-            // it doesn't matter too much what the CDS identifier is
-            return getMRNAIdentifier(header) + "_CDS";
         }
+        // it doesn't matter too much what the CDS identifier is
+        return getMRNAIdentifier(header) + "_CDS";
+
     }
 
     private String getMRNAIdentifier(String header) {
@@ -92,9 +92,8 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
 
         if (m.matches()) {
             return m.group(1);
-        } else {
-            throw new RuntimeException("can't find FBtr identifier in header: " + header);
         }
+        throw new RuntimeException("can't find FBtr identifier in header: " + header);
     }
 
     private MRNA getMRNA(String mrnaIdentifier, Organism organism) throws ObjectStoreException {
