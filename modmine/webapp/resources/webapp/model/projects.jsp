@@ -21,8 +21,8 @@
 		<th>Project</th>
 		<th>Title</th>
 		<th>Principal Investigator</th>
-		<th>Submissions</th>
     <th>Labs</th>
+    <th>Submissions</th>
 	</tr>
 	<c:forEach items="${labs}" var="item">
 		<tr>
@@ -33,24 +33,30 @@
 			<td><html:link href="${item.key.url}">
  ${item.key.title}
     </html:link>
-			<td>${item.key.namePI} ${item.key.surnamePI}
+			<td>${item.key.namePI} ${item.key.surnamePI} <br>
 
-<%--
-			<td><c:forEach items="${item.value}" var="prov">
+
+			<td><table cellpadding="0" cellspacing="0" border="0" class="internal">
+			<c:forEach items="${item.value}" var="prov">
+				
+				<tr><td>
 				<html:link
 					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
  ${prov.name}
     </html:link>
-				<br>
+    <td>
+    ${prov.affiliation}
 			</c:forEach>
-			--%>
+			</table>
 			
-			<td>
+      <td>
+			
 			<c:forEach items="${counts}" var="nr">
 				<c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
 					<c:set var="nrSubs" value="${nr.value}" />
 				</c:if>
 			</c:forEach> 
+
 			<c:choose>
 				<c:when test="${nrSubs eq 0}">
         -
@@ -58,7 +64,10 @@
 				<c:when test="${nrSubs gt 0}">
 					<im:querylink text="${nrSubs} submissions " skipBuilder="true">
 						<query name="" model="genomic"
-							view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
+							view="Project.labs.submissions.title 
+							Project.labs.submissions.design 
+							Project.labs.submissions.experimentalFactors.type 
+							Project.labs.submissions.experimentalFactors.name"
 							sortOrder="Project.labs.submissions.title">
 						<node path="Project" type="Project">
 						</node>
@@ -72,14 +81,15 @@
 				</c:when>
 			</c:choose>
 			
-			     <td><c:forEach items="${item.value}" var="prov">
+			<%--
+						     <td><c:forEach items="${item.value}" var="prov">
         <html:link
           href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
  ${prov.name}
     </html:link>
         <br>
       </c:forEach>
-			
+			--%>
 			
 	</c:forEach>
 	</tr>
