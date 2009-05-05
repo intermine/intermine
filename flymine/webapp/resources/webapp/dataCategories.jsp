@@ -33,7 +33,7 @@
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.11), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura pseudoobscura (R2.3), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2008_08</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_04</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17099233" target="_new">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
   </tr>
@@ -192,7 +192,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 22nd April 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 22nd April 2009</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -200,7 +200,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 22nd April 2008</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 22nd April 2009</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -268,7 +268,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 12th April 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 25th April 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -313,7 +313,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Affymetrix microarray-based atlas of gene expression in larval and adult tissues</td>
-    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 25th June 2008 </td>
+    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 24th February 2009 </td>
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17534367" target="_new">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -410,8 +410,7 @@
         <p> Pathways</p></html:link></td>
     <td> <i>D. melanogaster</i></td>
     <td> Pathway information and the genes involved in them</td>
-    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 50.0, 1st April 2009</td>
-
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - 23 April 2009</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -491,7 +490,7 @@
 
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 24th April 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 29th April 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -499,7 +498,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 24th April 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 29th April 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -507,7 +506,7 @@
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 24th April 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 29th April 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
