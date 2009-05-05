@@ -195,7 +195,7 @@ table.dbsources td.leftcol {
 table.results th {
     background: #927F97;font-size: 12px;color:#FFF;
 }
-table.results tr td.highlightCell {
+table.results tr td.highlightCell, table.results tr.even td.highlightCell {
  	border-right:1px solid #FFF;background-color: #FFCBFF;}
 
 table.results tfoot tr td {

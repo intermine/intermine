@@ -118,7 +118,7 @@ div.title h1 {
 .title a:link{
 	color:#FFF;}
 
-table.results tr td.highlightCell {
+table.results tr td.highlightCell, table.results tr.even td.highlightCell {
   background-color: #FFCBFF;}
 
 .widget {
