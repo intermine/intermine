@@ -103,9 +103,9 @@ function updateCountInColumnSummary() {
         setTimeout("updateCountInColumnSummary()", 1000);
         return;
     }
-
-    document.getElementById('summary_row_count').innerHTML = "<p>" + countString + "</p>";
-
+    
+    jQuery('#summary_row_count').html("<p>" + countString + "</p>");
+    
     var est = document.getElementById('resultsCountEstimate');
     if (est == null || est.style.display != 'none') {
         setTimeout("updateCountInColumnSummary()", 500);
@@ -126,8 +126,15 @@ function resultsCountCallback(size) {
     return true;
 }
 
+var dialog=null;
+
 function getColumnSummary(tableName, columnName, columnDisplayName) {
-    var dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
+	if (dialog == null) {
+        dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
+	}
+	if(!dialog.isVisible()) {
+		dialog.show();
+	}
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
         var uniqueCountQid = str[1];
@@ -174,7 +181,6 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
                         <thead id="summary_head">' + headerText +'</thead>    \
                         <tbody id="summary_table">' + bodyText + '</tbody>    \
                       </table>';
-
         if (summaryRowsCount > 10) {
             content += '<div><p>(Note: showing only the first 10 rows of summary)</p></div></div>';
         } else {
