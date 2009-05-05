@@ -331,9 +331,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             // rename so these synonyms merge correctly
             String synonymType = classAttribute;
             if (classAttribute.equals("primaryAccession")) {
-                synonym.setType("accession");
+                synonymType = "accession";
             } else if (classAttribute.equals("primaryIdentifier")) {
-                synonym.setType("identifier");
+                synonymType = "identifier";
             }
             synonym.setType(synonymType);
         }
