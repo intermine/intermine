@@ -183,22 +183,22 @@ public class PdbConverter extends BioDirectoryConverter
         return null;
     }
 
-    private String getOrganism(String taxonId)
-    throws SAXException {
-        String refId = organisms.get(taxonId);
-        if (refId == null) {
-            Item item = createItem("Organism");
-            item.setAttribute("taxonId", taxonId);
-            refId = item.getIdentifier();
-            organisms.put(taxonId, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
-    }
+//    private String getOrganism(String taxonId)
+//    throws SAXException {
+//        String refId = organisms.get(taxonId);
+//        if (refId == null) {
+//            Item item = createItem("Organism");
+//            item.setAttribute("taxonId", taxonId);
+//            refId = item.getIdentifier();
+//            organisms.put(taxonId, refId);
+//            try {
+//                store(item);
+//            } catch (ObjectStoreException e) {
+//                throw new SAXException(e);
+//            }
+//        }
+//        return refId;
+//    }
 
     private String getProtein(String accession, String taxonId)
     throws SAXException {
@@ -206,6 +206,7 @@ public class PdbConverter extends BioDirectoryConverter
         if (refId == null) {
             Item item = createItem("Protein");
             item.setAttribute("primaryAccession", accession);
+            item.setAttribute("uniprotAccession", accession);
             // TODO is there some way we can be certain of this taxonId for this protein?
             // item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
