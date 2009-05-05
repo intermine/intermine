@@ -136,14 +136,14 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Initialise FeatureMap with features that have already been processed.  This is optional, it
-     * permits subclasses to avoid processing the same features in multiple runs.  
+     * permits subclasses to avoid processing the same features in multiple runs.
      * @param initialMap map of chado feature id to FeatureData objects
      */
     protected void initialiseFeatureMap(Map<Integer, FeatureData> initialMap) {
         featureMap.putAll(initialMap);
     }
-    
-    
+
+
     /**
      * Return the config Map.
      * @param taxonId return the configuration for this organism
@@ -1091,7 +1091,7 @@ public class SequenceProcessor extends ChadoProcessor
                             }
                             Item synonym = createSynonym(fdat, "identifier", newFieldValue,
                                                          isPrimary, null);
-                            
+
                             if (synonym != null) {
                                 getChadoDBConverter().store(synonym);
                                 count++;
@@ -1365,6 +1365,14 @@ public class SequenceProcessor extends ChadoProcessor
             Integer featureId = new Integer(res.getInt("feature_id"));
             String identifier = res.getString("synonym_name");
             String synonymTypeName = res.getString("type_name");
+
+            // change type so synonyms will merge correctly
+            if (synonymTypeName.equals("primaryAccession")) {
+                synonymTypeName = "accession";
+            } else if (synonymTypeName.equals("primaryIdentifier")) {
+                synonymTypeName = "identifier";
+            }
+
             Boolean isCurrent = res.getBoolean("is_current");
 
             // it is a not null in db
