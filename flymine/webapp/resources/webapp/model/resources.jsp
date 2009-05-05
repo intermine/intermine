@@ -203,7 +203,7 @@
   <node path="TransposableElementInsertionSite.evidence" type="DataSet">
   </node>
   <node path="TransposableElementInsertionSite.evidence.title" type="String">
-    <constraint op="LIKE" value="%DrosDel%" description="" identifier="" code="B">
+    <constraint op="LIKE" value="*DrosDel*" description="" identifier="" code="B">
     </constraint>
   </node>
 </query>
