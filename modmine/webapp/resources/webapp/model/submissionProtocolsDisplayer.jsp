@@ -38,11 +38,13 @@ div#submissionProtocols h3 {
     })
 </script>
 
+<c:choose>
+<c:when test="${fn:length(pagedResults.rows) > 1}">
+
 <html:link linkName="#" styleId="bro" style="cursor:pointer"> 
 
 <h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif" id="oc"></h3>
 </html:link>
-
 
   <div id="submissionProtocols" style="display: block">
     <p>
@@ -163,15 +165,34 @@ div#submissionProtocols h3 {
 
     </table>
 
-
     <br/>
   </div>
-
 
 </TD>
 </tr>
 </table>
 
+</c:when>
+<c:otherwise>
 
+<im:querylink
+text="<h3>Browse metadata for this submission (click to view)</h3>"  skipBuilder="true">
+<%--<im:querylink text="${nrSubs} submissions " skipBuilder="true">--%>
+<query name="" model="genomic" view="AppliedProtocol.step AppliedProtocol:inputs.name AppliedProtocol:protocol.name AppliedProtocol:inputs.value AppliedProtocol:outputs.name AppliedProtocol:outputs.value" sortOrder="AppliedProtocol.step asc">
+  <node path="AppliedProtocol" type="AppliedProtocol">
+  </node>
+  <node path="AppliedProtocol.submission" type="Submission">
+  </node>
+  <node path="AppliedProtocol.submission.id" type="Integer">
+    <constraint op="=" value="${subId}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+</im:querylink>
+
+
+
+</c:otherwise>
+</c:choose>
 </div>
 

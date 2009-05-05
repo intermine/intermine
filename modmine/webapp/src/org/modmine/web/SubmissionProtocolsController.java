@@ -74,9 +74,15 @@ public class SubmissionProtocolsController extends TilesAction
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults results = executor.execute(q);
         
+        if (results.size() > 2000) {
+            // LOG.info("DAG SUBMISSION id: " + o.getId());
+            request.setAttribute("subId", o.getId());
+            return null;
+        }
+        
         PagedTable pagedTable = new PagedTable(results);
         // NB: you need to set a maximum, default is 10!
-        pagedTable.setPageSize(10000);
+        pagedTable.setPageSize(2000);
         request.setAttribute("pagedResults", pagedTable);
         
         return null;
