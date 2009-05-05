@@ -16,7 +16,7 @@
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr>
-    <th>Submission</th>
+    <th colspan="2">Submission</th>
     <th>Date</th>
     <th>Lab</th>
     <th>Affiliation</th>
@@ -25,6 +25,7 @@
   </tr>
   <c:forEach items="${subs}" var="sub">
     <tr>
+      <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.id}">${sub.key.dCCid}</html:link></td>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.id}">${sub.key.title}</html:link></td>
       <td><fmt:formatDate value="${sub.key.publicReleaseDate}" type="date"/></td>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.key.lab.id}">${sub.key.lab.name}</html:link></td>
