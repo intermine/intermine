@@ -17,6 +17,7 @@
   <collection name="proteins" referenced-type="Protein" reverse-reference="structures"/>
 </class>
 <class name="Protein" extends="BioEntity" is-interface="true">
+  <attribute name="uniprotAccession" type="java.lang.String"/>
   <collection name="structures" referenced-type="ProteinStructure" ordered="true" reverse-reference="proteins"/>
 </class>
 <class name="ProteinDomain" extends="BioEntity" is-interface="true">

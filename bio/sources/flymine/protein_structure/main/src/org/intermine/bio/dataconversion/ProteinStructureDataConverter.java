@@ -247,6 +247,7 @@ public class ProteinStructureDataConverter extends BioFileConverter
             if (proteinIdentifier == null) {
                 Item protein = createItem("Protein");
                 protein.setAttribute("primaryAccession", identifier);
+                protein.setAttribute("uniprotAccession", identifier);
                 proteinMap.put(identifier, protein.getIdentifier());
                 store(protein);
                 createSynonym(protein.getIdentifier(), "accession", identifier);
