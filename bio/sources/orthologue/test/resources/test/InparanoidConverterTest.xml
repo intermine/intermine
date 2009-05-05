@@ -1,6 +1,6 @@
 <items>
 <item id="6_1" class="Protein">
-<attribute name="secondaryIdentifier" value="MOSQUITO_1"/>
+<attribute name="primaryIdentifier" value="MOSQUITO_1"/>
 <reference name="organism" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
@@ -40,7 +40,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="6_2" class="Protein">
-<attribute name="secondaryIdentifier" value="MOSQUITO_2"/>
+<attribute name="primaryIdentifier" value="MOSQUITO_2"/>
 <reference name="organism" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
@@ -119,7 +119,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="6_3" class="Protein">
-<attribute name="secondaryIdentifier" value="MOSQUITO_3"/>
+<attribute name="primaryIdentifier" value="MOSQUITO_3"/>
 <reference name="organism" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
