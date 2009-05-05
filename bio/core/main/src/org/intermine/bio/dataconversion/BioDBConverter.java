@@ -247,11 +247,11 @@ public abstract class BioDBConverter extends DBConverter
         synonym.setAttribute("value", value);
         synonym.setAttribute("isPrimary", String.valueOf(isPrimary));
         synonym.setReference("subject", subjectId);
-        if (evidence != null) {
-            for (Item evidenceItem: evidence) {
-                synonym.addToCollection("evidence", evidenceItem);
-            }
-        }
+//        if (evidence != null) {
+//            for (Item evidenceItem: evidence) {
+//                synonym.addToCollection("evidence", evidenceItem);
+//            }
+//        }
         return synonym;
     }
 }

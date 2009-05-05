@@ -1934,7 +1934,7 @@ public class SequenceProcessor extends ChadoProcessor
                                                + " is already a synonym for: "
                                                + fdat.getExistingSynonyms());
         }
-        List<Item> allEvidence = new ArrayList<Item>();
+        List<Item> allEvidence = new ArrayList();
         if (otherEvidence != null) {
             allEvidence.addAll(otherEvidence);
         }
