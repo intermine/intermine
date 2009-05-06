@@ -163,10 +163,11 @@ public class PerformanceTester
         } catch (Exception e) {
             System .err.println("Thread " + threadNo + ": template " + templateName
                     + " could not be run.");
+//            // need a number to compare between releases
+//            System .out.println("Thread " + threadNo + ": template " + templateName
+//                                + " returned 0 rows");
             e.printStackTrace(System.err);
-            // need a number to compare between releases
-            System .out.println("Thread " + threadNo + ": template " + templateName
-                                + " returned 0 rows");
+
         }
     }
 

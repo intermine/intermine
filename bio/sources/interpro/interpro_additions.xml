@@ -1,21 +1,14 @@
 <?xml version="1.0"?>
 <classes>
-
-  <class name="Protein" is-interface="true">
-    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins"/>
-  </class>
-
   <class name="ProteinDomain" extends="BioEntity" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="shortName" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
-    <collection name="parentFeatures" referenced-type="ProteinDomain" ordered="true"/>
-    <collection name="childFeatures" referenced-type="ProteinDomain" ordered="true"/>
-    <collection name="contains" referenced-type="ProteinDomain" ordered="true"/>
-    <collection name="foundIn" referenced-type="ProteinDomain" ordered="true"/>
-    <collection name="publications" referenced-type="Publication" ordered="true"/>
-    <collection name="proteins" referenced-type="Protein" ordered="true" reverse-reference="proteinDomains"/>
+    <collection name="parentFeatures" referenced-type="ProteinDomain"/>
+    <collection name="childFeatures" referenced-type="ProteinDomain"/>
+    <collection name="contains" referenced-type="ProteinDomain"/>
+    <collection name="foundIn" referenced-type="ProteinDomain"/>
+    <collection name="publications" referenced-type="Publication"/>
   </class>
-
 </classes>
