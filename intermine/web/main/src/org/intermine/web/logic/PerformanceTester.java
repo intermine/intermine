@@ -75,13 +75,13 @@ public class PerformanceTester
 
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
 
-        templates.remove("ESTclone_LocationDMorthologuePathway_new");
-        templates.remove("ESTclone_LocationOverlappingGeneOrthologue_new");
-        templates.remove("ESTclone_LocationOverlappingGeneStructure");
 
         templates = new SearchFilterEngine().filterByTags(templates,
                 Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, superuser, new TagManagerFactory(userProfileOs).getTagManager());
+//        templates.remove("ESTclone_LocationDMorthologuePathway_new");
+//        templates.remove("ESTclone_LocationOverlappingGeneOrthologue_new");
+//        templates.remove("ESTclone_LocationOverlappingGeneStructure");
 
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
@@ -164,6 +164,9 @@ public class PerformanceTester
             System .err.println("Thread " + threadNo + ": template " + templateName
                     + " could not be run.");
             e.printStackTrace(System.err);
+            // need a number to compare between releases
+            System .out.println("Thread " + threadNo + ": template " + templateName
+                                + " returned 0 rows");
         }
     }
 
