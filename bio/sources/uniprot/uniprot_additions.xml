@@ -20,7 +20,7 @@
     <collection name="components" referenced-type="Component" reverse-reference="protein" />
     <collection name="keywords" referenced-type="OntologyTerm" />
     <collection name="features" referenced-type="UniProtFeature" />
-    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="protein" />
+    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins" />
   </class>
   <class name="Sequence" is-interface="true">
     <attribute name="md5checksum" type="java.lang.String"/>
