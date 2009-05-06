@@ -72,6 +72,9 @@ public class SubmissionOverlapsAction extends InterMineAction
 
             q.addView(findFeatureType + ".primaryIdentifier");
             q.addView(findFeatureType + ".overlappingFeatures.secondaryIdentifier");
+            q.addView(findFeatureType + ".chromosomeLocation.start");
+            q.addView(findFeatureType + ".chromosomeLocation.end");
+            q.addView(findFeatureType + ".chromosomeLocation.strand");
 
             if (findFeatureType.equals("Exon")) {
                 q.addView(findFeatureType + ".gene.primaryIdentifier");
