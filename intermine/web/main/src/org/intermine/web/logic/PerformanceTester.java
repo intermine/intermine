@@ -74,9 +74,15 @@ public class PerformanceTester
         Profile p = pm.getProfile(superuser);
 
         Map<String, TemplateQuery> templates = p.getSavedTemplates();
+
+        templates.remove("ESTclone_LocationDMorthologuePathway_new");
+        templates.remove("ESTclone_LocationOverlappingGeneOrthologue_new");
+        templates.remove("ESTclone_LocationOverlappingGeneStructure");
+
         templates = new SearchFilterEngine().filterByTags(templates,
                 Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, superuser, new TagManagerFactory(userProfileOs).getTagManager());
+
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
         doRun(productionOs, classKeys, bagQueryConfig, templates, i);
@@ -143,7 +149,7 @@ public class PerformanceTester
                     + (queryEndTime - queryStartTime) + " ms");
             if (results.isEmpty()) {
                 System .out.println("Thread " + threadNo + ": template " + templateName
-                        + " does not return any rows");
+                        + " returned 0 rows");
             } else if (results.size() < 1000) {
                 System .out.println("Thread " + threadNo + ": template " + templateName
                         + " returned " + results.size()
@@ -170,6 +176,15 @@ public class PerformanceTester
         private Iterator<Map.Entry<String, TemplateQuery>> iter;
         private int threadNo;
 
+        /**
+         *
+         * @param productionOs
+         * @param classKeys
+         * @param bagQueryConfig
+         * @param threads
+         * @param iter
+         * @param threadNo
+         */
         public Worker(ObjectStore productionOs, Map classKeys, BagQueryConfig bagQueryConfig,
                 Set threads, Iterator<Map.Entry<String, TemplateQuery>> iter, int threadNo) {
             this.productionOs = productionOs;
