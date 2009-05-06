@@ -1093,7 +1093,7 @@ public class PathQuery
         Map<String, String> dots = getPathsFromDots();
         String bestReplacement = null;
         for (String dot : dots.keySet()) {
-            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":"))
+            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":") || dotPath.equals(dot))
                 && (bestReplacement == null || dots.get(dot).startsWith(bestReplacement + ".")
                     || dots.get(dot).startsWith(bestReplacement + ":"))) {
                 String temp = dot;
