@@ -449,7 +449,7 @@
      </td>
      <td align="right">
   <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-    <img src="theme/xml.png" title="Export this template to XML"/>
+    <img src="images/xml.png" title="Export this template to XML"/>
   </html:link>
   </td>
   </tr>
