@@ -55,7 +55,7 @@
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
 
-    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+    <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="pubmed.organisms" value="4932"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
