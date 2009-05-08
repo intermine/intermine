@@ -47,11 +47,6 @@
       <property name="src.data.dir" location="/shared/data/psi/intact/2009-02-24"/>
     </source>
 
-    <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/shared/data/biogrid/2009-02-25"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-    </source>
-
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/shared/data/pdb/2009-02-25"/>
       <property name="pdb.organisms" value="7955"/>      
