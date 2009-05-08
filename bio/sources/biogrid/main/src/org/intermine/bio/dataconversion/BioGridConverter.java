@@ -105,14 +105,14 @@ public class BioGridConverter extends BioFileConverter
      */
     class BioGridHandler extends DefaultHandler
     {
-        private Map<String, InteractorHolder> interactors = new HashMap<String, InteractorHolder>();
-        private Map<String, ExperimentHolder> experiments = new HashMap<String, ExperimentHolder>();
+        private Map<String, InteractorHolder> interactors = new HashMap();
+        private Map<String, ExperimentHolder> experiments = new HashMap();
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
         private InteractorHolder interactorHolder;
         private String participantId = null;
 
-        private Stack<String> stack = new Stack<String>();
+        private Stack<String> stack = new Stack();
         private String attName = null;
         private StringBuffer attValue = null;
 
