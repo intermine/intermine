@@ -5,54 +5,12 @@
   <property name="intermine.properties.file" value="yeastmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="4932"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
-      <property name="createinterpro" value="true"/>
+    <source name="sgd" type="uniprot">      
+      <property name="src.data.dir" location="/shared/data/sgd/current/SGD.BUD.FEATURE.data"/>
     </source>
 
-    <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="4932"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
-      <property name="fasta.classAttribute" value="primaryAccession"/>
-      <property name="fasta.dataSetTitle" value="UniProt data set"/>
-      <property name="fasta.dataSourceName" value="UniProt"/>
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
-      <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
-      <property name="fasta.sequenceType" value="protein" />
-      <property name="fasta.loaderClassName" 
-                value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
-    </source>
-
-    <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/shared/data/uniprot/current"/>
-      <property name="src.data.dir.includes" value="keywlist.xml"/>
-    </source>
-
-   <source name="interpro" type="interpro">      
-      <property name="src.data.dir" location="/shared/data/interpro/current"/>
-    </source>
-<!--
-    <source name="ensembl" type="ensembl"> 
-     <property name="src.data.dir" location="/shared/data/ensembl/current"/> 
-    </source> 
---> 
-    <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/shared/data/kegg/current"/>
-      <property name="kegg.organisms" value="4932"/>
-    </source>
-   <!--
-    <source name="pdb" type="pdb">
-      <property name="src.data.dir" location="/shared/data/pdb/2009-02-25"/>
-      <property name="pdb.organisms" value="7955"/>      
-    </source>
--->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
-    </source>
-
-    <source name="inparanoid-orthologue" type="orthologue">
-      <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
     </source>
 
     <source name="pubmed-gene" type="pubmed-gene">
@@ -65,21 +23,9 @@
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/shared/data/psi/intact/2009-02-24"/>
     </source>
-<!--
-    <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/shared/data/biogrid/2009-02-25"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-    </source>
--->
 
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
-    </source>
-
-    <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/sgd/current"/>
-      <property name="src.data.dir.includes" value="gene_association.*"/>
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
