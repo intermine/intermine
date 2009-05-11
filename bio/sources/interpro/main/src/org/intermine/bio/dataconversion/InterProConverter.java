@@ -39,15 +39,19 @@ public class InterProConverter extends FileConverter
     private Map<String, String> datasets = new HashMap();
     private Map<String, Item> proteinDomains = new HashMap();
     private Map<String, String> synonyms = new HashMap();
-    private String datasourceRefId = null;
+    private String datasourceRefId = null, datasetRefId = null;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws SAXException if something goes wrong
      */
-    public InterProConverter(ItemWriter writer, Model model) {
+    public InterProConverter(ItemWriter writer, Model model)
+    throws SAXException {
         super(writer, model);
+        datasourceRefId = getDataSource("InterPro");
+        datasetRefId = getDataSet("InterPro");
     }
 
     /**
@@ -88,16 +92,23 @@ public class InterProConverter extends FileConverter
         throws SAXException {
 
             // descriptions span multiple lines
-            // so Rdon't reset temp var when processing descriptions
+            // so don't reset temp var when processing descriptions
             if (attName != null && !attName.equals("description")) {
                 attName = null;
             }
 
             // <interpro id="IPR000002" type="Domain" short_name="Fizzy" protein_count="256">
             if (qName.equals("interpro")) {
-                proteinDomain = getDomain(attrs.getValue("id"));
-                proteinDomain.setAttribute("shortName", attrs.getValue("short_name"));
+                String identifier = attrs.getValue("id");
+                proteinDomain = getDomain(identifier);
+                String name = attrs.getValue("short_name");
+                proteinDomain.setAttribute("shortName", name);
                 proteinDomain.setAttribute("type", attrs.getValue("type"));
+                proteinDomain.addToCollection("dataSets", datasetRefId);
+
+                createSynonym(proteinDomain.getIdentifier(), "name", name, datasetRefId);
+                createSynonym(proteinDomain.getIdentifier(), "identifier", identifier,
+                              datasetRefId);
 
                 // reset
                 description = new StringBuffer();
@@ -115,14 +126,15 @@ public class InterProConverter extends FileConverter
                 attName = "description";
             } else if (qName.equals("sec_ac")) {
                 createSynonym(proteinDomain.getIdentifier(), "identifier", attrs.getValue("acc"),
-                              "InterPro");
+                              datasetRefId);
            //<member_list><db_xref db="PFAM" dbkey="PF01167" name="SUPERTUBBY" />
             } else if (qName.equals("db_xref") && stack.peek().equals("member_list")) {
                 String dbkey = attrs.getValue("dbkey");
                 String name = attrs.getValue("name");
                 String datasetName = attrs.getValue("db");
-                createSynonym(proteinDomain.getIdentifier(), "identifier", dbkey, datasetName);
-                createSynonym(proteinDomain.getIdentifier(), "name", name, datasetName);
+                createSynonym(proteinDomain.getIdentifier(), "identifier", dbkey,
+                              getDataSet(datasetName));
+                createSynonym(proteinDomain.getIdentifier(), "name", name, getDataSet(datasetName));
                 //<interpro><foundin><rel_ref ipr_ref="IPR300000" /></foundin>
             } else if (qName.equals("rel_ref") && (stack.peek().equals("found_in")
                             || stack.peek().equals("contains")
@@ -144,8 +156,6 @@ public class InterProConverter extends FileConverter
                     relationCollection = "childFeatures";
                 }
                 proteinDomain.addToCollection(relationCollection, relative);
-            } else if (qName.equals("interprodb")) {
-                initData();
             }
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
@@ -168,10 +178,6 @@ public class InterProConverter extends FileConverter
                     } catch (ObjectStoreException e) {
                         throw new SAXException(e);
                     }
-                    createSynonym(item.getIdentifier(),
-                                  "identifier",
-                                  item.getAttribute("primaryIdentifier").getValue(),
-                                  "InterPro");
                 }
                 for (Item item : delayedItems) {
                     try {
@@ -183,7 +189,9 @@ public class InterProConverter extends FileConverter
             // <interpro><name>
             } else if (qName.equals("name") && stack.peek().equals("interpro")
                             && attName != null) {
-                proteinDomain.setAttribute("name", attValue.toString());
+                String name = attValue.toString();
+                proteinDomain.setAttribute("name", name);
+                createSynonym(proteinDomain.getIdentifier(), "name", name, datasetRefId);
             // <interpro><abstract>
             } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
                 proteinDomain.setAttribute("description", description.toString());
@@ -191,15 +199,14 @@ public class InterProConverter extends FileConverter
             }
         }
 
-        private void createSynonym(String subject, String type, String value, String sourceName)
-        throws SAXException  {
-            String key = value.toLowerCase();
+        private void createSynonym(String subject, String type, String value, String refId) {
+            String key = subject + type + value + refId;
             if (synonyms.get(key) == null) {
                 Item syn = createItem("Synonym");
                 syn.setReference("subject", subject);
                 syn.setAttribute("type", type);
                 syn.setAttribute("value", value);
-                syn.addToCollection("dataSets", getDataSet(sourceName));
+                syn.addToCollection("dataSets", refId);
                 synonyms.put(key, syn.getIdentifier());
                 delayedItems.add(syn);
             }
@@ -213,47 +220,6 @@ public class InterProConverter extends FileConverter
                 proteinDomains.put(identifier, item);
             }
             return item;
-        }
-
-        private void initData()
-        throws SAXException {
-            datasourceRefId = getDataSource("InterPro");
-            getDataSet("InterPro");
-        }
-
-        private String getDataSource(String title)
-        throws SAXException {
-            String refId = datasources.get(title);
-            if (refId == null) {
-                Item item = createItem("DataSource");
-                item.setAttribute("name", title);
-                refId = item.getIdentifier();
-                datasources.put(title, refId);
-                try {
-                    store(item);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-            return refId;
-        }
-
-        private String getDataSet(String title)
-        throws SAXException {
-            String refId = datasets.get(title);
-            if (refId == null) {
-                Item item = createItem("DataSet");
-                item.setAttribute("title", title + " data set");
-                item.setReference("dataSource", datasourceRefId);
-                refId = item.getIdentifier();
-                datasets.put(title, refId);
-                try {
-                    store(item);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
-            return refId;
         }
 
         private String getPub(String pubMedId)
@@ -312,5 +278,40 @@ public class InterProConverter extends FileConverter
                 }
             }
         }
+    }
+
+    private String getDataSource(String title)
+    throws SAXException {
+        String refId = datasources.get(title);
+        if (refId == null) {
+            Item item = createItem("DataSource");
+            item.setAttribute("name", title);
+            refId = item.getIdentifier();
+            datasources.put(title, refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+        return refId;
+    }
+
+    private String getDataSet(String title)
+    throws SAXException {
+        String refId = datasets.get(title);
+        if (refId == null) {
+            Item item = createItem("DataSet");
+            item.setAttribute("title", title + " data set");
+            item.setReference("dataSource", datasourceRefId);
+            refId = item.getIdentifier();
+            datasets.put(title, refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+        return refId;
     }
 }
