@@ -300,8 +300,10 @@ public class UniprotConverter extends DirectoryConverter
         protein.setAttribute("uniprotAccession", entry.getUniprotAccession());
         String primaryAccession = entry.getPrimaryAccession();
         protein.setAttribute("primaryAccession", primaryAccession);
+
         String primaryIdentifier = entry.getPrimaryIdentifier();
         protein.setAttribute("uniprotName", primaryIdentifier);
+
         // primaryIdentifier must be unique, so append isoform suffix, eg -1
         if (entry.isIsoform()) {
             primaryIdentifier = getIsoformIdentifier(primaryAccession, primaryIdentifier);
@@ -676,7 +678,8 @@ public class UniprotConverter extends DirectoryConverter
                             && attrs.getValue("type").equals("entry name")) {
                 String domain = entry.getAttribute();
                 if (domain.startsWith("IPR")) {
-                    entry.addDomainRefId(getInterpro(domain, attrs.getValue("value")));
+                    entry.addDomainRefId(getInterpro(domain, attrs.getValue("value"),
+                                                     entry.getDatasetRefId()));
                 }
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
                 taxonId = attrs.getValue("id");
@@ -906,13 +909,14 @@ public class UniprotConverter extends DirectoryConverter
         return refId;
     }
 
-    private String getInterpro(String identifier, String shortName)
+    private String getInterpro(String identifier, String shortName, String datasetRefId)
     throws SAXException {
         String refId = domains.get(identifier);
         if (refId == null) {
             Item item = createItem("ProteinDomain");
             item.setAttribute("primaryIdentifier", identifier);
             item.setAttribute("shortName", shortName);
+            item.addToCollection("dataSets", datasetRefId);
             refId = item.getIdentifier();
             domains.put(identifier, refId);
             try {
@@ -920,6 +924,7 @@ public class UniprotConverter extends DirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
+            getSynonym(refId, "identifier", identifier, "true", datasetRefId);
         }
         return refId;
     }

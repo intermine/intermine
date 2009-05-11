@@ -66,6 +66,12 @@
 <keyword id="KW-0001">keyword!</keyword>
 <keyword id="KW-0002">Complete proteome</keyword>
 <keyword id="KW-0003">DNA-binding</keyword>
+<dbReference type="InterPro" id="IPR001356" key="64">
+<property type="entry name" value="Homeobox"/>
+</dbReference>
+<dbReference type="InterPro" id="IPR017970" key="65">
+<property type="entry name" value="Homeobox_CS"/>
+</dbReference>
 <feature type="helix">
 <location>
 <begin position="79"/>
@@ -92,47 +98,6 @@ NPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHH
 PHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSL
 SPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTV
 IAEPKPKLFKPYKTEA
-</sequence>
-</entry>
-<entry dataset="Swiss-Prot" created="1988-01-01" modified="2008-04-29" version="93">
-<accession>Q000</accession>
-<name>JULIE_DROME</name>
-<protein>
-    <submittedName>
-      <fullName evidence="EI1">12 days embryo spinal ganglion cDNA, RIKEN full-length enriched library, clone:D130050H01 product:similar to kruppel-related zinc finger protein F80-L</fullName>
-    </submittedName>
-</protein>
-<gene>
-  <name type="primary">julie jeans</name>
-  <name type="ORF">CG2222</name>
-</gene>
-<organism key="1">
-  <dbReference type="NCBI Taxonomy" id="7227" key="2"/>
-</organism>
-<reference key="3">
-  <citation>
-    <dbReference type="PubMed" id="1111111" key="6"/>
-  </citation>
-</reference>
-<comment type="similarity">
-  <text>I'm a duplicate!</text>
-</comment>
-<dbReference type="FlyBase" id="FBgn0000001" key="40">
-  <property type="gene designation" value="julie jeans"/>
-</dbReference>
-<dbReference type="GO" id="GO:0001" key="44">
-  <property type="term" value="go term!"/>
-  <property type="evidence" value="NAS:FlyBase"/>
-</dbReference>
-<keyword id="KW-0539">keyword!</keyword>
-<feature type="feature!" description="description!" id="1">
-<location>
-  <begin position="1"/>
-  <end position="2"/>
-</location>
-</feature>
-<sequence length="13" mass="31" checksum="59058E0634B1BED0" modified="2000-12-01" version="3">
-JULIESEQUENCE
 </sequence>
 </entry>
 <copyright>
