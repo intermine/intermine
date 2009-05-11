@@ -1,114 +1,67 @@
 <items>
-<item id="4_1" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR000002"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="1_2" class="DataSet">
-<attribute name="title" value="Datasource 1 data set"/>
-<reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="4_10" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR300000"/>
-<reference name="subject" ref_id="2_6"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="2_8" class="ProteinDomain">
-<attribute name="description" value="&lt;p&gt;PAS domains are involved in many signalling proteins where theyare used as a signal sensor domain. PAS domains appear in archaea,bacteria and eukaryotes. Several PAS-domain proteins are known todetect their signal by way of an associated cofactor. Haeme,flavin, and a 4-hydroxycinnamyl chromophore are used in differentproteins. The PAS domain was named after three proteins that itoccurs in: &lt;/p&gt;&lt;li&gt;Per- period circadian protein&lt;/li&gt;&lt;li&gt;Arnt- Ah receptor nuclear translocator protein&lt;/li&gt;&lt;li&gt;Sim-  single-minded protein.&lt;/li&gt;&lt;p&gt;PAS domains are often associated withPAC domains .  It appears that these domains are directly linked, and that together they form the conserved 3D PAS fold.  The division between the PAS and PAC domains is caused by major differences in sequences in the region connecting these two motifs .  In human PAS kinase, this region has been shown to be very flexible, and adopts different conformations depending on the bound ligand .Probably the most surprising identification of a PAS domain was that inEAG-like K&lt;sup&gt;+&lt;/sup&gt;-channels .&lt;/p&gt;"/>
-<attribute name="name" value="monkey pants"/>
-<attribute name="primaryIdentifier" value="IPR00002"/>
-<attribute name="shortName" value="monkey"/>
-<attribute name="type" value="Domain"/>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_5"/></collection>
-</item>
-<item id="2_1" class="ProteinDomain">
-<attribute name="description" value="Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.Kringle domains are believed to play a role in binding mediators (e.g., membranes,other proteins or phospholipids), and in the regulation of proteolytic activity, , . Kringle domains , , are characterised by a triple loop, 3-disulphide bridge structure, whose  conformation is defined by a number of hydrogen bonds and small pieces of  anti-parallel beta-sheet. They are found in a varying number  of  copies  in some plasma proteins including prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to MEROPS peptidase family S1A."/>
-<attribute name="name" value="supertubby"/>
-<attribute name="primaryIdentifier" value="IPR000001"/>
-<attribute name="shortName" value="tubby"/>
-<attribute name="type" value="Domain"/>
-<collection name="childFeatures"><reference ref_id="2_3"/><reference ref_id="2_4"/><reference ref_id="2_5"/></collection>
-<collection name="contains"><reference ref_id="2_6"/></collection>
-<collection name="foundIn"><reference ref_id="2_7"/><reference ref_id="2_6"/><reference ref_id="2_3"/><reference ref_id="2_4"/><reference ref_id="2_5"/><reference ref_id="2_2"/></collection>
-<collection name="parentFeatures"><reference ref_id="2_2"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/><reference ref_id="3_4"/></collection>
-</item>
-<item id="4_15" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR00002"/>
-<reference name="subject" ref_id="2_8"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_4" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Synonym 2"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_2"/></collection>
-</item>
-<item id="3_5" class="Publication">
-<attribute name="pubMedId" value="9999999"/>
-</item>
-<item id="2_3" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR200001"/>
-</item>
-<item id="4_8" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Synonym 5"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_4"/></collection>
-</item>
-<item id="3_1" class="Publication">
-<attribute name="pubMedId" value="1111111"/>
-</item>
-<item id="4_2" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Synonym 1"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_2"/></collection>
-</item>
-<item id="4_14" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR000001"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="3_2" class="Publication">
-<attribute name="pubMedId" value="2222222"/>
-</item>
-<item id="4_11" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR100000"/>
-<reference name="subject" ref_id="2_2"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="2_6" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR300000"/>
-</item>
-<item id="4_3" class="Synonym">
+<item id="3_6" class="Synonym">
 <attribute name="type" value="name"/>
 <attribute name="value" value="Name 1"/>
 <reference name="subject" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_2"/></collection>
 </item>
-<item id="4_7" class="Synonym">
+<item id="1_2" class="DataSet">
+<attribute name="title" value="Datasource 1 data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="3_13" class="Synonym">
 <attribute name="type" value="name"/>
-<attribute name="value" value="Name 2"/>
+<attribute name="value" value="NAME 1"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_4"/></collection>
+</item>
+<item id="2_3" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR200001"/>
+</item>
+<item id="3_5" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Synonym 1"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_2"/></collection>
+</item>
+<item id="3_8" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Synonym 3"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_2"/></collection>
+</item>
+<item id="2_6" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR300000"/>
+</item>
+<item id="3_1" class="Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="tubby"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_1" class="Publication">
+<attribute name="pubMedId" value="1111111"/>
+</item>
+<item id="3_9" class="Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="name 1"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_2"/></collection>
+</item>
+<item id="3_10" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="Synonym 4"/>
 <reference name="subject" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_3"/></collection>
 </item>
-<item id="4_12" class="Synonym">
+<item id="3_12" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR400000"/>
-<reference name="subject" ref_id="2_7"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<attribute name="value" value="Synonym 5"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_4"/></collection>
 </item>
-<item id="4_16" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR200002"/>
-<reference name="subject" ref_id="2_4"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<item id="4_2" class="Publication">
+<attribute name="pubMedId" value="2222222"/>
 </item>
 <item id="1_1" class="DataSet">
 <attribute name="title" value="InterPro data set"/>
@@ -117,30 +70,49 @@
 <item id="2_5" class="ProteinDomain">
 <attribute name="primaryIdentifier" value="IPR200003"/>
 </item>
-<item id="3_4" class="Publication">
-<attribute name="pubMedId" value="4444444"/>
-</item>
-<item id="4_9" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR200001"/>
-<reference name="subject" ref_id="2_3"/>
+<item id="3_3" class="Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="supertubby"/>
+<reference name="subject" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="4_13" class="Synonym">
+<item id="3_7" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="IPR200003"/>
-<reference name="subject" ref_id="2_5"/>
+<attribute name="value" value="Synonym 2"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_2"/></collection>
+</item>
+<item id="3_11" class="Synonym">
+<attribute name="type" value="name"/>
+<attribute name="value" value="Name 2"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_3"/></collection>
+</item>
+<item id="4_3" class="Publication">
+<attribute name="pubMedId" value="3333333"/>
+</item>
+<item id="3_4" class="Synonym">
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="IPR000002"/>
+<reference name="subject" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="2_1" class="ProteinDomain">
+<attribute name="description" value="Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.Kringle domains are believed to play a role in binding mediators (e.g., membranes,other proteins or phospholipids), and in the regulation of proteolytic activity, , .Kringle domains , , are characterised by a triple loop, 3-disulphide bridge structure, whose  conformation is defined by a number of hydrogen bonds and small pieces of  anti-parallel beta-sheet. They are found in a varying number  of  copies  in some plasma proteins including prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to MEROPS peptidase family S1A."/>
+<attribute name="name" value="supertubby"/>
+<attribute name="primaryIdentifier" value="IPR000001"/>
+<attribute name="shortName" value="tubby"/>
+<attribute name="type" value="Domain"/>
+<collection name="childFeatures"><reference ref_id="2_3"/><reference ref_id="2_4"/><reference ref_id="2_5"/></collection>
+<collection name="contains"><reference ref_id="2_6"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="foundIn"><reference ref_id="2_7"/><reference ref_id="2_6"/><reference ref_id="2_3"/><reference ref_id="2_4"/><reference ref_id="2_5"/><reference ref_id="2_2"/></collection>
+<collection name="parentFeatures"><reference ref_id="2_2"/></collection>
+<collection name="publications"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
 </item>
 <item id="1_4" class="DataSet">
 <attribute name="title" value="Datasource 3 data set"/>
 <reference name="dataSource" ref_id="0_1"/>
-</item>
-<item id="4_5" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="Synonym 3"/>
-<reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_2"/></collection>
 </item>
 <item id="1_3" class="DataSet">
 <attribute name="title" value="Datasource 2 data set"/>
@@ -149,22 +121,22 @@
 <item id="2_2" class="ProteinDomain">
 <attribute name="primaryIdentifier" value="IPR100000"/>
 </item>
-<item id="4_6" class="Synonym">
+<item id="3_2" class="Synonym">
 <attribute name="type" value="identifier"/>
-<attribute name="value" value="Synonym 4"/>
+<attribute name="value" value="IPR000001"/>
 <reference name="subject" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_3"/></collection>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="0_1" class="DataSource">
 <attribute name="name" value="InterPro"/>
 </item>
-<item id="3_3" class="Publication">
-<attribute name="pubMedId" value="3333333"/>
+<item id="2_7" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR400000"/>
 </item>
 <item id="2_4" class="ProteinDomain">
 <attribute name="primaryIdentifier" value="IPR200002"/>
 </item>
-<item id="2_7" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR400000"/>
+<item id="4_4" class="Publication">
+<attribute name="pubMedId" value="4444444"/>
 </item>
 </items>

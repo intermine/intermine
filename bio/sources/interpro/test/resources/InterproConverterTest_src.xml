@@ -7,7 +7,7 @@
 Kringles are autonomous structural domains, found throughout the blood clotting and fibrinolytic proteins.
 Kringle domains are believed to play a role in binding mediators (e.g., membranes,
 other proteins or phospholipids), and in the regulation of proteolytic activity
-<cite idref="PUB00002414"/>, <cite idref="PUB00001541"/>, <cite idref="PUB00003257"/>. 
+<cite idref="PUB00002414"/>, <cite idref="PUB00001541"/>, <cite idref="PUB00003257"/>.
 Kringle domains <cite idref="PUB00003400"/>, <cite idref="PUB00000803"/>, <cite idref="PUB00001620"/> are characterised by a triple loop, 3-disulphide bridge structu
 re, whose  conformation is defined by a number of hydrogen bonds and small pieces of  anti-parallel beta-sheet. They are found in a varying number  of  copies  in so
 me plasma proteins including prothrombin and urokinase-type plasminogen activator, which are serine proteases belonging to MEROPS peptidase family S1A.
@@ -54,21 +54,21 @@ me plasma proteins including prothrombin and urokinase-type plasminogen activato
       <rel_ref ipr_ref="IPR200001" />
       <rel_ref ipr_ref="IPR200002" />
       <rel_ref ipr_ref="IPR200003" />
-    </child_list>    
+    </child_list>
     <contains>
       <rel_ref ipr_ref="IPR300000" />
-    </contains>  
+    </contains>
     <found_in>
       <rel_ref ipr_ref="IPR400000" />
-	<rel_ref ipr_ref="IPR300000" />
+  <rel_ref ipr_ref="IPR300000" />
       <rel_ref ipr_ref="IPR200001" />
       <rel_ref ipr_ref="IPR200002" />
       <rel_ref ipr_ref="IPR200003" />
-		<rel_ref ipr_ref="IPR100000" />
-    </found_in>    
+    <rel_ref ipr_ref="IPR100000" />
+    </found_in>
     <sec_list>
       <sec_ac acc="IPR000002" />
-    </sec_list>   
+    </sec_list>
     <member_list>
       <db_xref protein_count="321" db="Datasource 1" dbkey="Synonym 1" name="Name 1" />
       <db_xref protein_count="287" db="Datasource 1" dbkey="Synonym 2" name="Name 1" />
@@ -78,64 +78,5 @@ me plasma proteins including prothrombin and urokinase-type plasminogen activato
 
     </member_list>
   </interpro>
-  
-  <interpro id="IPR00002" type="Domain" short_name="monkey" protein_count="13917">
-    <name>monkey pants</name>
-    <abstract>
-&lt;p&gt;PAS domains are involved in many signalling proteins where they
-are used as a signal sensor domain. PAS domains appear in archaea,
-bacteria and eukaryotes. Several PAS-domain proteins are known to
-detect their signal by way of an associated cofactor. Haeme,
-flavin, and a 4-hydroxycinnamyl chromophore are used in different
-proteins. The PAS domain was named after three proteins that it
-occurs in: &lt;/p&gt;
-&lt;li&gt;Per- period circadian protein&lt;/li&gt;
-&lt;li&gt;Arnt- Ah receptor nuclear translocator protein&lt;/li&gt;
-&lt;li&gt;Sim-  single-minded protein.&lt;/li&gt;
-&lt;p&gt;PAS domains are often associated with
-PAC domains <db_xref db="INTERPRO" dbkey="IPR001610"/>.  It appears that these domains are directly linked, and that together they form the conserved 3D PAS fold.  The division between the PAS and PAC domains is caused by major differences in sequ
-ences in the region connecting these two motifs <cite idref="PUB00014500"/>.  In human PAS kinase, this region has been shown to be very flexible, and adopts different conformations depending on the bound ligand <cite idref="PUB00014501"/>.
-Probably the most surprising identification of a PAS domain was that in
-EAG-like K&lt;sup&gt;+&lt;/sup&gt;-channels <cite idref="PUB00005472"/>.&lt;/p&gt;
+</interprodb>
 
-</abstract>
-    <class_list>
-      <classification id="GO:0004871" class_type="GO">
-        <category>Molecular Function</category>
-        <description>signal transducer activity</description>
-      </classification>
-      <classification id="GO:0007165" class_type="GO">
-        <category>Biological Process</category>
-       </classification>
-    </class_list>
-    <example_list />
-    <pub_list>
-      <publication id="PUB00014500">
-        <author_list>Dixon R., Vervoort J., Hefti M.H., Francoijs K.J., De vries S.C.</author_list>
-        <title>The PAS fold.</title>
-        <db_xref db="PUBMED" dbkey="1111111" />
-        <journal>Eur. J. Biochem.</journal>
-        <location firstpage="1198" lastpage="1208" volume="271" issue="6" />
-        <year>2004</year>
-      </publication>
-      <publication id="PUB00014501">
-        <author_list>Amezcua C.A., Harper S.M., Rutter J., Gardner K.H.</author_list>
-        <title>Structure and interactions of PAS kinase N-terminal PAS domain: model for intramolecular kinase regulation.</title>
-        <db_xref db="PUBMED" dbkey="2222222" />
-        <journal>Structure</journal>
-        <location firstpage="1349" lastpage="1361" volume="10" issue="10" />
-        <year>2002</year>
-      </publication>
-      <publication id="PUB00005472">
-        <author_list>Dixon R., Zhulin I.B., Taylor B.L.</author_list>
-        <title>PAS domain S-boxes in Archaea, Bacteria and sensors for oxygen and redox.</title>
-        <db_xref db="PUBMED" dbkey="9999999" />
-        <journal>Trends Biochem. Sci.</journal>
-        <location firstpage="331" lastpage="333" volume="22" issue="9" />
-        <year>1997</year>
-      </publication>
-    </pub_list>
-  </interpro>
-</interprodb>   
-    
-      
