@@ -50,6 +50,7 @@ public class UniprotEntry
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String seqRefId, md5checksum;
+    private String commentType;
 
     // temporary object that holds attribute value until the item is stored on the next line of XML
     private String temp = null;
@@ -793,5 +794,19 @@ public class UniprotEntry
         entry.setProteinNames(proteinNames);
         entry.setHasMultipleGenes(hasMultipleGenes);
         return entry;
+    }
+
+    /**
+     * @return the commentType
+     */
+    public String getCommentType() {
+        return commentType;
+    }
+
+    /**
+     * @param commentType the commentType to set
+     */
+    public void setCommentType(String commentType) {
+        this.commentType = commentType;
     }
 }
