@@ -558,15 +558,15 @@ public class UniprotEntry
     /**
      * sets isIsoform to be false.  This is the isoform, but it's the canonical one so it is not
      * processed any different from a regular uniprot protein.
-     * moves current primary accession to accessions list and uses
-     * new isoform accession as primary accession.
-     * synonyms are made for all accessions.
+     * A synonym is made for the isoform accession, usually something like Q1234-1.  The
+     * primary accession is not changed for this protein due to integration issues.
+     *
+     * The uniprotAccession for all other isoforms will be the same as this entry's primaryaccession
      * @param accession for this isoform
      */
     public void setCanonicalIsoform(String accession) {
         isIsoform = false;
-        accessions.add(primaryAccession);
-        primaryAccession = accession;
+        accessions.add(accession);
     }
 
     /**

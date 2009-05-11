@@ -3,6 +3,27 @@
 <attribute name="text" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
 </item>
+<item id="10_1" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="true"/>
+<attribute name="length" value="376"/>
+<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
+<attribute name="molecularWeight" value="39970"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="Q1234"/>
+<attribute name="primaryIdentifier" value="EVE_DROME"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="organism" ref_id="11_1"/>
+<reference name="sequence" ref_id="9_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="features"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
+<collection name="genes"><reference ref_id="13_1"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
 <item id="5_3" class="OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="1_1"/>
@@ -50,6 +71,13 @@
 <reference name="subject" ref_id="10_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="7_6" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q1234"/>
+<reference name="subject" ref_id="10_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="7_11" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
@@ -80,26 +108,12 @@
 <reference name="subject" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="true"/>
-<attribute name="length" value="376"/>
-<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
-<attribute name="molecularWeight" value="39970"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="Q1234-1"/>
-<attribute name="primaryIdentifier" value="EVE_DROME"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequence" ref_id="9_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
+<item id="7_13" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="accession"/>
+<attribute name="value" value="Q1234-1"/>
+<reference name="subject" ref_id="10_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="features"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
-<collection name="genes"><reference ref_id="13_1"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="11_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
@@ -149,13 +163,6 @@
 <item id="7_7" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="accession"/>
-<attribute name="value" value="Q1234"/>
-<reference name="subject" ref_id="10_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="7_6" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="accession"/>
 <attribute name="value" value="Q1234-1"/>
 <reference name="subject" ref_id="10_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -203,13 +210,6 @@
 <item id="12_1" class="Component">
 <attribute name="name" value="full component name"/>
 <reference name="protein" ref_id="10_1"/>
-</item>
-<item id="7_13" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="accession"/>
-<attribute name="value" value="Q1234"/>
-<reference name="subject" ref_id="10_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
