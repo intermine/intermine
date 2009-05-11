@@ -397,24 +397,14 @@ public class CreateIndexesTask extends Task
             String keyName = (String) entry.getKey();
             PrimaryKey key = (PrimaryKey) entry.getValue();
             List fieldNames = new ArrayList();
-            boolean firstOne = true;
-            boolean doNulls = false;
             for (Iterator j = key.getFieldNames().iterator(); j.hasNext();) {
                 String fieldName = (String) j.next();
                 FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
-                if (firstOne) {
-                    if (fd instanceof AttributeDescriptor) {
-                        doNulls = !((AttributeDescriptor) fd).isPrimitive();
-                    } else if (fd instanceof ReferenceDescriptor) {
-                        doNulls = true;
-                    }
-                }
                 if (fd == null) {
                     throw new MetaDataException("field (" + fieldName + ") not found for class: "
                                                 + cld.getName() + " for key name " + keyName + ".");
                 }
                 fieldNames.add(DatabaseUtil.getColumnName(fd));
-                firstOne = false;
             }
 
             // create indexes on this class and on all subclasses
@@ -437,12 +427,6 @@ public class CreateIndexesTask extends Task
                     addStatement(statements, indexNameBase, tableName,
                                  StringUtil.join(fieldNames, ", ") + (simpleClass ? "" : ", id"),
                                  nextCld, tableMaster);
-                    if (doNulls) {
-                        addStatement(statements,
-                                     indexNameBase + "__nulls",
-                                     tableName, "(" + fieldNames.get(0) + " IS NULL)",
-                                     nextCld, tableMaster);
-                    }
                     doneFieldNames.add(fieldNames.get(0));
                 }
             }
@@ -544,11 +528,6 @@ public class CreateIndexesTask extends Task
 
                 } else {
                     addStatement(statements, indexName, tableName, fieldName, cld, null);
-                }
-                if (!att.isPrimitive()) {
-                    addStatement(statements,
-                                 indexName + "__nulls", tableName, "(" + fieldName + " IS NULL)",
-                                 cld, null);
                 }
             }
         }
