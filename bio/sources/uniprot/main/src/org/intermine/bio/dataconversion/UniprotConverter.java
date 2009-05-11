@@ -689,7 +689,7 @@ public class UniprotConverter extends DirectoryConverter
                 entry.addPub(getPub(attrs.getValue("id")));
             } else if (qName.equals("comment") && attrs.getValue("type") != null
                             && !attrs.getValue("type").equals("")) {
-                entry.addAttribute(attrs.getValue("type"));
+                entry.setCommentType(attrs.getValue("type"));
             } else if (qName.equals("text") && stack.peek().equals("comment")
                             && entry.processing()) {
                 attName = "text";
@@ -753,7 +753,8 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("text") && stack.peek().equals("comment")) {
                 String commentText = attValue.toString();
                 if (commentText != null  & !commentText.equals("")) {
-                    entry.addCommentRefId(getComment(entry.getAttribute(), commentText));
+                    entry.addCommentRefId(getComment(entry.getCommentType(), commentText));
+                    entry.setCommentType(null);
                 }
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
                 String type = attName;
