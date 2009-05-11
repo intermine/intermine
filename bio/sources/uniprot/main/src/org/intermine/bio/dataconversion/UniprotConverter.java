@@ -925,6 +925,7 @@ public class UniprotConverter extends DirectoryConverter
                 throw new SAXException(e);
             }
             getSynonym(refId, "identifier", identifier, "true", datasetRefId);
+            getSynonym(refId, "name", shortName, "false", datasetRefId);
         }
         return refId;
     }

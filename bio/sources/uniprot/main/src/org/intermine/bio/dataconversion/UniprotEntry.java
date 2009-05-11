@@ -766,8 +766,9 @@ public class UniprotEntry
      * no:
      *  features
      *  gene items, just identifiers  - for memory reasons
-     *  sequence
+     *  sequence, length, molecular weight, md5checksum
      *  components - per rachel
+     *
      *
      * @param accession for isoform
      * @return cloned uniprot entry, an isoform of original entry
@@ -775,16 +776,13 @@ public class UniprotEntry
     public UniprotEntry clone(String accession) {
         UniprotEntry entry = new UniprotEntry(accession);
         entry.setIsoform(true);
+        entry.setDuplicate(false);
         entry.setDatasetRefId(datasetRefId);
         entry.setPrimaryIdentifier(primaryIdentifier);
-        entry.setLength(length);
-        entry.setMolecularWeight(molecularWeight);
-        entry.setDuplicate(false);
         entry.setTaxonId(taxonId);
         entry.setName(name);
         entry.setFragment(isFragment);
         entry.setUniprotAccession(uniprotAccession);
-        entry.setMd5checksum(md5checksum);
         entry.setDbrefs(dbrefs);
         entry.setAccessions(accessions);
         entry.setComments(comments);
@@ -796,5 +794,4 @@ public class UniprotEntry
         entry.setHasMultipleGenes(hasMultipleGenes);
         return entry;
     }
-
 }
