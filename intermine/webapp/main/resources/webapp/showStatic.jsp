@@ -4,7 +4,10 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
-<!-- begin.jsp -->
+<!-- showStatic.jsp -->
 <html:xhtml/>
 
 <im:getStatic path='<%= request.getParameter("path") %>'/>
+
+
+<!-- /showStatic.jsp -->
