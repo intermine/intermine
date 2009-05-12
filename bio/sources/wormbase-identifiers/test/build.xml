@@ -1,8 +1,8 @@
-<project name="sources-flybae-identifiers-test" default="default" basedir="."
+<project name="sources-wormbase-identifiers-test" default="default" basedir="."
          xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
          xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
 
-  <description>build and test sources-flybae-identifiers-test</description>
+  <description>build and test sources-wormbase-identifiers-test</description>
 
   <import file="../../../../imbuild/tests.xml"/>
   <import file="../../../../imbuild/task.xml"/>
