@@ -200,7 +200,7 @@ public class InterProConverter extends FileConverter
         }
 
         private void createSynonym(String subject, String type, String value, String refId) {
-            String key = subject + type + value + refId;
+            String key = value;
             if (synonyms.get(key) == null) {
                 Item syn = createItem("Synonym");
                 syn.setReference("subject", subject);
