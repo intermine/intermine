@@ -465,10 +465,24 @@ public class UniprotConverter extends DirectoryConverter
                     continue;
                 }
                 String identifier = getGeneIdentifier(entry, taxonId, geneField, geneSynonyms);
+
                 if (identifier == null) {
                     LOG.error("Couldn't process gene, no " + geneField);
                     continue;
                 }
+
+                /*
+                 * if the protein is an isoform, this gene has already been processed so the
+                 * identifier will always be a duplicate in this case.
+                 */
+                if (!entry.isIsoform() && geneIdentifiers.contains(identifier)) {
+                    LOG.error("not assigning duplicate identifier:  " + identifier);
+                    continue;
+                    // if the canonical protein is processed and the gene has a duplicate
+                    // identifier, we need to flag so the gene won't be created for the isoform
+                    // either.
+                }
+                geneIdentifiers.add(identifier);
                 gene.setAttribute(geneField, identifier);
             }
             try {
@@ -520,21 +534,7 @@ public class UniprotConverter extends DirectoryConverter
             identifierValue = resolveGene(taxonId, identifierValue);
         }
 
-        /*
-         * if the protein is an isoform, this gene has already been processed so the identifier
-         * will always be a duplicate in this case.
-         */
-        if ((!entry.isIsoform() && geneIdentifiers.contains(identifierValue))
-                        || entry.isDuplicateGene()) {
-            LOG.error("not assigning duplicate identifier:  " + identifierValue);
-            identifierValue = null;
 
-            // if the canonical protein is processed and the gene has a duplicate identifier, we
-            // need to flag so the gene won't be created for the isoform either.
-            entry.setDuplicateGene(true);
-        } else {
-            geneIdentifiers.add(identifierValue);
-        }
 
         return identifierValue;
     }
@@ -548,8 +548,7 @@ public class UniprotConverter extends DirectoryConverter
 
         int resCount = resolver.countResolutions(taxonId, identifier);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene"
-                     + ": "
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + identifier + " count: " + resCount + " FBgn: "
                      + resolver.resolveId(taxonId, identifier));
             return null;
