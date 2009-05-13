@@ -39,63 +39,81 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
 
+    // submission maps
+    // ---------------
+    
+    private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
+    // maps from chado identifier to lab/project details
+    private Map<Integer, SubmissionDetails> submissionMap =
+        new HashMap<Integer, SubmissionDetails>();
+    // maps of the initial input data and final output data for a submission
+    private Map<Integer, List<Integer>> inputsMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> outputsMap =
+        new HashMap<Integer, List<Integer>>();
+
+    // maps of each submission input with its (submission) output data and vice versa
+    private Map<Integer, List<Integer>> inOutDataMap = new HashMap<Integer, List<Integer>>();
+    private Map<Integer, List<Integer>> outInDataMap = new HashMap<Integer, List<Integer>>();
+
+    
+    // applied_protocol/data/attribute maps
+    // -------------------
+
+    // chado submission id to chado data_id
+    private Map<Integer, List<Integer>> submissionDataMap = new HashMap<Integer, List<Integer>>();
+    // chado data id to chado submission id
+    private Map<Integer, Integer> dataSubmissionMap = new HashMap<Integer, Integer>();
+    
+    // used when traversing dag of applied protocols
+    private Map<Integer, AppliedProtocol> appliedProtocolMap =
+        new HashMap<Integer, AppliedProtocol>();
+    // used when traversing dag of applied protocols
+    private Map<Integer, AppliedData> appliedDataMap =
+        new HashMap<Integer, AppliedData>();
+
+    
+    // project/lab/submission maps
+    // ---------------------------
+
+    // for labs, the maps link the lab name with the identifiers...
+    private Map<String, Integer> labIdMap = new HashMap<String, Integer>();
+    private Map<String, String> labIdRefMap = new HashMap<String, String>();
+    // for projects, the maps link the project name with the identifiers...
+    private Map<String, Integer> projectIdMap = new HashMap<String, Integer>();
+    private Map<String, String> projectIdRefMap = new HashMap<String, String>();
+    // ...we need a further map to link to submission 
+    private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
+    // ...we need a further map to link to submission 
+    private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
+
+
+    // submission/applied_protocol/protocol maps
+    // -----------------------------------------
+
     // maps to link chado identifiers with intermineObjectId (Integer, Integer)
     // and chado identifiers with item identifiers (Integer, String)
     private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
+    // list of firstAppliedProtocols, first level of the DAG linking
+    // the applied protocols through the data (and giving the flow of data)
+    private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
 
-    // for projects, the maps link the project name with the identifiers...
-    private Map<String, Integer> projectIdMap = new HashMap<String, Integer>();
-    private Map<String, String> projectIdRefMap = new HashMap<String, String>();
-    // ...we need a further map to link to submission 
-    private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
-
-    // for labs, the maps link the lab name with the identifiers...
-    private Map<String, Integer> labIdMap = new HashMap<String, Integer>();
-    private Map<String, String> labIdRefMap = new HashMap<String, String>();
-    // ...we need a further map to link to submission 
-    private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
-
+    
+    // experimental factor maps
+    // ------------------------
 
     // for labs, the maps link the experimental factor name with the identifiers...
     private Map<String, Integer> eFactorIdMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
-    // ...we need a further map to link to submission 
     private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
 
-    private Map<String, String> cvtermCache = new HashMap();
+    // caches
+    // ------
+    // cache cv term names by id
+    private Map<String, String> cvtermCache = new HashMap<String, String>();
     
-    //  private Map<String, Integer> organismIdMap = new HashMap<String, Integer>();
-//  private Map<String, String> organismIdRefMap = new HashMap<String, String>();
-    private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
-
-    // maps from chado identifier to specific objects
-    private Map<Integer, SubmissionDetails> submissionMap =
-        new HashMap<Integer, SubmissionDetails>();
-    private Map<Integer, AppliedProtocol> appliedProtocolMap =
-        new HashMap<Integer, AppliedProtocol>();
-    private Map<Integer, AppliedData> appliedDataMap =
-        new HashMap<Integer, AppliedData>();
-
-    // list of firstAppliedProtocols, first level of the DAG linking
-    // the applied protocols through the data (and giving the flow
-    // of data)
-    private List<Integer> firstAppliedProtocols = new ArrayList<Integer>();
-
-    // maps of the initial input data and final output data for a submission
-    private Map<Integer, List<Integer>> inputsMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> outputsMap =
-        new HashMap<Integer, List<Integer>>();
-
-    // map used to store all data relative to a submission
-    // submissionId, list of appliedDataIds
-    private Map<Integer, List<Integer>> submissionDataMap = new HashMap<Integer, List<Integer>>();
-
-    // maps of each submission input with its (submission) output data and vice versa
-    private Map<Integer, List<Integer>> inOutDataMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> outInDataMap = new HashMap<Integer, List<Integer>>();
 
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
@@ -109,14 +127,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer interMineObjectId;
         // the identifier assigned to lab Item for this object
         private String labItemIdentifier;
-        // the identifier assigned to organism Item for this object
         private String organismItemIdentifier;
     }
 
     /**
-     * AppliedProtocol class
-     * to reconstruct the flow of submission data
-     *
+     * AppliedProtocol class to reconstruct the flow of submission data
      */
     private static class AppliedProtocol
     {
@@ -448,8 +463,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (res.isLast()) {
                     if (direction.equalsIgnoreCase("output")) {
                         node.outputs.add(dataId);
-                        addToMap (submissionDataMap, submissionId, dataId);
-//                        LOG.info("DATA last out" + submissionId + "|" + dataId); 
+                        addToMap(submissionDataMap, submissionId, dataId);
+                        dataSubmissionMap.put(dataId, submissionId);
+                        // LOG.info("DATA last out" + submissionId + "|" + dataId); 
                     }
                 }
 
@@ -928,37 +944,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-    /**
-     * to store lab attributes
-     * 
-     * NOTE: Not used now. 
-     * TODO: to remove
-     * 
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
-     */
-    private void processLabAttributes(Connection connection)
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getLabAttributesResultSet(connection);
-        int count = 0;
-        while (res.next()) {
-            Integer submissionId = new Integer(res.getInt("experiment_id"));
-            String heading = res.getString("name");
-            String value = res.getString("value");
-            String fieldName = PROVIDER_FIELD_NAME_MAP.get(heading);
-            if (fieldName == null) {
-                LOG.error("NOT FOUND in PROVIDER_FIELD_NAME_MAP: " + heading);
-                continue;
-            } else if (fieldName == NOT_TO_BE_LOADED) {
-                continue;
-            }
-            setAttribute(labIdMap.get(submissionId), fieldName, value);
-            count++;
-        }
-        LOG.info("created " + count + " lab properties");
-        res.close();
-    }
 
     /**
      * Return the rows needed for lab from the lab_prop table.
@@ -1136,7 +1121,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             String heading = res.getString("name");
             String value = res.getString("value");
-            int rank = res.getInt("rank");
 
             // TODO this is a temporary hack to make sure we get properly matched Experiment.factors
             // EF are dealt with separately
