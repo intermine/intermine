@@ -65,7 +65,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // ...we need a further map to link to submission 
     private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
 
-    
+    private Map<String, String> cvtermCache = new HashMap();
     
     //  private Map<String, Integer> organismIdMap = new HashMap<String, Integer>();
 //  private Map<String, String> organismIdRefMap = new HashMap<String, String>();
@@ -1451,6 +1451,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String name = res.getString("name");
             String heading = res.getString("heading");
             String value = null;
+            String typeId = res.getString("type_id");
             
             // check if this datum has an official name:
             ResultSet oName = getOfficialName(connection, dataId); 
@@ -1471,9 +1472,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (name != null && !name.equals("")) {
                 submissionData.setAttribute("name", name);
             }
-            if ((name == null || name.equals("")) && heading != null && heading.contains(" Name")) {
-                submissionData.setAttribute("name", heading.replace(" Name", ""));
+            // if no name for attribute fetch the cvterm of the type
+            if ((name == null || name.equals("")) && typeId != null) {
+            	name = getCvterm(connection, typeId);
+            	submissionData.setAttribute("name", name);
             }
+
             if (!StringUtils.isEmpty(value)) {
                 submissionData.setAttribute("value", value);
             }
@@ -1505,7 +1509,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException {
         String query =
             "SELECT d.data_id,"
-            + " d.heading, d.name, d.value"
+            + " d.heading, d.name, d.value, d.type_id"
             + " FROM data d";
 
         LOG.info("executing: " + query);
@@ -1539,6 +1543,33 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
+    /**
+     * Fetch a cvterm by id and cache results in cvtermCache.  Returns null if the cv terms isn't
+     * found.
+     * @param connection to chado database
+     * @param cvtermId internal chado id for a cvterm
+     * @return the cvterm name or null if not found
+     * @throws SQLException if database access problem
+     */
+    private String getCvterm(Connection connection, String cvtermId) throws SQLException {
+    	String cvTerm = cvtermCache.get(cvtermId);
+    	if (cvTerm == null) {
+    		String query =
+                "SELECT c.name " 
+                + " from cvterm c"
+                + " where c.cvterm_id=" + cvtermId;
+
+            Statement stmt = connection.createStatement();
+           
+            ResultSet res = stmt.executeQuery(query);
+            while (res.next()) {
+            	cvTerm = res.getString("name");
+            }
+            cvtermCache.put(cvtermId, cvTerm);
+    	}
+    	return cvTerm;	
+    }
+    
     /*
      * an attempt to get data and attribute all together
      * it's bugged
