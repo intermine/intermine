@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -404,7 +403,8 @@ public class UniprotConverter extends DirectoryConverter
         }
     }
 
-    // Start processing gene
+    // gets the unique identifier and list of identifiers to set
+    // loops through each gene entry, assigns refId to protein
     private void processGene(Item protein, UniprotEntry entry)
     throws SAXException {
         String taxonId = entry.getTaxonId();
@@ -423,48 +423,56 @@ public class UniprotConverter extends DirectoryConverter
             return;
         }
 
+        // just one gene, don't have to worry about gene designations and dbrefs
         if (!entry.hasMultipleGenes()) {
             String geneRefId = createGene(entry, taxonId, geneFields, uniqueIdentifierField);
             if (geneRefId != null) {
                 protein.addToCollection("genes", geneRefId);
             }
-        } else {
-            // map of identifiers, one for each gene to be processed
-            List<Map<String, String>> geneEntries = entry.getGeneEntries();
-            Iterator<Map<String, String>> iter = geneEntries.iterator();
-            while (iter.hasNext()) {
-                // create a dummy entry and add identifiers for specific gene
-                // this entry will be used by the gene methods
-                Map<String, String> identifierMap = iter.next();
-                UniprotEntry geneEntry = new UniprotEntry();
-                geneEntry.setGeneNames(identifierMap);
-                geneEntry.setDbrefs(getValidDbrefs(entry, identifierMap));
-                createGene(entry, taxonId, geneFields, uniqueIdentifierField);
+            return;
+        }
+
+        // loop through gene entries
+        // creates a uniprot entry for each gene to be processed
+        List<UniprotEntry> clonedEntries = entry.cloneGenes();
+        Iterator<UniprotEntry> iter = clonedEntries.iterator();
+        while (iter.hasNext()) {
+            // create a dummy entry and add identifiers for specific gene
+            String geneRefId = createGene(iter.next(), taxonId, geneFields, uniqueIdentifierField);
+            if (!StringUtil.isEmpty(geneRefId)) {
+                protein.addToCollection("genes", geneRefId);
             }
         }
     }
 
+    // creates and stores the gene
+    // sets the identifier fields specified in the config file
+    // creates synonym
     private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
-                              String uniqueIdentifierField)
+                              String uniqueIdentifierFieldType)
     throws SAXException {
         List<String> geneSynonyms = new ArrayList();
 
-        String uniqueIdentifier = getGeneIdentifier(entry, taxonId, uniqueIdentifierField,
-                                                    geneSynonyms);
-        if (uniqueIdentifier == null) {
+        String uniqueIdentifierValue = getGeneIdentifier(entry, taxonId, uniqueIdentifierFieldType,
+                                                    geneSynonyms, true);
+        if (uniqueIdentifierValue == null) {
             return null;
         }
-        String geneRefId = genes.get(uniqueIdentifier);
+        String geneRefId = genes.get(uniqueIdentifierValue);
         if (geneRefId == null) {
             Item gene = createItem("Gene");
+            genes.put(uniqueIdentifierValue, gene.getIdentifier());
             gene.addToCollection("dataSets", entry.getDatasetRefId());
-            gene.setAttribute(uniqueIdentifierField, uniqueIdentifier);
+            gene.setAttribute(uniqueIdentifierFieldType, uniqueIdentifierValue);
+
+            // set each identifier
             for (String geneField : geneFields) {
-                if (geneField.equals(uniqueIdentifierField)) {
+                if (geneField.equals(uniqueIdentifierFieldType)) {
                     // we've already set the key field
                     continue;
                 }
-                String identifier = getGeneIdentifier(entry, taxonId, geneField, geneSynonyms);
+                String identifier = getGeneIdentifier(entry, taxonId, geneField, geneSynonyms,
+                                                      false);
 
                 if (identifier == null) {
                     LOG.error("Couldn't process gene, no " + geneField);
@@ -485,24 +493,31 @@ public class UniprotConverter extends DirectoryConverter
                 geneIdentifiers.add(identifier);
                 gene.setAttribute(geneField, identifier);
             }
+
+            // store gene
             try {
                 gene.setReference("organism", getOrganism(taxonId));
                 store(gene);
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
+
+
+            // synonyms
             geneRefId = gene.getIdentifier();
             for (String identifier : geneSynonyms) {
-                getSynonym(geneRefId, "identifier", identifier, null, entry.getDatasetRefId());
+                getSynonym(geneRefId, "identifier", identifier, "false", entry.getDatasetRefId());
             }
-            getSynonym(geneRefId, "identifier", uniqueIdentifier, null, entry.getDatasetRefId());
-            genes.put(uniqueIdentifier, geneRefId);
+            getSynonym(geneRefId, "identifier", uniqueIdentifierValue, "false",
+                       entry.getDatasetRefId());
         }
         return geneRefId;
     }
 
+    // gets the identifier for a gene from the dbref/names collected from the XML
+    // which identifier is chosen depends on the configuration in the uniprot config file
     private String getGeneIdentifier(UniprotEntry entry, String taxonId, String identifierType,
-                                     List<String> geneSynonyms) {
+                                     List<String> geneSynonyms, boolean isUniqueIdentifier) {
 
         String identifierValue = null;
         // how to get the identifier, eg. dbref OR name
@@ -521,6 +536,11 @@ public class UniprotConverter extends DirectoryConverter
         }
 
         if (method.equals("name")) {
+            if (entry.getGeneNames() == null || entry.getGeneNames().isEmpty()) {
+                LOG.error(" ~~~ No gene names for " + taxonId + ". protein accession:"
+                          + entry.getPrimaryAccession());
+                return null;
+            }
             identifierValue = entry.getGeneNames().get(value);
         } else if (method.equals("dbref")) {
             identifierValue = entry.getDbrefs().get(value);
@@ -529,23 +549,18 @@ public class UniprotConverter extends DirectoryConverter
             return null;
         }
         geneSynonyms.add(identifierValue);
-
-        if (taxonId.equals("7227")) {
+        if (isUniqueIdentifier) {
             identifierValue = resolveGene(taxonId, identifierValue);
         }
-
-
-
         return identifierValue;
     }
 
     private String resolveGene(String taxonId, String identifier) {
         resolver = resolverFactory.getIdResolver(false);
-        // we aren't using a resolver so just return what we were given
         if (resolver == null) {
+            // no id resolver available, so return the original identifier
             return identifier;
         }
-
         int resCount = resolver.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
@@ -554,27 +569,6 @@ public class UniprotConverter extends DirectoryConverter
             return null;
         }
         return resolver.resolveId(taxonId, identifier).iterator().next();
-    }
-
-    // ONLY used for proteins with multiple genes
-    // using all identifiers, find dbrefs with valid "gene designation" values
-    private Map<String, String> getValidDbrefs(UniprotEntry entry,
-                                               Map<String, String> identifierMap) {
-        Map<String, String> validDbrefs = new HashMap();
-
-        // dbref "gene designations" have to match any one of the values in the geneIdentifiers list
-        Map<String, Map<String, String>> geneDesignationsToDbrefs
-        = entry.getGeneDesignationsToDbrefs();
-
-        Collection<String> identifiers = identifierMap.values();
-
-        for (Map.Entry<String, Map<String, String>> dbrefs : geneDesignationsToDbrefs.entrySet()) {
-            String geneDesignation = dbrefs.getKey();
-            if (identifiers.contains(geneDesignation)) {
-                validDbrefs.putAll(dbrefs.getValue());
-            }
-        }
-        return validDbrefs;
     }
 
     /* converts the XML into UniProt entry objects.  run once per file */
@@ -586,10 +580,6 @@ public class UniprotConverter extends DirectoryConverter
         private StringBuffer attValue = null;
         private String taxonId = null;
         private Set<UniprotEntry> entries;
-        // to match identifiers strewn across the XML, we have to do some special tricks
-        // because this is a small portion of the data, we only want to do these tricks for
-        // proteins with multiple genes only.
-        private int geneCount = 0;
 
         /**
          * @param entries empty map to be populated with uniprot entries
@@ -610,7 +600,6 @@ public class UniprotConverter extends DirectoryConverter
                 entry = new UniprotEntry();
                 entries.add(entry);
                 entry.setDatasetRefId(getDataset(attrs.getValue("dataset")));
-                geneCount = 0;
             } else if (qName.equals("protein")) {
                 String isFragment = "false";
                 if (attrs.getValue("type") != null
@@ -621,7 +610,7 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("fullName") && stack.search("protein") == 2
                             &&  (stack.peek().equals("recommendedName")
                                             || stack.peek().equals("submittedName"))) {
-                attName = "name";
+                attName = "proteinName";
             } else if ((qName.equals("fullName") || qName.equals("shortName"))
                             && stack.search("protein") == 2
                             && (stack.peek().equals("alternativeName")
@@ -696,12 +685,12 @@ public class UniprotConverter extends DirectoryConverter
                 attName = "keyword";
             } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
                 entry.addDbref(attrs.getValue("type"), attrs.getValue("id"));
-            } else if (qName.equals("property") && stack.peek().equals("dbReference")
-                            && entry.hasMultipleGenes()) {
+            } else if (qName.equals("property") && stack.peek().equals("dbReference")) {
                 // if the dbref has no gene designation value, it is discarded.
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
                 String type = attrs.getValue("type");
+                // TODO put text in config file
                 if (type != null && type.equals("gene designation")) {
                     String value = attrs.getValue("value");
                     entry.addGeneDesignation(value);
@@ -714,14 +703,6 @@ public class UniprotConverter extends DirectoryConverter
                 // set temporary holder variables to null
                 entry.reset();
             }
-
-            if (qName.equals("gene")) {
-                geneCount++;
-                if (geneCount == 2) {
-                    entry.setHasMultipleGenes(true);
-                }
-            }
-
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
             attValue = new StringBuffer();
@@ -745,7 +726,7 @@ public class UniprotConverter extends DirectoryConverter
             }
             if (qName.equals("sequence")) {
                 setSequence(entry, attValue.toString().replaceAll("\n", ""));
-            } else if (attName.equals("name")) {
+            } else if (attName.equals("proteinName")) {
                 entry.setName(attValue.toString());
             } else if (attName.equals("synonym")) {
                 entry.addProteinName(attValue.toString());
