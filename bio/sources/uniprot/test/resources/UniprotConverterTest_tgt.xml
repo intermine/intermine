@@ -149,6 +149,13 @@
 <reference name="subject" ref_id="10_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="7_5" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBgn0000002"/>
+<reference name="subject" ref_id="13_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="7_3" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="identifier"/>
@@ -208,12 +215,6 @@
 <attribute name="end" value="107"/>
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
-</item>
-<item id="7_5" class="Synonym">
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBgn0000002"/>
-<reference name="subject" ref_id="13_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_16" class="Synonym">
 <attribute name="isPrimary" value="false"/>
