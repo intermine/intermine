@@ -379,10 +379,10 @@ public class Item implements Comparable
     /**
      * Add a reference to a collection of this item
      * @param name the name of the collection
-     * @param identifier the item to add to the collection
+     * @param refId the item to add to the collection
      */
-    public void addToCollection(String name, String identifier) {
-        if (identifier.equals("")) {
+    public void addToCollection(String name, String refId) {
+        if (StringUtil.isEmpty(refId)) {
             throw new RuntimeException("empty string added to collection for: " + name);
         }
         ReferenceList list = getCollection(name);
@@ -390,7 +390,7 @@ public class Item implements Comparable
             list = new ReferenceList(name);
             addCollection(list);
         }
-        list.addRefId(identifier);
+        list.addRefId(refId);
     }
 
     /**
