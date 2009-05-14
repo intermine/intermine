@@ -550,6 +550,15 @@ public class UniprotConverter extends DirectoryConverter
         geneSynonyms.add(identifierValue);
         if (isUniqueIdentifier) {
             identifierValue = resolveGene(taxonId, identifierValue);
+
+            // try again!
+            if (identifierValue == null && entry.getGeneNames() != null
+                            && !entry.getGeneNames().isEmpty()) {
+                Iterator<String> iter = entry.getGeneNames().values().iterator();
+                while (iter.hasNext() && identifierValue == null) {
+                    identifierValue = resolveGene(taxonId, iter.next());
+                }
+            }
         }
         return identifierValue;
     }
