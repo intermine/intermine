@@ -1,15 +1,18 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class InternalIndexPage extends IndexPage
 {
+    private static int splitCount = 0;
     private int maxPages, pageCount;
     private IndexPage[] pages;
     private PenaltyCalculator penaltyCalc;
     private SplitCalculator splitCalc;
 
-    public InternalIndexPage(int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc) {
+    public InternalIndexPage(long colour, int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc) {
+        super(colour);
         this.maxPages = maxPages;
         this.penaltyCalc = penaltyCalc;
         this.splitCalc = splitCalc;
@@ -17,9 +20,8 @@ public class InternalIndexPage extends IndexPage
         pageCount = 0;
     }
 
-    public InternalIndexPage(int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc,
-            SplitPage splitPage) {
-        this(maxPages, penaltyCalc, splitCalc);
+    public InternalIndexPage(long colour, int maxPages, PenaltyCalculator penaltyCalc, SplitCalculator splitCalc, SplitPage splitPage) {
+        this(colour, maxPages, penaltyCalc, splitCalc);
         addPage(splitPage.getLeft());
         addPage(splitPage.getRight());
     }
@@ -34,24 +36,49 @@ public class InternalIndexPage extends IndexPage
                 bestPage = i;
             }
         }
-        min = Math.min(min, entry.getMin());
-        max = Math.max(max, entry.getMax());
+        expandToCover(entry);
         try {
             pages[bestPage].addEntry(entry);
         } catch (PageNeedsSplitException e) {
-            SplitPage splitPage = splitCalc.calc(pages[bestPage]);
+            IndexPage page = pages[bestPage];
+            SplitPage splitPage = splitCalc.calc(page);
             pages[bestPage] = splitPage.getLeft();
             pages[pageCount++] = splitPage.getRight();
+/*            splitCount++;
+            if (splitCount % 100 == 0) {
+                outputImageForSplit(page, splitCount, MidAverageSplitCalculator.INSTANCE);
+                outputImageForSplit(page, splitCount, StartEndMidSplitCalculator.INSTANCE);
+                outputImageForSplit(page, splitCount, SizeStartEndMidSplitCalculator.INSTANCE);
+                outputImageForSplit(page, splitCount, GeometricAreaStartEndSplitCalculator.INSTANCE);
+                outputImageForSplit(page, splitCount, GeometricSizeSplitCalculator.INSTANCE);
+            }*/
             if (pageCount > maxPages) {
                 throw new PageNeedsSplitException();
             }
         }
     }
 
+    public static void outputImageForSplit(IndexPage page, int imageNumber, SplitCalculator splitCalc) {
+        SplitPage splitPage = splitCalc.calc(page);
+        String splitterName = splitCalc.getClass().getName();
+        if (splitterName.indexOf(".") != -1) {
+            splitterName = splitterName.substring(splitterName.lastIndexOf(".") + 1);
+        }
+        try {
+            InternalIndexPage image = new InternalIndexPage(-1, 3, null, null);
+            image.addPage(page);
+            image.addPage(splitPage.getLeft());
+            image.addPage(splitPage.getRight());
+//            image.makeImage(1550, image.getMin(), image.getMax(), 3).writeImage("splits/split_" + TestBed.intToString(imageNumber, 5) + "_" + Integer.toHexString(page.hashCode()) + "_to_" + Integer.toHexString(retval.getLeft().hashCode()) + "_" + Integer.toHexString(retval.getRight().hashCode()) + ".pnm", 1550);
+            image.makeImage(1550, image.getMin(), image.getMax(), 3).writeImage("splits/split_" + TestBed.intToString(imageNumber, 5) + "_" + splitterName + "_" + TestBed.intToString(splitPage.getLeft().entryCount(), 3) + "_" + TestBed.intToString(splitPage.getRight().entryCount(), 3) + ".pnm", 1550);
+        } catch (IOException e2) {
+            e2.printStackTrace(System.err);
+        }
+    }
+
     protected void addPage(IndexPage page) {
         pages[pageCount++] = page;
-        min = Math.min(min, page.getMin());
-        max = Math.max(max, page.getMax());
+        expandToCover(page);
     }
 
     public int getMaxPages() {
@@ -70,14 +97,18 @@ public class InternalIndexPage extends IndexPage
         return pages;
     }
 
+    public int entryCount() {
+        return pageCount;
+    }
+
     public String toString() {
         return "Internal page (" + min + ".." + max + "): " + Arrays.asList(pages);
     }
 
     public void lookup(Range range, LookupStats stats) {
-        for (IndexPage page : pages) {
-            if ((page != null) && page.overlaps(range)) {
-                page.lookup(range, stats);
+        for (int i = 0; i < pageCount; i++) {
+            if (pages[i].overlaps(range)) {
+                pages[i].lookup(range, stats);
             }
         }
         stats.addStats(pageCount);
@@ -94,7 +125,7 @@ public class InternalIndexPage extends IndexPage
         }
         int width = right - left + 1;
         //System.err.println("Internal index page " + left + ".." + right + " width " + width);
-        int bgColour = hashCode() & 0xffffff;
+        int bgColour = (int) (colour & 0xffffff);
 
         List<Integer> occupied = new ArrayList<Integer>();
         List<int[]> pixels = new ArrayList<int[]>();
@@ -172,7 +203,7 @@ public class InternalIndexPage extends IndexPage
                         rowToPaint[x] = 0;
                     }
                     for (int i = row ; i < row + 3; i++) {
-                        occupied.set(i, new Integer(pageRight + 1));
+                        occupied.set(i, new Integer(pageRight + 2));
                     }
                 }
             }
