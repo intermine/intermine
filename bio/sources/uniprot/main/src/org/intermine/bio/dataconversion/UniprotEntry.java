@@ -715,22 +715,16 @@ public class UniprotEntry
         return identifiers;
     }
 
-    /**
-     * @return map of "gene designation" values (usually the "primary" value) to dbref entries
-     */
-    public Map<String, Map<String, String>> getGeneDesignationsToDbrefs() {
-        Map<String, Map<String, String>> geneDesignationToDbrefs = new HashMap();
-        Iterator iter = geneDesignationToDbref.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, Dbref> entry = (Map.Entry) iter.next();
-            String key = entry.getKey();
-            Dbref value = entry.getValue();
-            Map<String, String> dbrefStrings = new HashMap();
-            dbrefStrings.put(value.getType(), value.getValue());
-            geneDesignationToDbrefs.put(key, dbrefStrings);
+    // using all identifiers, find dbrefs with valid "gene designation" values
+    private Map<String, String> getValidDbrefs(List<String> identifiers) {
+        Map<String, String> validDbrefs = new HashMap();
+        for (Map.Entry<String, Dbref> refs : geneDesignationToDbref.entrySet()) {
+            String geneDesignation = refs.getKey();
+            if (identifiers.contains(geneDesignation)) {
+                validDbrefs.putAll(refs.getValue().toMap());
+            }
         }
-
-        return geneDesignationToDbrefs;
+        return validDbrefs;
     }
 
     /**
@@ -850,17 +844,6 @@ public class UniprotEntry
         return dummyEntries;
     }
 
-    // using all identifiers, find dbrefs with valid "gene designation" values
-    private Map<String, String> getValidDbrefs(List<String> identifiers) {
-        Map<String, String> validDbrefs = new HashMap();
-        for (Map.Entry<String, Dbref> refs : geneDesignationToDbref.entrySet()) {
-            String geneDesignation = refs.getKey();
-            if (identifiers.contains(geneDesignation)) {
-                validDbrefs.putAll(refs.getValue().toMap());
-            }
-        }
-        return validDbrefs;
-    }
 
 
     /**
@@ -885,7 +868,6 @@ public class UniprotEntry
         entry.setFragment(isFragment);
         entry.setUniprotAccession(uniprotAccession);
         entry.setDbrefs(dbrefs);
-        setGeneDesignations(geneDesignationToDbref);
         entry.setAccessions(accessions);
         entry.setComments(comments);
         entry.setDomains(domains);
@@ -893,6 +875,7 @@ public class UniprotEntry
         entry.setKeywords(keywords);
         entry.setProteinNames(proteinNames);
         entry.setGeneEntries(geneEntries);
+        entry.setGeneDesignations(geneDesignationToDbref);
         return entry;
     }
 }
