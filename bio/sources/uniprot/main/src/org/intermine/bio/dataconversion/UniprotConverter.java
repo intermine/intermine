@@ -432,8 +432,8 @@ public class UniprotConverter extends DirectoryConverter
             return;
         }
 
-        // loop through gene entries
-        // creates a uniprot entry for each gene to be processed
+        // loop through each gene entry to be processed
+        // cloning the gene removes dbrefs without gene designations
         List<UniprotEntry> clonedEntries = entry.cloneGenes();
         Iterator<UniprotEntry> iter = clonedEntries.iterator();
         while (iter.hasNext()) {
@@ -501,7 +501,6 @@ public class UniprotConverter extends DirectoryConverter
             } catch (ObjectStoreException e) {
                 throw new SAXException(e);
             }
-
 
             // synonyms
             geneRefId = gene.getIdentifier();
