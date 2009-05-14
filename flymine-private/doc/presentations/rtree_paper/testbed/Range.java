@@ -7,6 +7,11 @@ public class Range implements Comparable<Range>
         this.max = max;
     }
 
+    public Range(Range orig) {
+        this.min = orig.min;
+        this.max = orig.max;
+    }
+
     public int getMin() {
         return min;
     }
@@ -25,5 +30,22 @@ public class Range implements Comparable<Range>
 
     public boolean overlaps(Range range) {
         return min <= range.max && max >= range.min;
+    }
+
+    public void expandToCover(Range range) {
+        min = Math.min(min, range.getMin());
+        max = Math.max(max, range.getMax());
+    }
+
+    public int size() {
+        if (max > min) {
+            return max - min + 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public String toString() {
+        return min + ".." + max;
     }
 }

@@ -7,7 +7,8 @@ public class LeafIndexPage extends IndexPage
     private int maxEntries, entryCount;
     private IndexEntry[] entries;
 
-    public LeafIndexPage(int maxEntries) {
+    public LeafIndexPage(long colour, int maxEntries) {
+        super(colour);
         this.maxEntries = maxEntries;
         entries = new IndexEntry[maxEntries + 1];
         entryCount = 0;
@@ -15,8 +16,7 @@ public class LeafIndexPage extends IndexPage
 
     public void addEntry(IndexEntry entry) throws PageNeedsSplitException {
         entries[entryCount++] = entry;
-        min = Math.min(min, entry.getMin());
-        max = Math.max(max, entry.getMax());
+        expandToCover(entry);
         if (entryCount > maxEntries) {
             throw new PageNeedsSplitException();
         }
@@ -24,8 +24,7 @@ public class LeafIndexPage extends IndexPage
 
     public void addEntryWithoutCheck(IndexEntry entry) {
         entries[entryCount++] = entry;
-        min = Math.min(min, entry.getMin());
-        max = Math.max(max, entry.getMax());
+        expandToCover(entry);
     }
 
     public int getMaxEntries() {
@@ -36,14 +35,18 @@ public class LeafIndexPage extends IndexPage
         return entries;
     }
 
+    public int entryCount() {
+        return entryCount;
+    }
+
     public String toString() {
         return "Leaf page (" + min + ".." + max + "): " + Arrays.asList(entries);
     }
 
     public void lookup(Range range, LookupStats stats) {
         int results = 0;
-        for (IndexEntry entry : entries) {
-            if ((entry != null) && entry.overlaps(range)) {
+        for (int i = 0; i < entryCount; i++) {
+            if (entries[i].overlaps(range)) {
                 results++;
             }
         }
@@ -61,7 +64,7 @@ public class LeafIndexPage extends IndexPage
         }
         int width = right - left + 1;
         //System.err.println("Leaf index page " + left + ".." + right + " width " + width);
-        int bgColour = hashCode() & 0xffffff;
+        int bgColour = (int) (colour & 0xffffff);
 
         List<Integer> occupied = new ArrayList<Integer>();
         List<int[]> pixels = new ArrayList<int[]>();
