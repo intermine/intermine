@@ -72,6 +72,37 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="ontologyTerm.identifier" />
+      <fieldconfig fieldExpr="ontologyTerm.name" />
+      <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
+      <fieldconfig fieldExpr="qualifier"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="inParanoidScore"/>
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InfoSource">
     <fields>
       <fieldconfig fieldExpr="title"/>
@@ -152,6 +183,18 @@
     </bagdisplayers>
   </class>
 
+  <class className="org.intermine.model.bio.ProteinDomain">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
   <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
@@ -204,6 +247,15 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
   </class>
 
 <!-- exporters -->
