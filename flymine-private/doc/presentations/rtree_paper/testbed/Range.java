@@ -21,11 +21,12 @@ public class Range implements Comparable<Range>
     }
 
     public int compareTo(Range o) {
-        int retval = min - o.min;
+        /*int retval = min - o.min;
         if (retval == 0) {
             retval = o.max - max;
         }
-        return retval;
+        return retval;*/
+        return min - o.min + (max - o.max - min + o.min) / 2;
     }
 
     public boolean overlaps(Range range) {
