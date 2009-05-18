@@ -14,23 +14,19 @@
     </longdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.Chromosome">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="organism.name"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-    </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
-  </class>
-
   <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="text"/>
     </fields>
   </class>
+
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
 
   <class className="org.intermine.model.bio.DataSet">
     <fields>
@@ -109,16 +105,6 @@
     </fields>
   </class>
 
- <class className="org.intermine.model.bio.Location">
-    <fields>
-      <fieldconfig fieldExpr="object.primaryIdentifier"/>
-      <fieldconfig fieldExpr="start"/>
-      <fieldconfig fieldExpr="end"/>
-      <fieldconfig fieldExpr="strand"/>
-    </fields>
-  </class>
-
-
   <class className="org.intermine.model.bio.LocatedSequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -136,19 +122,22 @@
     </bagdisplayers>
   </class>
 
-  <class className="org.intermine.model.bio.OntologyTerm">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description" doNotTruncate="true" />
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="relationship"/>
       <fieldconfig fieldExpr="parentTerm.identifier"/>
       <fieldconfig fieldExpr="childTerm.identifier"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.OntologyTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
 
@@ -234,21 +223,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Transcript">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="exonCount"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-    </fields>
-    <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </longdisplayers>
-  </class>
-
   <class className="org.intermine.model.bio.UniProtFeature">
     <fields>
       <fieldconfig fieldExpr="type"/>
@@ -261,5 +235,48 @@
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+<!-- widgets -->
+   <widgets>
 
+         <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
+                                 label="Feature"
+                                 description="UniProt features enriched for proteins in this list."
+                                 typeClass="org.intermine.model.bio.Protein" />
+
+      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
+                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
+                                 label="Keyword"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 typeClass="org.intermine.model.bio.Protein" />
+
+      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
+                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 filterLabel="Ontology"
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
+                         link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.Gene"
+                         columnTitle="Orthologues"/>
+
+    </widgets>
 </webconfig>

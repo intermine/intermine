@@ -21,6 +21,12 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="title"/>
@@ -80,6 +86,16 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="inParanoidScore"/>
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.bio.InfoSource">
@@ -250,6 +266,14 @@
                                  description="Protein Domains enriched for items in this list."
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
+                         link="org.intermine.bio.web.widget.HomologueURLQuery"
+                         description="Counts of orthologues in other organisms for the genes in this list."
+                         displayFields="name"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.Gene"
+                         columnTitle="Orthologues"/>
 
 
     </widgets>
