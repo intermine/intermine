@@ -5,10 +5,7 @@
   <property name="intermine.properties.file" value="yeastmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="sgd-identifiers" type="sgd-identifiers">      
-      <property name="src.data.dir" location="/shared/data/sgd/current"/>
-      <property name="src.data.dir.includes" value="SGD.BUD.FEATURE.data"/>
-    </source>
+
 
     <source name="uniprot" type="uniprot" >
       <property name="uniprot.organisms" value="4932"/>
@@ -27,6 +24,11 @@
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
+    </source>
+
+    <source name="sgd-identifiers" type="sgd-identifiers">      
+      <property name="src.data.dir" location="/shared/data/sgd/current"/>
+      <property name="src.data.dir.includes" value="SGD.BUD.FEATURE.data"/>
     </source>
 
     <source name="uniprot-keywords" type="uniprot-keywords">
