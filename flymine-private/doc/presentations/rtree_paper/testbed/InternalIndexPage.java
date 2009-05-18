@@ -149,7 +149,7 @@ public class InternalIndexPage extends IndexPage
                 pageRight = width - 1;
             }
             if ((pageLeft <= width - 1) && (pageRight >= 0)) {
-                if (depth > 1) {
+                if ((depth > 1) || ((depth < 0) && (page instanceof InternalIndexPage))) {
                     Image pageImage = page.makeImage(imageWidth, minImage, maxImage, depth - 1);
                     do {
                         row++;
