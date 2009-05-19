@@ -54,8 +54,9 @@
     <collection name="dataSets" referenced-type="DataSet" ordered="true"/>
   </class>
 
-  <class name="Experiment" extends="Analysis" is-interface="true"/>
-  <class name="Location" extends="Relation" is-interface="true">
+	<class name="Experiment" extends="Analysis" is-interface="true"/>
+
+	<class name="Location" extends="Relation" is-interface="true">
     <attribute name="end" type="java.lang.Integer"/>
     <attribute name="endPhase" type="java.lang.Integer"/>
     <attribute name="phase" type="java.lang.Integer"/>

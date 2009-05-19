@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
 <classes>
+  <class name="CDNA"
+    extends="BioEntity" is-interface="true"/>
+  <class name="NaturalTransposableElement"
+    extends="Region" is-interface="true"/>
+  <class name="StopCodon"
+    extends="BioEntity" is-interface="true"/>
+  <class name="StartCodon"
+    extends="BioEntity" is-interface="true"/>
   <class name="OriginOfReplication"
     extends="Region" is-interface="true"/>
   <class name="HistoneBindingSite"
@@ -18,6 +26,9 @@
     <attribute name="url" type="java.lang.String" />
     <collection name="labs"
       referenced-type="Lab"
+      reverse-reference="project" />
+    <collection name="experiments"
+      referenced-type="Experiment"
       reverse-reference="project" />
     <collection name="submissions"
       referenced-type="Submission"
@@ -39,6 +50,17 @@
       reverse-reference="lab" />
   </class>
 
+  <class name="Experiment"
+    is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <reference name="project"
+      referenced-type="Project"
+      reverse-reference="experiments" />
+    <collection name="submissions"
+      referenced-type="Submission"
+      reverse-reference="experiment" />
+  </class>
+
   <class name="Submission"
     extends="DataSet" is-interface="true">
     <attribute name="title" type="java.lang.String" />
@@ -55,6 +77,9 @@
       <reference name="publication" referenced-type="Publication"/>
       <attribute name="fileFormat" type="java.lang.String"/>
     -->
+    <reference name="experiment"
+      referenced-type="Experiment"
+      reverse-reference="submissions" />
     <reference name="lab"
       referenced-type="Lab"
       reverse-reference="submissions" />
