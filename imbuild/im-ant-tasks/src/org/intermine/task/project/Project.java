@@ -13,9 +13,11 @@ package org.intermine.task.project;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 
@@ -112,7 +114,7 @@ public class Project
         
         if (!sources.isEmpty() &&  getSourceLocations().isEmpty()) {
             throw new BuildException("Error in project.xml: no source locations found.  You need to"
-                    + "set at least one 'source.location' property in project.xml to specify where"
+                    + " set at least one 'source.location' property in project.xml to specify where"
                     + " source directories can be found.");
         }
         
@@ -164,7 +166,7 @@ public class Project
         }
         
         
-        List<String> badSources = new ArrayList<String>();
+        Set<String> badSources = new HashSet<String>();
 
         // check that all <source> types can be found
         for (Source s : sources.values()) {
