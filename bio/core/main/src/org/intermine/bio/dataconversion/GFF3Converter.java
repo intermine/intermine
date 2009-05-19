@@ -141,7 +141,9 @@ public class GFF3Converter
                 duplicates = true;
                 duplicatedIds.add(record.getId());
             } else {
-                processedIds.add(record.getId());
+                if (record.getId() != null) {
+                    processedIds.add(record.getId());
+                }
             }
             if (!duplicates) {
                 process(record);
