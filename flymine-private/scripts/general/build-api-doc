@@ -11,6 +11,7 @@ ant clean-all
 ant build-db
 
 cd ~/svn/trunk/imbuild/javadoc
+ant clean
 ant
 chmod -R a+rX build/javadoc/
 rsync -avc --delete build/javadoc/ flymine@www.flymine.org:/var/www/html/api/
