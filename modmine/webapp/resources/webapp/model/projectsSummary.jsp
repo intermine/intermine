@@ -118,8 +118,13 @@
         <hr>
         <im:querylink text="All ${nrSubs} submissions" showArrow="true" skipBuilder="true">
             <query name="" model="genomic"
+              view="Project.submissions.DCCid Project.submissions.title Project.submissions.design"
+              sortOrder="Project.submissions.DCCid">
+<%--
               view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
               sortOrder="Project.labs.submissions.title">
+--%>
+
             <node path="Project" type="Project">
             </node>
             <node path="Project.surnamePI" type="String">
