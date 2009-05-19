@@ -26,6 +26,12 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Experiment">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.ExperimentalFactor">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -46,7 +52,7 @@
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="design"/>
       <fieldconfig fieldExpr="DCCid"/>
-      <fieldconfig fieldExpr="description" showInSummary="false"/>
+      <fieldconfig fieldExpr="description" showInSummary="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
@@ -93,6 +99,7 @@
     </bagdisplayers>
   </class>
 
+<!-- 
   <class className="org.intermine.model.bio.Analysis">
     <fields>
       <fieldconfig fieldExpr="publication.title"/>
@@ -100,6 +107,7 @@
       <fieldconfig fieldExpr="publication.journal"/>
     </fields>
   </class>
+-->
 
   <class className="org.intermine.model.bio.AnalysisResult">
     <fields>
