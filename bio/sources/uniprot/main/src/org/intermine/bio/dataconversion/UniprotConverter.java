@@ -68,7 +68,7 @@ public class UniprotConverter extends DirectoryConverter
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory resolverFactory;
-    private IdResolver resolver;
+    private IdResolver flyResolver;
     private String datasourceRefId = null;
 
     /**
@@ -548,7 +548,7 @@ public class UniprotConverter extends DirectoryConverter
             return null;
         }
         geneSynonyms.add(identifierValue);
-        if (isUniqueIdentifier) {
+        if (isUniqueIdentifier && taxonId.equals("7227")) {
             identifierValue = resolveGene(taxonId, identifierValue);
 
             // try again!
@@ -564,19 +564,19 @@ public class UniprotConverter extends DirectoryConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        resolver = resolverFactory.getIdResolver(false);
-        if (resolver == null) {
+        flyResolver = resolverFactory.getIdResolver(false);
+        if (flyResolver == null) {
             // no id resolver available, so return the original identifier
             return identifier;
         }
-        int resCount = resolver.countResolutions(taxonId, identifier);
+        int resCount = flyResolver.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + identifier + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(taxonId, identifier));
+                     + flyResolver.resolveId(taxonId, identifier));
             return null;
         }
-        return resolver.resolveId(taxonId, identifier).iterator().next();
+        return flyResolver.resolveId(taxonId, identifier).iterator().next();
     }
 
     /* converts the XML into UniProt entry objects.  run once per file */
