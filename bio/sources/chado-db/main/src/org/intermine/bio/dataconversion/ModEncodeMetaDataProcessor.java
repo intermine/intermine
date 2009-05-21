@@ -237,7 +237,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-         processFeatures(connection, submissionMap);
+//         processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
@@ -980,8 +980,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *
      * ================
      *    EXPERIMENT
-     * ================
+     * ================ 
      *
+     * Experiment is a collection of submissions. They all share the same description.
+     * It has been added later to the model. 
+     * A map is built between submissionId and experiment name. 
+     * 2 maps store intermine objectId and itemId, with key the experiment name.
+     * They are probably not needed.
+     * 
      */
     private void processExperiment(Connection connection)
     throws SQLException, ObjectStoreException {
@@ -990,59 +996,51 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<String, String> expProMap = new HashMap<String, String>();
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
-            String value = res.getString("descr");
-            String project = res.getString("project");
+            String name = cleanWikiLinks(res.getString("name"));
 
-            LOG.info("EX " + submissionId + "|" + value + "|" + project);
-            
-            expProMap.put(value, project);
-            addToMap(expSubMap, value, submissionId);
+            addToMap(expSubMap, name, submissionId);
+            expProMap.put(name, submissionProjectMap.get(submissionId));
         }
-        LOG.info("EX " + expSubMap);
-        LOG.info("EX " + expProMap);
         res.close();
 
         Set <String> experiment = expSubMap.keySet();
         Iterator <String> i  = experiment.iterator();
-        int count = 1;
         while (i.hasNext()) {
-            String descr = i.next();
+            String name = i.next();
             List<Integer> subs = new ArrayList<Integer>();
-            subs = expSubMap.get(descr);
+            subs = expSubMap.get(name);
 
-            String project = expProMap.get(descr);
-            String expName = descr;
-
-            LOG.info("EX D:" + descr);
-            LOG.info("EX S:" + subs);
-            LOG.info("EX P:" + project );
-            
             Item exp = getChadoDBConverter().createItem("Experiment");
-            exp.setAttribute("name", project+ "_" + count);
+            exp.setAttribute("name", name);
 
+            String project = expProMap.get(name);
             exp.setReference("project", projectIdRefMap.get(project));
-
-            List<String> subRefs = new ArrayList<String>();
-            Iterator <Integer> s = subs.iterator();
-            while (s.hasNext()) {
-                subRefs.add(submissionMap.get(s.next()).itemIdentifier);
-                LOG.info("EX C:" + subRefs);
-            }
-//            exp.setCollection("submissions", subRefs);
-
+            // note: the reference to submission collection is in a separate method
             Integer intermineObjectId = getChadoDBConverter().store(exp);
 
-            experimentIdMap .put(expName, intermineObjectId);
-            experimentIdRefMap .put(expName, exp.getIdentifier());
-            
-            LOG.info("EX MI:" + experimentIdMap);
-            LOG.info("EX Mr:" + experimentIdRefMap);
-
-            count++;
+            experimentIdMap .put(name, intermineObjectId);
+            experimentIdRefMap .put(name, exp.getIdentifier());            
         }
         LOG.info("created " + expSubMap.size() + " experiments");
     }
 
+    /**
+     * method to clean a wiki reference (url to a named page) in chado
+     * @param w       the wiki reference
+     */
+    private String cleanWikiLinks(String w){
+        String url = "http://wiki.modencode.org/project/index.php?title=";
+        // we are stripping from first ':', maybe we want to include project suffix
+        // e.g.:
+        // original "http://...?title=Gene Model Prediction:SC:1&amp;oldid=12356"
+        // now: Gene Model Prediction
+        // maybe? Gene Model Prediction:SC:1
+        // (:->&)
+        String s1 = StringUtils.substringBefore(StringUtils.replace(w, url, ""), ":");
+        String s = s1.replace('"', ' ');
+        return s;
+    }
+    
     /**
      * Return the rows needed for experiment from the experiment_prop table.
      * This is a protected method so that it can be overridden for testing
@@ -1054,67 +1052,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getExpResultSet(Connection connection)
     throws SQLException {
         String query =
-/*
             "select e.experiment_id, "
-            + " trim(both '"' from translate(x.accession, '_', ' ')) as name "
+            + " translate(x.accession, '_', ' ') as name "
             + " from experiment_prop e, dbxref x "
             + " where e.dbxref_id = x.dbxref_id "
             + " and e.name='Experiment Description' "
             ;
-            */
-//TODO use standard SQl and deal with string in java        
-            "select a.experiment_id, substr(a.value,1,30) as descr, b.value as project "
-            + " from experiment_prop a, experiment_prop b "
-            + " where a.experiment_id=b.experiment_id "
-            + " and a. name='Experiment Description' "
-            + " and b.name='Project'";
-
-        /*
-         *            "SELECT a.experiment_id, substr(a.value,1,30) "
-            + " FROM experiment_prop a "
-            + " where a.name = 'Experiment Description'";
-         */
+        // TODO use standard SQl and deal with string in java        
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-
-
-    /**
-     * method to add an element to a list which is the value of a map
-     * @param m       the map (<String, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<String, List<Integer>> m, String key, Integer value) {
-
-        List<Integer> ids = new ArrayList<Integer>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
-    }
-
-
-    /**
-     * adds an element (String) to a list only if it is not there yet
-     * @param l the list
-     * @param i the element
-     */
-    private void addToList(List<String> l, String i) {
-
-        if (!l.contains(i)) {
-            l.add(i);
-        }
-    }
-
-
-
 
     /**
      *
@@ -2290,6 +2239,37 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    /**
+     * method to add an element to a list which is the value of a map
+     * @param m       the map (<String, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToMap(Map<String, List<Integer>> m, String key, Integer value) {
+
+        List<Integer> ids = new ArrayList<Integer>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
+
+
+    /**
+     * adds an element (String) to a list only if it is not there yet
+     * @param l the list
+     * @param i the element
+     */
+    private void addToList(List<String> l, String i) {
+
+        if (!l.contains(i)) {
+            l.add(i);
+        }
+    }
     
     
     
