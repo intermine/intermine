@@ -198,7 +198,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         bT = System.currentTimeMillis();
         processExperimentTable(connection);
-        LOG.info("TIME experiment" + ":   " + (System.currentTimeMillis() - bT));
+        LOG.info("TIME experimentTable" + ":   " + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
         processExperimentProps(connection);
@@ -230,14 +230,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         bT = System.currentTimeMillis();
         processExperiment(connection);
-        LOG.info("TIME experimentNEW" + ":   " + (System.currentTimeMillis() - bT));
+        LOG.info("TIME experiment" + ":   " + (System.currentTimeMillis() - bT));
         
         bT = System.currentTimeMillis();
         processDag(connection);
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-//         processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
