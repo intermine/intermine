@@ -25,6 +25,8 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -119,26 +121,38 @@ public class HtmlHeadController extends TilesAction
                 dobj = ObjectDetailsController.makeDisplayObject(session, object);
             }
 
-            // TODO use the class keys instead
+
+            String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";
+
             if (dobj.getAttributes().get("primaryIdentifier") != null) {
-                idForPageTitle = dobj.getAttributes().get("primaryIdentifier").toString();
+                String primaryIdentifier = dobj.getAttributes().get("primaryIdentifier").toString();
+
+                if (dobj.getAttributes().get("symbol") != null) {
+                    String symbol = dobj.getAttributes().get("symbol").toString();
+                    idForPageTitle = symbol + " (" + primaryIdentifier + ")";
+                } else {
+                    idForPageTitle = primaryIdentifier;
+                }
             }
-            if (idForPageTitle == null
-                            && !idForPageTitle.equals("")
+
+            // TODO use the class keys instead of hardcoding which fields should be used
+            if (StringUtil.isEmpty(idForPageTitle)
                             && dobj.getAttributes().get("secondaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("secondaryIdentifier").toString();
             }
-            if (idForPageTitle == null
-                            && !idForPageTitle.equals("")
+            if (StringUtil.isEmpty(idForPageTitle)
                             && dobj.getAttributes().get("identifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("identifier").toString();
             }
-
-            if (idForPageTitle != null && !idForPageTitle.equals("")) {
-                htmlPageTitle = htmlPageTitle + ":  " + idForPageTitle;
+            if (StringUtil.isEmpty(idForPageTitle)
+                            && dobj.getAttributes().get("symbol") != null) {
+                idForPageTitle = dobj.getAttributes().get("symbol").toString();
             }
 
+            if (!StringUtil.isEmpty(idForPageTitle)) {
+                htmlPageTitle = className + " report for " + idForPageTitle;
+            }
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
         return null;
