@@ -18,7 +18,7 @@
 
           <ul><li><dt>Protein interactions have been loaded for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> from <a href="http://www.ebi.ac.uk/intact/" target="_new">IntAct</a>.</dt></li></ul>
 
-          <ul><li><dt>Genetic and protein interaction data for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> have been loaded from the <a href="http://www.thebiogrid.org/" target="_new">BioGrid</a>. These data include both high-throughput studies and conventional focused studies and have been curated from the literature.</dt></li></ul>
+          <ul><li><dt>Genetic and protein interaction data for <i>D. melanogaster</i>, <i>C. elegans</i> and <i>S. cerevisiae</i> have been loaded from the <a href="http://www.thebiogrid.org/" target="_new">BioGRID</a>. These data include both high-throughput studies and conventional focused studies and have been curated from the literature.</dt></li></ul>
 
         </div>
 
