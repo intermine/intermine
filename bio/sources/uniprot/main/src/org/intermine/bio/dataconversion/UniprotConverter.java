@@ -607,11 +607,11 @@ public class UniprotConverter extends DirectoryConverter
             if (qName.equals("entry")) {
                 entry = new UniprotEntry();
                 entries.add(entry);
-                entry.setDatasetRefId(getDataset(attrs.getValue("dataset")));
+                entry.setDatasetRefId(getDataset(getAttrValue(attrs, "dataset")));
             } else if (qName.equals("protein")) {
                 String isFragment = "false";
-                if (attrs.getValue("type") != null
-                                && attrs.getValue("type").startsWith("fragment")) {
+                if (getAttrValue(attrs, "type") != null
+                                && getAttrValue(attrs, "type").startsWith("fragment")) {
                     isFragment = "true";
                 }
                 entry.setFragment(isFragment);
@@ -634,11 +634,11 @@ public class UniprotConverter extends DirectoryConverter
             } else if (qName.equals("accession")) {
                 attName = "value";
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
-                entry.setTaxonId(attrs.getValue("id"));
+                entry.setTaxonId(getAttrValue(attrs, "id"));
             } else if (qName.equals("id")  && stack.peek().equals("isoform")) {
                 attName = "isoform";
             } else if (qName.equals("sequence")  && stack.peek().equals("isoform")) {
-                String sequenceType = attrs.getValue("type");
+                String sequenceType = getAttrValue(attrs, "type");
                 // ignore "external" types
                 if (sequenceType.equals("displayed")) {
                     entry.setCanonicalIsoform(entry.getAttribute());
@@ -646,8 +646,8 @@ public class UniprotConverter extends DirectoryConverter
                     entry.addIsoform(entry.getAttribute());
                 }
             } else if (qName.equals("sequence")) {
-                String strLength = attrs.getValue("length");
-                String strMass = attrs.getValue("mass");
+                String strLength = getAttrValue(attrs, "length");
+                String strMass = getAttrValue(attrs, "mass");
                 if (strLength != null) {
                     entry.setLength(strLength);
                     attName = "residues";
@@ -655,56 +655,56 @@ public class UniprotConverter extends DirectoryConverter
                 if (strMass != null) {
                     entry.setMolecularWeight(strMass);
                 }
-            } else if (qName.equals("feature") && attrs.getValue("type") != null) {
-                Item feature = getFeature(attrs.getValue("type"), attrs.getValue("description"),
-                                          attrs.getValue("status"));
+            } else if (qName.equals("feature") && getAttrValue(attrs, "type") != null) {
+                Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs, "description"),
+                                          getAttrValue(attrs, "status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
-                            && entry.processingFeature() && attrs.getValue("position") != null) {
-                entry.addFeatureLocation(qName, attrs.getValue("position"));
+                            && entry.processingFeature() && getAttrValue(attrs, "position") != null) {
+                entry.addFeatureLocation(qName, getAttrValue(attrs, "position"));
             } else if (qName.equals("position") && entry.processingFeature()
-                            && attrs.getValue("position") != null) {
-                entry.addFeatureLocation("begin", attrs.getValue("position"));
-                entry.addFeatureLocation("end", attrs.getValue("position"));
+                            && getAttrValue(attrs, "position") != null) {
+                entry.addFeatureLocation("begin", getAttrValue(attrs, "position"));
+                entry.addFeatureLocation("end", getAttrValue(attrs, "position"));
             } else if (createInterpro && qName.equals("dbReference")
-                            && attrs.getValue("type").equals("InterPro")) {
-                entry.addAttribute(attrs.getValue("id"));
+                            && getAttrValue(attrs, "type").equals("InterPro")) {
+                entry.addAttribute(getAttrValue(attrs, "id"));
             } else if (createInterpro && qName.equals("property") && entry.processing()
                             && stack.peek().equals("dbReference")
-                            && attrs.getValue("type").equals("entry name")) {
+                            && getAttrValue(attrs, "type").equals("entry name")) {
                 String domain = entry.getAttribute();
                 if (domain.startsWith("IPR")) {
-                    entry.addDomainRefId(getInterpro(domain, attrs.getValue("value"),
+                    entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value"),
                                                      entry.getDatasetRefId()));
                 }
             } else if (qName.equals("dbReference") && stack.peek().equals("organism")) {
-                taxonId = attrs.getValue("id");
+                taxonId = getAttrValue(attrs, "id");
                 entry.setTaxonId(taxonId);
             } else if (qName.equals("dbReference") && stack.peek().equals("citation")
-                            && attrs.getValue("type").equals("PubMed")) {
-                entry.addPub(getPub(attrs.getValue("id")));
-            } else if (qName.equals("comment") && attrs.getValue("type") != null
-                            && !attrs.getValue("type").equals("")) {
-                entry.setCommentType(attrs.getValue("type"));
+                            && getAttrValue(attrs, "type").equals("PubMed")) {
+                entry.addPub(getPub(getAttrValue(attrs, "id")));
+            } else if (qName.equals("comment") && getAttrValue(attrs, "type") != null
+                            && !getAttrValue(attrs, "type").equals("")) {
+                entry.setCommentType(getAttrValue(attrs, "type"));
             } else if (qName.equals("text") && stack.peek().equals("comment")
                             && entry.processing()) {
                 attName = "text";
             } else if (qName.equals("keyword")) {
                 attName = "keyword";
             } else if (qName.equals("dbReference") && stack.peek().equals("entry")) {
-                entry.addDbref(attrs.getValue("type"), attrs.getValue("id"));
+                entry.addDbref(getAttrValue(attrs, "type"), getAttrValue(attrs, "id"));
             } else if (qName.equals("property") && stack.peek().equals("dbReference")) {
                 // if the dbref has no gene designation value, it is discarded.
                 // without the gene designation, it's impossible to match up identifiers with the
                 // correct genes
-                String type = attrs.getValue("type");
+                String type = getAttrValue(attrs, "type");
                 // TODO put text in config file
                 if (type != null && type.equals("gene designation")) {
-                    String value = attrs.getValue("value");
+                    String value = getAttrValue(attrs, "value");
                     entry.addGeneDesignation(value);
                 }
             } else if (qName.equals("name") && stack.peek().equals("gene")) {
-                attName = attrs.getValue("type");
+                attName = getAttrValue(attrs, "type");
             } else if (qName.equals("dbreference") || qName.equals("comment")
                             || qName.equals("isoform")
                             || qName.equals("gene")) {
@@ -716,6 +716,7 @@ public class UniprotConverter extends DirectoryConverter
             attValue = new StringBuffer();
         }
 
+        
         /**
          * {@inheritDoc}
          */
@@ -1045,5 +1046,18 @@ public class UniprotConverter extends DirectoryConverter
         } catch (ObjectStoreException e) {
             throw new SAXException(e);
         }
+    }
+    
+    /**
+     * Get a value from SAX attributes and trim() the returned string.
+     * @param attrs SAX Attributes map
+     * @param name the attribute to fetch
+     * @return
+     */
+    private String getAttrValue(Attributes attrs, String name) {
+        if (attrs.getValue(name) != null) {
+            return attrs.getValue(name).trim();
+        }
+        return null;
     }
 }
