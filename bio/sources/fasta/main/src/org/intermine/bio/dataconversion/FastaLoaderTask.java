@@ -372,6 +372,10 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         DataSet dataSet = (DataSet) getDirectDataLoader().createObject(DataSet.class);
         dataSet.setTitle(dataSetTitle);
+        DataSource dataSource = getDataSource();
+        if (dataSource != null) {
+            dataSet.setDataSource(dataSource);
+        }
         getDirectDataLoader().store(dataSet);
         dataSets.put(dataSetTitle, dataSet);
         return dataSet;
