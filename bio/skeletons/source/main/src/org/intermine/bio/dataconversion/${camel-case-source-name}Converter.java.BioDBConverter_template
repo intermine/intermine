@@ -46,7 +46,17 @@ public class ${camel-case-source-name}Converter extends BioDBConverter
      * {@inheritDoc}
      */
     public void process() throws Exception {
+        // a database has been initialised from properties starting with db.${source-name}
 
+        Connection connection = getDatabase().getConnection();
+
+        // process data with direct SQL queries on the source database, for example:
+        
+        // Statement stmt = connection.createStatement();
+        // String query = "select column from table;";
+        // ResultSet res = stmt.executeQuery(query);
+        // while (res.next()) {
+        // }   
     }
 
     /**
