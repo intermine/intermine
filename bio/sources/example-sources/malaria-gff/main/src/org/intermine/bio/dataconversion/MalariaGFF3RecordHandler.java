@@ -10,11 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import org.intermine.metadata.Model;
-import org.intermine.xml.full.Item;
-import org.intermine.util.XmlUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.metadata.Model;
+import org.intermine.util.XmlUtil;
+import org.intermine.xml.full.Item;
 
 /**
  * Handle special cases when converting malaria GFF3 files.
@@ -24,6 +26,13 @@ import org.intermine.bio.io.gff3.GFF3Record;
 
 public class MalariaGFF3RecordHandler extends GFF3RecordHandler
 {
+    // parents map controls references/collections that are set from Parent= attributes in gff file
+    private static Map<String, String> parents = new HashMap();
+    static {
+        parents.put("Exon", "transcripts");
+        parents.put("MRNA", "gene");
+    }
+    
     /**
      * Create a new MalariaGFF3RecordHandler object.
      * @param tgtModel the target Model
@@ -55,5 +64,7 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
+        // set references/collections for any Parent attributes
+        setReferences(parents);
     }
 }
