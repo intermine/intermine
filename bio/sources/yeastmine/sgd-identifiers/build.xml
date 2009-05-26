@@ -1,5 +1,5 @@
 <project name="sgd-identifiers" default="default" basedir=".">
   <description>build, test, package sgd-identifiers</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 </project>
