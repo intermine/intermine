@@ -3,7 +3,7 @@
    <class name="Gene" extends="BioEntity" is-interface="true">
      <attribute name="featureType" type="java.lang.String"/>
      <attribute name="curated" type="java.lang.String"/>
-     <collection name="transcripts" referenced-type="Transcript" ordered="true" reverse-reference="gene" />
+     <collection name="transcripts" referenced-type="Transcript" reverse-reference="gene" />
    </class>
 
   <class name="Protein" extends="BioEntity" is-interface="true">
@@ -16,7 +16,7 @@
      <reference name="gene" referenced-type="Gene" reverse-reference="transcripts" />
      <reference name="protein" referenced-type="Protein" reverse-reference="transcripts" />
      <reference name="sequence" referenced-type="Sequence" />
-     <collection name="exons" referenced-type="Exon" ordered="true" reverse-reference="transcripts" />
+     <collection name="exons" referenced-type="Exon" reverse-reference="transcripts" />
    </class>
 
    <class name="Exon" extends="BioEntity" is-interface="true">

@@ -4,7 +4,7 @@
     <reference name="gene" referenced-type="Gene" reverse-reference="clones"/>
   </class>
   <class name="Gene" is-interface="true">
-    <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene" ordered="true"/>
+    <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene"/>
   </class>
 </classes>
 

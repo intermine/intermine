@@ -6,7 +6,7 @@
   <attribute name="sample1" type="java.lang.String"/>
   <attribute name="sample2" type="java.lang.String"/>
   <attribute name="displayOrder" type="java.lang.Integer"/>
-  <reference name="experiment" referenced-type="MicroArrayExperiment" reverse-reference="assays"/> 
+  <reference name="experiment" referenced-type="MicroArrayExperiment" reverse-reference="assays"/>
   <collection name="results" referenced-type="MicroArrayResult"  reverse-reference="assays"/>
   <collection name="samples" referenced-type="Sample" reverse-reference="assays"/>
 </class>
@@ -60,8 +60,8 @@
   <attribute name="primaryCharacteristic" type="java.lang.String"/>
   <attribute name="primaryCharacteristicType" type="java.lang.String"/>
   <collection name="assays" referenced-type="MicroArrayAssay" reverse-reference="samples"/>
-  <collection name="characteristics" referenced-type="SampleCharacteristic" ordered="true"/>
-  <collection name="treatments" referenced-type="Treatment" ordered="true"/>
+  <collection name="characteristics" referenced-type="SampleCharacteristic"/>
+  <collection name="treatments" referenced-type="Treatment"/>
 </class>
 <class name="MicroArrayResult" extends="ExperimentalResult" is-interface="true">
   <attribute name="scale" type="java.lang.String"/>
@@ -73,7 +73,7 @@
   <collection name="assays" referenced-type="MicroArrayAssay" reverse-reference="results"/>
   <collection name="reporters" referenced-type="Reporter" reverse-reference="results"/>
   <collection name="genes" referenced-type="Gene" reverse-reference="microArrayResults"/>
-  <collection name="samples" referenced-type="Sample" ordered="true"/>
+  <collection name="samples" referenced-type="Sample"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="microArrayResults" referenced-type="MicroArrayResult" reverse-reference="genes"/>

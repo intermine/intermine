@@ -5,7 +5,7 @@
   <!--reference name="forwardPrimer" referenced-type="ForwardPrimer"/-->
   <!--reference name="reversePrimer" referenced-type="ReversePrimer"/-->
   <reference name="tilingPathSpan" referenced-type="TilingPathSpan" reverse-reference="pcrProducts"/>
-  <collection name="primers" referenced-type="Primer" reverse-reference="pcrProduct" ordered="true"/>
+  <collection name="primers" referenced-type="Primer" reverse-reference="pcrProduct"/>
 </class>
 <class name="Primer" is-interface="true">
   <reference name="pcrProduct" referenced-type="PCRProduct" reverse-reference="primers"/>
@@ -16,6 +16,6 @@
 <class name="ReversePrimer" extends="Primer" is-interface="true">
 </class>
 <class name="TilingPathSpan" extends="Region" is-interface="true">
-  <collection name="pcrProducts" referenced-type="PCRProduct" reverse-reference="tilingPathSpan" ordered="true"/>
+  <collection name="pcrProducts" referenced-type="PCRProduct" reverse-reference="tilingPathSpan"/>
 </class>
 </classes>

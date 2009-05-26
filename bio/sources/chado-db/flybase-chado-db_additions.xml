@@ -3,7 +3,7 @@
   <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="annotationType" type="java.lang.String"/>
-    <reference name="allele" referenced-type="Allele" 
+    <reference name="allele" referenced-type="Allele"
                reverse-reference="phenotypeAnnotations"/>
     <!--
       - removed as the "with" clauses from FlyBase have errors - see ticket #889
@@ -15,14 +15,14 @@
     <collection name="publications" referenced-type="Publication"/>
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
-  <class name="Allele" 
+  <class name="Allele"
          extends="BioEntity" is-interface="true">
     <attribute name="alleleClass" type="java.lang.String"/>
     <collection name="mutagens"
                 referenced-type="Mutagen"
                 reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations"
-                referenced-type="PhenotypeAnnotation" 
+                referenced-type="PhenotypeAnnotation"
                 reverse-reference="allele"/>
   </class>
   <!-- mv from biogrid/biogrid_additions.xml  -->
@@ -31,23 +31,23 @@
 <!--       <attribute name="publication" type="Publication"/> -->
 <!--       <attribute name="description" type="java.lang.String"/> -->
 <!--       <attribute name="hostOrganism" type="java.lang.String" /> -->
-      <collection name="interactions" referenced-type="Interaction" ordered="true" reverse-reference="experiment"/>
+      <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
     </class>
-    
+
          <class name="Interaction" is-interface="true">
            <attribute name="shortName" type="java.lang.String"/>
            <attribute name="interactionType" type="java.lang.String"/>
            <reference name="gene" referenced-type="Gene" reverse-reference="interactions" />
            <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
-           <collection name="interactingGenes" referenced-type="Gene" ordered="true" reverse-reference="interactions"/>
+           <collection name="interactingGenes" referenced-type="Gene" reverse-reference="interactions"/>
 <!--            <collection name="dataSets" referenced-type="DataSet"/> -->
          </class>
-         
+
          <class name="Gene" is-interface="true">
            <attribute name="featureType" type="java.lang.String"/>
-           <collection name="interactions" referenced-type="Interaction" ordered="true" reverse-reference="gene"/>
+           <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
          </class>
-         
+
 
   <class name="Mutagen" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
@@ -57,20 +57,20 @@
   </class>
 
   <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true">
-    
+
   </class>
   <class name="DevelopmentTerm" extends="OntologyTerm" is-interface="true">
-    
+
   </class>
   <class name="CVTerm" extends="OntologyTerm" is-interface="true">
-    
+
   </class>
 
 <!--  <class name="Gene" is-interface="true">
     <attribute name="featureType" type="java.lang.String"/>
   </class>-->
 
-  <class name="ChromosomeStructureVariation" 
+  <class name="ChromosomeStructureVariation"
          extends="LocatedSequenceFeature"
          is-interface="true">
     <collection name="featureTerms"

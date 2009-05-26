@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <classes>
-  <class name="Motif" 
+  <class name="Motif"
          extends="BioEntity" is-interface="true">
     <collection name="predictedBindingSites"
-                referenced-type="TFBindingSite" 
-                ordered="true" reverse-reference="motif"/>
+                referenced-type="TFBindingSite"
+                reverse-reference="motif"/>
   </class>
   <class name="TFBindingSite" is-interface="true">
     <reference name="motif"
-               referenced-type="Motif" 
+               referenced-type="Motif"
                reverse-reference="predictedBindingSites"/>
   </class>
 </classes>

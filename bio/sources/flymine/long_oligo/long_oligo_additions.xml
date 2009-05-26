@@ -6,6 +6,6 @@
   <reference name="transcript" referenced-type="Transcript" reverse-reference="microarrayOligos"/>
 </class>
 <class name="Transcript" is-interface="true">
-  <collection name="microarrayOligos" referenced-type="MicroarrayOligo" ordered="true" reverse-reference="transcript"/>
+  <collection name="microarrayOligos" referenced-type="MicroarrayOligo" reverse-reference="transcript"/>
 </class>
 </classes>
