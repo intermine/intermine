@@ -8,6 +8,6 @@
     <attribute name="EValue" type="java.lang.Double"/>
   </class>
   <class name="Gene" is-interface="true">
-    <collection name="omimDiseases" referenced-type="Disease" ordered="true"/>
+    <collection name="omimDiseases" referenced-type="Disease"/>
   </class>
 </classes>

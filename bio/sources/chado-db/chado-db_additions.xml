@@ -7,9 +7,9 @@
   </class>
   <class name="Gene" extends="BioEntity" is-interface="true">
     <attribute name="GLEANRsymbol" type="java.lang.String"/>
-    <collection name="UTRs" referenced-type="UTR" reverse-reference="gene" ordered="true"/>
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene" ordered="true"/>
-    <collection name="alleles" referenced-type="Allele" reverse-reference="gene" ordered="true"/>
+    <collection name="UTRs" referenced-type="UTR" reverse-reference="gene"/>
+    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
+    <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
     <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene"/>
   </class>
   <class name="Protein" extends="BioEntity" is-interface="true">
@@ -18,29 +18,29 @@
     <collection name="CDSs" referenced-type="CDS" reverse-reference="protein"/>
   </class>
   <class name="InsertionSite" extends="BioEntity" is-interface="true">
-    <collection name="genes" referenced-type="Gene" ordered="true"/>
+    <collection name="genes" referenced-type="Gene"/>
   </class>
   <class name="MRNA" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
     <reference name="fivePrimeUTR" referenced-type="FivePrimeUTR"/>
     <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR"/>
-    <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA" ordered="true"/>
-    <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="MRNA" ordered="true"/>
+    <collection name="UTRs" referenced-type="UTR" reverse-reference="MRNA"/>
+    <collection name="cDNAClones" referenced-type="CDNAClone" reverse-reference="MRNA"/>
   </class>
   <class name="Transcript" extends="BioEntity" is-interface="true">
-    <collection name="introns" referenced-type="Intron" reverse-reference="transcripts" ordered="true"/>
-    <collection name="exons" referenced-type="Exon" reverse-reference="transcripts" ordered="true"/>
+    <collection name="introns" referenced-type="Intron" reverse-reference="transcripts"/>
+    <collection name="exons" referenced-type="Exon" reverse-reference="transcripts"/>
   </class>
   <class name="NcRNA" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
   </class>
   <class name="Exon" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons" ordered="true"/>
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="exons"/>
   </class>
   <class name="Intron" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
-    <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns" ordered="true"/>
+    <collection name="transcripts" referenced-type="Transcript" reverse-reference="introns"/>
   </class>
   <class name="UTR" extends="BioEntity" is-interface="true">
     <attribute name="symbol" type="java.lang.String"/>
@@ -61,7 +61,7 @@
     <attribute name="symbol" type="java.lang.String"/>
   </class>
   <class name="SequenceVariant" extends="BioEntity" is-interface="true">
-    <collection name="genes" referenced-type="Gene" ordered="true"/>
+    <collection name="genes" referenced-type="Gene"/>
   </class>
   <class name="ProteinBindingSite" extends="BindingSite" is-interface="true">
   </class>

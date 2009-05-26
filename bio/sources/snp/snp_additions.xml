@@ -7,9 +7,9 @@
      <attribute name="allele1" type="java.lang.String"/>
      <attribute name="allele2" type="java.lang.String"/>
      <reference name="chromosome" referenced-type="Chromosome" />
-     <collection name="validations" referenced-type="ValidationState" ordered="true" />
-     <collection name="consequenceTypes" referenced-type="ConsequenceType" ordered="true" />
-    <collection name="sources" referenced-type="Source" ordered="true" />
+     <collection name="validations" referenced-type="ValidationState" />
+     <collection name="consequenceTypes" referenced-type="ConsequenceType"/>
+    <collection name="sources" referenced-type="Source"/>
    </class>
 
    <class name="ValidationState" is-interface="true">
