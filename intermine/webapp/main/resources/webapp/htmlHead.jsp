@@ -48,8 +48,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/niftycube.js'/>"></script>
-
+<script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
 <!--[if lt IE 7.]>
   <script defer type="text/javascript" src="pngfix.js"></script>
 <![endif]-->
