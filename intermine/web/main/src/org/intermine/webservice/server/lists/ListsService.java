@@ -123,12 +123,12 @@ public class ListsService extends WebService
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
-            List<ResultElement> row = (ResultsRow) it.next();
+            List<ResultElement> row = (ArrayList) it.next();
             if (it.hasNext()) {
                 throw new BadRequestException("Multiple objects of type " + input.getType() 
                         + " with public id " + input.getPublicId() + " were found.");
             }
-            return ((InterMineObject) row.get(0).getObject()).getId();            
+            return ((ResultElement) row.get(0)).getId();
         } else {
             throw new ResourceNotFoundException("No objects of type " + input.getType() 
                     + " with public id " + input.getPublicId() + " were found.");            
