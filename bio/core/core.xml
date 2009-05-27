@@ -15,7 +15,7 @@
     <attribute name="version" type="java.lang.String"/>
     <reference name="dataSource"
                referenced-type="DataSource" reverse-reference="dataSets"/>
-    <collection name="bioEntities" referenced-type="BioEntity" ordered="true" reverse-reference="dataSets"/>
+    <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="dataSets"/>
   </class>
 
   <class name="Ontology" extends="InfoSource" is-interface="true">
@@ -28,14 +28,14 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="curated" type="java.lang.Boolean"/>
     <reference name="organism" referenced-type="Organism"/>
-    <collection name="relations" referenced-type="SymmetricalRelation" ordered="true" reverse-reference="bioEntities"/>
-    <collection name="subjects" referenced-type="Relation" ordered="true" reverse-reference="object"/>
-    <collection name="objects" referenced-type="Relation" ordered="true" reverse-reference="subject"/>
-    <collection name="annotations" referenced-type="Annotation" ordered="true" reverse-reference="subject"/>
-    <collection name="synonyms" referenced-type="Synonym" ordered="true" reverse-reference="subject"/>
-    <collection name="evidence" referenced-type="Evidence" ordered="true"/>
-    <collection name="dataSets" referenced-type="DataSet" ordered="true" reverse-reference="bioEntities"/>
-    <collection name="publications" referenced-type="Publication" ordered="true"/>
+    <collection name="relations" referenced-type="SymmetricalRelation" reverse-reference="bioEntities"/>
+    <collection name="subjects" referenced-type="Relation" reverse-reference="object"/>
+    <collection name="objects" referenced-type="Relation" reverse-reference="subject"/>
+    <collection name="annotations" referenced-type="Annotation" reverse-reference="subject"/>
+    <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
+    <collection name="evidence" referenced-type="Evidence"/>
+    <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
+    <collection name="publications" referenced-type="Publication"/>
   </class>
 
   <class name="ComputationalAnalysis" extends="Analysis" is-interface="true">
@@ -50,8 +50,8 @@
   <class name="Relation" extends="SymmetricalRelation" is-interface="true">
     <reference name="subject" referenced-type="BioEntity" reverse-reference="objects"/>
     <reference name="object" referenced-type="BioEntity" reverse-reference="subjects"/>
-    <collection name="evidence" referenced-type="Evidence" ordered="true" reverse-reference="relations"/>
-    <collection name="dataSets" referenced-type="DataSet" ordered="true"/>
+    <collection name="evidence" referenced-type="Evidence" reverse-reference="relations"/>
+    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
 	<class name="Experiment" extends="Analysis" is-interface="true"/>
@@ -67,7 +67,7 @@
   </class>
 
   <class name="Evidence" is-interface="true">
-    <collection name="relations" referenced-type="Relation" ordered="true" reverse-reference="evidence"/>
+    <collection name="relations" referenced-type="Relation" reverse-reference="evidence"/>
   </class>
 
   <class name="ComputationalResult" extends="AnalysisResult" is-interface="true">
@@ -76,7 +76,7 @@
   </class>
 
   <class name="SymmetricalRelation" is-interface="true">
-    <collection name="bioEntities" referenced-type="BioEntity" ordered="true" reverse-reference="relations"/>
+    <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="relations"/>
   </class>
 
   <class name="OverlapRelation" extends="SymmetricalRelation" is-interface="true">
@@ -91,7 +91,7 @@
     <attribute name="volume" type="java.lang.String"/>
     <attribute name="journal" type="java.lang.String"/>
     <attribute name="firstAuthor" type="java.lang.String"/>
-    <collection name="authors" referenced-type="Author" reverse-reference="publications" ordered="true"/>
+    <collection name="authors" referenced-type="Author" reverse-reference="publications" />
   </class>
 
   <class name="InfoSource" extends="Evidence" is-interface="true">
@@ -102,14 +102,14 @@
     <attribute name="qualifier" type="java.lang.String"/>
     <reference name="property" referenced-type="BioProperty" reverse-reference="annotations"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="annotations"/>
-    <collection name="dataSets" referenced-type="DataSet" ordered="true"/>
-    <collection name="publications" referenced-type="Publication" ordered="true"/>
+    <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="publications" referenced-type="Publication" />
   </class>
 
   <class name="BioProperty" is-interface="true">
-    <collection name="annotations" referenced-type="Annotation" ordered="true" reverse-reference="property"/>
-    <collection name="evidence" referenced-type="Evidence" ordered="true"/>
-    <collection name="dataSets" referenced-type="DataSet" ordered="true"/>
+    <collection name="annotations" referenced-type="Annotation" reverse-reference="property"/>
+    <collection name="evidence" referenced-type="Evidence" />
+    <collection name="dataSets" referenced-type="DataSet" />
   </class>
 
   <class name="SimpleRelation" extends="Relation" is-interface="true"/>
@@ -121,9 +121,9 @@
     <attribute name="namespace" type="java.lang.String"/>
     <attribute name="obsolete" type="java.lang.Boolean"/>
     <reference name="ontology" referenced-type="Ontology"/>
-    <collection name="relations" referenced-type="OntologyRelation" ordered="true" />
-    <collection name="synonyms" referenced-type="OntologyTermSynonym" ordered="true"/>
-    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" ordered="true" reverse-reference="ontologyTerm" /> 
+    <collection name="relations" referenced-type="OntologyRelation" />
+    <collection name="synonyms" referenced-type="OntologyTermSynonym" />
+    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="ontologyTerm" /> 
   </class>
 
   <class name="OntologyRelation" is-interface="true">
@@ -137,8 +137,8 @@
   <class name="OntologyAnnotation" is-interface="true">
     <attribute name="qualifier" type="java.lang.String"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="annotations"/>
-    <collection name="dataSets" referenced-type="DataSet" ordered="true"/>
-    <collection name="publications" referenced-type="Publication" ordered="true"/>
+    <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="publications" referenced-type="Publication" />
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
   </class>
 
@@ -158,7 +158,7 @@
 
   <class name="Author" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <collection name="publications" referenced-type="Publication" reverse-reference="authors" ordered="true"/>
+    <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
   </class>
 
   <class name="ExperimentalResult" extends="AnalysisResult" is-interface="true"/>
@@ -196,7 +196,7 @@
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="ncbiGeneNumber" type="java.lang.String"/>
-    <collection name="proteins" referenced-type="Protein" ordered="true" reverse-reference="genes"/>
+    <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   </class>
 
   <class name="Protein" extends="BioEntity" is-interface="true">
@@ -206,7 +206,7 @@
     <attribute name="length" type="java.lang.Integer"/>
     <attribute name="molecularWeight" type="java.lang.Integer"/>
     <reference name="sequence" referenced-type="Sequence"/>
-    <collection name="genes" referenced-type="Gene" ordered="true" reverse-reference="proteins"/>
+    <collection name="genes" referenced-type="Gene" reverse-reference="proteins"/>
   </class>
 
   <class name="Sequence" is-interface="true">
