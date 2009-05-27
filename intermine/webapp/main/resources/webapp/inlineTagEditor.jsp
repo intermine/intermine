@@ -12,8 +12,6 @@
 <tiles:importAttribute name="show" ignore="true"/>
 <tiles:importAttribute name="onChangeCode" ignore="true"/>
 
-<script type="text/javascript" src="js/inlineTagEditor.js"></script>
-
 <c:if test="${vertical}">
   <div style="margin-top: 5px">
 </c:if>
@@ -27,7 +25,7 @@
     <a class="addTagLink" onclick="javascript:startEditingTag('${editorId}')" >Add tags</a>
   </span>
   <span>
-  	<a  class="addTagLink" onclick="javascript:switchTagInput('${editorId}')" style="display:none;" id="switchLink-${editorId}">New tag</a>
+    <a  class="addTagLink" onclick="javascript:switchTagInput('${editorId}')" style="display:none;" id="switchLink-${editorId}">New tag</a>
   </span>
   <span id="tagsEdit-${editorId}" style="display:none; white-space:nowrap">
     <c:if test="${vertical}">

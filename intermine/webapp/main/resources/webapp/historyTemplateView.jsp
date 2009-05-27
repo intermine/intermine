@@ -10,7 +10,7 @@
 <!-- historyTemplates.jsp -->
 <html:xhtml/>
 
-  <script type="text/javascript" src="js/tablesort.js"></script>
+
   <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 
   <tiles:useAttribute id="type" name="type"/>
@@ -49,7 +49,7 @@
       <c:otherwise>
 
         <html:form action="/modifyTemplate">
-        <table class="sortable-onload-2 rowstyle-alt no-arrow" cellspacing="0">
+        <table cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"
@@ -94,10 +94,12 @@
             <fmt:param value="${savedTemplate.value.name}"/>
               </fmt:message>
             ${savedTemplate.value.name}
+            <%-- TOO SLOW
                     <tiles:insert name="setFavourite.tile">
                       <tiles:put name="name" value="${savedTemplate.value.name}"/>
                       <tiles:put name="type" value="template"/>
                     </tiles:insert>
+                     --%>
                     <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${savedTemplate.value}"/>
                       <tiles:insert name="inlineTagEditor.tile">
@@ -148,7 +150,8 @@
                         titleKey="history.action.export.hover">
                   <fmt:message key="history.action.export"/>
                 </html:link>
-                <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
+                <%-- these links need to be fixed, they take a very long time to load --%>
+                <c:if test="${1 == 2 && IS_SUPERUSER && savedTemplate.value.valid}">
                   <tiles:insert name="precomputeTemplate.tile">
                     <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
                   </tiles:insert>
