@@ -76,7 +76,7 @@
     <node path="Gene" type="Gene">
     </node>
     <node path="Gene.secondaryIdentifier" type="String">
-      <constraint op="=" value="CG1046" description="Gene.secondaryIdentifier" identifier="Gene.secondaryIdentifier" editable="true" code="A">
+      <constraint op="=" value="PFL2660w" description="Gene.secondaryIdentifier" identifier="Gene.secondaryIdentifier" editable="true" code="A">
       </constraint>
     </node>
   </query>
@@ -86,7 +86,7 @@
     <pathDescription pathString="Gene.proteins" description="Protein">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG1046" description="" identifier="" editable="true" code="A">
+      <constraint op="LOOKUP" value="PFL2660w" description="" identifier="" editable="true" code="A">
       </constraint>
     </node>
     <node path="Gene.proteins" type="Protein">
@@ -110,7 +110,7 @@
     <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
     </pathDescription>
     <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
+      <constraint op="LOOKUP" value="PFL2660w" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
       </constraint>
     </node>
     <node path="Gene.goAnnotation" type="GOAnnotation">
@@ -226,7 +226,7 @@
     <pathDescription pathString="Protein.genes" description="Gene">
     </pathDescription>
     <node path="Protein" type="Protein">
-      <constraint op="LOOKUP" value="P09089" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
+      <constraint op="LOOKUP" value="B3FEM5" description="Show GO annotaion for the following protein(s):" identifier="" editable="true" code="A" extraValue="D. melanogaster">
       </constraint>
     </node>
     <node path="Protein.genes" type="Gene">
