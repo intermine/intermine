@@ -422,14 +422,18 @@ public class GoConverter extends FileConverter
                         WithType wt = withTypes.get(prefix);
                         ItemWrapper productWrapper = null;
 
-                        // if a UniProt protein it may be from a differnet organism
+                        // if a UniProt protein it may be from a different organism
                         // also FlyBase may be from a different Drosophila species
                         if (prefix.equals("UniProt")) {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSource, false, null);
                         } else if (prefix.equals("FB")) {
-                            productWrapper = newProduct(value, wt.clsName, organism,
-                                                        dataSource, true, "primaryIdentifier");
+                            // if organism is D. melanogaster then create with gene
+                            // TODO could still be wrong as the FBgn could be a different species
+                            if (organism.getAttribute("taxonId").getValue().equals("7227")) {
+                                productWrapper = newProduct(value, wt.clsName, organism,
+                                        dataSource, true, "primaryIdentifier");
+                            }
                         } else {
                             productWrapper = newProduct(value, wt.clsName,
                                                         organism, dataSource, true, null);
