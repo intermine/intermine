@@ -37,9 +37,8 @@ public class FlyAtlasConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the target data model
-     * @throws ObjectStoreException if an error occurs in storing
      */
-    public FlyAtlasConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public FlyAtlasConverter(ItemWriter writer, Model model) {
         super(writer, model, "University of Glasgow", "FlyAtlas");
         setupItems();
     }
@@ -124,7 +123,7 @@ public class FlyAtlasConverter extends BioFileConverter
             throw new IllegalArgumentException("Unrecognised tissue type read from file: '"
                                                + tissue + "'.");
         }
-        result.setCollection("assays", new ArrayList(Collections.singleton(((Item)
+        result.setCollection("assays", new ArrayList(Collections.singleton((
                                                assays.get(tissue)).getIdentifier())));
 
         // set experiment
@@ -135,10 +134,8 @@ public class FlyAtlasConverter extends BioFileConverter
 
     /**
      * Set up the items that are common to all orthologues/paralogues
-     * @throws ObjectStoreException if an error occurs in storing
      */
-    protected void setupItems()
-    throws ObjectStoreException {
+    protected void setupItems() {
         org = createItem("Organism");
         org.setAttribute("taxonId", "7227");
 
