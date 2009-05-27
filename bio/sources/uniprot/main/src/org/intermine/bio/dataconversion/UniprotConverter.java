@@ -505,9 +505,9 @@ public class UniprotConverter extends DirectoryConverter
             // synonyms
             geneRefId = gene.getIdentifier();
             for (String identifier : geneSynonyms) {
-                getSynonym(geneRefId, "identifier", identifier, "false", entry.getDatasetRefId());
+                getSynonym(geneRefId, "identifier", identifier, null, entry.getDatasetRefId());
             }
-            getSynonym(geneRefId, "identifier", uniqueIdentifierValue, "false",
+            getSynonym(geneRefId, "identifier", uniqueIdentifierValue, null,
                        entry.getDatasetRefId());
         }
         return geneRefId;
@@ -656,11 +656,12 @@ public class UniprotConverter extends DirectoryConverter
                     entry.setMolecularWeight(strMass);
                 }
             } else if (qName.equals("feature") && getAttrValue(attrs, "type") != null) {
-                Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs, "description"),
-                                          getAttrValue(attrs, "status"));
+                Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs,
+                                          "description"), getAttrValue(attrs, "status"));
                 entry.addFeature(feature);
             } else if ((qName.equals("begin") || qName.equals("end"))
-                            && entry.processingFeature() && getAttrValue(attrs, "position") != null) {
+                            && entry.processingFeature()
+                            && getAttrValue(attrs, "position") != null) {
                 entry.addFeatureLocation(qName, getAttrValue(attrs, "position"));
             } else if (qName.equals("position") && entry.processingFeature()
                             && getAttrValue(attrs, "position") != null) {
@@ -716,7 +717,7 @@ public class UniprotConverter extends DirectoryConverter
             attValue = new StringBuffer();
         }
 
-        
+
         /**
          * {@inheritDoc}
          */
@@ -1047,7 +1048,7 @@ public class UniprotConverter extends DirectoryConverter
             throw new SAXException(e);
         }
     }
-    
+
     /**
      * Get a value from SAX attributes and trim() the returned string.
      * @param attrs SAX Attributes map
