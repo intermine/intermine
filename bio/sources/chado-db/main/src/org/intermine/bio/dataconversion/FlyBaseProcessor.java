@@ -912,7 +912,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
             String pubTitle = res.getString("pub_title");
             Integer pubmedId = new Integer(res.getInt("pubmed_id"));
-
             FeatureData featureData = getFeatureMap().get(featureId);
             FeatureData otherFeatureData = getFeatureMap().get(otherFeatureId);
 
@@ -920,28 +919,24 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             String shortName = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
                 + otherFeatureData.getChadoFeatureUniqueName();
-
             int i = 0;
             String newShortName = shortName;
             while (seenInteractions.contains(newShortName)) {
                 i++;
                 newShortName = shortName + "-" + i;
             }
-
             seenInteractions.add(newShortName);
-
             interaction.setAttribute("shortName", newShortName);
-
             interaction.setReference("gene", featureData.getItemIdentifier());
             interaction.addToCollection("interactingGenes", otherFeatureData.getItemIdentifier());
             interaction.setAttribute("interactionType", "genetic");
-
             String publicationItemId = makePublication(pubmedId);
-
             String experimentItemIdentifier =
                 makeInteractionExperiment(pubTitle, publicationItemId);
-
             interaction.setReference("experiment", experimentItemIdentifier);
+            OrganismData od = otherFeatureData.getOrganismData();
+            Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
+            interaction.addToCollection("dataSets", dataSetItem);
             getChadoDBConverter().store(interaction);
         }
     }

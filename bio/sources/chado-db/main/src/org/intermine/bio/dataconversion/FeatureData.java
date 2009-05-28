@@ -98,13 +98,11 @@ class FeatureData
     public boolean checkField(String fieldName) {
         if (fieldName.equals(SequenceProcessor.SEQUENCE_STRING)) {
             return getFlag(CAN_HAVE_SEQUENCE);
-        } else {
-            if (fieldName.equals(SequenceProcessor.SYMBOL_STRING)) {
-                return getFlag(CAN_HAVE_SYMBOL);
-            } else {
-                throw new RuntimeException("unknown field name: " + fieldName);
-            }
         }
+        if (fieldName.equals(SequenceProcessor.SYMBOL_STRING)) {
+            return getFlag(CAN_HAVE_SYMBOL);
+        }
+        throw new RuntimeException("unknown field name: " + fieldName);
     }
 
     /**
@@ -128,9 +126,8 @@ class FeatureData
     private short getFlagId(String attributeName) {
         if (NAME_MAP.containsKey(attributeName)) {
             return NAME_MAP.get(attributeName);
-        } else {
-            throw new RuntimeException("unknown attribute name: " + attributeName);
         }
+        throw new RuntimeException("unknown attribute name: " + attributeName);
     }
 
     /**
