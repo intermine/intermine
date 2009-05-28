@@ -223,7 +223,7 @@ public class PathQuery
             String viewPathString = viewPath.toStringNoConstraints();
             Pattern p = Pattern.compile(path.replaceAll("\\.", "\\\\.") + "((\\.|:)\\w+)*");
             Matcher m = p.matcher(viewPathString);
-            if(m.matches()) {
+            if (m.matches()) {
                 viewPathString = viewPathString.replace(path, newPathString);
             }
             newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
@@ -1093,7 +1093,8 @@ public class PathQuery
         Map<String, String> dots = getPathsFromDots();
         String bestReplacement = null;
         for (String dot : dots.keySet()) {
-            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":") || dotPath.equals(dot))
+            if ((dotPath.startsWith(dot + ".") || dotPath.startsWith(dot + ":")
+                        || dotPath.equals(dot))
                 && (bestReplacement == null || dots.get(dot).startsWith(bestReplacement + ".")
                     || dots.get(dot).startsWith(bestReplacement + ":"))) {
                 String temp = dot;

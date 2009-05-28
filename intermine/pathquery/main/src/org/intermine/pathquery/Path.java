@@ -379,9 +379,9 @@ public class Path
     }
 
     /**
-     * If the last element in the path is an attribute, return the Class of the attribute,
-     * otherwise return the parent type
-     * @return the Class of the last element if an attribute, or of its parent
+     * Return the type of the last element in the path, regardless of whether it is an attribute
+     * or a class.
+     * @return the Class of the last element
      */
     public Class getEndType() {
         if (endFld != null && endFld.isAttribute()) {

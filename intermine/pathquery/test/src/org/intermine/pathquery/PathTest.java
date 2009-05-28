@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Department;
 
 /**
  * Tests for the Path class.
@@ -146,7 +147,7 @@ public class PathTest extends TestCase
         assertEquals(cld, path.getStartClassDescriptor());
         assertEquals(cld, path.getEndClassDescriptor());
         assertNull(path.getEndFieldDescriptor());
-        assertNull(path.getEndType());
+        assertEquals(Department.class, path.getEndType());
     }
 
 
