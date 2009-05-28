@@ -25,13 +25,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -49,7 +47,7 @@ import org.intermine.web.logic.widget.Bonferroni;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
-import org.intermine.web.struts.InterMineAction;
+
 /**
  * Utility methods for the web package.
  *

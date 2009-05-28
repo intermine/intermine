@@ -23,7 +23,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
@@ -46,9 +45,9 @@ import org.intermine.webservice.server.output.Output;
  * See {@link ListsRequestProcessor} for parameter description
  *  URL examples:
  *  Get all public lists with specified intermine id
- *  /listswithobject?output=xml&id=1343743
+ *  /listswithobject?output=xml&amp;id=1343743
  *  Get all public lists with specified id, corresponding intermine id is found with lookup
- *  /listswithobject?output=xml&publicId=1343743
+ *  /listswithobject?output=xml&amp;publicId=1343743
  * @author Jakub Kulaviak
  **/
 public class ListsService extends WebService

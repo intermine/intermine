@@ -10,8 +10,6 @@ package org.intermine.web.logic.query;
  *
  */
 
-import static org.intermine.web.struts.InitialiserPlugin.PUBLIC_TAG_LIST;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -29,14 +27,9 @@ import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagQueryConfig;
 import org.intermine.web.logic.bag.BagQueryHelper;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
-import org.intermine.web.logic.search.SearchFilterEngine;
 import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**

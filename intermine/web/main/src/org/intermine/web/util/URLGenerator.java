@@ -12,8 +12,6 @@ package org.intermine.web.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.intermine.web.logic.WebUtil;
-
 /**
  * Class generating useful links like base link: http://localhost:8080/query
  * @author Jakub Kulaviak
