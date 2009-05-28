@@ -11,7 +11,6 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="7_6" class="Synonym">
-<attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000001"/>
 <reference name="subject" ref_id="13_2"/>
@@ -129,7 +128,6 @@
 <attribute name="name" value="UniProt"/>
 </item>
 <item id="7_5" class="Synonym">
-<attribute name="isPrimary" value="false"/>
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000002"/>
 <reference name="subject" ref_id="13_1"/>
