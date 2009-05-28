@@ -201,7 +201,8 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         Set toIds = new TreeSet();
                         Iterator rowIter = retval.iterator();
                         while (rowIter.hasNext()) {
-                            FastPathObject o = (FastPathObject) ((ResultsRow) rowIter.next()).get(0);
+                            FastPathObject o = (FastPathObject) ((ResultsRow) rowIter.next())
+                                .get(0);
                             Map fromColls = new HashMap();
                             Map fieldDescriptors = getModel().getFieldDescriptorsForClass(o
                                     .getClass());

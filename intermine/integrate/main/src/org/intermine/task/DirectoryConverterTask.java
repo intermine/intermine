@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2008 FlyMine
+ * Copyright (C) 2002-2009 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,7 +13,6 @@ package org.intermine.task;
 import java.io.File;
 import java.lang.reflect.Constructor;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.DirectoryConverter;
 import org.intermine.dataconversion.ItemWriter;
@@ -41,7 +40,8 @@ public class DirectoryConverterTask extends ConverterTask
     }
 
     /**
-     * Set the dataDir
+     * Set the dataDir.
+     *
      * @param dataDir
      */
     public void setDataDir(String dataDir) {
@@ -49,7 +49,8 @@ public class DirectoryConverterTask extends ConverterTask
     }
 
     /**
-     * Run the task
+     * Run the task.
+     *
      * @throws BuildException if a problem occurs
      */
     public void execute() throws BuildException {
