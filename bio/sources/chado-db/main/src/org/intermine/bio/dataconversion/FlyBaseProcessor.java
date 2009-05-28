@@ -927,6 +927,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
             seenInteractions.add(newShortName);
             interaction.setAttribute("shortName", newShortName);
+            interaction.setAttribute("name", newShortName);
             interaction.setReference("gene", featureData.getItemIdentifier());
             interaction.addToCollection("interactingGenes", otherFeatureData.getItemIdentifier());
             interaction.setAttribute("interactionType", "genetic");
