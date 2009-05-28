@@ -112,13 +112,17 @@ public class GraphWidget extends Widget
                                 ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
                                 ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
                                 graphDataSet, // data
-                                PlotOrientation.VERTICAL, true, true, // tooltips?
+                                PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
                                 false // URLs?
                                 );
                 plot = chart.getCategoryPlot();
                 chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
                 renderer = (StackedBarRenderer) plot.getRenderer();
+                renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+                         ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
+                renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+                         ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
                 // integers only
                 NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
                 rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -141,10 +145,12 @@ public class GraphWidget extends Widget
                         chart.addSubtitle(subtitleText);
                     }
                     plot = chart.getCategoryPlot();
-
                     renderer = new BarRenderer();
-
                     renderer.setItemMargin(0);
+                    renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+                             ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+                    renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+                             ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
                     plot.setRenderer(renderer);
                     CategoryURLGenerator categoryUrlGen = null;
                     if (config.getLink() != null) {
@@ -175,6 +181,13 @@ public class GraphWidget extends Widget
                     NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
                     rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
+                    renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(
+                    ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+
+                    // rotate the category labels
+                    plot.getDomainAxis().setCategoryLabelPositions(
+                    CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
+
                 }
 
             if (chart.getTitle() != null) {
@@ -185,10 +198,7 @@ public class GraphWidget extends Widget
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
             plot.getRenderer().setBaseItemLabelsVisible(true);
             plot.getRenderer().setBaseItemLabelGenerator(generator);
-            renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-                            ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
-            renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-                            ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
+
 
             // TODO put this in a config file
             // set colors for each data series
@@ -222,8 +232,7 @@ public class GraphWidget extends Widget
                 plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
             }
 
-            renderer.setNegativeItemLabelPositionFallback(new ItemLabelPosition(
-                            ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+
 
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
@@ -233,8 +242,8 @@ public class GraphWidget extends Widget
             plot.getDomainAxis().setLabelFont(labelFont);
             rangeAxis.setLabelFont(labelFont);
             plot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
-            plot.getDomainAxis().setCategoryLabelPositions(
-                            CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
+
+
 
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
