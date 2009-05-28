@@ -584,7 +584,7 @@ public class MainHelperTest extends TestCase {
 
     public void test21() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department:company.name Department:company.departments.name\"/>",
-                "SELECT DISTINCT a1_, a1_.company(SELECT default, a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE default.departments CONTAINS a1_) AS a2_ FROM org.intermine.model.testmodel.Department AS a1_ ORDER BY a1_.name",
+                "SELECT DISTINCT a1_, a1_.company(SELECT default, a2_ FROM org.intermine.model.testmodel.Department AS a2_ WHERE default.departments CONTAINS a2_) AS a2_ FROM org.intermine.model.testmodel.Department AS a1_ ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Department AS a1_) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC",
                 "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a2_.name AS a4_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_, org.intermine.model.testmodel.Department AS a3_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a3_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC",
                 "SELECT DISTINCT a1_.a4_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a2_, a3_, a3_.name AS a4_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.Company AS a2_, org.intermine.model.testmodel.Department AS a3_ WHERE (a1_.company CONTAINS a2_ AND a2_.departments CONTAINS a3_)) AS a1_ GROUP BY a1_.a4_ ORDER BY COUNT(*) DESC");
