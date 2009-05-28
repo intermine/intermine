@@ -28,7 +28,7 @@ import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
-
+import org.intermine.model.InterMineObject;
 
 public class XmlBindingTest extends XMLTestCase {
     protected XmlBinding binding;
@@ -64,11 +64,9 @@ public class XmlBindingTest extends XMLTestCase {
 
     protected void setIds(Collection c) throws Exception {
         int i=1;
-        Iterator iter = c.iterator();
-        while (iter.hasNext()) {
-            try {
-                TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
-            } catch (IllegalArgumentException e) {
+        for (Object o : c) {
+            if (o instanceof InterMineObject) {
+                ((InterMineObject) o).setId(new Integer(i++));
             }
         }
     }

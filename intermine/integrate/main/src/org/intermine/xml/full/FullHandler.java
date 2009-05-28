@@ -55,9 +55,8 @@ public class FullHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attrs) {
 
         if (qName.equals("item")) {
-            currentItem = itemFactory.makeItem();
+            currentItem = itemFactory.makeItem(attrs.getValue("id"));
             currentItem.setClassName(attrs.getValue("class"));
-            currentItem.setIdentifier(attrs.getValue("id"));
             if (attrs.getValue("implements") != null) {
                 currentItem.setImplementations(attrs.getValue("implements"));
             }
