@@ -33,6 +33,7 @@
   <item id="22_2" class="Interaction">
     <attribute name="interactionType" value="genetic"/>
     <attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
+    <attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461-1"/>
     <reference name="experiment" ref_id="23_2"/>
     <reference name="gene" ref_id="0_1"/>
     <collection name="interactingGenes"><reference ref_id="0_2"/></collection>
@@ -816,6 +817,7 @@
   <item id="22_1" class="Interaction">
     <attribute name="interactionType" value="genetic"/>
     <attribute name="shortName" value="FlyBase:FBgn0000001_FBgn0036461"/>
+    <attribute name="name" value="FlyBase:FBgn0000001_FBgn0036461"/>
     <reference name="experiment" ref_id="23_1"/>
     <reference name="gene" ref_id="0_1"/>
     <collection name="interactingGenes"><reference ref_id="0_2"/></collection>
