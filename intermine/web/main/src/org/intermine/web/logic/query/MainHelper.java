@@ -88,8 +88,6 @@ import org.intermine.web.logic.bag.BagQueryResult;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.template.TemplateQuery;
 
 /**

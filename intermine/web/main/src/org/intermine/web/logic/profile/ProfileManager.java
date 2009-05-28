@@ -108,7 +108,8 @@ public class ProfileManager
                     if (results.isEmpty()) {
                         // We can safely upgrade the database
                         MetadataManager.store(((ObjectStoreInterMineImpl) osw).getDatabase(),
-                                MetadataManager.PROFILE_FORMAT_VERSION, "" + PathQuery.USERPROFILE_VERSION);
+                                MetadataManager.PROFILE_FORMAT_VERSION, ""
+                                + PathQuery.USERPROFILE_VERSION);
                         version = PathQuery.USERPROFILE_VERSION;
                     }
                 }
