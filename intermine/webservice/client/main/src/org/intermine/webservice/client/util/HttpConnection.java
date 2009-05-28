@@ -106,12 +106,15 @@ public class HttpConnection
     private void executeMethod() {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(timeout);
+        String url = null;
         if (request.getType() == RequestType.GET) {
-            executedMethod = new GetMethod(request.getUrl(true));    
+            executedMethod = new GetMethod(request.getUrl(true));
+            url = request.getUrl(true);
         } else {
             PostMethod postMethod = new PostMethod(request.getServiceUrl());
             setPostMethodParameters(postMethod, request.getParameterMap());
             executedMethod = postMethod;
+            url = request.getServiceUrl();
         }
         // Provide custom retry handler is necessary
         executedMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
@@ -122,11 +125,11 @@ public class HttpConnection
         try {
             // Execute the method.
             client.executeMethod(executedMethod);
-            checkResponse();
+            checkResponse(url);
         } catch (HttpException e) {
             throw new RuntimeException("Fatal protocol violation.", e);
         } catch (IOException e) {
-            throw new RuntimeException("Fatal transport error.", e);
+            throw new RuntimeException("Fatal transport error connecting to " + url, e);
         }
     }
     
@@ -168,14 +171,18 @@ public class HttpConnection
     /**
      * Called to check the response and generate an appropriate exception (on failure). 
      * If the connection is not opened then it is opened and response checked.
+     *
+     * @param url a URL to quote in any error messages
      * @throws ServiceException when an error happens
      */
-    protected void checkResponse() throws ServiceException {
+    protected void checkResponse(String url) throws ServiceException {
       if (executedMethod.getStatusCode() >= 300) {
         try {
             handleErrorResponse();
+        } catch (ServiceException e) {
+            throw new ServiceException("Error while accessing " + url, e);
         } catch (IOException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("Error while accessing " + url, e);
         }
       }
     }
