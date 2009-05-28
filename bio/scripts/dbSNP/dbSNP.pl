@@ -56,6 +56,8 @@ $writer->startTag('items');
 my $datasource = 'Ensembl';
 my $datasource_item = make_item("DataSource");
 $datasource_item->set('name', $datasource);
+$datasource_item->as_xml($writer);
+
 my $org_item;
 my $dataset_item;
 my $count = 0;
