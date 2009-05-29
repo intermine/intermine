@@ -131,7 +131,7 @@ public class SaveBagAction extends InterMineAction
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
         } catch (ObjectStoreException e) {
-            LOG.error(e);
+            LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");
         } finally {
