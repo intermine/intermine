@@ -106,7 +106,7 @@ public class PortalQueryAction extends InterMineAction
         // Add a message to welcome the user
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String welcomeMsg = properties.getProperty("portal.welcome." + origin);
-        if (welcomeMsg == null || welcomeMsg.length() == 0) {
+        if (StringUtil.isEmpty(welcomeMsg)) {
             welcomeMsg = properties.getProperty("portal.welcome");
         }
         SessionMethods.recordMessage(welcomeMsg, session);
@@ -187,7 +187,7 @@ public class PortalQueryAction extends InterMineAction
         pathQuery.syncLogicExpression("and");
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
-        
+
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
@@ -227,7 +227,7 @@ public class PortalQueryAction extends InterMineAction
                     imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                              profile.getUserId(), uosw);
                     List<Integer> converted = new ArrayList<Integer>();
-                    for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow 
+                    for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
                             : convertedWebResult) {
                         ResultElement resElement = resRow.get(0).get(0).getValue();
                         Object obj = resElement.getObject();
@@ -238,7 +238,7 @@ public class PortalQueryAction extends InterMineAction
                     // No matches
                     if (converted.size() <= 0) {
                         actionMessages.add(Constants.PORTAL_MSG,
-                            new ActionMessage("portal.nomatches.orthologues", addparameter, extId));
+                            new ActionMessage("errors.noportalorthologues", addparameter, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
