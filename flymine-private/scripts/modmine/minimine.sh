@@ -160,7 +160,7 @@ echo
 
 # create new mine, set search path in chado and fill new mine
 createdb -E SQL_ASCII modmine-$REL -h modprod1 -U modvet
-psql -H -h $DBHOST -d $CHADODB -U $CHADOUSER -c 'alter user '$CHADOUSER' set search_path = u'$REL';'
+psql -H -h $DBHOST -d $CHADODB -U $CHADOUSER -c 'alter user '$CHADOUSER' set search_path = u'$REL',public;'
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 
@@ -197,7 +197,7 @@ mail $RECIPIENTS -s "$REL report, also in $REPORTPATH/$REL.html" < $REPDIR/$REL.
 
 echo
 echo "acceptance test results in "
-echo "$REPDIR/$REL.html"
+echo "$REPORTPATH/$REL.html"
 echo
 fi
 
