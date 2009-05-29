@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.lang.reflect.Constructor;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -217,6 +218,8 @@ public class PortalQueryAction extends InterMineAction
                 for (int i = 0; i < urlFields.length; i++) {
                     if (request.getParameter(urlFields[i]) != null) {
                         addparameter = request.getParameter(urlFields[i]);
+                        // the spaces in organisms, eg. D.%20rerio, need to be handled
+                        URLDecoder.decode(addparameter, "UTF-8");
                         break;
                     }
                 }
