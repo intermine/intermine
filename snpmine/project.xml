@@ -9,18 +9,12 @@
           <property name="src.data.dir" location="/shared/data/snpmine/current/"/>
           <property name="src.data.dir.includes" value="*.xml"/>
      </source>
-    <source name="go" type="go">
-      <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
-    </source>
-    <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/shared/data/go-annotation/human"/>
-      <property name="src.data.dir.includes" value="gene_association*"/>
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml"/>
     </source>
   </sources>
   <post-processing>
-    <!--<post-process name="create-references"/>-->
-    <post-process name="do-sources"/>
+    <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
   </post-processing>
 </project>
