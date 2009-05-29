@@ -70,7 +70,7 @@ my $go_version_buffer = "Gene Ontology\n$date\nThe Gene Ontology\nhttp://www.gen
 &write_version($go_download_dir,$go_version_buffer);
 
 ### Get goa files if any taxon ids configured
-if (keys %taxon_map) {
+if (%taxon_map) {
 
 
     my $goa_connection = &ftp_connect($uniprot_go_server,$username,$password);
