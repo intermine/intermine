@@ -83,6 +83,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
             }
             Set<String> bots = getBots();
 
+            if (request.getSession().getAttribute(Constants.PROFILE) == null) {
+                request.getSession().invalidate();
+            }
+
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
             if (userAgent != null && !profile.isLoggedIn()) {
@@ -128,9 +132,6 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 }
             }
 
-            if (request.getSession().getAttribute(Constants.PROFILE) == null) {
-                request.getSession().invalidate();
-            }
 
             if (!request.isRequestedSessionIdValid()
                 && request.getAttribute(Globals.MESSAGE_KEY) == null

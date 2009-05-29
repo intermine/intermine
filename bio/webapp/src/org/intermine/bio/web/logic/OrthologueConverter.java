@@ -18,6 +18,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -41,6 +42,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class OrthologueConverter implements BagConverter
 {
+
+    private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
 
     /**
      * The Constructor
@@ -74,7 +77,7 @@ public class OrthologueConverter implements BagConverter
         code = pathQuery.getUnusedConstraintCode();
         Constraint c2 = new Constraint(ConstraintOp.LOOKUP, organism,
                                         false, label, code, id, null);
-        
+
         pathQuery.addNode("Gene.homologues.homologue.organism").getConstraints().add(c2);
 
         Constraint c3 = new Constraint(ConstraintOp.EQUALS, "orthologue",
@@ -84,13 +87,14 @@ public class OrthologueConverter implements BagConverter
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
-        
+        LOG.error("PATH QUERY:" + pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+
         return executor.execute(pathQuery);
     }
 
     /**
-     * If view contains joined organism, this will make sure, that 
+     * If view contains joined organism, this will make sure, that
      * organism is joined as a inner join. Else constraint on organism doesn't work.
      * @param pathQuery
      * @param joinPath
