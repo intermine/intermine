@@ -41,8 +41,22 @@ public class FormattedTextParser
     }
 
     /**
-     * Return an Iterator over a comma delimited file.  Iterator.next() splits the current line at
-     * the commas and returns a String[] of the bits, stripped of all quotes.
+     * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
+     * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @param stripQuotes whether or not to remove double quotes
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    public static Iterator parseTabDelimitedReader(final Reader reader, boolean stripQuotes)
+    throws IOException {
+        return parseDelimitedReader(reader, stripQuotes, "\t");
+    }
+
+    /**
+     * Return an Iterator over a comma/tab delimited file.  Iterator.next() splits the current line
+     * and returns a String[] of the bits, stripped of all quotes.
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
      * @return an Iterator over the lines of the Reader
