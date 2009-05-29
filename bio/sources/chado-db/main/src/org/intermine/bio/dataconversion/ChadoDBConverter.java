@@ -165,16 +165,16 @@ public class ChadoDBConverter extends BioDBConverter
     /**
      * Return a map from chado organism id to OrganismData for the organisms in the organism table
      * in chado.  This is a protected method so that it can be overriden for testing
-     * @param connection the db connection
+     * @param conn the db connection
      * @param organismsToProcess2
      * @return a Map from abbreviation to chado organism_id
      * @throws SQLException if the is a database problem
      */
-    protected Map<OrganismData, Integer> getChadoOrganismIds(Connection connection)
+    protected Map<OrganismData, Integer> getChadoOrganismIds(Connection conn)
         throws SQLException {
         String query = "select organism_id, abbreviation, genus, species from organism";
         LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
+        Statement stmt = conn.createStatement();
         ResultSet res = stmt.executeQuery(query);
 
         Map<OrganismData, Integer> retMap = new HashMap<OrganismData, Integer>();
@@ -243,9 +243,8 @@ public class ChadoDBConverter extends BioDBConverter
                                        + this.getClass().getName()
                                        + " in the list of completed processors - must run a "
                                        + cls.getName() + " first");
-        } else {
-            return returnProcessor;
         }
+        return returnProcessor;
     }
     /**
      * Default implementation that makes a data set title based on the data source name.
@@ -253,12 +252,11 @@ public class ChadoDBConverter extends BioDBConverter
      */
     @Override
     public String getDataSetTitle(int taxonId) {
-        OrganismData od = organismRepository.getOrganismDataByTaxon(taxonId);
+        OrganismData od = organismRepository.getOrganismDataByTaxon(new Integer(taxonId));
         if (od != null) {
             return getDataSourceName() + " data set for " + od.getGenus() + " " + od.getSpecies();
-        } else {
-            return getDataSourceName() + " data set";
         }
+        return getDataSourceName() + " data set";
     }
 
     /**
