@@ -682,6 +682,15 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("dbxref", "Protein", "GB_protein", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("genbankIdentifier"),
                                   CREATE_SYNONYM_ACTION));
+            
+            // transposable_element and natural_transposable_element
+            map.put(new MultiKey("relationship", "TransposableElement",
+                    "producedby", "NaturalTransposableElement"),
+                    Arrays.asList(new SetFieldConfigAction("insertedElement")));
+            map.put(new MultiKey("synonym", "NaturalTransposableElement", "fullname",
+                    Boolean.TRUE),
+                    Arrays.asList(new SetFieldConfigAction("name"),
+                            CREATE_SYNONYM_ACTION));
         }
 
         return map;
@@ -841,11 +850,12 @@ public class FlyBaseProcessor extends SequenceProcessor
             "gene", "mRNA", "transcript",
             "intron", "exon",
             "regulatory_region", "enhancer",
-            "EST", "cDNA_clone",
+            //"EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
-            "protein", "point_mutation"
+            "protein", "point_mutation", "natural_transposable_element",
+            "transposable_element"
     );
 
     /**
