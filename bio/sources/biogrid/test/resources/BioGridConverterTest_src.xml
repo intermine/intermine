@@ -168,6 +168,56 @@
                                         </xref>
                                 </interactionType>
                         </interaction>
+
+                       <interaction id="38939">
+                                <names>
+                                        <shortLabel>1-1</shortLabel>
+                                </names>
+                                <xref>
+                                        <primaryRef db="grid" dbAc="MI:0463" id="38939" secondary="69126-69126" />
+                                </xref>
+                                <experimentList>
+                                        <experimentRef>1</experimentRef>
+                                </experimentList>
+                                <participantList>
+                                        <participant id="1">
+                                                <interactorRef>1</interactorRef>
+                                                <experimentalRoleList>
+                                                        <experimentalRole>
+                                                                <names>
+                                                                        <shortLabel>bait</shortLabel>
+                                                                        <fullName>bait</fullName>
+                                                                </names>
+                                                                <xref>
+                                                                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                                                                </xref>
+                                                        </experimentalRole>
+                                                </experimentalRoleList>
+                                        </participant>
+                                        <participant id="1">
+                                                <interactorRef>1</interactorRef>
+                                                <experimentalRoleList>
+                                                        <experimentalRole>
+                                                                <names>
+                                                                        <shortLabel>prey</shortLabel>
+                                                                        <fullName>prey</fullName>
+                                                                </names>
+                                                                <xref>
+                                                                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                                                                </xref>
+                                                        </experimentalRole>
+                                                </experimentalRoleList>
+                                        </participant>
+                                </participantList>
+                                <interactionType>
+                                        <names>
+                                                <shortLabel>Two-hybrid</shortLabel>
+                                        </names>
+                                        <xref>
+                                                <primaryRef db="grid" id="3" dbAc="MI:0463" />
+                                        </xref>
+                                </interactionType>
+                        </interaction>
                  </interactionList>
 </entry>
 </entrySet>
