@@ -850,7 +850,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             "gene", "mRNA", "transcript",
             "intron", "exon",
             "regulatory_region", "enhancer",
-            //"EST", "cDNA_clone",
+            "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
