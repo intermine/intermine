@@ -684,6 +684,14 @@ public class FlyBaseProcessor extends SequenceProcessor
                                   CREATE_SYNONYM_ACTION));
             
             // transposable_element and natural_transposable_element
+            map.put(new MultiKey("feature", "TransposableElement", FLYBASE_DB_NAME, "name"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
+                                  new SetFieldConfigAction("symbol"),
+                                  CREATE_SYNONYM_ACTION));
+            map.put(new MultiKey("feature", "NaturalTransposableElement", FLYBASE_DB_NAME, "name"),
+                    Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
+                                  new SetFieldConfigAction("symbol"),
+                                  CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("relationship", "TransposableElement",
                     "producedby", "NaturalTransposableElement"),
                     Arrays.asList(new SetFieldConfigAction("insertedElement")));
