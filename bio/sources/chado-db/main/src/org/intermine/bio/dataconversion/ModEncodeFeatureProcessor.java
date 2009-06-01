@@ -56,7 +56,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "three_prime_UTR", "origin_of_replication",
          "binding_site", "protein_binding_site", "TF_binding_site",
          "transcript_region", "histone_binding_site", "copy_number_variation",
-         "natural_transposable_element", "cDNA", "start_codon", "stop_codon"
+         "natural_transposable_element", "start_codon", "stop_codon"
+         ,"cDNA"
     );
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
@@ -205,8 +206,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             + " AND est.feature_id IN " 
             + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
         LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING ESTMATCH " + ":" + (System.currentTimeMillis() - bT));
         return res;
     }
 
@@ -337,14 +340,20 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
         Statement stmt = connection.createStatement();
         LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
         stmt.execute(query);
+        LOG.info("TIME CREATING TEMP FEAT TABLE " + ":" + (System.currentTimeMillis() - bT));
         String idIndexQuery = "CREATE INDEX " + SUBFEATUREID_TEMP_TABLE_NAME + "_feature_index ON "
             + SUBFEATUREID_TEMP_TABLE_NAME + "(feature_id)";
         LOG.info("executing: " + idIndexQuery);
+        long bT1 = System.currentTimeMillis();
         stmt.execute(idIndexQuery);
+        LOG.info("TIME CREATING INDEX " + ":" + (System.currentTimeMillis() - bT1));
         String analyze = "ANALYZE " + SUBFEATUREID_TEMP_TABLE_NAME;
         LOG.info("executing: " + analyze);
+        long bT2 = System.currentTimeMillis();
         stmt.execute(analyze);
+        LOG.info("TIME ANALYZING " + ":" + (System.currentTimeMillis() - bT2));
     }
 
 
