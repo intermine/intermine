@@ -236,7 +236,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processDag(connection);
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
-        bT = System.currentTimeMillis();
+        bT = System.currentTimeMillis();        
         processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
@@ -368,9 +368,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (prevId != 0) {
                     // store previous collection
                     LOG.info("STORING collection for dataId " + prevId + ": " 
-                            + " size:" + collectionSize); 
+                            + " size:" + collectionSize);
+                    
+                    long bT = System.currentTimeMillis();
                     getChadoDBConverter().store(collection, 
                             appliedDataMap.get(prevId).intermineObjectId);                    
+                    LOG.info("TIME STORING FEAT " + ":" + (System.currentTimeMillis() - bT));
                 }
                 collection = new ReferenceList();
                 collection.setName("features");
@@ -387,8 +390,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (res.isLast()) {
                 LOG.info("STORING collection for dataId " + dataId + ": " 
                         + " size:" + collectionSize); 
+                long bT = System.currentTimeMillis();
                 getChadoDBConverter().store(collection, 
                         appliedDataMap.get(dataId).intermineObjectId);
+                LOG.info("TIME STORING FEAT " + ":" + (System.currentTimeMillis() - bT));
             }
             prevId = dataId;
         }
@@ -402,8 +407,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " WHERE data_id in (" + queryList + ")";
 
         LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING FEAT " + ":" + (System.currentTimeMillis() - bT));
         return res;
     }
 
@@ -1028,7 +1035,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * method to clean a wiki reference (url to a named page) in chado
      * @param w       the wiki reference
      */
-    private String cleanWikiLinks(String w){
+    private String cleanWikiLinks(String w) {
         String url = "http://wiki.modencode.org/project/index.php?title=";
         // we are stripping from first ':', maybe we want to include project suffix
         // e.g.:
@@ -1056,8 +1063,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " translate(x.accession, '_', ' ') as name "
             + " from experiment_prop e, dbxref x "
             + " where e.dbxref_id = x.dbxref_id "
-            + " and e.name='Experiment Description' "
-            ;
+            + " and e.name='Experiment Description' ";
+        
         // TODO use standard SQl and deal with string in java        
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
