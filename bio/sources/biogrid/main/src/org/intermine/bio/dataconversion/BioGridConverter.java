@@ -524,7 +524,11 @@ public class BioGridConverter extends BioFileConverter
         private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
                                                         String refId) {
             ArrayList<String> interactorIds = new ArrayList(interactionHolder.refIds);
-            interactorIds.remove(refId);
+            // remove the gene from the list of interactors, unless this gene is interacting
+            // with itself - which is common
+            if (interactorIds.size() > 1) {
+                interactorIds.remove(refId);
+            }
             return interactorIds;
         }
 

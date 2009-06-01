@@ -496,9 +496,13 @@ public class PsiConverter extends BioFileConverter
                 interaction.setReference("experiment",
                                          interactionHolder.eh.experiment.getIdentifier());
 
-                // interactingProteins
+                // interactingGenes
                 List<String> geneIds = new ArrayList(interactionHolder.geneIds);
-                geneIds.remove(geneRefId);
+                // remove current gene being processed from list, unless this gene is currently
+                // only interacting with itself.  then leave it.
+                if (geneIds.size() > 1) {
+                    geneIds.remove(geneRefId);
+                }
                 interaction.setCollection("interactingGenes", geneIds);
 
                 // interactingRegions

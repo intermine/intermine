@@ -1,4 +1,14 @@
 <items>
+<item id="8_3" class="Interaction">
+<attribute name="interactionType" value="physical"/>
+<attribute name="name" value="BioGRID:FBgn001"/>
+<attribute name="role" value="prey"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="gene" ref_id="6_1"/>
+<reference name="type" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="6_1"/></collection>
+</item>
 <item id="6_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn001"/>
 <reference name="organism" ref_id="5_1"/>
