@@ -378,6 +378,17 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.NaturalTransposableElement">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="name"/>      
+    </fields>
+    <!-- inherits longdisplayers -->
+    <bagdisplayers>
+    </bagdisplayers>
+  </class>
+
   <class className="org.intermine.model.bio.OntologyRelation">
     <fields>
       <fieldconfig fieldExpr="relationship"/>
@@ -675,6 +686,22 @@
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.TransposableElement">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="insertedElement.symbol"/>      
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+    <!-- inherits longdisplayers -->
+    <bagdisplayers>
+    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.TransposableElementInsertionSite">
