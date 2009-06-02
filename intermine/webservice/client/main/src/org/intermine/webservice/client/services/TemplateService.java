@@ -86,12 +86,18 @@ public class TemplateService extends Service
      */
     public List<List<String>> getResult(String templateName, List<TemplateParameter> parameters, 
             int maxCount) {
+        if ((fakeResponses != null) && fakeResponses.hasNext()) {
+            String retval = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+            return new TabTableResult(retval).getData();
+        }
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
         request.setName(templateName);
         request.setTemplateParameters(parameters);
-        System.out.println(request);
         HttpConnection connection = executeRequest(request);
         return new TabTableResult(connection).getData();
     } 
@@ -107,6 +113,13 @@ public class TemplateService extends Service
      */
     public Iterator<List<String>> getResultIterator(String templateName, 
             List<TemplateParameter> parameters, int maxCount) {
+        if ((fakeResponses != null) && fakeResponses.hasNext()) {
+            String retval = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+            return new TabTableResult(retval).getIterator();
+        }
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);

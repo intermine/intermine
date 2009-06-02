@@ -79,6 +79,14 @@ public class ModelService extends Service
     }
     
     private String getModelXml() {
+        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
+            String retval = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+            return retval;
+        }
+        fakeResponses = null;
         Request request = new RequestImpl(RequestType.GET, getUrl(), 
                 ContentType.TEXT_PLAIN);
         HttpConnection connection = executeRequest(request);

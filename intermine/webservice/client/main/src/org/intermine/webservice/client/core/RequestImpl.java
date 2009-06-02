@@ -225,7 +225,10 @@ public class RequestImpl implements Request
     public String getHeader(String name) {
         return headers.get(name);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return getUrl(true);
     }

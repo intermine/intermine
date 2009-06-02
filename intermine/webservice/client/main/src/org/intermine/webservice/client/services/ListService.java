@@ -66,13 +66,21 @@ public class ListService extends Service
      * @return names of public lists containing specified object
      */
     public List<String> getPublicListsWithObject(String publicId, String type) {
-        ListRequest request = new ListRequest(RequestType.POST, getUrl(), 
-                ContentType.TEXT_TAB);
-        request.setPublicId(publicId);
-        request.setObjectType(type);
-        HttpConnection connection = executeRequest(request);
-        List<List<String>> result = (new TabTableResult
-                (connection)).getData();        
+        List<List<String>> result;
+        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
+            String retval = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+            result = new TabTableResult(retval).getData();
+        } else {
+            ListRequest request = new ListRequest(RequestType.POST, getUrl(), 
+                    ContentType.TEXT_TAB);
+            request.setPublicId(publicId);
+            request.setObjectType(type);
+            HttpConnection connection = executeRequest(request);
+            result = new TabTableResult(connection).getData();        
+        }
         List<String> ret = new ArrayList<String>();
         for (List<String> row : result) {
             if (row.size() > 0) {

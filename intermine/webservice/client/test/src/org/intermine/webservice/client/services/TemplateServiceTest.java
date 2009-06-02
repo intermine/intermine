@@ -1,6 +1,7 @@
 package org.intermine.webservice.client.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -34,6 +35,7 @@ public class TemplateServiceTest extends TestCase
      */
     public void testNonDefaultParameters() {
         TemplateService service = TestUtil.getTemplateService();
+        service.setFakeResponses(Collections.singleton("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue").iterator());
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA"));
         
