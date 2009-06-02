@@ -86,7 +86,7 @@ public class Service
     /**
      * Sets the username and password for all requests.
      *
-     * @param username a username
+     * @param userName a username
      * @param password a password
      */
     public void setAuthentication(String userName, String password) {
