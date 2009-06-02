@@ -29,8 +29,19 @@ import org.intermine.web.logic.export.ResponseUtil;
  */
 public class ResultsAction extends InterMineAction
 {
+    /**
+     * Called before results table is rendered.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
     public ActionForward execute(ActionMapping mapping,
-            @SuppressWarnings("unused")
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
