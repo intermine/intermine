@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <classes>
   <class name="CDNA"
-    extends="BioEntity" is-interface="true"/>
+    extends="Region" is-interface="true"/>
   <class name="NaturalTransposableElement"
     extends="Region" is-interface="true"/>
   <class name="StopCodon"
-    extends="BioEntity" is-interface="true"/>
+    extends="Codon" is-interface="true"/>
   <class name="StartCodon"
-    extends="BioEntity" is-interface="true"/>
+    extends="Codon" is-interface="true"/>
   <class name="OriginOfReplication"
     extends="Region" is-interface="true"/>
   <class name="HistoneBindingSite"
