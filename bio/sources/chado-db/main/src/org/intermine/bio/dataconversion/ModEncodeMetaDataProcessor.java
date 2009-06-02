@@ -89,7 +89,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // ...we need a further map to link to submission 
     private Map<Integer, String> submissionProjectMap = new HashMap<Integer, String>();
     private Map<Integer, String> submissionLabMap = new HashMap<Integer, String>();
-    private Map<Integer, String> submissionExpMap = new HashMap<Integer, String>();
 
 
     // submission/applied_protocol/protocol maps
@@ -162,8 +161,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer intermineObjectId;
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
-        // the list of applied protocols for which this data item is an output
-        private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
     }
 
     /**
@@ -1014,8 +1011,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator <String> i  = experiment.iterator();
         while (i.hasNext()) {
             String name = i.next();
-            List<Integer> subs = new ArrayList<Integer>();
-            subs = expSubMap.get(name);
 
             Item exp = getChadoDBConverter().createItem("Experiment");
             exp.setAttribute("name", name);
@@ -1295,7 +1290,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
        while (res.next()) {
            Integer submissionId = new Integer(res.getInt("experiment_id"));
            Integer rank = new Integer(res.getInt("rank"));
-           String  whichOne = res.getString("name");
            String  value    = res.getString("value");   
                      
            if (rank != prevRank || submissionId != prevSub) {
@@ -1675,16 +1669,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String heading = null;
 
         int count = 0;
-        Integer prevDataId=-1;
+        Integer prevDataId = -1;
         Item prevSubmissionData = null;
 
         while (res.next()) {
             Item submissionData = null;
             Integer dataId = new Integer(res.getInt("data_id"));
 
-            if (dataId != prevDataId){
+            if (dataId != prevDataId) {
                 submissionData = getChadoDBConverter().createItem("SubmissionData");
-                if (prevDataId>-1){
+                if (prevDataId > -1) {
                     // store previous item and add to object and maps
                     Integer intermineObjectId = getChadoDBConverter().store(prevSubmissionData);
 
@@ -1693,19 +1687,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     aData.itemIdentifier = prevSubmissionData.getIdentifier();
                     appliedDataMap.put(dataId, aData);
 
-                    LOG.debug("ADMAP put: data_id " + dataId + "|" + intermineObjectId + " imobjid");
+                    LOG.debug("ADMAP put: data_id " + dataId + "|" 
+                            + intermineObjectId + " imobjid");
                 } 
 
                 // new item                
                 name = res.getString("name");
                 value = res.getString("value");
                 heading = res.getString("heading");
-                LOG.info("DADEBUG 2: " + heading+name+value);
+                LOG.info("DADEBUG 2: " + heading + name + value);
 
                 if (name != null && !name.equals("")) {
                     submissionData.setAttribute("name", name);
                 }
-                if ((name == null || name.equals("")) && heading!= null && heading.contains(" Name")) {
+                if ((name == null || name.equals("")) 
+                        && heading != null && heading.contains(" Name")) {
                     submissionData.setAttribute("name", heading.replace(" Name", ""));
                 }
                 if (!StringUtils.isEmpty(value)) {
@@ -1715,7 +1711,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             String aHeading = res.getString("aHeading");
-            if (!StringUtils.isEmpty(aHeading)){
+            if (!StringUtils.isEmpty(aHeading)) {
                 String aName = res.getString("aName");
                 String aValue = res.getString("aValue");
                 Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
@@ -1729,13 +1725,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 // setting references to dataSubmission
                 dataAttribute.setReference("submissionData", submissionData.getIdentifier());
-                // store it and add to object and maps
-                Integer intermineObjectId = getChadoDBConverter().store(dataAttribute);
 
-                if (aHeading == "official name"){
+                getChadoDBConverter().store(dataAttribute);
+
+                if (aHeading == "official name") {
                     value = aValue;   
                     submissionData.setAttribute("value", value);
-                    LOG.info("DADEBUG 5: " + aValue + "|" + submissionData.getAttribute(value));                    
+                    LOG.info("DADEBUG 5: " + aValue + "|" + submissionData.getAttribute(value));
                 }
             }
             prevSubmissionData = submissionData;
@@ -1810,8 +1806,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // setting references to SubmissionData
             dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
 
-            // store it and add to object and maps
-            Integer intermineObjectId = getChadoDBConverter().store(dataAttribute);
+            getChadoDBConverter().store(dataAttribute);
 
             count++;
         }
