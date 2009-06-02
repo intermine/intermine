@@ -76,7 +76,8 @@ public class QueryService extends Service
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
         Model model = modelService.getModel();
         Model.addModel(model.getName(), model);
-        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
+        return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
+                PathQuery.USERPROFILE_VERSION);
     }
 
     /**
@@ -94,12 +95,21 @@ public class QueryService extends Service
      * @return number of results of specified query.
      */
     public int getCount(String queryXml) {
-        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
-                ContentType.TEXT_TAB);
-        request.setQueryXml(queryXml);
-        request.setParameter("tcount", "");
-        HttpConnection connection = executeRequest(request);
-        String body = connection.getResponseBodyAsString().trim();
+        String body = null;
+        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
+            body = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+        } else {
+            fakeResponses = null;
+            QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
+                    ContentType.TEXT_TAB);
+            request.setQueryXml(queryXml);
+            request.setParameter("tcount", "");
+            HttpConnection connection = executeRequest(request);
+            body = connection.getResponseBodyAsString().trim();
+        }
         if (body.length() == 0) {
             throw new ServiceException("Service didn't return any result");
         }
@@ -130,7 +140,8 @@ public class QueryService extends Service
      * @return results of specified PathQuery
      */
     public Iterator<List<String>> getResultIterator(PathQuery query, int maxCount) {
-        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), maxCount).getIterator();
+        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), maxCount)
+            .getIterator();
     }
  
     /**
@@ -156,6 +167,14 @@ public class QueryService extends Service
     }
     
     private TabTableResult getResultInternal(String queryXml, int maxCount) {
+        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
+            String retval = fakeResponses.next();
+            if (!fakeResponses.hasNext()) {
+                fakeResponses = null;
+            }
+            return new TabTableResult(retval);
+        }
+        fakeResponses = null;
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);

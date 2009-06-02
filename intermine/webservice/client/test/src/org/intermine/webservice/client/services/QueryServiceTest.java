@@ -1,6 +1,7 @@
 package org.intermine.webservice.client.services;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -22,9 +23,8 @@ import org.intermine.webservice.client.util.TestUtil;
  *
  */
 
-/**Tests functionality of QueryService - client class, implementing easy
- * access to InterMine web service. That's why it tests the web service itself
- * as well.
+/**
+ * Tests functionality of QueryService - client class
  * 
  * @author Jakub Kulaviak
  **/
@@ -42,6 +42,7 @@ public class QueryServiceTest extends TestCase
         query.addConstraint("Employee.age", new Constraint(ConstraintOp.LESS_THAN, new Integer(60)));
         query.addConstraint("Employee.fullTime", new Constraint(ConstraintOp.EQUALS, true));
         QueryService queryService = factory.getQueryService();
+        queryService.setFakeResponses(Collections.singleton("EmployeeA1	10	1	true\nEmployeeA2	20	2	true").iterator());
         List<List<String>> result = queryService.getResult(query, 100);
         TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1", "true");
         TestUtil.checkRow(result.get(1), "EmployeeA2", "20", "2", "true");
@@ -49,6 +50,7 @@ public class QueryServiceTest extends TestCase
 
     public void testGetResultPathQuery() throws IOException {
         QueryService queryService = TestUtil.getQueryService();
+        queryService.setFakeResponses(Collections.singleton("EmployeeA1\tDepartmentA1\tCompanyA\ttrue\tEmployee Street, AVille\nEmployeeA2\tDepartmentA1\tCompanyA\ttrue\tEmployee Street, AVille\nEmployeeA3\tDepartmentA1\tCompanyA\tfalse\tEmployee Street, AVille").iterator());
         PathQuery query = queryService.createPathQuery(getSimpleXml());
         checkResult(queryService.getResult(query, 10));
     }
@@ -69,6 +71,7 @@ public class QueryServiceTest extends TestCase
     
     public void testGetResultStringXmlQuery() throws IOException {
         QueryService service = TestUtil.getQueryService();
+        service.setFakeResponses(Collections.singleton("EmployeeA1\tDepartmentA1\tCompanyA\ttrue\tEmployee Street, AVille\nEmployeeA2\tDepartmentA1\tCompanyA\ttrue\tEmployee Street, AVille\nEmployeeA3\tDepartmentA1\tCompanyA\tfalse\tEmployee Street, AVille").iterator());
         List<List<String>> result = service.getResult(getSimpleXml(), 10);
         checkResult(result);
     }

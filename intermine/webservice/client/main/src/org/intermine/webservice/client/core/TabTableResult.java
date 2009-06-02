@@ -13,6 +13,7 @@ package org.intermine.webservice.client.core;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,8 @@ import org.intermine.webservice.client.util.HttpConnection;
 public class TabTableResult 
 {
     
-    private HttpConnection connection;
+    private HttpConnection connection = null;
+    private String fakeResults = null;
     
     /**
      * Constructor.
@@ -40,12 +42,26 @@ public class TabTableResult
     }
 
     /**
+     * Constructor with a String, for testing purposes.
+     *
+     * @param fakeResults a String containing the http response
+     */
+    public TabTableResult(String fakeResults) {
+        this.fakeResults = fakeResults;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public List<List<String>> getData() {
         List<List<String>> ret = new ArrayList<List<String>>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader
-                (connection.getResponseBodyAsStream()));
+        BufferedReader reader;
+        if (connection != null) {
+            reader = new BufferedReader(new InputStreamReader(connection
+                        .getResponseBodyAsStream()));
+        } else {
+            reader = new BufferedReader(new StringReader(fakeResults));
+        }
         String line = null;
         try {
             while ((line = reader.readLine()) != null) {
@@ -82,10 +98,15 @@ public class TabTableResult
 
         private List<String> next;
         
-        BufferedReader reader = new BufferedReader(new InputStreamReader
-                (connection.getResponseBodyAsStream()));
+        BufferedReader reader;
         
         public TableIterator() {
+            if (connection != null) {
+                reader = new BufferedReader(new InputStreamReader(connection
+                            .getResponseBodyAsStream()));
+            } else {
+                reader = new BufferedReader(new StringReader(fakeResults));
+            }
             next = parseNext();    
         }
         
