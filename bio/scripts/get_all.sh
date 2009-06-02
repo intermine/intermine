@@ -152,6 +152,14 @@ echo "Getting Ensembl Anopheles files"
 #        exit 1
     fi
 echo "==========================================================="
+echo "Getting Redfly GFF files"
+./get_redfly "$shared_data/REDfly" $tempfile
+    if [ $? -ne 0 ]
+    then
+        echo "error getting Redfly GFF files" 2>&1
+#        exit 1
+    fi
+echo "==========================================================="
 
 
 today=$(date +"%F")
