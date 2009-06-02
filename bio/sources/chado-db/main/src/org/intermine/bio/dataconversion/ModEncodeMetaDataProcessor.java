@@ -325,7 +325,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         + " has no featureMap keys.");
                 continue;
             } 
-            LOG.debug("FEATMAP: submission " + chadoExperimentId + "|"    
+            LOG.info("FEATMAP: submission " + chadoExperimentId + "|"    
                     + "featureMap: " + subFeatureMap.keySet().size());
 
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
