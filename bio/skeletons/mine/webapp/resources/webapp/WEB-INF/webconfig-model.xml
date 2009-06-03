@@ -64,10 +64,12 @@
       <fieldconfig fieldExpr="organism.shortName" />
     </fields>
     <longdisplayers>
+      <!-- attribute links can now be configured for gene report pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="geneMicroArrayDisplayer.tile"/>
     </longdisplayers>
     <bagdisplayers>
+      <!-- attribute links can now be configured for gene list analysis pages -->
       <displayer src="attributeLinkDisplayer.tile"/>
     </bagdisplayers>
   </class>
