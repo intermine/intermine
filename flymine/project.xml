@@ -111,7 +111,7 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling_reordered/"/>
    </source>
-    <source name="kegg-pathway" type="kegg-pathway">
+    <source name="kegg-pathway" type="kegg-pathway" dump="true">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
     </source>
