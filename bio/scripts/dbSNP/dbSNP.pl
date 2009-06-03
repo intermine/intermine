@@ -23,7 +23,7 @@ use Bio::EnsEMBL::Variation::DBSQL::DBAdaptor;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 
 if (@ARGV != 3) {
-    die "usage: mine_name taxon_id data_destination \n eg. flymine 7227 /data/ensembl \n";  
+    die "usage: dbSNP.pl mine_name taxon_id data_destination \n eg. dbSNP.pl snpmine 9606 /data/ensembl \n";  
 }
 
 my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
