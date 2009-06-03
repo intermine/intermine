@@ -207,7 +207,7 @@ public class FlyAtlasConverter extends BioFileConverter
         assays.put("eye", createAssay("Adult eye"));
         assays.put("heart", createAssay("Adult heart"));
         assays.put("lftrachea", createAssay("Larval trachea"));
-        assays.put("Drosophila S2 cells", createAssay("S2 cells"));
+        assays.put("drosophila s2 cells", createAssay("S2 cells"));
 
     }
 
