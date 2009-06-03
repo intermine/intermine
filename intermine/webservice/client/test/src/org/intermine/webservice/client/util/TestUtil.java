@@ -4,9 +4,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.intermine.webservice.client.services.ModelService;
-import org.intermine.webservice.client.services.QueryService;
-import org.intermine.webservice.client.services.TemplateService;
+import org.intermine.webservice.client.services.DummyModelService;
+import org.intermine.webservice.client.services.DummyQueryService;
+import org.intermine.webservice.client.services.DummyTemplateService;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -24,16 +24,16 @@ import org.intermine.webservice.client.services.TemplateService;
 public class TestUtil extends TestCase 
 {
 
-    public static QueryService getQueryService() {
-        return new QueryService(getRootUrl(), "TestUtil");
+    public static DummyQueryService getQueryService() {
+        return new DummyQueryService(getRootUrl(), "TestUtil");
     }
     
-    public static ModelService getModelService() {
-        return new ModelService(getRootUrl(), "TestUtil");
+    public static DummyModelService getModelService() {
+        return new DummyModelService(getRootUrl(), "TestUtil");
     }
     
-    public static TemplateService getTemplateService() {
-        return new TemplateService(getRootUrl(), "TestUtil");
+    public static DummyTemplateService getTemplateService() {
+        return new DummyTemplateService(getRootUrl(), "TestUtil");
     }    
             
     public static String getRootUrl() {

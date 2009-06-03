@@ -12,7 +12,6 @@ package org.intermine.webservice.client.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -50,8 +49,6 @@ public class Service
     private String userName;
 
     private String password;
-
-    protected Iterator<String> fakeResponses = null;
 
     /**
      * Constructor. {@link ServiceFactory} should be used always to create service and not this 
@@ -203,19 +200,5 @@ public class Service
      */
     public String getApplicationName() {
         return applicationName;
-    }
-
-    /**
-     * Add a fake response, for testing purposes. Allows fake http responses to be inserted into
-     * this object, so that testing does not require a real server to be set up.
-     *
-     * @param fakeResponses an Iterator over String
-     * @throws IllegalStateException if there are already some fake responses
-     */
-    public void setFakeResponses(Iterator<String> fakeResponses) throws IllegalStateException {
-        if (this.fakeResponses != null) {
-            throw new IllegalStateException("Fake responses already exist");
-        }
-        this.fakeResponses = fakeResponses;
     }
 }

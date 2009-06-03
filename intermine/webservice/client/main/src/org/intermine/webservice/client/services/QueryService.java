@@ -49,17 +49,38 @@ public class QueryService extends Service
         super(rootUrl, SERVICE_RELATIVE_URL, applicationName);
     }
 
-    private static class QueryRequest extends RequestImpl 
+    /**
+     * A subclass of RequestImpl that described a request for a data query.
+     *
+     * @author Jakub Kulaviak
+     */
+    protected static class QueryRequest extends RequestImpl 
     {
-
+        /**
+         * Constructor.
+         *
+         * @param type GET or POST
+         * @param serviceUrl the URL of the service, without parameters
+         * @param contentType a ContentType object
+         */
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
         }
         
+        /**
+         * Sets the maximum number of rows returned.
+         *
+         * @param maxCount an integer number of rows, where outer joins count as multiple rows
+         */
         public void setMaxCount(int maxCount) {
             setParameter("size", maxCount + "");
         }
-        
+
+        /**
+         * Sets the query that is to be executed.
+         *
+         * @param xml the query to be executed, in xml format
+         */
         public void setQueryXml(String xml) {
             setParameter("query", xml);
         }
@@ -95,21 +116,10 @@ public class QueryService extends Service
      * @return number of results of specified query.
      */
     public int getCount(String queryXml) {
-        String body = null;
-        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
-            body = fakeResponses.next();
-            if (!fakeResponses.hasNext()) {
-                fakeResponses = null;
-            }
-        } else {
-            fakeResponses = null;
-            QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
-                    ContentType.TEXT_TAB);
-            request.setQueryXml(queryXml);
-            request.setParameter("tcount", "");
-            HttpConnection connection = executeRequest(request);
-            body = connection.getResponseBodyAsString().trim();
-        }
+        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.TEXT_TAB);
+        request.setQueryXml(queryXml);
+        request.setParameter("tcount", "");
+        String body = getResponseString(request);
         if (body.length() == 0) {
             throw new ServiceException("Service didn't return any result");
         }
@@ -119,6 +129,17 @@ public class QueryService extends Service
             throw new ServiceException("Service returned invalid result. It is not number: " 
                     + body, e);
         }        
+    }
+
+    /**
+     * Returns a String response for a request from a server.
+     *
+     * @param request the QueryRequest
+     * @return a String
+     */
+    protected String getResponseString(QueryRequest request) {
+        HttpConnection connection = executeRequest(request);
+        return connection.getResponseBodyAsString().trim();
     }
 
     /**
@@ -167,18 +188,20 @@ public class QueryService extends Service
     }
     
     private TabTableResult getResultInternal(String queryXml, int maxCount) {
-        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
-            String retval = fakeResponses.next();
-            if (!fakeResponses.hasNext()) {
-                fakeResponses = null;
-            }
-            return new TabTableResult(retval);
-        }
-        fakeResponses = null;
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), 
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
         request.setQueryXml(queryXml);
+        return getResponseTable(request);
+    }
+
+    /**
+     * Performs the query and returns a TabTableResult containing the data.
+     *
+     * @param request a QueryRequest object
+     * @return a TabTableResult object containing the data fetched
+     */
+    protected TabTableResult getResponseTable(QueryRequest request) {
         HttpConnection connection = executeRequest(request);
         return new TabTableResult(connection);
     }

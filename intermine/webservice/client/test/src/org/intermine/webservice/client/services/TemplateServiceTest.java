@@ -34,8 +34,9 @@ public class TemplateServiceTest extends TestCase
      * parameters provided by client.
      */
     public void testNonDefaultParameters() {
-        TemplateService service = TestUtil.getTemplateService();
-        service.setFakeResponses(Collections.singleton("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue").iterator());
+        DummyTemplateService service = TestUtil.getTemplateService();
+        service.setFakeResponse("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue");
+        service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?value3=60&value4=true&value1=EmployeeA&size=10&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA"));
         
