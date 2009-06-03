@@ -60,6 +60,7 @@
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>
+      <property name="src.data.dir.includes" value="*.txt"/>
     </source>
     <source name="anopheles-identifiers" type="anopheles-identifiers">
       <property name="src.data.dir" location="/shared/data/anopheles/mappings/current"/>
