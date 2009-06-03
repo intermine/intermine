@@ -31,7 +31,7 @@ public class TabTableResult
 {
     
     private HttpConnection connection = null;
-    private String fakeResults = null;
+    private String stringResults = null;
     
     /**
      * Constructor.
@@ -42,12 +42,12 @@ public class TabTableResult
     }
 
     /**
-     * Constructor with a String, for testing purposes.
+     * Constructor with a String.
      *
-     * @param fakeResults a String containing the http response
+     * @param stringResults a String containing the http response
      */
-    public TabTableResult(String fakeResults) {
-        this.fakeResults = fakeResults;
+    public TabTableResult(String stringResults) {
+        this.stringResults = stringResults;
     }
 
     /**
@@ -60,7 +60,7 @@ public class TabTableResult
             reader = new BufferedReader(new InputStreamReader(connection
                         .getResponseBodyAsStream()));
         } else {
-            reader = new BufferedReader(new StringReader(fakeResults));
+            reader = new BufferedReader(new StringReader(stringResults));
         }
         String line = null;
         try {
@@ -105,7 +105,7 @@ public class TabTableResult
                 reader = new BufferedReader(new InputStreamReader(connection
                             .getResponseBodyAsStream()));
             } else {
-                reader = new BufferedReader(new StringReader(fakeResults));
+                reader = new BufferedReader(new StringReader(stringResults));
             }
             next = parseNext();    
         }

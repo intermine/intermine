@@ -78,15 +78,12 @@ public class ModelService extends Service
         return model;
     }
     
-    private String getModelXml() {
-        if ((fakeResponses != null) && (fakeResponses.hasNext())) {
-            String retval = fakeResponses.next();
-            if (!fakeResponses.hasNext()) {
-                fakeResponses = null;
-            }
-            return retval;
-        }
-        fakeResponses = null;
+    /**
+     * Fetches the xml for the model from the server.
+     *
+     * @return the model in XML format
+     */
+    protected String getModelXml() {
         Request request = new RequestImpl(RequestType.GET, getUrl(), 
                 ContentType.TEXT_PLAIN);
         HttpConnection connection = executeRequest(request);

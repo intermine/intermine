@@ -22,18 +22,18 @@ import org.intermine.webservice.client.template.TemplateParameter;
 import org.intermine.webservice.client.util.HttpConnection;
 
 /**
- * The TemplateService returns results of public templates and number of results. Template is 
+ * The TemplateService returns results of public templates and number of results. Template is
  * predefined query with some parameters. These parameters are variables that enable parameterized
- * queries. For example the same template can be run for Drosophila organism or Caenorhabditis. 
- * It depends just at the specified organism parameter.  
- * 
+ * queries. For example the same template can be run for Drosophila organism or Caenorhabditis.
+ * It depends just at the specified organism parameter.
+ *
  * @author Jakub Kulaviak
  **/
-public class TemplateService extends Service 
+public class TemplateService extends Service
 {
-    
+
     private static final String SERVICE_RELATIVE_URL = "template/results";
-        
+
     /**
      * Use {@link ServiceFactory} instead of constructor for creating this service.
      * @param rootUrl root URL
@@ -42,22 +42,48 @@ public class TemplateService extends Service
     public TemplateService(String rootUrl, String applicationName) {
         super(rootUrl, SERVICE_RELATIVE_URL, applicationName);
     }
-    
-    private static class TemplateRequest extends RequestImpl 
-    {
 
+    /**
+     * A subclass of RequestImpl relevant to template queries.
+     *
+     * @author Jakub Kulaviak
+     */
+    protected static class TemplateRequest extends RequestImpl
+    {
+        /**
+         * Constructor.
+         *
+         * @param type GET or POST
+         * @param serviceUrl the URL of the service, not including parameters
+         * @param contentType a ContentType object
+         */
         public TemplateRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
         }
-        
+
+        /**
+         * Sets the maximum number of rows returned.
+         *
+         * @param maxCount an integer number of rows, where outer joins count as multiple rows
+         */
         public void setMaxCount(int maxCount) {
             setParameter("size", maxCount + "");
         }
-        
+
+        /**
+         * Sets the name of the template to be used.
+         *
+         * @param xml template name
+         */
         public void setName(String xml) {
             setParameter("name", xml);
         }
-        
+
+        /**
+         * Set some template parameters.
+         *
+         * @param parameters a List of TemplateParameter objects
+         */
         public void setTemplateParameters(List<TemplateParameter> parameters) {
             for (int i = 0; i < parameters.size(); i++) {
                 TemplateParameter par = parameters.get(i);
@@ -74,58 +100,53 @@ public class TemplateService extends Service
             }
         }
     }
-    
+
     /**
-     * Returns template results for given parameters. If you expect a lot of results 
-     * use getResultIterator() method.  
+     * Returns template results for given parameters. If you expect a lot of results
+     * use getResultIterator() method.
      * @param templateName template name
      * @param parameters parameters of template
-     * @param maxCount maximum number of returned results 
+     * @param maxCount maximum number of returned results
      * @see TemplateService
      * @return results
      */
-    public List<List<String>> getResult(String templateName, List<TemplateParameter> parameters, 
+    public List<List<String>> getResult(String templateName, List<TemplateParameter> parameters,
             int maxCount) {
-        if ((fakeResponses != null) && fakeResponses.hasNext()) {
-            String retval = fakeResponses.next();
-            if (!fakeResponses.hasNext()) {
-                fakeResponses = null;
-            }
-            return new TabTableResult(retval).getData();
-        }
-        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
+        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
         request.setName(templateName);
         request.setTemplateParameters(parameters);
-        HttpConnection connection = executeRequest(request);
-        return new TabTableResult(connection).getData();
-    } 
-    
+        return getResponseTable(request).getData();
+    }
+
     /**
-     * Returns template results for given parameters. Use this method if you expects a lot 
-     * of results and you would run out of memory.   
+     * Returns template results for given parameters. Use this method if you expects a lot
+     * of results and you would run out of memory.
      * @param templateName template name
      * @param parameters parameters of template
-     * @param maxCount maximum number of returned results 
+     * @param maxCount maximum number of returned results
      * @see TemplateService
      * @return results
      */
-    public Iterator<List<String>> getResultIterator(String templateName, 
+    public Iterator<List<String>> getResultIterator(String templateName,
             List<TemplateParameter> parameters, int maxCount) {
-        if ((fakeResponses != null) && fakeResponses.hasNext()) {
-            String retval = fakeResponses.next();
-            if (!fakeResponses.hasNext()) {
-                fakeResponses = null;
-            }
-            return new TabTableResult(retval).getIterator();
-        }
-        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), 
+        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(),
                 ContentType.TEXT_TAB);
         request.setMaxCount(maxCount);
         request.setName(templateName);
         request.setTemplateParameters(parameters);
+        return getResponseTable(request).getIterator();
+    }
+
+    /**
+     * Performs the actual remote connection and fetches results.
+     *
+     * @param request a TemplateRequest object
+     * @return a TabTableResult object containing the response data
+     */
+    protected TabTableResult getResponseTable(TemplateRequest request) {
         HttpConnection connection = executeRequest(request);
-        return new TabTableResult(connection).getIterator();
-    }     
+        return new TabTableResult(connection);
+    }
 }
