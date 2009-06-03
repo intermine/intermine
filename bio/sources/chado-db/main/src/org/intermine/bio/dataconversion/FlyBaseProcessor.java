@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +24,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVFactory;
 import org.intermine.bio.chado.ChadoCVTerm;
@@ -30,20 +38,11 @@ import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * A converter for chado that handles FlyBase specific configuration.
@@ -151,11 +150,8 @@ public class FlyBaseProcessor extends SequenceProcessor
     // pattern to match GLEANR gene symbols from FlyBase chado
     private static final Pattern GLEANR_PATTERN = Pattern.compile(".*GLEANR.*");
 
-    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP =
-        new HashMap<String, String>();
-
-    private final Map<String, FeatureData> proteinFeatureDataMap =
-        new HashMap<String, FeatureData>();
+    private static final Map<String, String> CHROMOSOME_STRUCTURE_VARIATION_SO_MAP = new HashMap();
+    private final Map<String, FeatureData> proteinFeatureDataMap = new HashMap();
 
     static {
         CHROMOSOME_STRUCTURE_VARIATION_SO_MAP.put("chromosomal_deletion",
@@ -471,8 +467,12 @@ public class FlyBaseProcessor extends SequenceProcessor
                                  boolean isPrimary, List<Item> otherEvidence)
         throws ObjectStoreException {
         Item synonym = super.createSynonym(fdat, type, identifier, isPrimary, otherEvidence);
-        OrganismData od = fdat.getOrganismData();
-        processItem(synonym, new Integer(od.getTaxonId()));
+        /* synonym can be null if it's been created earlier.  this would happen only if
+         * the synonym was created when another protein was created in favour of this one.  */
+        if (synonym != null) {
+            OrganismData od = fdat.getOrganismData();
+            processItem(synonym, new Integer(od.getTaxonId()));
+        }
         return synonym;
     }
 
@@ -682,7 +682,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("dbxref", "Protein", "GB_protein", Boolean.TRUE),
                     Arrays.asList(new SetFieldConfigAction("genbankIdentifier"),
                                   CREATE_SYNONYM_ACTION));
-            
+
             // transposable_element and natural_transposable_element
             map.put(new MultiKey("feature", "TransposableElement", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
@@ -764,6 +764,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             // for mitochondrial features
             return null;
         }
+
         if (chadoFeatureType.equals("chromosome_arm")
                         || chadoFeatureType.equals("ultra_scaffold")) {
             if (uniqueName.equals("dmel_mitochondrion_genome")) {
@@ -806,11 +807,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
 
-        if (chadoFeatureType.equals("protein")) {
-            if (!uniqueName.startsWith("FBpp")) {
-                return null;
-            }
-        }
         if (chadoFeatureType.equals("transposable_element_insertion_site")
                         && name == null && !uniqueName.startsWith("FBti")) {
             // ignore this feature as it doesn't have an FBti identifier and there will be
@@ -855,14 +851,14 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private static final List<String> FEATURES = Arrays.asList(
-            "gene", "mRNA", "transcript",
+            "gene", "mRNA", "transcript", "protein",
             "intron", "exon",
             "regulatory_region", "enhancer",
             "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
-            "protein", "point_mutation", "natural_transposable_element",
+            "point_mutation", "natural_transposable_element",
             "transposable_element"
     );
 
@@ -1620,13 +1616,27 @@ public class FlyBaseProcessor extends SequenceProcessor
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
         if (type.equals("protein")) {
-            if (proteinFeatureDataMap.containsKey(md5checksum)) {
-                return proteinFeatureDataMap.get(md5checksum);
+            // TODO what data are we trying to avoid with this?
+            if (!uniqueName.startsWith("FBpp")) {
+                return null;
             }
-            FeatureData fdat =
-                super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
-                                      organismId);
-            proteinFeatureDataMap.put(md5checksum, fdat);
+            if (proteinFeatureDataMap.containsKey(md5checksum)) {
+                FeatureData protein = proteinFeatureDataMap.get(md5checksum);
+                // make a synonym for the protein we're about to discard
+                if (protein != null
+                                && !StringUtil.isEmpty(uniqueName)
+                                && !protein.getExistingSynonyms().contains(uniqueName)) {
+                    createSynonym(protein, "identifier", uniqueName, false, null);
+                    createSynonym(protein, "identifier", name, false, null);
+                }
+                return protein;
+            }
+            FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name, md5checksum,
+                                                     seqlen, organismId);
+            // TODO why can this be null now?
+            if (fdat != null) {
+                proteinFeatureDataMap.put(md5checksum, fdat);
+            }
             return fdat;
         }
         return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,

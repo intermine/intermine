@@ -66,17 +66,16 @@ public class SequenceProcessor extends ChadoProcessor
 
     // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
-    protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
+    protected Map<Integer, FeatureData> featureMap = new HashMap();
 
     // we don't configure anything by default, so the process methods do their default actions
     private static final MultiKeyMap DEFAULT_CONFIG = new MultiKeyMap();
 
     // A map from chromosome uniqueName to chado feature_ids, populated by processFeatureTable()
-    private Map<Integer, Map<String, Integer>> chromosomeMaps =
-        new HashMap<Integer, Map<String, Integer>>();
+    private Map<Integer, Map<String, Integer>> chromosomeMaps = new HashMap();
 
     // a map from chado pubmed id to item identifier for the publication
-    private Map<Integer, String> publications = new HashMap<Integer, String>();
+    private Map<Integer, String> publications = new HashMap();
 
     // the name of the temporary table we create from the feature table to speed up processing
     private String tempFeatureTableName = null;
@@ -259,6 +258,7 @@ public class SequenceProcessor extends ChadoProcessor
                                            Integer organismId)
     throws ObjectStoreException {
 
+
         if (featureMap.containsKey(featureId)) {
             return false;
         }
@@ -428,33 +428,26 @@ public class SequenceProcessor extends ChadoProcessor
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
         OrganismData organismData =
             getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
-
         Item feature = makeFeature(new Integer(featureId), chadoType, interMineType, name,
                                    uniqueName, seqlen, organismData.getTaxonId());
-
         if (feature == null) {
             return null;
         }
-
         int taxonId = organismData.getTaxonId();
         FeatureData fdat;
         fdat = new FeatureData();
         Item organismItem = getChadoDBConverter().getOrganismItem(taxonId);
         feature.setReference("organism", organismItem);
-
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
 
         fdat.setFieldExistenceFlags(feature);
-
-
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
         fdat.setUniqueName(uniqueName);
         fdat.setChadoFeatureName(name);
         fdat.setInterMineType(XmlUtil.getFragmentFromURI(feature.getClassName()));
-
         fdat.organismData = organismData;
         fdat.setMd5checksum(md5checksum);
         return fdat;
@@ -1930,9 +1923,12 @@ public class SequenceProcessor extends ChadoProcessor
                                  boolean isPrimary, List<Item> otherEvidence)
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
-            throw new IllegalArgumentException("feature identifier " + identifier
-                                               + " is already a synonym for: "
-                                               + fdat.getExistingSynonyms());
+            String msg = "feature identifier " + identifier + " is already a synonym for: "
+            + fdat.getExistingSynonyms();
+            LOG.info(msg);
+//          TODO:  why would a duplicate synonym require an exception to be thrown?
+//          throw new IllegalArgumentException(msg);
+            return null;
         }
         List<Item> allEvidence = new ArrayList();
         if (otherEvidence != null) {
