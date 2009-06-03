@@ -12,8 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,7 +29,7 @@ import org.intermine.xml.full.Item;
 public class FlyAtlasConverter extends BioFileConverter
 {
     private Item expt, org;
-    protected Map<String, Item> assays = new HashMap<String, Item>();
+    protected Map<String, Item> assays = new HashMap();
 
     /**
      * Constructor
@@ -72,7 +70,19 @@ public class FlyAtlasConverter extends BioFileConverter
                 for (i = 1; (i + 4) <= headers.length; i += 5) {
                     String col = headers[i];
                     col = col.replaceAll("\"", "");
-                    String tissue = col.substring(0, col.indexOf(' ')).toLowerCase();
+
+                    String tissue = null;
+
+                    /* get the tissue name from the header, using the part before the "vs", eg:
+                     * "larvae hindgut vs whole fly  - T-Test_Change Direction"
+                     * there are two headers without the vs, just use space as the delimiter.
+                     * We can't always use ' ' to identify the tissue because there are duplicates.
+                     * */
+                    if (col.contains(" vs ")) {
+                       tissue = col.substring(0, col.indexOf(" vs ")).toLowerCase();
+                    } else {
+                        tissue = col.substring(0, col.indexOf(' ')).toLowerCase();
+                    }
                     String[] results = new String[5];
                     System.arraycopy(line, i, results, 0, 5);
                     Item result = createFlyAtlasResult(probe, tissue, results);
@@ -123,8 +133,7 @@ public class FlyAtlasConverter extends BioFileConverter
             throw new IllegalArgumentException("Unrecognised tissue type read from file: '"
                                                + tissue + "'.");
         }
-        result.setCollection("assays", new ArrayList(Collections.singleton((
-                                               assays.get(tissue)).getIdentifier())));
+        result.addToCollection("assays", assays.get(tissue).getIdentifier());
 
         // set experiment
         result.setReference("experiment", expt.getIdentifier());
@@ -169,27 +178,36 @@ public class FlyAtlasConverter extends BioFileConverter
         // names of assays from column headins, could be made more descriptive
         assays.put("brain", createAssay("Brain"));
         assays.put("head", createAssay("Head"));
+        assays.put("crop", createAssay("Crop"));
         assays.put("midgut", createAssay("Midgut"));
         assays.put("hind", createAssay("Hindgut"));
-        assays.put("tubule", createAssay("Tubule"));
+        assays.put("tubule t test", createAssay("Tubule"));
         assays.put("ovary", createAssay("Ovary"));
         assays.put("testis", createAssay("Testis"));
-        assays.put("FlyMean", createAssay("Whole Fly"));
         assays.put("acc", createAssay("Male accessory glands"));
-        assays.put("lt", createAssay("Tubule (larval)"));
-        assays.put("fb", createAssay("Fat Body (larval)"));
-        assays.put("crop", createAssay("Crop"));
+        assays.put("lt", createAssay("Larval tubule"));
+        assays.put("fb", createAssay("Larval fat body"));
         assays.put("tag", createAssay("Thoracicoabdominal ganglion"));
         assays.put("car", createAssay("Adult carcass"));
         assays.put("sg", createAssay("Salivary gland"));
-        assays.put("l_sg", createAssay("Larval Salivary gland"));
+        assays.put("l_sg", createAssay("Larval salivary gland"));
         assays.put("l_mid", createAssay("Larval midgut"));
-        assays.put("l_tub", createAssay("Larval tubule"));
-        assays.put("l_hind", createAssay("Larval hindgut"));
-        assays.put("l_fat", createAssay("Larval fat body"));
-        assays.put("larvae", createAssay("Larvae"));
+
+        assays.put("larvae hindgut", createAssay("Larvae hindgut"));
         assays.put("sptv", createAssay("Virgin spermatheca"));
         assays.put("sptm", createAssay("Mated spermatheca"));
+
+        // is this used?
+        assays.put("FlyMean", createAssay("Whole Fly"));
+
+        // new 2009-05-19
+        assays.put("feeded larvae central nerve system", createAssay("Larval CNS"));
+        assays.put("adult fat body", createAssay("Adult fat body"));
+        assays.put("feeded larvae carcuss", createAssay("Larval carcass"));
+        assays.put("eye", createAssay("Adult eye"));
+        assays.put("heart", createAssay("Adult heart"));
+        assays.put("lftrachea", createAssay("Larval trachea"));
+        assays.put("Drosophila S2 cells", createAssay("S2 cells"));
 
     }
 
