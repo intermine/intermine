@@ -20,6 +20,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -63,6 +64,10 @@ public class FlyAtlasConverter extends BioFileConverter
                 System.arraycopy(line, 0, headers, 0, end);
             } else {
                 String probeId = line[0];
+                // there seems to be some empty lines at the end of the file
+                if (StringUtil.isEmpty(probeId)) {
+                    break;
+                }
                 Item probe = createProbe(probeId);
                 store(probe);
                 // some rows have extra info on end, just look at length of headers
