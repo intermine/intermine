@@ -4,6 +4,41 @@
   <div style="clear:" class="box">
 
 
+<div class="heading2">FlyMine version 16.0 - release notes (8th May 2009)</div>
+<div class="body">
+<p style="font-size: +1.1em;">
+In Release 16.0 we have updated data from FlyBase to release FB2009_04 and many sources are updated to the latest versions, the way we include proteins has been redesigned so that all isoforms from UniProt are loaded.  We have introduced a significant new feature to querying ('outer joins') and improved general query and export performance.</p>
+
+<h3>Data</h3>
+<p>Data from FlyBase is updated to the FB2009_04 release and many other sources have been updated to the latest versions, specific changes are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
+
+<ul>
+    <li>UPDATE - we now include all isoforms of proteins from UniProt.</li>
+    <li>UPDATE - Gene Ontology (GO) data assigned to genes has been re-modelled to now include relationship types between terms.  Genes no longer have an allGoAnnotation collection to model transitive closure of the ontology, instead use the GoAnnotation.relations.parents collection.</li>
+    <li>FIX - TransposableElementInsertionSite features now have orientations, these are displayed in GBrowse.</li>
+</ul>
+
+<h3>Query system</h3>
+<p>In a major update to the query system it is now possible to choose whether columns include information that must be present to produce a row in the results or should just be shown if a value is present.  This is best illustrated with an example.  Consider an organism that has a thousand genes but only 900 are known to code for a protein.  In FlyMine there would be 1000 genes and 900 of them would be related to a protein.  You can now query for genes and related proteins in two ways:</p>
+<ol>
+  <li>'inner join' - You create a query with two columns, the first for the gene identifier, the second with the protein identifier.  Only 900 rows are return, those that don't have a protein aren't included.  This is how all queries worked before this release.</li>
+  <li>'outer join' - You create the same query but specify the gene to protein relationship as an 'outer join'.  This will return all 1000 genes in the first column and have empty cells in the second column for the 100 genes that don't have a protein.</li>
+</ol>
+
+<h3>Organise you lists</h3>
+<p>You can now apply aritrary tags to your saved lists both on the list analysis page and in MyMine.  Tags can be any label you like to help you categorise your saved information, one list can have multiple tags applied.  You can filter lists by tag from the Lists view page.</p>
+  
+<h3>Export</h3>
+<p>Improvements to the internals of InterMine have made exporting large datasets significantly faster - you should find download speeds around an order of magnitude better.</li>
+
+
+<h3>User interface</h3>
+<p>
+<ul>
+  <li>NEW - </li>
+</ul>
+</p>
+</div>
 <div class="heading2">FlyMine version 15.0 - release notes (15th September 2008)</div>
 <div class="body">
 <p style="font-size: +1.1em;">
