@@ -1005,9 +1005,8 @@ public class SequenceProcessor extends ChadoProcessor
     private void processDbxrefTable(Connection connection)
         throws SQLException, ObjectStoreException {
 
-
         ResultSet res = getDbxrefResultSet(connection);
-        Set<String> existingAttributes = new HashSet<String>();
+        Set<String> existingAttributes = new HashSet();
         Integer currentFeatureId = null;
         int count = 0;
 
@@ -1028,9 +1027,9 @@ public class SequenceProcessor extends ChadoProcessor
                 if (accession == null) {
                     throw new RuntimeException("found null accession in dbxref table for database "
                             + dbName + ".");
-                } else {
-                    accession  = fixIdentifier(fdat, accession);
                 }
+                accession  = fixIdentifier(fdat, accession);
+
 
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
@@ -1937,7 +1936,7 @@ public class SequenceProcessor extends ChadoProcessor
         Item returnItem = getChadoDBConverter().createSynonym(fdat.getItemIdentifier(), type,
                                                               identifier, isPrimary,
                                                               allEvidence);
-        fdat.getExistingSynonyms().add(identifier);
+        fdat.addExistingSynonym(identifier);
         return returnItem;
     }
 

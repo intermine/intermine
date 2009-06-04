@@ -31,8 +31,7 @@ class FeatureData
     private String uniqueName;
     private String chadoFeatureName;
     // the synonyms that have already been created
-    private final Set<String> existingSynonyms
-        = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+    private Set<String> existingSynonyms = new TreeSet(String.CASE_INSENSITIVE_ORDER);
     private String itemIdentifier;
     private String interMineType;
     private Integer intermineObjectId;
@@ -51,12 +50,13 @@ class FeatureData
     private static final Map<String, Short> NAME_MAP = new HashMap<String, Short>();
 
     static {
-        NAME_MAP.put(SequenceProcessor.PRIMARY_IDENTIFIER_STRING, IDENTIFIER_SET);
-        NAME_MAP.put(SequenceProcessor.SECONDARY_IDENTIFIER_STRING, SECONDARY_IDENTIFIER_SET);
-        NAME_MAP.put(SequenceProcessor.SYMBOL_STRING, SYMBOL_SET);
-        NAME_MAP.put(SequenceProcessor.NAME_STRING, NAME_SET);
-        NAME_MAP.put(SequenceProcessor.SEQUENCE_STRING, SEQUENCE_SET);
-        NAME_MAP.put(SequenceProcessor.LENGTH_STRING, LENGTH_SET);
+        NAME_MAP.put(SequenceProcessor.PRIMARY_IDENTIFIER_STRING, new Short(IDENTIFIER_SET));
+        NAME_MAP.put(SequenceProcessor.SECONDARY_IDENTIFIER_STRING,
+                     new Short(SECONDARY_IDENTIFIER_SET));
+        NAME_MAP.put(SequenceProcessor.SYMBOL_STRING, new Short(SYMBOL_SET));
+        NAME_MAP.put(SequenceProcessor.NAME_STRING, new Short(NAME_SET));
+        NAME_MAP.put(SequenceProcessor.SEQUENCE_STRING, new Short(SEQUENCE_SET));
+        NAME_MAP.put(SequenceProcessor.LENGTH_STRING, new Short(LENGTH_SET));
     }
 
     /**
@@ -125,7 +125,7 @@ class FeatureData
 
     private short getFlagId(String attributeName) {
         if (NAME_MAP.containsKey(attributeName)) {
-            return NAME_MAP.get(attributeName);
+            return NAME_MAP.get(attributeName).shortValue();
         }
         throw new RuntimeException("unknown attribute name: " + attributeName);
     }
@@ -260,4 +260,16 @@ class FeatureData
     public final Set<String> getExistingSynonyms() {
         return existingSynonyms;
     }
+
+
+    /**
+     * this is a newer method, we are now creating synonyms later than we used to (because of
+     * duplicate sequences and discarded identifiers), so we need to be able to add this to the
+     * synonyms collection.
+     * @param synonym identifier that has just been created as a synonym
+     */
+    public void addExistingSynonym(String synonym) {
+        existingSynonyms.add(synonym);
+    }
+
 }

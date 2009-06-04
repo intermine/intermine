@@ -1623,20 +1623,24 @@ public class FlyBaseProcessor extends SequenceProcessor
             if (proteinFeatureDataMap.containsKey(md5checksum)) {
                 FeatureData protein = proteinFeatureDataMap.get(md5checksum);
                 // make a synonym for the protein we're about to discard
-                if (protein != null
-                                && !StringUtil.isEmpty(uniqueName)
-                                && !protein.getExistingSynonyms().contains(uniqueName)) {
-                    createSynonym(protein, "identifier", uniqueName, false, null);
-                    createSynonym(protein, "identifier", name, false, null);
+                if (protein != null) {
+                    if (!StringUtil.isEmpty(uniqueName)
+                                    && !protein.getExistingSynonyms().contains(uniqueName)) {
+                        Item synonym = createSynonym(protein, "identifier", uniqueName, true,
+                                                     null);
+                        store(synonym);
+                    }
+                    if (!StringUtil.isEmpty(name)
+                                    && !protein.getExistingSynonyms().contains(name)) {
+                        Item synonym = createSynonym(protein, "name", name, false, null);
+                        store(synonym);
+                    }
                 }
                 return protein;
             }
             FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name, md5checksum,
                                                      seqlen, organismId);
-            // TODO why can this be null now?
-            if (fdat != null) {
-                proteinFeatureDataMap.put(md5checksum, fdat);
-            }
+            proteinFeatureDataMap.put(md5checksum, fdat);
             return fdat;
         }
         return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
