@@ -107,7 +107,7 @@
             <fmt:message key="begin.importQuery"/>
           </a>
         </div>
-        <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload" styleClass="fp_button"><img src="images/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="47px" width="122px" /></html:link><br clear="right"/>
+        <html:link href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" styleClass="fp_button"><img src="images/build_a_query.png" id="build_a_query" title="Click here to Build A Query" link="/${WEB_PROPERTIES['webapp.path']}/customQuery.do" height="47px" width="122px" /></html:link><br clear="right"/>
       </im:boxarea>
 </div>
 
