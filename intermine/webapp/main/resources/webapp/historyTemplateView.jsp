@@ -55,19 +55,19 @@
               <input type="checkbox" id="selected_template"
                      onclick="selectColumnCheckbox(this.form, 'template')"/>
             </th>
-            <th align="left" nowrap class="sortable">
+            <th align="left" class="sortable">
               <fmt:message key="history.namecolumnheader"/>
             </th>
-            <th align="left" nowrap class="sortable">
+            <th align="left" class="sortable">
               <fmt:message key="history.titleheader"/>
             </th>
-            <th align="left" nowrap class="sortable">
+            <th align="left" class="sortable">
               <fmt:message key="history.descriptionheader"/>
             </th>
-            <th align="left" nowrap class="sortable">
+            <th align="left" class="sortable">
               <fmt:message key="history.commentheader"/>
             </th>
-            <th align="center" nowrap>
+            <th align="center">
               <fmt:message key="history.actionscolumnheader"/>
             </th>
           </tr>
@@ -82,7 +82,7 @@
 
               <c:choose>
                 <c:when test="${!savedTemplate.value.valid}">
-                  <td class="sorting" align="left" nowrap>
+                  <td class="sorting" align="left">
                     <html:link action="/templateProblems?name=${savedTemplate.key}&amp;scope=user" styleClass="brokenTmplLink">
                     <strike>${savedTemplate.value.name}</strike>
                     </html:link>
