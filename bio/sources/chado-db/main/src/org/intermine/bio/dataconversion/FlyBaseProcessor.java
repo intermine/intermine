@@ -736,6 +736,10 @@ public class FlyBaseProcessor extends SequenceProcessor
                                int seqlen, int taxonId) {
         String realInterMineType = interMineType;
 
+        if (chadoFeatureType.equals("protein") && !uniqueName.startsWith("FBpp")) {
+            return null;
+        }
+
         if (chadoFeatureType.equals("gene")) {
             if (uniqueName.startsWith("FBal")) {
                 // fix type of allele "gene" features
