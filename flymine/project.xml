@@ -114,8 +114,17 @@
     <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
-      <property name="genefile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
+      <property name="geneFile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
     </source>
+
+    <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/shared/data/treefam/current"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="genefile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <property name="treefam.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
+    </source>
+
+
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -158,14 +167,14 @@
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/REDfly/current"/>
+      <property name="src.data.dir" location="/shared/data/REDfly/current/tfbs"/>
       <property name="src.data.dir.includes" value="tfbs_dump.gff"/>
     </source>
     <source name="redfly" type="redfly">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
-      <property name="src.data.dir" location="/shared/data/REDfly/current"/>
+      <property name="src.data.dir" location="/shared/data/REDfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
     <source name="inparanoid-orthologue" type="orthologue">
