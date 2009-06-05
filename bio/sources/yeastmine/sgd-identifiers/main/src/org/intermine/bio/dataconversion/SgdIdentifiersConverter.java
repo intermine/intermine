@@ -53,42 +53,6 @@ public class SgdIdentifiersConverter extends BioFileConverter
 
     }
 
-//    feature_no
-//    feature_name
-//    dbxref_id
-//    feature_type
-//    source
-//    coord_version
-//    stop_coord
-//    start_coord
-//    strand
-//    gene_name
-//    name_description
-//    genetic_position
-//    headline
-//    date_created
-//    created_by
-
-
-
-//1
-//YHR051W
-//S000001093
-//ORF
-//SGD
-//2005-11-07
-//210145
-//209699
-//W
-//COX6
-//Cytochrome c
-//OXidase
-//Subunit VI of cytochrome c oxidase, which is the terminal member of the mitochondrial inner membrane electron transport chain; expression is regulated by oxygen levels
-//2000-05-19
-//OTTO
-
-
-
     /**
      *
      *
@@ -156,22 +120,5 @@ public class SgdIdentifiersConverter extends BioFileConverter
         Integer length = new Integer(b.intValue() - a.intValue());
         return length.toString();
     }
-
-//    private String getDataSource(String title)
-//    throws SAXException {
-//        String refId = datasources.get(title);
-//        if (refId == null) {
-//            Item item = createItem("DataSource");
-//            item.setAttribute("name", title);
-//            refId = item.getIdentifier();
-//            datasources.put(title, refId);
-//            try {
-//                store(item);
-//            } catch (ObjectStoreException e) {
-//                throw new SAXException(e);
-//            }
-//        }
-//        return refId;
-//    }
 
 }
