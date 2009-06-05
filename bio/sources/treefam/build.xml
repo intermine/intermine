@@ -1,0 +1,5 @@
+<project name="treefam" default="default" basedir=".">
+  <description>build, test, package treefam</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
