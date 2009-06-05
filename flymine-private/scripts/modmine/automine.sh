@@ -329,6 +329,7 @@ fi
       cd $DATADIR
       mv *.chadoxml $DATADIR/new
       mv $DATADIR/update/*.chadoxml $DATADIR/new
+      mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
       cd $DATADIR/new
    		for sub in *.chadoxml 
    		do
@@ -336,7 +337,7 @@ fi
        if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
         then
         echo "WARNING: $sub is missing from load directory" | tee -a $LOG
-			  STOP=y
+			  STOP=y # TODO: if incr you should exit! or exit always
        fi
 		  done
     fi
@@ -432,9 +433,13 @@ runtest $NAMESTAMP
 
 fi #VAL=y
 
-#go back to the chado directory
+# go back to the chado directory and mv chado file in 'done'
+# this is to allow to run the validation as a cronjob
 cd $DATADIR/new
+mv $sub validated
+cp -s validated/$sub .
 done
+
 # if we are validating, that's all
 if [ "$VALIDATING" = "y" ]
 then
