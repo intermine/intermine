@@ -13,9 +13,22 @@ In Release 16.0 we have updated data from FlyBase to release FB2009_04 and many 
 <p>Data from FlyBase is updated to the FB2009_04 release and many other sources have been updated to the latest versions, specific changes are detailed below.  For a complete list of all data included in FlyMine see the 'Data' tab above.</p>
 
 <ul>
-    <li>UPDATE - we now include all isoforms of proteins from UniProt.</li>
+    <li>UPDATE - we now include all isoforms of proteins from UniProt.</li>   
     <li>UPDATE - Gene Ontology (GO) data assigned to genes has been re-modelled to now include relationship types between terms.  Genes no longer have an allGoAnnotation collection to model transitive closure of the ontology, instead use the GoAnnotation.relations.parents collection.</li>
+    <li>NEW - we now load deficiencies/deletions and aberrations from FlyBase</li>
     <li>FIX - TransposableElementInsertionSite features now have orientations, these are displayed in GBrowse.</li>
+    <li>FIX - Rat genes now have synonyms, organisms and datasets correctly attached </li>
+    <li>FIX - Drosophila mRNA now have synonyms and datasets correctly attached</li>
+    <li>FIX - ESTs now have locations</li>
+    <li>FIX - Dmel proteins from UniProt are correctly attached to genes.</li>
+    <li>FIX - All genes and proteins now have a datasource.</li>
+    <li>UPDATE - Cytological location data now available</li>
+    <li>UPDATE - Proteins and transcripts are now linked</li>
+    <li>NEW - Predicted miRNA targets</li>
+    <li>NEW - Drosophila development ontology</li>
+    <li>NEW - Synonyms now have datasets, so you can tell who is using which identifier</li>
+    <li>UPDATE - Anopheles proteins now loaded for correct strain.</li>
+    <li>UPDATE - <i>Apis mellifera</i> genome removed.</li>
 </ul>
 
 <h3>Query system</h3>
@@ -31,11 +44,26 @@ In Release 16.0 we have updated data from FlyBase to release FB2009_04 and many 
 <h3>Export</h3>
 <p>Improvements to the internals of InterMine have made exporting large datasets significantly faster - you should find download speeds around an order of magnitude better.</li>
 
-
 <h3>User interface</h3>
 <p>
 <ul>
-  <li>NEW - </li>
+  <li>NEW - web service API is available.</li>
+  <li>FIX - Creating a list after converting between orthologues now works.</li>
+  <li>NEW - link to ArrayExpress atlas is available on certain report pages.</li>
+  <li>NEW - link to FlyBase appears on list analysis pages for alleles and insertions.</li>
+  <li>FIX - Foreign characters display properly</li>
+  <li>FIX - Chromosome distribution widget now excludes rubbish chromosomes from its calculations.</li>
+  <li>FIX - 404 error page improved.</li>
+  <li>FIX - List information on the report page is now at the top, for increased visibility</li>
+  <li>FIX - Export display issues fixed for Internet Explorer.</li>
+  <li>FIX - Fixed some slow algorithms displaying results data.</li>
+  <li>FIX - Fixed error in "Add Column" function where there are no extra columns to add.</li>
+  <li>FIX - Fixed "View all" button on Sequence residues.</li>
+  <li>UPDATE - Export now has column headings at the top.</li>
+  <li>FIX - Performance of widget queries improved.</li>
+  <li>FIX - Wildcards in queries are exported correctly.</li>
+  <li>UPDATE - Collection sizes are updated using AJAX on report pages.</li>
+  <li>UPDATE - UTRs now present in GBrowse</li>
 </ul>
 </p>
 </div>
