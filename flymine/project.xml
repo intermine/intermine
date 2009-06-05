@@ -116,14 +116,14 @@
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
     </source>
-
+<!--
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="genefile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
     </source>
-
+-->
 
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
