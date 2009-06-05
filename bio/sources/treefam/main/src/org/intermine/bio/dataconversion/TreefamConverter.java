@@ -83,15 +83,12 @@ public class TreefamConverter extends BioFileConverter
             String id = bits[0];
             String identifier = bits[4];
             String taxonId = bits[8];
-            System.out.println("taxonId:" + taxonId);
             try {
                 new Integer(taxonId);
             } catch (NumberFormatException e) {
                 continue;
             }
-            System.out.println("taxonId:" + taxonId);
             if (!taxonIds.isEmpty() && !taxonIds.contains(taxonId)) {
-                System.out.println("taxonId:" + taxonId);
                 // don't create gene object if gene isn't from an organism of interest
                 continue;
             }
