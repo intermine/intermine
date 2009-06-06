@@ -36,7 +36,7 @@
     </source>
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" >
-      <property name="uniprot.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
+      <property name="uniprot.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090 10116"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
     </source>
@@ -104,27 +104,24 @@
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/liftover/tiling_reordered/"/>
    </source>
-    <source name="kegg-pathway" type="kegg-pathway" dump="true">
+    <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr">
+    <source name="anoph-expr" type="anoph-expr" dump="true">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
     </source>
-<!--
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="genefile" value="/shared/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
+      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <property name="treefam.organisms" value="7227 7237 7220 7222 7230 7234 7237 7238 7240 7244 7260 7245 7217 6239 7165 7460 4932 9606 10090"/> 
     </source>
--->
-
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -158,11 +155,6 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-<!-- Remove this as probably no longer required for InParanoid
-    <source name="geneid-translationid" type="intermine-items-large-xml-file">
-      <property name="src.data.file" location="/shared/data/orthologues/inparanoid/geneid2peptideid/current/geneId2peptideId_with_primaryIdentifier.xml"/>
-    </source>
--->
     <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
