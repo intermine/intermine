@@ -673,8 +673,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             map.put(new MultiKey("dbxref", "Protein", FLYBASE_DB_NAME + " Annotation IDs",
                                  Boolean.TRUE),
-                                 Arrays.asList(new SetFieldConfigAction("name"),
-                                               CREATE_SYNONYM_ACTION));
+                                 Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("feature", "Protein", FLYBASE_DB_NAME, "name"),
                     Arrays.asList(CREATE_SYNONYM_ACTION));
             map.put(new MultiKey("feature", "Protein", FLYBASE_DB_NAME, "uniquename"),
