@@ -173,24 +173,6 @@
     </node>
   </query>
 </template>
-<template name="allGO_GeneOrganism_1" title="GO term name/id [and children of this term] --&gt; Genes in one specific organism." longDescription="Find all genes that are associated with a particular GO term in a specific organism. This template will return genes that have been assigned the given GO term as well as genes that have a more specific GO term." comment="">
-  <query name="allGO_GeneOrganism_1" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.actualGoTerms.identifier Gene.allGoAnnotation.actualGoTerms.name Gene.allGoAnnotation.qualifier Gene.allGoAnnotation.goEvidenceCodes.code Gene.allGoAnnotation.property.namespace" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="Search for genes in:" identifier="" editable="true" code="B">
-      </constraint>
-    </node>
-    <node path="Gene.allGoAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.allGoAnnotation.property" type="GOTerm">
-      <constraint op="LOOKUP" value="GO:0051707" description="that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-  </query>
-</template>
 <template name="Amplicon_RNAiResults" title="Amplicon [D. melanogaster] --&gt; RNAi screen results." longDescription="Find all RNAi screen results from the DRSC for a particular amplicon. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
   <query name="Amplicon_RNAiResults" model="genomic" view="RNAiScreenHit.amplicon.primaryIdentifier RNAiScreenHit.result RNAiScreenHit.rnaiScreen.publication.pubMedId RNAiScreenHit.rnaiScreen.publication.firstAuthor RNAiScreenHit.rnaiScreen.name RNAiScreenHit.rnaiScreen.analysisDescription RNAiScreenHit.rnaiScreen.cellLine" sortOrder="RNAiScreenHit.amplicon.primaryIdentifier asc">
     <node path="RNAiScreenHit" type="RNAiScreenHit">
@@ -1676,24 +1658,6 @@
     <node path="Gene.alleles" type="Allele">
     </node>
     <node path="Gene.alleles.annotations" type="PhenotypeAnnotation">
-    </node>
-  </query>
-</template>
-<template name="Gene_allGOTerms" title="Gene --&gt; GO terms and parents of those terms." longDescription="Given a gene show the associated GO terms, and the all parents to the top of the directed graph.  If 'isPrimaryAssignment' is 'true' then that GO term was actually assigned to the gene.  Likewise if it is false then the GO term is some more general parent term." comment="">
-  <query name="Gene_allGOTerms" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.allGoAnnotation.property.namespace Gene.allGoAnnotation.property.name Gene.allGoAnnotation.property.identifier Gene.allGoAnnotation.goEvidenceCodes.code Gene.allGoAnnotation.qualifier Gene.allGoAnnotation.isPrimaryAssignment" sortOrder="Gene.secondaryIdentifier asc">
-    <pathDescription pathString="Gene.goAnnotation" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.property" description="GO annotation">
-    </pathDescription>
-    <pathDescription pathString="Gene.goAnnotation.goEvidenceCodes" description="GO annotation &gt; evidence">
-    </pathDescription>
-    <node path="Gene" type="Gene">
-      <constraint op="LOOKUP" value="CG11348" description="Show GO annotations for gene:" identifier="Gene.class" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.allGoAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.allGoAnnotation.property" type="GOTerm">
     </node>
   </query>
 </template>
@@ -3601,40 +3565,6 @@
     </node>
     <node path="Gene.goAnnotation.name" type="String">
       <constraint op="CONTAINS" value="DNA binding" description="Go term" identifier="" editable="true" code="C">
-      </constraint>
-    </node>
-  </query>
-</template>
-<template name="GOInteraction_Genes" title="GO term + Interacting gene [D. melanogaster] --&gt; Genes." longDescription="List all D. melanogaster genes that are associated with a certain GO term and that have been found to interact with a specific gene. (Data Source: GO, BioGRID, IntAct)." comment="">
-  <query name="GOInteraction_Genes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.allGoAnnotation.identifier Gene.allGoAnnotation.name Gene.allGoAnnotation.qualifier" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C and E and B and D">
-    <node path="Gene" type="Gene">
-    </node>
-    <node path="Gene.organism" type="Organism">
-    </node>
-    <node path="Gene.organism.name" type="String">
-      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="E" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.allGoAnnotation" type="GOAnnotation">
-    </node>
-    <node path="Gene.allGoAnnotation.property" type="GOTerm">
-      <constraint op="LOOKUP" value="transcription factor activity" description="List all genes that have the following GO term:" identifier="" editable="true" code="A" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.allGoAnnotation.qualifier" type="String">
-      <constraint op="IS NULL" value="null" description="" identifier="" code="C">
-      </constraint>
-    </node>
-    <node path="Gene.interactions" type="Interaction">
-    </node>
-    <node path="Gene.interactions.interactingGenes" type="Gene">
-      <constraint op="LOOKUP" value="gl" description="" identifier="" editable="true" code="B" extraValue="">
-      </constraint>
-    </node>
-    <node path="Gene.interactions.interactingGenes.organism" type="Organism">
-    </node>
-    <node path="Gene.interactions.interactingGenes.organism.shortName" type="String">
-      <constraint op="=" value="D. melanogaster" description="" identifier="" code="D" extraValue="">
       </constraint>
     </node>
   </query>
@@ -5703,8 +5633,6 @@
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="OrganismGoTerm_GeneWithannotation" type="template">
   </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene.allGoAnnotation" type="collection">
-  </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_FlyAtlasGO" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="GeneOrganism_OrthologueOrganismGO" type="template">
@@ -5784,8 +5712,6 @@
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_OrthologuesGO" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="GOtermidentifier_name" type="template">
-  </tag>
-  <tag name="im:aspect:Gene Ontology" objectIdentifier="Gene_allGOTerms" type="template">
   </tag>
   <tag name="im:aspect:Gene Ontology" objectIdentifier="Organism_GoTerm_Gene" type="template">
   </tag>
@@ -7102,8 +7028,6 @@
   <tag name="im:public" objectIdentifier="Pathway_GenesOrthol" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="Pathway_GenesOrtholEST" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_allGOTerms" type="template">
   </tag>
   <tag name="im:public" objectIdentifier="PL FlyTF_novelTFs" type="bag">
   </tag>
