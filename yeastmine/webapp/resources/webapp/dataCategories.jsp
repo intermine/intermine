@@ -20,21 +20,21 @@
     <th>Source</th>
     <th>PubMed</th>
   </tr>
-
-  <tr><td class="leftcol">
-        <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
-        <p> Genomics </p></html:link></td>
-    <td> <i>D. rerio</i> </td>
-    <td> Genome annotation for <i>D. rerio</i>.  Files downloaded include:
+  <tr>
+    <td class="leftcol"><html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p><p> Genomics </p></html:link></td>
+    <td><i>Saccharomyces cerevisiae</i></td>
+    <td>Genome annotation for <i>Saccharomyces cerevisiae</i>.  Data loaded includes:
       <ul>
-        <li>ZFIN Markers associations to Ensembl IDs in ZFIN
-        <li>ZFIN Marker associations to UniProt protein IDs
-        <li>Previous ZFIN IDS
-        <li>Previous names
+        <li>PrimaryIdentifier
+        <li>SecondaryIdentifier
+        <li>Symbol
+        <li>Name
+        <li>Length
+        <li>Description
       </ul>
     </td>
-    <td><a href="http://www.zfin.org" target="_new">ZFIN</a> - 11 Mar, 2009</td>
-    <td> Sprague et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=1347449" target="_new">PubMed: 1347449</a></td>
+    <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 20 Mar, 2009</td>
+    <td></td>
   </tr>
 
 
@@ -42,7 +42,7 @@
         <html:link action="/aspect?name=Proteins">
         <p> <img src="model/images/proteins.png" /></p>
         <p> Proteins </p></html:link></td>
-    <td> <i>D. rerio</i> </td>
+    <td> <i>Saccharomyces cerevisiae</i> </td>
     <td> Protein annotation</td>
     <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.8</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=17142230" target="_new">PubMed: 17142230</a></td>
@@ -53,7 +53,7 @@
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
-    <td> <i>D. rerio</i> </td>
+    <td> <i>Saccharomyces cerevisiae</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 11 Mar 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids= 10802651" target="_new">PubMed:10802651</a></td>
