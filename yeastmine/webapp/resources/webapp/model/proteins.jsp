@@ -13,9 +13,9 @@
           <DD>
             All proteins from the <A href="http://www.uniprot.org" target="_new">UniProt Knowledgebase</A> (version 15.8) for the following organisms have been loaded:
             <UL>
-              <LI><I>D. rerio</I></LI>
+              <LI><I>S. cerevisiae</I></LI>
             </UL>
-            For each protein record in UniProt for each species the following information is extracted and loaded into FishMine:
+            For each protein record in UniProt for each species the following information is extracted and loaded into YeastMine:
             <UL>
               <LI>Entry name</LI>
               <LI>Primary accession</LI>
@@ -34,12 +34,12 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>D. rerio</i> data
+        Bulk download <i>S. cerevisiae</i> data
       </div>
       <div class="body">
         <ul>
           <li>
-            <i>Danio rerio</i> proteins and corresponding genes:
+            <i>S. cerevisiae</i> proteins and corresponding genes:
             <span style="white-space:nowrap">
               <im:querylink text="[browse]" skipBuilder="true">
                 <query name="" model="genomic" view="Protein.primaryAccession Protein.genes.primaryidentifier">
@@ -48,7 +48,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
+                    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>
@@ -61,7 +61,7 @@
                   <node path="Protein.organism" type="Organism">
                   </node>
                   <node path="Protein.organism.name" type="String">
-                    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
+                    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
                     </constraint>
                   </node>
                 </query>

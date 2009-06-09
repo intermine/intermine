@@ -19,12 +19,12 @@
     <td>
       <div class="body">
         <p>
-          FishMine contains <i>D. rerio</i> genome data from:
+          FishMine contains <i>Saccharomyces cerevisiae</i> genome data from:
         </p>
         <ul>
           <li>
             <a href="http://www.zfin.org/">
-              Gene identifiers for <i>D. rerio</i></a>
+              Gene identifiers for <i>Saccharomyces cerevisiae</i></a>
           </li>
         </ul>
       </div>
@@ -33,14 +33,14 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>D. rerio</i> genes (browse)" skipBuilder="true">
+            <im:querylink text="All <i>Saccharomyces cerevisiae</i> genes (browse)" skipBuilder="true">
               <query name="" model="genomic" view="Gene.secondaryIdentifier Gene.name Gene.primaryIdentifier Gene.symbol">
                 <node path="Gene" type="Gene">
                 </node>
                 <node path="Gene.organism" type="Organism">
                 </node>
                 <node path="Gene.organism.name" type="String">
-                  <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
+                  <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
                   </constraint>
                 </node>
               </query>
