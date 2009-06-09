@@ -18,7 +18,7 @@ jQuery(document).ready(function(){
 
    <div class="gradientbox" >
       <tiles:insert name="tipWrapper.tile"/>
-      <h1 style="display:inline">News</h2>
+      <h1 style="display:inline">News</h1>
       <div id="newsbox"><div align="center"><br/><br/><br/><img src="images/wait18.gif" title="Getting news..."/></div></div>
       <a href="${WEB_PROPERTIES['project.sitePrefix']}/news.shtml">more...</a>
    </div>
