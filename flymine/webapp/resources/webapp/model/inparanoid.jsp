@@ -24,7 +24,6 @@
           <li><I>D. melanogaster</I></li>
           <li><I>D. pseudoobscura</I></li>
           <li><I>A. gambiae</I></li>
-          <li><I>A. mellifera</I></li>
           <li><I>C. elegans</I></li>
         </ul><br/>
 
@@ -232,7 +231,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
   <node path="Homologue.gene.organism" type="Organism">
   </node>
   <node path="Homologue.gene.organism.name" type="String">
-    <constraint op="=" value="Anopheles gambiae str. PEST" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
+    <constraint op="=" value="Anopheles gambiae" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
     </constraint>
   </node>
   <node path="Homologue.homologue" type="Gene">
