@@ -241,7 +241,7 @@ public class PortalQueryAction extends InterMineAction
                     // No matches
                     if (converted.size() <= 0) {
                         actionMessages.add(Constants.PORTAL_MSG,
-                            new ActionMessage("errors.noportalorthologues", addparameter, extId));
+                            new ActionMessage("portal.noorthologues", addparameter, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
@@ -249,10 +249,8 @@ public class PortalQueryAction extends InterMineAction
                         extId, converted.size(), className, addparameter));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
-                    // Object details
                     if (converted.size() == 1) {
                         return goToObjectDetails(mapping, converted.get(0).toString());
-                        // Bag Details
                     }
                     return goToBagDetails(mapping, os, imBag, converted, profile);
                 }
@@ -327,7 +325,7 @@ public class PortalQueryAction extends InterMineAction
     }
 
     /**
-     * @deprecated Uses the BagQueryRunner instead
+     * @deprecated Use the BagQueryRunner instead
      */
     private String loadObjectDetails(ServletContext servletContext,
                                                 HttpSession session, HttpServletRequest request,

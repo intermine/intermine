@@ -87,7 +87,7 @@ public class OrthologueConverter implements BagConverter
 
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
-        LOG.error("PATH QUERY:" + pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
+        LOG.info("PATH QUERY:" + pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
 
         return executor.execute(pathQuery);
