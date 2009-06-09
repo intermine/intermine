@@ -104,7 +104,7 @@ public class AnophExprConverter extends BioFileConverter
      *
      * @param geneFile reporter to gene input file
      */
-    public void setGenefile(File geneFile) {
+    public void setGeneFile(File geneFile) {
         this.geneFile = geneFile;
     }
     private class StageName
