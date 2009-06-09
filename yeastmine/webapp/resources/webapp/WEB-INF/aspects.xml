@@ -4,12 +4,11 @@
     <icon-image>model/images/genomics.gif</icon-image>
     <large-image>model/images/genomics.gif</large-image>
     <intro-text>
-      The gene structure and other genome annotation in MalariaMine are provided by
-      a variety of curated source databases.  In most cases MalariaMine includes
-      all genome features that have chromosomal locations.
+      The gene structure and other genome annotation in YeastMine are provided by
+      a variety of curated source databases.
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <aspect-source name="GeneDB" url="http://www.genedb.org"/>
+    <aspect-source name="SGD" url="http://www.yeastgenome.org"/>
   </aspect>
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
@@ -21,4 +20,28 @@
     <tile-name>model/proteins.jsp</tile-name>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
   </aspect>
+
+    <aspect name="Comparative Genomics">
+    <subtitle>Orthologues and paralogues</subtitle>
+    <icon-image>model/images/comparativeGenomics.png</icon-image>
+    <large-image>model/images/comparativeGenomics.png</large-image>
+    <intro-text>
+      Orthologues and Paralogues.
+    </intro-text>
+    <tile-name>model/inparanoid.jsp</tile-name>
+    <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
+  </aspect>
+
+    <aspect name="Gene Ontology">
+    <subtitle></subtitle>
+    <icon-image>model/images/geneOntology.png</icon-image>
+    <large-image>model/images/geneOntology.png</large-image>
+    <intro-text>
+      Gene Ontology (GO) annotations for &lt;i&gt;Saccharomyces cerevisiaelt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
+    </intro-text>
+    <tile-name>model/GO.jsp</tile-name>
+    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
+  </aspect>
+
+
 </aspects>
