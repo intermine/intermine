@@ -11,7 +11,7 @@
  <h4>
    <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-    GO annotation in FishMine ...
+    GO annotation in YeastMine ...
    </a>
  </h4>
 
@@ -24,7 +24,7 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      FishMine has GO annotations for <i>D. rerio</i>.
+      FishMine has GO annotations for <i>Saccharomyces cerevisiae</i>.
       </p>
       </div>
 
@@ -92,14 +92,14 @@
         <ul>
 
           <li>
-            <im:querylink text="All gene/GO annotation pairs from <i>D. rerio</i> " skipBuilder="true">
+            <im:querylink text="All gene/GO annotation pairs from <i>Saccharomyces cerevisiae</i> " skipBuilder="true">
 <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.ontologyTerm.namespace" sortOrder="Gene.primaryIdentifier asc">
   <node path="Gene" type="Gene">
   </node>
   <node path="Gene.organism" type="Organism">
   </node>
   <node path="Gene.organism.name" type="String">
-    <constraint op="=" value="Danio rerio" description="" identifier="" code="A">
+    <constraint op="=" value="Saccharomyces cerevisiae" description="" identifier="" code="A">
     </constraint>
   </node>
   <node path="Gene.goAnnotation" type="GOAnnotation">
