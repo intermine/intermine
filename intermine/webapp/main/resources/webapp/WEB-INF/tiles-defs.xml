@@ -227,7 +227,7 @@
   </definition>
   <definition name="setFavourite.tile" path="setFavourite.jsp" controllerUrl="/initSetFavourite.do" />
   <definition name="precomputeTemplate.tile" path="precompute.jsp"  />
-  <definition name="summariseTemplate.tile" path="summarise.jsp" controllerUrl="/initPrecomputeTemplate.do" />
+  <definition name="summariseTemplate.tile" path="summarise.jsp" />
   <definition name="externalLinks.tile" path="/externalLinks.jsp"
               controllerUrl="/initExternalLinks.do"/>
   <definition name="bagDetails.tile" path="bagDetails.jsp" controllerUrl="/initBagDetails.do" />
