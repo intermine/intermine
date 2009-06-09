@@ -52,7 +52,7 @@ public class AnophExprConverterTest extends ItemsTestCase
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         AnophExprConverter converter = new AnophExprConverter(itemWriter, Model.getInstanceByName("genomic"));
-        converter.setGenefile(genes);
+        converter.setGeneFile(genes);
         converter.process(new StringReader(input));
         converter.close();
 
