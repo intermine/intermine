@@ -410,8 +410,6 @@
     </action>
     <action path="/initSetFavourite" type="org.intermine.web.struts.SetFavouriteController">
     </action>
-    <action path="/initPrecomputeTemplate" type="org.intermine.web.struts.PrecomputeTemplateController">
-    </action>
     <action path="/initBagDetails" type="org.intermine.web.struts.BagDetailsController">
     </action>
     <action path="/initExternalLinks" type="org.intermine.web.struts.ExternalLinksController">
@@ -431,6 +429,7 @@
     <action path="/initExportOptions" type="org.intermine.web.struts.ExportOptionsController"/>
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>
+    <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->

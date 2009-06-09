@@ -1,11 +1,14 @@
 <%@ include file="/shared/taglibs.jsp" %>
 
 <!--precompute.jsp-->
+<tiles:importAttribute name="templateName" ignore="false"/>
+<tiles:importAttribute name="precomputedTemplateMap" ignore="false"/>
+
+<c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
+<c:set var="isPrecomputed" value="${precomputedTemplateMap[templateName]}" />
+
 <c:choose>
 <c:when test="${isPrecomputed=='false'}"> | 
-  <tiles:importAttribute name="templateName" ignore="false"/>
-  <c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
-  
   <span id="precompute_${templateName}">
   <html:link  href="javascript:precomputeTemplate('${templateName}');" >
          Precompute

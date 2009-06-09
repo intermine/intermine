@@ -106,9 +106,11 @@
   <c:if test="${IS_SUPERUSER && webSearchable.valid}">
     <tiles:insert name="precomputeTemplate.tile">
       <tiles:put name="templateName" value="${webSearchable.name}"/>
+      <tiles:put name="precomputedTemplateMap" beanName="precomputedTemplateMap" />
     </tiles:insert>
     <tiles:insert name="summariseTemplate.tile">
       <tiles:put name="templateName" value="${webSearchable.name}"/>
+      <tiles:put name="summarisedTemplateMap" beanName="summarisedTemplateMap" />
     </tiles:insert>
   </c:if>
 </td>

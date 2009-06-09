@@ -10,11 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +24,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.TagManager;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.tagging.TagTypes;
+import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Tiles controller for history tile (page).
@@ -72,6 +80,55 @@ public class MyMineController extends TilesAction
                 }
             }
         }
+        // get the precomputed and summarised info
+        if (request.getParameter("subtab") != null
+            && request.getParameter("subtab").equals("templates")) {
+            getPrecomputedSummarisedInfo(profile, session, request);
+        }
         return null;
+    }
+    
+    /**
+     * Retrieve the information about precomputed and summarised templates for the
+     * given profile, and store it into the request
+     * 
+     * @param profile the user Profile
+     * @param session the HttpSession
+     * @param request the Servlet Request
+     * @throws ObjectStoreException when something goes wrong...
+     */
+    public static void getPrecomputedSummarisedInfo(Profile profile, HttpSession session,
+                                                    HttpServletRequest request)
+                    throws ObjectStoreException {
+        Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) session.getServletContext()
+                        .getAttribute(Constants.OBJECTSTORE);
+
+        Map<String, String> precomputedTemplateMap = new HashMap<String, String>();
+        Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
+
+        for (TemplateQuery template : templates.values()) {
+            if (template.isValid()) {
+                if (session.getAttribute("precomputing_" + template.getName()) != null
+                    && session.getAttribute("precomputing_" + template.getName()).equals("true")) {
+                    precomputedTemplateMap.put(template.getName(), "precomputing");
+                } else {
+                    Query query = TemplateHelper
+                                    .getPrecomputeQuery(template, new ArrayList(), null);
+                    precomputedTemplateMap.put(template.getName(), Boolean.toString(os
+                                    .isPrecomputed(query, "template")));
+                }
+                if ((session.getAttribute("summarising_" + template.getName()) != null)
+                    && session.getAttribute("summarising_" + template.getName()).equals("true")) {
+                    summarisedTemplateMap.put(template.getName(), "summarising");
+                } else {
+                    summarisedTemplateMap.put(template.getName(), Boolean.toString(template
+                                    .isSummarised()));
+                }
+            }
+        }
+
+        request.setAttribute("precomputedTemplateMap", precomputedTemplateMap);
+        request.setAttribute("summarisedTemplateMap", summarisedTemplateMap);
     }
 }

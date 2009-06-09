@@ -151,13 +151,15 @@
                   <fmt:message key="history.action.export"/>
                 </html:link>
                 <%-- these links need to be fixed, they take a very long time to load --%>
-                <c:if test="${1 == 2 && IS_SUPERUSER && savedTemplate.value.valid}">
+                <c:if test="${IS_SUPERUSER && savedTemplate.value.valid}">
                   <tiles:insert name="precomputeTemplate.tile">
                     <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+                    <tiles:put name="precomputedTemplateMap" beanName="precomputedTemplateMap" />
                   </tiles:insert>
-                    <tiles:insert name="summariseTemplate.tile">
-                        <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
-                    </tiles:insert>
+                  <tiles:insert name="summariseTemplate.tile">
+                    <tiles:put name="templateName" value="${savedTemplate.value.name}"/>
+                    <tiles:put name="summarisedTemplateMap" beanName="summarisedTemplateMap" />
+                  </tiles:insert>
                 </c:if>
               </td>
             </tr>
