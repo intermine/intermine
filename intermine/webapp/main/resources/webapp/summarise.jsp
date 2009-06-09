@@ -1,11 +1,15 @@
 <%@ include file="/shared/taglibs.jsp" %>
 
+<!--precompute.jsp-->
+<tiles:importAttribute name="templateName" ignore="false"/>
+<tiles:importAttribute name="summarisedTemplateMap" ignore="false"/>
+
+<c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
+<c:set var="isSummarised" value="${summarisedTemplateMap[templateName]}" />
+
 <!--summarise.jsp-->
 <c:choose>
   <c:when test="${isSummarised=='false'}"> |
-    <tiles:importAttribute name="templateName" ignore="false"/>
-    <c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
-
     <span id="summarise_${templateName}">
       <html:link  href="javascript:summariseTemplate('${templateName}');" >
         Summarise
