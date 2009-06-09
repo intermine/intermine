@@ -188,7 +188,8 @@ public class TemplateController extends TilesAction
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
-            constructAutocompleteIndex(servletContext, os, node, classDesc, fieldDesc);
+            constructAutocompleteIndex(displayTemplate, servletContext, os, node, classDesc,
+                            fieldDesc);
 
             int j = 1;
             for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator();
@@ -338,15 +339,16 @@ public class TemplateController extends TilesAction
         return null;
     }
 
-    private void constructAutocompleteIndex(ServletContext servletContext, ObjectStore os,
-                                            PathNode node, Map classDesc, Map fieldDesc) {
+    private void constructAutocompleteIndex(PathQuery query, ServletContext servletContext,
+                                            ObjectStore os, PathNode node, Map classDesc,
+                                            Map fieldDesc) {
         AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
         if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
-            Path path = new Path(os.getModel(), node.getPathString());
+            Path path = PathQuery.makePath(os.getModel(), query, node.getPathString());
             if (path.getEndFieldDescriptor() != null) {
                 fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
-                String[] tmp =  path.getLastClassDescriptor().getName().split("\\.");
-                classDesc.put(node.getPathString(), tmp[ tmp.length - 1]);
+                String[] tmp = path.getLastClassDescriptor().getName().split("\\.");
+                classDesc.put(node.getPathString(), tmp[tmp.length - 1]);
             }
         }
     }
