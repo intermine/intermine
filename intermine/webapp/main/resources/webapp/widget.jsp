@@ -224,7 +224,7 @@
     <div id="widgetdata${widget.id}" class="widgetdata">
   </c:when>
   <c:otherwise>
-  <div id="widgetdata${widget.id}" class="widgetdataoverflow">
+    <div id="widgetdata${widget.id}" class="widgetdataoverflow">
   </c:otherwise>
 </c:choose>
 
