@@ -217,9 +217,17 @@
   </c:if>
   </c:forEach>
   </c:if>
-  <c:if test="${type != 'GridWidgetConfig'}" >
-  <div id="widgetdata${widget.id}" class="widgetdata">
-  </c:if>
+
+<!-- output different widget containers if it's a graph widget because flyatlas widget is too tall-->
+<c:choose>
+  <c:when test="${type == 'GraphWidgetConfig'}" >
+    <div id="widgetdata${widget.id}" class="widgetdata">
+  </c:when>
+  <c:otherwise>
+  <div id="widgetdata${widget.id}" class="widgetdataoverflow">
+  </c:otherwise>
+</c:choose>
+
     <c:if test="${type == 'TableWidgetConfig' || type == 'EnrichmentWidgetConfig' || type == 'GridWidgetConfig' }" >
       <c:if test="${type == 'GridWidgetConfig'}" >
         <table id="tablewidget${widget.id}" border="1">

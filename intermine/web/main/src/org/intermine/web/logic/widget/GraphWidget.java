@@ -127,6 +127,8 @@ public class GraphWidget extends Widget
                 NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
                 rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
+                ((GraphWidgetConfig) config).setHeight(400);
+
                 /* regular bar chart */
             } else {
                     chart = ChartFactory.createBarChart(config.getTitle(), // chart title
@@ -249,8 +251,8 @@ public class GraphWidget extends Widget
 
             // generate the image and imagemap
             fileName = ServletUtilities.saveChartAsPNG(chart,
-                            ((GraphWidgetConfig) config).getWIDTH(),
-                            ((GraphWidgetConfig) config).getHEIGHT(), info,
+                            ((GraphWidgetConfig) config).getWidth(),
+                            ((GraphWidgetConfig) config).getHeight(), info,
                             ((GraphWidgetConfig) config).getSession());
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
         } catch (Exception e) {
@@ -305,8 +307,8 @@ public class GraphWidget extends Widget
         // IE doesn't support base64, so for now we are just going to pass back location of png file
         // see http://en.wikipedia.org/wiki/Data:_URI_scheme
         String img = "<img src=\"loadTmpImg.do?fileName=" + fileName
-        + "\" width=\"" + ((GraphWidgetConfig) config).getWIDTH()
-        + "\" height=\"" + ((GraphWidgetConfig) config).getHEIGHT()
+        + "\" width=\"" + ((GraphWidgetConfig) config).getWidth()
+        + "\" height=\"" + ((GraphWidgetConfig) config).getHeight()
         + "\" usemap=\"#chart" + fileName + "\">";
         StringBuffer sb = new StringBuffer(img);
         sb.append(imageMap);
