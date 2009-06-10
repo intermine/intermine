@@ -9,5 +9,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="test/resources"/>
+	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
