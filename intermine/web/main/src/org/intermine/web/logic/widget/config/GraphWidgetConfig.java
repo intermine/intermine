@@ -35,8 +35,8 @@ public class GraphWidgetConfig extends WidgetConfig
     private String domainLabel;
     private String rangeLabel;
     private String graphType;
-    private static final int WIDTH = 430;
-    private static final int HEIGHT = 350;
+    private int width = 430;
+    private int height = 350;
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private String editable;
@@ -203,17 +203,31 @@ public class GraphWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @return the wIDTH
+     * @return the width
      */
-    public static int getWIDTH() {
-        return WIDTH;
+    public int getWidth() {
+        return width;
     }
 
     /**
-     * @return the hEIGHT
+     * @return the height
      */
-    public static int getHEIGHT() {
-        return HEIGHT;
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * @param width the width to set
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * @param height the height to set
+     */
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     /**
