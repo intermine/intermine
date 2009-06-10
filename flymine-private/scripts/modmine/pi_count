@@ -88,7 +88,8 @@ for file in os.listdir("."):
         if not search_lines(last, projects):
             sub.seek(0,0)
             print "searching whole file: ", sub.name
-            search_lines(sub, projects)
+            if not search_lines(sub, projects):
+                print file + " - no <experiment_prop><name> found!"
         sub.close()
 
 print
