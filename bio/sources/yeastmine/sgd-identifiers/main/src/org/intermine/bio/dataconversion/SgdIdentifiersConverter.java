@@ -117,6 +117,14 @@ public class SgdIdentifiersConverter extends BioFileConverter
     throws NumberFormatException {
         Integer a = new Integer(start);
         Integer b = new Integer(end);
+
+        // if the coordinates are on the crick strand, they need to be reversed or they
+        // result in a negative number
+        if (a.compareTo(b) > 0) {
+            a = new Integer(end);
+            b = new Integer(start);
+        }
+
         Integer length = new Integer(b.intValue() - a.intValue());
         return length.toString();
     }
