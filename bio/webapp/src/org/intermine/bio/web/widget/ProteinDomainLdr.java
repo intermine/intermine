@@ -82,8 +82,6 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
             LOG.error(e);
             return null;
         }
-
-
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfGeneId = new QueryField(qcGene, "id");
 
@@ -162,7 +160,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
             q.addToSelect(objectCount);
         } else  {   // k and M
             subQ.addToSelect(qfId);
-            QueryField qfName = new QueryField(qcProteinFeature, "name");
+            QueryField qfName = new QueryField(qcProteinFeature, "shortName");
             subQ.addToSelect(qfName);
 
             QueryField qfInterProId = new QueryField(subQ, qfId);
