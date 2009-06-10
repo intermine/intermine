@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -35,6 +37,8 @@ import org.intermine.xml.full.Item;
  */
 public class TreefamConverter extends BioFileConverter
 {
+    private Properties props = new Properties();
+    private static final String PROP_FILE = "treefam_config.properties";
     private static final String DATASET_TITLE = "TreeFam dataset";
     private static final String DATA_SOURCE_NAME = "TreeFam";
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
@@ -43,6 +47,7 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, Item> genes = new HashMap();
     private Set<String> synonyms = new HashSet();
     private Map<String, String> organisms = new HashMap();
+    private Set<String> genesToStore = new HashSet();
 
     /**
      * Constructor
@@ -51,6 +56,7 @@ public class TreefamConverter extends BioFileConverter
      */
     public TreefamConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        readConfig();
     }
 
     /**
@@ -105,6 +111,16 @@ public class TreefamConverter extends BioFileConverter
         this.geneFile = geneFile;
     }
 
+    private void readConfig() {
+
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+    }
+
+
     /**
      * Process the text file
      * @param reader the Reader
@@ -130,28 +146,40 @@ public class TreefamConverter extends BioFileConverter
             if (bits.length < 4) {
                 continue;
             }
-            String gene1identifier = bits[0];
-            String gene2identifier = bits[1];
+            String gene1id = bits[0];
+            String gene2id = bits[1];
             //String taxonId = bits[2];
             String bootstrap = bits[3];
-
-            Item gene1 = genes.get(gene1identifier);
-            if (gene1 != null) {
-                Item gene2 = genes.get(gene2identifier);
-                if (gene2 != null) {
-                    processHomologues(gene1, gene2, bootstrap);
-                    processHomologues(gene2, gene1, bootstrap);
+            createHomologues(gene1id, gene2id, bootstrap);
+        }
+        for (Map.Entry<String, Item> entry : genes.entrySet()) {
+            // only store genes involved in homologues
+            if (genesToStore.contains(entry.getKey())) {
+                try {
+                    Item item = entry.getValue();
+                    store(item);
+                    String identifier = (item.hasAttribute("primaryIdentifier")
+                                    ? item.getAttribute("primaryIdentifier").getValue()
+                                    : item.getAttribute("secondaryIdentifier").getValue());
+                    createSynonym(item.getIdentifier(), "identifier", identifier);
+                } catch (ObjectStoreException e) {
+                    throw new ObjectStoreException(e);
                 }
             }
         }
+    }
 
-        for (Item item : genes.values()) {
-            try {
-                store(item);
-                createSynonym(item.getIdentifier(), "identifier",
-                              item.getAttribute("primaryIdentifier").getValue());
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
+    private void createHomologues(String gene1id, String gene2id,
+                                  String bootstrap)
+    throws ObjectStoreException {
+        Item gene1 = genes.get(gene1id);
+        if (gene1 != null) {
+            Item gene2 = genes.get(gene2id);
+            if (gene2 != null) {
+                processHomologues(gene1, gene2, bootstrap);
+                processHomologues(gene2, gene1, bootstrap);
+                genesToStore.add(gene1id);
+                genesToStore.add(gene2id);
             }
         }
     }
@@ -180,7 +208,11 @@ public class TreefamConverter extends BioFileConverter
     private Item createGene(String identifier, String taxonId)
     throws ObjectStoreException {
         Item gene = createItem("Gene");
-        gene.setAttribute("primaryIdentifier", identifier);
+        String identifierType = props.getProperty(taxonId);
+        if (identifierType == null) {
+            identifierType = props.getProperty("default");
+        }
+        gene.setAttribute(identifierType, identifier);
         gene.setReference("organism", getOrganism(taxonId));
         return gene;
     }
