@@ -50,11 +50,27 @@ div.widgetdata tbody td {
     padding:5px;
     border-bottom:1px solid #CCC;
 }
-
 div.widgetdata thead th{
     background-color:#CCC;
     padding:5px;
 }
+
+div.widgetdataoverflow table {
+    border-collapse:collapse;
+    margin:0px;
+    padding:0px;
+}
+div.widgetdataoverflow tbody td {
+    text-align:left;
+    padding:5px;
+    border-bottom:1px solid #CCC;
+}
+div.widgetdataoverflow thead th{
+    background-color:#CCC;
+    padding:5px;
+}
+
+
 
 div.widgetcontainer fieldset {
     text-align:right;
@@ -62,6 +78,7 @@ div.widgetcontainer fieldset {
     padding:0 0.5em 0 0;
     border:1px solid #BFBAB0;
 }
+
 div.widgetcontainer fieldset legend {
     font-size:0.9em;
     margin-left:1em;
