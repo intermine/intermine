@@ -5,7 +5,7 @@
 # rows
 
 if (@ARGV != 2) {
-  die "$0: needs two arguments\n"; 
+  die "$0: needs two arguments\n";
 }
 
 open my $f1, '<', $ARGV[0];
@@ -50,14 +50,13 @@ print '-' x 70, "\n";
 while ((my $f1_tempname, my $f1_count) = each %f1_results) {
   if (exists $f2_results{$f1_tempname}) {
     my $f2_count = $f2_results{$f1_tempname};
-    
+
     my $diff = $f2_count;
     if ($f1_count > 0) {
         $diff = 1.0 * abs($f1_count - $f2_count) / $f1_count;
     }
-
     if ($f1_count != $f2_count && $diff > 0.1) {
-      printf ("%-45s %s: %6.0f, %s: %6.0d, diff: %d%%\n",
+      printf ("%-45s %s: %6.0f, %s: %6.0f, diff: %d%%\n",
               $f1_tempname, $ARGV[0], $f1_count, $ARGV[1], $f2_count, $diff * 100);
     }
   }
@@ -73,9 +72,8 @@ while ((my $f1_tempname, my $f1_count) = each %f1_results) {
     if ($f1_count > 0) {
         $diff = 1.0 * abs($f1_count - $f2_count) / $f1_count;
     }
-
     if ($f1_count != $f2_count && ($diff <= 0.1 && ($f1_count < 100 || $f2_count < 100))) {
-      printf ("%-45s %s: %6.0f, %s: %6.0d, diff: %d%%\n",
+      printf ("%-45s %s: %6.0f, %s: %6.0f, diff: %d%%\n",
               $f1_tempname, $ARGV[0], $f1_count, $ARGV[1], $f2_count, $diff * 100);
     }
   }
