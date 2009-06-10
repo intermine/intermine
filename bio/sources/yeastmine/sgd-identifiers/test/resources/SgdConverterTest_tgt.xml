@@ -1,6 +1,6 @@
 <items>
 <item id="3_3" class="Gene">
-<attribute name="length" value="-314"/>
+<attribute name="length" value="314"/>
 <attribute name="primaryIdentifier" value="S000003009"/>
 <attribute name="secondaryIdentifier" value="YGL041C"/>
 <reference name="organism" ref_id="2_1"/>
