@@ -23,7 +23,8 @@ SCRIPTDIR=../flymine-private/scripts/modmine/
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-SOURCES=modmine-static,modencode-metadata
+#SOURCES=modmine-static,modencode-metadata
+SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
@@ -110,7 +111,7 @@ while getopts ":FMRVabef:gir:stuvwx" opt; do
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	V )  echo; echo "Validating all submission (1 by 1)"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	V )  echo; echo "Validating all submissions in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
 	e )  echo; echo "don't update all sources (get_all_modmine is not run)" ; GAM=n;;
@@ -431,13 +432,14 @@ echo
 NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
 runtest $NAMESTAMP
 
-fi #VAL=y
 
 # go back to the chado directory and mv chado file in 'done'
 # this is to allow to run the validation as a cronjob
 cd $DATADIR/new
 mv $sub validated
 cp -s validated/$sub .
+fi #VAL=y
+
 done
 
 # if we are validating, that's all
