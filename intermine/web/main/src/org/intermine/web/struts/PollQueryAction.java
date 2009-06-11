@@ -12,13 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.List;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.session.SessionMethods;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,6 +22,15 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ResultElement;
+import org.intermine.web.logic.results.WebTable;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
+import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Repeatedly poll the status of a running query and forward client to appropriate page
@@ -90,25 +92,26 @@ public class PollQueryAction extends InterMineAction
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult) {
-                List allRows = pr.getAllRows ();
-                if ((allRows instanceof WebResults)) {
-                    WebResults webResults = (WebResults) allRows;
+                List allRows = pr.getAllRows();
+                if ((allRows instanceof WebTable)) {
+                    WebTable webResults = (WebTable) allRows;
                     // Query can have more than one column, forward from the first
                     Object cell = null;
                     Integer forwardId = null;
-                    if (webResults.size() > 0) {
-                        cell = webResults.getResultElements(0).get(0);
+                    if (webResults.size() == 1) {
+                        cell = webResults.getResultElements(0).get(0).get(0).getValue();
                         if (cell instanceof ResultElement) {
                             forwardId = ((ResultElement) cell).getId();
                         }
-                        // special case hack - if every element of the first column is the same,
-                        // use that as the object to forward to
-                        for (int i = 1; i < webResults.size() && forwardId != null; i++) {
-                            cell = webResults.getResultElements(i).get(0);
-                            if (cell instanceof ResultElement) {
-                                if (!forwardId.equals(((ResultElement) cell).getId())) {
-                                    forwardId = null;
-                                }
+                    }
+
+                    // special case hack - if every element of the first column is the same,
+                    // use that as the object to forward to
+                    for (int i = 1; i < webResults.size() && forwardId != null; i++) {
+                        cell = webResults.getResultElements(i).get(0);
+                        if (cell instanceof ResultElement) {
+                            if (!forwardId.equals(((ResultElement) cell).getId())) {
+                                forwardId = null;
                             }
                         }
                     }
@@ -119,7 +122,6 @@ public class PollQueryAction extends InterMineAction
                         } else {
                             trail = "|" + forwardId;
                         }
-
                         String url = "/objectDetails.do?id=" + forwardId + "&trail=" + trail;
                         return new ActionForward(url, true);
                     }
