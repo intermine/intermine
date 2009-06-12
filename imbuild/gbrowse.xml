@@ -16,7 +16,7 @@
       Write GFF3 files suitable for reading into GBrowse.
     -->
   <target name="write-gff" 
-          depends="-init-gff, -init-properties, -init-app-properties, init, -init-deps"
+          depends="-init-gff, -init-properties, init, -init-deps"
           description="Write a GFF3 file containing all of the LocatedSequenceFeatures">
     <taskdef name="write-gff" classname="org.intermine.bio.gbrowse.WriteGFFTask">
       <classpath refid="task.class.path"/>
@@ -64,7 +64,7 @@
       Load data from GFF3 files into a MySQL based GBrowse.
     -->
   <target name="load-gbrowse-data-mysql" 
-          depends="-init-gff, -init-properties, -init-app-properties, init, -init-deps"
+          depends="-init-gff, -init-properties, init, -init-deps"
           description="call bp_bulk_load_gff.pl to load the GFF dump into GBrowse">
     <exec executable="/bin/sh">
       <arg line="-c 'bp_bulk_load_gff.pl --local --maxfeature 1000000000 --create --database dbi:mysql:${gbrowse.database}\;host=${gbrowse.database.host} --user ${gbrowse.database.write.user} --password ${gbrowse.database.write.password} ${build.gbrowse.data}/*.{fa,gff}'"/>
