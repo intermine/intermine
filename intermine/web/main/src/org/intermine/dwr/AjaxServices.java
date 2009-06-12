@@ -54,6 +54,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagConversionHelper;
@@ -591,9 +592,9 @@ public class AjaxServices
             returnList.add(callId);
 
             // We need a modifiable map so we can filter out invalid templates
-            LinkedHashMap<String, ? extends WebSearchable> modifiableWsMap = 
+            LinkedHashMap<String, ? extends WebSearchable> modifiableWsMap =
                 new LinkedHashMap(filteredWsMap);
-            
+
             SearchRepository.filterOutInvalidTemplates(modifiableWsMap);
             for (WebSearchable ws: modifiableWsMap.values()) {
                 List row = new ArrayList();
@@ -1339,4 +1340,20 @@ public class AjaxServices
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         return (query.getGroupedConstraintLogic().toString());
     }
+
+    public String[] getContent(String suffix, boolean wholeList, String field, String className) {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+        ac.createRAMIndex(className + "." + field);
+        if (!wholeList && suffix.length() > 0) {
+            String[] shortList = ac.getFastList(suffix, field, 31);
+            return shortList;
+        } else if (suffix.length() > 2 && wholeList) {
+            String[] longList = ac.getList(suffix, field);
+            return longList;
+        }
+        String[] defaultList = {""};
+        return defaultList;
+    }
+
 }
