@@ -103,17 +103,12 @@
     <collection name="experimentalFactors"
       referenced-type="ExperimentalFactor"
       reverse-reference="submissions" />
-    <collection name="antibodies"
-      referenced-type="Antibody" />
-    <collection name="developmentalStages"
-      referenced-type="DevelopmentalStage" />
-    <collection name="cellLines"
-      referenced-type="CellLine" />
-    <collection name="strains"
-      referenced-type="Strain" />
-    <collection name="arrays"
-      referenced-type="Array" />
-
+    <!-- <collection name="attributes" referenced-type="SubmissionAttribute" reverse-reference="submissions"/>-->
+    <collection name="antibodies" referenced-type="Antibody" reverse-reference="submissions"/>
+    <collection name="developmentalStages" referenced-type="DevelopmentalStage" reverse-reference="submissions"/>
+    <collection name="cellLines" referenced-type="CellLine" reverse-reference="submissions"/>
+    <collection name="strains" referenced-type="Strain" reverse-reference="submissions"/>
+    <collection name="arrays" referenced-type="Array" reverse-reference="submissions"/>
 
   </class>
 
@@ -201,30 +196,52 @@
       reverse-reference="dataAttributes" />
   </class>
 
+<!--  rns, to be superclass of attribute types -->
+  <!--<class name="SubmissionAttribute" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="attributes" />
+  </class>-->
+
   <class name="CellLine" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="sex" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="cellType" type="java.lang.String"/>
+    <attribute name="tissue" type="java.lang.String"/>
+    <attribute name="species" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="cellLines" />
   </class>
 
   <class name="Strain" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <attribute name="sex" type="java.lang.String"/>
+    <attribute name="species" type="java.lang.String"/>
+    <attribute name="source" type="java.lang.String"/>
+    <attribute name="reference" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="strains" />
   </class>
   
   <class name="DevelopmentalStage" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
-    <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
+    <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="developmentalStages" />
   </class>
   
   <class name="Antibody" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="hostOrganism" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <attribute name="antigen" type="java.lang.String"/>
     <reference name="target" referenced-type="Gene"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="antibodies" />
   </class>
 
   <class name="Array" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="platform" type="java.lang.String"/>
+    <attribute name="resolution" type="java.lang.String"/>
+    <attribute name="genome" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="arrays" />
   </class>
-  
   
 </classes>
