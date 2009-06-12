@@ -236,8 +236,7 @@
   </tr>
 
 
-  <tr><td rowspan="7"  class="leftcol">
-
+  <tr><td rowspan="6"  class="leftcol">
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
