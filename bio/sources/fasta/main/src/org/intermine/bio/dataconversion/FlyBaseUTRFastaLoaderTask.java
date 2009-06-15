@@ -13,18 +13,16 @@ package org.intermine.bio.dataconversion;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStoreException;
-
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.Sequence;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.UTR;
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta UTR fasta files and can make the
@@ -44,7 +42,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                    @SuppressWarnings("unused")
                                      org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
-                                   DataSource dataSource)
+                                   DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String mrnaIdentifier = bioJavaSequence.getName();
@@ -62,7 +60,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         utr.setmRNA(mrna);
 
-        createSynonym(interMineObject, dataSource, utrIdentifier);
+        createSynonym(interMineObject, dataSet, utrIdentifier);
 
         String header = (String) annotation.getProperty("description");
 
