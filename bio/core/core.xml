@@ -153,7 +153,6 @@
     <attribute name="isPrimary" type="java.lang.Boolean"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="synonyms"/>
     <collection name="dataSets" referenced-type="DataSet"/>
-    <collection name="evidence" referenced-type="InfoSource"/>
   </class>
 
   <class name="Author" is-interface="true">
