@@ -161,19 +161,31 @@ public class TreefamConverter extends BioFileConverter
             }
 
         }
-        for (Map.Entry<String, GeneHolder> entry : idsToGenes.entrySet()) {
-            GeneHolder holder = entry.getValue();
-            if (holder.isHomologue()) {
-                Item item = holder.getGene();
-                try {
-                    store(item);
-                    getSynonym(item.getIdentifier(), "identifier", holder.getIdentifier());
-                } catch (ObjectStoreException e) {
-                    throw new ObjectStoreException(e);
-                }
+        for (Map.Entry<String, Item> entry : identifiersToGenes.entrySet()) {
+            Item gene = entry.getValue();
+            try {
+                store(gene);
+                getSynonym(gene.getIdentifier(), "identifier", entry.getKey());
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
             }
         }
     }
+
+
+// TODO only store homologues, idsToGenes is has duplicate gene objects
+//        for (Map.Entry<String, GeneHolder> entry : idsToGenes.entrySet()) {
+//            GeneHolder holder = entry.getValue();
+//            if (holder.isHomologue()) {
+//                Item item = holder.getGene();
+//                try {
+//                    store(item);
+//                    getSynonym(item.getIdentifier(), "identifier", holder.getIdentifier());
+//                } catch (ObjectStoreException e) {
+//                    throw new ObjectStoreException(e);
+//                }
+//            }
+//        }
 
     private void processHomologues(Item gene1, Item gene2, String bootstrap)
     throws ObjectStoreException {
