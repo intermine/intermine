@@ -47,7 +47,7 @@ public class InteractionURLQuery implements WidgetURLQuery
         q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
                   + "Gene.interactions.shortName,Gene.interactions.type,"
                   + "Gene.interactions.geneRole,"
-                  + "Gene.interactions.interactingGenes.primaryIdentifier"
+                  + "Gene.interactions.interactingGenes.primaryIdentifier,"
                   + "Gene.interactions.experiment.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
         q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
