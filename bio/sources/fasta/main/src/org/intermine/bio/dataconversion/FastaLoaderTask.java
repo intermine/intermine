@@ -372,9 +372,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         DataSet dataSet = (DataSet) getDirectDataLoader().createObject(DataSet.class);
         dataSet.setTitle(dataSetTitle);
-        DataSource dataSource = getDataSource();
         if (dataSource != null) {
-            dataSet.setDataSource(dataSource);
+            dataSet.setDataSource(getDataSource());
         }
         getDirectDataLoader().store(dataSet);
         dataSets.put(dataSetTitle, dataSet);
@@ -392,10 +391,30 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @throws ObjectStoreException if a store() fails during processing
      */
     @SuppressWarnings("unused")
-    protected void extraProcessing(Sequence bioJavaSequence,
+    @Deprecated protected void extraProcessing(Sequence bioJavaSequence,
                                    org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
                                    DataSource dataSrc)
+        throws ObjectStoreException {
+        // default - no extra processing
+    }
+
+
+    /**
+     * Do any extra processing needed for this record (extra attributes, objects, references etc.)
+     * This method is called before the new objects are stored
+     * @param bioJavaSequence the BioJava Sequence
+     * @param flymineSequence the FlyMine Sequence
+     * @param interMineObject the object that references the flymineSequence
+     * @param organism the Organism object for the new InterMineObject
+     * @param dataSet the DataSet object
+     * @throws ObjectStoreException if a store() fails during processing
+     */
+    @SuppressWarnings("unused")
+    protected void  extraProcessing(Sequence bioJavaSequence,
+                                   org.intermine.model.bio.Sequence flymineSequence,
+                                   BioEntity interMineObject, Organism organism,
+                                   DataSet dataSet)
         throws ObjectStoreException {
         // default - no extra processing
     }

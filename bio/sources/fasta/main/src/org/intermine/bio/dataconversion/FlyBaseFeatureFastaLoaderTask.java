@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
@@ -60,12 +61,30 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
      * @param identifier the synonym value
      * @throws ObjectStoreException if there is a problem storing
      */
-    public void createSynonym(BioEntity interMineObject, DataSource dataSource, String identifier)
+    @Deprecated public void createSynonym(BioEntity interMineObject, DataSource dataSource,
+                                          String identifier)
     throws ObjectStoreException {
         Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
         synonym.setValue(identifier);
         synonym.setType("identifier");
         synonym.setSubject(interMineObject);
+        getDirectDataLoader().store(synonym);
+    }
+
+    /**
+     * Create a Synonym.
+     * @param interMineObject the subject InterMineObject of the Synonym
+     * @param dataSet the DataSet for the Synonym
+     * @param identifier the synonym value
+     * @throws ObjectStoreException if there is a problem storing
+     */
+    public void createSynonym(BioEntity interMineObject, DataSet dataSet, String identifier)
+    throws ObjectStoreException {
+        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
+        synonym.setValue(identifier);
+        synonym.setType("identifier");
+        synonym.setSubject(interMineObject);
+        synonym.addDataSets(dataSet);
         getDirectDataLoader().store(synonym);
     }
 

@@ -13,17 +13,15 @@ package org.intermine.bio.dataconversion;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.intermine.objectstore.ObjectStoreException;
-
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.Sequence;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.CDS;
-import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.Organism;
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.intermine.objectstore.ObjectStoreException;
 
 /**
  * A fasta loader that understand the headers of FlyBase fasta CDS fasta files and can make the
@@ -40,7 +38,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                    @SuppressWarnings("unused")
                                      org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,
-                                   DataSource dataSource)
+                                   DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String header = (String) annotation.getProperty("description");
@@ -59,7 +57,7 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
         MRNA mrna = getMRNA(mrnaIdentifier, organism);
         cds.setmRNA(mrna);
 
-        createSynonym(interMineObject, dataSource, cdsIdentifier);
+        createSynonym(interMineObject, dataSet, cdsIdentifier);
 
         Location loc = getLocationFromHeader(header, cds, organism);
         getDirectDataLoader().store(loc);
