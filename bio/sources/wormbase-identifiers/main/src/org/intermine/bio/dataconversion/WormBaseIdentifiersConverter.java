@@ -53,7 +53,7 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
 
         // data is in format:
         // primaryIdentifier | identifier | symbol
