@@ -23,8 +23,8 @@ SCRIPTDIR=../flymine-private/scripts/modmine/
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-#SOURCES=modmine-static,modencode-metadata
-SOURCES=modencode-metadata
+SOURCES=modmine-static,modencode-metadata
+#SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
@@ -67,11 +67,10 @@ function usage () {
 	cat <<EOF
 
 Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [-g] [-i] [-n] [-s] [-t] [-w] [-v] [-x]
-	-F: full (modmine) rebuild
+	-F: full (modmine) rebuild (Uses modmine-build as default) 
 	-M: test build (metadata only)
 	-R: restart full build after failure
-	-V: validation mode: all entries (one at the time)
-	-u: validation mode: one entry only
+	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
 	-a: append to chado
 	-b: don't build a back-up of modchado-$REL
 	-e: don't update the sources (don't run get_all_modmine). Valid only in F mode
@@ -85,27 +84,37 @@ Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [-g] [-i] [-n
 	-v: verbode mode
 	-x: don't build modmine (!: used for running only tests)
 
-Note: The file is downloaded only if not present or the remote copy
-			is newer or has a different size.
+Parameters: you can process
+            a single submission                   (e.g. automine.sh 204 )
+						a list of submission in an input file (e.g. automine.sh -V -f infile )
+            all the available submissions         (e.g. automine.sh -F )
+
+            you can also pass the release, overwriting the default
+                                                  (e.g. automine.sh -F -r test )
+
+Notes: The file is downloaded only if not present or the remote copy
+			 is newer or has a different size.
+ 
+       If no uppercase switch is used (V, M, F, R), the submissions found in the relevant chado
+       (default modchado-dev) are ADDED to the relevant modmine (default: modmine-dev)
 
 examples:
 
 $progname			add new submissions to modmine-dev, getting new files from ftp
-$progname -F test		build a modmine-test with metadata, Flybase and Wormbase,
+$progname -F -r test		build a modmine-test with metadata, Flybase and Wormbase,
 				getting new files from ftp
-$progname -M test		build a new chado with all the NEW submissions in
+$progname -M -r test		build a new chado with all the NEW submissions in
 				$FTPURL
 				and use this to build a modmine-test
-$progname -s -w -t dev	build modmine-dev using the existing modchado-dev,
+$progname -s -w -t build modmine-dev using the existing modchado-dev,
 				without performing acceptance tests and without building the webapp
-$progname -f file_name val	build modmine-val using the (already downloaded)
-				chadoxml files listed in file_name
+$progname -f file_name -r val	build modmine-val using the submissions listed in file_name
 
 EOF
 	exit 0
 }
 
-while getopts ":FMRVabef:gir:stuvwx" opt; do
+while getopts ":FMRVabef:gir:stvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -452,10 +461,9 @@ else
 echo
 echo "Using previously loaded chado."
 echo
+fi # if $STAG=y
 
 interact
-
-fi # if $STAG=y
 
 #---------------------------------------
 # build modmine
@@ -490,10 +498,11 @@ else
 # get the most up to date sources ..
 if [ $GAM = "y" ]
 then
-../bio/scripts/get_all_modmine.sh\
-|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+cd ../bio/scripts
+./get_all_modmine.sh|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
 # .. and build modmine
+cd $MINEDIR
 ../bio/scripts/project_build -V $REL $V -b -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 fi
