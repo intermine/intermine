@@ -608,13 +608,13 @@ public class UniprotConverter extends DirectoryConverter
                 entry = new UniprotEntry();
                 entries.add(entry);
                 entry.setDatasetRefId(getDataset(getAttrValue(attrs, "dataset")));
-            } else if (qName.equals("protein")) {
-                String isFragment = "false";
-                if (getAttrValue(attrs, "type") != null
-                                && getAttrValue(attrs, "type").startsWith("fragment")) {
-                    isFragment = "true";
-                }
-                entry.setFragment(isFragment);
+//            } else if (qName.equals("protein")) {
+//                String isFragment = "false";
+//                if (getAttrValue(attrs, "type") != null
+//                                && getAttrValue(attrs, "type").startsWith("fragment")) {
+//                    isFragment = "true";
+//                }
+//                entry.setFragment(isFragment);
             } else if (qName.equals("fullName") && stack.search("protein") == 2
                             &&  (stack.peek().equals("recommendedName")
                                             || stack.peek().equals("submittedName"))) {
@@ -655,6 +655,12 @@ public class UniprotConverter extends DirectoryConverter
                 if (strMass != null) {
                     entry.setMolecularWeight(strMass);
                 }
+                // fragments - we probably don't load any of these
+                String isFragment = "false";
+                if (getAttrValue(attrs, "fragment") != null) {
+                    isFragment = "true";
+                }
+                entry.setFragment(isFragment);
             } else if (qName.equals("feature") && getAttrValue(attrs, "type") != null) {
                 Item feature = getFeature(getAttrValue(attrs, "type"), getAttrValue(attrs,
                                           "description"), getAttrValue(attrs, "status"));
