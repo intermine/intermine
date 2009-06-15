@@ -32,8 +32,8 @@ public class WormBaseIdentifiersConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        String input = "WBGene00007167\tB0393.2\trbg-3" + ENDL
-            + "WBGene00007168\tB0393.3\t" + ENDL;
+        String input = "WBGene00007167,B0393.2,rbg-3" + ENDL
+            + "WBGene00007168,B0393.3," + ENDL;
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         BioFileConverter converter = new WormBaseIdentifiersConverter(itemWriter,
