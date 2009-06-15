@@ -1,2 +1,10 @@
-#cluster_id	classification	dana	dere	dgri	dmel	dmoj	dper	dpse	dsec	dsim	dvir	dwil	dyak
-1	00011n000000	dana_GLEANR_15484	dere_GLEANR_9302	dgri_GLEANR_10277	FBgn0031344	dmoj_GLEANR_1887	dper_GLEANR_1559,dper_GLEANR_1561	dpse_GLEANR_1674,dpse_GLEANR_1675	dsec_GLEANR_17788	dsim_GLEANR_6648	dvir_GLEANR_1064	dwil_GLEANR_15229	dyak_GLEANR_1708
+## FlyBase melanogaster gene ortholog report
+## Generated: Fri May 15 12:53:32 2009
+## Using datasource: dbi:Pg:dbname=fb_2009_05_reporting;host=flysql;port=5432...
+
+## FBgn#	gene_symbol	arm	location	strand	ortholog_fbgn	ortholog_gene-symbol	ortholog_arm	ortholog_location	ortholog_strand
+FBgn0000008	a	2R	18024494..18060346	1	FBgn0079820	Dpse\GA19824	3	19288717..19298416	-1
+FBgn0000008	a	2R	18024494..18060346	1	FBgn0088690	Dana\GF11650	scaffold_13266	10737172..10746624	-1
+FBgn0000008	a	2R	18024494..18060346	1	FBgn0114341	Dere\GG22167	scaffold_4845	12189848..12199456	1
+FBgn0000008	a	2R	18024494..18060346	1	FBgn0128019	Dgri\GH20556	scaffold_15245	6500307..6512987	-1
+FBgn0000008	a	2R	18024494..18060346	1	FBgn0141564	Dmoj\GI18825	scaffold_6496	15132704..15144745	-1

@@ -53,10 +53,9 @@
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
-
      <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/shared/data/flybase/homology"/>
-      <property name="src.data.dir.includes" value="frb.GLEANR.TEremoved.clusters.tsv"/>
+      <property name="src.data.dir" location="/shared/data/flybase/homology/current"/>
+      <property name="src.data.dir.includes" value="*.tsv"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/shared/data/wormbase/current"/>

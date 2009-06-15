@@ -10,17 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -32,18 +27,13 @@ import org.intermine.xml.full.Item;
 /**
  * Parse Drosophila 12 genome homology file and create pairwise Homologue objects.
  *
- * @author Richard Smith
+ * @author Julie Sullivan
  */
 public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub;
     private Map<String, String> genes = new HashMap();
-    private Map<String, String> fbgns = new HashMap();
-    private Map<String, String> organisms = new HashMap();
-    private OrganismRepository or = null;
     protected IdResolverFactory resolverFactory;
-    private IdResolver resolver = null;
-
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
 
     /**
@@ -60,11 +50,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17994087");
         store(pub);
-
-        or = OrganismRepository.getOrganismRepository();
-
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
+//        or = OrganismRepository.getOrganismRepository();
     }
 
 
@@ -74,140 +60,59 @@ public class DrosophilaHomologyConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        // read the header line (a comment) and extract 12 species abbreviations
-        String[] species = new String[12];
-        BufferedReader br = new BufferedReader(reader);
-        String[] header = br.readLine().split("\t");
-        System.arraycopy(header, 2, species, 0, 12);
-
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(br);
-
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
-            // key is a 12 element string: 1 = ortholog, n = potential paralogue, 0 = not in cluster
-            // the values correspond to gene ids for each species in columns 2-14.
-
-            // for each row: read gene ids into array, read roles into array
-            // for all species - i
-            //    for all species - j
-            //        if (i == j)
-            //            continue
-            //        if (key[i] == 0 or key[j] == 0)
-            //            no nothing
-            //        else if (key[i] == 1 && key[j] == 1)
-            //            create an orthologue
-            //        else if (key[i] == n or key[j] == n)
-            //            create a paralogue
-
             String[] line = (String[]) lineIter.next();
-
-            String clusterNum = line[0];
-            String keyStr = line[1];
-
-            char[] key = keyStr.toCharArray();
-
-            for (int i = 0; i < species.length; i++) {
-                for (int j = 0; j < species.length; j++) {
-                    // same species, do nothing
-                    if (i == j) {
-                        continue;
-                    }
-                    String type = null;
-                    if ((key[i] == '0') || (key[j] == '0')) {
-                        // one of the species not in cluster, do nothing
-                        continue;
-                    } else if ((key[i] == 'n') || (key[j] == 'n')) {
-                        // one of the species is a paralogue
-                        type = "paralogue";
-                    } else if ((key[i] == '1') || (key[j] == '1')) {
-                        // create an orthologue
-                        type = "orthologue";
-                    } else {
-                        throw new IllegalArgumentException("Unexpected key configuration: " + keyStr
-                                                           + " for cluster: " + clusterNum);
-                    }
-                    // each element can have multiple comma separated gene identfiers
-                    List<String> genes = Arrays.asList(line[i + 2].split(","));
-                    List<String> homGenes = Arrays.asList(line[j + 2].split(","));
-                    for (String gene : genes) {
-                        for (String homGene : homGenes) {
-                            createHomologue(getGene(gene, species[i]),
-                                            getGene(homGene, species[j]),
-                                            type, clusterNum);
-                        }
-                    }
-                }
+            if (line.length < 6) {
+                continue;
             }
+            String geneIdentifier = line[0];
+            String homologue = line[5];
+            createHomologue(getGene(geneIdentifier), getGene(homologue));
         }
     }
 
 
     // create and store a Homologue with identifiers of Gene items
-    private void createHomologue(String gene, String homGene, String type, String cluster)
+    private void createHomologue(String gene, String homGene)
     throws ObjectStoreException {
-
         // if no genes created then ids could not be resolved, don't create a homologue
         if (gene == null || homGene == null) {
             return;
         }
-
         Item homologue = createItem("Homologue");
-        homologue.setAttribute("type", type);
-        homologue.setAttribute("clusterName", "Drosophila homology:" + cluster);
+        // TODO this is a just a guess.  I have no idea if it's correct or not.
+        homologue.setAttribute("type", "orthologue");
         homologue.setReference("gene", gene);
         homologue.setReference("homologue", homGene);
         homologue.addToCollection("publications", pub);
         store(homologue);
     }
 
-    // fetch a gene or create and store
-    private String getGene(String symbol, String org)
+    private String getGene(String identifier)
     throws ObjectStoreException {
-        String geneId = genes.get(symbol + org);
-        if (geneId == null) {
-            // attempt to resolve to a current FlyBase gene
-            OrganismData oData = or.getOrganismDataByAbbreviation(org);
-            String taxonId = "" + oData.getTaxonId();
-            if (resolver == null) {
-                resolver = resolverFactory.getIdResolver();
-            }
-            int resCount = resolver.countResolutions(taxonId, symbol);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + symbol + " count: " + resCount + " FBgn: "
-                         + resolver.resolveId(taxonId, symbol));
-                return null;
-            }
-            String primaryIdentifier = resolver.resolveId(taxonId, symbol).iterator().next();
-            geneId = fbgns.get(primaryIdentifier);
-            if (geneId == null) {
-                Item gene = createItem("Gene");
-                gene.setAttribute("primaryIdentifier", primaryIdentifier);
-                gene.setReference("organism", getOrganism(org));
-                store(gene);
-                geneId = gene.getIdentifier();
-                fbgns.put(primaryIdentifier, geneId);
-            }
-            genes.put(symbol + org, geneId);
+        String geneRefId = genes.get(identifier);
+        if (geneRefId != null) {
+            return geneRefId;
         }
-        return geneId;
+        Item item = createItem("Gene");
+        item.setAttribute("primaryIdentifier", identifier);
+        geneRefId = item.getIdentifier();
+        genes.put(identifier, geneRefId);
+        getSynonym(geneRefId, "identifier", identifier);
+        return geneRefId;
     }
 
-    // create and store an organism
-    private String getOrganism(String abbrev) throws ObjectStoreException {
-        String orgId = organisms.get(abbrev);
-        if (orgId == null) {
-            Item organism = createItem("Organism");
-            OrganismData oData = or.getOrganismDataByAbbreviation(abbrev);
-            if (oData == null) {
-                throw new IllegalArgumentException("No organism data found for abbreviation: "
-                                                   + abbrev);
-            }
-            String taxonId = "" + oData.getTaxonId();
-            organism.setAttribute("taxonId", taxonId);
-            store(organism);
-            orgId = organism.getIdentifier();
-            organisms.put(abbrev, orgId);
+    private void getSynonym(String subjectId, String type, String value)
+    throws ObjectStoreException {
+        Item syn = createItem("Synonym");
+        syn.setReference("subject", subjectId);
+        syn.setAttribute("type", type);
+        syn.setAttribute("value", value);
+        try {
+            store(syn);
+        } catch (ObjectStoreException e) {
+            throw new ObjectStoreException(e);
         }
-        return orgId;
     }
 }
