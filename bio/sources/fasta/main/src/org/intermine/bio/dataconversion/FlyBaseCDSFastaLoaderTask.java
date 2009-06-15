@@ -51,16 +51,10 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                                        + "FlyBaseCDSFastaLoaderTask.extraProcessing() is not a "
                                        + "CDS: " + interMineObject);
         }
-
-        String cdsIdentifier = cds.getPrimaryIdentifier();
-
-        MRNA mrna = getMRNA(mrnaIdentifier, organism);
-        cds.setmRNA(mrna);
-
-        createSynonym(interMineObject, dataSet, cdsIdentifier);
-
+        cds.setmRNA(getMRNA(mrnaIdentifier, organism));
         Location loc = getLocationFromHeader(header, cds, organism);
         getDirectDataLoader().store(loc);
+        createSynonym(interMineObject, dataSet, cds.getPrimaryIdentifier());
     }
 
     /**
