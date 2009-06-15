@@ -2,13 +2,13 @@
 <item id="3_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="5_2" class="Synonym">
+<item id="5_1" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn002"/>
 <reference name="subject" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_1" class="Synonym">
+<item id="5_2" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn001"/>
 <reference name="subject" ref_id="2_1"/>
