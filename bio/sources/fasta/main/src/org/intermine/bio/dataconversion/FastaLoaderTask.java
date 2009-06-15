@@ -319,7 +319,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             }
         }
 
-        extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSource());
+        extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSet());
 
         Synonym synonym = null;
         if (dataSource != null) {
