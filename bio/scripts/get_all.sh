@@ -158,9 +158,9 @@ today=$(date +"%F")
 logfile="$logdir/$today.txt"
 mv $tempfile $logfile
 
-#file_with_usernames=${1:-./resources/mail_list}
-#for name in `cat ${file_with_usernames}`
-#do
-#  mail -s "Outcome of data download run on $today" $name < $logfile
-#done
+file_with_usernames=${1:-./resources/mail_list}
+for name in `cat ${file_with_usernames}`
+do
+  mail -s "Outcome of data download run on $today" $name < $logfile
+done
 
