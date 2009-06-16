@@ -25,7 +25,7 @@ except IOError:
     print "Error: Can't write to log file: " + logname
     sys.exit(1)
 
-log.write("get_redly  " + str(datetime.datetime.now()) + "\n")
+log.write("get_redfly  " + str(datetime.datetime.now()) + "\n")
 
 if not os.path.exists(download_dir):
     output(log, "Error: Can't find destination directory: " + download_dir)
