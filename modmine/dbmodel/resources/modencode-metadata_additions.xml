@@ -16,6 +16,16 @@
     extends="Region" is-interface="true"/>
   <class name="CopyNumberVariation"
     extends="SequenceVariant" is-interface="true"/>
+  <class name="PolyASite"
+    extends="Region" is-interface="true"/>
+  <class name="ThreePrimeRACEClone"
+    extends="Region" is-interface="true"/>
+  <class name="ThreePrimeRST"
+    extends="Region" is-interface="true"/>
+  <class name="ThreePrimeUST"
+    extends="Region" is-interface="true"/>
+  <class name="ThreePrimeUTR"
+    extends="Region" is-interface="true"/>
 
   <class name="Project"
     is-interface="true">

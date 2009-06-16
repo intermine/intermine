@@ -58,6 +58,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "transcript_region", "histone_binding_site", "copy_number_variation",
          "natural_transposable_element", "start_codon", "stop_codon"
          ,"cDNA"
+         ,"three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
+         ,"three_prime_UTR", "polyA_site"
     );
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
