@@ -73,6 +73,8 @@ if(&compare_files($old_file,$temp_file)==1){
 	$data_dir = $current_link;
 	$updated = 0;
 	$log_buffer = "Homophila\nCurrent data ok\n\n";
+        &write_log($log_buffer,$logdir,$logname);
+        exit(0);
 }
 
 #create the diseases and matches file and the hash needed to query Entrez
@@ -121,14 +123,14 @@ if( (-e $matches)&&(-e $diseases)&&(-e $prots) ){
 
 #print file
 sub print_hash2file{
-my ($filename, %hash) = @_;
-
-open FH, ">$filename"
-   or die "can't open $filename\n";
-for my $line (sort keys %hash) {
-  print FH "$line\n";
-}
-close FH;
+    my ($filename, %hash) = @_;
+    
+    open FH, ">$filename"
+        or die "can't open $filename\n";
+    for my $line (sort keys %hash) {
+        print FH "$line\n";
+    }
+    close FH;
 }
 
 #===================================================================================
@@ -191,12 +193,12 @@ if(-e $sequences_file){
 }
 # implements the three second delay between queries as required by ncbi
 sub delay(){
-my $future = (time + 3);
-	while (1) {
+    my $future = (time + 3);
+    while (1) {
     	if (time >= $future) {
-   	    	return;        
-   		}
-	}
+            return;        
+        }
+    }
 }
 #=================================================================================
 # this part was once create_protein_gene.pl 
