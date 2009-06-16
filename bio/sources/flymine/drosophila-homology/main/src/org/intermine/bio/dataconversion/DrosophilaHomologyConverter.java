@@ -100,6 +100,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
         getSynonym(geneRefId, "identifier", identifier);
+        store(item);
         return geneRefId;
     }
 
