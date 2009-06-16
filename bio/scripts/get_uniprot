@@ -41,8 +41,6 @@ my @files_to_get = qw(
                      );
 my $keywords_file = "keywlist.xml.gz";
 
-
-
 &checkdir_exists($uniprot_main_dir);
 
 #### Access ftp server
@@ -55,13 +53,17 @@ or die "Cannot change working directory ", $connection->message;
 my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
 &ftp_download($connection,$uniprot_main_dir,$release_notes_file);
 
-  #open file to get taxonIDs from the config file
-  my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
-  my $size = %taxons;
-  if ($size eq 0) {
-      die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
-  }
+my ($version_buffer,$log_buffer);
 
+$log_buffer = "UniProt\n";
+
+#open file to get taxonIDs from the config file
+my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
+my $size = %taxons;
+if ($size eq 0) {
+    die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
+    $log_buffer .= "No taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
+}
 
 #get the uniprot version from the release notes file
 my $version;
@@ -83,7 +85,7 @@ if (!defined $version) {
 
 unlink $local_release_notes_copy;
 
-my ($version_buffer,$log_buffer);
+
 #if there is a new release, download and unzip it, update the current link
 my $download_dir = "$uniprot_main_dir/$version";
 if (&checkdir_exists($download_dir)==1) {
@@ -91,7 +93,7 @@ if (&checkdir_exists($download_dir)==1) {
   or die "Cannot change working directory ", $connection->message;
 
   my $date = &convert_date();
-  $log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
+  $log_buffer = "New data available (release $version) in $download_dir containing file(s):\n";
   $version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 
   for my $file_to_get (@files_to_get) {

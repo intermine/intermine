@@ -15,17 +15,18 @@ use InterMine::DataDownloader;
 
 #Define ARGVs
 my ($logdir,$logname,$home);
-if(@ARGV!=3){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
-}else{
-	$logdir = $ARGV[0];
-	$logname= $ARGV[1];
-	$home = $ARGV[2];
-}
+#if(@ARGV!=3){
+#	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+#}else{
+my $logdir = "/shared/data/download_logs/";
+my $tempname="temp_log.txt";
+my $logname= $logdir.$tempname;
+my $home = "/shared/data";
+#}
 
 #data source
-my $flyatlas_server = "http://130.209.132.177/atlas";
-my $flyatlas_data_file = "all.txt";
+my $flyatlas_server = "http://130.209.54.32/atlas";
+my $flyatlas_data_file = "20090519all.txt";
 my $file_to_get = "$flyatlas_server/$flyatlas_data_file";
 
 #data destination
