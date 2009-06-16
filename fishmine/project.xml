@@ -1,6 +1,7 @@
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
+  <property name="source.location" location="../bio/sources/fishmine/"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="fishmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
@@ -28,6 +29,14 @@
       <property name="fasta.loaderClassName" 
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
+
+   <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/shared/data/treefam/current"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
+      <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/> 
+    </source>
+
 
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
@@ -67,12 +76,12 @@
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/> 
     </source>
-
+<!--
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/orthologues/inparanoid/current/"/>
       <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
     </source>
-
+-->
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
