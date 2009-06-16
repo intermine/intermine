@@ -53,21 +53,20 @@ public class GoConverter extends FileConverter
     private OboParser oboParser = null;
     protected File ontology;
 
-    protected Map<String, Item> goTerms = new LinkedHashMap<String, Item>();
+    protected Map<String, Item> goTerms = new LinkedHashMap();
     protected Map<GoTermToGene, Item> goAnnoItems;
-    private Map<String, String> goEvidence = new LinkedHashMap<String, String>();
-    private Map<String, Item> datasources = new LinkedHashMap<String, Item>();
-    private Map<String, String> datasets = new LinkedHashMap<String, String>();
-    private Map<String, String> publications = new LinkedHashMap<String, String>();
-    private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
+    private Map<String, String> goEvidence = new LinkedHashMap();
+    private Map<String, Item> datasources = new LinkedHashMap();
+    private Map<String, String> datasets = new LinkedHashMap();
+    private Map<String, String> publications = new LinkedHashMap();
+    private Map<String, Item> organisms = new LinkedHashMap();
     private Map<String, String> termIdNameMap = null;
-    private Map<String, String> geneAttributes = new HashMap<String, String>();
-    private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
-    private Map<String, String> synonymTypes = new HashMap<String, String>();
-    protected Map<String, ItemWrapper> productWrapperMap = new LinkedHashMap<String, ItemWrapper>();
-    private Map<GoTermToGene, PlaceHolder> holderMap =
-        new LinkedHashMap<GoTermToGene, PlaceHolder>();
-    protected Set<String> productIds = new HashSet<String>();
+    private Map<String, String> geneAttributes = new HashMap();
+    private Map<String, WithType> withTypes = new LinkedHashMap();
+    private Map<String, String> synonymTypes = new HashMap();
+    protected Map<String, ItemWrapper> productWrapperMap = new LinkedHashMap();
+    private Map<GoTermToGene, PlaceHolder> holderMap = new LinkedHashMap();
+    protected Set<String> productIds = new HashSet();
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
     protected IdResolverFactory resolverFactory;
 
