@@ -35,6 +35,7 @@
     </class>
 
          <class name="Interaction" is-interface="true">
+					 <attribute name="name" type="java.lang.String"/>
            <attribute name="shortName" type="java.lang.String"/>
            <attribute name="interactionType" type="java.lang.String"/>
            <reference name="gene" referenced-type="Gene" reverse-reference="interactions" />
