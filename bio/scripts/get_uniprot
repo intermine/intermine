@@ -13,19 +13,15 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
-my $logdir="/shared/data/download_logs/";
-my $tempname="temp_log.txt";
-my $logname=$logdir.$tempname;
-my $home="/shared/data";
-my $config_file = "../../flymine/project.xml";
-
-if (@ARGV!=4) {   
-    print "no arguments passed, using default settings\n";
+#Define ARGVs
+my ($logdir,$logname,$home,$config_file);
+if (@ARGV!=4) {
+  die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
 } else {
-    $logdir = $ARGV[0];
-    $logname= $ARGV[1];
-    $home = $ARGV[2];
-    $config_file = $ARGV[3];
+  $logdir = $ARGV[0];
+  $logname= $ARGV[1];
+  $home = $ARGV[2];
+  $config_file = $ARGV[3];
 }
 
 #data source
@@ -53,18 +49,6 @@ or die "Cannot change working directory ", $connection->message;
 my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
 &ftp_download($connection,$uniprot_main_dir,$release_notes_file);
 
-my ($version_buffer,$log_buffer);
-
-$log_buffer = "UniProt\n";
-
-#open file to get taxonIDs from the config file
-my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
-my $size = %taxons;
-if ($size eq 0) {
-    die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
-    $log_buffer .= "No taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
-}
-
 #get the uniprot version from the release notes file
 my $version;
 open F, $local_release_notes_copy
@@ -85,7 +69,7 @@ if (!defined $version) {
 
 unlink $local_release_notes_copy;
 
-
+my ($version_buffer,$log_buffer);
 #if there is a new release, download and unzip it, update the current link
 my $download_dir = "$uniprot_main_dir/$version";
 if (&checkdir_exists($download_dir)==1) {
@@ -93,7 +77,7 @@ if (&checkdir_exists($download_dir)==1) {
   or die "Cannot change working directory ", $connection->message;
 
   my $date = &convert_date();
-  $log_buffer = "New data available (release $version) in $download_dir containing file(s):\n";
+  $log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
   $version_buffer = "UniProt proteins\nRelease $version $date\nProteins for D. melanogaster, D. pseudoobscura, A. gambiae, A. mellifera, C. elegans and S. cerevisiae  from Uniprot (trembl and swissprot)\nhttp://www.ebi.uniprot.org/index.shtml\n";
 
   for my $file_to_get (@files_to_get) {
@@ -117,7 +101,7 @@ if (&checkdir_exists($download_dir)==1) {
   $log_buffer = "Uniprot\nCurrent data ok\n\n";
 }
 
-#&write_log($log_buffer,$logdir,$logname);
+&write_log($log_buffer,$logdir,$logname);
 $connection->quit;
 
 #============================================================================
@@ -157,12 +141,7 @@ if (&checkdir_exists($split_dir)==0) {
               );
 
   #open file to get taxonIDs from the config file
-  my %taxons = &get_taxonIds($config_file,"uniprot.organisms");
-  my $size = %taxons;
-  if ($size eq 0) {
-      die "no taxonIds!  please add the taxonIds to the uniprot entry in the project.xml file\n";
-  }
-
+  my %taxons = &config_species($config_file,"uniprot");
 
   # set to 1 while we are inside an <organism>...</organism>
   my $in_organism = 0;
@@ -242,7 +221,3 @@ sub writefile(){
     close(FH);
   }
 }
-
-
-
-
