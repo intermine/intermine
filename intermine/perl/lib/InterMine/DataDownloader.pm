@@ -121,7 +121,7 @@ sub make_link(){
 	symlink ($dir, "$link") or die "can't create $link";
 }
 
-#get taxon Ids from file - deprecated.  maybe.
+#get taxon Ids from config file 
 sub config_species(){
     my ($file,$trigger) = @_;
     my %data;
@@ -165,7 +165,7 @@ sub get_organisms(){
 
 
 
-#get taxon Ids from file
+#get taxon Ids from project.xml. not implemented yet, but will work with uniprot
 sub get_taxonIds(){
     my ($file,$trigger) = @_;
     # parse file looking for this line: <property name="uniprot.organisms" value="7955 9606"/>                                                                                                                 

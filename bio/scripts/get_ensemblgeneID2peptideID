@@ -21,12 +21,12 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($logdir,$logname,$home,$file);
 if(@ARGV!=4){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
+    die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, /shared/data/ and config file.\n";
 }else{
-	$logdir = $ARGV[0];
-	$logname= $ARGV[1];
-	$home = $ARGV[2];
-	$file = $ARGV[3];
+    $logdir = $ARGV[0];
+    $logname= $ARGV[1];
+    $home = $ARGV[2];
+    $file = $ARGV[3];
 }
 
 # BioMart http server
@@ -49,60 +49,60 @@ my %species_map = &config_species($file,"biomart");
 my $updated = 0;
 
 for my $species (keys %species_map) {
-	#define the URL for the BioMart data
-	my $query = '?query=<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" header = "0" count = "" softwareVersion = "0.5" ><Dataset name ="'.$species.'_gene_ensembl" interface = "default" ><Attribute name = "ensembl_gene_id" /><Attribute name = "ensembl_peptide_id" /></Dataset></Query>';
-	my $url = $biomart_server.$query;
+    #define the URL for the BioMart data
+    my $query = '?query=<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE Query><Query  virtualSchemaName = "default" header = "0" count = "" softwareVersion = "0.5" ><Dataset name ="'.$species.'_gene_ensembl" interface = "default" ><Attribute name = "ensembl_gene_id" /><Attribute name = "ensembl_peptide_id" /></Dataset></Query>';
+    my $url = $biomart_server.$query;
 	
-	# slurp the contents of the URL and write it to a file
-	my $taxonID = $species_map{$species}{taxon};
-	my $filename = $taxonID."_mart_export.txt";
-	my $temp_file = "$temp_dir/$filename";
-	my $old_file = "$main_dir/$filename";
-	
-	print "Getting $filename to $temp_dir\n";
-	my $io = io"$url";
-	my $contents = $io->slurp;
-	open FH, ">$temp_file" or die "Cannot open $temp_file: $!";
-	print FH $contents;		
-	close FH;
-	
-	#remove duplicate lines from the temporary file before comparing it to the current data
-	#put each line into a hash, print each line unless it is already seen i.e if it's hash 
-	#element has a value >1
-	my %seen = ();
-		{
-			local @ARGV = ($temp_file);
-			local $^I = '.bac';
-			while(<>){
-				$seen{$_}++;
-				next if $seen{$_} > 1;
-				print;
-			}
-			unlink "$temp_file.bac";
-		}
-	
-	
-	#compare the new data to the existing file and keep it if it is different  
-	if(&compare_files($old_file,$temp_file)==1){
-		print "Keeping downloaded files.\n";
-		&update_files($main_dir,$filename,$temp_file);
-		$updated = 1;
-	}else{
-		print "Downloaded files deleted.\n";
-		unlink $temp_file;
-	}
+    # slurp the contents of the URL and write it to a file
+    my $taxonID = $species_map{$species}{taxon};
+    my $filename = $taxonID."_mart_export.txt";
+    my $temp_file = "$temp_dir/$filename";
+    my $old_file = "$main_dir/$filename";
+    
+    print "Getting $filename to $temp_dir\n";
+    my $io = io"$url";
+    my $contents = $io->slurp;
+    open FH, ">$temp_file" or die "Cannot open $temp_file: $!";
+    print FH $contents;		
+    close FH;
+    
+    #remove duplicate lines from the temporary file before comparing it to the current data
+    #put each line into a hash, print each line unless it is already seen i.e if it's hash 
+    #element has a value >1
+    my %seen = ();
+    {
+        local @ARGV = ($temp_file);
+        local $^I = '.bac';
+        while(<>){
+            $seen{$_}++;
+            next if $seen{$_} > 1;
+            print;
+        }
+        unlink "$temp_file.bac";
+    }
+    
+    
+    #compare the new data to the existing file and keep it if it is different  
+    if(&compare_files($old_file,$temp_file)==1){
+        print "Keeping downloaded files.\n";
+        &update_files($main_dir,$filename,$temp_file);
+        $updated = 1;
+    }else{
+        print "Downloaded files deleted.\n";
+        unlink $temp_file;
+    }
 }
 #create data directory, move old files to archive and keep the new file	
 sub update_files(){
-	my ($dir,$new_name,$tempfile) = @_;
-	
-	#when the first updated file is found, create the archive and copy old files to it
-	if(&checkdir_exists($archive_dir)==1){
-		system("cp $dir/*mart_export.txt $archive_dir");
-	}
-	
-	my $orig_file = "$dir/$new_name";
-	rename($tempfile, $orig_file) or die "Cannot rename $tempfile: $!";
+    my ($dir,$new_name,$tempfile) = @_;
+    
+    #when the first updated file is found, create the archive and copy old files to it
+    if(&checkdir_exists($archive_dir)==1){
+        system("cp $dir/*mart_export.txt $archive_dir");
+    }
+    
+    my $orig_file = "$dir/$new_name";
+    rename($tempfile, $orig_file) or die "Cannot rename $tempfile: $!";
 }
 #==========================================================================================
 #creates the xml file (this part was ensemblgene2translation_xml.pl)
@@ -123,121 +123,121 @@ my @items_to_write = ();
 my ($log_buffer,$version_buffer);
 
 if($updated == 0){
-	warn "XML already up to date\n";
-	$log_buffer = "Ensembl geneId to peptideId\nCurrent data ok\n\n";
+    warn "XML already up to date\n";
+    $log_buffer = "Ensembl geneId to peptideId\nCurrent data ok\n\n";
 }elsif($updated == 1 ){
-	#the output directory and file
-	my $out_dir = "$main_dir/xml";
-	&checkdir_exists($out_dir);
-	my $outfile = "$out_dir/geneId2peptideId.xml";
-	$log_buffer = "Ensembl geneId to peptideId\nNew data downloaded and XML generated on $date. Saved to $outfile\n\n";
+    #the output directory and file
+    my $out_dir = "$main_dir/xml";
+    &checkdir_exists($out_dir);
+    my $outfile = "$out_dir/geneId2peptideId.xml";
+    $log_buffer = "Ensembl geneId to peptideId\nNew data downloaded and XML generated on $date. Saved to $outfile\n\n";
+    
+    #add the existing xml file to the archive directory
+    my $archive_xml = "$archive_dir/geneId2peptideId.xml";
+    
+    #if there is an existing xml file, move it to the archive
+    if(-e $outfile){
+        rename($outfile, $archive_xml) or die "Cannot move $outfile to $archive_xml: $!";
+    }
+    
+    #create the DataSource object
+    my $source = 'Ensembl';
+    my $source_item = make_item('DataSource');
+    $source_item->set('name', $source);
+    
+    print "\nCreating xml objects.\n";
+    my @files;
+    #identify the input files
+    opendir(DIR,$main_dir) || die("Cannot open directory !\n");
+    @files=grep(/mart_export.txt$/,readdir DIR);
+    closedir(DIR);
+    
+    #get the taxon ID from each file name and create the organism object
+    foreach my $file (@files){
+        my %genes; #hash to store the gene objects
+        my ($taxonID) = ($file=~/^(\d+)/);
 	
-	#add the existing xml file to the archive directory
-	my $archive_xml = "$archive_dir/geneId2peptideId.xml";
+        my $org_item = make_item('Organism');
+        $org_item->set('taxonId', $taxonID);
+        #print "file $file Taxon $taxonID\n";
 	
-	#if there is an existing xml file, move it to the archive
-	if(-e $outfile){
-		rename($outfile, $archive_xml) or die "Cannot move $outfile to $archive_xml: $!";
-	}
-	
-	#create the DataSource object
-	my $source = 'Ensembl';
-	my $source_item = make_item('DataSource');
-	$source_item->set('name', $source);
-
-	print "\nCreating xml objects.\n";
-	my @files;
-	#identify the input files
-	opendir(DIR,$main_dir) || die("Cannot open directory !\n");
-	@files=grep(/mart_export.txt$/,readdir DIR);
-	closedir(DIR);
-	
-	#get the taxon ID from each file name and create the organism object
-	foreach my $file (@files){
-		my %genes; #hash to store the gene objects
-		my ($taxonID) = ($file=~/^(\d+)/);
-	
-		my $org_item = make_item('Organism');
-		$org_item->set('taxonId', $taxonID);
-		#print "file $file Taxon $taxonID\n";
-	
-		#add the path to the file name, open the file and read each line
-		my $filepath = "$main_dir/$file";
-		my $mtime = (stat ($filepath) )[9];
-		my $file_date = &convert_date($mtime);
-		$version_buffer.= "$file was last updated on $file_date\n";
-		
-		open(F,"<$filepath") or die "Cannot open $filepath: $!";
-		
-		while(<F>){
-			my $gene_item;
-			my @f = split/\t/;
-			my ($geneID,$translationID) = ($f[0],$f[1]);
-			chomp $translationID;
+        #add the path to the file name, open the file and read each line
+        my $filepath = "$main_dir/$file";
+        my $mtime = (stat ($filepath) )[9];
+        my $file_date = &convert_date($mtime);
+        $version_buffer.= "$file was last updated on $file_date\n";
+        
+        open(F,"<$filepath") or die "Cannot open $filepath: $!";
+        
+        while(<F>){
+            my $gene_item;
+            my @f = split/\t/;
+            my ($geneID,$translationID) = ($f[0],$f[1]);
+            chomp $translationID;
 			#print "$geneID $translationID\t";
-		
-			#check that there is a translation ID and that the current line does not contain column titles
-			if($translationID && $translationID ne 'Ensembl Peptide ID'){
-
-				#if the gene has already been identified add a reference to it's object to the translation object
-				if(exists $genes{$geneID}){
-					$gene_item = $genes{$geneID}->{'object'};
-					#print "Already found gene\n";
-				}else{
-					#create the gene object, add a link to the gene synonym object and add the gene object to the hash
-					$gene_item = make_item('Gene');
-					$gene_item->set('identifier', $geneID);
-					$gene_item->set('organism', $org_item);
+            
+            #check that there is a translation ID and that the current line does not contain column titles
+            if($translationID && $translationID ne 'Ensembl Peptide ID'){
+                
+                #if the gene has already been identified add a reference to it's object to the translation object
+                if(exists $genes{$geneID}){
+                    $gene_item = $genes{$geneID}->{'object'};
+                    #print "Already found gene\n";
+                }else{
+                    #create the gene object, add a link to the gene synonym object and add the gene object to the hash
+                    $gene_item = make_item('Gene');
+                    $gene_item->set('identifier', $geneID);
+                    $gene_item->set('organism', $org_item);
 					$genes{$geneID}={'object' => $gene_item};
-					#print "New gene\n";
+                    #print "New gene\n";
+                    
+                    #else create a new gene synonym object. add reference to the source object
+                    my $g_syn_item = make_item('Synonym');
+                    $g_syn_item->set('value', $geneID);
+                    $g_syn_item->set('type', 'identifier');
+                    $g_syn_item->set('source', $source_item);
+                }
 
-					#else create a new gene synonym object. add reference to the source object
-					my $g_syn_item = make_item('Synonym');
-					$g_syn_item->set('value', $geneID);
-					$g_syn_item->set('type', 'identifier');
-					$g_syn_item->set('source', $source_item);
-				}
-
-				#create the translation object and add a reference to the synonym object
-				my $trans_item = make_item('Translation');
-				$trans_item->set('identifier', $translationID);
-				$trans_item->set('organism', $org_item);
+                #create the translation object and add a reference to the synonym object
+                my $trans_item = make_item('Translation');
+                $trans_item->set('identifier', $translationID);
+                $trans_item->set('organism', $org_item);
                 $trans_item->set('gene', $gene_item);
-
+                
 				#create the synonym object and add a reference to the source object
-				my $t_syn_item = make_item('Synonym');
-				$t_syn_item->set('value', $translationID);
-				$t_syn_item->set('type', 'identifier');
-				$t_syn_item->set('source', $source_item);
-			}#else{print"\n";}
-		}	
+                my $t_syn_item = make_item('Synonym');
+                $t_syn_item->set('value', $translationID);
+                $t_syn_item->set('type', 'identifier');
+                $t_syn_item->set('source', $source_item);
+            }#else{print"\n";}
+        }	
 		close(F) or die "Problem closing $filepath: $!";
-	}#end foreach
-
-	#write xml file
-	print "Writing xml\n";
-	my $output = new IO::File(">$outfile");
-	my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
-	$writer->startTag('items');
-	for my $item (@items_to_write) {
-		$item->as_xml($writer);
-	}
-	$writer->endTag('items');
-	$writer->end();
-	$output->close(); 
-	
-	my $current_link = "$main_dir/current";
-	&make_link("xml",$current_link);
-	&write_version($main_dir, $version_buffer);
-        system "chmod -R a+r,g+w $main_dir";
+    }#end foreach
+    
+    #write xml file
+    print "Writing xml\n";
+    my $output = new IO::File(">$outfile");
+    my $writer = new XML::Writer(OUTPUT => $output, DATA_MODE => 1, DATA_INDENT => 3);
+    $writer->startTag('items');
+    for my $item (@items_to_write) {
+        $item->as_xml($writer);
+    }
+    $writer->endTag('items');
+    $writer->end();
+    $output->close(); 
+    
+    my $current_link = "$main_dir/current";
+    &make_link("xml",$current_link);
+    &write_version($main_dir, $version_buffer);
+    system "chmod -R a+r,g+w $main_dir";
 }
 
 &write_log($log_buffer,$logdir,$logname);
 
 #kim's subroutine. Organsim object references are automatically created where necessary
 sub make_item{
-	my $classname = shift;
-	my $item = $item_factory->make_item(classname => $classname);
-	push @items_to_write, $item;
-	return $item;
+    my $classname = shift;
+    my $item = $item_factory->make_item(classname => $classname);
+    push @items_to_write, $item;
+    return $item;
 }
