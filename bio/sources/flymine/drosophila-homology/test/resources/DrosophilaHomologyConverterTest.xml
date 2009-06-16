@@ -1,4 +1,16 @@
 <items>
+<item id="3_6" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0141564"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0088690"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="1_1" class="DataSet">
+<attribute name="title" value="Drosophila 12 Genomes Consortium homology"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
 <item id="2_1" class="Publication">
 <attribute name="pubMedId" value="17994087"/>
 </item>
@@ -9,15 +21,15 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="2_1"/></collection>
 </item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000008"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="4_5" class="Synonym">
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0128019"/>
 <reference name="subject" ref_id="3_5"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="1_1" class="DataSet">
-<attribute name="title" value="Drosophila 12 Genomes Consortium homology"/>
-<reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="4_4" class="Synonym">
 <attribute name="type" value="identifier"/>
@@ -45,10 +57,21 @@
 <reference name="subject" ref_id="3_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
+<item id="3_5" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0128019"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
 <item id="5_1" class="Homologue">
 <attribute name="type" value="orthologue"/>
 <reference name="gene" ref_id="3_1"/>
 <reference name="homologue" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="publications"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_5"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 <collection name="publications"><reference ref_id="2_1"/></collection>
 </item>
@@ -58,15 +81,16 @@
 <reference name="subject" ref_id="3_6"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
-<item id="5_4" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="homologue" ref_id="3_5"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="publications"><reference ref_id="2_1"/></collection>
-</item>
 <item id="0_1" class="DataSource">
 <attribute name="name" value="FlyBase"/>
+</item>
+<item id="3_4" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0114341"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0079820"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="4_3" class="Synonym">
 <attribute name="type" value="identifier"/>
