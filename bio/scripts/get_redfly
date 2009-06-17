@@ -54,10 +54,14 @@ version_dir = download_dir + formatted_date + "/"
 # create directory and download files, or stop if version already exists
 if not os.path.exists(version_dir):
     os.mkdir(version_dir)
-    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/tfbs_dump.gff", version_dir + "tfbs_dump.gff")
+
+    os.mkdir(version_dir + "tfbs/")
+    os.mkdir(version_dir + "crm/")
+
+    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/tfbs_dump.gff", version_dir + "tfbs/tfbs_dump.gff")
     output(log, "Downloaded new file: " + version_dir + "tfbs_dump.gff")
 
-    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/crm_dump.gff", version_dir + "crm_dump.gff")
+    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/crm_dump.gff", version_dir + "crm/crm_dump.gff")
     output(log, "Downloaded new file: " + version_dir + "tfbs_dump.gff")
 
     link = download_dir + "current"
