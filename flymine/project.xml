@@ -182,7 +182,7 @@
       <property name="src.data.dir" location="/shared/data/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
-    <source name="flybase-dmel-gene-fasta" type="fasta">
+    <source name="flybase-dmel-gene-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
@@ -443,7 +443,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="pubmed-gene" type="pubmed-gene">
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="pubmed.organisms" value="7227 7165 4932 6239"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
