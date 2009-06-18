@@ -129,7 +129,6 @@ public class OrthologueConverter implements BagConverter
         view.add(PathQuery.makePath(model, pathQuery,
                                                 "Gene.homologues.homologue.organism.shortName"));
         view.add(PathQuery.makePath(model, pathQuery, "Gene.homologues.type"));
-        view.add(PathQuery.makePath(model, pathQuery, "Gene.homologues.inParanoidScore"));
         pathQuery.setViewPaths(view);
 
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
