@@ -48,6 +48,7 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, Item> identifiersToGenes = new HashMap();
     private Set<String> synonyms = new HashSet();
     private Map<String, String> organisms = new HashMap();
+    private Map<String, String[]> config = new HashMap();
 
     /**
      * Constructor
@@ -88,7 +89,21 @@ public class TreefamConverter extends BioFileConverter
             }
             String id = bits[0];
             String identifier = bits[4];
+            String symbol = bits[6];
             String taxonId = bits[8];
+
+//            `IDX` int(11) NOT NULL default '0' COMMENT 'Gene index',
+//            `ID` varchar(30) NOT NULL default '' COMMENT 'Unique sequence ID',
+//            `TID` varchar(30) NOT NULL default '' COMMENT 'Transcript ID',
+//            `TVER` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Version of TID',
+//            `GID` varchar(30) NOT NULL default '' COMMENT 'Gene ID',
+//            `GVER` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Version of GID',
+//            `SYMBOL` varchar(30) NOT NULL default '' COMMENT 'gene symbol',
+//            `DISP_ID` varchar(45) NOT NULL default '' COMMENT 'display name (obsolete)',
+//            `TAX_ID` int(10) unsigned NOT NULL default '0' COMMENT 'Taxonomy ID',
+//            `DESC` text NOT NULL COMMENT 'Description',
+
+
             try {
                 new Integer(taxonId);
             } catch (NumberFormatException e) {
@@ -98,7 +113,24 @@ public class TreefamConverter extends BioFileConverter
                 // don't create gene object if gene isn't from an organism of interest
                 continue;
             }
-            Item gene = getGene(identifier, taxonId);
+
+            // default value
+            String identifierType = "primaryIdentifier";
+
+            if (config.containsKey(taxonId)) {
+                String[] configs = config.get(taxonId);
+                String col = configs[0];
+                if (col.equals("symbol")) {
+                    if (symbol.contains("_")) {
+                        // to handle this case:  WBGene00022038_F2
+                        symbol = symbol.split("_")[0];
+                    }
+                    identifier = symbol;
+                }
+                identifierType = configs[1];
+            }
+
+            Item gene = getGene(identifierType, identifier, taxonId);
             idsToGenes.put(id, new GeneHolder(id, identifier, gene));
         }
     }
@@ -117,6 +149,26 @@ public class TreefamConverter extends BioFileConverter
             props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
         } catch (IOException e) {
             throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                                           + key);
+            }
+            String taxonId = attributes[0];
+            String col = attributes[1];
+
+            String[] configs = new String[2];
+            configs[0] = col;
+            configs[1] = value;
+
+            config.put(taxonId, configs);
         }
     }
 
@@ -207,17 +259,14 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String identifier, String taxonId)
+    private Item getGene(String identifierType, String identifier, String taxonId)
     throws ObjectStoreException {
         Item gene = identifiersToGenes.get(identifier);
         if (gene != null) {
             return gene;
         }
         gene = createItem("Gene");
-        String identifierType = props.getProperty(taxonId);
-        if (identifierType == null) {
-            identifierType = props.getProperty("default");
-        }
+
         gene.setAttribute(identifierType, identifier);
         gene.setReference("organism", getOrganism(taxonId));
         identifiersToGenes.put(identifier, gene);
