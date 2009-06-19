@@ -97,24 +97,27 @@ echo "Getting UniProt data"
         "error getting UniProt data" 2>&1 >> tempfile
     fi
 echo "==========================================================="
-echo
-echo "==========================================================="
-echo "Getting Ensembl GeneId to PeptideId data"
-./get_ensemblgeneID2peptideID $logdir $tempname $shared_data $config_file
-    if [ $? -ne 0 ]
-    then
-        "error getting Ensembl GeneId to PeptideId data" 2>&1 >> tempfile
-    fi
-echo "==========================================================="
-echo
-echo "==========================================================="
-echo "Getting InParanoid data"
-./get_inparanoid $logdir $tempname $shared_data $config_file
-    if [ $? -ne 0 ]
-    then
-        "error getting InParanoid data" 2>&1 >> tempfile
-    fi
-echo "==========================================================="
+
+# broken.  we may not need to update this again, so wait to fix.
+
+#echo
+#echo "==========================================================="
+#echo "Getting Ensembl GeneId to PeptideId data"
+#./get_ensemblgeneID2peptideID $logdir $tempname $shared_data $config_file
+#    if [ $? -ne 0 ]
+#    then
+#        "error getting Ensembl GeneId to PeptideId data" 2>&1 >> tempfile
+#    fi
+#echo "==========================================================="
+#echo
+#echo "==========================================================="
+#echo "Getting InParanoid data"
+#./get_inparanoid $logdir $tempname $shared_data $config_file
+#    if [ $? -ne 0 ]
+#    then
+#        "error getting InParanoid data" 2>&1 >> tempfile
+#    fi
+#echo "==========================================================="
 echo
 echo "==========================================================="
 echo "Getting Interpro xml file"

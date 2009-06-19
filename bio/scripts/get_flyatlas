@@ -18,7 +18,7 @@ my ($logdir,$logname,$home,$tempname);
 if(@ARGV!=3){
 #    die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
     $logdir = "/shared/data/download_logs/";
-    $logname= $logdir.$tempname;
+    $tempname="temp_log.txt";
     $home = "/shared/data";
 } else {
     $logdir = $ARGV[0];
@@ -26,7 +26,8 @@ if(@ARGV!=3){
     $home = $ARGV[2];
 }
 
-my $tempname="temp_log.txt";
+$logname= $logdir.$tempname;
+
 
 #data source
 my $flyatlas_server = "http://130.209.54.32/atlas";
