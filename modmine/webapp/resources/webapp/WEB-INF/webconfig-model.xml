@@ -39,6 +39,44 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.DevelopmentalStage">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Antibody">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="hostOrganism"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Array">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="platform"/>
+      <fieldconfig fieldExpr="resolution"/>
+      <fieldconfig fieldExpr="genome"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Strain">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="species"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.CellLine">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="tissue"/>
+      <fieldconfig fieldExpr="species"/>
+    </fields>
+  </class>
+
+
   <class className="org.intermine.model.bio.AppliedProtocol">
     <fields>
       <fieldconfig fieldExpr="protocol.type"/>
