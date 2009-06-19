@@ -122,6 +122,7 @@ echo "Getting Interpro xml file"
     if [ $? -ne 0 ]
     then
          "error getting Interpro" 2>&1 >> tempfile
+    fi
 echo "==========================================================="
 echo
 echo "==========================================================="
@@ -161,4 +162,3 @@ for name in `cat ${file_with_usernames}`
 do
   mail -s "Outcome of data download run on $today" $name < $logfile
 done
-
