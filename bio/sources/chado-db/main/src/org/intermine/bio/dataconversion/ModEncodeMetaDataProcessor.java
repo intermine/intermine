@@ -51,20 +51,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // maps from chado identifier to lab/project details
     private Map<Integer, SubmissionDetails> submissionMap =
         new HashMap<Integer, SubmissionDetails>();
-    // maps of the initial input data and final output data for a submission
-    private Map<Integer, List<Integer>> inputsMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> outputsMap =
-        new HashMap<Integer, List<Integer>>();
     // chado submission id to list of top level attributes, e.g. dev stage, organism_part
     private Map<String, Map<String, List<SubmissionAttribute>>> submissionAttributes = 
         new HashMap<String, Map<String, List<SubmissionAttribute>>>();
     private Map<String, String> attributeToSubmission = new HashMap<String, String>();
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
-
-    // maps of each submission input with its (submission) output data and vice versa
-    private Map<Integer, List<Integer>> inOutDataMap = new HashMap<Integer, List<Integer>>();
-    private Map<Integer, List<Integer>> outInDataMap = new HashMap<Integer, List<Integer>>();
-
 
     // applied_protocol/data/attribute maps
     // -------------------
@@ -130,7 +121,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // ------
     // cache cv term names by id
     private Map<String, String> cvtermCache = new HashMap<String, String>();
-
 
     private Map<String, String> devStageTerms = new HashMap<String, String>();
     // just for debugging
@@ -251,25 +241,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
-        bT = System.currentTimeMillis();
-        // links submission inputs with their respective submission outputs
-        // also set the references
-        // TODO: check if working
-        linksInOut(connection);
-        LOG.info("TIME InOut" + ":   "  + (System.currentTimeMillis() - bT));
-
         // set references
         bT = System.currentTimeMillis();
         setSubmissionRefs(connection);
         LOG.info("TIME setsubmissionRefs" + ":   "  + (System.currentTimeMillis() - bT));
-
-        bT = System.currentTimeMillis();
-        setSubmissionInputRefs(connection);
-        LOG.info("TIME setsubmission" + ":   "  + (System.currentTimeMillis() - bT));
-
-        bT = System.currentTimeMillis();
-        setSubmissionResultsRefs(connection);
-        LOG.info("TIME setsubmissionResults" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
         setSubmissionProtocolsRefs(connection);
@@ -283,6 +258,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setDAGRefs(connection);
         LOG.info("TIME setDAG" + ":   "  + (System.currentTimeMillis() - bT));
 
+        // for high level attributes and experimental factors (EF)
+        // TODO: clean up
         bT = System.currentTimeMillis();
         processEFactor(connection);
         LOG.info("TIME experimentalFactors" + ":   " + (System.currentTimeMillis() - bT));
@@ -483,11 +460,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // the submissionId != null for the first applied protocol
                 if (submissionId > 0) {
                     firstAppliedProtocols.add(appliedProtocolId);
-                    if (direction.startsWith("in")) {
-                        // .. the map of initial data for the submission
-                        addToMap (inputsMap, submissionId, dataId);
-                    }
-                    // and set actual submission id
+                    // set actual submission id
                     // we can either be at a first applied protocol (submissionId > 0)..
                     actualSubmissionId = submissionId;
                 } else {
@@ -546,7 +519,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (submissionId > 0) {
                         // initial data
                         mapSubmissionAndData(submissionId, dataId);
-                        addToMap (inputsMap, submissionId, dataId);
                     }
                     // as above
                     branch.nextAppliedProtocols.add(appliedProtocolId);
@@ -682,7 +654,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
                         // we store it in a map that links it directly to the submission
-                        addToMap(outputsMap, submissionId, currentOD);
+//                        addToMap(outputsMap, submissionId, currentOD);
                     }
                 }
 
@@ -718,130 +690,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
         return nextIterationProtocols;
-    }
-
-    /**
-     *
-     * =======================
-     *    SUBMISSION IN-OUT
-     * =======================
-     *
-     *    This part of the code deals with setting references between
-     *    each submission input (inputs) with its respective
-     *    submission output(s) (outputs), black-boxing the DAG.
-     *    This method loop through all the submissions, each time
-     *    creating the maps linking ins and outs and then setting
-     *    the references.
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
-     */
-    private void linksInOut(Connection connection)
-    throws SQLException, ObjectStoreException {
-        Set <Integer> submissions = inputsMap.keySet();
-        Iterator <Integer> thisSubmission = submissions.iterator();
-
-        while (thisSubmission.hasNext()) {
-            // TODO: use local maps?
-            // FOR EACH submission
-            // clear the maps
-            inOutDataMap.clear();
-            outInDataMap.clear();
-
-            // build In-Out map
-            buildInOutMap (thisSubmission.next());
-            // the reverse map is built from the previous one
-            buildOutInMap();
-
-            setInOutRefs(connection);
-            setOutInRefs(connection);
-        }
-    }
-
-
-    /**
-     * Builds the map linking each input to its outputs
-     *
-     * @param submissionId
-     */
-    private void buildInOutMap(Integer submissionId) {
-        // get all the submission input data
-        List <Integer> inputs = inputsMap.get(submissionId);
-        Iterator <Integer> thisInput = inputs.iterator();
-
-        while (thisInput.hasNext()) {
-            Integer currentId = thisInput.next();
-            // for each find the related outputs.
-            // note: the first time only the submission input is sent to the loop,
-            // then it could be list of intermediate outputs (which are
-            // inputs to other applied protocols) that need to be processed
-            // (i.e. used to find the their respective outputs).
-            List <Integer> currentIteration = new ArrayList<Integer>();
-            List<Integer> nextIteration = new ArrayList<Integer>();
-            currentIteration.add(currentId);
-
-            while (currentIteration.size() > 0) {
-                nextIteration = getOutputs (currentIteration, currentId);
-                currentIteration = nextIteration;
-            }
-        }
-    }
-
-
-    /**
-     * get the outputs related to a list of inputs and builds the inOutData map.
-     * note: for each submission input, when this is first called the list contains
-     * only the submission input. Then it is filled with the outputs found (that are
-     * potentially inputs to following steps).
-     *
-     * @param ids list of intermediate inputs (they are outputs of previous steps)
-     * @param submissionInput  the initial input we are considering
-     * @return the list of outputs related to the list of inputs
-     */
-    private List<Integer> getOutputs(List<Integer> ids, Integer submissionInput) {
-        // actually this method also set the map.
-        List <Integer> outs = new ArrayList<Integer>();
-
-        Iterator <Integer> dataId = ids.iterator();
-        while (dataId.hasNext()) {
-            Integer currentIn = dataId.next();
-            List <Integer> nextAppliedProtocols =
-                appliedDataMap.get(currentIn).nextAppliedProtocols;
-
-            if (nextAppliedProtocols.isEmpty()) {
-                // this is a submission output: let's connect it to the
-                // submission input
-                addToMap(inOutDataMap, submissionInput, currentIn);
-            } else {
-                // keep gathering the outputs..
-                Iterator <Integer> nap = nextAppliedProtocols.iterator();
-                while (nap.hasNext()) {
-                    // addToList checks if the various ids are already present in
-                    // the results list before adding them
-                    addToList(outs, appliedProtocolMap.get(nap.next()).outputs);
-                }
-            }
-        }
-        return outs;
-    }
-
-    /**
-     * builds the map from each submission output to its related inputs.
-     * it uses the previously built reverse map (each submission input
-     * with its related submission output(s))
-     *
-     */
-    private void buildOutInMap() {
-        Set <Integer> in = inOutDataMap.keySet();
-        Iterator <Integer> ins = in.iterator();
-        while (ins.hasNext()) {
-            Integer thisIn = ins.next();
-            List <Integer> out = inOutDataMap.get(thisIn);
-            Iterator <Integer> outs = out.iterator();
-            while (outs.hasNext()) {
-                addToMap (outInDataMap, outs.next(), thisIn);
-            }
-        }
     }
 
 
@@ -981,27 +829,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-//  TOREMOVE
-    /**
-     * Return the rows needed for lab from the lab_prop table.
-     * This is a protected method so that it can be overridden for testing
-     *
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-
-//  protected ResultSet getLabAttributesResultSet(Connection connection)
-//  throws SQLException {
-//  String query =
-//  "SELECT experiment_id, name, value"
-//  + " FROM experiment_prop"
-//  + " where rank=0 ";
-//  LOG.info("executing: " + query);
-//  Statement stmt = connection.createStatement();
-//  ResultSet res = stmt.executeQuery(query);
-//  return res;
-//  }
 
     /**
      *
@@ -2267,57 +2094,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    /**
-     * to store references between submission and its initial submissionData
-     * (initial input of the submission)
-     * (1 to many)
-     */
-    private void setSubmissionInputRefs(Connection connection)
-    throws ObjectStoreException {
-        Iterator<Integer> subs = inputsMap.keySet().iterator();
-        while (subs.hasNext()) {
-            Integer thisSubmissionId = subs.next();
-            List<Integer> dataIds = inputsMap.get(thisSubmissionId);
-            Iterator<Integer> dat = dataIds.iterator();
-            ReferenceList collection = new ReferenceList();
-            collection.setName("inputs");
-            while (dat.hasNext()) {
-                Integer currentId = dat.next();
-                if (appliedDataMap.get(currentId) == null) {
-                    continue;
-                }
-                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
-            }
-            getChadoDBConverter().store(collection,
-                    submissionMap.get(thisSubmissionId).interMineObjectId);
-        }
-    }
-
-    /**
-     * to store references between submission and its resulting submissionData
-     * (final output of the submission)
-     * (1 to many)
-     */
-    private void setSubmissionResultsRefs(Connection connection)
-    throws ObjectStoreException {
-        Iterator<Integer> subs = outputsMap.keySet().iterator();
-        while (subs.hasNext()) {
-            Integer thisSubmissionId = subs.next();
-            List<Integer> dataIds = outputsMap.get(thisSubmissionId);
-            Iterator<Integer> dat = dataIds.iterator();
-            ReferenceList collection = new ReferenceList();
-            collection.setName("outputs");
-            while (dat.hasNext()) {
-                Integer currentId = dat.next();
-                if (appliedDataMap.get(currentId) == null) {
-                    continue;
-                }
-                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
-            }
-            getChadoDBConverter().store(collection,
-                    submissionMap.get(thisSubmissionId).interMineObjectId);
-        }
-    }
 
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
@@ -2367,12 +2143,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-
     //sub -> ef
     private void setSubmissionEFactorsRefs(Connection connection)
     throws ObjectStoreException {
-
-        LOG.info("EF REFS");
 
         Iterator<Integer> subs = submissionEFactorMap.keySet().iterator();
         while (subs.hasNext()) {
@@ -2380,7 +2153,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
             LOG.info("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
-
             Iterator<String> ef = eFactors.iterator();
             ReferenceList collection = new ReferenceList();
             collection.setName("experimentalFactors");
@@ -2440,61 +2212,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-
-
-    /**
-     * to store references between submission and its resulting submissionData
-     * (final output of the submission)
-     * (1 to many)
-     */
-    private void setInOutRefs(Connection connection)
-    throws ObjectStoreException {
-        Iterator<Integer> subs = inOutDataMap.keySet().iterator();
-        while (subs.hasNext()) {
-            Integer thisId = subs.next();
-            List<Integer> dataIds = inOutDataMap.get(thisId);
-            Iterator<Integer> dat = dataIds.iterator();
-            ReferenceList collection = new ReferenceList();
-            collection.setName("resultData");
-            while (dat.hasNext()) {
-                Integer currentId = dat.next();
-                if (appliedDataMap.get(currentId) == null) {
-                    continue;
-                }
-                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
-            }
-            getChadoDBConverter().store(collection,
-                    appliedDataMap.get(thisId).intermineObjectId);
-        }
-    }
-
-    /**
-     * to store references between submission and its resulting submissionData
-     * (final output of the submission)
-     * (1 to many)
-     */
-    private void setOutInRefs(Connection connection)
-    throws ObjectStoreException {
-        Iterator<Integer> subs = outInDataMap.keySet().iterator();
-        while (subs.hasNext()) {
-            Integer thisId = subs.next();
-            List<Integer> dataIds = outInDataMap.get(thisId);
-            Iterator<Integer> dat = dataIds.iterator();
-            ReferenceList collection = new ReferenceList();
-            collection.setName("initialData");
-            while (dat.hasNext()) {
-                Integer currentId = dat.next();
-                if (appliedDataMap.get(currentId) == null) {
-                    continue;
-                }
-                collection.addRefId(appliedDataMap.get(currentId).itemIdentifier);
-            }
-            getChadoDBConverter().store(collection,
-                    appliedDataMap.get(thisId).intermineObjectId);
-        }
-    }
-
-
     /**
      * maps from chado field names to ours.
      *
@@ -2540,8 +2257,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
 
-
-
         // data: parameter values
         FIELD_NAME_MAP.put("genome version", "genomeVersion");
         FIELD_NAME_MAP.put("median value", "medianValue");
@@ -2566,13 +2281,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Array Design REF", "arrayDesignRef");
         FIELD_NAME_MAP.put("Derived Array Data File", "derivedArrayDataFile");
         FIELD_NAME_MAP.put("Result File", "resultFile");
-        // data: obsolete?
-        // FIELD_NAME_MAP.put("", "arrayMatrixDateFile");
-        // FIELD_NAME_MAP.put("", "label");
-        // FIELD_NAME_MAP.put("", "source");
-        // FIELD_NAME_MAP.put("", "sample");
-        // FIELD_NAME_MAP.put("", "extract");
-        // FIELD_NAME_MAP.put("", "labelExtract");
 
         // protocol
         FIELD_NAME_MAP.put("Protocol Type", "type");
@@ -2580,124 +2288,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
     }
-
-    static { // TODO: to remove, now lab is all static
-        PROVIDER_FIELD_NAME_MAP.put("Person Affiliation", "affiliation");
-        PROVIDER_FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experiment Description", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Investigation Title", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Design", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Experimental Factor Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Person Roles", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Quality Control Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Replicate Type", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("PubMed ID", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Date of Experiment", NOT_TO_BE_LOADED);
-        PROVIDER_FIELD_NAME_MAP.put("Public Release Date", NOT_TO_BE_LOADED);
-    }
-
-    /**
-     * method to add an element to a list which is the value of a map
-     * @param m       the map (<Integer, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
-
-        List values = new ArrayList();
-
-        if (m.containsKey(key)) {
-            values = m.get(key);
-        }
-        if (!values.contains(value)) {
-            values.add(value);
-            m.put(key, values);
-        }
-    }
-
-    /**
-     * method to add an element to a list which is the value of a map
-     * @param m       the map (<Integer, List<String>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<Integer, List<String>> m, Integer key, String value) {
-
-        List<String> ids = new ArrayList<String>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
-    }
-    /**
-     * method to add an element to a list which is the value of a map
-     * @param m       the map (<String, List<Integer>>)
-     * @param key     the key for the map
-     * @param value   the list
-     */
-    private void addToMap(Map<String, List<Integer>> m, String key, Integer value) {
-
-        List<Integer> ids = new ArrayList<Integer>();
-
-        if (m.containsKey(key)) {
-            ids = m.get(key);
-        }
-        if (!ids.contains(value)) {
-            ids.add(value);
-            m.put(key, ids);
-        }
-    }
-
-
-    /**
-     * adds an element (String) to a list only if it is not there yet
-     * @param l the list
-     * @param i the element
-     */
-    private void addToList(List<String> l, String i) {
-
-        if (!l.contains(i)) {
-            l.add(i);
-        }
-    }
-
-
-    /**
-     * adds an element (Integer) to a list only if it is not there yet
-     * @param l the list
-     * @param i the element
-     */
-    private void addToList(List<Integer> l, Integer i) {
-
-        if (!l.contains(i)) {
-            l.add(i);
-        }
-    }
-
-    /**
-     * adds the elements of a list i to a list l only if they are not yet
-     * there
-     * @param l the receiving list
-     * @param i the donating list
-     */
-    private void addToList(List<Integer> l, List<Integer> i) {
-        Iterator <Integer> it  = i.iterator();
-        while (it.hasNext()) {
-            Integer thisId = it.next();
-            if (!l.contains(thisId)) {
-                l.add(thisId);
-            }
-        }
-    }
+    
 
     /**
      * to store identifiers in protocol maps.
@@ -2771,42 +2362,110 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addToMap(submissionDataMap, submissionId, dataId);
         dataSubmissionMap.put(dataId, submissionId);
     }
+    
+    /**
+     * =====================
+     *    UTILITY METHODS
+     * =====================
+     */
+    
+    /**
+     * adds an element to a list which is the value of a map
+     * @param m       the map (<Integer, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToMap(Map<Integer, List<Integer>> m, Integer key, Integer value) {
+
+        List<Integer> values = new ArrayList<Integer>();
+
+        if (m.containsKey(key)) {
+            values = m.get(key);
+        }
+        if (!values.contains(value)) {
+            values.add(value);
+            m.put(key, values);
+        }
+    }
+
+    /**
+     * adds an element to a list which is the value of a map
+     * @param m       the map (<Integer, List<String>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToMap(Map<Integer, List<String>> m, Integer key, String value) {
+
+        List<String> ids = new ArrayList<String>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
+    /**
+     * adds an element to a list which is the value of a map
+     * @param m       the map (<String, List<Integer>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private void addToMap(Map<String, List<Integer>> m, String key, Integer value) {
+
+        List<Integer> ids = new ArrayList<Integer>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
 
 
-    // utilities for debugging
-    // to be removed
-    private void printListMap (Map<Integer, List<Integer>> m) {
-        Iterator i  = m.keySet().iterator();
-        while (i.hasNext()) {
-            Integer current = (Integer) i.next();
+    /**
+     * adds an element (String) to a list only if it is not there yet
+     * @param l the list
+     * @param i the element
+     */
+    private void addToList(List<String> l, String i) {
 
-            List ids = m.get(current);
-            Iterator i2 = ids.iterator();
-            while (i2.hasNext()) {
-                LOG.debug("MAP: " + current + "|" + i2.next());
+        if (!l.contains(i)) {
+            l.add(i);
+        }
+    }
+
+
+    /**
+     * adds an element (Integer) to a list only if it is not there yet
+     * @param l the list
+     * @param i the element
+     */
+    private void addToList(List<Integer> l, Integer i) {
+
+        if (!l.contains(i)) {
+            l.add(i);
+        }
+    }
+
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
+    private void addToList(List<Integer> l, List<Integer> i) {
+        Iterator <Integer> it  = i.iterator();
+        while (it.hasNext()) {
+            Integer thisId = it.next();
+            if (!l.contains(thisId)) {
+                l.add(thisId);
             }
         }
     }
 
-    private void printMap (Map<Integer, Integer> m) {
-        Iterator<Integer> i = m.keySet().iterator();
-        while (i.hasNext()) {
-            Integer thisId = i.next();
-            LOG.debug("MAP: " + thisId + "|" + m.get(thisId));
-        }
-    }
 
-    private void printMapAP (Map<Integer, AppliedProtocol> m) {
-        Iterator<Integer> i = m.keySet().iterator();
-        while (i.hasNext()) {
-            Integer a = i.next();
-            //LOG.info("DB APMAP ***" + a +  ": " + i2.next() );
-            AppliedProtocol ap = m.get(a);
-            List<Integer> ids = ap.outputs;
-            Iterator<Integer> i2 = ids.iterator();
-            while (i2.hasNext()) {
-                LOG.debug("DB APMAP " + a +  ": " + i2.next());
-            }
-        }
-    }
 }
