@@ -109,10 +109,10 @@
       referenced-type="SubmissionData" />
     <collection name="inputs"
       referenced-type="SubmissionData" />
-
     <collection name="experimentalFactors"
       referenced-type="ExperimentalFactor"
       reverse-reference="submissions" />
+
     <!-- <collection name="attributes" referenced-type="SubmissionAttribute" reverse-reference="submissions"/>-->
     <collection name="antibodies" referenced-type="Antibody" reverse-reference="submissions"/>
     <collection name="developmentalStages" referenced-type="DevelopmentalStage" reverse-reference="submissions"/>
@@ -129,6 +129,13 @@
     <collection name="submissions"
       referenced-type="Submission"
       reverse-reference="experimentalFactors" />
+  </class>
+
+<!-- temp --> 
+  <class name="ExpFac"
+    is-interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
   </class>
 
   <class name="Protocol"  
