@@ -13,8 +13,6 @@ then
   rm $tempfile;
 fi
 
-$errmsg="";
-
 echo "==========================================================="
 echo "Getting Fly Anatomy Ontology"
 ./get_fly_anatomy_ontology $logdir $tempname $shared_data
