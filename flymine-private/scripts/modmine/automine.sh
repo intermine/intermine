@@ -23,8 +23,8 @@ SCRIPTDIR=../flymine-private/scripts/modmine/
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-SOURCES=modmine-static,modencode-metadata
-#SOURCES=modencode-metadata
+#SOURCES=modmine-static,modencode-metadata
+SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
@@ -389,7 +389,11 @@ LOOPVAR="$1.chadoxml"
 elif [ $INFILE != "undefined" ]
 then
 # use the list provided in a file
-LOOPVAR=`cat $INFILE`
+#LOOPVAR=`cat $INFILE`
+LOOPVAR=`sed 's/$/.chadoxml/g' $INFILE | cat`
+echo "********"
+echo $LOOPVAR
+
 else
 LOOPVAR="*.chadoxml"
 fi
@@ -400,7 +404,8 @@ for sub in $LOOPVAR
 do
 # if it is a symbolic link and this is not the given input
 # we skip that file
-if [ -L "$sub" -a ! -n "$1" ]
+#if [ -L "$sub" -a ! -n "$1" ]
+if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
 then
 continue
 fi
