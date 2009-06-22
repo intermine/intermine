@@ -186,7 +186,7 @@ if($updated == 0){
                 }else{
                     #create the gene object, add a link to the gene synonym object and add the gene object to the hash
                     $gene_item = make_item('Gene');
-                    $gene_item->set('identifier', $geneID);
+                    $gene_item->set('primaryIdentifier', $geneID);
                     $gene_item->set('organism', $org_item);
 					$genes{$geneID}={'object' => $gene_item};
                     #print "New gene\n";
@@ -199,12 +199,12 @@ if($updated == 0){
                 }
 
                 #create the translation object and add a reference to the synonym object
-                my $trans_item = make_item('Translation');
-                $trans_item->set('identifier', $translationID);
+                my $trans_item = make_item('Protein');
+                $trans_item->set('primaryIdentifier', $translationID);
                 $trans_item->set('organism', $org_item);
                 $trans_item->set('gene', $gene_item);
                 
-				#create the synonym object and add a reference to the source object
+                #create the synonym object and add a reference to the source object
                 my $t_syn_item = make_item('Synonym');
                 $t_syn_item->set('value', $translationID);
                 $t_syn_item->set('type', 'identifier');
