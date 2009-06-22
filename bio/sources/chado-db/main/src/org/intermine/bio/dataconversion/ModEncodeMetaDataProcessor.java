@@ -325,8 +325,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.debug("FEATMAP: submission " + chadoExperimentId + "|"
                     + "featureMap: " + subFeatureMap.keySet().size());
 
-            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable(connection, subFeatureMap, queryList);
+            // removed to check role in memory error
+//            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
+//            processDataFeatureTable(connection, subFeatureMap, queryList);
         }
     }
 

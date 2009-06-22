@@ -23,8 +23,8 @@ SCRIPTDIR=../flymine-private/scripts/modmine/
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-#SOURCES=modmine-static,modencode-metadata
-SOURCES=modencode-metadata
+SOURCES=modmine-static,modencode-metadata
+#SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
