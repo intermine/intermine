@@ -15,7 +15,7 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($data_dir,$organisms,$database_name);
 if(@ARGV!=3){
-    die "Wrong number of arguments:  ORGANISM_NAME DATA_DIRECTORY WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
+    die "Wrong number of arguments: DATA_DIRECTORY ORGANISM_NAME WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
 }else{
 
     $data_dir = $ARGV[0];
