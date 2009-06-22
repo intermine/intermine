@@ -1145,18 +1145,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 addToMap(submissionEFTypeMap, submissionId, value);
 
                 // TODO: remove. here for checking
-                if (!eFactorIdTEMPMap.containsKey(efName)) {
-                    Item ef = getChadoDBConverter().createItem("ExpFac");
-                    ef.setAttribute ("name", efName);
-                    ef.setAttribute ("type", value);
-
-                    Integer intermineObjectId = getChadoDBConverter().store(ef);
-                    eFactorIdTEMPMap .put(efName, intermineObjectId);
-                    eFactorIdRefTEMPMap .put(efName, ef.getIdentifier());
-                }
-                addToMap(submissionEFactorTEMPMap, submissionId, efName);
-                LOG.info("EF MAP TEMP" + submissionEFactorTEMPMap);
-                count++;
+//                if (!eFactorIdTEMPMap.containsKey(efName)) {
+//                    Item ef = getChadoDBConverter().createItem("ExpFac");
+//                    ef.setAttribute ("name", efName);
+//                    ef.setAttribute ("type", value);
+//
+//                    Integer intermineObjectId = getChadoDBConverter().store(ef);
+//                    eFactorIdTEMPMap .put(efName, intermineObjectId);
+//                    eFactorIdRefTEMPMap .put(efName, ef.getIdentifier());
+//                }
+//                addToMap(submissionEFactorTEMPMap, submissionId, efName);
+//                LOG.info("EF MAP TEMP" + submissionEFactorTEMPMap);
+//                count++;
                 // --remove END
             }
             prevRank = rank;
