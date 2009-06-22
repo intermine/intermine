@@ -58,11 +58,14 @@ if not os.path.exists(version_dir):
     os.mkdir(version_dir + "tfbs/")
     os.mkdir(version_dir + "crm/")
 
-    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/tfbs_dump.gff", version_dir + "tfbs/tfbs_dump.gff")
-    output(log, "Downloaded new file: " + version_dir + "tfbs_dump.gff")
+    tfbs_file = version_dir + "tfbs/tfbs_dump.gff"
+    crm_file = version_dir + "crm/crm_dump.gff"
 
-    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/crm_dump.gff", version_dir + "crm/crm_dump.gff")
-    output(log, "Downloaded new file: " + version_dir + "tfbs_dump.gff")
+    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/tfbs_dump.gff", tfbs_file)
+    output(log, "Downloaded new file: " + tfbs_file)
+
+    urllib.urlretrieve("http://redfly.ccr.buffalo.edu/datadumps/crm_dump.gff", crm_file)
+    output(log, "Downloaded new file: " + crm_file)
 
     link = download_dir + "current"
     if os.path.exists(link):
