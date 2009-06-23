@@ -208,7 +208,8 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 MetadataManager.store(db, MetadataManager.OS_SUMMARY,
                                       PropertiesUtil.serialize(oss.toProperties()));
             } else if ("precompute-queries".equals(operation)) {
-                PrecomputeTask.precompute(false, getObjectStoreWriter().getObjectStore(), 0);
+                (new PrecomputeTask()).precompute(false, getObjectStoreWriter().getObjectStore(),
+                        0);
             } else if ("create-lucene-index".equals(operation)
                        || "create-autocomplete-index".equals(operation)) {
                 System.out .println("create lucene index ...");
