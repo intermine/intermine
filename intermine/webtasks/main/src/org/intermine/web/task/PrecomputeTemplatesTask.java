@@ -13,7 +13,6 @@ package org.intermine.web.task;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,9 +29,9 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.profile.ProfileManager;
@@ -161,11 +160,10 @@ public class PrecomputeTemplatesTask extends Task
      * @param oss the ObjectStoreSummary for os
      */
     protected void precomputeTemplates(ObjectStore os, ObjectStoreSummary oss) {
-        Iterator iter = getPrecomputeTemplateQueries().entrySet().iterator();
-
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            TemplateQuery template = (TemplateQuery) entry.getValue();
+        List<TemplateQuery> toSummarise = new ArrayList<TemplateQuery>();
+        List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
+        for (Map.Entry<String, TemplateQuery> entry : getPrecomputeTemplateQueries().entrySet()) {
+            TemplateQuery template = entry.getValue();
 
             // check if we should ignore this template (maybe it won't precompute)
             if (ignoreNames.contains(template.getName())) {
@@ -203,18 +201,19 @@ public class PrecomputeTemplatesTask extends Task
                 }
             }
 
-            ResultsInfo resultsInfo;
-            try {
-                resultsInfo = os.estimate(q);
-            } catch (ObjectStoreException e) {
-                throw new BuildException("Exception while calling ObjectStore.estimate() "
-                        + "for template " + template.getName(), e);
-            }
+            toSummarise.add(template);
 
-            if (resultsInfo.getRows() >= minRows) {
-                LOG.info("precomputing template " + entry.getKey());
-                precompute(os, q, indexes, template.getName());
-            }
+            jobs.add(new ParallelPrecomputer.Job(template.getName(), q, indexes, false,
+                        "PrecomputeTemplatesTask"));
+        }
+        ParallelPrecomputer pp = new ParallelPrecomputer((ObjectStoreInterMineImpl) os, 4);
+        try {
+            pp.precompute(jobs);
+        } catch (ObjectStoreException e) {
+            throw new BuildException(e);
+        }
+
+        for (TemplateQuery template : toSummarise) {
             if (doSummarise) {
                 try {
                     template.summarise(os, userProfileOS);
@@ -261,7 +260,7 @@ public class PrecomputeTemplatesTask extends Task
      * @return Map from template name to TemplateQuery
      * @throws BuildException if an IO error occurs loading the template queries
      */
-    protected Map getPrecomputeTemplateQueries() throws BuildException {
+    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() throws BuildException {
         ProfileManager pm;
         ServletContext servletContext = new ServletContextSimulator();
         try {

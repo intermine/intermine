@@ -25,6 +25,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
+import org.intermine.objectstore.intermine.TestParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -68,11 +69,10 @@ public class PrecomputeTaskTest extends QueryTestCase
      * Test that PrecomputeTask creates the right pre-computed tables
      */
     public void testExecute() throws Exception {
-        PrecomputeTask task = new PrecomputeTask();
+        TestPrecomputeTask task = new TestPrecomputeTask();
 
         task.setAlias("os.unittest");
         task.setMinRows(new Integer(1));
-        PrecomputeTask.setTestMode();
 
         Properties summaryProperties;
 
@@ -117,7 +117,8 @@ public class PrecomputeTaskTest extends QueryTestCase
             "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id"
         };
 
-        assertEquals(expectedQueries.length, task.testQueries.size());
+        List<Query> testQueries = ((TestParallelPrecomputer) task.getPrecomputer((ObjectStoreInterMineImpl) os)).testQueries;
+        assertEquals(expectedQueries.length, testQueries.size());
 
         Set<String> expected = new HashSet<String>();
         for (int i = 0; i < expectedQueries.length; i++) {
@@ -128,7 +129,7 @@ public class PrecomputeTaskTest extends QueryTestCase
         }
 
         Set<String> got = new HashSet<String>();
-        for (Query q : task.testQueries) {
+        for (Query q : testQueries) {
             got.add(q.toString());
         }
         assertEquals(expected, got);
