@@ -112,6 +112,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
     private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
     private Map<Integer, List<String>> submissionEFTypeMap = new HashMap<Integer, List<String>>();
+    private Map<Integer, List<String>> submissionEFNameMap = new HashMap<Integer, List<String>>();
     // TO REMOVE
     private Map<Integer, List<String>> submissionEFactorTEMPMap = new HashMap<Integer, List<String>>();
     private Map<String, Integer> eFactorIdTEMPMap = new HashMap<String, Integer>();
@@ -1141,6 +1142,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             if (rank != prevRank || submissionId != prevSub) {
                 efName = value;
+                addToMap(submissionEFNameMap, submissionId, value);
             } else {
                 // build map to use in setting EF in processSubmissionAttributes
                 addToMap(submissionEFTypeMap, submissionId, value);
@@ -1715,7 +1717,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             List<Integer> subs = attributeSubIds.get(dataValue);
 
-            // TODO - set experimentalFactors:
+            // TODO - Use a predefined list of accepted types, or get it from db 
+            // set experimentalFactors:
             // given a map of submission to experimental factor type (e.g. developmental_stage)
             // could match the type against attribute.type in sections below and create
             // ExperimentalFactor with details.getValue().get(0)
@@ -1723,42 +1726,50 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Iterator<Integer> i  = submissionEFTypeMap.keySet().iterator();
             while (i.hasNext()) {
                 Integer current = (Integer) i.next();
-//                LOG.info("EFX =========================================" + current + "|" + dataValue);                                
                 List<String> eft = submissionEFTypeMap.get(current);
                 Iterator<String> i2 = eft.iterator();
+                int index = 0; // used to fetch the proper name from the list (see below)
                 while (i2.hasNext()) {
                     String type = i2.next();
+                    String efName = null;                        
                     if (type.equalsIgnoreCase(attribute.type) ||
                             (type.equalsIgnoreCase("developmental_stage") 
                                     && attribute.type.equalsIgnoreCase("stage"))
                                     || (type.equalsIgnoreCase("CellLine") 
-                                            && attribute.type.equalsIgnoreCase("cell line"))
-                    ){
-                        
-                        String efName = null;                        
-                        // TODO: check...not sure what is going on
+                                            && attribute.type.equalsIgnoreCase("cell line"))){
+                        // getting the EF name from the attributes..
                         for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
                             if (detail.getKey().equalsIgnoreCase("official name")) {
                                 efName = detail.getValue().get(0);
                             }
                         }
-
-                        // create the EF, if not there already
-                        if (!eFactorIdMap.containsKey(efName)) {
-
-                            Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
-                            ef.setAttribute ("name", efName);
-                            ef.setAttribute ("type", type);
-
-                            Integer intermineObjectId = getChadoDBConverter().store(ef);
-                            eFactorIdMap .put(efName, intermineObjectId);
-                            eFactorIdRefMap .put(efName, ef.getIdentifier());
-                        }
-                        // if pertinent to the current sub, add to the map for the references
-                        if (subs.contains(current)){
-                            addToMap(submissionEFactorMap, current, efName);
-                        }
                     }
+                    else if (type.equalsIgnoreCase("compound") || type.equalsIgnoreCase("tissue")
+                            || type.equalsIgnoreCase("organism_part")
+                            || type.equalsIgnoreCase("PCR_primer")){
+                        // this is not a recognised attribute, use what you find in the experiment properties
+                        efName = submissionEFNameMap.get(current).get(index);                        
+                    }
+                    else {
+                        continue;
+                    }
+
+                    // create the EF, if not there already
+                    if (!eFactorIdMap.containsKey(efName)) {
+
+                        Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
+                        ef.setAttribute ("name", efName);
+                        ef.setAttribute ("type", type);
+
+                        Integer intermineObjectId = getChadoDBConverter().store(ef);
+                        eFactorIdMap .put(efName, intermineObjectId);
+                        eFactorIdRefMap .put(efName, ef.getIdentifier());
+                    }
+                    // if pertinent to the current sub, add to the map for the references
+                    if (subs.contains(current)){
+                        addToMap(submissionEFactorMap, current, efName);
+                    }
+                    index++;                        
                 }
             }
             LOG.info("EFMAPef: " + submissionEFactorMap); 
