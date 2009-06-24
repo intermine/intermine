@@ -34,8 +34,8 @@
 
   <class className="org.intermine.model.bio.ExperimentalFactor">
     <fields>
-      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
