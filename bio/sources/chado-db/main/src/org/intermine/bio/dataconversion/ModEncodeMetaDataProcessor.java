@@ -1730,11 +1730,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     String type = i2.next();
                     if (type.equalsIgnoreCase(attribute.type) ||
                             (type.equalsIgnoreCase("developmental_stage") 
-                                    && attribute.type.equalsIgnoreCase("stage"))){
+                                    && attribute.type.equalsIgnoreCase("stage"))
+                                    || (type.equalsIgnoreCase("CellLine") 
+                                            && attribute.type.equalsIgnoreCase("cell line"))
+                    ){
+                        
                         String efName = null;                        
                         // TODO: check...not sure what is going on
                         for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                            efName = detail.getValue().get(0);
+                            if (detail.getKey().equalsIgnoreCase("official name")) {
+                                efName = detail.getValue().get(0);
+                            }
                         }
 
                         // create the EF, if not there already
