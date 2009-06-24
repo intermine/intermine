@@ -1754,6 +1754,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         continue;
                     }
 
+                    if (efName == null){
+                        LOG.error("EF has null name: " + current + "|" + type);
+                        continue;
+                    }
+                    
                     // create the EF, if not there already
                     if (!eFactorIdMap.containsKey(efName)) {
 
