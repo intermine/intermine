@@ -675,7 +675,7 @@
 		<attribute name="name" value="Valerie Reinke"/>
 		<attribute name="affiliation" value="Yale University"/>
 		<attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
-		<reference name="project" ref_id="1013"/>
+		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1091" class="" implements="Lab">
 		<attribute name="surname" value="Ren"/>
