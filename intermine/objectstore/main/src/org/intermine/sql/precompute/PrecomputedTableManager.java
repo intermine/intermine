@@ -294,23 +294,22 @@ public class PrecomputedTableManager
                         SelectValue obv = (SelectValue) pt.getValueMap().get(ob);
                         sb.append(obv.getAlias());
                     }
-                    LOG.info("Creating index on precomputed table " + pt.getName() + "(" + sb
-                            + ")");
                     indexes.add(sb.toString());
                 }
             }
             indexes = canonicaliseIndexes(indexes);
 
+            LOG.info("Creating " + indexes.size() + " indexes for " + pt.getName());
             Iterator indexIter = indexes.iterator();
             while (indexIter.hasNext()) {
                 String indexName = (String) indexIter.next();
+                LOG.info("Creating index on " + pt.getName() + " (" + indexName + ")");
                 addIndex(pt.getName(), indexName, con);
                 // special case for string lower() indexes - add an index that can be used by
                 // LIKE constraints
                 if (indexName.startsWith("lower(")) {
                     String newIndexName = indexName.replaceFirst("^lower\\(([^,]+)\\)(.*)",
                                                                  "lower($1) text_pattern_ops$2");
-
                     addIndex(pt.getName(), newIndexName, con);
                 }
             }
