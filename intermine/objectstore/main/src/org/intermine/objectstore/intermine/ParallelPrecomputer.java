@@ -196,6 +196,7 @@ public class ParallelPrecomputer
          * @throws ObjectStoreException if something goes wrong
          */
         private void execute(ParallelPrecomputer pp, int threadNo) throws ObjectStoreException {
+            LOG.info("Job with key " + key + " has expected time " + info.getComplete());
             pp.precomputeQuery(key, query, indexes, allFields, category, threadNo);
         }
 
