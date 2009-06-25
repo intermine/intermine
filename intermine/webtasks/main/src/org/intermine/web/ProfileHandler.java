@@ -193,7 +193,7 @@ class ProfileHandler extends DefaultHandler
         if (qName.equals("items")) {
             items = ((FullHandler) subHandler).getItems();
             idObjectMap = new HashMap();
-            Model model = profileManager.getObjectStore().getModel();
+            Model model = profileManager.getProductionObjectStore().getModel();
             List<InterMineObject> objects;
             try {
                 objects = FullParser.realiseObjects(items, model, true, abortOnError);

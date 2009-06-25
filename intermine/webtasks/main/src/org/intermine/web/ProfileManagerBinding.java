@@ -25,7 +25,6 @@ import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.SAXParser;
 import org.intermine.web.bag.PkQueryIdUpgrader;
@@ -42,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Code for reading and writing ProfileManager objects as XML
  *
- * @author Ernst Rutherford
+ * @author Kim Rutherford
  */
 
 public class ProfileManagerBinding
@@ -62,7 +61,7 @@ public class ProfileManagerBinding
     public static void marshal(ProfileManager profileManager, XMLStreamWriter writer) {
         try {
             writer.writeStartElement("userprofiles");
-            String profileVersion = getProfileVersion(profileManager.getObjectStore());
+            String profileVersion = getProfileVersion(profileManager.getProfileObjectStoreWriter());
             writer.writeAttribute(MetadataManager.PROFILE_FORMAT_VERSION, profileVersion);
             List usernames = profileManager.getProfileUserNames();
 
@@ -73,7 +72,7 @@ public class ProfileManagerBinding
                 LOG.info("Writing profile: " + profile.getUsername());
                 long startTime = System.currentTimeMillis();
 
-                ProfileBinding.marshal(profile, profileManager.getObjectStore(), writer,
+                ProfileBinding.marshal(profile, profileManager.getProductionObjectStore(), writer,
                         profileManager.getVersion());
 
                 long totalTime = System.currentTimeMillis() - startTime;
@@ -96,6 +95,7 @@ public class ProfileManagerBinding
         Database database = ((ObjectStoreInterMineImpl) os).getDatabase();
         try {
             String ret = MetadataManager.retrieve(database, MetadataManager.PROFILE_FORMAT_VERSION);
+            LOG.info("Userprofile database has version \"" + ret + "\"");
             if (ret == null) {
                 ret = ZERO_PROFILE_VERSION;
             }
