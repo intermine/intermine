@@ -13,18 +13,14 @@ MINEDIR=$HOME/svn/trunk/modmine
 
 if [ "$USER" != "modminebuild" ]
 then
-echo
-echo "Please run this command as user modminebuild."
-echo
+echo "`date +%y%m%d.%H%M`: EXITING: please run this command as user modminebuild."
 exit;
 fi
 
 
 if [ -e $PROPDIR/build.lock ]
 then
-echo
-echo "EXITING: release being built."
-echo
+echo "`date +%y%m%d.%H%M`: EXITING: release being built."
 exit;
 fi
 
