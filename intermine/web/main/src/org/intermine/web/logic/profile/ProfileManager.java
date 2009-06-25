@@ -83,6 +83,7 @@ public class ProfileManager
         try {
             String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) osw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
+            LOG.info("Database has userprofile version \"" + versionString + "\"");
             if (versionString == null) {
                 version = 0;
             } else {
@@ -125,7 +126,7 @@ public class ProfileManager
      * Return the ObjectStore that was passed to the constructor.
      * @return the ObjectStore from the constructor
      */
-    public ObjectStore getObjectStore() {
+    public ObjectStore getProductionObjectStore() {
         return os;
     }
 
