@@ -40,4 +40,8 @@ public class IncrementalLoader implements Loader
         }
         return index;
     }
+
+    public String layoutDescription(PenaltyCalculator penaltyCalc, SplitCalculator splitCalc) {
+        return "Incremental_" + splitCalc.getClass().getName();
+    }
 }
