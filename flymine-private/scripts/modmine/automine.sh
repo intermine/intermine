@@ -66,23 +66,27 @@ progname=$0
 function usage () {
 	cat <<EOF
 
-Usage: $progname [-F] [-M] [-R] [-V] [-a] [-b] [-e] [-f file_name] [-g] [-i] [-n] [-s] [-t] [-w] [-v] [-x]
-	-F: full (modmine) rebuild (Uses modmine-build as default) 
+Usage:
+$progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DCCid
+	-F: full (modmine) rebuild (Uses modmine-build as default)
 	-M: test build (metadata only)
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
-	-a: append to chado
-	-b: don't build a back-up of modchado-$REL
-	-e: don't update the sources (don't run get_all_modmine). Valid only in F mode
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
-	-n: also updated chado files will be considered
 	-s: no new loading of chado (stag is not run)
+	-v: verbode mode
+
+In addition to those:
+Advanced Usage switches: [-a] [-b] [-e] [-t] [-w] [-x]
+	-a: append to chado
+	-b: don't build a back-up of modchado-$REL
+	-e: don't update the sources (don't run get_all_modmine). Valid only in F mode
 	-t: no acceptance test run
 	-w: no new webapp will be built
-	-v: verbode mode
 	-x: don't build modmine (!: used for running only tests)
+
 
 Parameters: you can process
             a single submission                   (e.g. automine.sh 204 )
@@ -101,7 +105,7 @@ Notes: The file is downloaded only if not present or the remote copy
 examples:
 
 $progname			add new submissions to modmine-dev, getting new files from ftp
-$progname -F -r test		build a modmine-test with metadata, Flybase and Wormbase,
+$programe 123 add submission 123 to modmine-dev, getting it from ftp$progname -F -r test		build a modmine-test with metadata, Flybase and Wormbase,
 				getting new files from ftp
 $progname -M -r test		build a new chado with all the NEW submissions in
 				$FTPURL
