@@ -18,7 +18,12 @@ public class TestBed
             executeTest(args[0], args[1], IncrementalLoader.INSTANCE, penaltyCalc, SizeStartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
             executeTest(args[0], args[1], IncrementalLoader.INSTANCE, penaltyCalc, GeometricAreaStartEndSplitCalculator.INSTANCE, PAGE_SIZE);
             executeTest(args[0], args[1], IncrementalLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], BulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], STRBulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, MidAverageSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, StartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, SizeStartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricAreaStartEndSplitCalculator.INSTANCE, PAGE_SIZE);
+            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
         } else {
             executeTest(args[0], null, IncrementalLoader.INSTANCE, penaltyCalc, splitCalc, PAGE_SIZE);
         }
@@ -29,15 +34,15 @@ public class TestBed
         IndexPage index = loader.load(indexFile, penaltyCalc, splitCalc, pageSize);
         long builtTime = System.currentTimeMillis();
         //System.out.println("Index: " + index);
-        index.makeImage(15500, 0, 28000000, -1).writeImage(loader.getClass().getName() + "_" + splitCalc.getClass().getName() + ".pnm", 15500);
-        if (index instanceof InternalIndexPage) {
+        //index.makeImage(15500, 0, 28000000, -1).writeImage(loader.layoutDescription(penaltyCalc, splitCalc) + ".pnm", 15500);
+/*        if (index instanceof InternalIndexPage) {
             IndexPage pages[] = ((InternalIndexPage) index).getPages();
             for (IndexPage page : pages) {
                 if (page != null) {
-                    page.makeImage(1550, page.getMin(), page.getMax(), 2).writeImage(loader.getClass().getName() + "_" + splitCalc.getClass().getName() + "_" + intToString(page.getMin(), 9) + ".." + intToString(page.getMax(), 9) + ".pnm", 1550);
+                    page.makeImage(1550, page.getMin(), page.getMax(), 2).writeImage(loader.layoutDescription(penaltyCalc, splitCalc) + "_" + intToString(page.getMin(), 9) + ".." + intToString(page.getMax(), 9) + ".pnm", 1550);
                 }
             }
-        }
+        }*/
         if (lookupFile != null) {
             long startLookupTime = System.currentTimeMillis();
             LookupStats stats = new LookupStats();
@@ -54,7 +59,7 @@ public class TestBed
                 index.lookup(new Range(min, max), stats);
                 line = r.readLine();
             }
-            System.out.println(splitCalc.getClass().getName() + ": " + stats + " took " + (builtTime - startTime) + " ms to build, and " + (System.currentTimeMillis() - startLookupTime) + " ms to query. Root page contains " + index.entryCount() + " entries.");
+            System.out.println(loader.layoutDescription(penaltyCalc, splitCalc) + ": " + stats + " took " + (builtTime - startTime) + " ms to build, and " + (System.currentTimeMillis() - startLookupTime) + " ms to query. Root page contains " + index.entryCount() + " entries.");
         }
     }
 
