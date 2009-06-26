@@ -157,10 +157,6 @@
           <tiles:put name="heading" value="true"/>
         </tiles:insert>
 
-        <tiles:insert name="externalLinks.tile">
-          <tiles:put name="object" beanName="object"/>
-        </tiles:insert>
-
         <%-- Fields that are set to 'sectionOnRight' --%>
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
