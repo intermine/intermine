@@ -36,7 +36,11 @@ div#submissionProtocols h3 {
            jQuery("#submissionProtocols").toggle("slow");
         });
     })
-</script>
+</script> 
+
+
+<c:set var="urlPrefix" value="http://submit.modencode.org/submit/public/get_file/"/>
+
 
 <c:choose>
 <c:when test="${fn:length(pagedResults.rows) > 1}">
@@ -130,6 +134,15 @@ div#submissionProtocols h3 {
                   </td>
                   <c:set var="output" value="false"/>
                 </c:if>            
+                <c:if test="${fn:length(fn:substringBefore(resultElement.field,'File')) gt 0}">
+                  <c:set var="output" value="true"/>
+                  <c:set var="isFile" value="true" />
+									
+  							</c:if>            
+
+
+
+
               </c:when>
               <c:otherwise>
               
@@ -138,16 +151,33 @@ div#submissionProtocols h3 {
                 </c:if>     
                                    
                 <c:if test="${output}">
-                  <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
-                     rowspan="${subRow[column.index].rowspan}"  class="<c:out value="${stepClass}${rowClass}"/>"> 
-              
-                   <c:choose>
-                    <c:when test="${fn:startsWith(fn:trim(resultElement.field), 'http://')}">
-                      <a href="${resultElement.field}" class="value extlink">
-                        <c:set var="elements" value="${fn:split(resultElement.field,'/')}"/>
-                        <c:out value="${elements[fn:length(elements) - 1]}"/>
-                      </a>
-                    </c:when>
+														<td
+															id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
+															rowspan="${subRow[column.index].rowspan}"
+															class="<c:out value="${stepClass}${rowClass}"/>"><c:choose>
+															<c:when
+																test="${fn:startsWith(fn:trim(resultElement.field), 'http://')}">
+																<a href="${resultElement.field}" class="value extlink">
+																<c:set var="elements"
+																	value="${fn:split(resultElement.field,'/')}" /> <c:out
+																	value="${elements[fn:length(elements) - 1]}" /> </a>
+															</c:when>
+
+															<c:when test="${isFile}">
+																<c:out value="${resultElement.field}" /></td>
+														<c:set var="isFile" value="false" />
+                            <c:set var="doLink" value="true" />														
+														</c:when>
+														
+                              <c:when test="${doLink}">
+                                <a href="${urlPrefix}${DCCid}/extracted/${resultElement.field}" class="value extlink">
+                                <c:out value="${resultElement.field}" /> </a></td>
+                            <c:set var="doLink" value="false" />
+
+                            </c:when>
+                    
+                    
+                    
                     <c:otherwise>
                       <tiles:insert name="objectView.tile" />
                   </c:otherwise>

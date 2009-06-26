@@ -10,6 +10,8 @@ package org.modmine.web;
  *
  */
 
+import java.util.Iterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,7 +23,17 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Project;
+import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
@@ -75,7 +87,7 @@ public class SubmissionProtocolsController extends TilesAction
         WebResults results = executor.execute(q);
         
         if (results.size() > 2000) {
-            // LOG.info("DAG SUBMISSION id: " + o.getId());
+//             LOG.info("DAG SUBMISSION id: " + o.getId());
             request.setAttribute("subId", o.getId());
             return null;
         }
@@ -84,6 +96,28 @@ public class SubmissionProtocolsController extends TilesAction
         // NB: you need to set a maximum, default is 10!
         pagedTable.setPageSize(2000);
         request.setAttribute("pagedResults", pagedTable);
+
+        
+        // let's get also the dccid (needed for external link)
+        // maybe it can be gained in a simpler way
+        Query q1 = new Query();  
+        QueryClass qc = new QueryClass(Submission.class);
+        QueryField qcId = new QueryField(qc, "id");
+
+        q1.addFrom(qc);
+        q1.addToSelect(qc);        
+        SimpleConstraint sc = new SimpleConstraint(qcId, ConstraintOp.EQUALS, new QueryValue(o.getId()));
+        q1.setConstraint(sc);
+        Results result = os.executeSingleton(q1);
+
+        Integer DCCid = 0;
+        Iterator i = result.iterator();
+        while (i.hasNext()) {
+            Submission sub = (Submission) i.next();
+            DCCid = sub.getdCCid();
+//            LOG.info("DAG SUBMISSION ->: " + DCCid);
+        }
+        request.setAttribute("DCCid", DCCid);
         
         return null;
     }
