@@ -140,19 +140,16 @@ public class PsiConverter extends BioFileConverter
      */
     class PsiHandler extends DefaultHandler
     {
-        private Map<String, ExperimentHolder> experimentIds
-            = new HashMap<String, ExperimentHolder>();
+        private Map<String, ExperimentHolder> experimentIds = new HashMap();
         private InteractionHolder holder = null;
         private ExperimentHolder experimentHolder = null;
         private InteractorHolder interactorHolder = null;
         private Item gene = null, comment = null;
         private String experimentId = null, interactorId = null;
-        private Map<String, String> identifiers = new HashMap<String, String>();
-
-        private Map<String, Item> validGenes = new HashMap<String, Item>();
+        private Map<String, String> identifiers = new HashMap();
+        private Map<String, Item> validGenes = new HashMap();
         private String regionName = null;
-
-        private Stack<String> stack = new Stack<String>();
+        private Stack<String> stack = new Stack();
         private String attName = null;
         private StringBuffer attValue = null;
 
