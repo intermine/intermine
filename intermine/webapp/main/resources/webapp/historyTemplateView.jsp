@@ -94,12 +94,10 @@
             <fmt:param value="${savedTemplate.value.name}"/>
               </fmt:message>
             ${savedTemplate.value.name}
-            <%-- TOO SLOW
                     <tiles:insert name="setFavourite.tile">
                       <tiles:put name="name" value="${savedTemplate.value.name}"/>
                       <tiles:put name="type" value="template"/>
                     </tiles:insert>
-                     --%>
                     <c:if test="${IS_SUPERUSER}">
                       <c:set var="taggable" value="${savedTemplate.value}"/>
                       <tiles:insert name="inlineTagEditor.tile">
