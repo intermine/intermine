@@ -21,35 +21,44 @@ use Cwd;
 use Digest::MD5 qw(md5);
 
 if (@ARGV != 3) {
-  die "usage: mine_name taxon_ids data_destination \n eg. flymine 9606 /shared/data/ensembl/current\n";  
+  die "usage: mine_name taxon_id data_destination \n eg. flymine 9606 /shared/data/ensembl/current\n";  
 }
 
+# vars from the command line
 my ($mine_name, $taxon_ids, $data_destination) = @ARGV;
 
+# just for logging purposes
 my $start_time = time();
 
+# intermine
 my $model_file = "../../$mine_name/dbmodel/build/main/genomic_model.xml";
+my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
+
 my $model = new InterMine::Model(file => $model_file);
 my $item_factory = new InterMine::ItemFactory(model => $model);
 
-my $datasource = 'Ensembl';
+# init vars
 my @items = (); 
+my %locations = ();
 my %organisms = parse_orgs($taxon_ids);
+
+my $datasource = 'Ensembl';
 my $datasource_item = make_item("DataSource");
 $datasource_item->set('name', $datasource);
-my $org_item;
-my $dataset_item;
 
+my $dataset_item;
+my $org_item;
+
+# config file
 my $config_file = '../sources/ensembl/resources/ensembl_config.properties';
 parse_config(read_file($config_file));
-
-my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties";
 
 foreach my $taxon_id(keys %organisms) {
     
     my %proteins = ();
     my %exons = ();
     my %sequences = ();
+    %locations = ();
 
     $org_item = make_item("Organism");
     $org_item->set("taxonId", $taxon_id);
@@ -104,7 +113,7 @@ foreach my $taxon_id(keys %organisms) {
             }
             $gene_item->set('curated', $curated);
             
-            parseFeature($gene, $gene_item, $chromosome_item);
+            parse_feature($gene, $gene_item, $chromosome_item);
             make_synonym($gene_item, "identifier", $gene->stable_id());
 
             my @transcripts = @{ $gene->get_all_Transcripts() };
@@ -120,7 +129,7 @@ foreach my $taxon_id(keys %organisms) {
                 $transcript_item->set('sequence', make_seq(\%sequences, $transcript->seq->seq));
                 # TODO are these transcripts going to be unique?
                 make_synonym($transcript_item, "identifier", $transcript->stable_id());
-                parseFeature($transcript, $transcript_item, $chromosome_item);
+                parse_feature($transcript, $transcript_item, $chromosome_item);
           
                 if ($gene_type eq "protein_coding") {
 
@@ -150,7 +159,7 @@ foreach my $taxon_id(keys %organisms) {
                     $exon_item->set('transcripts', [$transcript_item]);
                     $exon_item->set('gene', $gene_item);                    
                     $exon_item->set('sequence', make_seq(\%sequences, $exon->seq->seq));
-                    parseFeature($exon, $exon_item, $chromosome_item);     
+                    parse_feature($exon, $exon_item, $chromosome_item);     
                 }
             }
         }    
@@ -196,20 +205,12 @@ sub make_item {
 # parses the feature returned from ensembl and 
 # assigns the classes to the intermine item
 # used for genes, transcripts, and exons.  assumes has seq(0
-sub parseFeature {
-
-    my ($feature, $item, $chromosome) = @_;
-
-    my $location = make_item("Location");
-    $location->set('start', $feature->start());
-    $location->set('end', $feature->end());
-    $location->set('strand', $feature->strand());
-    $location->set('subject', $item);
-    $location->set('object', $chromosome);
-
-    $item->set('primaryIdentifier', $feature->stable_id());
-    $item->set('chromosomeLocation', $location);
+sub parse_feature {
+    my ($feature, $item, $chromosome) = @_;    
+    $item->set('primaryIdentifier', $feature->stable_id());    
     $item->set('chromosome', $chromosome);
+    my $location = make_location($feature, $item, $chromosome);
+    $item->set('chromosomeLocation', $location);
     return;
 }
 
@@ -231,13 +232,11 @@ sub read_file {
 # parse the config file
 sub parse_config {
     my (@lines) = @_;
-
     foreach (@lines) {
-
         my $line = $_;
         my ($taxon_id, $config) = split("\\.", $line);
         my ($label, $value) = split("\\=", $config);
-
+        
         if ($label eq 'chromosomes' && defined $organisms{$taxon_id}) {
             $organisms{$taxon_id} = $value;
         }
@@ -245,10 +244,34 @@ sub parse_config {
     return;
 }
 
+sub make_location {
+    my ($feature, $item, $chromosome) = @_;
+    my $location;
+
+    my $start = $feature->start();
+    my $end = $feature->end();
+    my $itemId = $item->get('primaryIdentifier');
+    my $chromosomeId = $chromosome->get('primaryIdentifier');
+
+    my $key = $start . "|" . $end . "|" . $itemId . "|" . $chromosomeId;
+
+    if (defined $locations{$key}) {
+        $location = $locations{$key};
+    } else {
+        $location = make_item("Location");
+        $location->set('start', $start);
+        $location->set('end', $end);
+        $location->set('strand', $feature->strand());
+        $location->set('subject', $item);
+        $location->set('object', $chromosome);
+        $locations{$key} = $location;
+    }
+    return $location;
+}
+
 # user can specify which chromosomes to load  
 # eg 1-21,X,Y
 sub parse_chromosomes {
-
     my ($chromosome_string) = shift;
   
     my @bits = split(",", $chromosome_string);
@@ -298,6 +321,8 @@ sub make_chromosome {
     }
     return $chromosome_item;
 }   
+
+
 
 sub make_protein {
 
