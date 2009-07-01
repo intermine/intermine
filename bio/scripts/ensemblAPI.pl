@@ -371,6 +371,7 @@ sub make_seq {
         $seq_item = make_item("Sequence");
         $seq_item->set('residues', $seq);
         $seq_item->set('length', length($seq));
+        $seq_item->{$md5checksum} = $seq_item;
         $sequences->{$md5checksum} = $seq_item;
     }
     return $seq_item;
