@@ -12,17 +12,13 @@ package org.intermine.dataloader;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import static org.intermine.dataloader.IntegrationWriterAbstractImpl.SKELETON;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
 
@@ -38,37 +34,44 @@ public class SourcePriorityComparator implements Comparator
     private static final Logger LOG = Logger.getLogger(SourcePriorityComparator.class);
 
     private DataTracker dataTracker;
-    private FieldDescriptor field;
+    private Class clazz;
+    private String fieldName;
     private Source def;
     private InterMineObject defObj;
     private IntPresentSet dbIdsStored;
     private IntegrationWriterAbstractImpl iw;
     private Source source, skelSource;
+    private PriorityConfig priorityConfig;
 
     /**
      * Constructs a new Comparator for comparing objects for priority for a given field.
      *
      * @param dataTracker the data tracker
-     * @param field the FieldDescriptor the comparison is for
+     * @param clazz the Class of the resulting object
+     * @param fieldName the fieldName the comparison is for
      * @param def the default Source
      * @param defObj a InterMineObject that came from a data source, not from the destination
      * objectstore, and should be associated with the default source
+     * @param dbIdsStored the set of IDs stored in this dataloader run - improves error messages
      * @param iw the IntegrationWriter creating this comparator
      * @param source the main source, as passed to iw.store
      * @param skelSource the skeleton source, as passed to iw.store
-     * @param dbIdsStored the set of IDs stored in this dataloader run - improves error messages
+     * @param priorityConfig a PriorityConfig object for the target Model
      */
-    public SourcePriorityComparator(DataTracker dataTracker, FieldDescriptor field,
+    public SourcePriorityComparator(DataTracker dataTracker, Class clazz, String fieldName,
             Source def, InterMineObject defObj, IntPresentSet dbIdsStored,
-            IntegrationWriterAbstractImpl iw, Source source, Source skelSource) {
+            IntegrationWriterAbstractImpl iw, Source source, Source skelSource,
+            PriorityConfig priorityConfig) {
         this.dataTracker = dataTracker;
-        this.field = field;
+        this.clazz = clazz;
+        this.fieldName = fieldName;
         this.def = def;
         this.defObj = defObj;
         this.dbIdsStored = dbIdsStored;
         this.iw = iw;
         this.source = source;
         this.skelSource = skelSource;
+        this.priorityConfig = priorityConfig;
     }
 
     /**
@@ -89,39 +92,33 @@ public class SourcePriorityComparator implements Comparator
             Source source2 = null;
             Object value1, value2;
             try {
-                value1 = f1.getFieldProxy(field.getName());
-                value2 = f2.getFieldProxy(field.getName());
+                value1 = f1.getFieldProxy(fieldName);
+                value2 = f2.getFieldProxy(fieldName);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            ClassDescriptor cld = field.getClassDescriptor();
-            String cldName = TypeUtil.unqualifiedName(cld.getName());
-            Map descriptorSources = DataLoaderHelper.getDescriptors(cld.getModel());
-            List srcs = (List) descriptorSources.get(cldName + "." + field.getName());
-            if (srcs == null) {
-                srcs = (List) descriptorSources.get(cldName);
-            }
+            List<String> srcs = priorityConfig.getPriorities(clazz, fieldName);
             if (srcs != null) {
                 if (f1 == defObj) {
                     source1 = def;
                 } else {
-                    source1 = dataTracker.getSource(f1.getId(), field.getName());
+                    source1 = dataTracker.getSource(f1.getId(), fieldName);
                 }
                 if (f2 == defObj) {
                     source2 = def;
                 } else {
-                    source2 = dataTracker.getSource(f2.getId(), field.getName());
+                    source2 = dataTracker.getSource(f2.getId(), fieldName);
                 }
                 if (source1 == null && value1 != null) {
                     throw new IllegalArgumentException("Object o1 is not in the data"
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + field.getName() + "\" with value \""
+                            + "\" for field \"" + fieldName + "\" with value \""
                             + value1 + "\"");
                 }
                 if (source2 == null && value2 != null) {
                     throw new IllegalArgumentException("Object o2 is not in the data"
                             + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + field.getName() + "\" with value \""
+                            + "\" for field \"" + fieldName + "\" with value \""
                             + value2 + "\"");
                 }
                 if (source1 != null && source2 != null) {
@@ -159,17 +156,17 @@ public class SourcePriorityComparator implements Comparator
                     }
                     String errorMessage = null;
                     if (source1Priority == -1) {
-                        errorMessage = "Priority configured for " + cldName + "." + field.getName()
-                            + " does not include source " + source1.getName();
+                        errorMessage = "Priority configured for " + clazz.getName() + "."
+                            + fieldName + " does not include source " + source1.getName();
                     }
                     if (source2Priority == -1) {
                         if (errorMessage != null) {
-                            errorMessage = "Priority configured for " + cldName + "."
-                                + field.getName() + " does not include sources " + source1.getName()
+                            errorMessage = "Priority configured for " + clazz.getName() + "."
+                                + fieldName + " does not include sources " + source1.getName()
                                 + " or " + source2.getName();
                         } else {
-                            errorMessage = "Priority configured for " + cldName + "."
-                                + field.getName() + " does not include source " + source2.getName();
+                            errorMessage = "Priority configured for " + clazz.getName() + "."
+                                + fieldName + " does not include source " + source2.getName();
                         }
                     }
                     if (errorMessage != null) {
@@ -231,14 +228,14 @@ public class SourcePriorityComparator implements Comparator
                 if (f1 == defObj) {
                     source1 = def;
                 } else {
-                    source1 = dataTracker.getSource(f1.getId(), field.getName());
+                    source1 = dataTracker.getSource(f1.getId(), fieldName);
                 }
             }
             if (source2 == null) {
                 if (f2 == defObj) {
                     source2 = def;
                 } else {
-                    source2 = dataTracker.getSource(f2.getId(), field.getName());
+                    source2 = dataTracker.getSource(f2.getId(), fieldName);
                 }
             }
             if (source1.equals(source2)) {
@@ -246,7 +243,7 @@ public class SourcePriorityComparator implements Comparator
                        + " data source (" + source1.getName() + "): " + o1 + " and " + o2);
             }
             throw new IllegalArgumentException("Conflicting values for field "
-                    + field.getClassDescriptor().getName() + "." + field.getName()
+                    + clazz.getName() + "." + fieldName
                     + " between " + source1.getName() + " (value "
                     + (value1.toString().length() <= 1000 ? value1
                        : value1.toString().subSequence(0, 999)) + ") and "
@@ -255,7 +252,7 @@ public class SourcePriorityComparator implements Comparator
                        : value2.toString().subSequence(0, 999))
                     + ") while comparing: " + o1 + " and " + o2
                     + ". This field needs configuring in "
-                    + cld.getModel().getName() + "_priorities.properties");
+                    + "the *_priorities.properties file");
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
                 + " InterMineObjects");

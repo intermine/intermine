@@ -171,17 +171,12 @@ public class DataLoaderHelperTest extends QueryTestCase
         expected.put("Department", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Company", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
         expected.put("Address", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource4"}));
-        expected.put("Employable", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
-        expected.put("ImportantPerson", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Secretary", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Bank", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Types", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         expected.put("Employee.age", Arrays.asList(new Object[] {"testsource3", "storedata", "testsource2", "testsource"}));
         expected.put("Employee", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata", "testsource3"}));
-        expected.put("Broke", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("HasAddress", Arrays.asList(new Object[] {"testsource4", "testsource2", "testsource", "storedata", "testsource3"}));
-        expected.put("Manager", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
-        expected.put("CEO", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
+        expected.put("Employee.address", Arrays.asList("testsource4", "testsource2", "testsource", "storedata", "testsource3"));
         expected.put("Contractor", Arrays.asList(new Object[] {"testsource2", "testsource", "storedata"}));
         assertEquals(expected, DataLoaderHelper.getDescriptors(model));
     }
