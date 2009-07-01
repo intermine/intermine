@@ -66,6 +66,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      */
     protected IntPresentSet duplicateObjects = new IntPresentSet();
     protected boolean isDuplicates = false;
+    protected PriorityConfig priorityConfig;
 
     /**
      * Creates a new instance of this class, given the properties defining it.
@@ -158,6 +159,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = Collections.emptySet();
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -173,6 +175,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = trackerMissingClasses;
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -397,9 +400,10 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     if (field instanceof CollectionDescriptor) {
                         sortedEquivalentObjects = new HashSet();
                     } else {
-                        Comparator compare = new SourcePriorityComparator(dataTracker, field,
-                             (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
-                             source, skelSource);
+                        Comparator compare = new SourcePriorityComparator(dataTracker,
+                                newObj.getClass(), field.getName(),
+                                (type == SOURCE ? source : skelSource), o, dbIdsStored, this,
+                                source, skelSource, priorityConfig);
                         sortedEquivalentObjects = new TreeSet(compare);
                     }
 

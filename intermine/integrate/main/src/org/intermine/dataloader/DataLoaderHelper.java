@@ -50,7 +50,8 @@ public class DataLoaderHelper
     private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
     protected static Map sourceKeys = new HashMap();
-    protected static Map modelDescriptors = new HashMap();
+    protected static Map<Model, Map<String, List<String>>> modelDescriptors
+        = new HashMap<Model, Map<String, List<String>>>();
     protected static Set verifiedSources = new HashSet();
 
     /**
@@ -59,12 +60,12 @@ public class DataLoaderHelper
      * @param model the Model
      * @return the Map
      */
-    protected static Map getDescriptors(Model model) {
-        Map descriptorSources = null;
+    protected static Map<String, List<String>> getDescriptors(Model model) {
+        Map<String, List<String>> descriptorSources = null;
         synchronized (modelDescriptors) {
-            descriptorSources = (Map) modelDescriptors.get(model);
+            descriptorSources = modelDescriptors.get(model);
             if (descriptorSources == null) {
-                descriptorSources = new HashMap();
+                descriptorSources = new HashMap<String, List<String>>();
                 Properties priorities = PropertiesUtil.loadProperties(model.getName()
                                                                       + "_priorities.properties");
                 if (priorities == null) {
@@ -88,7 +89,6 @@ public class DataLoaderHelper
         }
         return descriptorSources;
     }
-
 
     /**
      * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
