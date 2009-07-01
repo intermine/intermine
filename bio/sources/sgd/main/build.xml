@@ -1,4 +1,0 @@
-<project name="sgd-tasks" default="default" basedir=".">
-  <description>build sgd tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
