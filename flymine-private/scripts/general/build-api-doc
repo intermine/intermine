@@ -21,4 +21,4 @@ if test "`find build/javadoc | wc -l`" -gt "1000" ; then
 else
     echo "Error with API documentation - see log file $LOGFILE for details" | mail -s "API Documentation failed" interminedoc@flymine.org
 fi
-) >>$LOGFILE
+) >>$LOGFILE 2>&1
