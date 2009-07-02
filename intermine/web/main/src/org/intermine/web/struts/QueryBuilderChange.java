@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -789,22 +790,30 @@ public class QueryBuilderChange extends DispatchAction
     // Inspect query to find if prefix is already constrained to a subclass, add subclass
     // constraints to the prefix string - e.g. Department.employees[Manager]
     private String getPrefixWithSubclasses(String prefix, PathQuery query, Model model) {
-        String prefixString = prefix;
+        String prefixString = "";
         if (prefix != null && MainHelper.containsJoin(prefix)) {
             String prefixJoinStyle = query.getCorrectJoinStyle(prefix);
-            PathNode prefixNode = query.getNode(prefixJoinStyle);
-            
-            if (prefixNode != null) {
-                String parentType = prefixNode.getParentType();
+            //break down in bits to make sure we don't miss any subclass in the path
+            StringTokenizer bits = new StringTokenizer(prefixJoinStyle, ".:", true);
+            prefixString = bits.nextToken();
+            String currentPrefix = prefixString;
+            while (bits.hasMoreTokens()) {
+                String bitAndSep = bits.nextToken() + bits.nextToken();
+                prefixString  += bitAndSep;
+                currentPrefix += bitAndSep;
+                PathNode prefixNode = query.getNode(currentPrefix);
+                if (prefixNode != null) {
+                    String parentType = prefixNode.getParentType();
 
-                ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
-                ReferenceDescriptor rfd = (ReferenceDescriptor) prefixCld
-                                .getFieldDescriptorByName(prefixNode.getFieldName());
+                    ClassDescriptor prefixCld = model.getClassDescriptorByName(parentType);
+                    ReferenceDescriptor rfd = (ReferenceDescriptor) prefixCld
+                                    .getFieldDescriptorByName(prefixNode.getFieldName());
 
-                String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
-                String prefixType = prefixNode.getType();
-                if (!prefixType.equals(refType)) {
-                    prefixString += "[" + prefixType + "]";
+                    String refType = rfd.getReferencedClassDescriptor().getUnqualifiedName();
+                    String prefixType = prefixNode.getType();
+                    if (!prefixType.equals(refType)) {
+                        prefixString += "[" + prefixType + "]";
+                    }
                 }
             }
         }
