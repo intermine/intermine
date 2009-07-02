@@ -902,7 +902,7 @@ for my $action (@actions) {
       my $saved_dir = getcwd;
       chdir $action_type
         or die "can't change directory into: $saved_dir/$action_type\n";
-      run_and_check_status @ant_command, "clean-all";
+      run_and_check_status @ant_command, "clean-all -Dsource=all";
       run_and_check_status @ant_command, @action_args;
       chdir $saved_dir
         or die "can't return to previous directory ($saved_dir) after $action_type\n";
