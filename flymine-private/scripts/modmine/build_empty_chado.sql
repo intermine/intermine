@@ -14011,12 +14011,12 @@ CREATE INDEX treatment_idx3 ON treatment USING btree (protocol_id);
 
 --
 -- Name: viewlimitstrigger; Type: TRIGGER; Schema: public; Owner: yostinso
---
+-- NB: REMOVED because of error loading (for example 593, 584)
 
-CREATE TRIGGER viewlimitstrigger
-    BEFORE INSERT ON wiggle_data
-    FOR EACH ROW
-    EXECUTE PROCEDURE viewlimitstrigger();
+-- CREATE TRIGGER viewlimitstrigger
+--     BEFORE INSERT ON wiggle_data
+--     FOR EACH ROW
+--     EXECUTE PROCEDURE viewlimitstrigger();
 
 
 SET search_path = genetic_code, pg_catalog;
