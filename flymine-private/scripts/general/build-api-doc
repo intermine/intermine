@@ -3,7 +3,9 @@
 export INIT=/software/noarch/local/init
 . $INIT/bash/common.bashrc
 
-cd ~/svn/trunk
+LOGFILE="/home/interminedoc/logs/build-api-doc-`date +%Y-%m-%d`.log"
+
+(cd ~/svn/trunk
 svn up
 
 cd ~/svn/trunk/bio/test-all/dbmodel
@@ -14,4 +16,10 @@ cd ~/svn/trunk/imbuild/javadoc
 ant clean
 ant
 chmod -R a+rX build/javadoc/
-rsync -avc --delete build/javadoc/ flymine@www.flymine.org:/var/www/html/api/
+if test "`find build/javadoc | wc -l`" -gt "1000" ; then
+    rsync -avc --delete build/javadoc/ flymine@www.flymine.org:/var/www/html/api/
+    echo "API documentation uploaded successfully" | mail -s "API Documentation uploaded successfully" interminedoc@flymine.org
+else
+    echo "Error with API documentation - see log file $LOGFILE for details" | mail -s "API Documentation failed" interminedoc@flymine.org
+fi
+) >>$LOGFILE
