@@ -33,8 +33,11 @@ if [ ! -s pathcheck.tmp ]
 then
 echo "EXITING: you should be in the modmine directory from your checkout."
 echo
+rm pathcheck.tmp
 exit;
 fi
+
+rm pathcheck.tmp
 
 BUILDDIR=$MINEDIR/integrate/build
 
@@ -294,12 +297,19 @@ then
 # use the list provided in a file
 LOOPVAR=`cat $INFILE`
 else
-# get the full list from the ftp site 
-wget -O - $FTPURL/list.txt | grep released | grep false | awk '{print $1}' | sort > $DATADIR/live.dccid
+# get the full list from the ftp site and save it for reference
+wget -O - $FTPURL/list.txt | sort > $DATADIR/loft/`date "+%y%m%d"`.list
+# get the list of live dccid and use it as loop variable
+grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep false | awk '{print $1}' > $DATADIR/live.dccid
 LOOPVAR=`cat $DATADIR/live.dccid`
-
 # get also the list of deprecated entries with their replacement
-wget -O - $FTPURL/list.txt | grep released | grep true | awk '{print $1, " -> ", $3 }' | sort > $DATADIR/deprecated.dccid
+grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecated.dccid
+
+# wget -O - $FTPURL/list.txt | grep released | grep false | awk '{print $1}' | sort > $DATADIR/live.dccid
+# LOOPVAR=`cat $DATADIR/live.dccid`
+# 
+# # get also the list of deprecated entries with their replacement
+# wget -O - $FTPURL/list.txt | grep released | grep true | awk '{print $1, " -> ", $3 }' | sort > $DATADIR/deprecated.dccid
 
 fi
 
