@@ -26,5 +26,5 @@ fi
 
 cd $MINEDIR
 pwd
-
+echo "`date +%y%m%d.%H%M`: RUNNING automatic validation."
 ../flymine-private/scripts/modmine/automine.sh -V
