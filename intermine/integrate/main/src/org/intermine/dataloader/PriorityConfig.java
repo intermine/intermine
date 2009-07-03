@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 
@@ -35,9 +37,32 @@ public class PriorityConfig
      * Constructor.
      *
      * @param model the Model of the production database
+     * @throws IllegalArgumentException if the priorities are misconfigured
      */
-    public PriorityConfig(Model model) {
+    public PriorityConfig(Model model) throws IllegalArgumentException {
         descriptors = DataLoaderHelper.getDescriptors(model);
+        for (String key : descriptors.keySet()) {
+            if (key.indexOf(".") == -1) {
+                ClassDescriptor cld = model.getClassDescriptorByName(key);
+                Class clazz = cld.getType();
+                for (FieldDescriptor field : cld.getFieldDescriptors()) {
+                    if (!field.isCollection()) {
+                        getPriorities(clazz, field.getName());
+                    }
+                }
+            } else {
+                String className = key.substring(0, key.indexOf("."));
+                String fieldName = key.substring(key.indexOf(".") + 1);
+                ClassDescriptor cld = model.getClassDescriptorByName(className);
+                Class clazz = cld.getType();
+                FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
+                if ((field != null) && (!field.isCollection())) {
+                    getPriorities(clazz, fieldName);
+                } else {
+                    throw new IllegalArgumentException("Bad entry in priorities file: " + key);
+                }
+            }
+        }
     }
 
     /**
