@@ -6,9 +6,6 @@
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-    <source name="modmine-static" type="intermine-items-xml-file" dump="true">
-      <property name="src.data.file" location="resources/projects.xml"/>
-    </source>
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
@@ -132,6 +129,9 @@
            items DB, then into the final objectstore dump="true"-->
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
+		<source name="modmine-static" type="intermine-items-xml-file">
+			<property name="src.data.file" location="resources/projects.xml"/>
+		</source>
     <source name="modencode-metadata" type="chado-db" dump="true">
 			<property name="organisms" value="7227 6239"/>
       <property name="dataSourceName" value="modENCODE"/>
