@@ -464,4 +464,20 @@ public class StringUtil
         }
         return returnMap;
     }
+
+    /**
+     * Converts all the colons in a String into dots.
+     *
+     * @param in
+     * @return a new String
+     */
+    public static String colonsToDots(String in) {
+        char array[] = in.toCharArray();
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == ':') {
+                array[i] = '.';
+            }
+        }
+        return new String(array);
+    }
 }

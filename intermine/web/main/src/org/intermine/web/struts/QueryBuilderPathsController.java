@@ -27,6 +27,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.MainHelper;
 
@@ -73,6 +74,7 @@ public class QueryBuilderPathsController extends TilesAction
         }
 
         Set<String> clickableNodes = new HashSet<String>();
+        Map<String, PathNode> qNodes = new TreeMap<String, PathNode>();
         for (Map.Entry<String, PathNode> entry : q.getNodes().entrySet()) {
             PathNode node = entry.getValue();
             if (!entry.getValue().isAttribute()) {
@@ -85,9 +87,14 @@ public class QueryBuilderPathsController extends TilesAction
                 } else {
                     clickableNodes.add(entry.getKey());
                 }
+                qNodes.put(StringUtil.colonsToDots(entry.getKey()), node);
+            } else {
+                String key = StringUtil.colonsToDots(entry.getKey());
+                int lastIndex = key.lastIndexOf(".");
+                key = key.substring(0, lastIndex) + "+" + key.substring(lastIndex + 1);
+                qNodes.put(key, node);
             }
         }
-        Map<String, PathNode> qNodes = new TreeMap<String, PathNode>(q.getNodes());
 
         request.setAttribute("clickableNodes", clickableNodes);
         request.setAttribute("qNodes", qNodes);
