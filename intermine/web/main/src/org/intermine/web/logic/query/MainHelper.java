@@ -900,11 +900,10 @@ public class MainHelper
                             && (!loops.containsKey(path))
                             && (!loops.containsKey(c.getValue())))) {
                         QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
-                        if (refQc == null) {
-                            throw new NullPointerException("Could not find QueryClass for "
-                                    + c.getValue() + " in querybits: " + queryBits);
+                        if (refQc != null) {
+                            cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(),
+                                        refQc));
                         }
-                        cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(), refQc));
                     }
                 }
             }
