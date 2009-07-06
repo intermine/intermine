@@ -890,6 +890,11 @@ if ((!$load_last && !$restart) || !defined $restart_dump_suffix) {
 
 my @action_times = ();
 
+if ($action_type eq 'integrate' || $action_type eq 'postprocess') {
+# clean before running all of the ant commands
+    run_and_check_status @ant_command, "clean-all -Dsource=all";
+}
+
 for my $action (@actions) {
   my $action_name = $action->{name};
   my $action_type = $action->{type};
@@ -901,8 +906,7 @@ for my $action (@actions) {
     if ($action_type eq 'integrate' || $action_type eq 'postprocess') {
       my $saved_dir = getcwd;
       chdir $action_type
-        or die "can't change directory into: $saved_dir/$action_type\n";
-      run_and_check_status @ant_command, "clean-all -Dsource=all";
+        or die "can't change directory into: $saved_dir/$action_type\n";      
       run_and_check_status @ant_command, @action_args;
       chdir $saved_dir
         or die "can't return to previous directory ($saved_dir) after $action_type\n";
