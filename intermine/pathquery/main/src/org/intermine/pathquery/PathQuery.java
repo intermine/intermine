@@ -384,7 +384,7 @@ public class PathQuery
      * @return the new path
      */
     public String toPathDefaultJoinStyle(String prefix, String path) {
-        if (prefix != null) {
+        if (prefix != null && prefix.length() > 0) {
             if (path.indexOf(".") == -1) {
                 path = prefix;
             } else {
