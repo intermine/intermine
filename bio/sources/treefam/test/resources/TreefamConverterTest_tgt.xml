@@ -16,7 +16,7 @@
 </item>
 <item id="4_1" class="Homologue">
 <attribute name="bootstrapScore" value="100"/>
-<attribute name="type" value="inParalogue"/>
+<attribute name="type" value="paralogue"/>
 <reference name="gene" ref_id="2_1"/>
 <reference name="homologue" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -32,7 +32,7 @@
 </item>
 <item id="4_2" class="Homologue">
 <attribute name="bootstrapScore" value="100"/>
-<attribute name="type" value="inParalogue"/>
+<attribute name="type" value="paralogue"/>
 <reference name="gene" ref_id="2_2"/>
 <reference name="homologue" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>

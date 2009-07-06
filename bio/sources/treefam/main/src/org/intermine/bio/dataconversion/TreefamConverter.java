@@ -248,7 +248,7 @@ public class TreefamConverter extends BioFileConverter
         String type = "orthologue";
         String refId = gene1.getReference("organism").getRefId();
         if (gene2.getReference("organism").getRefId().equals(refId)) {
-            type = "inParalogue";
+            type = "paralogue";
         }
         homologue.setAttribute("type", type);
         gene1.addToCollection("homologues", homologue);
