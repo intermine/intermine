@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
@@ -21,6 +22,16 @@
       <tr>
         <td><fmt:message key="createAccount.password2"/></td>
         <td><html:password property="password2"/><br/></td>
+      </tr>
+      <tr>
+      <c:if test="${!empty WEB_PROPERTIES['mail.mailing-list']}">
+        <td>&nbsp;</td>
+        <td><html:checkbox property="mailinglist"/><i>&nbsp;<fmt:message key="createAccount.mailinglist"/></i></td>
+      </c:if>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
         <td><html:submit property="action"><fmt:message key="createAccount.createAccount"/></html:submit></td>
       </tr>
     </table>

@@ -34,6 +34,21 @@ import org.intermine.web.logic.profile.ProfileManager;
 public class CreateAccountForm extends ActionForm
 {
     protected String username, password, password2;
+    protected boolean mailinglist;
+
+    /**
+     * @return the mailinglist
+     */
+    public boolean getMailinglist() {
+        return mailinglist;
+    }
+
+    /**
+     * @param mailinglist the mailinglist to set
+     */
+    public void setMailinglist(boolean mailinglist) {
+        this.mailinglist = mailinglist;
+    }
 
     /**
      * @return password
@@ -118,6 +133,7 @@ public class CreateAccountForm extends ActionForm
         username = null;
         password = null;
         password2 = null;
+        mailinglist = true;
     }
 
 }
