@@ -170,14 +170,6 @@ public class OboConverter extends DataConverter
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
-//        for (OboTerm subTerm : term.getChildren()) {
-//            Item subItem = process(subTerm);
-//            relate(item, subItem, "is_a");
-//        }
-//        for (OboTerm subTerm : term.getComponents()) {
-//            Item subItem = process(subTerm);
-//            relate(item, subItem, "part_of");
-//        }
         for (OboTermSynonym syn : term.getSynonyms()) {
             Item synItem = (Item) synToItem.get(syn);
             if (synItem == null) {
@@ -195,6 +187,8 @@ public class OboConverter extends DataConverter
             item.setAttribute("description", oboterm.getDescription());
         }
         item.setAttribute("obsolete", "" + oboterm.isObsolete());
+        // Term is its own parent
+        item.addToCollection("parents", item);
     }
 
     /**
@@ -234,6 +228,9 @@ public class OboConverter extends DataConverter
                             .addToCollection("relations", relation);
             ((Item) nameToTerm.get(oboRelation.getChildTermId()))
                             .addToCollection("relations", relation);
+            // add parent to term for easier querying in webapp
+            ((Item) nameToTerm.get(oboRelation.getChildTermId())).addToCollection("parents",
+                            (Item) nameToTerm.get(oboRelation.getParentTermId()));
             store(relation);
         } else {
             LOG.info("GOTerm id not found for relation " + oboRelation.getParentTermId() + " "
