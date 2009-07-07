@@ -60,6 +60,11 @@ public class CreateAccountAction extends LoginHandler
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         try {
             MailUtils.email(username, password, webProperties);
+            if (((CreateAccountForm) form).getMailinglist()
+                && webProperties.get("mail.mailing-list") != null
+                && ((String) webProperties.get("mail.mailing-list")).length() > 0) {
+                MailUtils.subscribe(username, webProperties);
+            }
             SessionMethods.recordMessage("You have successfully created an account.", session);
         } catch (Exception e) {
             SessionMethods.recordError("Failed to send confirmation email", session);

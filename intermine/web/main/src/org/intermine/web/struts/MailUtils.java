@@ -86,5 +86,55 @@ public abstract class MailUtils
         message.setContent(text, "text/plain");
         Transport.send(message);
     }
+    
+    /**
+     * Subscribe the given email address to the mailing list specified in the
+     * mine config file
+     * @param email the email to subscribe
+     * @param webProperties the web properties
+     * @throws Exception when somethign goes wrong
+     */
+    public static void subscribe(String email, final Map webProperties) throws Exception {
+        final String user = (String) webProperties.get("mail.smtp.user");
+        String smtpPort = (String) webProperties.get("mail.smtp.port");
+        String authFlag = (String) webProperties.get("mail.smtp.auth");
+        String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
+
+        Properties properties = System.getProperties();
+
+        properties.put("mail.smtp.host", webProperties.get("mail.host"));
+        properties.put("mail.smtp.user", user);
+        properties.put("mail.smtp.localhost", "localhost");
+        if (smtpPort != null) {
+            properties.put("mail.smtp.port", smtpPort);
+        }
+
+        if (starttlsFlag != null) {
+            properties.put("mail.smtp.starttls.enable", starttlsFlag);
+        }
+        if (authFlag != null) {
+            properties.put("mail.smtp.auth", authFlag);
+        }
+        Session session;
+        if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+            Authenticator authenticator = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    String password = (String) webProperties.get("mail.server.password");
+                    return new PasswordAuthentication(user, password);
+                }
+            };
+            session = Session.getDefaultInstance(properties, authenticator);
+        } else {
+            session = Session.getDefaultInstance(properties);
+        }
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(email));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(((String) webProperties
+                        .get("mail.mailing-list"))));
+        message.setContent("", "text/plain");
+        Transport.send(message);
+    }
 
 }
