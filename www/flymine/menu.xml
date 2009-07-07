@@ -4,7 +4,7 @@
     <item url="/about.xml" title="About"/>
     <item url="/contact.xml" title="Contact"/>
     <item url="/project/jobs.xml" title="Jobs"/>
-    <item url="http://mailman.flymine.org/listinfo/" title="Mailing lists"/>
+    <item url="http://mail.flymine.org/cgi-bin/mailman/listinfo" title="Mailing lists"/>
   </item>
 
   <item title="Release info">
