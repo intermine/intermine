@@ -124,6 +124,7 @@
     <collection name="relations" referenced-type="OntologyRelation" />
     <collection name="synonyms" referenced-type="OntologyTermSynonym" />
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="ontologyTerm" /> 
+    <collection name="parents" referenced-type="OntologyTerm" /> 
   </class>
 
   <class name="OntologyRelation" is-interface="true">

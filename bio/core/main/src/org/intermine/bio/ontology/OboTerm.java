@@ -19,6 +19,7 @@ import java.util.Set;
  * format.
  *
  * @author Thomas Riley
+ * @author Xavier Watkins
  */
 public class OboTerm
 {
