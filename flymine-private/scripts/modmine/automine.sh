@@ -501,25 +501,25 @@ then
 # NB: if failing won't stop!! ant exit with 0!
 echo; echo "Appending new chado (metadata) to modmine-$REL.."
 cd integrate
-ant -v -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+ant $V -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 elif [ $RESTART = "y" ]
 then
 # restart build after failure
 echo; echo "Restating build.."
 ../bio/scripts/project_build -V $REL $V -l -t localhost /tmp/mod-all\
-|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+|| { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
 # new build. static, metadata, organism
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
-|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+|| { printf "%b" "\n modMine build (only metadata) FAILED.\n" ; exit 1 ; }
 else
 # new build, all the sources
 # get the most up to date sources ..
 if [ $GAM = "y" ]
 then
 cd ../bio/scripts
-./get_all_modmine.sh|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+./get_all_modmine.sh|| { printf "%b" "\n modMine build (get_all_modmine.sh) FAILED.\n" ; exit 1 ; }
 fi
 # .. and build modmine
 cd $MINEDIR
