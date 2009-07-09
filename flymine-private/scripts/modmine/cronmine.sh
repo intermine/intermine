@@ -11,6 +11,9 @@
 PROPDIR=$HOME/.intermine
 MINEDIR=$HOME/svn/trunk/modmine
 
+# get path (cronjob does not do it!)
+. $HOME/.bashrc
+
 if [ "$USER" != "modminebuild" ]
 then
 echo "`date +%y%m%d.%H%M`: EXITING: please run this command as user modminebuild."

@@ -259,8 +259,7 @@ DCCID=`echo $1 | cut -f 1 -d.`
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 \
-|| { printf "\n **** $1 **** stag-storenode FAILED at `date`.\n" "%b" \
->> `date "+%y%m%d.$REL.log"`; grep -v $1 $LOG > tmp ; mv -f tmp $LOG; exit 1 ; }
+|| { printf "\n$1  stag-storenode FAILED. EXITING. \n\n" "%b" ; exit 1 ; }
 
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 }
