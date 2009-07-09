@@ -47,6 +47,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.CacheMap;
+import org.intermine.util.PasswordHasher;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.query.MainHelper;
@@ -173,7 +174,7 @@ public class ProfileManager
      * @return true if password is valid
      */
     public boolean validPassword(String username, String password) {
-        return getUserProfile(username).getPassword().equals(password);
+        return PasswordHasher.checkPassword(password, getUserProfile(username).getPassword());
     }
 
     /**
@@ -184,7 +185,7 @@ public class ProfileManager
      */
     public void setPassword(String username, String password) {
         UserProfile userProfile = getUserProfile(username);
-        userProfile.setPassword(password);
+        userProfile.setPassword(PasswordHasher.hashPassword(password));
         try {
             osw.store(userProfile);
         } catch (ObjectStoreException e) {
@@ -418,7 +419,7 @@ public class ProfileManager
     public void createProfile(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
-        userProfile.setPassword(profile.getPassword());
+        userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
         //userProfile.setId(userId);
 
         try {
