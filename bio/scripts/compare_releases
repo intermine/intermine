@@ -5,7 +5,7 @@
 # rows
 
 if (@ARGV != 2) {
-  die "$0: needs two arguments\n";
+  die "$0: needs arguments - the names of the two log files to compare\n";
 }
 
 open my $f1, '<', $ARGV[0];
