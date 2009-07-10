@@ -79,9 +79,10 @@ public class PerformanceTester
         templates = new SearchFilterEngine().filterByTags(templates,
                 Collections.singletonList(TagNames.IM_PUBLIC),
                 TagTypes.TEMPLATE, superuser, new TagManagerFactory(userProfileOs).getTagManager());
-//        templates.remove("ESTclone_LocationDMorthologuePathway_new");
-//        templates.remove("ESTclone_LocationOverlappingGeneOrthologue_new");
-//        templates.remove("ESTclone_LocationOverlappingGeneStructure");
+        templates.remove("ESTclone_LocationDMorthologuePathway_new");
+        templates.remove("ESTclone_LocationOverlappingGeneOrthologue_new");
+        templates.remove("ESTclone_LocationOverlappingGeneStructure");
+        templates.remove("Organism_interologues");
 
         int i = Integer.parseInt(args[0]);
         System .out.println("Running with " + i + " threads:");
