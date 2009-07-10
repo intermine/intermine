@@ -50,8 +50,8 @@ cd $CHECKDIR
 awk '{print $3}' $DATADIR/deprecated.dccid | sort -n > updated
 awk '{print $1}' $DATADIR/deprecated.dccid | sort -n > deprecated
 
-comm -12 deprecated sub.r$1 > depr.inrel
 comm -12 updated sub.r$1 > up.inrel
+comm -12 deprecated sub.r$1 > depr.inrel
 
 grep -wf depr.inrel $DATADIR/deprecated.dccid | awk '{print $3}' | sort -n > dont_load.list
 
@@ -67,6 +67,16 @@ for sub in $LOOPVAR
 do
 mv $sub $NEXTDIR
 done
+
+cd $NEXTDIR
+NN=`ls -1 *.chadoxml | grep -c .`
+
+cd $VALDIR
+IN=`ls -1 *.chadoxml | grep -c .`
+
+echo
+echo "There are $IN candidates for the incremental release, $NN submissions are postponed to the next full release"
+echo
 
 exit;
 
