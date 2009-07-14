@@ -10,6 +10,8 @@ run_performance_test() {
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
     cd ~/svn/dev/flymine/webapp
+    echo "removing temporary directories"
+    ant clean-all > ant_output.log
     echo "building webapp"
     ant default -Drelease=$release1 > ant_output.log
     
@@ -47,7 +49,8 @@ run_acceptance_tests() {
 
     attfile='/home/julie/svn/dev/flymine/integrate/build/acceptance_test.html'     
     subject="Outcome of acceptance tests run for $release2"
-    mailto='julie@flymine.org'
+    mailto='all@flymine.org'
+    #mailto='julie@flymine.org'
 
     mutt -s "$subject" -a $attfile $mailto < /dev/null
 }
