@@ -49,6 +49,8 @@ public class TreefamConverter extends BioFileConverter
     private Set<String> synonyms = new HashSet();
     private Map<String, String> organisms = new HashMap();
     private Map<String, String[]> config = new HashMap();
+    protected IdResolverFactory resolverFactory;
+    private IdResolver flyResolver;
 
     /**
      * Constructor
@@ -58,6 +60,8 @@ public class TreefamConverter extends BioFileConverter
     public TreefamConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -131,7 +135,9 @@ public class TreefamConverter extends BioFileConverter
             }
 
             Item gene = getGene(identifierType, identifier, taxonId);
-            idsToGenes.put(id, new GeneHolder(id, identifier, gene));
+            if (gene != null) {
+                idsToGenes.put(id, new GeneHolder(id, identifier, gene));
+            }
         }
     }
 
@@ -259,17 +265,22 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String identifierType, String identifier, String taxonId)
+    private Item getGene(String identifierType, String id, String taxonId)
     throws ObjectStoreException {
-        Item gene = identifiersToGenes.get(identifier);
-        if (gene != null) {
-            return gene;
+        String identifier = id;
+        if (taxonId.equals("7227")) {
+            identifier = resolveGene(identifier);
+            if (identifier == null) {
+                return null;
+            }
         }
-        gene = createItem("Gene");
-
-        gene.setAttribute(identifierType, identifier);
-        gene.setReference("organism", getOrganism(taxonId));
-        identifiersToGenes.put(identifier, gene);
+        Item gene = identifiersToGenes.get(identifier);
+        if (gene == null) {
+            gene = createItem("Gene");
+            gene.setAttribute(identifierType, identifier);
+            gene.setReference("organism", getOrganism(taxonId));
+            identifiersToGenes.put(identifier, gene);
+        }
         return gene;
     }
 
@@ -391,4 +402,21 @@ public class TreefamConverter extends BioFileConverter
 
     }
 
+    private String resolveGene(String identifier) {
+        // we only have a resolver for dmel for now
+        String taxonId = "7227";
+        flyResolver = resolverFactory.getIdResolver(false);
+        if (flyResolver == null) {
+            // no id resolver available, so return the original identifier
+            return identifier;
+        }
+        int resCount = flyResolver.countResolutions(taxonId, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " FBgn: "
+                     + flyResolver.resolveId(taxonId, identifier));
+            return null;
+        }
+        return flyResolver.resolveId(taxonId, identifier).iterator().next();
+    }
 }
