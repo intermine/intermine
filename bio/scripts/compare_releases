@@ -72,7 +72,7 @@ while ((my $f1_tempname, my $f1_count) = each %f1_results) {
     if ($f1_count > 0) {
         $diff = 1.0 * abs($f1_count - $f2_count) / $f1_count;
     }
-    if ($f1_count != $f2_count && ($diff <= 0.1 && ($f1_count < 100 || $f2_count < 100))) {
+    if ($diff <= 0.1 && ($f1_count < 100 || $f2_count < 100)) {
       printf ("%-45s %s: %6.0f, %s: %6.0f, diff: %d%%\n",
               $f1_tempname, $ARGV[0], $f1_count, $ARGV[1], $f2_count, $diff * 100);
     }
