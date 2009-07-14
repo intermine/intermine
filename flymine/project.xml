@@ -54,7 +54,7 @@
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
      <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/shared/data/flybase/homology/current"/>
+      <property name="src.data.dir" location="/shared/data/flybase/current/homology"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
     </source>
     <source name="wormbase-identifiers" type="wormbase-identifiers">
