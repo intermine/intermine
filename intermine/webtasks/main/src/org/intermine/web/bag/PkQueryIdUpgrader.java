@@ -40,7 +40,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
             .getLogger(PkQueryIdUpgrader.class);
     private Source source = null;
     EquivalentObjectFetcher eof;
-    private Map<Integer, Set> newIdsCache = new HashMap<Integer, Set>();
+    private Map<Integer, Set<Integer>> newIdsCache = new HashMap<Integer, Set<Integer>>();
 
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
@@ -63,7 +63,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
     /**
      * Return true if upgrade should be performed.
-     * @return true if upgrade shoule be performed
+     * @return true if upgrade should be performed
      */
     public boolean doUpgrade() {
         return true;
@@ -76,7 +76,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
      * @param os ObjectStore used to resolve objects
      * @return the set of new InterMineObjects
      */
-    public Set getNewIds(InterMineObject oldObject, ObjectStore os) {
+    public Set<Integer> getNewIds(InterMineObject oldObject, ObjectStore os) {
         if (newIdsCache.containsKey(oldObject.getId())) {
             return newIdsCache.get(oldObject.getId());
         }
@@ -103,7 +103,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
         if (size == 0) {
             LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
                       + " executed query: " + query);
-            return new HashSet();
+            return new HashSet<Integer>();
         } else {
             if (size > 1) {
                 LOG.error("createPKQuery() query didn't return 1 result for: "
@@ -111,7 +111,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
                           + results + ")");
             }
 
-            Set returnSet = new HashSet();
+            Set<Integer> returnSet = new HashSet<Integer>();
 
             Iterator iter = results.iterator();
 

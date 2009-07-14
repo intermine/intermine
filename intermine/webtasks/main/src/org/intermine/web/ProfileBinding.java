@@ -56,6 +56,7 @@ import org.xml.sax.InputSource;
  * Code for reading and writing Profile objects as XML.
  *
  * @author Kim Rutherford
+ * @author Richard Smith
  */
 
 public class ProfileBinding
@@ -101,9 +102,7 @@ public class ProfileBinding
             if (writeBags) {
                 ItemFactory itemFactory = new ItemFactory(os.getModel());
 
-                Set idSet = new HashSet();
-
-                getProfileObjectIds(profile, os, idSet);
+                Set<Integer> idSet = getProfileObjectIds(profile, os);
 
                 if (!idSet.isEmpty()) {
                     List<InterMineObject> objects = os.getObjectsByIds(idSet);
@@ -116,15 +115,13 @@ public class ProfileBinding
                         Item item = itemFactory.makeItemImpl(o, false);
                         FullRenderer.renderImpl(writer, item, false);
                     }
-
                     writer.writeEndElement();
                 }
 
                 writer.writeStartElement("bags");
-                for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    String bagName = (String) entry.getKey();
-                    InterMineBag bag = (InterMineBag) entry.getValue();
+                for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
+                    String bagName = entry.getKey();
+                    InterMineBag bag = entry.getValue();
 
                     if (bag != null) {
                         InterMineBagBinding.marshal(bag, writer);
@@ -141,10 +138,7 @@ public class ProfileBinding
 
             writer.writeStartElement("queries");
             if (writeQueries) {
-                for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    SavedQuery query = (SavedQuery) entry.getValue();
-
+                for (SavedQuery query : profile.getSavedQueries().values()) {
                     SavedQueryBinding.marshal(query, writer, version);
                 }
             }
@@ -152,10 +146,7 @@ public class ProfileBinding
 
             writer.writeStartElement("template-queries");
             if (writeTemplates) {
-                for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    TemplateQuery template = (TemplateQuery) entry.getValue();
-
+                for (TemplateQuery template : profile.getSavedTemplates().values()) {
                     TemplateQueryBinding.marshal(template, writer, version);
                 }
             }
@@ -184,33 +175,24 @@ public class ProfileBinding
 
     /**
      * Get the ids of objects in all bags and all objects mentioned in primary keys of those
-     * items (recursively).
+     * items.
      * @param profile read the object in the bags from this Profile
      * @param os the ObjectStore to use when following references
-     * @param idsToSerialise object ids are added to this Set
      */
-    private static void getProfileObjectIds(Profile profile, ObjectStore os, Set idsToSerialise) {
-        List idsToPreFetch = new ArrayList();
+    private static Set<Integer> getProfileObjectIds(Profile profile, ObjectStore os) {
+        Set<Integer> idsToSerialise = new HashSet<Integer>();
+        List<Integer> idsToPreFetch = new ArrayList<Integer>();
         try {
 
-            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                InterMineBag bag = (InterMineBag) entry.getValue();
-
+            for (InterMineBag bag : profile.getSavedBags().values()) {
                 idsToPreFetch.addAll(bag.getContentsAsIds());
             }
 
             // pre-fetch objects from all bags into the cache
             os.getObjectsByIds(idsToPreFetch);
 
-            for (Iterator i = profile.getSavedBags().entrySet().iterator(); i.hasNext();) {
-                Map.Entry entry = (Map.Entry) i.next();
-                InterMineBag bag = (InterMineBag) entry.getValue();
-
-                Iterator iter = bag.getContentsAsIds().iterator();
-
-                while (iter.hasNext()) {
-                    Integer id = (Integer) iter.next();
+            for (InterMineBag bag : profile.getSavedBags().values()) {
+                for (Integer id : bag.getContentsAsIds()) {
                     InterMineObject object;
                     try {
                         object = os.getObjectById(id);
@@ -223,13 +205,13 @@ public class ProfileBinding
                                                    + " bag: " + bag.getName());
                     } else {
                         getIdsFromObject(object, os.getModel(), idsToSerialise);
-
                     }
                 }
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to find object for ids: " + idsToPreFetch, e);
         }
+        return idsToSerialise;
     }
 
     /**
@@ -240,24 +222,12 @@ public class ProfileBinding
      * @param idsToSerialise object ids are added to this Set
      */
     protected static void getIdsFromObject(InterMineObject object, Model model,
-                                           Set idsToSerialise) {
+                                           Set<Integer> idsToSerialise) {
         idsToSerialise.add(object.getId());
-        Set cds = model.getClassDescriptorsForClass(object.getClass());
-        Iterator cdIter = cds.iterator();
-
-        while (cdIter.hasNext()) {
-            ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-            Map primaryKeyMap = PrimaryKeyUtil.getPrimaryKeys(cd);
-            Iterator primaryKeyIter = primaryKeyMap.values().iterator();
-
-            while (primaryKeyIter.hasNext()) {
-                PrimaryKey pk = (PrimaryKey) primaryKeyIter.next();
-                Set fieldNames = pk.getFieldNames();
-                Iterator fieldNameIter = fieldNames.iterator();
-
-                while (fieldNameIter.hasNext()) {
-                    String fieldName = (String) fieldNameIter.next();
-                    FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
+        for (ClassDescriptor cld : model.getClassDescriptorsForClass(object.getClass())) {
+            for (PrimaryKey pk : PrimaryKeyUtil.getPrimaryKeys(cld).values()) {
+                for (String fieldName : pk.getFieldNames()) {
+                    FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
 
                     if (fd instanceof ReferenceDescriptor) {
                         InterMineObject referencedObject;
@@ -271,8 +241,6 @@ public class ProfileBinding
 
                         if (referencedObject != null) {
                             // recurse
-                            //LOG.error("recursing for: " + pk.getName() + " object: "
-                            //+ object.getId() + " field " + fieldName);
                             getIdsFromObject(referencedObject, model, idsToSerialise);
                         }
                     }
@@ -294,7 +262,7 @@ public class ProfileBinding
      * @return the new Profile
      */
     public static Profile unmarshal(Reader reader, ProfileManager profileManager, String username,
-            String password, Set tags, ObjectStoreWriter osw, int version) {
+            String password, Set<Tag> tags, ObjectStoreWriter osw, int version) {
         try {
             IdUpgrader idUpgrader = IdUpgrader.ERROR_UPGRADER;
             ProfileHandler profileHandler =
