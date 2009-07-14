@@ -38,6 +38,7 @@ my $flybase_current_dir = "current";
 my $flybase_dir = "flybase";
 my $genomes_dir = "genomes";
 my $fasta_dir = "fasta";
+my $homologue_dir = "homology";
 
 #### Access FlyBase ftp server
 my $flybase_ftp = Net::FTP->new($flybase_server, Passive => 1)
@@ -83,63 +84,126 @@ if (-d "$download_dir/$fasta_dir") {
     print "$download_dir/$fasta_dir directory already exists - skipping download\n"
 } else {
 
-if (!(-d "$home/$flybase_dir")) {
-print "creating $home/$flybase_dir\n";
-    mkdir "$home/$flybase_dir";
-}
-
-if (!(-d $download_dir)) {
-print "creating $download_dir\n";
-    mkdir "$download_dir" or die "failed to create $download_dir";
-}
-
-if (!(-d "$download_dir/$fasta_dir")) {
-print "creating $download_dir/$fasta_dir\n";
-    mkdir "$download_dir/$fasta_dir"
-        or die "failed to create $download_dir/$fasta_dir";
-}
-
-# now find fasta from genomes/xxxx/current/fasta
-
-$flybase_ftp->cwd()
-    or die "failed to change to root directory\n";
-
-$flybase_ftp->cwd($genomes_dir)
-    or die "failed to change directory to $genomes_dir";
-
-my($filetype) = "binary"; 
-$flybase_ftp->$filetype;
-
-my $species_dir = undef;
-
-my $file_types = "all-CDS|all-gene-|all-five_prime_UTR|all-three_prime_UTR";
-my @species_list = $flybase_ftp->ls();
-
-for my $species (@species_list) {
-    if (length($species) eq 4) {
-        $flybase_ftp->cwd("$species/current/fasta")
-            or die "Could not change to directory: $species/current/fasta";
-        my @files = $flybase_ftp->ls();
-        for my$file (@files) {
-            if ($file =~ $file_types) {
-                $log_buffer .= "downloaded: $file to $download_dir/$fasta_dir/\n";
-                $flybase_ftp->get($file, "$download_dir/$fasta_dir/$file")
-                    or die "failed to get file: $file";
-            }
-        }
-        $flybase_ftp->cwd("../../../");
+    if (!(-d "$home/$flybase_dir")) {
+        print "creating $home/$flybase_dir\n";
+        mkdir "$home/$flybase_dir";
     }
-}
+    
+    if (!(-d $download_dir)) {
+        print "creating $download_dir\n";
+        mkdir "$download_dir" or die "failed to create $download_dir";
+    }
+    
+    if (!(-d "$download_dir/$fasta_dir")) {
+        print "creating $download_dir/$fasta_dir\n";
+        mkdir "$download_dir/$fasta_dir"
+            or die "failed to create $download_dir/$fasta_dir";
+    }
+    
+# now find fasta from genomes/xxxx/current/fasta
+    
+    $flybase_ftp->cwd()
+        or die "failed to change to root directory\n";
+    
+    $flybase_ftp->cwd($genomes_dir)
+        or die "failed to change directory to $genomes_dir";
+    
+    my($filetype) = "binary"; 
+    $flybase_ftp->$filetype;
+    
+    my $species_dir = undef;
 
+    my $file_types = "all-CDS|all-gene-|all-five_prime_UTR|all-three_prime_UTR";
+    my @species_list = $flybase_ftp->ls();
+    
+    for my $species (@species_list) {
+        if (length($species) eq 4) {
+            $flybase_ftp->cwd("$species/current/fasta")
+            or die "Could not change to directory: $species/current/fasta";
+            my @files = $flybase_ftp->ls();
+            for my$file (@files) {
+                if ($file =~ $file_types) {
+                    $log_buffer .= "downloaded: $file to $download_dir/$fasta_dir/\n";
+                    $flybase_ftp->get($file, "$download_dir/$fasta_dir/$file")
+                        or die "failed to get file: $file";
+                }
+        }
+            $flybase_ftp->cwd("../../../");
+        }
+    }
+    
 # unzip fasta files
-print"gzip -dr $download_dir/$fasta_dir\n";
-
-if ((system "gzip -dr $download_dir/$fasta_dir") != 0) {
-  die qq|system "gzip -dr $download_dir/$fasta_dir" failed: $?\n|;
+    print"gzip -dr $download_dir/$fasta_dir\n";
+    
+    if ((system "gzip -dr $download_dir/$fasta_dir") != 0) {
+        die qq|system "gzip -dr $download_dir/$fasta_dir" failed: $?\n|;
+    }
+    $log_buffer = "fasta files updated to $download_dir\n";
 }
- $log_buffer = "fasta files updated to $download_dir\n";
+
+#####################
+# get ortholog file #
+#####################
+
+#from ftp://ftp.flybase.net/releases/current/precomputed_files/genes/gene_orthologs_fb_2009_06.tsv.gz
+
+# create download dir
+
+if (-d "$download_dir/$homologue_dir") {        
+    $log_buffer = "FlyBase\n$download_dir/$homologue_dir directory already exists - skipping download\n";
+    print "$download_dir/$homologue_dir directory already exists - skipping download\n"
+
+} else {
+
+    print "creating $download_dir/$homologue_dir\n";
+    mkdir "$download_dir/$homologue_dir"
+        or die "failed to create $download_dir/$homologue_dir";
+
+    
+# navigate to correct directory
+    $flybase_ftp->cwd()
+        or die "failed to change to root directory\n";
+    
+    my $precomputed_files_dir = "precomputed_files";
+    my $genes_dir = "genes";
+    
+    $flybase_ftp->cwd($flybase_releases_dir)
+        or die "Cannot change working directory ", $flybase_ftp->message;
+    
+    $flybase_ftp->cwd($flybase_current_dir)
+        or die "Cannot change working directory ", $flybase_ftp->message;
+    
+    $flybase_ftp->cwd($precomputed_files_dir)
+    or die "failed to change directory to $precomputed_files_dir";
+    
+    $flybase_ftp->cwd($genes_dir)
+        or die "failed to change directory to $genes_dir";
+    
+# download homologue file
+
+    my($filetype) = "binary"; 
+    $flybase_ftp->$filetype;
+
+    my @files = $flybase_ftp->ls();
+    for my$file (@files) {
+        if ($file =~ /^gene_orthologs_fb_/) {
+            $log_buffer .= "downloaded: $file to $download_dir/$homologue_dir/\n";
+            $flybase_ftp->get($file, "$download_dir/$homologue_dir/$file")
+                or die "failed to get file: $file";
+        }
+    }
+    
+# unzip file
+    print"gzip -dr $download_dir/$homologue_dir\n";
+
+    if ((system "gzip -dr $download_dir/$homologue_dir") != 0) {
+        die qq|system "gzip -dr $download_dir/$homologue_dir" failed: $?\n|;
+    }
+    $log_buffer = "homologue files updated to $homologue_dir\n";
+    
 }
 
-$log_buffer .= "\n";
-print $log_buffer;
-&write_log($log_buffer,$logdir,$logname);
+#$log_buffer .= "\n";
+#print $log_buffer;
+#&write_log($log_buffer,$logdir,$logname);
+    
