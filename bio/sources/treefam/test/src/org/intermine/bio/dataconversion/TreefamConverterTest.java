@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -31,8 +32,15 @@ public class TreefamConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
+
         itemWriter = new MockItemWriter(new HashMap());
         converter = new TreefamConverter(itemWriter, Model.getInstanceByName("genomic"));
+        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
+        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
+        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
+        converter.resolverFactory = resolverFactory;
+
+
         super.setUp();
     }
 
