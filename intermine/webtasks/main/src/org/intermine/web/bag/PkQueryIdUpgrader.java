@@ -41,7 +41,9 @@ public class PkQueryIdUpgrader implements IdUpgrader
     private Source source = null;
     EquivalentObjectFetcher eof;
     private Map<Integer, Set<Integer>> newIdsCache = new HashMap<Integer, Set<Integer>>();
-
+    private int cacheHits = 0;
+    private int cacheLookups = 0;
+    
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
      * @param os the ObjectStore to query
@@ -77,9 +79,16 @@ public class PkQueryIdUpgrader implements IdUpgrader
      * @return the set of new InterMineObjects
      */
     public Set<Integer> getNewIds(InterMineObject oldObject, ObjectStore os) {
+        cacheLookups++;
+        if (cacheLookups % 10000 == 0) {
+            LOG.info("newIdsCache - hits: " + cacheHits + " lookups: " + cacheLookups
+                    + " queries: " + (cacheLookups - cacheHits));
+        }
         if (newIdsCache.containsKey(oldObject.getId())) {
+            cacheHits++;
             return newIdsCache.get(oldObject.getId());
         }
+
         Query query;
         try {
             query = eof.createPKQuery(oldObject, source, false);
@@ -96,10 +105,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
             return Collections.EMPTY_SET;
         }
 
-        SingletonResults results = os.executeSingleton(query, 0, false, false, true);
+        SingletonResults results = os.executeSingleton(query, 0, false, false, false);
 
         int size = results.size();
-
+       
         if (size == 0) {
             LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
                       + " executed query: " + query);
@@ -114,13 +123,13 @@ public class PkQueryIdUpgrader implements IdUpgrader
             Set<Integer> returnSet = new HashSet<Integer>();
 
             Iterator iter = results.iterator();
-
             while (iter.hasNext()) {
                 InterMineObject newObject = (InterMineObject) iter.next();
 
                 returnSet.add(newObject.getId());
             }
             newIdsCache.put(oldObject.getId(), returnSet);
+
             return returnSet;
         }
     }
