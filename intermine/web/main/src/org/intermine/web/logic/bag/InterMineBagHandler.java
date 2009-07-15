@@ -12,7 +12,6 @@ package org.intermine.web.logic.bag;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ public class InterMineBagHandler extends DefaultHandler
 
     private ObjectStoreWriter uosw;
     private ObjectStoreWriter osw;
-    private Map bags;
+    private Map<String, InterMineBag> bags;
     private Integer userId;
     private Model model;
 
@@ -45,7 +44,7 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagType;
     private String bagDescription;
     private InterMineBag bag;
-    private Map idToObjectMap;
+    private Map<Integer, InterMineObject> idToObjectMap;
     private IdUpgrader idUpgrader;
     private int elementsInOldBag;
     private Set<Integer> bagContents;
@@ -61,8 +60,9 @@ public class InterMineBagHandler extends DefaultHandler
      * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
      * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
      */
-    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw, Map bags,
-            Integer userId, Map idToObjectMap, IdUpgrader idUpgrader) {
+    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw, 
+            Map<String, InterMineBag> bags, Integer userId, 
+            Map<Integer, InterMineObject> idToObjectMap, IdUpgrader idUpgrader) {
         this.uosw = uosw;
         this.osw = osw;
         this.bags = bags;
@@ -81,7 +81,7 @@ public class InterMineBagHandler extends DefaultHandler
             Attributes attrs) throws SAXException {
         try {
             if (qName.equals("bag")) {
-                bagContents = new HashSet();
+                bagContents = new HashSet<Integer>();
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
@@ -107,17 +107,14 @@ public class InterMineBagHandler extends DefaultHandler
                 Integer id = new Integer(attrs.getValue("id"));
 
                 if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
-                    //if (osw.getObjectById(id) == null && idToObjectMap.containsKey(id)) {
-                    // the id isn't in the database and we have an Item representing the object from
-                    // a previous database
+                    // try to find an equivalent object in the new database
+                    
                     InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
 
-                    Set newIds = idUpgrader.getNewIds(oldObject, osw);
-                    Iterator newIdIter = newIds.iterator();
-                    while (newIdIter.hasNext()) {
-                        bagContents.add((Integer) newIdIter.next());
-                    }
+                    Set<Integer> newIds = idUpgrader.getNewIds(oldObject, osw);
+                    bagContents.addAll(newIds);
                 } else {
+                    // we aren't upgrading so just find the object by id
                     if (osw.getObjectById(id) != null) {
                         bagContents.add(id);
                     }
