@@ -9,11 +9,13 @@
 # TODO:- use webservice to get automatically the list of current subs
 #        no need to pass the release then
 #      - then: add to automine (?)
-
+# NB: comm wants alphabetical sorting!
+#
 DATADIR=/shared/data/modmine/subs/chado
 VALDIR=$DATADIR/new/validated
 CHECKDIR=$VALDIR/deprecationCheck
-NEXTDIR=$VALDIR/load_in_next_full_release
+NEXTDIR=$DATADIR/load_in_next_full_release
+DONTDIR=$DATADIR/neverIn
 
 if [ -z "$1" ]
 then
@@ -44,28 +46,53 @@ fi
 fi
 
 cd $VALDIR
-ls -1 *.chadoxml | sed 's/.chadoxml.*//g' | sort -n > $CHECKDIR/rel_candidates
+ls -1 *.chadoxml | sed 's/.chadoxml.*//g' | sort > $CHECKDIR/rel_candidates
 
 cd $CHECKDIR
-awk '{print $3}' $DATADIR/deprecated.dccid | sort -n > updated
-awk '{print $1}' $DATADIR/deprecated.dccid | sort -n > deprecated
+awk '{print $3}' $DATADIR/deprecated.dccid | sort > updated
+awk '{print $1}' $DATADIR/deprecated.dccid | sort > deprecated
 
-comm -12 updated sub.r$1 > up.inrel
-comm -12 deprecated sub.r$1 > depr.inrel
+comm -12 updated deprecated > updead
 
-grep -wf depr.inrel $DATADIR/deprecated.dccid | awk '{print $3}' | sort -n > dont_load.list
+sort sub.r$1 > in.now
 
-cat up.inrel >> dont_load.list
+comm -12 updated in.now > up.inrel
+comm -12 deprecated in.now > depr.inrel
 
-LOOPVAR=`sed 's/$/.chadoxml/g' dont_load.list | cat`
+comm -23 rel_candidates $DATADIR/live.dccid > deleted.list
+comm -12 rel_candidates $DATADIR/live.dccid > live_rel_candidates
+
+grep -wf depr.inrel $DATADIR/deprecated.dccid | awk '{print $3}' | sort > dont_load.list
+#grep -wf deprecated $DATADIR/deprecated.dccid | awk '{print $3}' | sort > dont_load.list
+
+# we need to add those to catch the ones that are updating submissions updating other
+# submissions already in the release.
+# we could simply use the 'updated' file, but we will miss the ones that don't have an ancestor
+# in the release 
+grep -wf updead $DATADIR/deprecated.dccid | awk '{print $3}' | sort >> dont_load.list
+
+LOOPVAR=`sed 's/$/.chadoxml/g' $CHECKDIR/deleted.list | cat`
 echo "********"
+echo "DELETED.."
+echo $LOOPVAR
+cd $VALDIR
+
+for sub in $LOOPVAR
+do
+mv $sub $DONTDIR
+done
+
+
+LOOPVAR=`sed 's/$/.chadoxml/g' $CHECKDIR/dont_load.list | cat`
+echo "********"
+echo "FOR NEXT REL.."
 echo $LOOPVAR
 
 cd $VALDIR
 
 for sub in $LOOPVAR
 do
-mv $sub $NEXTDIR
+mv  $sub $NEXTDIR
 done
 
 cd $NEXTDIR
@@ -74,8 +101,13 @@ NN=`ls -1 *.chadoxml | grep -c .`
 cd $VALDIR
 IN=`ls -1 *.chadoxml | grep -c .`
 
+cd $DONTDIR
+DN=`ls -1 *.chadoxml | grep -c .`
+
+
 echo
 echo "There are $IN candidates for the incremental release, $NN submissions are postponed to the next full release"
+echo "$DN submissions were already deleted before entering modMine" 
 echo
 
 exit;
