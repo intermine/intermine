@@ -90,13 +90,13 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
 
  <h4>
-  <a href="javascript:toggleDiv('hiddenDiv1');">
-    <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
+  <a href="javascript:toggleDiv('hiddenDiv3');">
+    <img id='hiddenDiv3Toggle' src="images/disclosed.gif"/>
       Homology data from Treefam ...
   </a>
  </h4>
 
-<div id="hiddenDiv1" class="dataSetDescription">
+<div id="hiddenDiv3" class="dataSetDescription">
 
 
         <p>Orthologue and paralogue relationships calculated by <A href="http://www.treefam.org/" target="_new">Treefam</A> between the following organisms:</p>
