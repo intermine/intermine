@@ -12,8 +12,8 @@ package org.intermine.web;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +62,9 @@ import org.xml.sax.InputSource;
 public class ProfileBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
-
+    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache = 
+        new HashMap<Class, Set<FieldDescriptor>>();
+    
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -91,6 +93,7 @@ public class ProfileBinding
     public static void marshal(Profile profile, ObjectStore os, XMLStreamWriter writer,
             boolean writeUserAndPassword, boolean writeQueries, boolean writeTemplates,
             boolean writeBags, boolean writeTags, boolean onlyConfigTags, int version) {
+        
         try {
             writer.writeStartElement("userprofile");
 
@@ -100,29 +103,12 @@ public class ProfileBinding
             }
 
             if (writeBags) {
-                ItemFactory itemFactory = new ItemFactory(os.getModel());
-
-                Set<Integer> idSet = getProfileObjectIds(profile, os);
-
-                if (!idSet.isEmpty()) {
-                    List<InterMineObject> objects = os.getObjectsByIds(idSet);
-
-                    writer.writeStartElement("items");
-                    Iterator<InterMineObject> objectsIter = objects.iterator();
-
-                    while (objectsIter.hasNext()) {
-                        InterMineObject o = objectsIter.next();
-                        Item item = itemFactory.makeItemImpl(o, false);
-                        FullRenderer.renderImpl(writer, item, false);
-                    }
-                    writer.writeEndElement();
-                }
-
+                writeItemsForBagIds(os, profile, writer);
+                
                 writer.writeStartElement("bags");
                 for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
                     String bagName = entry.getKey();
                     InterMineBag bag = entry.getValue();
-
                     if (bag != null) {
                         InterMineBagBinding.marshal(bag, writer);
                     } else {
@@ -173,6 +159,33 @@ public class ProfileBinding
         }
     }
 
+
+    private static void writeItemsForBagIds(ObjectStore os, Profile profile, 
+            XMLStreamWriter writer) throws ObjectStoreException, XMLStreamException {
+        Set<Integer> idsOfAllBagElements = getProfileObjectIds(profile, os);
+
+        if (!idsOfAllBagElements.isEmpty()) {
+            List<InterMineObject> objectsToWrite = os.getObjectsByIds(idsOfAllBagElements);
+
+            writer.writeStartElement("items");
+
+            for (InterMineObject objToWrite : objectsToWrite) {
+                writeItemPrimaryKeyFields(os, objToWrite, writer);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    // we actually need to write out the primary key fields, these are the only needed for upgrade
+    private static void writeItemPrimaryKeyFields(ObjectStore os, InterMineObject objToWrite, 
+            XMLStreamWriter writer) {
+        Model model = os.getModel();             
+        ItemFactory itemFactory = new ItemFactory(model);
+        Set<String> fieldsToWrite = getPrimaryKeyFieldnamesForClass(model, objToWrite.getClass());
+        Item item = itemFactory.makeItemImpl(objToWrite, fieldsToWrite);
+        FullRenderer.renderImpl(writer, item);
+    }
+    
     /**
      * Get the ids of objects in all bags and all objects mentioned in primary keys of those
      * items.
@@ -224,31 +237,53 @@ public class ProfileBinding
     protected static void getIdsFromObject(InterMineObject object, Model model,
                                            Set<Integer> idsToSerialise) {
         idsToSerialise.add(object.getId());
-        for (ClassDescriptor cld : model.getClassDescriptorsForClass(object.getClass())) {
-            for (PrimaryKey pk : PrimaryKeyUtil.getPrimaryKeys(cld).values()) {
-                for (String fieldName : pk.getFieldNames()) {
-                    FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+        for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {            
+            if (fd instanceof ReferenceDescriptor) {
+                String fieldName = fd.getName();
+                InterMineObject referencedObject;
+                try {
+                    referencedObject =
+                        (InterMineObject) TypeUtil.getFieldValue(object, fieldName);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Unable to access field " + fieldName
+                            + " in object: " + object);
+                }
 
-                    if (fd instanceof ReferenceDescriptor) {
-                        InterMineObject referencedObject;
-                        try {
-                            referencedObject =
-                                (InterMineObject) TypeUtil.getFieldValue(object, fieldName);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException("Unable to access field " + fieldName
-                                                       + " in object: " + object);
-                        }
-
-                        if (referencedObject != null) {
-                            // recurse
-                            getIdsFromObject(referencedObject, model, idsToSerialise);
-                        }
-                    }
+                if (referencedObject != null) {
+                    // recurse
+                    getIdsFromObject(referencedObject, model, idsToSerialise);
                 }
             }
         }
     }
 
+    
+    private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model, 
+            Class lookupClass) {
+        Set<FieldDescriptor> primaryKeyFields = primaryKeyFieldsCache.get(lookupClass);
+        if (primaryKeyFields == null) {
+            primaryKeyFields = new HashSet<FieldDescriptor>();
+            for (ClassDescriptor cld : model.getClassDescriptorsForClass(lookupClass)) {
+                for (PrimaryKey pk : PrimaryKeyUtil.getPrimaryKeys(cld).values()) {
+                    for (String fieldName : pk.getFieldNames()) {
+                        FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+                        primaryKeyFields.add(fd);
+                    }
+                }
+            }
+            primaryKeyFieldsCache.put(lookupClass, primaryKeyFields);
+        }
+        return primaryKeyFields;
+    }
+    
+    private static Set<String> getPrimaryKeyFieldnamesForClass(Model model, Class lookupClass) {
+        Set<String> primaryKeyFieldNames = new HashSet<String>();
+        for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, lookupClass)) {
+            primaryKeyFieldNames.add(fd.getName());
+        }
+        return primaryKeyFieldNames;
+    }
+    
     /**
      * Read a Profile from an XML stream Reader.  Note that Tags from the XML are stored immediately
      * using the ProfileManager.

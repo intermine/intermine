@@ -10,16 +10,17 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Arrays;
+import java.util.Set;
 
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.xml.XmlHelper;
 
 /**
@@ -172,18 +173,17 @@ public class ItemFactory
      * @return a new Full Data Item
      */
     public Item makeItem(Object obj) {
-        return makeItemImpl(obj, true);
+        return makeItemImpl(obj, TypeUtil.getFieldInfos(obj.getClass()).keySet());
     }
 
-
+    
     /**
-     * Convert an Object to Item format.
+     * Convert an Object to Item format, writing the fields provided in includeFields.
      * @param obj object to convert
-     * @param transferCollections if true add the colections from obj to the new Item, otherwise
-     * ignore the collections of obj
+     * @param includeFields the field names to write
      * @return a new Full Data Item
      */
-    public Item makeItemImpl(Object obj, boolean transferCollections) {
+    public Item makeItemImpl(Object obj, Set<String> includeFields) {
         if ((obj instanceof InterMineObject) && (((InterMineObject) obj).getId() == null)) {
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
@@ -197,16 +197,13 @@ public class ItemFactory
         item.setImplementations(getImplements(obj, model));
 
         try {
-            Map infos = TypeUtil.getFieldInfos(obj.getClass());
-            Iterator iter = infos.keySet().iterator();
-            while (iter.hasNext()) {
+            for (String fieldname : includeFields) {
                 // If Reference, value is id of referred-to object
                 // If Attribute, value is field value
                 // If Collection, contains list of ids of objects in collection
 
                 // Element is not output if the value is null
 
-                String fieldname = (String) iter.next();
                 Object value = TypeUtil.getFieldValue(obj, fieldname);
 
                 if (value == null) {
@@ -214,28 +211,20 @@ public class ItemFactory
                 }
                 // Collection
                 if (Collection.class.isAssignableFrom(value.getClass())) {
-                    if (transferCollections) {
-                        Collection col = (Collection) value;
-                        if (col.size() > 0) {
-                            ReferenceList refList = new ReferenceList(fieldname);
-                            for (Iterator j = col.iterator(); j.hasNext();) {
-                                InterMineObject tempobj = (InterMineObject) j.next();
-                                refList.addRefId((tempobj).getId().toString());
-                            }
-                            item.addCollection(refList);
+                    Collection col = (Collection) value;
+                    if (col.size() > 0) {
+                        ReferenceList refList = new ReferenceList(fieldname);
+                        for (Iterator j = col.iterator(); j.hasNext();) {
+                            InterMineObject tempobj = (InterMineObject) j.next();
+                            refList.addRefId((tempobj).getId().toString());
                         }
+                        item.addCollection(refList);
                     }
                 } else if (value instanceof InterMineObject) {
-                    Reference ref = new Reference();
-                    ref.setName(fieldname);
-                    ref.setRefId(((InterMineObject) value).getId().toString());
-                    item.addReference(ref);
+                    item.setReference(fieldname, ((InterMineObject) value).getId().toString());
                 } else {
                     if (!fieldname.equalsIgnoreCase("id")) {
-                        Attribute attr = new Attribute();
-                        attr.setName(fieldname);
-                        attr.setValue(TypeUtil.objectToString(value));
-                        item.addAttribute(attr);
+                        item.setAttribute(fieldname, TypeUtil.objectToString(value));
                     }
                 }
             }

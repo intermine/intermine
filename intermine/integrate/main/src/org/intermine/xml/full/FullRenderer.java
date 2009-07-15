@@ -100,17 +100,15 @@ public class FullRenderer
      * @param item the Item to render
      */
     public static void render(XMLStreamWriter writer, Item item) {
-        renderImpl(writer, item, true);
+        renderImpl(writer, item);
     }
 
     /**
      * Render the given Item as XML using an XMLStreamWriter
      * @param writer to XMLStreamWriter to write to
      * @param item the Item to render
-     * @param renderCollections render the collections if and only if this is true
      */
-    public static void renderImpl(XMLStreamWriter writer, Item item,
-                                  boolean renderCollections) {
+    public static void renderImpl(XMLStreamWriter writer, Item item) {
         try {
             writer.writeStartElement("item");
             if (item.getIdentifier() != null) {
@@ -144,21 +142,19 @@ public class FullRenderer
                 writer.writeCharacters(ENDL);
             }
 
-            if (renderCollections) {
-                TreeSet cols = new TreeSet(new RendererComparator());
-                cols.addAll(item.getCollections());
-                for (Iterator i = cols.iterator(); i.hasNext();) {
-                    ReferenceList refList = (ReferenceList) i.next();
-                    writer.writeStartElement("collection");
-                    writer.writeAttribute("name", refList.getName());
+            TreeSet cols = new TreeSet(new RendererComparator());
+            cols.addAll(item.getCollections());
+            for (Iterator i = cols.iterator(); i.hasNext();) {
+                ReferenceList refList = (ReferenceList) i.next();
+                writer.writeStartElement("collection");
+                writer.writeAttribute("name", refList.getName());
 
-                    for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
-                        writer.writeEmptyElement("reference");
-                        writer.writeAttribute("ref_id", (String) j.next());
-                    }
-                    writer.writeEndElement();
-                    writer.writeCharacters(ENDL);
+                for (Iterator j = refList.getRefIds().iterator(); j.hasNext();) {
+                    writer.writeEmptyElement("reference");
+                    writer.writeAttribute("ref_id", (String) j.next());
                 }
+                writer.writeEndElement();
+                writer.writeCharacters(ENDL);
             }
             writer.writeEndElement();
             writer.writeCharacters(ENDL);
@@ -179,7 +175,7 @@ public class FullRenderer
         XMLStreamWriter writer;
         try {
             writer = factory.createXMLStreamWriter(sw);
-            renderImpl(writer, item, true);
+            renderImpl(writer, item);
         } catch (XMLStreamException e) {
             throw new RuntimeException("unexpected failure while creating Item XML", e);
         }
