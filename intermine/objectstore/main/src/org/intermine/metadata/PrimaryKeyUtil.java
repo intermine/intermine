@@ -30,7 +30,8 @@ import org.intermine.util.TypeUtil;
 
 public abstract class PrimaryKeyUtil
 {
-    protected static Map<Model, Properties> modelKeys = new HashMap<Model, Properties>();
+    protected static Map<String, Properties> modelKeys = new HashMap<String, Properties>();
+    
     /**
      * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
      * that exist on a particular class, without performing any recursion.
@@ -40,7 +41,7 @@ public abstract class PrimaryKeyUtil
      */
     public static Map<String, PrimaryKey> getPrimaryKeys(ClassDescriptor cld) {
         Map<String, PrimaryKey> keyMap = new LinkedHashMap<String, PrimaryKey>();
-        Properties keys = getKeyProperties(cld.getModel());
+        Properties keys = getKeyProperties(cld.getModel().getName());
         String cldName = TypeUtil.unqualifiedName(cld.getName());
         Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
         cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
@@ -64,13 +65,13 @@ public abstract class PrimaryKeyUtil
      * @param model the Model
      * @return the relevant Properties
      */
-    public static Properties getKeyProperties(Model model) {
+    public static Properties getKeyProperties(String modelName) {
         Properties keys = null;
         synchronized (modelKeys) {
-            keys = (Properties) modelKeys.get(model);
+            keys = (Properties) modelKeys.get(modelName);
             if (keys == null) {
-                keys = MetadataManager.loadKeyDefinitions(model.getName());
-                modelKeys.put(model, keys);
+                keys = MetadataManager.loadKeyDefinitions(modelName);
+                modelKeys.put(modelName, keys);
             }
         }
         return keys;
