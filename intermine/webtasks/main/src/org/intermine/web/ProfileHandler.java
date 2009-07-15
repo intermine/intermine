@@ -52,9 +52,9 @@ class ProfileHandler extends DefaultHandler
     private Map<String, SavedQuery> savedQueries;
     private Map<String, InterMineBag> savedBags;
     private Map<String, TemplateQuery> savedTemplates;
-    private Set tags;
+    private Set<Tag> tags;
     private List<Item> items;
-    private Map<Integer, InterMineObject> idObjectMap;
+    private Map<Integer, InterMineObject> idObjectMap = new HashMap<Integer, InterMineObject>();
     private IdUpgrader idUpgrader;
     private ObjectStoreWriter osw;
     private int version;
@@ -98,7 +98,7 @@ class ProfileHandler extends DefaultHandler
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set tags, ObjectStoreWriter osw,
+            String defaultUsername, String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
             boolean abortOnError, int version) {
         super();
         this.profileManager = profileManager;
@@ -124,7 +124,7 @@ class ProfileHandler extends DefaultHandler
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, IdUpgrader idUpgrader,
-            String defaultUsername, String defaultPassword, Set tags, ObjectStoreWriter osw,
+            String defaultUsername, String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw,
             int version) {
         this(profileManager, idUpgrader, defaultPassword, defaultPassword, tags,
              osw, true, version);
@@ -192,7 +192,12 @@ class ProfileHandler extends DefaultHandler
         super.endElement(uri, localName, qName);
         if (qName.equals("items")) {
             items = ((FullHandler) subHandler).getItems();
-            idObjectMap = new HashMap();
+            //idObjectMap = new HashMap<Integer, InterMineObject>();
+            for (Item item : items) {
+                if (idObjectMap.containsKey(new Integer(item.getIdentifier()))) {
+                    items.remove(item);
+                }
+            }
             Model model = profileManager.getProductionObjectStore().getModel();
             List<InterMineObject> objects;
             try {
