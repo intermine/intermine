@@ -15,16 +15,6 @@ import junit.framework.TestCase;
 public class XmlUtilTest extends TestCase
 {
 
-    public void testCorrectNamespace() throws Exception {
-        assertEquals("http://www.intermine.org/test#",
-                     XmlUtil.correctNamespace("http://www.intermine.org/test#junk"));
-        assertEquals("http://www.intermine.org/test#",
-                     XmlUtil.correctNamespace("http://www.intermine.org/test#junk#morejunk"));
-        assertEquals("http://www.intermine.org/test#",
-                     XmlUtil.correctNamespace("http://www.intermine.org/test/"));
-        assertEquals("http://www.intermine.org/test#",
-                     XmlUtil.correctNamespace("http://www.intermine.org/test"));
-    }
 
     public void testIndentXmlSimple() throws Exception {
         String input = "<query name=\"\" model=\"testmodel\" view=\"Employee\"><node path=\"Employee\" " +

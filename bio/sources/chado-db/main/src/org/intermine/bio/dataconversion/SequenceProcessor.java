@@ -10,6 +10,10 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateCollectionAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
@@ -31,26 +39,14 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Transcript;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * A processor for the chado sequence module.
@@ -447,7 +443,7 @@ public class SequenceProcessor extends ChadoProcessor
         fdat.setItemIdentifier(feature.getIdentifier());
         fdat.setUniqueName(uniqueName);
         fdat.setChadoFeatureName(name);
-        fdat.setInterMineType(XmlUtil.getFragmentFromURI(feature.getClassName()));
+        fdat.setInterMineType(feature.getClassName());
         fdat.organismData = organismData;
         fdat.setMd5checksum(md5checksum);
         return fdat;

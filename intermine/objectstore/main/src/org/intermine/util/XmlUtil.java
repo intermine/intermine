@@ -10,10 +10,9 @@ package org.intermine.util;
  *
  */
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * General-purpose methods for manipulating URIs and XML schema types
@@ -21,49 +20,6 @@ import java.io.ByteArrayOutputStream;
  */
 public class XmlUtil
 {
-    /**
-     * XSD namespace.
-     */
-    public static final String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema#";
-
-    /**
-     * If a given namespace uri does not end in a '#' add one, removing trailing '/' if present.
-     * @param ns the namespace uri
-     * @return the corrected namespace
-     */
-    public static String correctNamespace(String ns) {
-        if (ns.indexOf('#') >= 0) {
-            return ns.substring(0, ns.indexOf('#') + 1);
-        } else if (ns.endsWith("/")) {
-            return ns.substring(0, ns.length() - 1) + "#";
-        } else {
-            return ns + "#";
-        }
-    }
-
-    /**
-     * Return the namespace portion of URI string (i.e. everything up to and including a #).
-     * @param uri a uri string
-     * @return the namespace or original uri if no # present
-     */
-    public static String getNamespaceFromURI(String uri) {
-        if (uri.indexOf('#') > 0) {
-            return uri.substring(0, uri.indexOf('#') + 1);
-        }
-        return uri;
-    }
-
-    /**
-     * Return the fragment portion of a URI string (i.e. everything after a #).
-     * @param uri a uri string
-     * @return the fragment or original uri if no # present
-     */
-    public static String getFragmentFromURI(String uri) {
-        if (uri.indexOf('#') > 0) {
-            return uri.substring(uri.indexOf('#') + 1);
-        }
-        return uri;
-    }
 
     /**
      * Apply some indentiation to some XML. This method is not very sophisticated and will
