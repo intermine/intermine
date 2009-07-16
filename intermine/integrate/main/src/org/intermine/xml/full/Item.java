@@ -13,7 +13,6 @@ package org.intermine.xml.full;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,11 +33,11 @@ public class Item implements Comparable
     private String className = "";
     private String implementations = "";
     private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
-    private Map<String, Reference> references = new HashMap();
-    private Map<String, ReferenceList> collections = new HashMap();
+    private Map<String, Reference> references = new HashMap<String, Reference>();
+    private Map<String, ReferenceList> collections = new HashMap<String, ReferenceList>();
     private Model model = null;
     private ClassDescriptor classDescriptor = null;
-    private Set implementationClassDescriptors = null;
+    private Set<ClassDescriptor> implementationClassDescriptors = null;
 
     /**
      * Construct an item.
@@ -211,7 +210,6 @@ public class Item implements Comparable
      * @return true if the attribute exists
      */
     public boolean hasAttribute(String attributeName) {
-        //checkAttribute(attributeName);
         return attributes.containsKey(attributeName);
     }
 
@@ -237,7 +235,7 @@ public class Item implements Comparable
      * Get all the references
      * @return all the references
      */
-    public Collection getReferences() {
+    public Collection<Reference> getReferences() {
         return references.values();
     }
 
@@ -283,7 +281,7 @@ public class Item implements Comparable
      * Get all the collections
      * @return all the collections
      */
-    public Collection getCollections() {
+    public Collection<ReferenceList> getCollections() {
         return collections.values();
     }
 
@@ -308,7 +306,7 @@ public class Item implements Comparable
     }
 
     /**
-     * Set a colletion.
+     * Set a collection.
      * @param collectionName collection name
      * @param refIds ids to reference
      */
@@ -404,11 +402,8 @@ public class Item implements Comparable
             return true;
         }
 
-        Iterator cdIter = getAllClassDescriptors().iterator();
-
-        while (cdIter.hasNext()) {
-            ClassDescriptor cd = (ClassDescriptor) cdIter.next();
-            if (cd.getAttributeDescriptorByName(name, true) != null) {
+        for (ClassDescriptor cld : getAllClassDescriptors()) {
+            if (cld.getAttributeDescriptorByName(name, true) != null) {
                 return true;
             }
         }
@@ -530,14 +525,11 @@ public class Item implements Comparable
      * implementations.  Call only if model, className and implementations are set.
      * @return all the ClassDescriptors for this Item
      */
-    protected Set getAllClassDescriptors() {
-        Set cds = new HashSet();
-        Set implementationCds = getImplementClassDescriptors(implementations);
-        if (implementationCds != null) {
-            cds.addAll(implementationCds);
-        }
-        cds.add(classDescriptor);
-        return cds;
+    protected Set<ClassDescriptor> getAllClassDescriptors() {
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+        clds.addAll(getImplementClassDescriptors(implementations));
+        clds.add(classDescriptor);
+        return clds;
     }
 
     /**
@@ -548,26 +540,19 @@ public class Item implements Comparable
      * @return the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
      * been set
      */
-    protected Set getImplementClassDescriptors(String implementations) {
-        if (implementations.length() == 0) {
-            return null;
-        }
-
+    protected Set<ClassDescriptor> getImplementClassDescriptors(String implementations) {
         if (implementationClassDescriptors != null) {
             return implementationClassDescriptors;
+        } else {
+            implementationClassDescriptors = new HashSet<ClassDescriptor>();
+            String [] bits = StringUtil.split(implementations, " ");
+
+            for (String clsName : bits) {
+                if (!StringUtil.isEmpty(clsName)) {
+                    implementationClassDescriptors.add(getClassDescriptorByName(clsName));
+                }
+            }
         }
-
-        Set cds = new HashSet();
-
-        String [] bits = StringUtil.split(implementations, " ");
-
-        for (int i = 0; i < bits.length; i++) {
-            ClassDescriptor cd = getClassDescriptorByName(bits[i]);
-            cds.add(cd);
-        }
-
-        implementationClassDescriptors = cds;
-
         return implementationClassDescriptors;
     }
 

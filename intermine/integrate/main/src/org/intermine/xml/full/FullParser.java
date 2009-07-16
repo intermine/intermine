@@ -10,23 +10,20 @@ package org.intermine.xml.full;
  *
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
-
-import java.io.InputStream;
-
-import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
 /**
@@ -149,13 +146,11 @@ public class FullParser
      * @param obj the object
      * @return a populated object
      */
-    protected static Object populateObject(Item item, Map objMap, boolean useIdentifier,
-            boolean abortOnError, FastPathObject obj) {
+    protected static Object populateObject(Item item, Map<String, FastPathObject> objMap, 
+            boolean useIdentifier, boolean abortOnError, FastPathObject obj) {
         try {
             // Set the data for every given attribute except id
-            Iterator attrIter = item.getAttributes().iterator();
-            while (attrIter.hasNext()) {
-                Attribute attr = (Attribute) attrIter.next();
+            for (Attribute attr : item.getAttributes()) {
                 TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
                     String message = "Field " + attr.getName()
@@ -180,9 +175,7 @@ public class FullParser
             }
 
             // Set the data for every given reference
-            Iterator refIter = item.getReferences().iterator();
-            while (refIter.hasNext()) {
-                Reference ref = (Reference) refIter.next();
+            for (Reference ref : item.getReferences()) {
                 Object refObj = objMap.get(ref.getRefId());
                 TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), ref.getName());
                 if (info == null) {
@@ -211,12 +204,10 @@ public class FullParser
             }
 
             // Set objects for every collection
-            Iterator colIter = item.getCollections().iterator();
-            while (colIter.hasNext()) {
-                ReferenceList refList = (ReferenceList) colIter.next();
-                Collection col = (Collection) obj.getFieldValue(refList.getName());
-                for (Iterator i = refList.getRefIds().iterator(); i.hasNext();) {
-                    col.add(objMap.get(i.next()));
+            for (ReferenceList refList : item.getCollections()) {
+                Collection<Object> col = (Collection<Object>) obj.getFieldValue(refList.getName());
+                for (String refId : refList.getRefIds()) {
+                    col.add(objMap.get(refId));
                 }
             }
 

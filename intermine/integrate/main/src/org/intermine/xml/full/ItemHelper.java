@@ -10,8 +10,6 @@ package org.intermine.xml.full;
  *
  */
 
-import java.util.Iterator;
-
 import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
@@ -19,6 +17,7 @@ import org.intermine.util.XmlUtil;
 /**
 * Class providing Item utility methods
 * @author Mark Woodbridge
+* @author Richard Smith
 */
 public class ItemHelper
 {
@@ -29,37 +28,24 @@ public class ItemHelper
      */
     public static org.intermine.model.fulldata.Item convert(Item item) {
         org.intermine.model.fulldata.Item newItem = new org.intermine.model.fulldata.Item();
-
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
         newItem.setImplementations(item.getImplementations());
-
-        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            Attribute attr = (Attribute) i.next();
-            org.intermine.model.fulldata.Attribute newAttr
-                = new org.intermine.model.fulldata.Attribute();
-            newAttr.setName(attr.getName());
-            newAttr.setValue(attr.getValue());
+        
+        for (Attribute attr : item.getAttributes()) {
+            org.intermine.model.fulldata.Attribute newAttr = convert(attr);
             newItem.getAttributes().add(newAttr);
             newAttr.setItem(newItem);
         }
 
-        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            Reference ref = (Reference) i.next();
-            org.intermine.model.fulldata.Reference newRef
-                = new org.intermine.model.fulldata.Reference();
-            newRef.setName(ref.getName());
-            newRef.setRefId(ref.getRefId());
+        for (Reference ref : item.getReferences()) {
+            org.intermine.model.fulldata.Reference newRef = convert(ref);
             newItem.getReferences().add(newRef);
             newRef.setItem(newItem);
         }
 
-        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            ReferenceList refs = (ReferenceList) i.next();
-            org.intermine.model.fulldata.ReferenceList newRefs
-                = new org.intermine.model.fulldata.ReferenceList();
-            newRefs.setName(refs.getName());
-            newRefs.setRefIds(makeFulldataRefIds(refs));
+        for (ReferenceList refs : item.getCollections()) {
+            org.intermine.model.fulldata.ReferenceList newRefs = convert(refs);
             newItem.getCollections().add(newRefs);
             newRefs.setItem(newItem);
         }
@@ -123,106 +109,24 @@ public class ItemHelper
      * @return an equivalent XML Item
      */
     public static Item convert(org.intermine.model.fulldata.Item item) {
-        Item newItem = new Item();
-        newItem.setIdentifier(item.getIdentifier());
-        newItem.setClassName(item.getClassName());
-        newItem.setImplementations(item.getImplementations());
+        Item newItem = new Item(item.getIdentifier(), item.getClassName(), 
+                item.getImplementations());
 
-        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.Attribute attr =
-                (org.intermine.model.fulldata.Attribute) i.next();
-            Attribute newAttr = new Attribute();
-            newAttr.setName(attr.getName());
-            newAttr.setValue(attr.getValue());
-            newItem.addAttribute(newAttr);
+        for (org.intermine.model.fulldata.Attribute attr : item.getAttributes()) {
+            newItem.setAttribute(attr.getName(), attr.getValue());
         }
 
-        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.Reference ref =
-                (org.intermine.model.fulldata.Reference) i.next();
-            Reference newRef = new Reference();
-            newRef.setName(ref.getName());
-            newRef.setRefId(ref.getRefId());
-            newItem.addReference(newRef);
+        for (org.intermine.model.fulldata.Reference ref : item.getReferences()) {
+            newItem.setReference(ref.getName(), ref.getRefId());
         }
 
-        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.ReferenceList refs
-                = (org.intermine.model.fulldata.ReferenceList) i.next();
-            ReferenceList newRefs = new ReferenceList(refs.getName(),
-                                                      StringUtil.tokenize(refs.getRefIds()));
-            newItem.addCollection(newRefs);
+        for (org.intermine.model.fulldata.ReferenceList refs : item.getCollections()) {
+            newItem.setCollection(refs.getName(), StringUtil.tokenize(refs.getRefIds()));
         }
 
         return newItem;
     }
 
-
-    /**
-     * org.intermine.model.fulldata.Item is auto-generated code and does not have a sensible
-     * constructor.  Define one here.
-     * @param identifier identifier of Item
-     * @param className classname of Item
-     * @param implementations space separated string of fully qualified class/interface names
-     * @return the new Item
-     */
-    public static org.intermine.model.fulldata.Item createFulldataItem(String identifier,
-                                                                       String className,
-                                                                       String implementations) {
-        org.intermine.model.fulldata.Item item = new org.intermine.model.fulldata.Item();
-        item.setIdentifier(identifier);
-        item.setClassName(className);
-        item.setImplementations(implementations);
-        return item;
-    }
-
-    /**
-     * org.intermine.model.fulldata.Attribute is auto-generated code and does not have a sensible
-     * constructor.  Define one here.
-     * @param name field name of the attribute
-     * @param value the attribute value
-     * @return the new Attribute
-     */
-    public static org.intermine.model.fulldata.Attribute createFulldataAttribute(String name,
-                                                                                 String value) {
-        org.intermine.model.fulldata.Attribute att =
-            new org.intermine.model.fulldata.Attribute();
-        att.setName(name);
-        att.setValue(value);
-        return att;
-    }
-
-    /**
-     * org.intermine.model.fulldata.Reference is auto-generated code and does not have a sensible
-     * constructor.  Define one here.
-     * @param name field name of the reference
-     * @param refid identifer of referenced Item
-     * @return the new Reference
-     */
-    public static org.intermine.model.fulldata.Reference createFulldataReference(String name,
-                                                                                 String refid) {
-        org.intermine.model.fulldata.Reference ref =
-            new org.intermine.model.fulldata.Reference();
-        ref.setName(name);
-        ref.setRefId(refid);
-        return ref;
-    }
-
-    /**
-     * org.intermine.model.fulldata.ReferenceList is auto-generated code and does not have a
-     * sensible constructor.  Define one here.
-     * @param name field name of the collection
-     * @param refids space separated string of identifiers in collection
-     * @return the new ReferenceList
-     */
-    public static org.intermine.model.fulldata.ReferenceList createFulldataReferenceList(
-                                                                String name, String refids) {
-        org.intermine.model.fulldata.ReferenceList col =
-            new org.intermine.model.fulldata.ReferenceList();
-        col.setName(name);
-        col.setRefIds(refids);
-        return col;
-    }
 
     /**
      * Generate a package qualified class name within the specified model from a space separated
@@ -237,9 +141,9 @@ public class ItemHelper
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = StringUtil.tokenize(classNames).iterator(); i.hasNext();) {
+        for (String s : StringUtil.tokenize(classNames)) {
             sb.append(model.getPackageName() + "."
-                      + XmlUtil.getFragmentFromURI((String) i.next()) + " ");
+                      + XmlUtil.getFragmentFromURI(s + " "));
         }
         return sb.toString().trim();
     }
