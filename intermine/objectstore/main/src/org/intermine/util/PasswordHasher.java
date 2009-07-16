@@ -36,6 +36,10 @@ public class PasswordHasher
      * @return a 88-character String containing the salt and the hash
      */
     public static String hashPassword(String password) {
+        if ((password.length() == 88) && (password.charAt(43) == '=')
+                && (password.charAt(87) == '=')) {
+            return password;
+        }
         try {
             byte salt[] = new byte[32];
             SecureRandom sr = new SecureRandom();
@@ -59,11 +63,8 @@ public class PasswordHasher
      * @return true if the password matches
      */
     public static boolean checkPassword(String password, String hash) {
-        if (password.equals(hash)) {
-            return true;
-        }
         try {
-            if (hash.length() == 88) {
+            if ((hash.length() == 88) && (hash.charAt(43) == '=') && (hash.charAt(87) == '=')) {
                 String saltString = hash.substring(0, 44);
                 MessageDigest md = MessageDigest.getInstance("SHA-256");
                 md.update((saltString + password).getBytes());
@@ -72,6 +73,8 @@ public class PasswordHasher
                 if (hashString.equals(hash.substring(44))) {
                     return true;
                 }
+            } else {
+                return password.equals(hash);
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

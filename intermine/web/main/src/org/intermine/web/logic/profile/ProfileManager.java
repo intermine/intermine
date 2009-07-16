@@ -12,11 +12,13 @@ package org.intermine.web.logic.profile;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.sql.SQLException;
 
@@ -516,5 +518,96 @@ public class ProfileManager
      */
     public Profile getSuperuserProfile() {
         return getProfile(superuser);
+    }
+
+    private Map<String, PasswordChangeToken> passwordChangeTokens
+        = new HashMap<String, PasswordChangeToken>();
+
+    /**
+     * Creates a password change token assigned to the given username that will expire after a day.
+     *
+     * @param username the name of the user to create a password change token for
+     * @return a String containing the token
+     * @throws IllegalArgumentException if the username does not match a profile
+     */
+    public synchronized String createPasswordChangeToken(String username) {
+        if (hasProfile(username)) {
+            Date expiry = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
+            Random random = new Random();
+            char tokenArray[] = new char[10];
+            for (int i = 0; i < 10; i++) {
+                tokenArray[i] = (char) (random.nextInt(26) + 'a');
+            }
+            String token = new String(tokenArray);
+            passwordChangeTokens.put(token, new PasswordChangeToken(username, expiry));
+            return token;
+        } else {
+            throw new IllegalArgumentException("No such profile " + username);
+        }
+    }
+
+    /**
+     * Returns the username associated with the given token, if the token is valid.
+     *
+     * @param token the token
+     * @return the username associated with the token
+     * @throws IllegalArgumentException if the token is invalid
+     */
+    public synchronized String getUsernameForToken(String token) throws IllegalArgumentException {
+        PasswordChangeToken retval = passwordChangeTokens.get(token);
+        if (retval != null) {
+            if (retval.isValid()) {
+                return retval.getUsername();
+            } else {
+                throw new IllegalArgumentException("Token has expired for username "
+                        + retval.getUsername());
+            }
+        }
+        throw new IllegalArgumentException("Token is not valid");
+    }
+
+    /**
+     * Changes the password of a profile if the given token is valid.
+     *
+     * @param token the token
+     * @param password the new password to apply to the account
+     * @return the username hat has the new password
+     * @throws IllegalArgumentException if the token is invalid
+     */
+    public synchronized String changePasswordWithToken(String token, String password)
+    throws IllegalArgumentException {
+        PasswordChangeToken pct = passwordChangeTokens.get(token);
+        if (pct != null) {
+            if (pct.isValid()) {
+                setPassword(pct.getUsername(), password);
+                passwordChangeTokens.remove(token);
+                return pct.getUsername();
+            }
+        }
+        throw new IllegalArgumentException("Token is invalid");
+    }
+
+    /**
+     * Password change token - a combination of username and expiry date.
+     *
+     * @author Matthew Wakeling
+     */
+    private static class PasswordChangeToken
+    {
+        private String username;
+        private Date expiry;
+
+        public PasswordChangeToken(String username, Date expiry) {
+            this.username = username;
+            this.expiry = expiry;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public boolean isValid() {
+            return System.currentTimeMillis() < expiry.getTime();
+        }
     }
 }

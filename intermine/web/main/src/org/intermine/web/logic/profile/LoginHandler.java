@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-
 /**
  * @author Xavier Watkins
  *
@@ -49,18 +48,18 @@ public abstract class LoginHandler extends InterMineAction
      * @param password The password
      * @return the map containing the renamed bags the user created before they were logged in
      */
-    public Map doLogin(ServletContext servletContext, HttpServletRequest request,
+    public Map<String, String> doLogin(ServletContext servletContext, HttpServletRequest request,
             HttpServletResponse response, HttpSession session, ProfileManager pm, String username,
             String password) {
         // Merge current history into loaded profile
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
                     Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
-        Map mergeQueries = Collections.EMPTY_MAP;
-        Map mergeBags = Collections.EMPTY_MAP;
+        Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
+        Map<String, InterMineBag> mergeBags = Collections.emptyMap();
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
-            mergeQueries = new HashMap(currentProfile.getHistory());
-            mergeBags = new HashMap(currentProfile.getSavedBags());
+            mergeQueries = currentProfile.getHistory();
+            mergeBags = currentProfile.getSavedBags();
         }
 
         Profile profile = setUpProfile(session, pm, username, password);
@@ -72,16 +71,14 @@ public abstract class LoginHandler extends InterMineAction
             profile.saveHistory(query);
         }
         // Merge anonymous bags
-        Map renamedBags = new HashMap();
-        for (Iterator iter = mergeBags.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
+        Map<String, String> renamedBags = new HashMap<String, String>();
+        for (Map.Entry<String, InterMineBag> entry : mergeBags.entrySet()) {
+            InterMineBag bag = entry.getValue();
             // Make sure the userId gets set to be the profile one
             try {
                 bag.setProfileId(profile.getUserId(), uosw);
-                String name = makeUniqueQueryName((String) entry.getKey(), profile.getSavedBags()
-                        .keySet());
-                if (!((String) entry.getKey()).equals(name)) {
+                String name = makeUniqueQueryName(entry.getKey(), profile.getSavedBags().keySet());
+                if (!entry.getKey().equals(name)) {
                     renamedBags.put(entry.getKey(), name);
                 }
                 bag.setName(name, uosw);
@@ -120,14 +117,14 @@ public abstract class LoginHandler extends InterMineAction
         return profile;
     }
 
-    private String makeUniqueQueryName(String name, Set names) {
+    private String makeUniqueQueryName(String name, Set<String> names) {
         String newName = name;
         int i = 1;
         while (names.contains(newName)) {
             newName =  name + "_" + i;
             i++;
         }
-        return name;
+        return newName;
     }
 
 }

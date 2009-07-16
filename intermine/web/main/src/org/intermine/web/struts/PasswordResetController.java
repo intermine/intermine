@@ -10,8 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -19,16 +21,18 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.ProfileManager;
 /**
- * Controller for the login page.
+ * Controller for the password reset page.
  *
- * @author Kim Rutherford
+ * @author Matthew Wakeling
  */
 
-public class LoginController extends TilesAction
+public class PasswordResetController extends TilesAction
 {
     /**
-     * Set up the form for login.
+     * Set up the form.
      * {@inheritDoc}
      */
     @Override
@@ -38,9 +42,23 @@ public class LoginController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        LoginForm loginForm = (LoginForm) form;
-        String returnToString = request.getParameter("returnto");
-        loginForm.setReturnToString(returnToString);
+        PasswordResetForm loginForm = (PasswordResetForm) form;
+        String token = request.getParameter("token");
+        HttpSession session = request.getSession();
+        if (token == null) {
+            token = (String) session.getAttribute("passwordResetToken");
+        } else {
+            session.setAttribute("passwordResetToken", token);
+        }
+        ServletContext servletContext = session.getServletContext();
+        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        try {
+            String username = pm.getUsernameForToken(token);
+            request.setAttribute("IS_VALID", true);
+            request.setAttribute("username", username);
+        } catch (IllegalArgumentException e) {
+            // Invalid token, so do nothing
+        }
         return null;
     }
 }
