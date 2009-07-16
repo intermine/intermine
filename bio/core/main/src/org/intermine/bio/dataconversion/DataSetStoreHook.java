@@ -16,7 +16,6 @@ import org.intermine.dataconversion.DataConverterStoreHook;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -59,7 +58,7 @@ public class DataSetStoreHook implements DataConverterStoreHook
      * @param dataSourceId the item id of the DataSource to add
      */
     public static void setDataSets(Model model, Item item, String dataSetId, String dataSourceId) {
-        String className  = XmlUtil.getFragmentFromURI(item.getClassName());
+        String className = item.getClassName();
         ClassDescriptor cd = model.getClassDescriptorByName(className);
         ReferenceDescriptor rd = cd.getReferenceDescriptorByName("source");
         String dataSourceClassName = "org.intermine.model.bio.DataSource";

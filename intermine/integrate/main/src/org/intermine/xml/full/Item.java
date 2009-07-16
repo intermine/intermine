@@ -493,7 +493,7 @@ public class Item implements Comparable
             return null;
         }
 
-        String fullClassName = model.getPackageName() + "." + XmlUtil.getFragmentFromURI(className);
+        String fullClassName = model.getPackageName() + "." + className;
 
         ClassDescriptor cd = model.getClassDescriptorByName(fullClassName);
 
@@ -514,8 +514,7 @@ public class Item implements Comparable
     protected void setClassDescriptor(String className) {
         if (model != null && !className.equals("")) {
             String fullClassName =
-                model.getPackageName() + "." + XmlUtil.getFragmentFromURI(className);
-
+                model.getPackageName() + "." + className;
             classDescriptor = getClassDescriptorByName(fullClassName);
         }
     }

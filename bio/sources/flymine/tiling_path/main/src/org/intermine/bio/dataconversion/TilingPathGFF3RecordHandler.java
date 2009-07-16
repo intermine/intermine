@@ -51,7 +51,7 @@ public class TilingPathGFF3RecordHandler extends GFF3RecordHandler
      */
     public void process(GFF3Record record) {
         Item feature = getFeature();
-        String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
+        String clsName = feature.getClassName();
 
         List newIds = record.getAttributes().get("newID");
         if (newIds != null) {

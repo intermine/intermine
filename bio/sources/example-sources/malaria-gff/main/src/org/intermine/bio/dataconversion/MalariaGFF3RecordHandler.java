@@ -47,7 +47,7 @@ public class MalariaGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         Item feature = getFeature();
 
-        String clsName = XmlUtil.getFragmentFromURI(feature.getClassName());
+        String clsName = feature.getClassName();
 
         if ("Gene".equals(clsName)) {
             // move Gene.primaryIdentifier to Gene.secondaryIdentifier
