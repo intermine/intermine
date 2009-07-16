@@ -109,7 +109,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
 
     /**
-     * Initialise SequenceProcessor with features that have alredy been processed and put the same
+     * Initialise SequenceProcessor with features that have already been processed and put the same
      * features data into a commonFeaturesMap that tracks features (e.g. Chromosomes) that appear
      * in multiple submissions but should only be processed once. 
      * @param initialMap map of chado feature id to FeatureData objects
