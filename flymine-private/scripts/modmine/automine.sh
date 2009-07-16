@@ -501,7 +501,7 @@ then
 # NB: if failing won't stop!! ant exit with 0!
 echo; echo "Appending new chado (metadata) to modmine-$REL.."
 cd integrate
-ant $V -Drelease=$REL -Dsource=modencode-metadata || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+ant $V -Drelease=$REL -Dsource=modencode-metadata-inc || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 elif [ $RESTART = "y" ]
 then
 # restart build after failure
