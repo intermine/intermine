@@ -54,15 +54,11 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      * Paths that can be used as initial pages ie. when there is no session.
      */
     public static final List START_PATHS =
-        Arrays.asList(new String[] {
-                          LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild",
-                          "/objectDetails", "/examples", "/browseAction",
-                          "/collectionDetails", "/iqlQuery", "/login", "/contact", "/portal",
-                          "/templates", "/templateSearch", "/template", "/aspect",
-                          "/ping", "/standalone", "/quickStart", "/importQuery", "/tree",
-                          "/headMenu", "/htmlHead", "/dataCategories", "/bagDetails"
-                          , "/results"
-                      });
+        Arrays.asList(LOGON_PATH, LOGON_INIT_PATH, "/classChooser", "/bagBuild", "/objectDetails",
+                "/examples", "/browseAction", "/collectionDetails", "/iqlQuery", "/login",
+                "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
+                "/ping", "/standalone", "/quickStart", "/importQuery", "/tree", "/headMenu",
+                "/htmlHead", "/dataCategories", "/bagDetails", "/results", "/passwordReset");
 
     /**
      * This is called during the processing of every controller

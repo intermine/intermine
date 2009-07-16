@@ -1,4 +1,4 @@
-package org.intermine.web.struts;
+package org.intermine.util;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -10,10 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
-
-import java.text.MessageFormat;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -25,33 +24,31 @@ import javax.mail.internet.MimeMessage;
 
 /**
  * Mail utilities for the webapp.
+ *
  * @author Kim Rutherford
+ * @author Matthew Wakeling
  */
 public abstract class MailUtils
 {
     /**
-     * Send a password to an email address
+     * Send a welcoming email to an email address
      *
      * @param to the address to send to
-     * @param imPassword the password to send
      * @param webProperties properties such as the from address
      * @throws Exception if there is a problem creating the email
      */
-    public static void email(String to, String imPassword, final Map webProperties)
-        throws Exception {
-
+    public static void email(String to, final Map webProperties) throws Exception {
         final String user = (String) webProperties.get("mail.smtp.user");
         String smtpPort = (String) webProperties.get("mail.smtp.port");
         String text = (String) webProperties.get("mail.text");
         String authFlag = (String) webProperties.get("mail.smtp.auth");
         String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
-        
-        text = MessageFormat.format(text, new Object[] {imPassword});
+
         Properties properties = System.getProperties();
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
-        // Fix to "javax.mail.MessagingException: 501 Syntactically 
+        // Fix to "javax.mail.MessagingException: 501 Syntactically
         // invalid HELO argument(s)" problem
         // See http://forum.java.sun.com/thread.jspa?threadID=487000&messageID=2280968
         properties.put("mail.smtp.localhost", "localhost");
@@ -86,7 +83,65 @@ public abstract class MailUtils
         message.setContent(text, "text/plain");
         Transport.send(message);
     }
-    
+
+    /**
+     * Send a password change email to an email address
+     *
+     * @param to the address to send to
+     * @param url the URL to embed in the email
+     * @param webProperties properties such as the from address
+     * @throws Exception if there is a problem creating the email
+     */
+    public static void emailPasswordToken(String to, String url, final Map webProperties)
+    throws Exception {
+        final String user = (String) webProperties.get("mail.smtp.user");
+        String smtpPort = (String) webProperties.get("mail.smtp.port");
+        String text = (String) webProperties.get("mail.passwordText");
+        String authFlag = (String) webProperties.get("mail.smtp.auth");
+        String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
+
+        Properties properties = System.getProperties();
+        text = MessageFormat.format(text, new Object[] {url});
+
+        properties.put("mail.smtp.host", webProperties.get("mail.host"));
+        properties.put("mail.smtp.user", user);
+        // Fix to "javax.mail.MessagingException: 501 Syntactically
+        // invalid HELO argument(s)" problem
+        // See http://forum.java.sun.com/thread.jspa?threadID=487000&messageID=2280968
+        properties.put("mail.smtp.localhost", "localhost");
+        if (smtpPort != null) {
+            properties.put("mail.smtp.port", smtpPort);
+        }
+
+        if (starttlsFlag != null) {
+            properties.put("mail.smtp.starttls.enable", starttlsFlag);
+        }
+        if (authFlag != null) {
+            properties.put("mail.smtp.auth", authFlag);
+        }
+
+        Session session;
+        if (authFlag != null && (authFlag.equals("true") || authFlag.equals("t"))) {
+            Authenticator authenticator = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    String password = (String) webProperties.get("mail.server.password");
+                    return new PasswordAuthentication(user, password);
+                }
+            };
+            session = Session.getDefaultInstance(properties, authenticator);
+        } else {
+            session = Session.getDefaultInstance(properties);
+        }
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(((String) webProperties.get("mail.from"))));
+        message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);
+        message.setSubject((String) webProperties.get("mail.passwordSubject"));
+        message.setContent(text, "text/plain");
+        Transport.send(message);
+    }
+
+
     /**
      * Subscribe the given email address to the mailing list specified in the
      * mine config file
@@ -136,5 +191,4 @@ public abstract class MailUtils
         message.setContent("", "text/plain");
         Transport.send(message);
     }
-
 }

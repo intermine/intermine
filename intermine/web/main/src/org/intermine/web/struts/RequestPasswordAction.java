@@ -23,8 +23,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.util.MailUtils;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.util.URLGenerator;
 
 /**
  * Action to handle button presses RequestPasswordForm
@@ -66,7 +68,10 @@ public class RequestPasswordAction extends InterMineAction
 
         if (pm.hasProfile(username)) {
             try {
-                MailUtils.email(username, pm.getPassword(username), webProperties);
+                String token = pm.createPasswordChangeToken(username);
+                MailUtils.emailPasswordToken(username, new URLGenerator(request)
+                        .getPermanentBaseURL() + "/passwordReset.do?token=" + token,
+                        webProperties);
                 recordMessage(new ActionMessage("login.emailed", username), request);
             } catch (Exception e) {
                 RequestPasswordAction.LOG.warn(e);

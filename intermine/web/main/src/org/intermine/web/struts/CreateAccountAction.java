@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.util.MailUtils;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.Profile;
@@ -59,7 +60,7 @@ public class CreateAccountAction extends LoginHandler
                 new HashMap()));
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         try {
-            MailUtils.email(username, password, webProperties);
+            MailUtils.email(username, webProperties);
             if (((CreateAccountForm) form).getMailinglist()
                 && webProperties.get("mail.mailing-list") != null
                 && ((String) webProperties.get("mail.mailing-list")).length() > 0) {

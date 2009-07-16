@@ -22,17 +22,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.profile.ProfileManager;
 
 /**
- * @author Xavier Watkins
+ * Action to change a user's password with the authority of a token previously emailed to them.
  *
+ * @author Matthew Wakeling
  */
-public class ChangePasswordAction extends InterMineAction
+public class PasswordResetAction extends LoginHandler
 {
 
     /**
-     * Method called when user has finished updating a constraint
+     * Method called when the form is submitted.
      *
      * @param mapping
      *            The ActionMapping used to select this instance
@@ -53,17 +55,26 @@ public class ChangePasswordAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        String username = ((ChangePasswordForm) form).getUsername();
-        String password = ((ChangePasswordForm) form).getNewpassword();
-        pm.setPassword(username, password);
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String token = ((PasswordResetForm) form).getToken();
+        String password = ((PasswordResetForm) form).getNewpassword();
 
+        session.removeAttribute("passwordResetToken");
         try {
+            String username = pm.changePasswordWithToken(token, password);
+            Map<String, String> renamedBags = doLogin(servletContext, request, response, session,
+                    pm, username, password);
             recordMessage(new ActionMessage("password.changed", username), request);
+            recordMessage(new ActionMessage("login.loggedin", username), request);
+            if (renamedBags.size() > 0) {
+                for (String initName : renamedBags.keySet()) {
+                    recordMessage(new ActionMessage("login.renamedbags", initName,
+                        renamedBags.get(initName)), request);
+                }
+            }
         } catch (Exception e) {
             RequestPasswordAction.LOG.warn(e);
             recordError(new ActionMessage("login.invalidemail"), request);
         }
-        return mapping.findForward("mymine");
+        return mapping.findForward("begin");
     }
 }

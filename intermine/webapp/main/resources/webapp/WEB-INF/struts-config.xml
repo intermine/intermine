@@ -32,6 +32,7 @@
     <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
     <form-bean name="excelExportForm" type="org.intermine.web.struts.TableExportForm"/>
+    <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
   </form-beans>
@@ -361,6 +362,12 @@
       <forward name="template" redirect="true" path="/template.do"/>
       <forward name="bag" redirect="true" path="/bagDetails.do"/>
     </action>
+    <action path="/passwordReset" forward="passwordReset.page" name="passwordResetForm" validate="false">
+    </action>
+    <action path="/passwordResetAction" name="passwordResetForm" input="passwordReset" type="org.intermine.web.struts.PasswordResetAction">
+      <forward name="begin" redirect="true" path="/begin.do"/>
+      <forward name="passwordReset" redirect="false" path="/passwordReset.do"/>
+    </action>
     <!-- These should all start with /init for session handling purposes -->
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
@@ -430,6 +437,7 @@
     <action path="/initAvailableColumns" type="org.intermine.web.struts.AvailableColumnsController"/>
     <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
+    <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
