@@ -142,16 +142,6 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source> 
-		<source name="modencode-metadata-inc" type="chado-db" dump="true">
-			<property name="organisms" value="7227 6239"/>
-			<property name="dataSourceName" value="modENCODE"/>
-			<property name="dataSetTitle" value="modENCODE submission"/>
-			<property name="source.db.name" value="modencode-metadata-inc"/>
-			<property name="processors"
-								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-			<property name="converter.class"
-								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-		</source>
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
