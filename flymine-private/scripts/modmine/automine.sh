@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# default usage: automine.sh rel
+# default usage: automine.sh
 #
 # note: you should put the db password in ~/.pgpass if don't
 #       want to be prompted for it
@@ -78,6 +78,7 @@ $progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DC
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
+	-r release: specify which instance to use (val, dev, build). Default is dev (not with -V or -F)
 	-s: no new loading of chado (stag is not run)
 	-v: verbode mode
 
