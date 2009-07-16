@@ -13,6 +13,7 @@ package org.intermine.metadata;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +27,14 @@ import org.intermine.util.TypeUtil;
  * Utility methods for PrimaryKey objects.
  *
  * @author Kim Rutherford
+ * @author Richard Smith
  */
 
 public abstract class PrimaryKeyUtil
 {
     protected static Map<String, Properties> modelKeys = new HashMap<String, Properties>();
+    protected static Map<ClassDescriptor, Map<String, PrimaryKey>> primaryKeyCache =
+        new IdentityHashMap<ClassDescriptor, Map<String, PrimaryKey>>();
     
     /**
      * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
@@ -40,21 +44,25 @@ public abstract class PrimaryKeyUtil
      * @return the Map from key names to PrimaryKeys
      */
     public static Map<String, PrimaryKey> getPrimaryKeys(ClassDescriptor cld) {
-        Map<String, PrimaryKey> keyMap = new LinkedHashMap<String, PrimaryKey>();
-        Properties keys = getKeyProperties(cld.getModel().getName());
-        String cldName = TypeUtil.unqualifiedName(cld.getName());
-        Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
-        cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
-        List<String> keyNames = new ArrayList<String>();
-        for (Object key : cldKeys.keySet()) {
-            if (key instanceof String) {
-                keyNames.add((String) key);
+        Map<String, PrimaryKey> keyMap = primaryKeyCache.get(cld);
+        if (keyMap == null) {
+            keyMap = new LinkedHashMap<String, PrimaryKey>();
+            Properties keys = getKeyProperties(cld.getModel().getName());
+            String cldName = TypeUtil.unqualifiedName(cld.getName());
+            Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
+            cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
+            List<String> keyNames = new ArrayList<String>();
+            for (Object key : cldKeys.keySet()) {
+                if (key instanceof String) {
+                    keyNames.add((String) key);
+                }
             }
-        }
-        Collections.sort(keyNames);
-        for (String keyName : keyNames) {
-            PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName), cld);
-            keyMap.put(keyName, key);
+            Collections.sort(keyNames);
+            for (String keyName : keyNames) {
+                PrimaryKey key = new PrimaryKey(keyName, (String) cldKeys.get(keyName), cld);
+                keyMap.put(keyName, key);
+            }
+            primaryKeyCache.put(cld, keyMap);
         }
         return keyMap;
     }
@@ -62,7 +70,7 @@ public abstract class PrimaryKeyUtil
     /**
      * Return the Properties that specify the key fields for the classes in this Model
      *
-     * @param model the Model
+     * @param modelName name of the model
      * @return the relevant Properties
      */
     public static Properties getKeyProperties(String modelName) {
