@@ -13,13 +13,11 @@ package org.intermine.xml.full;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.XmlHelper;
 
@@ -124,46 +122,6 @@ public class ItemFactory
      */
     public Item makeItemForClass(String className) {
         return makeItem(null, className, "");
-    }
-
-    /**
-    * Convert a data model item to an XML one
-    * @param item the data model Item
-    * @return an equivalent XML Item
-    */
-    protected static Item makeItem(org.intermine.model.fulldata.Item item) {
-        Item newItem = new Item();
-        newItem.setIdentifier(item.getIdentifier());
-        newItem.setClassName(item.getClassName());
-        newItem.setImplementations(item.getImplementations());
-
-        for (Iterator i = item.getAttributes().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.Attribute attr =
-                (org.intermine.model.fulldata.Attribute) i.next();
-            Attribute newAttr = new Attribute();
-            newAttr.setName(attr.getName());
-            newAttr.setValue(attr.getValue());
-            newItem.addAttribute(newAttr);
-        }
-
-        for (Iterator i = item.getReferences().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.Reference ref =
-                (org.intermine.model.fulldata.Reference) i.next();
-            Reference newRef = new Reference();
-            newRef.setName(ref.getName());
-            newRef.setRefId(ref.getRefId());
-            newItem.addReference(newRef);
-        }
-
-        for (Iterator i = item.getCollections().iterator(); i.hasNext();) {
-            org.intermine.model.fulldata.ReferenceList refs
-                = (org.intermine.model.fulldata.ReferenceList) i.next();
-            ReferenceList newRefs = new ReferenceList(refs.getName(),
-                                                      StringUtil.tokenize(refs.getRefIds()));
-            newItem.addCollection(newRefs);
-        }
-
-        return newItem;
     }
 
 
