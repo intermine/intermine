@@ -14,7 +14,7 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/ui.datepicker.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 
-<link href="${WEB_PROPERTIES['project.sitePrefix']}/rss.xml" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
+<link href="${WEB_PROPERTIES['project.rss']}" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
 
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
