@@ -22,6 +22,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.intermine.web.logic.Constants;
+
 /**
  * Mail utilities for the webapp.
  *
@@ -96,12 +98,12 @@ public abstract class MailUtils
     throws Exception {
         final String user = (String) webProperties.get("mail.smtp.user");
         String smtpPort = (String) webProperties.get("mail.smtp.port");
-        String text = (String) webProperties.get("mail.passwordText");
+        String mailText = (String) webProperties.get("mail.passwordText");
         String authFlag = (String) webProperties.get("mail.smtp.auth");
         String starttlsFlag = (String) webProperties.get("mail.smtp.starttls.enable");
 
         Properties properties = System.getProperties();
-        text = MessageFormat.format(text, new Object[] {url});
+        mailText = MessageFormat.format(mailText, new Object[] {url});
 
         properties.put("mail.smtp.host", webProperties.get("mail.host"));
         properties.put("mail.smtp.user", user);
@@ -133,11 +135,16 @@ public abstract class MailUtils
         } else {
             session = Session.getDefaultInstance(properties);
         }
+
+        String projectTitle = (String) webProperties.get("project.title");
+        String baseSubject = (String) webProperties.get("mail.passwordSubject");
+        String mailSubject = MessageFormat.format(baseSubject, new Object[] {projectTitle});
+
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(((String) webProperties.get("mail.from"))));
         message.addRecipient(Message.RecipientType.TO, InternetAddress.parse(to, true)[0]);
-        message.setSubject((String) webProperties.get("mail.passwordSubject"));
-        message.setContent(text, "text/plain");
+        message.setSubject(mailSubject);
+        message.setContent(mailText, "text/plain");
         Transport.send(message);
     }
 
