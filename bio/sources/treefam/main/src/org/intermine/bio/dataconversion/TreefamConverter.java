@@ -45,7 +45,7 @@ public class TreefamConverter extends BioFileConverter
     private Set<String> taxonIds = new HashSet();
     protected File geneFile;
     private Map<String, GeneHolder> idsToGenes = new HashMap();
-    private Map<String, Item> identifiersToGenes = new HashMap();
+    private Map<String, String> identifiersToGenes = new HashMap();
     private Set<String> synonyms = new HashSet();
     private Map<String, String> organisms = new HashMap();
     private Map<String, String[]> config = new HashMap();
@@ -134,9 +134,9 @@ public class TreefamConverter extends BioFileConverter
                 identifierType = configs[1];
             }
 
-            Item gene = getGene(identifierType, identifier, taxonId);
-            if (gene != null) {
-                idsToGenes.put(id, new GeneHolder(id, identifier, gene));
+            String geneRefId = getGene(identifierType, identifier, taxonId);
+            if (geneRefId != null) {
+                idsToGenes.put(id, new GeneHolder(id, identifier, geneRefId, taxonId));
             }
         }
     }
@@ -209,24 +209,13 @@ public class TreefamConverter extends BioFileConverter
             if (holder1 != null) {
                 GeneHolder holder2 = idsToGenes.get(gene2id);
                 if (holder2 != null) {
-                    Item gene1 = holder1.getGene();
-                    Item gene2 = holder2.getGene();
-                    processHomologues(gene1, gene2, bootstrap);
-                    processHomologues(gene2, gene1, bootstrap);
+                    processHomologues(holder1, holder2, bootstrap);
+                    processHomologues(holder2, holder1, bootstrap);
                     holder1.setHomologue(true);
                     holder2.setHomologue(true);
                 }
             }
 
-        }
-        for (Map.Entry<String, Item> entry : identifiersToGenes.entrySet()) {
-            Item gene = entry.getValue();
-            try {
-                store(gene);
-                getSynonym(gene.getIdentifier(), "identifier", entry.getKey());
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
         }
     }
 
@@ -245,19 +234,22 @@ public class TreefamConverter extends BioFileConverter
 //            }
 //        }
 
-    private void processHomologues(Item gene1, Item gene2, String bootstrap)
+    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
     throws ObjectStoreException {
+
+        String gene1 = holder1.getGeneRefId();
+        String gene2 = holder2.getGeneRefId();
+
         Item homologue = createItem("Homologue");
         homologue.setAttribute("bootstrapScore", bootstrap);
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         String type = "orthologue";
-        String refId = gene1.getReference("organism").getRefId();
-        if (gene2.getReference("organism").getRefId().equals(refId)) {
+        if (holder1.getTaxonId().equals(holder2.getTaxonId())) {
             type = "paralogue";
         }
         homologue.setAttribute("type", type);
-        gene1.addToCollection("homologues", homologue);
+        //gene1.addToCollection("homologues", homologue);
         try {
             store(homologue);
         } catch (ObjectStoreException e) {
@@ -265,7 +257,7 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    private Item getGene(String identifierType, String id, String taxonId)
+    private String getGene(String identifierType, String id, String taxonId)
     throws ObjectStoreException {
         String identifier = id;
         if (taxonId.equals("7227")) {
@@ -274,14 +266,22 @@ public class TreefamConverter extends BioFileConverter
                 return null;
             }
         }
-        Item gene = identifiersToGenes.get(identifier);
-        if (gene == null) {
-            gene = createItem("Gene");
+        String refId = identifiersToGenes.get(identifier);
+        if (refId == null) {
+            Item gene = createItem("Gene");
+            refId = gene.getIdentifier();
             gene.setAttribute(identifierType, identifier);
             gene.setReference("organism", getOrganism(taxonId));
-            identifiersToGenes.put(identifier, gene);
+            identifiersToGenes.put(identifier, refId);
+            getSynonym(refId, "identifier", identifier);
+            try {
+                store(gene);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+
         }
-        return gene;
+        return refId;
     }
 
     private void getSynonym(String subjectId, String type, String value)
@@ -331,17 +331,20 @@ public class TreefamConverter extends BioFileConverter
         boolean isHomologue = false;
         String id = null;
         String identifier = null;
-        Item gene = null;
+        String geneRefId = null;
+        String taxonId = null;
 
         /**
          * @param id internal treefam database id, an integer
          * @param identifier gene identifier, eg FBgn
-         * @param gene gene object
+         * @param geneRefId id representing the gene object
+         * @param taxonId organism for this gene
          */
-        public GeneHolder(String id, String identifier, Item gene) {
+        public GeneHolder(String id, String identifier, String geneRefId, String taxonId) {
             this.id = id;
             this.identifier = identifier;
-            this.gene = gene;
+            this.geneRefId = geneRefId;
+            this.taxonId = taxonId;
         }
 
         /**
@@ -373,17 +376,17 @@ public class TreefamConverter extends BioFileConverter
         }
 
         /**
-         * @return the gene
+         * @return the id representing the gene object
          */
-        public Item getGene() {
-            return gene;
+        public String getGeneRefId() {
+            return geneRefId;
         }
 
         /**
-         * @param gene the gene to set
+         * @return taxonid
          */
-        public void setGene(Item gene) {
-            this.gene = gene;
+        public String getTaxonId() {
+            return taxonId;
         }
 
         /**
