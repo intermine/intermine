@@ -34,7 +34,7 @@
 <script type="text/javascript" src="js/toolbar.js"></script>
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
-        jQuery(".tb_button").click(function () { 
+        jQuery(".tb_button").click(function () {
             toggleToolBarMenu(this);
         });
     })
@@ -130,30 +130,30 @@
 </div>
 
 <table style="margin-top: 10px;">
-	<tr>
-		<td><tiles:insert name="paging.tile">
-		  <tiles:put name="resultsTable" beanName="pagedResults" />
-		  <tiles:put name="currentPage" value="bagDetails" />
-		  <tiles:put name="bag" beanName="bag" />
-		</tiles:insert></td>
-		<c:if test="${! empty PROFILE.username}">
-			<td><div style="background-color: #F5F0FF; margin-left: 10px; padding-top: 3px; padding-bottom: 3px; padding-left: 10px; padding-right: 10px;">
-				<table>
-					<tr>
-						<td><b>Tags&nbsp;&nbsp;</b></td>
-						<td>
-							<c:set var="taggable" value="${bag}"/>
-							<tiles:insert name="inlineTagEditor.tile">
-				       			<tiles:put name="taggable" beanName="taggable"/>
-				       			<tiles:put name="vertical" value="true"/>
-			    	   			<tiles:put name="show" value="true"/>
-			     			</tiles:insert>
-						 </td>
-					</tr>
-				</table>
-		    </div></td>
-		</c:if>		    
-	</tr>
+  <tr>
+    <td><tiles:insert name="paging.tile">
+      <tiles:put name="resultsTable" beanName="pagedResults" />
+      <tiles:put name="currentPage" value="bagDetails" />
+      <tiles:put name="bag" beanName="bag" />
+    </tiles:insert></td>
+    <c:if test="${! empty PROFILE.username}">
+      <td><div style="background-color: #F5F0FF; margin-left: 10px; padding-top: 3px; padding-bottom: 3px; padding-left: 10px; padding-right: 10px;">
+        <table>
+          <tr>
+            <td><b>Tags&nbsp;&nbsp;</b></td>
+            <td>
+              <c:set var="taggable" value="${bag}"/>
+              <tiles:insert name="inlineTagEditor.tile">
+                     <tiles:put name="taggable" beanName="taggable"/>
+                     <tiles:put name="vertical" value="true"/>
+                     <tiles:put name="show" value="true"/>
+                 </tiles:insert>
+             </td>
+          </tr>
+        </table>
+        </div></td>
+    </c:if>
+  </tr>
 </table>
 
 <div id="clearLine">&nbsp;</div>
@@ -227,10 +227,22 @@
 </p>
 </div>
 </html:form>
+
+<!-- link outs -->
+<div id="linkOuts" class="listtoolbox" align="left">
+  <h3>Link outs</h3>
+     <p>
+  <tiles:insert name="attributeLinkDisplayer.tile">
+       <tiles:put name="bag" beanName="bag" />
+  </tiles:insert>
+  </p>
+</div>
+
+<!--
 <tiles:insert page="/bagDisplayers.jsp">
    <tiles:put name="bag" beanName="bag"/>
 </tiles:insert>
-
+ -->
 </TD></TR>
 </TABLE>
 
