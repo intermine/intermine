@@ -115,6 +115,10 @@
     <put name="body" value="error.tile"/>
     <put name="pageName" value="error"/>
   </definition>
+  <definition name="pagenotfound.page" extends="layout.template">
+    <put name="body" value="pagenotfound.tile"/>
+    <put name="pageName" value="error"/>
+  </definition>
   <definition name="createAccount.page" extends="layout.template">
     <put name="body" value="createAccount.jsp"/>
     <put name="pageName" value="createAccount"/>
@@ -167,6 +171,7 @@
   <definition name="htmlHead.page" path="/htmlHead.jsp"/>
   <!--tiles-->
   <definition name="error.tile" path="/error.jsp"/>
+  <definition name="pagenotfound.tile" path="/pagenotfound.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="tipWrapper.tile" path="/tipWrapper.jsp"/>
   <definition name="login.tile" path="/login.jsp" controllerUrl="/initLogin.do"/>
