@@ -177,14 +177,18 @@
 
   <error-page>
     <error-code>500</error-code>
-    <location>/static/offline.shtml</location>
+    <location>/static/flymine-offline/</location>
   </error-page>
   <error-page>
     <error-code>502</error-code>
-    <location>/static/offline.shtml</location>
+    <location>/static/flymine-offline/</location>
   </error-page>
   <error-page>
     <error-code>503</error-code>
-    <location>/static/offline.shtml</location>
+    <location>/static/flymine-offline/</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/pagenotfound.do</location>
   </error-page>
 </web-app>
