@@ -44,12 +44,12 @@ public class PsiConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(PsiConverter.class);
     private static final String PROP_FILE = "psi-intact_config.properties";
-    private Map<String, String> organisms = new HashMap<String, String>();
-    private Map<String, String> pubs = new HashMap<String, String>();
-    private Map<String, Object> experimentNames = new HashMap<String, Object>();
-    private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, String> organisms = new HashMap();
+    private Map<String, String> pubs = new HashMap();
+    private Map<String, Object> experimentNames = new HashMap();
+    private Map<String, String> terms = new HashMap();
     private String termId = null;
-    private Map<String, Item> genes = new  HashMap<String, Item>();
+    private Map<String, Item> genes = new  HashMap();
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
     private Map<String, String[]> config = new HashMap();
@@ -70,7 +70,7 @@ public class PsiConverter extends BioFileConverter
         try {
             termId = getTerm("MI:0117");
         } catch (SAXException e) {
-            throw new RuntimeException("ack");
+            throw new RuntimeException("couldn't save ontology term");
         }
     }
 
