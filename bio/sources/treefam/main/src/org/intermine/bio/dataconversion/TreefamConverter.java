@@ -136,7 +136,7 @@ public class TreefamConverter extends BioFileConverter
 
             String geneRefId = getGene(identifierType, identifier, taxonId);
             if (geneRefId != null) {
-                idsToGenes.put(id, new GeneHolder(id, identifier, geneRefId, taxonId));
+                idsToGenes.put(id, new GeneHolder(identifier, geneRefId, taxonId));
             }
         }
     }
@@ -211,28 +211,11 @@ public class TreefamConverter extends BioFileConverter
                 if (holder2 != null) {
                     processHomologues(holder1, holder2, bootstrap);
                     processHomologues(holder2, holder1, bootstrap);
-                    holder1.setHomologue(true);
-                    holder2.setHomologue(true);
                 }
             }
 
         }
     }
-
-
-// TODO only store homologues, idsToGenes is has duplicate gene objects
-//        for (Map.Entry<String, GeneHolder> entry : idsToGenes.entrySet()) {
-//            GeneHolder holder = entry.getValue();
-//            if (holder.isHomologue()) {
-//                Item item = holder.getGene();
-//                try {
-//                    store(item);
-//                    getSynonym(item.getIdentifier(), "identifier", holder.getIdentifier());
-//                } catch (ObjectStoreException e) {
-//                    throw new ObjectStoreException(e);
-//                }
-//            }
-//        }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
     throws ObjectStoreException {
@@ -328,51 +311,27 @@ public class TreefamConverter extends BioFileConverter
      */
     public class GeneHolder
     {
-        boolean isHomologue = false;
-        String id = null;
         String identifier = null;
         String geneRefId = null;
         String taxonId = null;
 
         /**
-         * @param id internal treefam database id, an integer
          * @param identifier gene identifier, eg FBgn
          * @param geneRefId id representing the gene object
          * @param taxonId organism for this gene
          */
-        public GeneHolder(String id, String identifier, String geneRefId, String taxonId) {
-            this.id = id;
+        public GeneHolder(String identifier, String geneRefId, String taxonId) {
             this.identifier = identifier;
             this.geneRefId = geneRefId;
             this.taxonId = taxonId;
         }
 
-        /**
-         * @return the id
-         */
-        public String getId() {
-            return id;
-        }
-
-        /**
-         * @param id the id to set
-         */
-        public void setId(String id) {
-            this.id = id;
-        }
 
         /**
          * @return the identifier
          */
         public String getIdentifier() {
             return identifier;
-        }
-
-        /**
-         * @param identifier the identifier to set
-         */
-        public void setIdentifier(String identifier) {
-            this.identifier = identifier;
         }
 
         /**
@@ -388,21 +347,6 @@ public class TreefamConverter extends BioFileConverter
         public String getTaxonId() {
             return taxonId;
         }
-
-        /**
-         * @return the isHomologue
-         */
-        public boolean isHomologue() {
-            return isHomologue;
-        }
-
-        /**
-         * @param isHomologue the isHomologue to set
-         */
-        public void setHomologue(boolean isHomologue) {
-            this.isHomologue = isHomologue;
-        }
-
     }
 
     private String resolveGene(String identifier) {
