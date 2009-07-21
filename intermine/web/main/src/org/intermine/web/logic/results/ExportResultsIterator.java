@@ -32,6 +32,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.query.MainHelper;
 
+import org.apache.log4j.Logger;
+
 /**
  * An Iterator that produces data in a format suitable for exporting. The data is flattened, so if
  * there are outer joined collections, there may be more rows than in the original results.
@@ -40,6 +42,8 @@ import org.intermine.web.logic.query.MainHelper;
  */
 public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
+    private static final Logger LOG = Logger.getLogger(ExportResultsIterator.class);
+    
     private Iterator<List> osIter;
     private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
@@ -130,7 +134,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         try {
             ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());    
         } catch (ObjectStoreException ex) {
-            throw new RuntimeException("Error happened during executing goFaster method.", ex);
+            LOG.error("Error happened during executing goFaster method.", ex);
         }
     }
 
@@ -144,7 +148,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
                     .getQuery());    
         } catch (ObjectStoreException ex) {
-            throw new RuntimeException("Error happened during executing goFaster method.", ex);
+            LOG.error("Error happened during executing releaseGoFaster method.", ex);
         }
     }
 
