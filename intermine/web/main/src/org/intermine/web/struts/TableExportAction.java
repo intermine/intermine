@@ -46,7 +46,7 @@ public class TableExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(TableExportAction.class);
 
-    private static final String ERROR_MSG = "Export failed. Please contact support.";
+    private static final String ERROR_MSG = "Export failed.";
 
     /**
      * Method called to export a PagedTable object.  Uses the type request parameter to choose the
@@ -87,7 +87,7 @@ public class TableExportAction extends InterMineAction
             return null;
         } catch (RuntimeException e) {
             return processException(mapping, request, response, e);
-        } 
+        }
     }
 
     private void checkTable(PagedTable pt) {
@@ -101,7 +101,7 @@ public class TableExportAction extends InterMineAction
                     + pt.getMaxRetrievableIndex() + " rows.");
         }
     }
-    
+
     /**
      * Copy the old PagedTable and make one with the new paths
      */
