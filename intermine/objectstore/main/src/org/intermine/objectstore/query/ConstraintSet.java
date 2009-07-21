@@ -93,12 +93,20 @@ public class ConstraintSet extends Constraint
         return false;
     }
     /**
-     * Get the hashCode for this object overrides Object.hashCode()
+     * Get the hashCode for this object overrides Object.hashCode().
      *
      * @return the hashCode
      */
     public int hashCode() {
         return constraints.hashCode() + 3 * op.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "ConstraintSet@" + Integer.toHexString(System.identityHashCode(this)) + "(" + op
+                + ", " + constraints + ")";
     }
 
     protected static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.AND,

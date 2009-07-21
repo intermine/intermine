@@ -202,7 +202,6 @@ public class MainHelper
         }
     }
 
-
     /**
      * Make an InterMine query from a path query
      * @param query the PathQuery
@@ -320,6 +319,7 @@ public class MainHelper
     throws ObjectStoreException {
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
+        List<CsTreeStructure> csTreeStructure = new ArrayList<CsTreeStructure>();
         ConstraintSet rootcs = null;
         ConstraintSet andcs = new ConstraintSet(ConstraintOp.AND);
 
@@ -329,7 +329,7 @@ public class MainHelper
         Set<PathNode> nonOuterNodes = findNonOuterNodes(pathQuery.getNodes(), root);
         Set<String> relevantCodes = findRelevantCodes(nonOuterNodes);
         LogicExpression logic = pathQuery.getLogic();
-        logic = logic == null ? null : pathQuery.getLogic().getSection(relevantCodes);
+        logic = logic == null ? null : logic.getSection(relevantCodes);
 
         if (relevantCodes.size() == 1) {
             codeToCS.put(relevantCodes.iterator().next(), andcs);
@@ -339,9 +339,8 @@ public class MainHelper
                         + "constraint logic. Query: " + PathQueryBinding.marshal(pathQuery,
                             "", "", PathQuery.USERPROFILE_VERSION));
             }
-            rootcs = makeConstraintSets(logic, codeToCS, andcs);
+            rootcs = makeConstraintSets(logic, codeToCS, andcs, csTreeStructure);
         }
-        q.setConstraint(andcs);
         if ((rootcs != null) && (rootcs != andcs)) {
             andcs.addConstraint(rootcs);
         }
@@ -558,13 +557,6 @@ public class MainHelper
         // forwards in the query so we can't process these in the above loop.
         makeQueryProcessLoopsHelper(pathQuery, codeToCS, loops, queryBits);
 
-        if (andcs.getConstraints().isEmpty()) {
-            q.setConstraint(null);
-        } else if (andcs.getConstraints().size() == 1) {
-            q.setConstraint((org.intermine.objectstore.query.Constraint)
-                    (andcs.getConstraints().iterator().next()));
-        }
-
         // build the SELECT list
         HashSet<PathNode> done = new HashSet<PathNode>();
         List<QuerySelectable> added = new ArrayList<QuerySelectable>();
@@ -708,6 +700,32 @@ public class MainHelper
         // caller might want path to query node map (e.g. PrecomputeTask)
         if (pathToQueryNode != null) {
             pathToQueryNode.putAll(queryBits);
+        }
+
+        // Construct the constraintSet tree structure
+        Map<ConstraintSet, ConstraintSet> csTreeStructureMap = new LinkedHashMap<ConstraintSet,
+            ConstraintSet>();
+        for (CsTreeStructure csts : csTreeStructure) {
+            csTreeStructureMap.put(csts.getChild(), csts.getParent());
+        }
+        while (!csTreeStructureMap.isEmpty()) {
+            Iterator<Map.Entry<ConstraintSet, ConstraintSet>> iter = csTreeStructureMap.entrySet()
+                .iterator();
+            while (iter.hasNext()) {
+                Map.Entry<ConstraintSet, ConstraintSet> entry = iter.next();
+                if (!csTreeStructureMap.containsValue(entry.getKey())) {
+                    iter.remove();
+                    entry.getValue().addConstraint(entry.getKey());
+                }
+            }
+        }
+        if (andcs.getConstraints().isEmpty()) {
+            q.setConstraint(null);
+        } else if (andcs.getConstraints().size() == 1) {
+            q.setConstraint((org.intermine.objectstore.query.Constraint)
+                    (andcs.getConstraints().iterator().next()));
+        } else {
+            q.setConstraint(andcs);
         }
     }
 
@@ -1002,18 +1020,25 @@ public class MainHelper
      * @param logic the parsed logic expression
      * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
      * @param andcs an AND ConstraintSet that could be used as the root
+     * @param csTreeStructure a List detailing which ConstraintSets should be inside which other
+     * ConstraintSets. This is needed so that the tree structure can be assembled after the
+     * ConstraintSets are populated with Constraints, so they don't change their hashcode when they
+     * are in a HashSet.
      * @return root ConstraintSet
      */
     protected static ConstraintSet makeConstraintSets(LogicExpression logic,
-                            Map<String, ConstraintSet> codeToConstraintSet, ConstraintSet andcs) {
+            Map<String, ConstraintSet> codeToConstraintSet, ConstraintSet andcs,
+            List<CsTreeStructure> csTreeStructure) {
         LogicExpression.Node node = logic.getRootNode();
         ConstraintSet root;
         if (node instanceof LogicExpression.And) {
             root = andcs;
-            makeConstraintSets((LogicExpression.And) node, root, codeToConstraintSet);
+            makeConstraintSets((LogicExpression.And) node, root, codeToConstraintSet,
+                    csTreeStructure);
         } else if (node instanceof LogicExpression.Or) {
             root = new ConstraintSet(ConstraintOp.OR);
-            makeConstraintSets((LogicExpression.Or) node, root, codeToConstraintSet);
+            makeConstraintSets((LogicExpression.Or) node, root, codeToConstraintSet,
+                    csTreeStructure);
         } else {
             throw new IllegalArgumentException("logic expression must contain a root operator");
         }
@@ -1025,30 +1050,40 @@ public class MainHelper
      * Given a Node in the expression logic and set of constraints, generate a tree of
      * ConstraintSets that reflects the expression and add entries to the codeToConstraintSet Map
      * from map from constraint code to ConstraintSet.
+     *
      * @param node a Node in the expression
      * @param set the constraints under this node
      * @param codeToConstraintSet output mapping from constraint code to ConstraintSet object
+     * @param csTreeStructure a List detailing which ConstraintSets should be inside which other
+     * ConstraintSets. This is needed so that the tree structure can be assembled after the
+     * ConstraintSets are populated with Constraints, so they don't change their hashcode when they
+     * are in a HashSet.
      */
     public static void makeConstraintSets(LogicExpression.Operator node, ConstraintSet set,
-                                          Map<String, ConstraintSet> codeToConstraintSet) {
+            Map<String, ConstraintSet> codeToConstraintSet,
+            List<CsTreeStructure> csTreeStructure) {
         Iterator iter = node.getChildren().iterator();
         while (iter.hasNext()) {
             LogicExpression.Node child = (LogicExpression.Node) iter.next();
             if (child instanceof LogicExpression.And) {
                 if (set.getOp() == ConstraintOp.AND) {
-                    makeConstraintSets((LogicExpression.And) child, set, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.And) child, set, codeToConstraintSet,
+                            csTreeStructure);
                 } else {
                     ConstraintSet childSet = new ConstraintSet(ConstraintOp.AND);
-                    set.addConstraint(childSet);
-                    makeConstraintSets((LogicExpression.And) child, childSet, codeToConstraintSet);
+                    csTreeStructure.add(new CsTreeStructure(set, childSet));
+                    makeConstraintSets((LogicExpression.And) child, childSet, codeToConstraintSet,
+                            csTreeStructure);
                 }
             } else if (child instanceof LogicExpression.Or) {
                 if (set.getOp() == ConstraintOp.OR) {
-                    makeConstraintSets((LogicExpression.Or) child, set, codeToConstraintSet);
+                    makeConstraintSets((LogicExpression.Or) child, set, codeToConstraintSet,
+                            csTreeStructure);
                 } else {
                     ConstraintSet childSet = new ConstraintSet(ConstraintOp.OR);
-                    set.addConstraint(childSet);
-                    makeConstraintSets((LogicExpression.Or) child, childSet, codeToConstraintSet);
+                    csTreeStructure.add(new CsTreeStructure(set, childSet));
+                    makeConstraintSets((LogicExpression.Or) child, childSet, codeToConstraintSet,
+                            csTreeStructure);
                 }
             } else {
                 // variable
@@ -1300,7 +1335,6 @@ public class MainHelper
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
                 bagQueryRunner);
     }
-        
 
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
@@ -1312,11 +1346,9 @@ public class MainHelper
      * @param bagQueryRunner a BagQueryRunner to execute bag queries
      * @return the generated summary query
      */
-     public static Query makeSummaryQuery(PathQuery pathQuery,
-             String summaryPath,
-             Map<String, InterMineBag> savedBags,
-             Map<String, QuerySelectable> pathToQueryNode,
-             BagQueryRunner bagQueryRunner) {   
+    public static Query makeSummaryQuery(PathQuery pathQuery, String summaryPath,
+            Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
+            BagQueryRunner bagQueryRunner) {
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap();
         Query subQ = null;
         try {
@@ -1363,7 +1395,7 @@ public class MainHelper
                     if ((!oldSelect.contains(qs))
                             && (!oldSelect.contains(new PathExpressionField(qope, 0)))) {
                         throw new IllegalArgumentException("QueryObjectPathExpression is too deeply"
-                               + " nested");
+                                + " nested");
                     }
                     // We need to add QueryClasses to the query for this outer join. This will make
                     // it an inner join, so the "no object" results will disappear.
@@ -1509,5 +1541,45 @@ public class MainHelper
             throw new IllegalArgumentException("Cannot summarise this column");
         }
         return q;
+    }
+
+    /**
+     * Class holding a tree structure relationship for a ConstraintSet that should be inside
+     * another ConstraintSet.
+     *
+     * @author Matthew Wakeling
+     */
+    protected static class CsTreeStructure
+    {
+        private ConstraintSet parent, child;
+
+        /**
+         * Constructor.
+         *
+         * @param parent the parent ConstraintSet
+         * @param child the ConstraintSet that should be placed inside the parent
+         */
+        public CsTreeStructure(ConstraintSet parent, ConstraintSet child) {
+            this.parent = parent;
+            this.child = child;
+        }
+
+        /**
+         * Returns the parent ConstraintSet.
+         *
+         * @return a ConstraintSet
+         */
+        public ConstraintSet getParent() {
+            return parent;
+        }
+
+        /**
+         * Returns the child ConstraintSet.
+         *
+         * @return a ConstraintSet
+         */
+        public ConstraintSet getChild() {
+            return child;
+        }
     }
 }
