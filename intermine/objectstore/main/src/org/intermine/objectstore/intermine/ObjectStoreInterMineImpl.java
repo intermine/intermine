@@ -1943,6 +1943,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 goFasterCountMap.put(q, new Integer(1));
             } catch (SQLException e) {
                 throw new ObjectStoreException(e);
+            } catch (IllegalArgumentException e) {
+                throw new ObjectStoreException(e);
             }
         }
     }
