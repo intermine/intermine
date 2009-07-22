@@ -46,8 +46,4 @@ public class ZfinIdentifiersConverterTest extends MockItemsTestCase
 
         assertEquals(readItemSet("ZfinIdentifiersConverterTest_tgt.xml"), itemWriter.getItems());
     }
-
-    protected Collection getExpectedItems() throws Exception {
-        return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ZfinIdentifiersConverterTest.xml"));
-    }
 }
