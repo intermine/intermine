@@ -102,9 +102,6 @@ public class BDGPinsituDataSetLdr implements DataSetLdr
     }
 
     private Query createQuery(InterMineBag bag, boolean calcTotal) {
-
-
-
         QueryClass mrnaResult = new QueryClass(MRNAExpressionResult.class);
         QueryClass gene = new QueryClass(Gene.class);
         QueryClass ds = new QueryClass(DataSet.class);
