@@ -45,6 +45,13 @@
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
   </class>
 
+  <class className="org.intermine.model.bio.ExpressionResult">
+    <fields>
+      <fieldconfig fieldExpr="stageRange"/>
+      <fieldconfig fieldExpr="expressed"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Gene">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -215,6 +222,16 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
+
+  <class className="org.intermine.model.bio.Stage">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
@@ -237,6 +254,16 @@
 
 <!-- widgets -->
    <widgets>
+
+      <graphdisplayer id="zfinexpr" title="ZFIN expression patterns"
+                      link="org.fishmine.web.widget.ZfinExprGraphURLGenerator"
+                      dataSetLoader="org.fishmine.web.widget.ZfinExprDataSetLdr"
+                      description="Expression patterns"
+                      domainLabel="Stage"
+                      rangeLabel="Gene count"
+                      typeClass="org.intermine.model.bio.Gene"
+                      graphType="BarChart" />
+<!--
 
          <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
@@ -277,7 +304,7 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
-
+-->
 
     </widgets>
 </webconfig>
