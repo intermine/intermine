@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
 import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;
@@ -28,8 +29,6 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
 import org.intermine.web.logic.bag.IdUpgrader;
 
-import org.apache.log4j.Logger;
-
 /**
  * Bag object id upgrader that uses the primary keys to find the objects in the new ObjectStore.
  * @author Kim Rutherford
@@ -40,7 +39,8 @@ public class PkQueryIdUpgrader implements IdUpgrader
             .getLogger(PkQueryIdUpgrader.class);
     private Source source = null;
     EquivalentObjectFetcher eof;
-    private Map<Integer, Set<Integer>> newIdsCache = new HashMap<Integer, Set<Integer>>();
+    private IntToIntMap newIdsCacheSingle = new IntToIntMap();
+    private Map<Integer, Set<Integer>> newIdsCacheMultiple = new HashMap<Integer, Set<Integer>>();
     private int cacheHits = 0;
     private int cacheLookups = 0;
     
@@ -84,9 +84,10 @@ public class PkQueryIdUpgrader implements IdUpgrader
             LOG.info("newIdsCache - hits: " + cacheHits + " lookups: " + cacheLookups
                     + " queries: " + (cacheLookups - cacheHits));
         }
-        if (newIdsCache.containsKey(oldObject.getId())) {
+        Set<Integer> idsFromCache = fetchFromCache(oldObject.getId());
+        if (idsFromCache != null) {
             cacheHits++;
-            return newIdsCache.get(oldObject.getId());
+            return idsFromCache;
         }
 
         Query query;
@@ -112,7 +113,9 @@ public class PkQueryIdUpgrader implements IdUpgrader
         if (size == 0) {
             LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
                       + " executed query: " + query);
-            return new HashSet<Integer>();
+            Set<Integer> emptySet = new HashSet<Integer>();
+            cacheNewIds(oldObject.getId(), emptySet);
+            return emptySet;
         } else {
             if (size > 1) {
                 LOG.error("createPKQuery() query didn't return 1 result for: "
@@ -128,9 +131,28 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
                 returnSet.add(newObject.getId());
             }
-            newIdsCache.put(oldObject.getId(), returnSet);
+            cacheNewIds(oldObject.getId(), returnSet);
 
             return returnSet;
         }
+    }
+    
+    private void cacheNewIds(Integer oldId, Set<Integer> newIds) {
+        if (newIds.size() == 1) {
+            Integer newId = newIds.iterator().next();
+            newIdsCacheSingle.put(oldId, newId);
+        } else {
+            newIdsCacheMultiple.put(oldId, newIds);
+        }
+    }
+    
+    
+    private Set<Integer> fetchFromCache(Integer oldId) {
+        Integer newId = newIdsCacheSingle.get(oldId);
+        if (newId != null) {
+            return new HashSet<Integer>(Collections.singleton(newId));
+        }
+        // return the value or null
+        return newIdsCacheMultiple.get(newId);
     }
 }
