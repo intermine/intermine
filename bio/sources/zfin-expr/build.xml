@@ -1,0 +1,5 @@
+<project name="zfin-expr" default="default" basedir=".">
+  <description>build, test, package zfin-expr</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
