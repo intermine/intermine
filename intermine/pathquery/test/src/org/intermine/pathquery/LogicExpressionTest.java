@@ -118,12 +118,51 @@ public class LogicExpressionTest extends TestCase
     public void test6() {
         LogicExpression l = new LogicExpression("A and (B or C and D)");
         assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
-        assertEquals("A and (B or C and D)", l.toString());
+        assertEquals("A and (B or (C and D))", l.toString());
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B or (C and D)")), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C", "D"))));
         try {
             l.split(Arrays.asList(Arrays.asList("A", "B", "C"), Arrays.asList("D")));
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testRemoveVariables1() {
+        LogicExpression l = new LogicExpression("(A or B) and (C or D)");
+        assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
+        assertEquals("(A or B) and (C or D)", l.toString());
+        l.removeAllVariablesExcept(Arrays.asList("C", "D"));
+        assertEquals("C or D", l.toString());
+    }
+
+    public void testRemoveVariables2() {
+        LogicExpression l = new LogicExpression("(A or B) and (C or D)");
+        assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
+        assertEquals("(A or B) and (C or D)", l.toString());
+        l.removeVariable("A");
+        assertEquals("B and (C or D)", l.toString());
+        l.removeVariable("B");
+        assertEquals("C or D", l.toString());
+    }
+
+    public void testBrackets1() {
+        LogicExpression l = new LogicExpression("A and B or C");
+        assertEquals("(A and B) or C", l.toString());
+    }
+
+    public void testBrackets2() {
+        LogicExpression l = new LogicExpression("A and (B or C)");
+        assertEquals("A and (B or C)", l.toString());
+    }
+
+    public void testBrackets3() {
+        LogicExpression l = new LogicExpression("(A and B) or C");
+        assertEquals("(A and B) or C", l.toString());
+    }
+
+    public void testPrecedence() {
+        assertTrue(true || true && false);
+        assertTrue(true || (true && false));
+        assertFalse((true || true) && false);
     }
 }
