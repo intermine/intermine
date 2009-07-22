@@ -10,6 +10,7 @@ package org.fishmine.web.widget;
  *
  */
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -25,6 +26,7 @@ import org.jfree.data.category.CategoryDataset;
  */
 public class ZfinExprGraphURLGenerator implements GraphCategoryURLGenerator
 {
+    private static final Logger LOG = Logger.getLogger(ZfinExprGraphURLGenerator.class);
     private String bagName;
 
     /**
@@ -45,7 +47,6 @@ public class ZfinExprGraphURLGenerator implements GraphCategoryURLGenerator
         super();
         this.bagName = bagName;
     }
-
 
     /**
      * {@inheritDoc}
@@ -80,14 +81,14 @@ public class ZfinExprGraphURLGenerator implements GraphCategoryURLGenerator
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
 
-        q.setView("Gene.primaryIdentifier,"
-                  + "Gene.expressionResults.stages.name,Gene.expressionResults.expressed");
+        q.setView("Gene.primaryIdentifier,Gene.expressionResults.stages.name," +
+                  "Gene.expressionResults.expressed");
 
         // bag constraint
         q.addConstraint("Gene",  Constraints.in(bag.getName()));
 
         // stage (category)
-        q.addConstraint("Gene.expressionResults.stages.name", Constraints.eq(category));
+        q.addConstraint("Gene.expressionResults.stages.name", Constraints.contains(category));
 
         // expressed (series)
         Boolean expressed = (series.equals("true") ? Boolean.TRUE : Boolean.FALSE);
@@ -95,6 +96,8 @@ public class ZfinExprGraphURLGenerator implements GraphCategoryURLGenerator
 
         q.setConstraintLogic("A and B and C and D");
         q.syncLogicExpression("and");
+
+        LOG.error("WIDGETURLQUERY:" + q);
 
         return q;
     }
