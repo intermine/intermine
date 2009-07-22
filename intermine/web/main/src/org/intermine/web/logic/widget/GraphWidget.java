@@ -12,10 +12,12 @@ package org.intermine.web.logic.widget;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -49,7 +51,7 @@ import org.jfree.ui.TextAnchor;
  */
 public class GraphWidget extends Widget
 {
-
+    private static final Logger LOG = Logger.getLogger(GraphWidget.class);
     private int notAnalysed = 0;
     private DataSetLdr dataSetLdr;
     private InterMineBag bag;
@@ -85,24 +87,33 @@ public class GraphWidget extends Widget
      * {@inheritDoc}
      */
     public void process() {
-        try {
+
             String dataSetLoader = config.getDataSetLoader();
             Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
-            Constructor<?> constr = clazz.getConstructor(new Class[]
-                {
+            try {
+                Constructor<?> constr = clazz.getConstructor(new Class[]
+                                                                       {
                     InterMineBag.class, ObjectStore.class, String.class
-                });
-            dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-                {
+                                                                       });
+                dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
+                                                                        {
                     bag, os, selectedExtraAttribute
-                });
-
-            notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
+                                                                        });
+                notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
 
             // TODO use caching here
             JFreeChart chart = null;
             CategoryPlot plot = null;
             BarRenderer renderer = null;
+
+            if (dataSetLdr == null || dataSetLdr.getDataSet() == null) {
+                LOG.error("no data found for graph widget");
+                return;
+            }
+
             CategoryDataset graphDataSet = dataSetLdr.getDataSet();
 
             /* stacked bar chart */
@@ -169,7 +180,6 @@ public class GraphWidget extends Widget
                                                     {
                                 bag.getName(), selectedExtraAttribute
                                                     });
-
                         } catch (Exception err) {
                             err.printStackTrace();
                         }
@@ -222,19 +232,21 @@ public class GraphWidget extends Widget
             // this may be already set individually for the different series
             if (config.getLink() != null) {
                 Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
-                Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
-                    {
+                try {
+                    Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
+                                                                                       {
                         String.class, String.class
-                    });
-                CategoryURLGenerator categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
-                                .newInstance(new Object[]
-                                    {
-                                        bag.getName(), selectedExtraAttribute
-                                    });
-                plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
+                                                                                       });
+                    CategoryURLGenerator categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
+                    .newInstance(new Object[]
+                                            {
+                        bag.getName(), selectedExtraAttribute
+                                            });
+                    plot.getRenderer().setBaseItemURLGenerator(categoryUrlGen);
+                } catch (Exception e) {
+                    throw new RuntimeException("unexpected exception", e);
+                }
             }
-
-
 
             NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setUpperMargin(0.15);
@@ -245,19 +257,19 @@ public class GraphWidget extends Widget
             rangeAxis.setLabelFont(labelFont);
             plot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
 
-
-
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
             // generate the image and imagemap
-            fileName = ServletUtilities.saveChartAsPNG(chart,
-                            ((GraphWidgetConfig) config).getWidth(),
-                            ((GraphWidgetConfig) config).getHeight(), info,
-                            ((GraphWidgetConfig) config).getSession());
+            try {
+                fileName = ServletUtilities.saveChartAsPNG(chart,
+                           ((GraphWidgetConfig) config).getWidth(),
+                           ((GraphWidgetConfig) config).getHeight(), info,
+                           ((GraphWidgetConfig) config).getSession());
+            } catch (IOException e) {
+                throw new RuntimeException("error rendering html", e);
+            }
+
             imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
-        } catch (Exception e) {
-            throw new RuntimeException("unexpected exception", e);
-        }
     }
 
     /**
@@ -280,9 +292,10 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
-
     public boolean getHasResults() {
-        return (dataSetLdr.getResults() != null && dataSetLdr.getResults().size() > 0);
+        return (dataSetLdr != null
+                        && dataSetLdr.getResults() != null
+                        && dataSetLdr.getResults().size() > 0);
     }
 
     /**
