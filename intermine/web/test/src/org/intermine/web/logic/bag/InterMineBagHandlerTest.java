@@ -24,7 +24,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-import org.intermine.web.logic.profile.ProfileManagerTest;
 
 /**
  * Tests for the InterMineBagHandler class.
@@ -35,7 +34,8 @@ import org.intermine.web.logic.profile.ProfileManagerTest;
 public class InterMineBagHandlerTest extends StoreDataTestCase
 {
     private ObjectStore os;
-
+    private int idCounter;
+    
     public InterMineBagHandlerTest (String arg) {
         super(arg);
     }
@@ -44,6 +44,7 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         super.setUp();
         ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
         os = osw.getObjectStore();
+        idCounter = 0;
     }
 
     public void executeTest(String type) {
@@ -61,66 +62,45 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
     }
     
     public void testNoNewObject() throws Exception {
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-
-        oldCompany.setName("Old company");
+        Company oldCompany = createCompanyWithId("Old company");
 
         // no new object so expect an empt set
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(new HashSet(), newIds);
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
+        assertEquals(new HashSet<Integer>(), newIds);
     }
 
     public void testFindCompanyByVatNumber() throws Exception {
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-
-        oldCompany.setName("Old company");
+        Company oldCompany = createCompanyWithId("Old company");
         oldCompany.setVatNumber(5678);
 
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(1, newIds.size());
     }
 
     public void testFindCompanyByName() throws Exception {
-        Address oldAddress =
-            (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
-        oldAddress.setAddress("Company Street, BVille");
-
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        oldCompany.setName("CompanyB");
+        Address oldAddress = createAddressWithId("Company Street, BVille");
+        Company oldCompany = createCompanyWithId("CompanyB");
         oldCompany.setAddress(oldAddress);
 
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
 
         assertEquals(1, newIds.size());
     }
 
     public void testFindCompanyByNameNoAddress() throws Exception {
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        oldCompany.setName("CompanyB");
-
+        Company oldCompany = createCompanyWithId("CompanyB");
         // can't find a new object so expect empty set
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-        assertEquals(new HashSet(), newIds);
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
+        assertEquals(new HashSet<Integer>(), newIds);
     }
 
     public void testFindCompanyByNameAndVat() throws Exception {
-        Address oldAddress =
-            (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
-        oldAddress.setAddress("Company Street, BVille");
-
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        oldCompany.setName("CompanyB");
+        Address oldAddress = createAddressWithId("Company Street, BVille");
+        Company oldCompany = createCompanyWithId("CompanyB");
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(5678);
 
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
-
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(1, newIds.size());
     }
 
@@ -129,18 +109,28 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
      * @throws Exception
      */
     public void testFindCompanyByNameAndDifferentVat() throws Exception {
-        Address oldAddress =
-            (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
-        oldAddress.setAddress("Company Street, BVille");
-
-        Company oldCompany =
-            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        oldCompany.setName("CompanyB");
+        Address oldAddress = createAddressWithId("Company Street, BVille");
+        Company oldCompany = createCompanyWithId("CompanyB");
         oldCompany.setAddress(oldAddress);
         oldCompany.setVatNumber(1234);
 
-        Set newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
+        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(2, newIds.size());
     }
 
+    
+    private Company createCompanyWithId(String companyName) {
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company.setId(new Integer(idCounter++));
+        company.setName(companyName);
+        return company;
+    }
+    
+    private Address createAddressWithId(String streetAddress) {
+        Address address =  (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        address.setId(new Integer(idCounter++));
+        address.setAddress(streetAddress);
+        return address;
+    }
 }
