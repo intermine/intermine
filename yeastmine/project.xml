@@ -6,6 +6,11 @@
   <property name="intermine.properties.file" value="yeastmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
+    <source name="sgd" type="sgd">
+      <property name="source.db.name" value="sgd"/>
+      <property name="dataSourceName" value="SGD"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
+    </source>
    <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -29,10 +34,6 @@
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>
-    <source name="sgd-identifiers" type="sgd-identifiers">      
-      <property name="src.data.dir" location="/shared/data/sgd/current"/>
-      <property name="src.data.dir.includes" value="SGD.BUD.FEATURE.data"/>
-    </source> 
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/shared/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
