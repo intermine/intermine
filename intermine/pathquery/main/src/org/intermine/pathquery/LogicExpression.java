@@ -69,12 +69,14 @@ public class LogicExpression
             return rootNode;
         } catch (antlr.RecognitionException e) {
             new antlr.DumpASTVisitor().visit(ast);
-            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
+            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage()
+                    + " while parsing " + expression);
             e2.initCause(e);
             throw e2;
         } catch (antlr.TokenStreamException e) {
             new antlr.DumpASTVisitor().visit(ast);
-            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage());
+            IllegalArgumentException e2 = new IllegalArgumentException(e.getMessage()
+                    + " while parsing " + expression);
             e2.initCause(e);
             throw e2;
         } catch (IllegalArgumentException e) {
@@ -420,15 +422,19 @@ public class LogicExpression
             StringBuffer expr = new StringBuffer();
             boolean needComma = false;
             for (Node child : getChildren()) {
-                if (needComma) {
-                    expr.append(" " + getOperator() + " ");
-                }
-                needComma = true;
                 String subexpr = child.toString();
-                if (child instanceof Or && this instanceof And) {
-                    subexpr = "(" + subexpr + ")";
+                if (!"".equals(subexpr)) {
+                    if (child instanceof Or && this instanceof And) {
+                        subexpr = "(" + subexpr + ")";
+                    } else if (child instanceof And && this instanceof Or) {
+                        subexpr = "(" + subexpr + ")";
+                    }
+                    if (needComma) {
+                        expr.append(" " + getOperator() + " ");
+                    }
+                    needComma = true;
+                    expr.append(subexpr);
                 }
-                expr.append(subexpr);
             }
             return expr.toString();
         }
