@@ -44,4 +44,19 @@ public class PathNodeTest extends TestCase
         assertFalse(n3.equals(n5));
         assertFalse(n1.equals(n6));
     }
+
+    public void testOuterJoinGroup() {
+        Node n = new PathNode("Employee");
+        assertEquals("Employee", n.getOuterJoinGroup());
+        n = new PathNode("Employee.name");
+        assertEquals("Employee", n.getOuterJoinGroup());
+        n = new PathNode("Employee.department.name");
+        assertEquals("Employee", n.getOuterJoinGroup());
+        n = new PathNode("Employee:department");
+        assertEquals("Employee:department", n.getOuterJoinGroup());
+        n = new PathNode("Employee:department.companys.name");
+        assertEquals("Employee:department", n.getOuterJoinGroup());
+        n = new PathNode("Employee:department:companys.name");
+        assertEquals("Employee:department:companys", n.getOuterJoinGroup());
+    }
 }

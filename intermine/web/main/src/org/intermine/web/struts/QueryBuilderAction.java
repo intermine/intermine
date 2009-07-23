@@ -31,6 +31,8 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 
+import org.apache.log4j.Logger;
+
 /**
  * Action to handle button presses on the main tile
  *
@@ -38,6 +40,8 @@ import org.intermine.web.logic.Constants;
  */
 public class QueryBuilderAction extends InterMineAction
 {
+    private static final Logger LOG = Logger.getLogger(QueryBuilderAction.class);
+    
     /**
      * Method called when user has finished updating a constraint
      *
@@ -78,8 +82,8 @@ public class QueryBuilderAction extends InterMineAction
 
         // Select the join style for the path in the query
         // this should remove any invalid order by elements
-        if (mf.getUseJoin() != null && mf.getUseJoin().equals("true") && joinType != null
-            && joinType.length() != 0) {
+        if ((mf.getUseJoin() != null) && mf.getUseJoin().equals("true") && (joinType != null)
+            && (joinType.length() != 0) && (request.getParameter("loop") == null)) {
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
             Path path = PathQuery.makePath(model, query, mf.getPath());
@@ -176,13 +180,12 @@ public class QueryBuilderAction extends InterMineAction
                     .getLoopQueryOp()));
             Object constraintValue = mf.getLoopQueryValue();
             // Loop constraints can't operate over outer joins, switch all outer joins to normal
-            String updatedNodePath = query.setJoinStyleForPath(node.getPathString(), false);
-            PathNode updatedNode = query.getNode(updatedNodePath);
+            // We don't do this any more - we just forbid creating such loop constraints.
+            //String updatedNodePath = query.setJoinStyleForPath(node.getPathString(), false);
 
             Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id,
                     null);
-            updatedNode.getConstraints().add(c);
-            mf.setPath(updatedNodePath);
+            node.getConstraints().add(c);
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());

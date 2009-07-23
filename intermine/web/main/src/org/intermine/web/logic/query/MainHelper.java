@@ -371,18 +371,22 @@ public class MainHelper
             }
             PathNode node = queue.removeFirst();
             String path = node.getPathString();
-            if (nonOuterNodes.contains(node)) {
+            if (nonOuterNodes.contains(node) && (!(node.equals(root)))) {
                 QueryReference qr = null;
                 String finalPath = loops.get(path);
 
                 if (finalPath == null) {
-                    if (path.indexOf(".") == -1) {
+                    if ((path.indexOf(".") == -1) && (path.indexOf(":") == -1)) {
                         QueryClass qc;
                         try {
                             qc = new QueryClass(TypeUtil.getClass(node.getType(), model));
                         } catch (ClassNotFoundException e) {
                             throw new IllegalArgumentException("class not found in the model: "
                                                                + node.getType(), e);
+                        }
+                        if (!(q instanceof Query)) {
+                            LOG.error("q is not a Query. path = " + path + ", nonOuterNodes = "
+                                    + nonOuterNodes);
                         }
                         ((Query) q).addFrom(qc);
                         queryBits.put(path, qc);
@@ -769,6 +773,8 @@ public class MainHelper
                 if ((Util.equals(root, parent) || retval.contains(parent))
                             && (!node.isOuterJoin())) {
                     retval.add(node);
+                } else if (Util.equals(root, node)) {
+                    retval.add(node);
                 }
                 done.add(node);
                 deferralReasons.remove(node);
@@ -919,6 +925,10 @@ public class MainHelper
                             && (!loops.containsKey(c.getValue())))) {
                         QueryClass refQc = (QueryClass) queryBits.get(c.getValue());
                         if (refQc != null) {
+                            if (cs == null) {
+                                throw new NullPointerException("Code " + c.getCode()
+                                        + " not in codeToCS " + codeToCS);
+                            }
                             cs.addConstraint(new ClassConstraint((QueryClass) qn, c.getOp(),
                                         refQc));
                         }
