@@ -346,6 +346,10 @@ public class QueryBuilderController extends TilesAction
                     }
                     // also find the target of the loop constraint and disable join arrows for it
                     PathNode otherNode = pathQuery.getNode((String) con.getValue());
+                    if (otherNode == null) {
+                        throw new IllegalArgumentException("Error - otherNode is null for "
+                                + "constraint value " + con.getValue() + " in query " + pathQuery);
+                    }
                     paths.add(otherNode);
                     while (otherNode.getParent() != null) {
                         paths.add(otherNode);

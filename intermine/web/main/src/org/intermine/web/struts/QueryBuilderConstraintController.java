@@ -103,6 +103,7 @@ public class QueryBuilderConstraintController extends TilesAction
 //            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
                 // loop query arguments
                 ArrayList paths = new ArrayList();
+                String nodeJoinGroup = node.getOuterJoinGroup();
                 Iterator iter = query.getNodes().values().iterator();
                 while (iter.hasNext()) {
                     PathNode anode = (PathNode) iter.next();
@@ -110,7 +111,7 @@ public class QueryBuilderConstraintController extends TilesAction
                     // - there is another node of the same type
                     // - the other node has no outer joins in its path
                     if (anode != node && anode.getType().equals(node.getType())
-                            && (anode.getPathString().indexOf(":") == -1)) {
+                            && nodeJoinGroup.equals(anode.getOuterJoinGroup())) {
                         paths.add(anode.getPathString());
                     }
                 }

@@ -114,6 +114,32 @@ public class Node
     }
 
     /**
+     * Returns a String describing the outer join group that this Node is in. Nodes in the same
+     * group can be constrained to one another, as they are fetched in the same query.
+     *
+     * @return a String
+     */
+    public String getOuterJoinGroup() {
+        String retval = getPathString();
+        int lastIndexOf = retval.lastIndexOf(":");
+        if (lastIndexOf == -1) {
+            int nextIndex = retval.indexOf(".");
+            if (nextIndex == -1) {
+                return retval;
+            } else {
+                return retval.substring(0, nextIndex);
+            }
+        } else {
+            int nextDot = retval.indexOf(".", lastIndexOf + 1);
+            if (nextDot == -1) {
+                return retval;
+            } else {
+                return retval.substring(0, nextDot);
+            }
+        }
+    }
+
+    /**
      * Gets the value of type
      *
      * @return the value of type
