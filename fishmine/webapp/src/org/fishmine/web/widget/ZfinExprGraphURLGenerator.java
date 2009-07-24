@@ -97,8 +97,6 @@ public class ZfinExprGraphURLGenerator implements GraphCategoryURLGenerator
         q.setConstraintLogic("A and B and C and D");
         q.syncLogicExpression("and");
 
-        LOG.error("WIDGETURLQUERY:" + q);
-
         return q;
     }
 }
