@@ -32,6 +32,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.StringUtil;
@@ -55,7 +56,7 @@ public class PathQuery
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
-    /** 
+    /**
      * Version number for the userprofile and PathQuery XML format
      */
     public static final int USERPROFILE_VERSION = 1;
@@ -191,7 +192,7 @@ public class PathQuery
             return updateJoinStyle(path, false);
         }
     }
-    
+
     /**
      * Change the join style of a path in the query. All children will also be updated.
      * The path must not end by an attribute.
@@ -229,7 +230,7 @@ public class PathQuery
             newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
         }
         view = newView;
-        
+
         PathNode node = getNode(path);
         if (node != null) {
             node.setOuterJoin(outer);
@@ -241,11 +242,26 @@ public class PathQuery
         for (PathNode transferNode : nodes) {
             origNodes.put(transferNode.getPathString(), transferNode);
         }
-        
+
+        // Fix up any loop constraints
+        for (PathNode loopNode : getNodes().values()) {
+            if (!loopNode.isAttribute()) {
+                for (Constraint con : loopNode.getConstraints()) {
+                    if ((!BagConstraint.VALID_OPS.contains(con.getOp()))
+                            && (!con.getOp().equals(ConstraintOp.LOOKUP))) {
+                        // We have found a loop constraint.
+                        String toPath = (String) con.getValue();
+                        toPath = getCorrectJoinStyle(toPath);
+                        con.setValue(toPath);
+                    }
+                }
+            }
+        }
+
         // remove any invalid paths from sort order - outer join paths aren't valid for sorting
         validateSortOrder();
         syncLogicExpression("and");
-        
+
         return newPathString;
     }
 
@@ -254,10 +270,10 @@ public class PathQuery
             if (!isValidOrderPath(orderPath.toStringNoConstraints())) {
                 sortOrder.remove(orderPath);
             }
-        }    
+        }
     }
-    
-    
+
+
     /**
      * Set the joins style of an entire given path to outer/normal.  This changes all joins in the
      * path, updating all the relevant nodes and view elements.
@@ -402,10 +418,10 @@ public class PathQuery
      * @return the new path
      */
     public String toPathDefaultJoinStyle(String path) {
-        
+
         // this will validate the path so we don't have to here
         Path dummyPath = makePath(model, this, path);
-        
+
         String parts[] = dummyPath.toString().split("[.:]");
 
         StringBuffer currentPath = new StringBuffer();
@@ -421,13 +437,13 @@ public class PathQuery
             // cope with sub types specified by [type] in the path, extract the subType and use
             // this to check for fields in the model
             String subType = null;
-            
+
             if (thisPart.indexOf("[") >= 0) {
                 String tmp = thisPart;
                 thisPart = tmp.substring(0, tmp.indexOf("["));
                 subType = tmp.substring(tmp.indexOf("[") + 1, tmp.indexOf("]"));
             }
-            
+
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
             if (fld.isCollection()
                 || fld.isReference()
@@ -440,7 +456,7 @@ public class PathQuery
             } else {
                 currentPath.append(".");
             }
-            
+
             currentPath.append(thisPart);
             // if an attribute this will be the end of the path, otherwise get the class of this
             // path element
@@ -456,7 +472,7 @@ public class PathQuery
         }
         return currentPath.toString();
     }
-    
+
     /**
      * Add a path to the view
      * @param viewString the String version of the path to add - should not include any class
@@ -1116,7 +1132,7 @@ public class PathQuery
     public PathNode getNode(String path) {
         return nodes.get(path);
     }
-    
+
     /**
      * Get a PathNode by path, independantly of
      * join style

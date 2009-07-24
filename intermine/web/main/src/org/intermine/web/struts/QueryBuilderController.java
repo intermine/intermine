@@ -13,10 +13,12 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
@@ -36,6 +38,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.MetadataNode;
+import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
@@ -92,6 +95,7 @@ public class QueryBuilderController extends TilesAction
 
         // constraint display values
         request.setAttribute("lockedPaths", listToMap(findLockedPaths(query)));
+        request.setAttribute("forcedInnerJoins", listToMap(findForcedInnerJoins(query)));
         request.setAttribute("loopPaths", listToMap(findLoopConstraints(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
 
@@ -232,7 +236,7 @@ public class QueryBuilderController extends TilesAction
      *            the PathQuery containing the paths
      * @return list of paths (as Strings) that cannot be removed by the user
      */
-    protected static List findLockedPaths(PathQuery pathquery) {
+    protected static List<String> findLockedPaths(PathQuery pathquery) {
         ArrayList<String> paths = new ArrayList<String>();
         // loop query constraint
         List<PathNode> nodes = findLoopConstraints(pathquery);
@@ -250,6 +254,32 @@ public class QueryBuilderController extends TilesAction
                         path = null;
                     }
                 }
+            }
+        }
+        return paths;
+    }
+
+    /**
+     * Get a list of paths that should be forced to inner join. This is usually because they are
+     * involved in a loop query constraint.
+     *
+     * @param pathquery the PathQuery containing the paths
+     * @return a list of paths (as Strings) that must be inner joins
+     * @throws IllegalArgumentException if a path that should be an inner join is not
+     */
+    protected static Set<String> findForcedInnerJoins(PathQuery pathquery) {
+        Set<String> paths = new HashSet<String>();
+        List<PathNode> nodes = findLoopConstraints(pathquery);
+        for (PathNode node : nodes) {
+            for (Constraint con : node.getConstraints()) {
+                String fromPath = node.getPathString();
+                String toPath = (String) con.getValue();
+                if (!node.getOuterJoinGroup().equals(Node.getOuterJoinGroup(toPath))) {
+                    throw new IllegalArgumentException("Paths " + fromPath + " and " + toPath
+                            + " cannot be looped together because they are in different join"
+                            + " groups");
+                }
+                paths.addAll(PathNode.findForcedInnerJoins(fromPath, toPath));
             }
         }
         return paths;
@@ -312,18 +342,17 @@ public class QueryBuilderController extends TilesAction
      *            the list of map keys
      * @return a map that maps every item in list to Boolean.TRUE
      */
-    protected static Map listToMap(List list) {
+    protected static Map listToMap(Collection list) {
         Map<Object, Boolean> map = new HashMap<Object, Boolean>();
-        int n = list.size();
-        for (int i = 0; i < n; i++) {
-            map.put(list.get(i), Boolean.TRUE);
+        for (Object o : list) {
+            map.put(o, Boolean.TRUE);
         }
         return map;
     }
-    
+
     /**
      * Returns a list of paths with loop constrained for a given query
-     * 
+     *
      * @param pathQuery the PathQuery
      * @return a list of paths
      */
