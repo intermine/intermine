@@ -151,8 +151,8 @@ public class GraphWidgetConfig extends WidgetConfig
      */
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
         throws Exception {
-        Collection<String> extraAttributes = new ArrayList<String>();
-        Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
+        Collection<String> extraAttributes = new ArrayList();
+        Map<String, Collection<String>> returnMap = new HashMap();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);

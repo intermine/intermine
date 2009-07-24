@@ -44,10 +44,9 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 public class GoStatLdr extends EnrichmentWidgetLdr
 {
     private static final Logger LOG = Logger.getLogger(GoStatLdr.class);
-    private Collection<String> organisms;
+    private Collection<String> taxonIds;
     private InterMineBag bag;
     private String namespace;
-    private Collection<String> organismsLower = new ArrayList<String>();
     private Model model;
 
     /**
@@ -59,14 +58,8 @@ public class GoStatLdr extends EnrichmentWidgetLdr
     public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         namespace = extraAttribute;
-        organisms = BioUtil.getOrganisms(os, bag, false);
+        taxonIds = BioUtil.getOrganisms(os, bag, false, true);
         model = os.getModel();
-        for (String s : organisms) {
-            if (s != null) {
-                organismsLower.add(s.toLowerCase());
-            }
-        }
-
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
@@ -107,7 +100,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
 
         QueryField qfQualifier = new QueryField(qcGoAnnotation, "qualifier");
         QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+        QueryField qfTaxonId = new QueryField(qcOrganism, "taxonId");
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfPrimaryIdentifier = null;
         QueryField qfId = null;
@@ -166,10 +159,17 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         cs.addConstraint(new SimpleConstraint(c7, ConstraintOp.EQUALS,
                                               new QueryValue(namespace.toLowerCase())));
 
-        // organisms in bag = organism.names
+        Collection<Integer> taxonIdInts = new ArrayList();
         // constrained only for memory reasons
-        QueryExpression c8 = new QueryExpression(QueryExpression.LOWER, qfOrganismName);
-        cs.addConstraint(new BagConstraint(c8, ConstraintOp.IN, organismsLower));
+        for (String taxonId : taxonIds) {
+            try {
+                taxonIdInts.add(new Integer(taxonId));
+            } catch (NumberFormatException e) {
+                LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
+                return null;
+            }
+        }
+        cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));
 
         // can't be a NOT relationship!
         cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
