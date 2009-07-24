@@ -11,7 +11,9 @@ package org.intermine.pathquery;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Node used in displaying query
@@ -128,4 +130,28 @@ public class PathNode extends Node
             + 3 * constraints.hashCode();
     }
     
+    /**
+     * Returns a set of path strings that must be inner joins if the two given path strings are
+     * loop constrained onto each other.
+     *
+     * @param fromPath a path string
+     * @param toPath another path string
+     * @return a Set of path strings
+     */
+    public static Set<String> findForcedInnerJoins(String fromPath, String toPath) {
+        Set<String> retval = new HashSet<String>();
+        String commonPrefix = fromPath;
+        while (!toPath.startsWith(commonPrefix)) {
+            retval.add(commonPrefix);
+            commonPrefix = commonPrefix.substring(0, Math.max(commonPrefix.lastIndexOf("."),
+                        commonPrefix.lastIndexOf(":")));
+        }
+        commonPrefix = toPath;
+        while (!fromPath.startsWith(commonPrefix)) {
+            retval.add(commonPrefix);
+            commonPrefix = commonPrefix.substring(0, Math.max(commonPrefix.lastIndexOf("."),
+                        commonPrefix.lastIndexOf(":")));
+        }
+        return retval;
+    }
 }

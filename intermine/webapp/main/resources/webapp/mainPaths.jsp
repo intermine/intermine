@@ -121,48 +121,50 @@
               <fmt:message key="query.removeNodeTitle" var="removeNodeTitle">
                 <fmt:param value="${node.friendlyName}"/>
               </fmt:message>
-             <c:choose>
-              <%-- View only --%>
-              <c:when test="${(empty node.constraints) && (!empty viewPaths[node.pathString])}">
-                <html:link action="/viewChange?method=removeFromView&amp;path=${node.pathString}"
+              <c:choose>
+                <%-- View only --%>
+                <c:when test="${(empty node.constraints) && (!empty viewPaths[node.pathString])}">
+                  <html:link action="/viewChange?method=removeFromView&amp;path=${node.pathString}"
                            title="${removeNodeTitle}">
-                  <img border="0" src="images/cross.gif" width="13" height="13"
+                    <img border="0" src="images/cross.gif" width="13" height="13"
                        title="${removeNodeTitle}"/>
-                </html:link>
-              </c:when>
-              <%-- Constraint --%>
-              <c:otherwise>
-                <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
+                  </html:link>
+                </c:when>
+                <%-- Constraint --%>
+                <c:otherwise>
+                  <html:link action="/mainChange?method=removeNode&amp;path=${node.pathString}"
                            title="${removeNodeTitle}">
-                  <img border="0" src="images/cross.gif" width="13" height="13"
+                    <img border="0" src="images/cross.gif" width="13" height="13"
                        title="${removeNodeTitle}"/>
-                </html:link>
-              </c:otherwise>
-             </c:choose>
-             <c:choose>
-              <c:when test="${node.isOuterJoin && !node.attribute && !empty node.parent}">
-             <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
-             <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
-                         onclick="return editJoinStyle('${node.pathString}')"
-                         title="${editConstraintTitle}">
-                <img border="0" src="images/join_outer.png" width="13" height="13"
-                     title="Outer join"/>
-             </html:link>
-              </c:when>
-              <c:when test="${!node.isOuterJoin && !node.attribute && !empty node.parent}">
-             <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
-             <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
-                         onclick="return editJoinStyle('${node.pathString}')"
-                         title="${editConstraintTitle}">
-                <img border="0" src="images/join_inner.png" width="13" height="13"
-                     title="Inner join"/>
-             </html:link>
-              </c:when>
-            </c:choose>
+                  </html:link>
+                </c:otherwise>
+              </c:choose>
             </c:if>
             <c:if test="${lockedPaths[node.pathString]}">
               <img border="0" src="images/discross.gif" width="13" height="13"
                    title="x" title="<fmt:message key="query.disabledRemoveNodeTitle"/>"/>
+            </c:if>
+            <c:if test="${!forcedInnerJoins[node.pathString]}">
+              <c:choose>
+                <c:when test="${node.isOuterJoin && !node.attribute && !empty node.parent}">
+                  <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
+                  <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
+                         onclick="return editJoinStyle('${node.pathString}')"
+                         title="${editConstraintTitle}">
+                    <img border="0" src="images/join_outer.png" width="13" height="13"
+                     title="Outer join"/>
+                  </html:link>
+                </c:when>
+                <c:when test="${!node.isOuterJoin && !node.attribute && !empty node.parent}">
+                  <fmt:message key="query.editConstraintTitle" var="editConstraintTitle"/>
+                  <html:link action="/mainChange?method=editJoinStyle&amp;path=${node.pathString}"
+                         onclick="return editJoinStyle('${node.pathString}')"
+                         title="${editConstraintTitle}">
+                    <img border="0" src="images/join_inner.png" width="13" height="13"
+                     title="Inner join"/>
+                  </html:link>
+                </c:when>
+              </c:choose>
             </c:if>
           </div>
           <c:forEach var="constraint" items="${node.constraints}" varStatus="status">

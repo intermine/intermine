@@ -10,6 +10,9 @@ package org.intermine.pathquery;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import junit.framework.TestCase;
 
 /**
@@ -58,5 +61,11 @@ public class PathNodeTest extends TestCase
         assertEquals("Employee:department", n.getOuterJoinGroup());
         n = new PathNode("Employee:department:companys.name");
         assertEquals("Employee:department:companys", n.getOuterJoinGroup());
+    }
+
+    public void testFindForcedInnerJoins() {
+        assertEquals(new HashSet(Arrays.asList("Company.department", "Company.department.companys")), PathNode.findForcedInnerJoins("Company", "Company.department.companys"));
+        assertEquals(new HashSet(Arrays.asList("Company.department.companys", "Company.department.companys.department")), PathNode.findForcedInnerJoins("Company.department", "Company.department.companys.department"));
+        assertEquals(new HashSet(Arrays.asList("Company.department", "Company.department.address", "Company.address")), PathNode.findForcedInnerJoins("Company.address", "Company.department.address"));
     }
 }

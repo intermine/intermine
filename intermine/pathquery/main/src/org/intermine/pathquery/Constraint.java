@@ -115,6 +115,15 @@ public class Constraint
     }
 
     /**
+     * Sets the value of value
+     *
+     * @param value a new value for value
+     */
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    /**
      * Return true if and only if this constraint should be editable in a template.
      * @return the editable flag
      */

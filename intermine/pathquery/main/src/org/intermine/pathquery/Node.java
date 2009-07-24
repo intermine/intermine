@@ -120,21 +120,30 @@ public class Node
      * @return a String
      */
     public String getOuterJoinGroup() {
-        String retval = getPathString();
-        int lastIndexOf = retval.lastIndexOf(":");
+        return getOuterJoinGroup(getPathString());
+    }
+
+    /**
+     * Returns a String describing the outer join group that the given path string is in.
+     *
+     * @param path the path string
+     * @return a String
+     */
+    public static String getOuterJoinGroup(String path) {
+        int lastIndexOf = path.lastIndexOf(":");
         if (lastIndexOf == -1) {
-            int nextIndex = retval.indexOf(".");
+            int nextIndex = path.indexOf(".");
             if (nextIndex == -1) {
-                return retval;
+                return path;
             } else {
-                return retval.substring(0, nextIndex);
+                return path.substring(0, nextIndex);
             }
         } else {
-            int nextDot = retval.indexOf(".", lastIndexOf + 1);
+            int nextDot = path.indexOf(".", lastIndexOf + 1);
             if (nextDot == -1) {
-                return retval;
+                return path;
             } else {
-                return retval.substring(0, nextDot);
+                return path.substring(0, nextDot);
             }
         }
     }
