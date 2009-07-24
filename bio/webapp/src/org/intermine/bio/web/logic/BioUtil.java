@@ -56,6 +56,20 @@ public class BioUtil implements WidgetUtil
     @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
                                                   boolean lowercase) {
+        return getOrganisms(os, bag, lowercase, false);
+    }
+
+    /**
+     * For a bag of objects, returns a list of organisms.
+     * @param os ObjectStore
+     * @param lowercase if true, the organism names will be returned in lowercase
+     * @param bag InterMineBag
+     * @param taxonIds if false, return organism names.  if true, return list of taxonids
+     * @return collection of organism names
+     */
+    @SuppressWarnings("unchecked")
+    public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
+                                                  boolean lowercase, boolean taxonIds) {
 
         Query q = new Query();
         Model model = os.getModel();
@@ -68,12 +82,19 @@ public class BioUtil implements WidgetUtil
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
+        QueryField qfOrganismTaxonId = new QueryField(qcOrganism, "taxonId");
         QueryField qfGeneId = new QueryField(qcObject, "id");
 
         q.addFrom(qcObject);
         q.addFrom(qcOrganism);
 
-        q.addToSelect(qfOrganismName);
+        if (taxonIds) {
+            q.addToSelect(qfOrganismTaxonId);
+            q.addToOrderBy(qfOrganismTaxonId);
+        } else {
+            q.addToSelect(qfOrganismName);
+            q.addToOrderBy(qfOrganismName);
+        }
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
@@ -85,22 +106,20 @@ public class BioUtil implements WidgetUtil
 
         q.setConstraint(cs);
 
-        q.addToOrderBy(qfOrganismName);
-
         Results r = os.execute(q);
         Iterator<ResultsRow> it = r.iterator();
-        Collection<String> organismNames = new ArrayList<String>();
+        Collection<String> orgs = new ArrayList();
 
         while (it.hasNext()) {
             ResultsRow rr = it.next();
-            String organismsName =  (String) rr.get(0);
+            Object org =  rr.get(0);
             if (lowercase) {
-                organismNames.add(organismsName.toLowerCase());
+                orgs.add(org.toString().toLowerCase());
             } else {
-                organismNames.add(organismsName);
+                orgs.add(org.toString());
             }
         }
-        return organismNames;
+        return orgs;
     }
 
 
