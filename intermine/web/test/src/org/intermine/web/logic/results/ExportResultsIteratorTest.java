@@ -41,6 +41,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
 import org.intermine.web.logic.query.MainHelper;
+import org.intermine.web.logic.results.flatouterjoins.MultiRow;
 
 /**
  * Tests for the ExportResultsIterator class
@@ -308,6 +309,57 @@ public class ExportResultsIteratorTest extends TestCase
         }
         List expected = Arrays.asList(Arrays.asList(new ResultElement(e1, p1, false), new ResultElement(department1, p2, false), new ResultElement(company1, p3, false)),
                 Arrays.asList(new ResultElement(e2, p1, false), new ResultElement(department2, p2, false), new ResultElement(company1, p3, false)));
+        assertEquals(expected, got);
+    }
+
+    public void testMultipleCollectionsWithOneEntry() throws Exception {
+        ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
+        os.setResultsSize(1);
+
+        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company.setName("Company1");
+        company.setVatNumber(101);
+        company.setId(1);
+
+        Department department = new Department();
+        department.setName("Department1");
+        department.setId(2);
+
+        Contractor contractor = new Contractor();
+        contractor.setName("Fred");
+        contractor.setId(3);
+
+        ResultsRow row = new ResultsRow();
+        row.add(company);
+        List sub1 = new MultiRow();
+        ResultsRow subRow1 = new ResultsRow();
+        subRow1.add(department);
+        sub1.add(subRow1);
+        row.add(sub1);
+        sub1 = new MultiRow();
+        subRow1 = new ResultsRow();
+        subRow1.add(contractor);
+        sub1.add(subRow1);
+        row.add(sub1);
+        os.addRow(row);
+
+        PathQuery pq = new PathQuery(model);
+        final Path p1 = new Path(model, "Company.name");
+        final Path p2 = new Path(model, "Company:departments.name");
+        final Path p3 = new Path(model, "Company:contractors.name");
+        List view = new ArrayList();
+        view.add(p1);
+        view.add(p2);
+        view.add(p3);
+        pq.setViewPaths(view);
+        ExportResultsIterator iter = new ExportResultsIterator(os, pq, new HashMap(), null);
+        List got = new ArrayList();
+        for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
+            got.add(gotRow);
+        }
+        List expected = Arrays.asList(Arrays.asList(new ResultElement(company, p1, false),
+                    new ResultElement(department, p2, false),
+                    new ResultElement(contractor, p3, false)));
         assertEquals(expected, got);
     }
 }
