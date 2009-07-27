@@ -1318,9 +1318,11 @@ public class PathQuery
             }
         }
         if (!longestPrefix.equals("")) {
-            return path.replaceFirst(longestPrefix, longestPrefixAlias);
+            String restOfPath = path.substring(longestPrefix.length());
+            restOfPath = restOfPath.replaceAll("[:.](?!\\s)", " > ");
+            return longestPrefixAlias + restOfPath;
         }
-        return path;
+        return path.replaceAll("[:.](?!\\s)", " > ");
     }
 
     /**

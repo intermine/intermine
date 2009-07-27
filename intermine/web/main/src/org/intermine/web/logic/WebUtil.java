@@ -483,13 +483,14 @@ public abstract class WebUtil
 
 
     /**
-     * Formats column name. Replaces all dots and colons in path with '>'.
+     * Formats column name. Replaces " > " with "&nbsp;&gt; ".
      * @param original original column name
      * @return modified string
      */
     public static String formatColumnName(String original) {
         // replaces all dots and colons but not dots with following space - they are probably
         // part of name, e.g. 'D. melanogaster'
-        return original.replaceAll("[:.](?!\\s)", "&nbsp;> ");
+        return original.replaceAll("&", "&amp;").replaceAll(" > ", "&nbsp;&gt; ")
+            .replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
 }

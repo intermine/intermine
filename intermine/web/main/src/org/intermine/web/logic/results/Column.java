@@ -71,7 +71,7 @@ public class Column
      */
     public Column(Path path, int index, Class type) {
         this.path = path;
-        this.name = path.toStringNoConstraints();
+        this.name = path.toStringNoConstraints().replaceAll("[:.](?!\\s)", " > ");
         this.index = index;
         this.type = type;
         setColumnId(path.toString().substring(0, path.toString().lastIndexOf(".")) + "_"

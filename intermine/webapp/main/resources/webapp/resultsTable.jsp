@@ -53,7 +53,7 @@
       <c:choose>
         <c:when test="${column.visible}">
           <th align="center" class="columnHeader">
-          <c:if test="${column.selectable && empty inlineTable}">
+            <c:if test="${column.selectable && empty inlineTable}">
               <c:set var="disabled" value="false"/>
               <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
@@ -64,15 +64,15 @@
                              disabled="${disabled}">
                 <c:out value="${column.columnId}"/>
               </html:multibox>
-          </c:if>
-              ${columnDisplayName}
-              <im:typehelp type="${column.path}" fullPath="true"/>
-              <%-- summary --%>
-              <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
-                <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-                <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-                   title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
-              </c:if>
+            </c:if>
+            ${columnDisplayName}
+            <im:typehelp type="${column.path}" fullPath="true"/>
+            <%-- summary --%>
+            <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
+              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+              <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
+                 title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+            </c:if>
           </th>
         </c:when>
         <c:otherwise>
