@@ -241,6 +241,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         }
         template = new ArrayList(template);
         int columnNo = 0;
+        boolean multiRow = false;
         for (Object column : columns) {
             if (column instanceof Map) {
                 Map<Path, Integer> desc = (Map<Path, Integer>) column;
@@ -248,6 +249,14 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
                     template.set(descEntry.getValue().intValue(),
                             new ResultElement((FastPathObject) row.get(columnNo),
                                 descEntry.getKey(), false));
+                }
+            } else if (!multiRow) {
+                // Check the collection size, to see if we can get away with a single row.
+                List<List> collection = (List<List>) row.get(columnNo);
+                if (collection.size() > 1) {
+                    multiRow = true;
+                } else if (collection.size() == 1) {
+                    multiRow = isCollectionMultiRow(collection.iterator().next(), (List) column);
                 }
             }
             columnNo++;
@@ -258,8 +267,12 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             if (column instanceof List) {
                 List<List> collection = (List<List>) row.get(columnNo);
                 for (List subRow : collection) {
-                    hasCollections = true;
-                    expandCollections(subRow, retval, template, (List) column);
+                    if (multiRow) {
+                        hasCollections = true;
+                        expandCollections(subRow, retval, template, (List) column);
+                    } else {
+                        expandCollectionsJustOneRow(subRow, retval, template, (List) column);
+                    }
                 }
             }
             columnNo++;
@@ -267,5 +280,47 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         if (!hasCollections) {
             retval.add(template);
         }
+    }
+
+    private void expandCollectionsJustOneRow(List row, List<List<ResultElement>> retval,
+            List<ResultElement> template, List columns) {
+        if (row.size() != columns.size()) {
+            throw new IllegalArgumentException("Column description (size " + columns.size()
+                    + ") does not match input data (size " + row.size() + ")");
+        }
+        int columnNo = 0;
+        for (Object column : columns) {
+            if (column instanceof Map) {
+                Map<Path, Integer> desc = (Map<Path, Integer>) column;
+                for (Map.Entry<Path, Integer> descEntry : desc.entrySet()) {
+                    template.set(descEntry.getValue().intValue(),
+                            new ResultElement((FastPathObject) row.get(columnNo),
+                                descEntry.getKey(), false));
+                }
+            } else {
+                List<List> collection = (List<List>) row.get(columnNo);
+                for (List subRow : collection) {
+                    expandCollectionsJustOneRow(subRow, retval, template, (List) column);
+                }
+            }
+            columnNo++;
+        }
+    }
+
+    private boolean isCollectionMultiRow(List row, List columns) {
+        boolean multiRow = false;
+        int columnNo = 0;
+        for (Object column : columns) {
+            if ((column instanceof List) && (!multiRow)) {
+                List<List> collection = (List<List>) row.get(columnNo);
+                if (collection.size() > 1) {
+                    multiRow = true;
+                } else if (collection.size() == 1) {
+                    multiRow = isCollectionMultiRow(collection.iterator().next(), (List) column);
+                }
+            }
+            columnNo++;
+        }
+        return multiRow;
     }
 }
