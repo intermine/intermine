@@ -356,7 +356,7 @@ public class AjaxServices
             } else {
                 query.getPathDescriptions().put(prefixPath, descr);
             }
-            return descr;
+            return descr.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         } catch (RuntimeException e) {
             processException(e);
             return null;
