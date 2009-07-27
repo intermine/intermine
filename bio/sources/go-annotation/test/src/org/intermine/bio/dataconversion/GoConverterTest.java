@@ -46,7 +46,6 @@ public class GoConverterTest extends ItemsTestCase
         writeTempFile(goOboFile, goOboReader);
         writer = new MockItemWriter(new LinkedHashMap());
         converter = new GoConverter(writer, model);
-        converter.setOntologyfile(goOboFile);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0020002", Collections.singleton("FBgn0020002"));
         resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
@@ -72,7 +71,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
         converter.process(reader);
-        System.out.println("productWrapperMap: " + converter.productWrapperMap.keySet());
+        System.out.println("productWrapperMap: " + converter.productMap.keySet());
         converter.close();
 
         // uncomment to write a new target items file
@@ -83,28 +82,16 @@ public class GoConverterTest extends ItemsTestCase
 
 
     public void testCreateWithObjects() throws Exception {
-        Set expected = new HashSet();
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-        Item gene1 = tgtItemFactory.makeItem("0_1", "Gene", "");
-        gene1.setAttribute("primaryIdentifier", "FBgn0026430");
-        gene1.setReference("organism", "3_1");
-        gene1.addToCollection("dataSets", "2_1");
-        expected.add(gene1);
-        Item gene2 = tgtItemFactory.makeItem("0_2", "Gene", "");
-        gene2.setAttribute("primaryIdentifier", "FBgn0001612");
-        gene2.setReference("organism", "3_1");
-        gene2.addToCollection("dataSets", "2_1");
-        expected.add(gene2);
         Item organism = tgtItemFactory.makeItem("3_1", "Organism", "");
         organism.setAttribute("taxonId", "7227");
-        Item datasource = tgtItemFactory.makeItem("1_1", "DataSource", "");
-        datasource.setAttribute("name", "FlyBase");
 
-        Item dataset = tgtItemFactory.makeItem("2_1", "DataSet", "");
-        dataset.setAttribute("title", "Gene Annotation for FlyBase");
-        datasource.setCollection("dataSets", new ArrayList(Collections.singleton(dataset.getIdentifier())));
+        Set<String> expected = new HashSet<String>();
+        expected.add("0_1");
+        expected.add("0_2");
+        converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet(converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, datasource)));
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "FlyBase")));
     }
 
 
@@ -113,6 +100,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
 
+        converter.initialiseMapsForFile();
         converter.productIds.add("FBgn0020002");
 
         try {
