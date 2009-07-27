@@ -201,7 +201,7 @@ public class GoConverter extends FileConverter
                     // get the rest of the data
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
 
-                    Integer storedAnnotationId = createGoAnnotation(productIdentifier, 
+                    Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, 
                             qualifier, withText, dataSourceCode);
                     
@@ -263,7 +263,7 @@ public class GoConverter extends FileConverter
         }
     }
 
-    private Integer createGoAnnotation(String productIdentifier, String termIdentifier, 
+    private Integer createGoAnnotation(String productIdentifier, String productType, String termIdentifier, 
             Item organism, String qualifier, String withText, String dataSourceCode) 
     throws ObjectStoreException {
         Item goAnnotation = createItem("GOAnnotation");
@@ -288,7 +288,9 @@ public class GoConverter extends FileConverter
 
         goAnnotation.addToCollection("dataSets", getDataset(dataSourceCode));
 
-        addProductCollection(productIdentifier, goAnnotation.getIdentifier());
+        if (productType.equals("gene")) {
+            addProductCollection(productIdentifier, goAnnotation.getIdentifier());
+        }
         Integer storedAnnotationId = store(goAnnotation);
         return storedAnnotationId;
     }
