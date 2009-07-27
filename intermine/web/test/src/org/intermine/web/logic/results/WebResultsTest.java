@@ -192,10 +192,10 @@ public class WebResultsTest extends TestCase
         WebResults webResults = new WebResults(pq, results, model, pathToQueryNode, classKeys, null);
         List<Column> expectedColumns = new ArrayList<Column>();
         Path path = new Path(model, "Company.CEO.name");
-        Column col1 = new Column("description 1.name",0 ,Company.class);
-        Column col2 = new Column("description 1.vatNumber",1 ,Company.class);
-        Column col3 = new Column("description 1.CEO.name",2 ,CEO.class);
-        Column col4 = new Column("Employee.name",3 ,Employee.class);
+        Column col1 = new Column("description 1 > name",0 ,Company.class);
+        Column col2 = new Column("description 1 > vatNumber",1 ,Company.class);
+        Column col3 = new Column("description 1 > CEO > name",2 ,CEO.class);
+        Column col4 = new Column("Employee > name",3 ,Employee.class);
         expectedColumns.add(col1);
         expectedColumns.add(col2);
         expectedColumns.add(col3);
