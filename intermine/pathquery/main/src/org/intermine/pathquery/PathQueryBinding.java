@@ -141,13 +141,10 @@ public class PathQueryBinding
         for (Map.Entry<Path, String> entry : query.getPathDescriptions().entrySet()) {
             Path path = entry.getKey();
             String description = entry.getValue();
-            // this can be a bad path
-            if (path.getElements().size() > 0) {
-                writer.writeStartElement("pathDescription");
-                writer.writeAttribute("pathString", path.toStringNoConstraints());
-                writer.writeAttribute("description", description);
-                writer.writeEndElement();
-            }
+            writer.writeStartElement("pathDescription");
+            writer.writeAttribute("pathString", path.toStringNoConstraints());
+            writer.writeAttribute("description", description);
+            writer.writeEndElement();
         }
     }
 
