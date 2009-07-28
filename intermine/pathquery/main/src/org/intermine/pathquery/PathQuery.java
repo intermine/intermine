@@ -219,17 +219,30 @@ public class PathQuery
                 + path.substring(lastIndex + 1);
         }
 
+        Pattern p = Pattern.compile(path.replaceAll("\\.", "\\\\.") + "((\\.|:)\\w+)*");
         List<Path> newView = new ArrayList<Path>();
         for (Path viewPath : view) {
             String viewPathString = viewPath.toStringNoConstraints();
-            Pattern p = Pattern.compile(path.replaceAll("\\.", "\\\\.") + "((\\.|:)\\w+)*");
             Matcher m = p.matcher(viewPathString);
             if (m.matches()) {
-                viewPathString = viewPathString.replace(path, newPathString);
+                viewPathString = newPathString + viewPathString.substring(path.length());
             }
             newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
         }
         view = newView;
+
+        Map<Path, String> newPathDescriptions = new HashMap<Path, String>();
+        for (Map.Entry<Path, String> entry : pathDescriptions.entrySet()) {
+            String descPathString = entry.getKey().toStringNoConstraints();
+            Matcher m = p.matcher(descPathString);
+            if (m.matches()) {
+                descPathString = newPathString + descPathString.substring(path.length());
+            }
+            Path newPath = new Path(model, descPathString, entry.getKey()
+                    .getSubClassConstraintPaths());
+            newPathDescriptions.put(newPath, entry.getValue());
+        }
+        pathDescriptions = newPathDescriptions;
 
         PathNode node = getNode(path);
         if (node != null) {
