@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -58,6 +59,8 @@ import org.intermine.web.logic.template.TemplateBuildState;
  */
 public class QueryBuilderChange extends DispatchAction
 {
+    private static final Logger LOG = Logger.getLogger(QueryBuilderChange.class);
+
     /**
      * Remove all nodes under a given path
      *
@@ -431,8 +434,14 @@ public class QueryBuilderChange extends DispatchAction
 
         String prefixWithSubs = getPrefixWithSubclasses(prefix, query, os.getModel());
         
-        // This call will work out the default join style between prefix and path
-        path = query.toPathDefaultJoinStyle(prefixWithSubs, path);
+        // We want an inner join style, as we are about to add a constraint.
+        if ((prefixWithSubs != null) && (prefixWithSubs.length() > 0)) {
+            if (path.indexOf(".") == -1) {
+                path = prefixWithSubs;
+            } else {
+                path = prefixWithSubs + "." + path.substring(path.indexOf(".") + 1);
+            }
+        }
         // Now correct the join style deferring to any existing information in the query
         path = query.getCorrectJoinStyle(path);
 
