@@ -225,6 +225,7 @@ public class TreefamConverter extends BioFileConverter
 
         Item homologue = createItem("Homologue");
         homologue.setAttribute("bootstrapScore", bootstrap);
+        homologue.setAttribute("evidenceCode", "(AA) Amino acid sequence comparison");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         String type = "orthologue";

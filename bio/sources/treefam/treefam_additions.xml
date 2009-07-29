@@ -3,6 +3,7 @@
 <class name="Homologue" is-interface="true">
   <attribute name="bootstrapScore" type="java.lang.Integer"/>
   <attribute name="type" type="java.lang.String"/>
+  <attribute name="evidenceCode" type="java.lang.String" />
   <reference name="gene" referenced-type="Gene" reverse-reference="homologues"/>
   <reference name="homologue" referenced-type="Gene"/>
   <collection name="dataSets" referenced-type="DataSet"/>
@@ -11,4 +12,3 @@
   <collection name="homologues" referenced-type="Homologue" reverse-reference="gene"/>
 </class>
 </classes>
-
