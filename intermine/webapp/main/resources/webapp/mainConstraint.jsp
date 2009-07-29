@@ -446,34 +446,36 @@ swapInputs('subclass');
 </c:if>
 <%--${loopQueryOJ != true}--%>
   <c:if test="${(!editingPath.onlyAttribute)}" >
-    <h3><fmt:message key="query.joinHeading" /></h3> <%--2. Join type--%>
-    <ol style="list-style:none">
-      <li>
-        <html:radio property="joinType" value="inner" styleId="inner" />
-        <label for="inner">&nbsp;
-           <fmt:message key="query.innerJoin">
+    <c:if test="${allowOuterJoin}">
+      <h3><fmt:message key="query.joinHeading" /></h3> <%--2. Join type--%>
+      <ol style="list-style:none">
+        <li>
+          <html:radio property="joinType" value="inner" styleId="inner" />
+          <label for="inner">&nbsp;
+            <fmt:message key="query.innerJoin">
               <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
               <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
-           </fmt:message>                 
-           <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
-        </label>
-      </li>
-      <li>
-        <html:radio property="joinType" value="outer" styleId="outer"/>
-        <label for="outer">&nbsp;
-          <fmt:message key="query.outerJoin">
-            <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
-            <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
-          </fmt:message>
-          <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
-        </label>
-      </li>
-    </ol>
-    <html:hidden property="useJoin" value="true"/>
-    <c:if test="${! empty joinStyleOnly}">
-    <html:submit property="joinStyle" styleId="joinStyleSubmit" >
-      <fmt:message key="query.submitConstraint"/><%-- Submit button --%>
-    </html:submit>
+            </fmt:message>                 
+            <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
+          </label>
+        </li>
+        <li>
+          <html:radio property="joinType" value="outer" styleId="outer"/>
+          <label for="outer">&nbsp;
+            <fmt:message key="query.outerJoin">
+              <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
+              <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
+            </fmt:message>
+            <img border="0" src="images/join_outer.png" width="13" height="13" title="Outer join"/>
+          </label>
+        </li>
+      </ol>
+      <html:hidden property="useJoin" value="true"/>
+      <c:if test="${! empty joinStyleOnly}">
+        <html:submit property="joinStyle" styleId="joinStyleSubmit" >
+          <fmt:message key="query.submitConstraint"/><%-- Submit button --%>
+        </html:submit>
+      </c:if>
     </c:if>
   </c:if>
 </div>

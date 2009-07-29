@@ -81,7 +81,6 @@ public class QueryBuilderConstraintController extends TilesAction
 
         //set up the node on which we are editing constraints
         if (session.getAttribute("editingNode") != null) {
-
             SessionMethods.moveToRequest("editingNode", request);
             PathNode node = (PathNode) request.getAttribute("editingNode");
             SessionMethods.moveToRequest("editingConstraintIndex", request);
@@ -176,6 +175,22 @@ public class QueryBuilderConstraintController extends TilesAction
                 Collection<String> keyFields = ClassKeyHelper.getKeyFieldNames(classKeys, nodeType);
                 String keyFieldStr = StringUtil.prettyList(keyFields, true);
                 request.setAttribute("keyFields", keyFieldStr);
+            }
+
+            // Search for elements already in the view list, to see whether an outer join is
+            // permissable.
+            {
+                String ojBase = (node.isAttribute() ? node.getParent() : node).getPathString();
+                String ojBaseDot = ojBase + ".";
+                String ojBaseColon = ojBase + ":";
+                boolean allowOuterJoin = false;
+                for (String viewNode : query.getViewStrings()) {
+                    if (viewNode.startsWith(ojBaseDot) || viewNode.startsWith(ojBaseColon)) {
+                        allowOuterJoin = true;
+                        break;
+                    }
+                }
+                request.setAttribute("allowOuterJoin", Boolean.valueOf(allowOuterJoin));
             }
 
             if (useBags) {
