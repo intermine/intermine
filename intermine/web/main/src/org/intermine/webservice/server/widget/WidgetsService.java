@@ -49,7 +49,7 @@ import org.intermine.webservice.server.WebService;
 
 /**
  * Web service that returns a widget for a given list of identifiers See
- * {@link WidgetsRequestProcessor} for parameter description 
+ * {@link WidgetsRequestProcessor} for parameter description
  * URL examples: get an EnrichmentWidget
  * /service/widgets?widgetId=go_enrichment
  *   &className=Gene
@@ -61,14 +61,14 @@ import org.intermine.webservice.server.WebService;
  *   &className=Gene&extraAttributes=
  *   &ids=FBgn0011648,FBgn0011655,FBgn0025800
  *   &format=html
- * 
+ *
  * @author "Xavier Watkins"
  */
 public class WidgetsService extends WebService
 {
 
     /**
-     * Executes service specific logic. 
+     * Executes service specific logic.
      * @param request request
      * @param response response
      * @throws Exception an error has occured
@@ -79,7 +79,7 @@ public class WidgetsService extends WebService
         WidgetsServiceInput widgetsServiceInput = getInput();
         ServletContext servletContext = request.getSession().getServletContext();
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
-        
+
         String className = widgetsServiceInput.getClassName();
         List<String> ids = widgetsServiceInput.getIds();
         InterMineBag imBag = getBag(className, ids, servletContext, profile);
@@ -93,7 +93,7 @@ public class WidgetsService extends WebService
          response.getWriter().print(
                         getHtml(widgetConfig, imBag, new URLGenerator(request).getBaseURL(), os));
     }
-    
+
     /**
      * Make a bag and return it for a given list of ids
      * @param className the type of the bag to make
@@ -152,20 +152,19 @@ public class WidgetsService extends WebService
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(servletContext, profile);
-        
+
         // execute query, we just need the bag query results
         executor.execute(pathQuery, returnBagQueryResults);
-                
+
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
-        List <Integer> bagList = new ArrayList <Integer> ();
+        List <Integer> bagList = new ArrayList();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        InterMineBag imBag = new InterMineBag(bagName,
-                        className , null , new Date() ,
-                        os , profile.getUserId() , uosw);
+        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
+                                              profile.getUserId(), uosw);
         ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         osw.addAllToBag(imBag.getOsb(), bagList);
         osw.close();
@@ -176,7 +175,7 @@ public class WidgetsService extends WebService
     private WidgetsServiceInput getInput() {
         return new WidgetsRequestParser(request).getInput();
     }
-    
+
     /**
      * Returns the HTML used for displaying widgets in the service
      * @param widgetConfig the WidgetConfig
@@ -281,7 +280,7 @@ public class WidgetsService extends WebService
         sb.append("</fieldset>");
 
         if (widgetConfig instanceof EnrichmentWidgetConfig
-            || widgetConfig instanceof TableWidgetConfig) {
+                        || widgetConfig instanceof TableWidgetConfig) {
             sb.append("<div id=\"widget_tool_bar_div_" + widgetConfig.getId()
                       + "\" class=\"widget_tool_bar_div\" >");
             sb.append("<ul id=\"widget_button_bar_"
