@@ -88,7 +88,7 @@ implements WebTable
      */
     public WebResults(PathQuery pathQuery, Results results, Model model,
                       Map<String, QuerySelectable> pathToQueryNode,
-                      Map<String, List<FieldDescriptor>> classKeys, 
+                      Map<String, List<FieldDescriptor>> classKeys,
                       Map<String, BagQueryResult> pathToBagQueryResult) {
         this.osResults = results;
         this.flatResults = new ResultsFlatOuterJoinsImpl((List<ResultsRow>) osResults,
@@ -214,7 +214,10 @@ implements WebTable
        try {
            return getInfo().getRows();
        } catch (ObjectStoreException e) {
-           throw new RuntimeException("failed to get a ResultsInfo object", e);
+           // whoops.  return zero so we can post a nice error message
+           LOG.error("failed to get a ResultsInfo object", e);
+           return 0;
+           //throw new RuntimeException("failed to get a ResultsInfo object", e);
        }
     }
 
@@ -475,8 +478,8 @@ implements WebTable
 
         public Iter(int start) {
             subIter = flatResults.iteratorFrom(start);
-        }        
-        
+        }
+
         public Iter() {
             subIter = flatResults.iterator();
         }
@@ -488,7 +491,7 @@ implements WebTable
             return subIter.hasNext();
         }
 
-        /** 
+        /**
          * {@inheritDoc}
          */
         public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> next() {

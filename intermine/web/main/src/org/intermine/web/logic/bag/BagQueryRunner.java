@@ -129,7 +129,7 @@ public class BagQueryRunner
         for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
-                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                Map<String, Set<Integer>> resMap = new HashMap();
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
@@ -225,7 +225,7 @@ public class BagQueryRunner
                             BagQueryResult bqr, BagQuery bq, Class<?> type, boolean areWildcards)
     throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
-        
+
         for (Map.Entry entry : resMap.entrySet()) {
             String input = (String) entry.getKey();
             Set<Integer> ids = (Set<Integer>) entry.getValue();
@@ -344,14 +344,14 @@ public class BagQueryRunner
                 }
 
                 // try to convert objects to target type
-                Map<InterMineObject, List<InterMineObject>> convertedObjsMap = 
-                    TypeConverter.getConvertedObjectMap(conversionTemplates, fromClass, 
+                Map<InterMineObject, List<InterMineObject>> convertedObjsMap =
+                    TypeConverter.getConvertedObjectMap(conversionTemplates, fromClass,
                             type, objs, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;
                 }
-                
+
                 // loop over the old objects
                 for (InterMineObject origObj : convertedObjsMap.keySet()) {
                     boolean toRemove = false;

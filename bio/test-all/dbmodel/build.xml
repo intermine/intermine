@@ -43,6 +43,7 @@
     <merge-additions file="bio/sources/flymine/experimental/pride/pride_additions.xml"/> 
     <merge-additions file="bio/sources/flymine/miranda/miranda_additions.xml"/>
     <merge-additions file="bio/sources/omim/omim_additions.xml"/>
+ <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/core/shortcuts.xml"/>
   </target>
 
