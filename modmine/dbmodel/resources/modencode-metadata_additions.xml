@@ -236,6 +236,7 @@
   
   <class name="DevelopmentalStage" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="sex" type="java.lang.String"/>
     <collection name="ontologyTerms" referenced-type="OntologyTerm"/>
     <collection name="submissions" referenced-type="Submission" reverse-reference="developmentalStages" />
   </class>

@@ -20,17 +20,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -52,9 +51,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, SubmissionDetails> submissionMap =
         new HashMap<Integer, SubmissionDetails>();
     // chado submission id to list of top level attributes, e.g. dev stage, organism_part
-    private Map<String, Map<String, List<SubmissionAttribute>>> submissionAttributes = 
-        new HashMap<String, Map<String, List<SubmissionAttribute>>>();
-    private Map<String, String> attributeToSubmission = new HashMap<String, String>();
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
 
     // applied_protocol/data/attribute maps
@@ -272,7 +268,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         bT = System.currentTimeMillis();
         setSubmissionEFactorsRefs(connection);
         LOG.info("TIME setSubmissionEFactorsRefs" + ":   "  + (System.currentTimeMillis() - bT));
-
     }
 
 
@@ -1644,20 +1639,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // TODO update query to check against dbxrefs
         ResultSet res = getAppliedDataResultSetAll(connection);
 
-//      String comma = ",";
-//      File f = new File("all_subs_report.csv");
-//      FileWriter writer = new FileWriter(f);
-//      Set<String> dccDone = new HashSet<String>();
+        String comma = ",";
+        File f = new File("all_subs_report.csv");
+        FileWriter writer = new FileWriter(f);
+        Set<String> dccDone = new HashSet<String>();
 
-//      writer.write("submission" + comma);
-//      writer.write("data_heading" + comma);
-//      writer.write("data_name" + comma);
-//      writer.write("data_value" + comma);
-//      writer.write("cv_term" + comma);
-//      writer.write("att_heading" + comma);
-//      writer.write("att_name" + comma);
-//      writer.write("att_value" + comma);
-//      writer.write(System.getProperty("line.separator"));
+        writer.write("submission" + comma);
+        writer.write("data_heading" + comma);
+        writer.write("data_name" + comma);
+        writer.write("data_value" + comma);
+        writer.write("cv_term" + comma);
+        writer.write("att_heading" + comma);
+        writer.write("att_name" + comma);
+        writer.write("att_value" + comma);
+        writer.write(System.getProperty("line.separator"));
 
         SubmissionAttribute buildSubAttribute = null;
         Integer lastDataId = new Integer(-1);
@@ -1670,18 +1665,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
-            //String dataHeading  = res.getString("data_heading");
+            String dataHeading  = res.getString("data_heading");
             String dataName = res.getString("data_name");
             String dataValue  = res.getString("data_value");
-            //String cvTerm = res.getString("cv_term");
+            String cvTerm = res.getString("cv_term");
             String attHeading = res.getString("att_heading");
-            //String attName = res.getString("att_name");
+            String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
 
             Integer submissionId = dataSubmissionMap.get(dataId);
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
 
+            writer.write(dccId + comma + dataHeading + comma + dataName + comma + dataValue + comma 
+                    + cvTerm + comma + attHeading + comma + attName + comma + attValue 
+                    + System.getProperty("line.separator"));
+            
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
                 // have we seen this modencodewiki entry before?
@@ -1710,6 +1709,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             lastDataId = dataId;
         }
 
+        writer.flush();
+        writer.close();
+        
         // now create and store attributes
         for (Map.Entry<String, SubmissionAttribute> entry : attributes.entrySet()) {
             String dataValue = entry.getKey();
@@ -1738,7 +1740,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                                     || (type.equalsIgnoreCase("CellLine") 
                                             && attribute.type.equalsIgnoreCase("cell line"))){
                         // getting the EF name from the attributes..
-                        for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        for (Map.Entry<String, List<String>> detail 
+                                : attribute.details.entrySet()) {
                             if (detail.getKey().equalsIgnoreCase("official name")) {
                                 efName = detail.getValue().get(0);
                             }
@@ -1747,21 +1750,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     else if (type.equalsIgnoreCase("compound") || type.equalsIgnoreCase("tissue")
                             || type.equalsIgnoreCase("organism_part")
                             || type.equalsIgnoreCase("PCR_primer")){
-                        // this is not a recognised attribute, use what you find in the experiment properties
+                        // this is not a recognised attribute, use what you find 
+                        // in the experiment properties
                         efName = submissionEFNameMap.get(current).get(index);                        
                     }
                     else {
                         continue;
                     }
 
-                    if (efName == null){
+                    if (efName == null) {
                         LOG.error("EF has null name: " + current + "|" + type);
                         continue;
                     }
                     
                     // create the EF, if not there already
                     if (!eFactorIdMap.containsKey(efName)) {
-
                         Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
                         ef.setAttribute ("name", efName);
                         ef.setAttribute ("type", type);
@@ -1771,7 +1774,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         eFactorIdRefMap .put(efName, ef.getIdentifier());
                     }
                     // if pertinent to the current sub, add to the map for the references
-                    if (subs.contains(current)){
+                    if (subs.contains(current)) {
                         addToMap(submissionEFactorMap, current, efName);
                     }
                     index++;                        
@@ -1779,136 +1782,183 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             LOG.info("EFMAPef: " + submissionEFactorMap); 
 
-
             LOG.info("ATTRIBUTE: " + dataValue + ", " + attribute.type + " - " 
                     + attribute.details.size());
-            if (attribute.type.equals("antibody")) {
-                Item antibody = getChadoDBConverter().createItem("Antibody");
+            
+            
+            Map<String, String> attTypesToClassName = new HashMap<String, String>();
+            attTypesToClassName.put("antibody", "Antibody");
+            attTypesToClassName.put("array", "Array");
+            attTypesToClassName.put("cell line", "CellLine");
+            attTypesToClassName.put("strain", "Strain");
+            attTypesToClassName.put("stage", "DevelopmentalStage");
+            attTypesToClassName.put("dev stage", "DevelopmentalStage");
+            
+            String clsName = attTypesToClassName.get(attribute.type);
 
-                for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                    String name = detail.getKey();
-                    List<String> values = detail.getValue();
+            if (clsName != null) {
 
-                    if (notNullEquals(name, "official name")) {
-                        antibody.setAttribute("name", values.get(0));
-                    }
-                    if (notNullEquals(name, "antigen")) {
-                        antibody.setAttribute("antigen", values.get(0));
-                    }
-                    if (notNullEquals(name, "host")) {
-                        antibody.setAttribute("hostOrganism", values.get(0));
-                    }
-                    if (notNullEquals(name, "target name")) {
-                        antibody.setAttribute("targetName", values.get(0));
-                    }
+                List<String> checkOfficialName = attribute.details.get("official name");
+                if (checkOfficialName == null) {
+                    LOG.info("Official name - missing for attribute: " 
+                            + attribute.type + ", " + attribute.value);
+                    continue;
+                } else if (checkOfficialName.size() != 1) {
+                    LOG.info("Official name - multiple times for attribute: " 
+                            + attribute.type + ", " + attribute.value + ", " + checkOfficialName);
                 }
-                antibody.setCollection("submissions", attributeToSubmissionItems.get(dataValue));
-                getChadoDBConverter().store(antibody);
-            }
+                
+                String officialName = attribute.details.get("official name").get(0);
+                
+                List<String> subIds = attributeToSubmissionItems.get(dataValue);
+                Item subAttribute = createSubmissionAttribute(clsName, officialName, subIds);
 
-            if (attribute.type.equals("array")) {
-                Item array = getChadoDBConverter().createItem("Array");
-                for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                    String name = detail.getKey();
-                    List<String> values = detail.getValue();                   
+                if (clsName.equals("Antibody")) {
+                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        String name = detail.getKey();
+                        List<String> values = detail.getValue();
 
-                    if (notNullEquals(name, "official name")) {
-                        array.setAttribute("name", values.get(0));
-                    }
-                    if (notNullEquals(name, "platform")) {
-                        array.setAttribute("platform", values.get(0));
-                    }
-                    if (notNullEquals(name, "resolution")) {
-                        array.setAttribute("resolution", values.get(0));
-                    }
-                    if (notNullEquals(name, "genome")) {
-                        array.setAttribute("genome", values.get(0));
-                    }
-                }
-                array.setCollection("submissions", attributeToSubmissionItems.get(dataValue));
-
-                getChadoDBConverter().store(array);
-            }
-
-
-            if (attribute.type.equals("cell line")) {
-                Item cellLine = getChadoDBConverter().createItem("CellLine");
-                for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                    String name = detail.getKey();
-                    List<String> values = detail.getValue();
-
-                    if (notNullEquals(name, "official name")) {
-                        cellLine.setAttribute("name", values.get(0));
-                    }
-                    if (notNullEquals(name, "sex")) {
-                        cellLine.setAttribute("sex", values.get(0));
-                    }
-                    if (notNullEquals(name, "short description")) {
-                        cellLine.setAttribute("description", values.get(0));
-                    }
-                    if (notNullEquals(name, "species")) {
-                        cellLine.setAttribute("species", values.get(0));
-                    }
-                    if (notNullEquals(name, "tissue")) {
-                        cellLine.setAttribute("tissue", values.get(0));
-                    }
-                    if (notNullEquals(name, "cell type")) {
-                        cellLine.setAttribute("cellType", values.get(0));
-                    }
-                }
-                cellLine.setCollection("submissions", attributeToSubmissionItems.get(dataValue));
-
-                getChadoDBConverter().store(cellLine);
-            }
-
-            if (attribute.type.equals("strain")) {
-                Item strain = getChadoDBConverter().createItem("Strain");
-                for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                    String name = detail.getKey();
-                    List<String> values = detail.getValue();
-
-                    if (notNullEquals(name, "official name")) {
-                        strain.setAttribute("name", values.get(0));
-                    }
-                    if (notNullEquals(name, "species")) {
-                        strain.setAttribute("species", values.get(0));
-                    }
-                    if (notNullEquals(name, "source")) {
-                        strain.setAttribute("source", values.get(0));
-                    }
-                    if (notNullEquals(name, "reference")) {
-                        strain.setAttribute("reference", values.get(0));
-                    }
-                }
-                strain.setCollection("submissions", attributeToSubmissionItems.get(dataValue));
-
-                getChadoDBConverter().store(strain);
-            }
-
-            if (attribute.type.equals("stage")) {
-                Item stage = getChadoDBConverter().createItem("DevelopmentalStage");
-                for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                    String name = detail.getKey();
-                    List<String> values = detail.getValue();
-
-                    if (notNullEquals(name, "official name")) {
-                        stage.setAttribute("name", values.get(0));
-                    }
-                    if (notNullEquals(name, "developmental stage")) {
-                        for (String value : values) {
-                            stage.addToCollection("ontologyTerms", getDevStageTerm(value));
+                        if (notNullEquals(name, "antigen")) {
+                            subAttribute.setAttribute("antigen", values.get(0));
                         }
-                    }                
+                        if (notNullEquals(name, "host")) {
+                            subAttribute.setAttribute("hostOrganism", values.get(0));
+                        }
+                        if (notNullEquals(name, "target name")) {
+                            subAttribute.setAttribute("targetName", values.get(0));
+                        }
+                    }
                 }
-                stage.setCollection("submissions", attributeToSubmissionItems.get(dataValue));
 
-                getChadoDBConverter().store(stage);
+                if (clsName.equals("Array")) {
+                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        String name = detail.getKey();
+                        List<String> values = detail.getValue();                   
+
+                        if (notNullEquals(name, "official name")) {
+                            subAttribute.setAttribute("name", values.get(0));
+                        }
+                        if (notNullEquals(name, "platform")) {
+                            subAttribute.setAttribute("platform", values.get(0));
+                        }
+                        if (notNullEquals(name, "resolution")) {
+                            subAttribute.setAttribute("resolution", values.get(0));
+                        }
+                        if (notNullEquals(name, "genome")) {
+                            subAttribute.setAttribute("genome", values.get(0));
+                        }
+                    }
+                }
+
+                if (clsName.equals("CellLine")) {
+                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        String name = detail.getKey();
+                        List<String> values = detail.getValue();
+
+                        if (notNullEquals(name, "sex")) {
+                            subAttribute.setAttribute("sex", values.get(0));
+                        }
+                        if (notNullEquals(name, "short description")) {
+                            subAttribute.setAttribute("description", values.get(0));
+                        }
+                        if (notNullEquals(name, "species")) {
+                            subAttribute.setAttribute("species", values.get(0));
+                        }
+                        if (notNullEquals(name, "tissue")) {
+                            subAttribute.setAttribute("tissue", values.get(0));
+                        }
+                        if (notNullEquals(name, "cell type")) {
+                            subAttribute.setAttribute("cellType", values.get(0));
+                        }
+                    }
+                }
+
+                if (clsName.equals("Strain")) {
+                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        String name = detail.getKey();
+                        List<String> values = detail.getValue();
+
+                        if (notNullEquals(name, "species")) {
+                            subAttribute.setAttribute("species", values.get(0));
+                        }
+                        if (notNullEquals(name, "source")) {
+                            subAttribute.setAttribute("source", values.get(0));
+                        }
+                        if (notNullEquals(name, "reference")) {
+                            subAttribute.setAttribute("reference", values.get(0));
+                        }
+                    }
+                }
+
+                if (clsName.equals("DevelopmentalStage")) {
+                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
+                        String name = detail.getKey();
+                        List<String> values = detail.getValue();
+
+                        if (notNullEquals(name, "sex")) {
+                            subAttribute.setAttribute("sex", values.get(0));
+                        }
+                        if (notNullEquals(name, "developmental stage")) {
+                            for (String value : values) {
+                                subAttribute.addToCollection("ontologyTerms", 
+                                        getDevStageTerm(value));
+                            }
+                        }                
+                    }
+                }
+                getChadoDBConverter().store(subAttribute);
             }
-
         }
-
     }
 
+    
+    private Item createSubmissionAttribute(String clsName, String name, List<String> subIds) {
+        Item subAttribute = getChadoDBConverter().createItem(clsName);
+        
+        name = correctOfficialName(name, clsName);
+        if (name != null) {
+            
+            subAttribute.setAttribute("name", name);
+        }
+        subAttribute.setCollection("submissions", subIds);
+        
+        return subAttribute;
+    }
+    
+    /**
+     * Unify variations on similar official names.
+     * @param name the original 'official name' value
+     * @param clsName behaviour different depending class to be created
+     * @return a unified official name
+     */
+    protected String correctOfficialName(String name, String clsName) {
+        if (clsName.equals("DevelopmentalStage")) {
+            name = name.replace("_", " ");
+            name = name.replaceFirst("embryo", "Embryo");
+            name = name.replaceFirst("Embyro", "Embryo");
+            if (name.matches("E\\d.*")) {
+                name = name.replaceFirst("^E", "Embryo ");
+            }
+            if (name.matches("Embryo.*\\d")) {
+                name = name + " h";
+            }
+            if (name.matches("Embryo.*hr")) {
+                name = name.replace("hr", "h");
+            }
+            if (name.matches("Embryo.*\\dh")) {
+                name = name.replaceFirst("h", " h");
+            }
+            if (name.startsWith("DevStage:")) {
+                name = name.replaceFirst("DevStage:", "").trim();
+            }
+            if (name.matches("L\\d")) {
+                name = name + " stage larvae";
+            }
+        }
+        
+        return name;  
+    }
+    
     /**
      * Will be used for change to SubmissionAttribute superclass
      * @param dccRefLists
@@ -1945,11 +1995,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private String getDevStageTerm(String value) throws ObjectStoreException {
-        // some terms are prefixed with ontology namespace
-        String prefix = "FlyBase development CV:";
-        if (value.startsWith(prefix)) {
-            value = value.substring(prefix.length());
-        }
+        value = correctDevStageTerm(value);
+        
         String identifier = devStageTerms.get(value);
         if (identifier == null) {
             Item term = getChadoDBConverter().createItem("OntologyTerm");
@@ -1961,7 +2008,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return identifier;
     }
 
-
+    private String correctDevStageTerm(String value) {
+        // some terms are prefixed with ontology namespace
+        String prefix = "FlyBase development CV:";
+        if (value.startsWith(prefix)) {
+            value = value.substring(prefix.length());
+        }
+        return value;
+    }
+    
     private boolean notNullEquals(String a, String b) {
         return (a != null && b != null && a.equalsIgnoreCase(b));
     }
@@ -1992,59 +2047,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    // prints spreadsheet of submission attributes, not needed once changes complete
-    private void printSubmissionAttributes() throws IOException {
-        File f = new File("sub_report");
-        FileWriter writer = new FileWriter(f);
-        String endl = System.getProperty("line.separator");
-        String comma = ",";
-        StringBuffer sb = new StringBuffer();
-
-        sb.append("submission" + comma);
-        boolean firstEntry = true;
-        for (String heading : submissionAttTypes) {
-            if (!firstEntry) {
-                sb.append(comma);
-            } else {
-                firstEntry = false;
-            }
-            sb.append(heading);
-        }
-        sb.append(endl);
-
-        TreeSet<String> dccIds = new TreeSet(dccIdMap.values());
-
-        for (String dccId : dccIds) {
-            sb.append(dccId + comma);
-            for (String type : submissionAttTypes) {
-                if (submissionAttributes.containsKey(dccId)) {
-                    firstEntry = true;
-                    for (SubmissionAttribute sa 
-                            : submissionAttributes.get(dccId).get(type)) {
-                        if (!firstEntry) {
-                            sb.append("; ");
-                        } else {
-                            firstEntry = false;
-                        }
-                        sb.append(sa.value);
-                    }
-                }
-                sb.append(comma);
-            }
-            sb.append(endl);
-        }
-        writer.write(sb.toString());
-        writer.flush();
-        writer.close();
-    }
-
-
     private class SubmissionAttribute 
     {
-
-        public String type;
-        public String value;
-        public Map<String, List<String>> details;
+        protected String type;
+        protected String value;
+        protected Map<String, List<String>> details;
 
         public SubmissionAttribute(String type, String value) {
             this.type = type;
@@ -2205,30 +2212,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void setDAGRefs(Connection connection)
     throws ObjectStoreException {
 
-        Iterator<Integer> apId = appliedProtocolMap.keySet().iterator();
-        while (apId.hasNext()) {
-            Integer thisAP = apId.next();
+        for (Integer thisAP : appliedProtocolMap.keySet()) {
             AppliedProtocol ap = appliedProtocolMap.get(thisAP);
             List<Integer> dataIds = ap.inputs;
             if (!dataIds.isEmpty()) {
-                Iterator<Integer> i = dataIds.iterator();
-                ReferenceList collection = new ReferenceList();
-                collection.setName("inputs");
-                while (i.hasNext()) {
-                    Integer n = i.next();
-                    collection.addRefId(appliedDataMap.get(n).itemIdentifier);
+                ReferenceList collection = new ReferenceList("inputs");
+                for (Integer dataId : dataIds) {
+                    collection.addRefId(appliedDataMap.get(dataId).itemIdentifier);
                 }
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
 
             List<Integer> outIds = ap.outputs;
             if (!outIds.isEmpty()) {
-                Iterator<Integer> i = outIds.iterator();
-                ReferenceList collection = new ReferenceList();
-                collection.setName("outputs");
-                while (i.hasNext()) {
-                    Integer n = i.next();
-                    collection.addRefId(appliedDataMap.get(n).itemIdentifier);
+                ReferenceList collection = new ReferenceList("outputs");
+                for (Integer dataId : dataIds) {
+                    collection.addRefId(appliedDataMap.get(dataId).itemIdentifier);
                 }
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
