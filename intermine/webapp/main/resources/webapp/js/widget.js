@@ -92,11 +92,10 @@ function handleTableWidget(widget) {
          }
          row.appendChild(cell);
     }
-
       $("tablewidget"+widget.configId+"body").appendChild(row);
     }
     Element.hide($(widgetdatawait));
-      Element.show($(widgetdataname));
+     Element.show($(widgetdataname));
   } else {
     Element.hide($('widgetdatawait' + widget.configId));
     Element.hide($('widgetdata' + widget.configId));

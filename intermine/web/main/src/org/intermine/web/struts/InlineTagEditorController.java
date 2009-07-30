@@ -40,9 +40,9 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class InlineTagEditorController extends TilesAction
 {
-    
+
     private static int counter = 0;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -55,8 +55,6 @@ public class InlineTagEditorController extends TilesAction
         throws Exception {
         // Retrieve the taggable thing from the context
         Object taggable = context.getAttribute("taggable");
-        ProfileManager pm = (ProfileManager) request.getSession()
-            .getServletContext().getAttribute(Constants.PROFILE_MANAGER);
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
 
         String tagged = null;
@@ -102,7 +100,7 @@ public class InlineTagEditorController extends TilesAction
     }
 
     private String createUniqueEditorId(String tagged) {
-        return tagged + "@" + counter++; 
+        return tagged + "@" + counter++;
     }
 }
 

@@ -40,7 +40,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
 import org.intermine.webservice.server.query.result.WebServiceRequestParser;
 
 /**
- * 
+ *
  * Base class for web services. See methods of class to be able implement
  * subclass. <h3>Output</h3> There can be 3 types of output:
  * <ul>
@@ -48,7 +48,7 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  * <li>Complete results - xml, tab separated, html
  * <li>Incomplete results - error messages are appended at the end
  * </ul>
- * 
+ *
  * <h3>Web service design</h3>
  * <ul>
  * <li>Request is parsed with corresponding RequestProcessor class and returned
@@ -62,10 +62,10 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  * correctly initialized and there don't stay values from previous requests.
  * </ul>
  * For using of web services see InterMine wiki pages.
- * 
+ *
  * @author Jakub Kulaviak
  */
-public abstract class WebService 
+public abstract class WebService
 {
     /** XML format constant **/
     public static final int XML_FORMAT = 0;
@@ -78,7 +78,7 @@ public abstract class WebService
 
     /** CSV format constant **/
     public static final int CSV_FORMAT = 3;
-    
+
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
     private static Logger logger = Logger.getLogger(WebService.class);
@@ -86,26 +86,26 @@ public abstract class WebService
     private static final String FORWARD_PATH = "/webservice/table.jsp";
 
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
-    
+
     protected HttpServletRequest request;
 
     protected HttpServletResponse response;
 
     protected Output output;
-    
+
     private boolean authenticated = false;
 
     /**
      * Starting method of web service. The web service should be run like
-     * 
+     *
      * <pre>
      * new ListsService().doGet(request, response);
      * </pre>
-     * 
+     *
      * Ensures initialization of web service and makes steps common for all web
      * services and after that executes <tt>execute</tt> method, that should be
      * overwritten with each web service.
-     * 
+     *
      * @param request request
      * @param response response
      */
@@ -124,19 +124,19 @@ public abstract class WebService
             }
 
             authenticate(request);
-            
+
             execute(request, response);
 
         } catch (Throwable t) {
             sendError(t, response);
-        } 
+        }
         output.flush();
     }
-    
+
     /**
      * If user name and password is specified in request, then it setups user profile in session.
      * User was authenticated.
-     * It is using Http basis access authentication. 
+     * It is using Http basis access authentication.
      * {@link http://en.wikipedia.org/wiki/Basic_access_authentication}
      * @param request request
      */
@@ -149,13 +149,13 @@ public abstract class WebService
         String decoded = new String(Base64.decodeBase64(authString.getBytes()));
         String[] parts = decoded.split(":", 2);
         if (parts.length != 2) {
-            throw new BadRequestException("Invalid request authentication. " 
-                    + "Authorization field contains invalid value. Decoded authorization value: " 
+            throw new BadRequestException("Invalid request authentication. "
+                    + "Authorization field contains invalid value. Decoded authorization value: "
                     + parts[0]);
         }
         String userName = parts[0];
         String password = parts[1];
-        
+
         if (userName.length() == 0) {
             throw new BadRequestException("Empty user name.");
         }
@@ -171,7 +171,7 @@ public abstract class WebService
         } else {
             throw new BadRequestException("Unknown user name: " + userName);
         }
-        
+
         HttpSession session = request.getSession();
         LoginHandler.setUpProfile(session, SessionMethods.getProfileManager(
                 session.getServletContext()), userName, password);
@@ -196,14 +196,14 @@ public abstract class WebService
 
     private void logError(Throwable t, String msg, int code) {
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
-            logger.error("Service failed by internal error. Request parameters: \n" 
+            logger.error("Service failed by internal error. Request parameters: \n"
                     + requestParametersToString(), t);
         } else {
             logger.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code));
         }
     }
-    
+
     private String requestParametersToString() {
         StringBuilder sb = new StringBuilder();
         Map<String, String[]> map = request.getParameterMap();
@@ -228,8 +228,8 @@ public abstract class WebService
     private void sendErrorMsg(HttpServletResponse response, String msg, int code) {
         // When status is set, buffer with previous results is cleaned and
         // that's why errors must be set again
-        
-        
+
+
         if (!response.isCommitted()) {
             // Cheating here. It is an xml output, but when content type is set
             // to html, then
@@ -246,7 +246,7 @@ public abstract class WebService
                 // by server
                 response.setStatus(code, msg);
                 if (code != Output.SC_NO_CONTENT) {
-                    response.getWriter().print(msg);    
+                    response.getWriter().print(msg);
                 }
             } catch (IOException e) {
                 logger.error("Writing error to response failed.", e);
@@ -308,30 +308,27 @@ public abstract class WebService
 
     /**
      * Returns required output format.
-     * 
+     *
      * @return format
      */
     public int getFormat() {
-        String format = request
-                .getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+        String format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
         if (format == null || format.equals("")) {
             return TSV_FORMAT;
-        } else {
-            if (WebServiceRequestParser.FORMAT_PARAMETER_XML
-                    .equalsIgnoreCase(format)) {
-                return XML_FORMAT;
-            }
-            if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
-                    .equalsIgnoreCase(format)) {
-                return HTML_FORMAT;
-            } 
-            if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
-                    .equalsIgnoreCase(format)) {
-                return CSV_FORMAT;
-            } else {
-                return TSV_FORMAT;
-            }
         }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_XML
+                        .equalsIgnoreCase(format)) {
+            return XML_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
+                        .equalsIgnoreCase(format)) {
+            return HTML_FORMAT;
+        }
+        if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
+                        .equalsIgnoreCase(format)) {
+            return CSV_FORMAT;
+        }
+        return TSV_FORMAT;
     }
 
     /**
@@ -341,7 +338,7 @@ public abstract class WebService
      * WebService.doGet method that encapsulates logic common for all web
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
-     * 
+     *
      * @param request
      *            request
      * @param response
@@ -355,14 +352,14 @@ public abstract class WebService
     /**
      * Returns dispatcher that forwards to the page that displays results as a
      * html page.
-     * 
+     *
      * @return dispatcher
      */
     public RequestDispatcher getHtmlForward() {
         return request.getSession().getServletContext().getRequestDispatcher(
                 FORWARD_PATH);
     }
-    
+
     /**
      * @return true if request specified user name and password
      */
