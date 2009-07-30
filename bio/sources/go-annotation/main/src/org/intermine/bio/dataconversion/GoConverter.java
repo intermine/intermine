@@ -65,7 +65,6 @@ public class GoConverter extends FileConverter
     private Map<GoTermToGene, AssignmentEvidence> assignmentEvidenceMap =
         new LinkedHashMap<GoTermToGene, AssignmentEvidence>();
     private Map<Integer, List<String>> productCollectionsMap;
-    protected Set<String> productIds;
     private Map<String, Integer> storedProductIds;
 
     protected IdResolverFactory resolverFactory;
@@ -133,14 +132,14 @@ public class GoConverter extends FileConverter
         initialiseMapsForFile();
 
         BufferedReader br = new BufferedReader(reader);
-        String line, lastProductId = null;
+        String line = null;
 
         // loop through entire file
         while ((line = br.readLine()) != null) {
             if (line.startsWith("!")) {
                 continue;
             }
-            String[] array = line.split("\t", -1); //keep trailing empty Strings
+            String[] array = line.split("\t", -1); // keep trailing empty Strings
             if (array.length < 13) {
                 throw new IllegalArgumentException("Not enough elements (should be > 13 not "
                                                    + array.length + ") in line: " + line);
@@ -162,19 +161,6 @@ public class GoConverter extends FileConverter
                 continue;
             }
 
-            // if we move onto a new product id store the last one, we require that files
-            // are ordered by product id
-            if (lastProductId != null && !lastProductId.equals(productId)) {
-                if (productIds.contains(productId)) {
-                    throw new IllegalArgumentException("Product was found twice in file but not in "
-                                               + "consecutive entries: " + productId + " in file: "
-                                               + getCurrentFile() + ".  To save memory"
-                                               + " we assume the file is ordered");
-                }
-                productIds.add(productId);
-            }
-
-            lastProductId = productId;
             String goId = array[4];
             String qualifier = array[3];
             String strEvidence = array[6];
@@ -233,7 +219,6 @@ public class GoConverter extends FileConverter
     protected void initialiseMapsForFile() {
         assignmentEvidenceMap = new LinkedHashMap<GoTermToGene, AssignmentEvidence>();
         productCollectionsMap = new LinkedHashMap<Integer, List<String>>();
-        productIds = new HashSet<String>();
         storedProductIds = new HashMap<String, Integer>();
     }
     
@@ -263,8 +248,9 @@ public class GoConverter extends FileConverter
         }
     }
 
-    private Integer createGoAnnotation(String productIdentifier, String productType, String termIdentifier, 
-            Item organism, String qualifier, String withText, String dataSourceCode) 
+    private Integer createGoAnnotation(String productIdentifier, String productType, 
+            String termIdentifier, Item organism, String qualifier, String withText, 
+            String dataSourceCode) 
     throws ObjectStoreException {
         Item goAnnotation = createItem("GOAnnotation");
         goAnnotation.setReference("subject", productIdentifier);
@@ -437,17 +423,17 @@ public class GoConverter extends FileConverter
         String dataSetIdentifier = getDataset(dataSourceCode);
         product.addToCollection("dataSets", dataSetIdentifier);
 
+        Integer storedProductId = store(product);
+        storedProductIds.put(product.getIdentifier(), storedProductId);
+        productMap.put(key, product.getIdentifier());
+
         Item synonym = newSynonym(
                 product.getIdentifier(),
                 synonymTypes.get(type),
                 accession,
                 dataSetIdentifier);
         store(synonym);
-
-        Integer storedProductId = store(product);
-        storedProductIds.put(product.getIdentifier(), storedProductId);
-        productMap.put(key, product.getIdentifier());
-
+        
         return product.getIdentifier();
     }
 
