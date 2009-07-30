@@ -428,7 +428,7 @@ public class QueryBuilderChange extends DispatchAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 

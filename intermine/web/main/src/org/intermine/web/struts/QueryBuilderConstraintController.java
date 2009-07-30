@@ -126,7 +126,9 @@ public class QueryBuilderConstraintController extends TilesAction
             String nodeType;
             boolean useBags;
             if (node.isAttribute() && (node.getParent() != null)) {
-                nodeType = (query.getNodes().get(node.getPrefix())).getType();
+                //nodeType = (query.getNodes().get(node.getPrefix())).getType();
+                nodeType = TypeUtil.unqualifiedName(PathQuery.makePath(model, query,
+                                node.getPathString()).getEndType().getName());
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
                 //fetch AutoCompleter from servletContext
