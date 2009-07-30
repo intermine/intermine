@@ -189,6 +189,7 @@ public class WidgetsService extends WebService
                            ObjectStore os)
                     throws Exception {
         StringBuffer sb = new StringBuffer();
+        sb.append("<!-- WidgetsService.java -->");
         sb.append("<html><head>");
         sb.append("<script type=\"text/javascript\" src=\"" + prefix
                   + "/dwr/interface/AjaxServices.js\"></script>");
@@ -220,11 +221,10 @@ public class WidgetsService extends WebService
                   + "\" class=\"widgetcontainer\">");
         sb.append("<h3>" + widgetConfig.getTitle() + "</h3>");
         sb.append("<p>" + widgetConfig.getDescription() + "<br/>");
-         sb
-                        .append("<span style=\"margin-top:5px\">Number of " + bag.getType()
+        sb.append("<span style=\"margin-top:5px\">Number of " + bag.getType()
                   + "s in this list not analysed in this widget:");
-         sb.append("<span id=\"widgetnotanalysed" + widgetConfig.getId() + "\"></span>");
-         sb.append("</span>");
+        sb.append("<span id=\"widgetnotanalysed" + widgetConfig.getId() + "\"></span>");
+        sb.append("</span>");
         sb.append("</p>");
         // <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
         if (widgetConfig instanceof EnrichmentWidgetConfig) {
@@ -242,8 +242,7 @@ public class WidgetsService extends WebService
             sb.append("<select name=\"errorCorrection\" id=\"errorCorrection"
                       + widgetConfig.getId() + "\" onchange=\"getProcessEnrichmentWidgetConfig('"
                       + widgetConfig.getId() + "','" + bag.getName() + "}');\">");
-            sb.append("<html:option value=\"Benjamini and Hochberg\">"
-                      + "Benjamini and Hochberg</html:option>");
+            sb.append("<option value=\"Benjamini and Hochberg\">Benjamini and Hochberg</option>");
             sb.append("<option value=\"Bonferroni\">Bonferroni</option>");
             sb.append("<option value=\"None\">None</option>");
             sb.append("</select>");
@@ -271,7 +270,7 @@ public class WidgetsService extends WebService
                           + TypeUtil.unqualifiedName(widgetConfig.getClass().getName()) + "('"
                           + widgetConfig.getId() + "','" + bag.getName() + "');\">");
                 for (String option : extraAttrsMap.get(label)) {
-                    sb.append("option value=\"" + option + "\">" + option + "</option>");
+                    sb.append("<option value=\"" + option + "\">" + option + "</option>");
                 }
                 sb.append("</select>");
                 sb.append("</li>");
