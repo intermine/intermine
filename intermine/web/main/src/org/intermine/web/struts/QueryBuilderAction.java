@@ -70,6 +70,13 @@ public class QueryBuilderAction extends InterMineAction
 
         PathNode node = query.getNodes().get(mf.getPath());
 
+        if (node == null) {
+            // We are adding a constraint to a node not already in the query. Need to add those
+            // nodes, like in QueryBuilderChange.addPath, but not on a clone.
+            String path = query.getCorrectJoinStyle(mf.getPath());
+            node = query.addNode(path);
+        }
+
         Integer cindex = (request.getParameter("cindex") != null) ? new Integer(request
                 .getParameter("cindex")) : null;
 

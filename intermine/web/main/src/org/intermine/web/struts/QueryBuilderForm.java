@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Locale;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -21,12 +22,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
-import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -348,6 +350,9 @@ public class QueryBuilderForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 
@@ -356,10 +361,10 @@ public class QueryBuilderForm extends ActionForm
                     : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
 
         if (request.getParameter("attribute") != null) {
-            PathNode node = query.getNodes().get(path);
+            Path pathObj = PathQuery.makePath(model, query, path);
             Class fieldClass;
-            if (node.isAttribute()) {
-                fieldClass = TypeUtil.getClass(node.getType());
+            if (pathObj.endIsAttribute()) {
+                fieldClass = PathQuery.makePath(model, query, path).getEndType();
             } else {
                 fieldClass = String.class;
             }
