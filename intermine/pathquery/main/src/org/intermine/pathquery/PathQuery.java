@@ -144,6 +144,7 @@ public class PathQuery
         }
         String [] pathStrings = paths.split("[, ]+");
         setView(new ArrayList<String>(Arrays.asList(pathStrings)));
+        validateSortOrder();
     }
 
     /**
@@ -156,6 +157,7 @@ public class PathQuery
             return;
         }
         setViewPaths(makePaths(viewStrings));
+        validateSortOrder();
     }
 
     /**
@@ -174,6 +176,7 @@ public class PathQuery
                 node.setType(entry.getValue());
             }
         }
+        validateSortOrder();
     }
 
     /**
@@ -279,9 +282,10 @@ public class PathQuery
     }
 
     private void validateSortOrder() {
-        for (Path orderPath : sortOrder.keySet()) {
-            if (!isValidOrderPath(orderPath.toStringNoConstraints())) {
-                sortOrder.remove(orderPath);
+        Iterator<Path> iter = sortOrder.keySet().iterator();
+        while (iter.hasNext()) {
+            if (!isValidOrderPath(iter.next().toStringNoConstraints())) {
+                iter.remove();
             }
         }
     }
@@ -563,6 +567,7 @@ public class PathQuery
             }
         }
         removeOrderBy(pathString);
+        validateSortOrder();
     }
 
     /**
@@ -830,7 +835,14 @@ public class PathQuery
      */
     public boolean isValidOrderPath(String path) {
         path = getCorrectJoinStyle(path);
-        return path.indexOf(':') == -1;
+        if (path.indexOf(':') == -1) {
+            for (Path viewPath : view) {
+                if (viewPath.toStringNoConstraints().equals(path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -856,14 +868,14 @@ public class PathQuery
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
         try {
             for (String path : paths.split("[, ]+")) {
-                if (!isValidOrderPath(path)) {
-                    throw new IllegalArgumentException("Sort order path " + path + " cannot be in "
-                            + "the ORDER BY list");
-                }
-                if (direction.equals("desc")) {
-                    orderBy.put(makePath(model, this, path), DESCENDING);
-                } else if (direction.equals("asc")) {
-                    orderBy.put(makePath(model, this, path), ASCENDING);
+                if (isValidOrderPath(path)) {
+                    if (direction.equals("desc")) {
+                        orderBy.put(makePath(model, this, path), DESCENDING);
+                    } else if (direction.equals("asc")) {
+                        orderBy.put(makePath(model, this, path), ASCENDING);
+                    }
+                } else {
+                    logPathError("Cannot order by path " + path);
                 }
             }
         } catch (PathError e) {
@@ -897,11 +909,11 @@ public class PathQuery
         for (String path : paths) {
             if (path != null && !path.equals("")) {
                 try {
-                    if (!isValidOrderPath(path)) {
-                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
-                                + "in the ORDER BY list");
+                    if (isValidOrderPath(path)) {
+                        orderBy.put(makePath(model, this, path), direction);
+                    } else {
+                        logPathError("Cannot order by path " + path);
                     }
-                    orderBy.put(makePath(model, this, path), direction);
                 } catch (PathError e) {
                     logPathError(e);
                 }
@@ -962,11 +974,11 @@ public class PathQuery
         for (String path : paths.split("[, ]")) {
             if (path != null && !path.equals("")) {
                 try {
-                    if (!isValidOrderPath(path)) {
-                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
-                                + "in the ORDER BY list");
+                    if (isValidOrderPath(path)) {
+                        orderBy.put(makePath(model, this, path), direction);
+                    } else {
+                        logPathError("Cannot order by path " + path);
                     }
-                    orderBy.put(makePath(model, this, path), direction);
                 } catch (PathError e) {
                     logPathError(e);
                 }
@@ -999,11 +1011,11 @@ public class PathQuery
         try {
             for (String path : paths) {
                 if (path != null && !path.equals("")) {
-                    if (!isValidOrderPath(path)) {
-                        throw new IllegalArgumentException("Sort order path " + path + " cannot be "
-                                + "in the ORDER BY list");
+                    if (isValidOrderPath(path)) {
+                        orderBy.put(makePath(model, this, path), direction);
+                    } else {
+                        logPathError("Cannot order by path " + path);
                     }
-                    orderBy.put(makePath(model, this, path), direction);
                 } else {
                     logPathError(MSG);
                 }
