@@ -72,7 +72,7 @@ public class WidgetsService extends WebService
      */
     @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+    throws Exception {
         WidgetsServiceInput widgetsServiceInput = getInput();
         ServletContext servletContext = request.getSession().getServletContext();
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
@@ -85,10 +85,10 @@ public class WidgetsService extends WebService
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         if (widgetConfig instanceof TableWidgetConfig) {
             ((TableWidgetConfig) widgetConfig).setClassKeys((Map) servletContext
-                            .getAttribute(Constants.CLASS_KEYS));
+                                                            .getAttribute(Constants.CLASS_KEYS));
         }
-         response.getWriter().print(
-                        getHtml(widgetConfig, imBag, new URLGenerator(request).getBaseURL(), os));
+        response.getWriter().print(
+                                   getHtml(widgetConfig, imBag, new URLGenerator(request).getBaseURL(), os));
     }
 
     /**
@@ -102,7 +102,7 @@ public class WidgetsService extends WebService
      */
     protected InterMineBag getBag(String className, List<String> ids,
                                   ServletContext servletContext, Profile profile)
-                    throws ObjectStoreException {
+    throws ObjectStoreException {
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = os.getModel();
@@ -112,10 +112,10 @@ public class WidgetsService extends WebService
         } catch (ClassNotFoundException clse) {
             return null;
         }
-//        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
+//      ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
 
         ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                               Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
+                                 Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
@@ -136,7 +136,7 @@ public class WidgetsService extends WebService
         PathQuery pathQuery = new PathQuery(model);
 
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
-            null, true);
+                                                               null, true);
 
         pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
@@ -148,7 +148,7 @@ public class WidgetsService extends WebService
             sb.append(ident);
         }
         Constraint c = new Constraint(ConstraintOp.LOOKUP, sb.toString(),
-                        false, label, code, id, null);
+                                      false, label, code, id, null);
         pathQuery.addNode(className).getConstraints().add(c);
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
@@ -187,151 +187,153 @@ public class WidgetsService extends WebService
      */
     private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix,
                            ObjectStore os)
-                    throws Exception {
+    throws Exception {
         StringBuffer sb = new StringBuffer();
-        sb.append("<!-- WidgetsService.java -->");
-        sb.append("<html><head>");
+        sb.append("<!-- WidgetsService.java -->\n");
+        sb.append("<html><head>\n");
         sb.append("<script type=\"text/javascript\" src=\"" + prefix
-                  + "/dwr/interface/AjaxServices.js\"></script>");
+                  + "/dwr/interface/AjaxServices.js\"></script>\n");
         sb.append("<script type=\"text/javascript\" src=\"" + prefix
-                  + "/dwr/engine.js\"></script>");
-        sb.append("<script type=\"text/javascript\" src=\"" + prefix + "/dwr/util.js\"></script>");
-        sb.append("<script type=\"text/javascript\" src=\"" + prefix + "/js/widget.js\"></script>");
+                  + "/dwr/engine.js\"></script>\n");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/dwr/util.js\"></script>\n");
+        sb.append("<script type=\"text/javascript\" src=\"" + prefix
+                  + "/js/widget.js\"></script>\n");
         sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + prefix
-                  + "/css/widget.css\"/>");
+                  + "/css/widget.css\"/>\n");
         sb.append("<script type=\"text/javascript\" src=\"" + prefix
-                  + "/js/prototype.js\"></script>");
+                  + "/js/prototype.js\"></script>\n");
         sb.append("<script type=\"text/javascript\" src=\"" + prefix
-                  + "/js/scriptaculous.js\"></script>");
-        sb.append("</head><body>");
+                  + "/js/scriptaculous.js\"></script>\n");
+        sb.append("</head>\n<body>\n");
         sb.append("<form action=\"/widgetAction\" id=\"widgetaction"
-                  + widgetConfig.getId() + "\">");
+                  + widgetConfig.getId() + "\">\n");
         sb.append("<input type=\"hidden\" name=\"link\" value=\""
-                  + widgetConfig.getLink() + "\"/>");
-        sb.append("<input type=\"hidden\" name=\"bagType\" value=\"" + bag.getType() + "\"/>");
-        sb.append("<input type=\"hidden\" name=\"bagName\" value=\"" + bag.getName() + "\" />");
+                  + widgetConfig.getLink() + "\"/>\n");
+        sb.append("<input type=\"hidden\" name=\"bagType\" value=\"" + bag.getType() + "\"/>\n");
+        sb.append("<input type=\"hidden\" name=\"bagName\" value=\"" + bag.getName() + "\" />\n");
         sb.append("<input type=\"hidden\" name=\"widgetid\" value=\""
-                  + widgetConfig.getId() + "\" />");
+                  + widgetConfig.getId() + "\" />\n");
         sb.append("<input type=\"hidden\" name=\"action\" value=\"\" styleId=\"action"
-                  + widgetConfig.getId() + "\"/>");
+                  + widgetConfig.getId() + "\"/>\n");
         sb.append("<input type=\"hidden\" name=\"exporttype\" value=\"\" styleId=\"export"
-                  + widgetConfig.getId() + "\"/>");
+                  + widgetConfig.getId() + "\"/>\n");
 
         sb.append("<div id=\"widgetcontainer" + widgetConfig.getId()
-                  + "\" class=\"widgetcontainer\">");
-        sb.append("<h3>" + widgetConfig.getTitle() + "</h3>");
+                  + "\" class=\"widgetcontainer\">\n");
+        sb.append("<h3>" + widgetConfig.getTitle() + "</h3>\n");
         sb.append("<p>" + widgetConfig.getDescription() + "<br/>");
         sb.append("<span style=\"margin-top:5px\">Number of " + bag.getType()
                   + "s in this list not analysed in this widget:");
         sb.append("<span id=\"widgetnotanalysed" + widgetConfig.getId() + "\"></span>");
-        sb.append("</span>");
-        sb.append("</p>");
+        sb.append("</span>\n");
+        sb.append("</p>\n");
         // <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
         if (widgetConfig instanceof EnrichmentWidgetConfig) {
-            sb.append("<fieldset>");
-            sb.append("<legend>Options</legend>");
-            sb.append("<ol>");
+            sb.append("<fieldset>\n");
+            sb.append("<legend>Options</legend>\n");
+            sb.append("<ol>\n");
             sb.append("<input type=\"hidden\" name=\"externalLink" + widgetConfig.getId()
                       + "\" styleId=\"externalLink" + widgetConfig.getId() + "\" value=\""
-                      + widgetConfig.getExternalLink() + "\"/>");
+                      + widgetConfig.getExternalLink() + "\"/>\n");
             sb.append("<input type=\"hidden\" name=\"externalLinkLabel" + widgetConfig.getId()
                       + "\" styleId=\"externalLinkLabel" + widgetConfig.getId() + "\" value=\""
-                      + widgetConfig.getExternalLinkLabel() + "\"/>");
-            sb.append("<li>");
-            sb.append("<label>Multiple Hypothesis Test Correction</label>");
+                      + widgetConfig.getExternalLinkLabel() + "\"/>\n");
+            sb.append("<li>\n");
+            sb.append("<label>Multiple Hypothesis Test Correction</label>\n");
             sb.append("<select name=\"errorCorrection\" id=\"errorCorrection"
                       + widgetConfig.getId() + "\" onchange=\"getProcessEnrichmentWidgetConfig('"
-                      + widgetConfig.getId() + "','" + bag.getName() + "}');\">");
-            sb.append("<option value=\"Benjamini and Hochberg\">Benjamini and Hochberg</option>");
-            sb.append("<option value=\"Bonferroni\">Bonferroni</option>");
-            sb.append("<option value=\"None\">None</option>");
-            sb.append("</select>");
-            sb.append("</li>");
-            sb.append("<li style=\"float:right\">");
-            sb.append("<label>Maximum value to display</label>");
+                      + widgetConfig.getId() + "','" + bag.getName() + "');\">\n");
+            sb.append("<option value=\"Benjamini and Hochberg\">Benjamini and Hochberg</option>\n");
+            sb.append("<option value=\"Bonferroni\">Bonferroni</option>\n");
+            sb.append("<option value=\"None\">None</option>\n");
+            sb.append("</select>\n");
+            sb.append("</li>\n");
+            sb.append("<li style=\"float:right\">\n");
+            sb.append("<label>Maximum value to display</label>\n");
             sb.append("<select name=\"max\" id=\"max" + widgetConfig.getId()
                       + "\" onchange=\"getProcessEnrichmentWidgetConfig('" + widgetConfig.getId()
-                      + "','" + bag.getName() + "')\">");
-            sb.append("<option value=\"0.01\">0.01</option>");
-            sb.append("<option value=\"0.05\">0.05</option>");
-            sb.append("<option value=\"0.10\">0.10</option>");
-            sb.append("<option value=\"0.50\">0.50</option>");
-            sb.append("<option value=\"1.00\">1.00</option>");
-            sb.append("</select>");
-            sb.append("</li>");
+                      + "','" + bag.getName() + "')\">\n");
+            sb.append("<option value=\"0.01\">0.01</option>\n");
+            sb.append("<option value=\"0.05\">0.05</option>\n");
+            sb.append("<option value=\"0.10\">0.10</option>\n");
+            sb.append("<option value=\"0.50\">0.50</option>\n");
+            sb.append("<option value=\"1.00\">1.00</option>\n");
+            sb.append("</select>\n");
+            sb.append("</li>\n");
         }
         Map<String, Collection<String>> extraAttrsMap = widgetConfig.getExtraAttributes(bag, os);
         if (extraAttrsMap != null) {
             for (String label : extraAttrsMap.keySet()) {
-                sb.append("<li>");
-                sb.append("<label>" + label + "</label>");
+                sb.append("<li>\n");
+                sb.append("<label>" + label + "</label>\n");
                 sb.append("<select name=\"selectedExtraAttribute\" id=\"widgetselect"
                           + widgetConfig.getId() + "\" onchange=\"getProcess"
                           + TypeUtil.unqualifiedName(widgetConfig.getClass().getName()) + "('"
-                          + widgetConfig.getId() + "','" + bag.getName() + "');\">");
+                          + widgetConfig.getId() + "','" + bag.getName() + "');\">\n");
                 for (String option : extraAttrsMap.get(label)) {
-                    sb.append("<option value=\"" + option + "\">" + option + "</option>");
+                    sb.append("<option value=\"" + option + "\">" + option + "</option>\n");
                 }
-                sb.append("</select>");
-                sb.append("</li>");
+                sb.append("</select>\n");
+                sb.append("</li>\n");
             }
         }
-        sb.append("</ol>");
-        sb.append("</fieldset>");
+        sb.append("</ol>\n");
+        sb.append("</fieldset>\n");
 
         if (widgetConfig instanceof EnrichmentWidgetConfig
                         || widgetConfig instanceof TableWidgetConfig) {
             sb.append("<div id=\"widget_tool_bar_div_" + widgetConfig.getId()
-                      + "\" class=\"widget_tool_bar_div\" >");
+                      + "\" class=\"widget_tool_bar_div\" >\n");
             sb.append("<ul id=\"widget_button_bar_"
                       + widgetConfig.getId()
                       + "\" onclick=\"toggleToolBarMenu(event,'widget');\""
-                      + " class=\"widget_button_bar\" >");
+                      + " class=\"widget_button_bar\" >\n");
             sb.append("<li id=\"tool_bar_li_display_" + widgetConfig.getId()
                       + "\"><span id=\"tool_bar_button_display_" + widgetConfig.getId()
-                      + "\" class=\"widget_tool_bar_button\">Display</span></li>");
+                      + "\" class=\"widget_tool_bar_button\">Display</span></li>\n");
             sb.append("<li id=\"tool_bar_li_export_" + widgetConfig.getId()
                       + "\"><span id=\"tool_bar_button_export_" + widgetConfig.getId()
-                      + "\" class=\"widget_tool_bar_buttons\">Export</span></li>");
-            sb.append("</ul>");
-            sb.append("</div>");
+                      + "\" class=\"widget_tool_bar_buttons\">Export</span></li>\n");
+            sb.append("</ul>\n");
+            sb.append("</div>\n");
 
             sb.append("<div id=\"tool_bar_item_display_" + widgetConfig.getId()
-                      + "\" style=\"visibility:hidden;width:200px\" class=\"tool_bar_item\">");
+                      + "\" style=\"visibility:hidden;width:200px\" class=\"tool_bar_item\">\n");
             sb.append("<a href=\"javascript:submitWidgetForm('" + widgetConfig.getId()
-                      + "','display',null)\">Display checked items in results table</a>");
-            sb.append("<hr/>");
+                      + "','display',null)\">Display checked items in results table</a>\n");
+            sb.append("<hr/>\n");
             sb.append("<a href=\"javascript:hideMenu('tool_bar_item_display_"
-                      + widgetConfig.getId() + "','widget')\" >Cancel</a>");
-            sb.append("</div>");
+                      + widgetConfig.getId() + "','widget')\" >Cancel</a>\n");
+            sb.append("</div>\n");
 
             sb.append("<div id=\"tool_bar_item_export_" + widgetConfig.getId()
-                      + "\" style=\"visibility:hidden;width:230px\" class=\"tool_bar_item\">");
+                      + "\" style=\"visibility:hidden;width:230px\" class=\"tool_bar_item\">\n");
             sb.append("<a href=\"javascript:submitWidgetForm('" + widgetConfig.getId()
-                      + "','export','csv')\">Export selected as comma separated values</a><br/>");
+                      + "','export','csv')\">Export selected as comma separated values</a><br/>\n");
             sb.append("<a href=\"javascript:submitWidgetForm('" + widgetConfig.getId()
-                      + "','export','tab')\">Export selected as tab separated values</a>");
+                      + "','export','tab')\">Export selected as tab separated values</a>\n");
             sb.append("<hr/>");
             sb.append("<a href=\"javascript:hideMenu('tool_bar_item_export_" + widgetConfig.getId()
-                      + "','widget')\" >Cancel</a>");
-            sb.append("</div>");
+                      + "','widget')\" >Cancel</a>\n");
+            sb.append("</div>\n");
         }
-        sb.append("<div id=\"widgetdata" + widgetConfig.getId() + "\" class=\"widgetdata\">");
+        sb.append("<div id=\"widgetdata" + widgetConfig.getId() + "\" class=\"widgetdata\">\n");
         if (widgetConfig instanceof TableWidgetConfig
-            || widgetConfig instanceof EnrichmentWidgetConfig) {
-            sb.append("<table id=\"tablewidget" + widgetConfig.getId() + "\" border=\"0\" >");
-            sb.append("<thead id=\"tablewidget" + widgetConfig.getId() + "head\"></thead>");
-            sb.append("<tbody id=\"tablewidget" + widgetConfig.getId() + "body\"></tbody>");
+                        || widgetConfig instanceof EnrichmentWidgetConfig) {
+            sb.append("<table id=\"tablewidget" + widgetConfig.getId() + "\" border=\"0\" >\n");
+            sb.append("<thead id=\"tablewidget" + widgetConfig.getId() + "head\"></thead>\n");
+            sb.append("<tbody id=\"tablewidget" + widgetConfig.getId() + "body\"></tbody>\n");
             sb.append("</table>");
         }
-        sb.append("</div>");
+        sb.append("</div>\n");
         sb.append("<div id=\"widgetdatawait" + widgetConfig.getId()
                   + "\" class=\"widgetdatawait\"><img src=\"" + prefix
-                  + "/images/wait30.gif\" title=\"Searching...\"/></div>");
+                  + "/images/wait30.gif\" title=\"Searching...\"/></div>\n");
         sb.append("<div id=\"widgetdatanoresults"
                   + widgetConfig.getId()
                   + "\" class=\"widgetdatawait\" style=\"display:none;\">"
-                  + "<i>no results found</i></div>");
+                  + "<i>no results found</i></div>\n");
         sb.append("<script language=\"javascript\">");
         if (widgetConfig instanceof GraphWidgetConfig) {
             sb.append("<!--//<![CDATA[\n");
@@ -344,17 +346,16 @@ public class WidgetsService extends WebService
                 sb.append("getProcessTableWidgetConfig('" + widgetConfig.getId() + "','"
                           + bag.getName() + "');\n");
                 sb.append("//]]>-->\n");
-            } else
-                if (widgetConfig instanceof EnrichmentWidgetConfig) {
-                    sb.append("<!--//<![CDATA[\n");
-                    sb.append("getProcessEnrichmentWidgetConfig('" + widgetConfig.getId() + "','"
-                              + bag.getName() + "');\n");
-                    sb.append("//]]>-->\n");
-                }
-        sb.append("</script>");
-        sb.append("</div>");
-        sb.append("</form>");
-        sb.append("</body></html>");
+            } else if (widgetConfig instanceof EnrichmentWidgetConfig) {
+                sb.append("<!--//<![CDATA[\n");
+                sb.append("getProcessEnrichmentWidgetConfig('" + widgetConfig.getId() + "','"
+                          + bag.getName() + "');\n");
+                sb.append("//]]>-->\n");
+            }
+        sb.append("</script>\n");
+        sb.append("</div>\n");
+        sb.append("</form>\n");
+        sb.append("</body></html>\n");
         return sb.toString();
     }
 }
