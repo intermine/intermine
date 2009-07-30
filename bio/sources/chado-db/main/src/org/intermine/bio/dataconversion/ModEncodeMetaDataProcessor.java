@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -95,6 +97,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // and chado identifiers with item identifiers (Integer, String)
     private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
+    private Map<Integer, String> protocolTypesMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
     // list of firstAppliedProtocols, first level of the DAG linking
@@ -235,7 +238,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        processFeatures(connection, submissionMap);
+        //processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
@@ -1214,8 +1217,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             protocol.setAttribute("description", description);
             Integer intermineObjectId = getChadoDBConverter().store(protocol);
             storeInProtocolMaps (protocol, protocolId, intermineObjectId);
-            //protocolIdMap .put(protocolId, intermineObjectId);
-            //protocolIdRefMap .put(protocolId, protocol.getIdentifier());
+            
             count++;
         }
         res.close();
@@ -1263,6 +1265,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             setAttribute(protocolIdMap.get(protocolId), fieldName, value);
+            if (fieldName.equals("type")) {
+                protocolTypesMap.put(protocolId, value);
+            }
             count++;
         }
         LOG.info("created " + count + " protocol attributes");
@@ -2145,14 +2150,114 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ReferenceList collection = new ReferenceList();
             collection.setName("protocols");
             while (dat.hasNext()) {
+                
                 Integer currentId = dat.next();
                 collection.addRefId(protocolIdRefMap.get(currentId));
             }
-            getChadoDBConverter().store(collection,
-                    submissionMap.get(thisSubmissionId).interMineObjectId);
+            Integer storedSubmissionId = submissionMap.get(thisSubmissionId).interMineObjectId;
+            getChadoDBConverter().store(collection, storedSubmissionId);
+            setSubmissionExperimentType(storedSubmissionId, protocolIds);
         }
     }
 
+    // store Submission.experimentType if it can be inferred from protocols
+    private void setSubmissionExperimentType(Integer storedSubId, List<Integer> protocolIds) 
+    throws ObjectStoreException {
+        Set<String> protocolTypes = new HashSet<String>();
+        for (Integer protocolId : protocolIds) {
+            protocolTypes.add(protocolTypesMap.get(protocolId).trim());
+        }
+
+        String experimentType = inferExperimentType(protocolTypes);
+        if (experimentType != null) {
+            Attribute expTypeAtt = new Attribute("experimentType", experimentType);
+            getChadoDBConverter().store(expTypeAtt, storedSubId);
+        }
+    }
+    
+    
+    /** 
+     * Work out an experiment type give the combination of protocols used for the
+     * submussion.  e.g. *immunoprecipitation + hybridization = chIP-chip
+     * @param protocolTypes the protocal types
+     * @return a short experiment type
+     */
+    protected String inferExperimentType(Set<String> protocolTypes) {
+
+        // extraction + sequencing + reverse transcription - ChIP = RTPCR
+        // extraction + sequencing - reverse transcription - ChIP = RNA-seq
+        if (containsMatch(protocolTypes, "nucleic_acid_extraction|RNA extraction")
+                && containsMatch(protocolTypes, "sequencing(_protocol)?")
+                && !containsMatch(protocolTypes, "chromatin_immunoprecipitation")) {
+            if (containsMatch(protocolTypes, "reverse_transcription")) {
+                return "RTPCR";
+            } else {
+                return "RNA-seq";
+            }
+        }
+        
+        // reverse transcription + PCR + RACE = RACE
+        // reverse transcription + PCR - RACE = RTPCR
+        if (containsMatch(protocolTypes, "reverse_transcription")
+                && containsMatch(protocolTypes, "PCR(_amplification)?")) {
+            if (containsMatch(protocolTypes, "RACE")) {
+                return "RACE";
+            } else {
+                return "RTPCR";
+            }
+        }
+        
+        // ChIP + hybridization = ChIP-chip
+        // ChIP - hybridization = ChIP-seq
+        if (containsMatch(protocolTypes, "(.*)?immunoprecipitation")) {
+            if (containsMatch(protocolTypes, "hybridization")) {
+                return "ChIP-chip";
+            } else {
+                return "ChIP-seq";
+            }           
+        }
+        
+        // hybridization - ChIP = RNA tiling array
+        if (containsMatch(protocolTypes, "hybridization")
+                && !containsMatch(protocolTypes, "immunoprecipitation")) {
+            return "RNA tiling array";
+        }
+        
+        // annotation = Computational annotation
+        if (containsMatch(protocolTypes, "annotation")) {
+            return "Computational annotation";
+        }
+        
+        // If we haven't found a type yet, and there is a growth protocol, then
+        // this is probably an RNA sample creation experiment from Celniker
+        if (containsMatch(protocolTypes, "grow")) {
+            return "RNA sample creation";
+        }
+        
+        return null;
+    }
+    
+    
+    private boolean containsMatch(Set<String> testSet, String regex) {
+        boolean matches = false;
+        Pattern p = Pattern.compile(regex);
+        for (String test : testSet) {
+            Matcher m = p.matcher(test);
+            if (m.matches()) {
+                matches = true;
+            }
+        }
+        return matches;
+    }
+    
+    private void createSubmissionExperimentType(Integer storedSubmissionId,
+            String type) throws ObjectStoreException {
+        LOG.info("EXP TYPE: " + type);
+        Attribute experimentType = new Attribute("experimentType", type);
+        getChadoDBConverter().store(experimentType, storedSubmissionId);
+    }
+    
+    
     //sub -> exp
     private void setSubmissionExperimetRefs(Connection connection)
     throws ObjectStoreException {
@@ -2327,8 +2432,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void storeInProtocolMaps(Item i, Integer chadoId, Integer intermineObjectId)
     throws ObjectStoreException {
         if (i.getClassName().equals("Protocol")) {
-            protocolIdMap .put(chadoId, intermineObjectId);
-            protocolIdRefMap .put(chadoId, i.getIdentifier());
+            protocolIdMap.put(chadoId, intermineObjectId);
+            protocolIdRefMap.put(chadoId, i.getIdentifier());
         } else {
             throw new IllegalArgumentException("Type mismatch: expecting Protocol, getting "
                     + i.getClassName().substring(37) + " with intermineObjectId = "
