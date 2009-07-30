@@ -562,7 +562,7 @@ public class PathQueryTest extends TestCase
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name");
+        q.setOrderBy("Company.vatNumber,Company.name");
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
 
         // overwrite current orderby
@@ -570,12 +570,8 @@ public class PathQueryTest extends TestCase
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
         q.setOrderBy("Company.address.address");
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name");
+        q.setOrderBy("Company.vatNumber,Company.name");
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
-
-        q = (PathQuery) expected.get("orderByCompany");
-        q.setOrderBy("Company.departments.name");
-        assertEquals("Company.departments.name asc", q.getSortOrderStrings().get(0));
 
         // bad path
         q = (PathQuery) expected.get("companyName");
@@ -616,7 +612,7 @@ public class PathQueryTest extends TestCase
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", PathQuery.ASCENDING);
+        q.setOrderBy("Company.vatNumber,Company.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
 
         // overwrite current orderby
@@ -624,12 +620,8 @@ public class PathQueryTest extends TestCase
         q = new PathQuery(model);
         q.setView("Company.vatNumber,Company.name,Company.address.address");
         q.setOrderBy("Company.address.address", PathQuery.DESCENDING);
-        q.setOrderBy("Company.vatNumber,Company.name,Company.departments.name", PathQuery.ASCENDING);
+        q.setOrderBy("Company.vatNumber,Company.name", PathQuery.ASCENDING);
         assertEquals(e.getSortOrderStrings(), q.getSortOrderStrings());
-
-        q = (PathQuery) expected.get("orderByCompany");
-        q.setOrderBy("Company.departments.name", PathQuery.ASCENDING);
-        assertEquals("Company.departments.name asc", q.getSortOrderStrings().get(0));
 
         // bad path
         q = (PathQuery) expected.get("companyName");
@@ -688,6 +680,7 @@ public class PathQueryTest extends TestCase
         // one
         e = (PathQuery) expected.get("orderByAsc");
         q = new PathQuery(model);
+        q.setView("Employee.name");
         orderBy = new ArrayList<String>() {{
             add("Employee.name");
         }};
@@ -697,6 +690,7 @@ public class PathQueryTest extends TestCase
         // desc
         e = (PathQuery) expected.get("orderByDesc");
         q = new PathQuery(model);
+        q.setView("Employee.name");
         orderBy = new ArrayList<String>() {{
             add("Employee.name");
         }};
@@ -706,6 +700,7 @@ public class PathQueryTest extends TestCase
         //three
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name");
         orderBy = new ArrayList<String>() {{
             add("Company.vatNumber");
             add("Company.name");
@@ -725,6 +720,7 @@ public class PathQueryTest extends TestCase
 
         // bad path with good paths
         q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name");
         orderBy = new ArrayList<String>() {{
             add("Company.vatNumber");
             add("Company.name");
@@ -737,6 +733,7 @@ public class PathQueryTest extends TestCase
 
         // bad path with empty path
         q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name");
         orderBy = new ArrayList<String>() {{
             add("Company.vatNumber");
             add("");
@@ -749,6 +746,7 @@ public class PathQueryTest extends TestCase
 
         // bad paths with empty path
         q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name");
         orderBy = new ArrayList<String>() {{
             String isnull = null;
             add(isnull);
@@ -762,15 +760,14 @@ public class PathQueryTest extends TestCase
     }
 
     public void testSetOrderByList() {
-
+        // Note that setOrderByList() does not validate!
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
+        q.setView("Company.vatNumber,Company.name");
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>() {{
             Path p =  PathQuery.makePath(model, q, "Company.vatNumber");
             put(p, PathQuery.ASCENDING);
             p = PathQuery.makePath(model, q, "Company.name");
-            put(p, PathQuery.ASCENDING);
-            p = PathQuery.makePath(model, q, "Company.departments.name");
             put(p, PathQuery.ASCENDING);
         }};
         q.setOrderByList(orderBy);
@@ -783,24 +780,6 @@ public class PathQueryTest extends TestCase
         }};
         q.setOrderByList(orderBy);
         assertEquals(1, q.getSortOrder().size());
-
-        // null paths
-        e = (PathQuery) expected.get("orderByVat");
-        q = new PathQuery(model);
-        orderBy = new LinkedHashMap<Path, String>() {{
-            Path p = null;
-            put(p, "");
-            p = PathQuery.makePath(model, q, "Company.vatNumber");
-            put(p, "asc");
-            p = PathQuery.makePath(model, q, "Company.name");
-            put(p, "asc");
-            p = PathQuery.makePath(model, q, "Company.departments.name");
-            put(p, "asc");
-
-        }};
-        q.setOrderByList(orderBy);
-        assertEquals(e.getSortOrder(), q.getSortOrder());
-        assertFalse(q.isValid());
     }
 
     public void testAddOrderByString() {
@@ -1073,70 +1052,105 @@ public class PathQueryTest extends TestCase
     }
 
     public void testInvalidSortOrder() {
-        e = expected.get("employeeDepartmentName");
+        e = expected.get("employeeDepartmentName").clone();
         e.flipJoinStyle("Employee.department");
-        try {
-            e.setOrderBy("Employee:department.name", "asc");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.setOrderBy("Employee.department.name", "asc");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.setOrderBy(Arrays.asList("Employee:department.name"), "asc");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.setOrderBy(Arrays.asList("Employee.name", "Employee.department.name"), "asc");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
+        e.setOrderBy("Employee:department.name", "asc");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.setOrderBy("Employee.department.name", "asc");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.setOrderBy(Arrays.asList("Employee:department.name"), "asc");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.setOrderBy(Arrays.asList("Employee.name", "Employee.department.name"), "asc");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.setOrderBy(Collections.EMPTY_LIST, "asc");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.setOrderByList(Collections.EMPTY_MAP);
+        assertFalse(e.isValid());
 
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.addOrderBy("");
-        try {
-            e.addOrderBy("Employee:department.name");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.addOrderBy("Employee.department.name");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.addOrderBy("Employee.name, Employee.department.name");
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        e.addOrderBy(", Employee.name");
-        e.addOrderBy("flibble");
+        assertFalse(e.isValid());
 
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy("Employee:department.name");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy("Employee.department.name");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy("Employee.name, Employee.department.name");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy(", Employee.name");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy("flibble");
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.addOrderBy(Arrays.asList("Employee.name"));
+        assertTrue(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.addOrderBy(Collections.EMPTY_LIST);
-        try {
-            e.addOrderBy(Arrays.asList("Employee:department.name"));
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.addOrderBy(Arrays.asList("Employee.department.name"));
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
-        try {
-            e.addOrderBy(Arrays.asList("Employee.name", "Employee.department.name"));
-            fail("Expected exception");
-        } catch (IllegalArgumentException e2) {
-        }
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy(Arrays.asList("Employee:department.name"));
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy(Arrays.asList("Employee.department.name"));
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
+        e.addOrderBy(Arrays.asList("Employee.name", "Employee.department.name"));
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.addOrderBy(Arrays.asList("", "Employee.name"));
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.addOrderBy(Arrays.asList("flibble"));
+        assertFalse(e.isValid());
+
+        e = expected.get("employeeDepartmentName").clone();
+        e.flipJoinStyle("Employee.department");
         e.setSortOrder(e.getSortOrder());
+        assertTrue(e.isValid());
 
         e.resetOrderBy();
         assertTrue(e.getSortOrder().isEmpty());
