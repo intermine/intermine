@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -90,25 +89,8 @@ public class GoConverterTest extends ItemsTestCase
         expected.add("0_1");
         expected.add("0_2");
         converter.initialiseMapsForFile();
-        assertEquals(expected, new HashSet(converter.createWithObjects(
+        assertEquals(expected, new HashSet<String>(converter.createWithObjects(
                 "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "FlyBase")));
     }
 
-
-    // if we see the same product id twice but not in order process should fail
-    public void testFileNotOrdered() throws Exception {
-        Reader reader = new InputStreamReader(
-            getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
-
-        converter.initialiseMapsForFile();
-        converter.productIds.add("FBgn0020002");
-
-        try {
-            converter.process(reader);
-            fail("Expected an exception due to unordered file");
-        } catch (IllegalArgumentException e) {
-            // expected
-            converter.close();
-        }
-    }
 }
