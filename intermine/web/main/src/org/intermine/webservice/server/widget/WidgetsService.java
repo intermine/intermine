@@ -38,6 +38,7 @@ import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
@@ -51,11 +52,7 @@ import org.intermine.webservice.server.WebService;
  * Web service that returns a widget for a given list of identifiers See
  * {@link WidgetsRequestProcessor} for parameter description
  * URL examples: get an EnrichmentWidget
- * /service/widgets?widgetId=go_enrichment
- *   &className=Gene
- *   &extraAttributes=Bonferroni,0.1,biological_process
- *   &ids=FBgn0011648,FBgn0011655,FBgn0025800
- *   &format=html
+ * /service/widgets?widgetId=go_enrichment&className=Gene&extraAttributes=Bonferroni,0.1,biological_process&ids=S000000003,S000000004&format=html
  * get a GraphWidget
  * /service/widgets?widgetId=flyatlas
  *   &className=Gene&extraAttributes=
@@ -115,7 +112,11 @@ public class WidgetsService extends WebService
         } catch (ClassNotFoundException clse) {
             return null;
         }
-        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
+//        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
+
+        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
+                               Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
+
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
         boolean bagExists = true;
@@ -255,8 +256,8 @@ public class WidgetsService extends WebService
             sb.append("<option value=\"0.01\">0.01</option>");
             sb.append("<option value=\"0.05\">0.05</option>");
             sb.append("<option value=\"0.10\">0.10</option>");
-            sb.append("<option value=\"1.00\">1.00</option>");
             sb.append("<option value=\"0.50\">0.50</option>");
+            sb.append("<option value=\"1.00\">1.00</option>");
             sb.append("</select>");
             sb.append("</li>");
         }
