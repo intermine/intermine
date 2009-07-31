@@ -12,27 +12,28 @@ package org.intermine.webservice.server.query.result;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
- * Processes service request. Evaluates parameters and validates them and check if 
- * its combination is valid. 
- * 
+ * Processes service request. Evaluates parameters and validates them and check if
+ * its combination is valid.
+ *
  * @author Jakub Kulaviak
  **/
-public class QueryResultRequestParser extends WebServiceRequestParser  
+public class QueryResultRequestParser extends WebServiceRequestParser
 {
-    /** Name of parameter with query **/ 
+    /** Name of parameter with query **/
     public static final String QUERY_PARAMETER = "query";
 
     /** Compute total count parameter name. **/
     public static final String COMPUTE_TOTAL_COUNT_PARAMETER = "tcount";
-    
+
     /** Layout parameter name. **/
     public static final String LAYOUT_PARAMETER = "layout";
-    
+
     private HttpServletRequest request;
-    
+
     /**
      * RequestProcessor constructor.
      * @param request request
@@ -42,7 +43,7 @@ public class QueryResultRequestParser extends WebServiceRequestParser
     }
 
     /**
-     * Returns parsed parameters in parameter object - so this 
+     * Returns parsed parameters in parameter object - so this
      * values can be easily get from this object.
      * @return web service input
      */
@@ -52,24 +53,23 @@ public class QueryResultRequestParser extends WebServiceRequestParser
         return input;
     }
 
-    private void parseRequest(HttpServletRequest request, QueryResultInput input) {
+    private void parseRequest(HttpServletRequest req, QueryResultInput input) {
 
-        super.parseRequest(request, input);
-        
-        String xmlQuery = request.getParameter(QUERY_PARAMETER);
-        if (xmlQuery == null || xmlQuery.equals("")) {
-            throw new BadRequestException("invalid " + QUERY_PARAMETER 
+        super.parseRequest(req, input);
+
+        String xmlQuery = req.getParameter(QUERY_PARAMETER);
+        if (StringUtils.isEmpty(xmlQuery)) {
+            throw new BadRequestException("invalid " + QUERY_PARAMETER
                     + " parameter (empty or missing)");
-        } else {
-            input.setXml(xmlQuery);
         }
+        input.setXml(xmlQuery);
 
-        String totalCount = request.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
+        String totalCount = req.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
         if (totalCount != null) {
-            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER 
+            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER
                     + " is not now supported. It is not possible to retrieve number of results.");
         }
-        
-        input.setLayout(request.getParameter(LAYOUT_PARAMETER));
+
+        input.setLayout(req.getParameter(LAYOUT_PARAMETER));
     }
 }
