@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -60,7 +61,7 @@ public class KeggExampleConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        if (taxonId == null || taxonId.equals("")) {
+        if (StringUtils.isEmpty(taxonId)) {
             throw new IllegalArgumentException("No taxonId provided: " + taxonId);
         }
 

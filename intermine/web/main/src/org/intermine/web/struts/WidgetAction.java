@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -122,7 +123,7 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
@@ -196,14 +197,14 @@ public class WidgetAction extends InterMineAction
         String bagName = request.getParameter("bagName");
         String key = request.getParameter("key");
         String link = request.getParameter("link");
-        if (key == null || key.equals("")) {
+        if (StringUtils.isEmpty(key)) {
             WidgetForm wf = (WidgetForm) form;
             bagName = wf.getBagName();
             key = wf.getSelectedAsString();
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
