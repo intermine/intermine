@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -56,6 +57,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class QueryBuilderConstraintController extends TilesAction
 {
+    private static final Logger LOG = Logger.getLogger(QueryBuilderConstraintController.class);
+
     /**
      * {@inheritDoc}
      */
@@ -79,7 +82,7 @@ public class QueryBuilderConstraintController extends TilesAction
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
-        PathNode node = (PathNode) request.getAttribute("editingNode");
+        PathNode node = (PathNode) session.getAttribute("editingNode");
         //set up the node on which we are editing constraints
         if (node != null) {
             SessionMethods.moveToRequest("editingNode", request);
