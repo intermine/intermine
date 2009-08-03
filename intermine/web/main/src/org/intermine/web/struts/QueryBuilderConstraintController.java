@@ -79,10 +79,10 @@ public class QueryBuilderConstraintController extends TilesAction
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
+        PathNode node = (PathNode) request.getAttribute("editingNode");
         //set up the node on which we are editing constraints
-        if (session.getAttribute("editingNode") != null) {
+        if (node != null) {
             SessionMethods.moveToRequest("editingNode", request);
-            PathNode node = (PathNode) request.getAttribute("editingNode");
             SessionMethods.moveToRequest("editingConstraintIndex", request);
             SessionMethods.moveToRequest("editingTemplateConstraint", request);
             SessionMethods.moveToRequest("editingConstraintValue", request);
@@ -213,13 +213,13 @@ public class QueryBuilderConstraintController extends TilesAction
                     request.setAttribute("constrainOnBag", "true");
                 }
             }
-        }
-        // ONLY EDITING JOIN STYLE
-        else if (session.getAttribute("joinStylePath") != null) {
+        } else if (session.getAttribute("joinStylePath") != null) {
+            // ONLY EDITING JOIN STYLE
             request.setAttribute("editingPath", PathQuery.makePath(model, query,
                                 (String) session.getAttribute("joinStylePath")));
             request.setAttribute("joinStyleOnly", "true");
             session.removeAttribute("joinStylePath");
+            request.setAttribute("allowOuterJoin", Boolean.TRUE);
         }
 
         return null;
