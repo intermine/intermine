@@ -72,7 +72,6 @@ table.results {
 table.results th {
   border-right:1px solid #FFF;
   border-bottom:1px solid #FFF;
-  white-space:nowrap;
   font-size: 12px;
 }
 table.results td {

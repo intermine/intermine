@@ -61,40 +61,40 @@ options displayConstraint.optionsList
 </c:if>
 <!-- ATTRIBUTE TOGGLE -->
 <c:if test="${displayConstraint.attribute || ! empty keyFields}">
-<h4>
+  <h4>
     <a href="javascript:swapInputs('attribute');">
-        <img id='attributeToggle' src="images/disclosed.gif"/>
-        <fmt:message key="query.filterValue"/><%--Filter query results on this field having a specific value.--%>
+      <img id='attributeToggle' src="images/disclosed.gif"/>
+      <fmt:message key="query.filterValue"/><%--Filter query results on this field having a specific value.--%>
     </a>
-</h4>
+  </h4>
 
-<!-- field name -->
-<c:choose>
-<c:when test="${empty editingNode.fieldName}">
-<span class="type">
-    <c:out value="${editingNode.pathString}"/>
-</span>
-</c:when>
-<c:otherwise>
-<span class="attributeField">
-    <c:out value="${editingNode.fieldName}"/>
-</span>
-</c:otherwise>
-</c:choose>
-<c:choose>
-<c:when test="${editingNode.collection}">
-<fmt:message key="query.collection"><%--collection--%>
-<fmt:param value="${editingNode.type}"/>
-</fmt:message>
-</c:when>
-<c:otherwise>
-<%-- <c:out value="${editingNode.type}"/> --%>
-</c:otherwise>
-</c:choose>
+  <!-- field name -->
+  <c:choose>
+    <c:when test="${empty editingNode.fieldName}">
+      <span class="type">
+        <c:out value="${editingNode.pathString}"/>
+      </span>
+    </c:when>
+    <c:otherwise>
+      <span class="attributeField">
+        <c:out value="${editingNode.fieldName}"/>
+      </span>
+    </c:otherwise>
+  </c:choose>
+  <c:choose>
+    <c:when test="${editingNode.collection}">
+      <fmt:message key="query.collection"><%--collection--%>
+        <fmt:param value="${editingNode.type}"/>
+      </fmt:message>
+    </c:when>
+    <c:otherwise>
+      <%-- <c:out value="${editingNode.type}"/> --%>
+    </c:otherwise>
+  </c:choose>
 
-<c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
-<c:set var="options" value="${displayConstraint.optionsList}"/>
-<c:set var="validOps" value="${displayConstraint.validOps}"/>
+  <c:set var="fixedOps" value="${displayConstraint.fixedOpIndices}"/>
+  <c:set var="options" value="${displayConstraint.optionsList}"/>
+  <c:set var="validOps" value="${displayConstraint.validOps}"/>
 </c:if>
 
 <script type="text/javascript">
@@ -114,81 +114,54 @@ fixedOps[0][${status.count}] = "<c:out value="${op}"/>";
 
 <!-- input or radio buttons -->
 <c:choose>
-<c:when test="${editingNode.attribute}">
-<table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" >
-    <tr>
+  <c:when test="${editingNode.attribute}">
+    <table border="0" cellspacing="0" cellpadding="1" border="0" class="noborder" >
+      <tr>
         <c:choose>
-        <c:when test="${editingNode.type == 'Boolean'}">
-        <td valign="top">
-
-            <html:hidden property="attributeOp" styleId="attribute1" value="0" disabled="false" />
-            <html:radio property="attributeValue" styleId="attribute2" value="true" disabled="false" /><fmt:message key="query.constraint.true"/>
-            <html:radio property="attributeValue" styleId="attribute3" value="false" disabled="false" /><fmt:message key="query.constraint.false"/>
-            <html:radio property="attributeValue" styleId="attribute4" value="NULL" disabled="false" /><fmt:message key="query.constraint.null"/>
-
-        </td>
-    </c:when>
-    <c:otherwise>
-    <td valign="top">
-        <html:select property="attributeOp" styleId="attribute5" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue, fixedOps)">
-        <c:forEach items="${validOps}" var="op">
-        <c:if test="${!(editingNode.type == 'String' && (op.value == '<=' || op.value == '>='))}">
-        <option value="${op.key}"
-        <c:if test="${editingConstraintOperand == op.key}">
-        selected
-    </c:if>
-    >
-    <im:displayableOpName opName="${op.value}"
-    valueType="${editingNode.type}"/>
-</option>
-</c:if>
-</c:forEach>
-</html:select>
-</td>
-<td valign="top" align="center">
-    <span id="operandEditSpan0">
-
-
-
-
-
-
-        <c:set var="ac" value="${useAutoCompleter}"/>
-        <c:set var="classDesc" value="${classDescriptor}"/>
-        <c:set var="fieldDesc" value="${fieldDescriptor}"/>
-        <c:choose>
-        <%-- inputfield for an autocompletion --%>
-        <c:when test="${!empty ac}">
-        <input name="attributeValue" id="attribute6" size="55" autocomplete ="off"
-        style="background:#ffffc8"
-        value="${editingConstraintValue}"
-        onKeyDown="getId(this.id); isSubmit(event);"
-        onKeyUp="readInput(event, '${classDesc}', '${fieldDesc}');"
-        onMouseOver="setMouseOver(1);"
-        onMouseOut="setMouseOver(0);"
-        onBlur="if(MOUSE_OVER != 1) { removeList(); }"/>
-        <iframe width="100%" height="0" id="attribute6_IEbugFixFrame"
-        marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" ></iframe>
-        <div class="auto_complete" id="attribute6_display"
-        onMouseOver="setMouseOver(1);"
-        onMouseOut="setMouseOver(0);"
-        onBlur="if(MOUSE_OVER != 1) { removeList(); }" ></div>
-        <div class="error_auto_complete" id="attribute6_error"></div>
-    </c:when>
-    <%-- normal inputfield --%>
-    <c:otherwise>
-
-    <c:set var="datePickerClass" value=""/>
-    <c:if test="${editingNode.type == 'Date'}">
-    <c:set var="datePickerClass" value="date-pick"/>
-</c:if>
-
-<html:text property="attributeValue" styleId="attribute6"
-value="${editingConstraintValue}"
-onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"
-styleClass="${datePickerClass}"/>
-
-<c:if test="${editingNode.type == 'Date'}">
+          <c:when test="${editingNode.type == 'Boolean'}">
+            <td valign="top">
+              <html:hidden property="attributeOp" styleId="attribute1" value="0" disabled="false" />
+              <html:radio property="attributeValue" styleId="attribute2" value="true" disabled="false" /><fmt:message key="query.constraint.true"/>
+              <html:radio property="attributeValue" styleId="attribute3" value="false" disabled="false" /><fmt:message key="query.constraint.false"/>
+              <html:radio property="attributeValue" styleId="attribute4" value="NULL" disabled="false" /><fmt:message key="query.constraint.null"/>
+            </td>
+          </c:when>
+          <c:otherwise>
+            <td valign="top">
+              <html:select property="attributeOp" styleId="attribute5" onchange="updateConstraintForm(0, this.form.attributeOp, this.form.attributeOptions, this.form.attributeValue, fixedOps)">
+                <c:forEach items="${validOps}" var="op">
+                  <c:if test="${!(editingNode.type == 'String' && (op.value == '<=' || op.value == '>='))}">
+                    <option value="${op.key}"<c:if test="${editingConstraintOperand == op.key}">selected</c:if>>
+                      <im:displayableOpName opName="${op.value}" valueType="${editingNode.type}"/>
+                    </option>
+                  </c:if>
+                </c:forEach>
+              </html:select>
+            </td>
+            <td valign="top" align="center">
+              <span id="operandEditSpan0">
+                <c:set var="ac" value="${useAutoCompleter}"/>
+                <c:set var="classDesc" value="${classDescriptor}"/>
+                <c:set var="fieldDesc" value="${fieldDescriptor}"/>
+                <c:choose>
+                  <%-- inputfield for an autocompletion --%>
+                  <c:when test="${!empty ac}">
+                    <input name="attributeValue" id="attribute6" size="55" autocomplete ="off" style="background:#ffffc8" value="${editingConstraintValue}" onKeyDown="getId(this.id); isSubmit(event);" onKeyUp="readInput(event, '${classDesc}', '${fieldDesc}');" onMouseOver="setMouseOver(1);" onMouseOut="setMouseOver(0);" onBlur="if(MOUSE_OVER != 1) { removeList(); }"/>
+                    <iframe width="100%" height="0" id="attribute6_IEbugFixFrame" marginheight="0" marginwidth="0" frameborder="0" style="position:absolute;" >
+                    </iframe>
+                    <div class="auto_complete" id="attribute6_display" onMouseOver="setMouseOver(1);" onMouseOut="setMouseOver(0);" onBlur="if(MOUSE_OVER != 1) { removeList(); }">
+                    </div>
+                    <div class="error_auto_complete" id="attribute6_error">
+                    </div>
+                  </c:when>
+                  <%-- normal inputfield --%>
+                  <c:otherwise>
+                    <c:set var="datePickerClass" value=""/>
+                    <c:if test="${editingNode.type == 'Date'}">
+                      <c:set var="datePickerClass" value="date-pick"/>
+                    </c:if>
+                    <html:text property="attributeValue" styleId="attribute6" value="${editingConstraintValue}" onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}" styleClass="${datePickerClass}"/>
+                    <c:if test="${editingNode.type == 'Date'}">
 <script type="text/javascript">
 jQuery('.date-pick').datepicker(
     {
@@ -201,51 +174,47 @@ jQuery('.date-pick').datepicker(
     }
 );
 </script>
-</c:if>
-</c:otherwise>
-</c:choose>
+                    </c:if>
+                  </c:otherwise>
+                </c:choose>
 
-<%-- might want to show up arrow --%>
-<c:if test="${!empty options}">
-<br/><im:vspacer height="2"/>
-<img src="images/up-arrow.gif" title="^^^" border="0" height="13" width="13"/>
-<im:vspacer height="2"/>
-</c:if>
-</span>
-<c:if test="${!empty options}">
-<html:select property="attributeOptions" styleId="attribute7" onchange="this.form.attributeValue.value=this.value;">
-<c:forEach items="${options}" var="option">
-<option value="${option}"
-<c:if test="${editingConstraintValue == option}">
-selected
-</c:if>
->
-<c:out value="${option}"/>
-</option>
-</c:forEach>
-</html:select>
-</c:if>
-</td>
-</c:otherwise>
-</c:choose>
-<td valign="top">&nbsp;
-    <html:submit property="attribute"  styleId="attributeSubmit" disabled="false">
-    <fmt:message key="query.submitConstraint"/><%--Add to query--%>
-    </html:submit>
-</td>
-</tr>
-<c:if test="${editingNode.type == 'String'}">
-<tr>
-    <td colspan="3">
-        <span class="smallnote">
-            <fmt:message key="query.filterValue.wildcardHint"/>
-        </span>
-    </td>
-</tr>
-</c:if>
-</table>
-</c:when>
-<c:otherwise>
+                <%-- might want to show up arrow --%>
+                <c:if test="${!empty options}">
+                  <br/><im:vspacer height="2"/>
+                  <img src="images/up-arrow.gif" title="^^^" border="0" height="13" width="13"/>
+                  <im:vspacer height="2"/>
+                </c:if>
+              </span>
+              <c:if test="${!empty options}">
+                <html:select property="attributeOptions" styleId="attribute7" onchange="this.form.attributeValue.value=this.value;">
+                  <c:forEach items="${options}" var="option">
+                    <option value="${option}"<c:if test="${editingConstraintValue == option}">selected</c:if>>
+                      <c:out value="${option}"/>
+                    </option>
+                  </c:forEach>
+                </html:select>
+              </c:if>
+            </td>
+          </c:otherwise>
+        </c:choose>
+        <td valign="top">&nbsp;
+          <html:submit property="attribute"  styleId="attributeSubmit" disabled="false">
+            <fmt:message key="query.submitConstraint"/><%--Add to query--%>
+          </html:submit>
+        </td>
+      </tr>
+      <c:if test="${editingNode.type == 'String'}">
+        <tr>
+          <td colspan="3">
+            <span class="smallnote">
+              <fmt:message key="query.filterValue.wildcardHint"/>
+            </span>
+          </td>
+        </tr>
+      </c:if>
+    </table>
+  </c:when>
+  <c:otherwise>
 
 <!-- lookup constraint -->
 <c:if test="${!empty keyFields}">
