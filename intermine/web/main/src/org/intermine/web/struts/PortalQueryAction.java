@@ -116,7 +116,7 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
         }
-        ActionMessages actionMessages = new ActionMessages();
+        
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         // Set collapsed/uncollapsed state of object details UI
@@ -171,12 +171,10 @@ public class PortalQueryAction extends InterMineAction
             }
             number++;
         }
-        // NEW STUFF
-        PathQuery pathQuery = new PathQuery(model);
 
+        PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
             null, true);
-
         pathQuery.setViewPaths(view);
         String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.LOOKUP, StringUtils.replace(extId, ",", "\t"),
@@ -185,24 +183,24 @@ public class PortalQueryAction extends InterMineAction
         pathQuery.setConstraintLogic("A and B and C");
         pathQuery.syncLogicExpression("and");
 
-        Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
+        Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
 
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
-        InterMineBag imBag = new InterMineBag(bagName,
-                        className , null , new Date() ,
-                        os , profile.getUserId() , uosw);
-
-        List <Integer> bagList = new ArrayList <Integer> ();
+        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os, 
+                                              profile.getUserId(), uosw);
+        List <Integer> bagList = new ArrayList();
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session,
-                                                   properties, className, null);
+        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className, 
+                                                   null);
 
+        ActionMessages actionMessages = new ActionMessages();
+        
         // Use custom converters
         Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
@@ -227,7 +225,7 @@ public class PortalQueryAction extends InterMineAction
                         addparameter, bagList, className);
                     imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                              profile.getUserId(), uosw);
-                    List<Integer> converted = new ArrayList<Integer>();
+                    List<Integer> converted = new ArrayList();
                     for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
                             : convertedWebResult) {
                         ResultElement resElement = resRow.get(0).get(0).getValue();
