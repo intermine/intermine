@@ -254,18 +254,7 @@
 
 <!-- widgets -->
    <widgets>
-
-      <graphdisplayer id="zfinexpr" title="ZFIN expression patterns"
-                      link="org.fishmine.web.widget.ZfinExprGraphURLGenerator"
-                      dataSetLoader="org.fishmine.web.widget.ZfinExprDataSetLdr"
-                      description="Expression patterns"
-                      domainLabel="Stage"
-                      rangeLabel="Gene count"
-                      typeClass="org.intermine.model.bio.Gene"
-                      graphType="BarChart" />
-<!--
-
-         <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
+     <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
                                  label="Feature"
@@ -304,7 +293,7 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
--->
+
 
     </widgets>
 </webconfig>

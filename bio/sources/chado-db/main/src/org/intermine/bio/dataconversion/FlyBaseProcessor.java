@@ -115,14 +115,14 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
     // the configuration for this processor, set when getConfig() is called the first time
-    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
+    private final Map<Integer, MultiKeyMap> config = new HashMap();
 
     // a set of feature_ids for those genes that have a location in the featureloc table, set by
     // the constructor
     private final IntPresentSet locatedGeneIds;
 
     // a map from the uniquename of each allele to its item identifier
-    private Map<String, String> alleleIdMap = new HashMap<String, String>();
+    private Map<String, String> alleleIdMap = new HashMap();
 
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
@@ -131,11 +131,11 @@ public class FlyBaseProcessor extends SequenceProcessor
     private ChadoCV sequenceOntologyCV = null;
 
     // a map from mutagen description to Mutagen Item identifier
-    private Map<String, String> mutagensMap = new HashMap<String, String>();
+    private Map<String, String> mutagensMap = new HashMap();
 
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
-    private Map<String, String> interactionExperiments = new HashMap<String, String>();
+    private Map<String, String> interactionExperiments = new HashMap();
 
     private static final String LOCATED_GENES_TEMP_TABLE_NAME = "intermine_located_genes_temp";
     private static final String ALLELE_TEMP_TABLE_NAME = "intermine_flybase_allele_temp";
