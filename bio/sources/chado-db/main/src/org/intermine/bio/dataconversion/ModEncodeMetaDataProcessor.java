@@ -238,7 +238,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        //processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
