@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
@@ -176,7 +177,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 
                 // the amplicon may target zero or more genes, a gene can be targeted
                 // by more than one amplicon.
-                if (!(line[1] == null || line[1].equals(""))) {
+                if (StringUtils.isNotEmpty(line[1])) {
                     String [] geneNames = line[1].split(",");
                     for (int i = 0; i < geneNames.length; i++) {
                         String geneSymbol = geneNames[i].trim();

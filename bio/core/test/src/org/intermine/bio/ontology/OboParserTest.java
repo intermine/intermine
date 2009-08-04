@@ -10,8 +10,6 @@ package org.intermine.bio.ontology;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -22,7 +20,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.io.IOUtils;
 
 public class OboParserTest extends TestCase
