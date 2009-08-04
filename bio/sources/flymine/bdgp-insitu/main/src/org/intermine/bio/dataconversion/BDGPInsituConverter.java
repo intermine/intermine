@@ -19,7 +19,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -227,7 +229,7 @@ public class BDGPInsituConverter extends FileConverter
     }
 
     private Item getTerm(String name) throws ObjectStoreException {
-        if (name == null || name.equals("") || badTerms.contains(name)) {
+        if (StringUtils.isEmpty(name) || badTerms.contains(name)) {
             return null;
         } else if (terms.containsKey(name)) {
             return terms.get(name);

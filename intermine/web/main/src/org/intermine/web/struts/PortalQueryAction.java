@@ -126,8 +126,6 @@ public class PortalQueryAction extends InterMineAction
         collapsed.put("further", Boolean.FALSE);
         collapsed.put("summary", Boolean.FALSE);
 
-        session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
-
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String[] idList = extId.split(",");
 
