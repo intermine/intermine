@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -55,7 +56,7 @@ public class FlyAtlasConverter extends BioFileConverter
                 // column headers - strip off any extra columns
                 int end = 0;
                 for (int i = 0; i < line.length; i++) {
-                    if (line[i] == null || line[i].equals("")) {
+                    if (StringUtils.isEmpty(line[i])) {
                         break;
                     }
                     end++;
