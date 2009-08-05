@@ -269,17 +269,19 @@ public class QueryBuilderController extends TilesAction
      */
     protected static Set<String> findForcedInnerJoins(PathQuery pathquery) {
         Set<String> paths = new HashSet<String>();
-        List<PathNode> nodes = findLoopConstraints(pathquery);
-        for (PathNode node : nodes) {
+        for (PathNode node : pathquery.getNodes().values()) {
             for (Constraint con : node.getConstraints()) {
-                String fromPath = node.getPathString();
-                String toPath = (String) con.getValue();
-                if (!node.getOuterJoinGroup().equals(Node.getOuterJoinGroup(toPath))) {
-                    throw new IllegalArgumentException("Paths " + fromPath + " and " + toPath
-                            + " cannot be looped together because they are in different join"
-                            + " groups");
+                if (!node.isAttribute() && (!BagConstraint.VALID_OPS.contains(con.getOp()))
+                        && (!con.getOp().equals(ConstraintOp.LOOKUP))) {
+                    String fromPath = node.getPathString();
+                    String toPath = (String) con.getValue();
+                    if (!node.getOuterJoinGroup().equals(Node.getOuterJoinGroup(toPath))) {
+                        throw new IllegalArgumentException("Paths " + fromPath + " and " + toPath
+                                + " cannot be looped together because they are in different join"
+                                + " groups");
+                    }
+                    paths.addAll(PathNode.findForcedInnerJoins(fromPath, toPath));
                 }
-                paths.addAll(PathNode.findForcedInnerJoins(fromPath, toPath));
             }
         }
         return paths;
