@@ -113,7 +113,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<Integer, List<String>> submissionEFTypeMap = new HashMap<Integer, List<String>>();
     private Map<Integer, List<String>> submissionEFNameMap = new HashMap<Integer, List<String>>();
     // TO REMOVE
-    private Map<Integer, List<String>> submissionEFactorTEMPMap = new HashMap<Integer, List<String>>();
+    private Map<Integer, List<String>> submissionEFactorTEMPMap = 
+        new HashMap<Integer, List<String>>();
     private Map<String, Integer> eFactorIdTEMPMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefTEMPMap = new HashMap<String, String>();
 
@@ -126,11 +127,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
 
-    List<String> submissionAttTypes = 
+    List<String> submissionPropTypes = 
         Arrays.asList(
                 new String[] {"pi", "antibody", "cell line", "stage", "strain", "tissue", "array"});
-
-
+    private Map<String, String> nonWikiSubmissionProperties = new HashMap<String, String>();
+    private Map<String, Item> subItemsMap = new HashMap<String, Item>();
+    
     private static class SubmissionDetails
     {
         // the identifier assigned to Item eg. "0_23"
@@ -265,8 +267,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME experimentalFactors" + ":   " + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        processSubmissionAttributes(connection);
-        LOG.info("TIME submissionAttributes" + ":   "  + (System.currentTimeMillis() - bT));
+        processSubmissionProperties(connection);
+        LOG.info("TIME submissionProperties" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
         setSubmissionEFactorsRefs(connection);
@@ -1142,7 +1144,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 efName = value;
                 addToMap(submissionEFNameMap, submissionId, value);
             } else {
-                // build map to use in setting EF in processSubmissionAttributes
+                // build map to use in setting EF in processSubmissionProperties
                 addToMap(submissionEFTypeMap, submissionId, value);
 
                 // TODO: remove. here for checking
@@ -1638,7 +1640,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // get DCC id
     // add antibody to types
 
-    private void processSubmissionAttributes(Connection connection) throws SQLException, 
+    private void processSubmissionProperties(Connection connection) throws SQLException, 
     IOException, ObjectStoreException {
 
         // TODO update query to check against dbxrefs
@@ -1647,7 +1649,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String comma = ",";
         File f = new File("all_subs_report.csv");
         FileWriter writer = new FileWriter(f);
-        Set<String> dccDone = new HashSet<String>();
 
         writer.write("submission" + comma);
         writer.write("data_heading" + comma);
@@ -1659,20 +1660,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         writer.write("att_value" + comma);
         writer.write(System.getProperty("line.separator"));
 
-        SubmissionAttribute buildSubAttribute = null;
+        SubmissionProperty buildSubProperty = null;
         Integer lastDataId = new Integer(-1);
-        Map<String, SubmissionAttribute> attributes = new HashMap <String, SubmissionAttribute>();
-        Map<String, List<String>> attributeToSubmissionItems = new HashMap <String, List<String>>();
+        Map<String, SubmissionProperty> props = new HashMap <String, SubmissionProperty>();
+        Map<String, List<String>> propToSubmissionItems = new HashMap <String, List<String>>();
 
-        Map<Integer, List<String>> subIdAttributes = new HashMap <Integer, List<String>>();
-        Map<String, List<Integer>> attributeSubIds = new HashMap <String, List<Integer>>();
-
+        Map<Integer, List<String>> subIdDataType = new HashMap <Integer, List<String>>();
+        Map<String, List<Integer>> propSubIds = new HashMap <String, List<Integer>>();
+        Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes = 
+            new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
 
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             String dataHeading  = res.getString("data_heading");
             String dataName = res.getString("data_name");
-            String dataValue  = res.getString("data_value");
+            String wikiPageUrl  = res.getString("data_value");
             String cvTerm = res.getString("cv_term");
             String attHeading = res.getString("att_heading");
             String attName = res.getString("att_name");
@@ -1682,34 +1684,48 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
 
-            writer.write(dccId + comma + dataHeading + comma + dataName + comma + dataValue + comma 
-                    + cvTerm + comma + attHeading + comma + attName + comma + attValue 
-                    + System.getProperty("line.separator"));
+            writer.write(dccId + comma + dataHeading + comma + dataName + comma 
+                    + wikiPageUrl + comma + cvTerm + comma + attHeading + comma + attName 
+                    + comma + attValue + System.getProperty("line.separator"));
             
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
                 // have we seen this modencodewiki entry before?
-
-                if (attributes.containsKey(dataValue)) {
-                    buildSubAttribute = null;
+                if (props.containsKey(wikiPageUrl)) {
+                    buildSubProperty = null;
                 } else {
-                    buildSubAttribute = new SubmissionAttribute(dataName, dataValue);
-                    attributes.put(dataValue, buildSubAttribute);
+                    buildSubProperty = new SubmissionProperty(dataName, wikiPageUrl);
+                    props.put(wikiPageUrl, buildSubProperty);
                 }
 
-                List<String> subItems = attributeToSubmissionItems.get(dataValue);
+                List<String> subItems = propToSubmissionItems.get(wikiPageUrl);
                 if (subItems == null) {
-                    subItems = new ArrayList();
-                    attributeToSubmissionItems.put(dataValue, subItems);
+                    subItems = new ArrayList<String>();
+                    propToSubmissionItems.put(wikiPageUrl, subItems);
                 }
                 subItems.add(getSubmissionItemIdentifier(dccId));
                 // mapping datavalues to subids, so we know which sub associate with the EF
-                addToMap(attributeSubIds, dataValue, submissionId);
+                addToMap(propSubIds, wikiPageUrl, submissionId);
+                
+                // submissionId -> [type -> SubmissionProperty]
+                Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
+                if (typeToSubProp == null) {
+                    typeToSubProp = new HashMap<String, List<SubmissionProperty>>();
+                    subToTypes.put(submissionId, typeToSubProp);
+                }
+                List<SubmissionProperty> subProps = typeToSubProp.get(dataName);
+                if (subProps == null) {
+                    subProps = new ArrayList<SubmissionProperty>();
+                    typeToSubProp.put(dataName, subProps);
+                } 
+                subProps.add(props.get(wikiPageUrl));
+            
+                addToMap(subIdDataType, submissionId, wikiPageUrl);
             }
-            if (buildSubAttribute != null) {
+            if (buildSubProperty != null) {
                 // we are building a new submission attribute, this is the first time we have
                 // seen a data.value that points to modencodewiki
-                buildSubAttribute.addDetail(attHeading, attValue);                
+                buildSubProperty.addDetail(attHeading, attValue);                
             }
             lastDataId = dataId;
         }
@@ -1717,36 +1733,31 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         writer.flush();
         writer.close();
         
-        // now create and store attributes
-        for (Map.Entry<String, SubmissionAttribute> entry : attributes.entrySet()) {
+        
+        // create and store experimental factors
+        for (Map.Entry<String, SubmissionProperty> entry : props.entrySet()) {
             String dataValue = entry.getKey();
-            SubmissionAttribute attribute = entry.getValue();
+            SubmissionProperty prop = entry.getValue();
 
-            List<Integer> subs = attributeSubIds.get(dataValue);
+            List<Integer> subs = propSubIds.get(dataValue);
 
-            // TODO - Use a predefined list of accepted types, or get it from db 
             // set experimentalFactors:
             // given a map of submission to experimental factor type (e.g. developmental_stage)
-            // could match the type against attribute.type in sections below and create
+            // could match the type against prop.type in sections below and create
             // ExperimentalFactor with details.getValue().get(0)
 
-            Iterator<Integer> i  = submissionEFTypeMap.keySet().iterator();
-            while (i.hasNext()) {
-                Integer current = (Integer) i.next();
-                List<String> eft = submissionEFTypeMap.get(current);
-                Iterator<String> i2 = eft.iterator();
-                int index = 0; // used to fetch the proper name from the list (see below)
-                while (i2.hasNext()) {
-                    String type = i2.next();
+            for (Integer current : submissionEFTypeMap.keySet()) {
+                for (String type : submissionEFTypeMap.get(current)) {
+                    int index = 0; // used to fetch the proper name from the list (see below)
                     String efName = null;                        
-                    if (type.equalsIgnoreCase(attribute.type) ||
-                            (type.equalsIgnoreCase("developmental_stage") 
-                                    && attribute.type.equalsIgnoreCase("stage"))
+                    if (type.equalsIgnoreCase(prop.type) 
+                            || (type.equalsIgnoreCase("developmental_stage") 
+                                    && prop.type.equalsIgnoreCase("stage"))
                                     || (type.equalsIgnoreCase("CellLine") 
-                                            && attribute.type.equalsIgnoreCase("cell line"))){
+                                            && prop.type.equalsIgnoreCase("cell line"))) {
                         // getting the EF name from the attributes..
                         for (Map.Entry<String, List<String>> detail 
-                                : attribute.details.entrySet()) {
+                                : prop.details.entrySet()) {
                             if (detail.getKey().equalsIgnoreCase("official name")) {
                                 efName = detail.getValue().get(0);
                             }
@@ -1754,10 +1765,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     }
                     else if (type.equalsIgnoreCase("compound") || type.equalsIgnoreCase("tissue")
                             || type.equalsIgnoreCase("organism_part")
-                            || type.equalsIgnoreCase("PCR_primer")){
+                            || type.equalsIgnoreCase("PCR_primer")) {
                         // this is not a recognised attribute, use what you find 
                         // in the experiment properties
-                        efName = submissionEFNameMap.get(current).get(index);                        
+                        efName = submissionEFNameMap.get(current).get(index);
                     }
                     else {
                         continue;
@@ -1785,149 +1796,217 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     index++;                        
                 }
             }
-            LOG.info("EFMAPef: " + submissionEFactorMap); 
-
-            LOG.info("ATTRIBUTE: " + dataValue + ", " + attribute.type + " - " 
-                    + attribute.details.size());
-            
-            
-            Map<String, String> attTypesToClassName = new HashMap<String, String>();
-            attTypesToClassName.put("antibody", "Antibody");
-            attTypesToClassName.put("array", "Array");
-            attTypesToClassName.put("cell line", "CellLine");
-            attTypesToClassName.put("strain", "Strain");
-            attTypesToClassName.put("stage", "DevelopmentalStage");
-            attTypesToClassName.put("dev stage", "DevelopmentalStage");
-            
-            String clsName = attTypesToClassName.get(attribute.type);
-
-            if (clsName != null) {
-
-                List<String> checkOfficialName = attribute.details.get("official name");
-                if (checkOfficialName == null) {
-                    LOG.info("Official name - missing for attribute: " 
-                            + attribute.type + ", " + attribute.value);
-                    continue;
-                } else if (checkOfficialName.size() != 1) {
-                    LOG.info("Official name - multiple times for attribute: " 
-                            + attribute.type + ", " + attribute.value + ", " + checkOfficialName);
-                }
-                
-                String officialName = attribute.details.get("official name").get(0);
-                
-                List<String> subIds = attributeToSubmissionItems.get(dataValue);
-                Item subAttribute = createSubmissionAttribute(clsName, officialName, subIds);
-
-                if (clsName.equals("Antibody")) {
-                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                        String name = detail.getKey();
-                        List<String> values = detail.getValue();
-
-                        if (notNullEquals(name, "antigen")) {
-                            subAttribute.setAttribute("antigen", values.get(0));
-                        }
-                        if (notNullEquals(name, "host")) {
-                            subAttribute.setAttribute("hostOrganism", values.get(0));
-                        }
-                        if (notNullEquals(name, "target name")) {
-                            subAttribute.setAttribute("targetName", values.get(0));
-                        }
-                    }
-                }
-
-                if (clsName.equals("Array")) {
-                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                        String name = detail.getKey();
-                        List<String> values = detail.getValue();                   
-
-                        if (notNullEquals(name, "official name")) {
-                            subAttribute.setAttribute("name", values.get(0));
-                        }
-                        if (notNullEquals(name, "platform")) {
-                            subAttribute.setAttribute("platform", values.get(0));
-                        }
-                        if (notNullEquals(name, "resolution")) {
-                            subAttribute.setAttribute("resolution", values.get(0));
-                        }
-                        if (notNullEquals(name, "genome")) {
-                            subAttribute.setAttribute("genome", values.get(0));
-                        }
-                    }
-                }
-
-                if (clsName.equals("CellLine")) {
-                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                        String name = detail.getKey();
-                        List<String> values = detail.getValue();
-
-                        if (notNullEquals(name, "sex")) {
-                            subAttribute.setAttribute("sex", values.get(0));
-                        }
-                        if (notNullEquals(name, "short description")) {
-                            subAttribute.setAttribute("description", values.get(0));
-                        }
-                        if (notNullEquals(name, "species")) {
-                            subAttribute.setAttribute("species", values.get(0));
-                        }
-                        if (notNullEquals(name, "tissue")) {
-                            subAttribute.setAttribute("tissue", values.get(0));
-                        }
-                        if (notNullEquals(name, "cell type")) {
-                            subAttribute.setAttribute("cellType", values.get(0));
-                        }
-                    }
-                }
-
-                if (clsName.equals("Strain")) {
-                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                        String name = detail.getKey();
-                        List<String> values = detail.getValue();
-
-                        if (notNullEquals(name, "species")) {
-                            subAttribute.setAttribute("species", values.get(0));
-                        }
-                        if (notNullEquals(name, "source")) {
-                            subAttribute.setAttribute("source", values.get(0));
-                        }
-                        if (notNullEquals(name, "reference")) {
-                            subAttribute.setAttribute("reference", values.get(0));
-                        }
-                    }
-                }
-
-                if (clsName.equals("DevelopmentalStage")) {
-                    for (Map.Entry<String, List<String>> detail : attribute.details.entrySet()) {
-                        String name = detail.getKey();
-                        List<String> values = detail.getValue();
-
-                        if (notNullEquals(name, "sex")) {
-                            subAttribute.setAttribute("sex", values.get(0));
-                        }
-                        if (notNullEquals(name, "developmental stage")) {
-                            for (String value : values) {
-                                subAttribute.addToCollection("ontologyTerms", 
-                                        getDevStageTerm(value));
-                            }
-                        }                
-                    }
-                }
-                getChadoDBConverter().store(subAttribute);
-            }
         }
+
+
+        // create and store properties of submission
+        for (Integer submissionId : subToTypes.keySet()) {
+            Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
+            
+            Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
+            
+            List<String> devStageIds = new ArrayList<String>();
+            devStageIds.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
+                    new String[] {"stage", "dev stage"}));
+            if (devStageIds.isEmpty()) {
+                devStageIds.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
+                        typeToProp, new String[] {
+                        "tissue.developmental stage",
+                        "tissue source.developmental stage",
+                        "cell line.developmental stage",
+                        "cell id.developmental stage"
+                        }));
+            }
+            
+            storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
+            
+            List<String> strainIds = new ArrayList<String>();
+            strainIds.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
+            storeSubmissionCollection(storedSubmissionId, "strains", strainIds);
+
+            List<String> arrayIds = new ArrayList<String>();
+            arrayIds.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
+            storeSubmissionCollection(storedSubmissionId, "arrays", arrayIds);
+            
+            List<String> lineIds = new ArrayList<String>();
+            lineIds.addAll(createFromWikiPage("CellLine", typeToProp, 
+                    new String[] {"cell line", "cell id"}));
+            storeSubmissionCollection(storedSubmissionId, "cellLines", lineIds);
+            
+            List<String> antibodyIds = new ArrayList<String>();
+            antibodyIds.addAll(createFromWikiPage("Antibody", typeToProp, 
+                    new String[] {"antibody"}));
+            storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyIds);
+        }  
     }
 
     
-    private Item createSubmissionAttribute(String clsName, String name, List<String> subIds) {
-        Item subAttribute = getChadoDBConverter().createItem(clsName);
-        
-        name = correctOfficialName(name, clsName);
-        if (name != null) {
-            
-            subAttribute.setAttribute("name", name);
+    private List<String> createFromWikiPage(String clsName, 
+            Map<String, List<SubmissionProperty>> typeToProp, String[] types) 
+            throws ObjectStoreException {
+        List<String> itemIds = new ArrayList<String>();
+
+        List<SubmissionProperty> props = new ArrayList<SubmissionProperty>();
+        for (String type : types) {
+            if (typeToProp.containsKey(type)) {
+                props.add(typeToProp.get(type).get(0));
+            }
         }
-        subAttribute.setCollection("submissions", subIds);
+        itemIds.addAll(createItemsForSubmissionProperties(clsName, props));
+        return itemIds;
+    }
+    
+    
+    private void storeSubmissionCollection(Integer storedSubmissionId, String name,
+            List<String> ids) 
+    throws ObjectStoreException {
+        if (!ids.isEmpty()) {
+            ReferenceList refList = new ReferenceList(name, ids);
+            getChadoDBConverter().store(refList, storedSubmissionId);
+        }
+    }
+    
+    private List<String> createItemsForSubmissionProperties(String clsName, 
+            List<SubmissionProperty> subProps)
+    throws ObjectStoreException {
+        List<String> itemIds = new ArrayList<String>();
+        for (SubmissionProperty subProp : subProps) {
+            String itemId = getItemForSubmissionProperty(clsName, subProp);
+            if (itemId != null) {
+                itemIds.add(itemId);
+            }
+        }
+        return itemIds;
         
-        return subAttribute;
+    }
+        
+    private String getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
+    throws ObjectStoreException {
+        Item propItem = subItemsMap.get(prop.wikiPageUrl);
+        if (propItem == null) {
+
+            if (clsName != null) {
+                List<String> checkOfficialName = prop.details.get("official name");
+                if (checkOfficialName == null) {
+                    LOG.info("Official name - missing for property: " 
+                            + prop.type + ", " + prop.wikiPageUrl);
+                    return null;
+                } else if (checkOfficialName.size() != 1) {
+                    LOG.info("Official name - multiple times for property: " 
+                            + prop.type + ", " + prop.wikiPageUrl + ", " 
+                            + checkOfficialName);
+                }
+
+                String officialName = prop.details.get("official name").get(0);
+                propItem = createSubmissionProperty(clsName, officialName);
+
+                if (clsName.equals("DevelopmentalStage")) {                    
+                    setAttributeOnProp(prop, propItem, "sex", "sex");
+                    
+                    List<String> devStageValues = prop.details.get("developmental stage");
+                    if (devStageValues != null) {
+                        for (String devStageValue : devStageValues) {
+                            propItem.addToCollection("ontologyTerms", 
+                                    getDevStageTerm(devStageValue));
+                        }
+                    } else {
+                        LOG.error("METADATA FAIL: no 'developmental stage' values for wiki page: " 
+                                + prop.wikiPageUrl);
+                    }
+                } else if (clsName.equals("Antibody")) {
+                    setAttributeOnProp(prop, propItem, "antigen", "antigen");
+                    setAttributeOnProp(prop, propItem, "host", "hostOrganism");
+                    setAttributeOnProp(prop, propItem, "target name", "targetName");
+                    setAttributeOnProp(prop, propItem, "antigen", "antigen");
+                } else if (clsName.equals("Array")) {
+                    setAttributeOnProp(prop, propItem, "platform", "platform");
+                    setAttributeOnProp(prop, propItem, "resolution", "resolution");
+                    setAttributeOnProp(prop, propItem, "genome", "genome");
+                } else if (clsName.equals("CellLine")) {
+                    setAttributeOnProp(prop, propItem, "sex", "sex");
+                    setAttributeOnProp(prop, propItem, "short description", 
+                            "description");
+                    setAttributeOnProp(prop, propItem, "species", "species");
+                    setAttributeOnProp(prop, propItem, "tissue", "tissue");
+                    setAttributeOnProp(prop, propItem, "cell type", "cellType");
+                } else if (clsName.equals("Strain")) {
+                    setAttributeOnProp(prop, propItem, "species", "species");
+                    setAttributeOnProp(prop, propItem, "source", "source");
+                    setAttributeOnProp(prop, propItem, "reference", "reference");
+                }
+                getChadoDBConverter().store(propItem);
+            }
+            subItemsMap.put(prop.wikiPageUrl, propItem);
+        }
+        return propItem.getIdentifier();
+    }
+    
+    private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
+           String attributeName) {
+        if (subProp.details.containsKey(metadataName)) {
+            String value = subProp.details.get(metadataName).get(0);
+            item.setAttribute(attributeName, value);
+        }
+    }       
+      
+    private List<String> lookForAttributesInOtherWikiPages(String clsName,
+            Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
+            throws ObjectStoreException {
+
+        List<String> itemIds = new ArrayList<String>();
+        for (String typeProp : lookFor) {
+            if (typeProp.indexOf(".") > 0) {
+                String[] bits = StringUtils.split(typeProp, '.');
+
+                String type = bits[0];
+                String propName = bits[1];
+
+                if (typeToProp.containsKey(type)) {
+                    for (SubmissionProperty subProp : typeToProp.get(type)) { 
+                        if (subProp.details.containsKey(propName)) {
+                            for (String value : subProp.details.get(propName)) {
+                                itemIds.add(createNonWikiSubmissionPropertyItem(clsName, value));
+                            }
+                        }
+                    }
+                    if (!itemIds.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
+        return itemIds;
+    }
+    
+    private String createNonWikiSubmissionPropertyItem(String clsName, String name) 
+    throws ObjectStoreException {
+        if (clsName.equals("DevelopmentalStage")) {
+            name = correctDevStageTerm(name);
+        }
+        
+        String itemId = nonWikiSubmissionProperties.get(name);
+        if (itemId == null) {    
+            Item item = createSubmissionProperty(clsName, name);
+            
+            if (clsName.equals("DevelopmentalStage")) {
+                String ontologyTermId = getDevStageTerm(name);
+                item.addToCollection("ontologyTerms", ontologyTermId);
+            }
+            getChadoDBConverter().store(item);
+
+            itemId = item.getIdentifier();
+            nonWikiSubmissionProperties.put(name, itemId);
+        }
+        return itemId;
+    }
+    
+    private Item createSubmissionProperty(String clsName, String name) {
+        Item subProp = getChadoDBConverter().createItem(clsName);        
+        name = correctOfficialName(name, clsName);
+        if (name != null) {           
+            subProp.setAttribute("name", name);
+        }
+        return subProp;
     }
     
     /**
@@ -1947,7 +2026,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (name.matches("Embryo.*\\d")) {
                 name = name + " h";
             }
-            if (name.matches("Embryo.*hr")) {
+            if (name.matches(".*hr")) {
                 name = name.replace("hr", "h");
             }
             if (name.matches("Embryo.*\\dh")) {
@@ -1959,34 +2038,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (name.matches("L\\d")) {
                 name = name + " stage larvae";
             }
+            if (name.matches("WPP.*")) {
+                name = name.replaceFirst("WPP", "White prepupae (WPP)");
+            }
         }
-        
         return name;  
     }
     
-    /**
-     * Will be used for change to SubmissionAttribute superclass
-     * @param dccRefLists
-     * @param dccId
-     * @param refListName
-     * @param identifier
-     */
-    private void addToSubmissionRefList(Map <String, Map<String, ReferenceList>> dccRefLists,
-            String dccId, String refListName, String identifier) {
-        Map<String, ReferenceList> subMap = dccRefLists.get(dccId);
-        if (subMap == null) {
-            subMap = new HashMap();
-            dccRefLists.put(dccId, subMap);
-        }
-
-        ReferenceList refList = subMap.get(refListName);
-        if (refList == null) {
-            refList = new ReferenceList(refListName);
-            subMap.put(refListName, refList);
-        }
-
-        refList.addRefId(identifier);
-    }
 
     private String getSubmissionItemIdentifier(String dccId) {
         for (Map.Entry<Integer, String> entry : dccIdMap.entrySet()) {
@@ -2021,10 +2079,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return value;
     }
-    
-    private boolean notNullEquals(String a, String b) {
-        return (a != null && b != null && a.equalsIgnoreCase(b));
-    }
 
 
     /**
@@ -2052,15 +2106,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    private class SubmissionAttribute 
+    private class SubmissionProperty 
     {
         protected String type;
-        protected String value;
+        protected String wikiPageUrl;
         protected Map<String, List<String>> details;
 
-        public SubmissionAttribute(String type, String value) {
+        public SubmissionProperty(String type, String wikiPageUrl) {
             this.type = type;
-            this.value = value;
+            this.wikiPageUrl = wikiPageUrl;
             details = new HashMap<String, List<String>>();
         }
 
@@ -2237,7 +2291,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return null;
     }
     
-    
+    // utility method for looking up in a set by regular expression
     private boolean containsMatch(Set<String> testSet, String regex) {
         boolean matches = false;
         Pattern p = Pattern.compile(regex);
@@ -2249,14 +2303,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return matches;
     }
-    
-    private void createSubmissionExperimentType(Integer storedSubmissionId,
-            String type) throws ObjectStoreException {
-        LOG.info("EXP TYPE: " + type);
-        Attribute experimentType = new Attribute("experimentType", type);
-        getChadoDBConverter().store(experimentType, storedSubmissionId);
-    }
-    
     
     //sub -> exp
     private void setSubmissionExperimetRefs(Connection connection)
@@ -2533,6 +2579,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             m.put(key, ids);
         }
     }
+    
+    
     /**
      * adds an element to a list which is the value of a map
      * @param m       the map (<String, List<Integer>>)
