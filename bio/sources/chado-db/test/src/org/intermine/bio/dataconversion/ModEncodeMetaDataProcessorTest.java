@@ -32,8 +32,7 @@ public class ModEncodeMetaDataProcessorTest extends TestCase {
     }
     
     public void testCorrectOfficialName() throws Exception {
-        
-        
+
         // actual examples from metadata
         assertEquals("Adult Female", processor.correctOfficialName("Adult_Female", "DevelopmentalStage"));
         assertEquals("Embryo 0-4 h", processor.correctOfficialName("E0-4h", "DevelopmentalStage"));
@@ -42,6 +41,7 @@ public class ModEncodeMetaDataProcessorTest extends TestCase {
         assertEquals("Embryo 2-4 h", processor.correctOfficialName("Embryo 2-4 hr", "DevelopmentalStage"));
         assertEquals("L1 stage larvae", processor.correctOfficialName("DevStage: L1 stage larvae", "DevelopmentalStage"));
         assertEquals("L1 stage larvae", processor.correctOfficialName("L1", "DevelopmentalStage"));
+        assertEquals("White prepupae (WPP) + 12 h", processor.correctOfficialName("WPP + 12 h", "DevelopmentalStage"));
     }
     
     
