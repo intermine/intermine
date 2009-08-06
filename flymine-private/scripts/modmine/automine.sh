@@ -18,6 +18,7 @@ FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
 REPORTS=$SUBDIR/reports
 DATADIR=$SUBDIR/chado
+FAILDIR=$DATADIR/chado/new/failed
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
 
@@ -57,8 +58,10 @@ INTERACT=n       # y: step by step interaction
 WGET=y           # use wget to get files from ftp
 GAM=y            # run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
+STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
 
 # these are mutually exclusive
+# should be enforced
 INCR=y
 FULL=n
 META=n           # it builds a new mine with static and metadata only
@@ -258,11 +261,23 @@ echo "STAG: `date "+%y%m%d.%H%M"` $1" >> $LOG
 
 DCCID=`echo $1 | cut -f 1 -d.`
 
-stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
-$DBPW -noupdate cvterm,dbxref,db,cv,feature $1 \
-|| { printf "\n$1  stag-storenode FAILED. EXITING. \n\n" "%b" ; exit 1 ; }
+# stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
+# $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 \
+# || { printf "\n$1  stag-storenode FAILED. EXITING. \n\n" "%b" ; exit 1 ; }
 
+stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
+$DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
+
+exitstatus=$?
+
+if [ "$exitstatus" = "0" ]
+then
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
+else
+echo "\n$1  stag-storenode FAILED. SKIPPING SUBMISSION. \n\n"
+STAGFAIL=y
+fi
+
 }
 
 interact
@@ -440,6 +455,13 @@ chadorebuild
 fi
 
 chadofill $sub
+
+if [ "$STAGFAIL" = "y" ]
+then
+mv $sub $FAILDIR
+STAGFAIL=n
+continue
+fi
 
 # if building the release, we move the file
 if [ "$FULL" = "y" ]
