@@ -115,6 +115,7 @@
     <collection name="developmentalStages" referenced-type="DevelopmentalStage" reverse-reference="submissions"/>
     <collection name="cellLines" referenced-type="CellLine" reverse-reference="submissions"/>
     <collection name="strains" referenced-type="Strain" reverse-reference="submissions"/>
+    <collection name="tissues" referenced-type="Tissue" reverse-reference="submissions"/>
     <collection name="arrays" referenced-type="Array" reverse-reference="submissions"/>
 
   </class>
@@ -233,6 +234,14 @@
     <attribute name="source" type="java.lang.String"/>
     <attribute name="reference" type="java.lang.String"/>
     <collection name="submissions" referenced-type="Submission" reverse-reference="strains" />
+  </class>
+  
+  <class name="Tissue" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="species" type="java.lang.String"/>
+    <attribute name="sex" type="java.lang.String"/>
+    <attribute name="organismPart" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="tissues" />
   </class>
   
   <class name="DevelopmentalStage" is-interface="true">
