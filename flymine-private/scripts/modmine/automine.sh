@@ -129,7 +129,7 @@ while getopts ":FMRVabef:gir:stvwx" opt; do
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	V )  echo; echo "Validating all submissions in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
 	e )  echo; echo "don't update all sources (get_all_modmine is not run)" ; GAM=n;;
@@ -303,7 +303,9 @@ wget -O - $FTPURL/list.txt | sort > $DATADIR/loft/`date "+%y%m%d"`.list
 grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep false | awk '{print $1}' > $DATADIR/live.dccid
 LOOPVAR=`cat $DATADIR/live.dccid`
 # get also the list of deprecated entries with their replacement
-grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecated.dccid
+grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+
+awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/dead.dccid
 
 # wget -O - $FTPURL/list.txt | grep released | grep false | awk '{print $1}' | sort > $DATADIR/live.dccid
 # LOOPVAR=`cat $DATADIR/live.dccid`

@@ -15,7 +15,7 @@ DATADIR=/shared/data/modmine/subs/chado
 VALDIR=$DATADIR/new/validated
 CHECKDIR=$VALDIR/deprecationCheck
 NEXTDIR=$DATADIR/load_in_next_full_release
-DONTDIR=$DATADIR/neverIn
+DONTDIR=$DATADIR/deprecated/neverIn
 
 if [ -z "$1" ]
 then
@@ -112,9 +112,5 @@ echo
 
 exit;
 
-# TODO, these don't work
 
-elinks http://intermine.modencode.org/query/service/template/results?name=getSubmissions&constraint1=Submission.title&op1=eq&value1=*&size=1000&format=tab
-
-wget "http://intermine.modencode.org/query/service/template/results?name=getSubmissions&constraint1=Submission.title&op1=eq&value1=*&size=1000&format=tab"
-
+elinks -dump 1 -dump-width 1  "http://intermine.modencode.org/query/service/template/results?name=getSubmissions&constraint1=Submission.title&op1=eq&value1=*&size=1000&format=tab" > inrel
