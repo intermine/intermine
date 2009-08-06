@@ -51,9 +51,6 @@
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology" dump="true">
       <property name="src.data.file" location="/shared/data/modmine/sources/ontologies/fly_anatomy/current/fly_anatomy.obo"/>
     </source>
-    <source name="fly-development-ontology" type="fly-development-ontology" dump="true">
-      <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
-    </source>
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/shared/data/ontologies/fly_cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
@@ -142,6 +139,10 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source> 
+    <source name="fly-development-ontology" type="fly-development-ontology">
+      <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+    </source>
+
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
