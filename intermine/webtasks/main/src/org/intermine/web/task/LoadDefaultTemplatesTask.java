@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -39,7 +40,6 @@ import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.struts.RequestPasswordAction;
 
 import servletunit.ServletContextSimulator;
 
@@ -53,9 +53,12 @@ public class LoadDefaultTemplatesTask extends Task
 {
     private static final Logger LOG = Logger.getLogger(LoadDefaultTemplatesTask.class);
 
+    protected static Random random = new Random();
+
     private String xmlFile;
     private String username;
     private String osAlias;
+    private String superuserPassword;
 
     private String userProfileAlias;
 
@@ -68,7 +71,7 @@ public class LoadDefaultTemplatesTask extends Task
     }
 
     /**
-     * Set the account name to laod template to.
+     * Set the account name to load template to.
      * @param user username to load templates into
      */
     public void setUsername(String user) {
@@ -89,6 +92,16 @@ public class LoadDefaultTemplatesTask extends Task
      */
     public void setUserProfileAlias(String userProfileAlias) {
         this.userProfileAlias = userProfileAlias;
+    }
+
+    /**
+     * Set the superuser's initial password. Make sure you change the password afterwards, because
+     * passwords stored in properties are likely to be compromised - this is just a bootstrap.
+     *
+     * @param superuserPassword the initial superuser password
+     */
+    public void setSuperuserPassword(String superuserPassword) {
+        this.superuserPassword = superuserPassword;
     }
 
     /**
@@ -116,8 +129,12 @@ public class LoadDefaultTemplatesTask extends Task
 
             // Copy into existing or new superuser profile
             if (!pm.hasProfile(username)) {
+                String password = superuserPassword;
+                if ((password == null) || "".equals(password)
+                        || "${superuser.initialPassword}".equals(password)) {
+                    password = generatePassword();
+                }
                 LOG.info("Creating profile for " + username);
-                String password = RequestPasswordAction.generatePassword();
                 profileDest = new Profile(pm, username, null, password,
                                       new HashMap(), new HashMap(), new HashMap());
                 profileDest.disableSaving();
@@ -189,5 +206,18 @@ public class LoadDefaultTemplatesTask extends Task
                 LOG.error("exception while closing object store writer", e);
             }
         }
+    }
+
+    /**
+     * Generate a random 8-letter String of lower-case characters
+     *
+     * @return the String
+     */
+    public static String generatePassword() {
+        String s = "";
+        for (int i = 0; i < 8; i++) {
+            s += (char) ('a' + random.nextInt(26));
+        }
+        return s;
     }
 }

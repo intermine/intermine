@@ -237,7 +237,8 @@ public class ProfileBinding
     protected static void getIdsFromObject(InterMineObject object, Model model,
                                            Set<Integer> idsToSerialise) {
         idsToSerialise.add(object.getId());
-        for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {            
+        for (FieldDescriptor fd
+                : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {            
             if (fd instanceof ReferenceDescriptor) {
                 String fieldName = fd.getName();
                 InterMineObject referencedObject;

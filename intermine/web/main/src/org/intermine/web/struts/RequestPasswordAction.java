@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -36,8 +35,6 @@ import org.intermine.web.util.URLGenerator;
 public class RequestPasswordAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(RequestPasswordAction.class);
-
-    protected static Random random = new Random();
 
     /**
      * Method called when user has finished updating a constraint
@@ -80,18 +77,5 @@ public class RequestPasswordAction extends InterMineAction
         }
 
         return mapping.findForward("login");
-    }
-
-    /**
-     * Generate a random 8-letter String of lower-case characters
-     *
-     * @return the String
-     */
-    public static String generatePassword() {
-        String s = "";
-        for (int i = 0; i < 8; i++) {
-            s += (char) ('a' + random.nextInt(26));
-        }
-        return s;
     }
 }
