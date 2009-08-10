@@ -674,7 +674,25 @@ public class UniprotEntry
             LOG.error("Could not set 'gene designation' for dbref:" + dbref);
         }
     }
-
+    
+    /**
+     *
+     *  <dbReference type="Ensembl" key="23" id="FBtr0082909">
+     *      <property value="FBgn0010340" type="gene designation"/>
+     * </dbReference>
+     *
+     * @param dbrefName name of database, eg Ensembl
+     * @return gene designation for a certain dbref.type, eg Ensembl
+     */
+    public String getGeneDesignation(String dbrefName) {
+        for (Map.Entry<String, Dbref> entry : geneDesignationToDbref.entrySet()) {
+            if(entry.getValue().getType().equals(dbrefName)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
     /**
      * @return true if this uniprot entry has more than 1 gene
      */
