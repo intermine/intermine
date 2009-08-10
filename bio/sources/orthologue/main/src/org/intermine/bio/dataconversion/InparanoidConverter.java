@@ -388,7 +388,7 @@ public class InparanoidConverter extends FileConverter
 
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
-
+        homologue.setAttribute("evidenceCode", "AA - Amino acid sequence comparison");
         homologue.addToCollection("dataSets", dataSet.getIdentifier());
         homologue.addToCollection("publications", pub.getIdentifier());
         return homologue;
