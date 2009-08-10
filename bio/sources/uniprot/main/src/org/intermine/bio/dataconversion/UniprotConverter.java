@@ -408,19 +408,17 @@ public class UniprotConverter extends DirectoryConverter
     private void processGene(Item protein, UniprotEntry entry)
     throws SAXException {
         String taxonId = entry.getTaxonId();
+        
         // which gene.identifier field has to be unique
         String uniqueIdentifierField = CONFIG.getUniqueIdentifier(taxonId);
         if (uniqueIdentifierField == null) {
-            LOG.error("Couldn't process genes for " + taxonId + ", no unique identifier set");
-            return;
+            uniqueIdentifierField = CONFIG.getUniqueIdentifier("default");
         }
 
         // for this organism, set the following gene fields
         Set<String> geneFields = CONFIG.getGeneIdentifierFields(taxonId);
-
         if (geneFields == null) {
-            LOG.error("Couldn't process genes for " + taxonId + ", configuration missing");
-            return;
+            geneFields = CONFIG.getGeneIdentifierFields("default");
         }
 
         // just one gene, don't have to worry about gene designations and dbrefs

@@ -114,6 +114,9 @@ public class UniprotConfig
      */
     public Set<String> getGeneIdentifierFields(String taxonId) {
         ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            return null; 
+        } 
         return configEntry.getIdentifierFields();
     }
 
@@ -124,6 +127,9 @@ public class UniprotConfig
      */
     protected String getIdentifierMethod(String taxonId, String identifier) {
         ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            return null;
+        }
         return configEntry.getIdentifierMethod(identifier);
     }
 
@@ -134,6 +140,9 @@ public class UniprotConfig
      */
     protected String getIdentifierValue(String taxonId, String identifier) {
         ConfigEntry configEntry = entries.get(taxonId);
+        if (configEntry == null) {
+            return null;
+        }
         return configEntry.getIdentifierValue(identifier);
     }
 
