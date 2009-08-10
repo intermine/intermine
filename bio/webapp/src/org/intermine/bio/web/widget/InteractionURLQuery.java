@@ -50,7 +50,7 @@ public class InteractionURLQuery implements WidgetURLQuery
                   + "Gene.interactions.interactingGenes.primaryIdentifier,"
                   + "Gene.interactions.experiment.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
+        q.addConstraint("Gene.interactions.interactingGenes", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"

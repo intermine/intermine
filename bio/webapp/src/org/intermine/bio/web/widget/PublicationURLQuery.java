@@ -49,7 +49,7 @@ public class PublicationURLQuery implements WidgetURLQuery
                       + "Gene.publications.pubMedId");
         q.setOrderBy("Gene.publications.pubMedId, Gene.primaryIdentifier");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.publications", Constraints.lookup(key));
+        q.addConstraint("Gene.publications", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;
