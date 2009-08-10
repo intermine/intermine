@@ -49,7 +49,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
                       + "Protein.features.begin,Protein.features.end");
         q.setOrderBy("Protein.features.feature.name, Protein.primaryAccession");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.features.feature", Constraints.lookup(key));
+        q.addConstraint("Protein.features.feature", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;

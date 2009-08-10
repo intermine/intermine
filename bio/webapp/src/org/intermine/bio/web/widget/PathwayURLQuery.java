@@ -47,7 +47,7 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
                   + "Gene.pathways.identifier,Gene.pathways.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.pathways", Constraints.lookup(key));
+        q.addConstraint("Gene.pathways", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         q.setOrderBy("Gene.pathways.identifier,Gene.pathways.name,Gene.primaryIdentifier");

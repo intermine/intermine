@@ -51,7 +51,7 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
                   + "Protein.proteinInteractions.proteinRole,"
                   + "Protein.proteinInteractions.experiment.publication.pubMedId");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.proteinInteractions.interactingProteins", Constraints.lookup(key));
+        q.addConstraint("Protein.proteinInteractions.interactingProteins", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         q.setOrderBy("Protein.primaryIdentifier, Protein.primaryAccession,"

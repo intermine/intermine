@@ -48,7 +48,7 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
         q.setView(viewStrings);
         q.setOrderBy(viewStrings);
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.keywords", Constraints.lookup(key));
+        q.addConstraint("Protein.keywords", Constraints.eq(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;
