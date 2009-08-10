@@ -439,7 +439,7 @@ public class UniprotConverter extends DirectoryConverter
         while (iter.hasNext()) {
             // create a dummy entry and add identifiers for specific gene
             String geneRefId = createGene(iter.next(), taxonId, geneFields, uniqueIdentifierField);
-            if (!StringUtil.isEmpty(geneRefId)) {
+            if (StringUtils.isNotEmpty(geneRefId)) {
                 protein.addToCollection("genes", geneRefId);
             }
         }
@@ -542,7 +542,12 @@ public class UniprotConverter extends DirectoryConverter
             }
             identifierValue = entry.getGeneNames().get(value);
         } else if (method.equals("dbref")) {
-            identifierValue = entry.getDbrefs().get(value);
+            if (value.equals("Ensembl")) {
+                // See #2122
+                identifierValue = entry.getGeneDesignation("Ensembl");   
+            } else {
+                identifierValue = entry.getDbrefs().get(value);
+            }
         } else {
             LOG.error("error processing line in config file for organism " + taxonId);
             return null;
