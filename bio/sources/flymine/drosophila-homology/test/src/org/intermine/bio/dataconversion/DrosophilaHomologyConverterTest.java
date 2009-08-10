@@ -32,12 +32,6 @@ public class DrosophilaHomologyConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new DrosophilaHomologyConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7234", "FBgn001", Collections.singleton("dper_GLEANR_1559"));
-        resolverFactory.addResolverEntry("7234", "FBgn002", Collections.singleton("dper_GLEANR_1561"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn0031344"));
-        resolverFactory.addResolverEntry("7230", "FBgn004", Collections.singleton("dmoj_GLEANR_1887"));
-        converter.resolverFactory = resolverFactory;
     }
 
     public void testProcess() throws Exception {

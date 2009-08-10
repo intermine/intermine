@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -33,8 +35,10 @@ public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub;
     private Map<String, String> genes = new HashMap();
+    private Map<String, String> organisms = new HashMap();
     protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
+    private OrganismRepository or;
 
     /**
      * Constructor
@@ -50,7 +54,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17994087");
         store(pub);
-//        or = OrganismRepository.getOrganismRepository();
+        or = OrganismRepository.getOrganismRepository();
     }
 
 
@@ -67,10 +71,15 @@ public class DrosophilaHomologyConverter extends BioFileConverter
                 continue;
             }
             String geneIdentifier = line[0];
+            String geneOrganismRefId = parseSymbol(line[1]);
             String homologue = line[5];
-            createHomologue(getGene(geneIdentifier), getGene(homologue));
+            String homoOrganismRefId = parseSymbol(line[6]);
+            createHomologue(getGene(geneIdentifier, geneOrganismRefId), 
+                            getGene(homologue, homoOrganismRefId));
         }
     }
+
+    
 
 
     // create and store a Homologue with identifiers of Gene items
@@ -81,7 +90,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             return;
         }
         Item homologue = createItem("Homologue");
-        // TODO this is a just a guess.  I have no idea if it's correct or not.
         homologue.setAttribute("type", "orthologue");
         homologue.setReference("gene", gene);
         homologue.setReference("homologue", homGene);
@@ -89,7 +97,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         store(homologue);
     }
 
-    private String getGene(String identifier)
+    private String getGene(String identifier, String organismRefId)
     throws ObjectStoreException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
@@ -97,6 +105,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         }
         Item item = createItem("Gene");
         item.setAttribute("primaryIdentifier", identifier);
+        item.setReference("organism", organismRefId);
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
         getSynonym(geneRefId, "identifier", identifier);
@@ -116,4 +125,29 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             throw new ObjectStoreException(e);
         }
     }
+    
+    private String getOrganism(String taxonId) 
+    throws ObjectStoreException  {
+        String refId = organisms.get(taxonId);
+        if (refId != null) {
+            return refId;
+        }
+        Item item = createItem("Organism");
+        item.setAttribute("taxonId", taxonId);
+        refId = item.getIdentifier();
+        organisms.put(taxonId, refId);
+        store(item);
+        return refId;
+    }
+    
+    private String parseSymbol(String symbol) 
+    throws ObjectStoreException  {
+        if (!symbol.contains("\\")) {
+            return getOrganism("7227"); 
+        }
+        String[] bits = symbol.split("\\\\");
+        OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
+        return getOrganism(String.valueOf(od.getTaxonId()));
+    }
+    
 }
