@@ -5,7 +5,7 @@
 <item id="5_2" class="Homologue">
 <attribute name="bootstrapScore" value="100"/>
 <attribute name="type" value="paralogue"/>
-<attribute name="evidenceCode" value="(AA) Amino acid sequence comparison"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="2_2"/>
 <reference name="homologue" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -33,7 +33,7 @@
 <item id="5_1" class="Homologue">
 <attribute name="bootstrapScore" value="100"/>
 <attribute name="type" value="paralogue"/>
-<attribute name="evidenceCode" value="(AA) Amino acid sequence comparison"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="2_1"/>
 <reference name="homologue" ref_id="2_2"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
