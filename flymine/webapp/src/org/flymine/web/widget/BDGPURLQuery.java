@@ -51,7 +51,7 @@ public class BDGPURLQuery implements WidgetURLQuery
         q.setView(viewStrings);
         q.addView(expressionStrings);
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
-        q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms", Constraints.lookup(key));
+        q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms", Constraints.eq(key));
         q.addConstraint("Gene.mRNAExpressionResults.expressed", Constraints.eq(Boolean.TRUE));
         q.addConstraint("Gene.mRNAExpressionResults.dataSet.title", Constraints.eq(DATASET));
         q.setConstraintLogic("A and B and C and D");
