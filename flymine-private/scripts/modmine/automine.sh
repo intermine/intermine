@@ -245,7 +245,7 @@ do
      then
 # unzip and rename dowloaded file
 DCCID=`echo $sub | cut -f 1 -d.`
-echo "unzipping updated file $DCCID"
+echo "unzipping $1 file $DCCID"
 gzip -S .chadoxml -d $sub
       mv $DCCID $DATADIR/$1/$sub
   		FOUND=y
@@ -274,8 +274,11 @@ if [ "$exitstatus" = "0" ]
 then
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 else
-echo "\n$1  stag-storenode FAILED. SKIPPING SUBMISSION. \n\n"
+echo
+echo "$1  stag-storenode FAILED. SKIPPING SUBMISSION."
+echo
 STAGFAIL=y
+mv $sub $FAILDIR
 fi
 
 }
@@ -292,9 +295,8 @@ then
 		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
 		echo
 
-#cd $DATADIR
 cd $DATADIR/new
-# this for confirmation the program run and to avoid to grep on a non-existent file
+# this for confirmation the program runs and to avoid to grep on a non-existent file
 touch $LOG
 
 #FTPURL=http://submit.modencode.org/submit/public/
@@ -314,11 +316,13 @@ LOOPVAR=`cat $INFILE`
 else
 # get the full list from the ftp site and save it for reference
 wget -O - $FTPURL/list.txt | sort > $DATADIR/loft/`date "+%y%m%d"`.list
+rm $DATADIR/ftplist
+ln -s $DATADIR/loft/`date "+%y%m%d"`.list $DATADIR/ftplist
 # get the list of live dccid and use it as loop variable
-grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep false | awk '{print $1}' > $DATADIR/live.dccid
+grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/live.dccid
 LOOPVAR=`cat $DATADIR/live.dccid`
 # get also the list of deprecated entries with their replacement
-grep released $DATADIR/loft/`date "+%y%m%d"`.list | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
 
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/dead.dccid
 
@@ -458,7 +462,6 @@ chadofill $sub
 
 if [ "$STAGFAIL" = "y" ]
 then
-mv $sub $FAILDIR
 STAGFAIL=n
 continue
 fi
@@ -484,7 +487,6 @@ echo
 # to name the acceptance tests file
 NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
 runtest $NAMESTAMP
-
 
 # go back to the chado directory and mv chado file in 'done'
 # this is to allow to run the validation as a cronjob
