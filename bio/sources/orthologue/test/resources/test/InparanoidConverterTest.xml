@@ -8,6 +8,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_2"/>
 <reference name="homologueProtein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -19,6 +20,7 @@
 <attribute name="homologueBootstrapScore" value="100"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologue" ref_id="4_2"/>
 <reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -28,6 +30,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_2"/>
 <reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -48,6 +51,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_3"/>
 <reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -57,6 +61,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologue" ref_id="4_2"/>
 <reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -75,6 +80,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_1"/>
 <reference name="homologueProtein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -84,6 +90,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_2"/>
 <reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -93,6 +100,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_1"/>
 <reference name="protein" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -104,6 +112,7 @@
 <attribute name="homologueBootstrapScore" value="95"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_2"/>
 <reference name="homologueProtein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -132,6 +141,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_1"/>
 <reference name="homologueProtein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -141,6 +151,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.566"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_3"/>
 <reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -161,6 +172,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologue" ref_id="4_1"/>
 <reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -172,6 +184,7 @@
 <attribute name="homologueBootstrapScore" value="100"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologue" ref_id="4_2"/>
 <reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -187,6 +200,7 @@
 <attribute name="homologueBootstrapScore" value="98"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="orthologue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_2"/>
 <reference name="homologueProtein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -202,6 +216,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_2"/>
 <reference name="homologue" ref_id="4_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -214,6 +229,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="1.0"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologueProtein" ref_id="6_1"/>
 <reference name="protein" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -223,6 +239,7 @@
 <attribute name="clusterName" value="ANOGA-SACCE:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="homologue" ref_id="4_1"/>
 <reference name="protein" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -235,6 +252,7 @@
 <attribute name="clusterName" value="SACCE-ANOGA:14"/>
 <attribute name="inParanoidScore" value="0.997"/>
 <attribute name="type" value="inParalogue"/>
+<attribute name="evidenceCode" value="AA - Amino acid sequence comparison"/>
 <reference name="gene" ref_id="4_1"/>
 <reference name="homologue" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
