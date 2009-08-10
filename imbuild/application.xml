@@ -82,7 +82,8 @@
   <target name="-load-default-templates" depends="-init-properties, -init-build-db">
     <load-default-templates templatesXml="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"
-                            userProfileAlias="${userprofile.objectstorewriter.name}"/>
+                            userProfileAlias="${userprofile.objectstorewriter.name}"
+                            superuserPassword="${superuser.initialPassword}"/>
   </target>
 	
   <target name="dump-default-templates" depends="-init-properties, -init-build-db">
