@@ -27,13 +27,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.text.StrMatcher;
+import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.metadata.AttributeDescriptor;
@@ -511,13 +512,14 @@ public class MainHelper
                         if (bagQueryRunner == null) {
                             throw new IllegalArgumentException("Attempted to create a query with"
                                     + " a LOOKUP constraint without providing a BagQueryRunner.");
-                                    
                         }
                         String identifiers = (String) c.getValue();
                         BagQueryResult bagQueryResult;
                         List identifierList = new ArrayList();
-                        StringTokenizer st = new StringTokenizer(identifiers, "\n\t,");
-                        while (st.hasMoreTokens()) {
+                        StrTokenizer st = new StrTokenizer(identifiers,
+                                StrMatcher.charSetMatcher("\n\t, "),
+                                StrMatcher.doubleQuoteMatcher());
+                        while (st.hasNext()) {
                             String token = st.nextToken();
                             identifierList.add(token.trim());
                         }
