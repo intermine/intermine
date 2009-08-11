@@ -1805,6 +1805,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
             
+            // DEVELOPMENTAL STAGE
             List<String> devStageIds = new ArrayList<String>();
             devStageIds.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
                     new String[] {"stage", "dev stage"}));
@@ -1817,26 +1818,33 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         "cell id.developmental stage"
                         }));
             }
-            
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
             
+            
+            // STRAIN
             List<String> strainIds = new ArrayList<String>();
             strainIds.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
             storeSubmissionCollection(storedSubmissionId, "strains", strainIds);
 
+            // ARRAY
             List<String> arrayIds = new ArrayList<String>();
             arrayIds.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
             storeSubmissionCollection(storedSubmissionId, "arrays", arrayIds);
             
+            // CELL LINE
             List<String> lineIds = new ArrayList<String>();
             lineIds.addAll(createFromWikiPage("CellLine", typeToProp, 
                     new String[] {"cell line", "cell id"}));
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineIds);
             
+            // ANTIBODY
             List<String> antibodyIds = new ArrayList<String>();
             antibodyIds.addAll(createFromWikiPage("Antibody", typeToProp, 
                     new String[] {"antibody"}));
             storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyIds);
+
+            // TISSUE
+            
         }  
     }
 
@@ -1917,7 +1925,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "antigen", "antigen");
                     setAttributeOnProp(prop, propItem, "host", "hostOrganism");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
-                    setAttributeOnProp(prop, propItem, "antigen", "antigen");
                 } else if (clsName.equals("Array")) {
                     setAttributeOnProp(prop, propItem, "platform", "platform");
                     setAttributeOnProp(prop, propItem, "resolution", "resolution");
