@@ -11,17 +11,16 @@ package org.intermine.bio.util;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
-import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -42,16 +41,16 @@ public abstract class GFF3Util
      * @param extraAttributes name/value pairs to add to the attribute field of the GFF3Record
      * @return the GFF3Record or null if this lsf has no Chromosome or no Chromosome location
      */
-    public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, Map soClassNameMap,
-                                            String sourceName,
-                                            Map<String, List<String>> extraAttributes) {
-        Set classes = DynamicUtil.decomposeClass(lsf.getClass());
+    public static GFF3Record makeGFF3Record(LocatedSequenceFeature lsf, 
+            Map<String, String> soClassNameMap, String sourceName,
+            Map<String, List<String>> extraAttributes) {
+        Set<Class> classes = DynamicUtil.decomposeClass(lsf.getClass());
 
         String type = null;
         String sequenceID = null;
         int start = -1;
         int end = -1;
-        String strand = null;
+        String strand = ".";
 
         if (lsf instanceof Chromosome) {
             sequenceID = lsf.getPrimaryIdentifier();
@@ -72,13 +71,11 @@ public abstract class GFF3Util
 
             sequenceID = chr.getPrimaryIdentifier();
 
-            Iterator iter = classes.iterator();
-            while (iter.hasNext()) {
-                Class c = (Class) iter.next();
+            for (Class c : classes) {
                 if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
                     if (soClassNameMap.containsKey(className)) {
-                        type = (String) soClassNameMap.get(className);
+                        type = soClassNameMap.get(className);
                     } else {
                         type = className;
                         LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
@@ -95,7 +92,9 @@ public abstract class GFF3Util
 
             start = chrLocation.getStart().intValue();
             end = chrLocation.getEnd().intValue();
-            strand = chrLocation.getStrand().equals("1") ? "+" : "-";
+            if (chrLocation.getStrand() != null) { 
+                strand = chrLocation.getStrand().equals("1") ? "+" : "-";
+            }
         }
 
         Map<String, List<String>> recordAttribute =
