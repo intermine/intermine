@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -38,6 +39,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * DataConverter to parse psi data into items
+ *
+ * Experiments and interactions appear in different files, so we have to keep all experiments
+ * until all interactions are processed.
+ *
  * @author Julie Sullivan
  */
 public class PsiConverter extends BioFileConverter
@@ -49,12 +54,16 @@ public class PsiConverter extends BioFileConverter
     private Map<String, Object> experimentNames = new HashMap();
     private Map<String, String> terms = new HashMap();
     private String termId = null;
-    private Map<String, Item> genes = new  HashMap();
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
     private Map<String, String[]> config = new HashMap();
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet();
+    private Set<String> synonyms = new HashSet();
+
+    // key --> intact ID, refId
+    // value --> temporary gene object holding refId and identifier
+    private Map genes = new HashMap();
 
     /**
      * Constructor
@@ -132,7 +141,6 @@ public class PsiConverter extends BioFileConverter
      */
     public void setIntactOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
-        LOG.info("Setting list of organisms to " + this.taxonIds);
     }
 
     /**
@@ -144,10 +152,9 @@ public class PsiConverter extends BioFileConverter
         private InteractionHolder holder = null;
         private ExperimentHolder experimentHolder = null;
         private InteractorHolder interactorHolder = null;
-        private Item gene = null, comment = null;
+        private Item comment = null;
         private String experimentId = null, interactorId = null;
         private Map<String, String> identifiers = new HashMap();
-        private Map<String, Item> validGenes = new HashMap();
         private String regionName = null;
         private Stack<String> stack = new Stack();
         private String attName = null;
@@ -159,6 +166,9 @@ public class PsiConverter extends BioFileConverter
         public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
             attName = null;
+
+            // ------------- experiments ------------------------- //
+
             // <experimentList><experimentDescription>
             if (qName.equals("experimentDescription")) {
                 experimentId = attrs.getValue("id");
@@ -174,12 +184,8 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("bibref") == 2
                             && stack.search("experimentDescription") == 3) {
-                String pubMedId = attrs.getValue("id");
-                if (StringUtil.allDigits(pubMedId)) {
-                    String pub = getPub(pubMedId);
-                    experimentHolder.setPublication(pub);
-                }
-                //<experimentList><experimentDescription><attributeList><attribute>
+                experimentHolder.setPublication(attrs.getValue("id"));
+            //<experimentList><experimentDescription><attributeList><attribute>
             } else if (qName.equals("attribute") && stack.peek().equals("attributeList")
                             && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
@@ -190,59 +196,63 @@ public class PsiConverter extends BioFileConverter
                 } else {
                     LOG.info("Can't create comment, bad experiment.");
                 }
-                // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
+            // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if (qName.equals("hostOrganism")) {
                 attName = "hostOrganism";
-                //<interactionDetectionMethod><xref><primaryRef>
+            //<interactionDetectionMethod><xref><primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("interactionDetectionMethod") == 2) {
                 String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("interactionDetectionMethod", termItemId);
-                //<participantIdentificationMethod><xref> <primaryRef>
+            //<participantIdentificationMethod><xref> <primaryRef>
             } else if (qName.equals("primaryRef") && stack.peek().equals("xref")
                             && stack.search("participantIdentificationMethod") == 2) {
                 String termItemId = getTerm(attrs.getValue("id"));
                 experimentHolder.setMethod("participantIdentificationMethod", termItemId);
-                // <interactorList><interactor id="4">
+
+
+            // --------------- interactors -------------------- //
+
+            // <interactorList><interactor id="4">
             } else if (qName.equals("interactor") && stack.peek().equals("interactorList")) {
                 interactorId = attrs.getValue("id");
-                // <interactorList><interactor id="4"><names><fullName>F15C11.2</fullName>
+            // <interactorList><interactor id="4"><names><fullName>F15C11.2</fullName>
             } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
                             && stack.search("interactor") == 2) {
                 attName = qName;
             // <interactorList><interactor id="4"><xref>
             // <secondaryRef db="sgd" dbAc="MI:0484" id="S000006331" secondary="YPR127W"/>
             } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
-                            && stack.search("interactor") == 2
-                       && attrs.getValue("db") != null) {
-                identifiers.put(attrs.getValue("db").toLowerCase(), attrs.getValue("id"));
-                // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
+                            && stack.search("interactor") == 2 && attrs.getValue("db") != null) {
+                identifiers.put(attrs.getValue("db").toLowerCase(), attrs.getValue("id"));                
+            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
                 if ((taxonIds == null || taxonIds.isEmpty()) || taxonIds.contains(taxId))  {
                     try {
-                        gene = getGene(taxId);
+                        storeGene(taxId, interactorId);
                     } catch (ObjectStoreException e) {
                         throw new RuntimeException("failed storing gene");
                     }
-                    if (gene != null && !validGenes.containsKey(interactorId)) {
-                        validGenes.put(interactorId, gene);
-                    }
                 }
+                // reset list of identifiers, this list is only per gene
                 identifiers = new HashMap();
-                // <interactorList><interactor id="4"><names>
-                // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
+            // <interactorList><interactor id="4"><names>
+            // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
             } else if (qName.equals("alias") && stack.peek().equals("names")
                             && stack.search("interactor") == 2) {
                 attName = attrs.getValue("type");
-                // <interactorList><interactor id="4"><sequence>
+            // <interactorList><interactor id="4"><sequence>
             } else if (qName.equals("sequence") && stack.peek().equals("interactor")) {
                 attName = "sequence";
-                //<interactionList><interaction id="1"><names><shortLabel>
+
+            // ---------------- interactions ---------------- //
+
+            //<interactionList><interaction id="1"><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("interaction") == 2) {
                 attName = "interactionName";
-                //<interaction><confidenceList><confidence><unit><names><shortLabel>
+            //<interaction><confidenceList><confidence><unit><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.peek().equals("names")
                             && stack.search("confidence") == 3) {
                 attName = "confidenceUnit";
@@ -271,8 +281,8 @@ public class PsiConverter extends BioFileConverter
                 // <featureList><feature id="24"><names><shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("feature") == 2) {
                 attName = "regionName";
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            // <featureType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117"
             } else if (qName.equals("primaryRef") && stack.search("featureType") == 2
                             && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
@@ -286,19 +296,15 @@ public class PsiConverter extends BioFileConverter
                 interactorHolder.interactionRegion = interactionRegion;
                 holder.addRegion(interactionRegion.getIdentifier());
 
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                //    <featureRangeList><featureRange><begin position="470"/>
-            } else if (qName.equals("begin")
-                            && stack.peek().equals("featureRange")
-                            && interactorHolder != null
-                            && interactorHolder.isRegionFeature) {
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            //    <featureRangeList><featureRange><begin position="470"/>
+            } else if (qName.equals("begin") && stack.peek().equals("featureRange")
+                            && interactorHolder != null && interactorHolder.isRegionFeature) {
                 interactorHolder.setStart(attrs.getValue("position"));
-                // <participantList><participant id="6919"><featureList><feature id="6920">
-                //    <featureRangeList><featureRange><end position="470"/>
-            } else if (qName.equals("end")
-                            && stack.peek().equals("featureRange")
-                            && interactorHolder != null
-                            && interactorHolder.isRegionFeature) {
+            // <participantList><participant id="6919"><featureList><feature id="6920">
+            //    <featureRangeList><featureRange><end position="470"/>
+            } else if (qName.equals("end") && stack.peek().equals("featureRange")
+                            && interactorHolder != null && interactorHolder.isRegionFeature) {
                 interactorHolder.setEnd(attrs.getValue("position"));
             //<interactorType><xref><primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326"
             } else if (qName.equals("primaryRef") && stack.search("interactionType") == 2) {
@@ -307,7 +313,6 @@ public class PsiConverter extends BioFileConverter
                     holder.setType(getTerm(term));
                 }
             }
-
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
             attValue = new StringBuffer();
@@ -318,31 +323,25 @@ public class PsiConverter extends BioFileConverter
          */
         public void endElement(String uri, String localName, String qName)
         throws SAXException {
-
             super.endElement(uri, localName, qName);
-
             stack.pop();
+
+            // ----------------------- experiment ------------------------------ //
 
             // <experimentList><experimentDescription><attributeList><attribute/>
             // <attribute name="publication-year">2006</attribute>
             if (attName != null && attName.equals("experimentAttribute")
                             && qName.equals("attribute")) {
                 String s = attValue.toString();
-                if (comment != null && s != null && !s.equals("")) {
-                    comment.setAttribute("text", s);
-                    try {
-                        store(comment);
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("Couldn't store comment: ", e);
-                    }
-                    experimentHolder.comments.add(comment.getIdentifier());
+                if (comment != null && StringUtils.isNotEmpty(s)) {
+                    processComment(s);
                     comment = null;
                 }
             // <experimentList><experimentDescription><names><shortLabel>
             } else if (attName != null && attName.equals("experimentName")
                             && qName.equals("shortLabel")) {
                 String shortLabel = attValue.toString();
-                if (shortLabel != null) {
+                if (StringUtils.isNotEmpty(shortLabel)) {
                     experimentHolder = getExperiment(shortLabel);
                     experimentIds.put(experimentId, experimentHolder);
                     experimentHolder.setName(shortLabel);
@@ -354,7 +353,7 @@ public class PsiConverter extends BioFileConverter
             } else if (attName != null && attName.equals("experimentDescr")
                             && qName.equals("fullName")) {
                 String descr = attValue.toString();
-                if (descr != null) {
+                if (StringUtils.isNotEmpty(descr)) {
                     experimentHolder.setDescription(descr);
                 }
             // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
@@ -363,51 +362,48 @@ public class PsiConverter extends BioFileConverter
                 // organism must be a string because several entries are in vivo or in vitro, with
                 // a taxonid of -1 or -2
                 String hostOrganism = attValue.toString();
-                if (hostOrganism != null) {
+                if (StringUtils.isNotEmpty(hostOrganism)) {
                     experimentHolder.setHostOrganism(hostOrganism);
                 }
+                
+                
+             // ----------------- interactors ----------------------- //   
+                
             // <interactorList><interactor id="4"><names><fullName>
             } else if ((qName.equals("fullName") || qName.equals("shortLabel"))
                             && stack.search("interactor") == 2) {
                 String name = attValue.toString();
-                if (name != null) {
+                if (StringUtils.isNotEmpty(name)) {
                     identifiers.put(qName, name);
                 }
             // <interactorList><interactor id="4">
             } else if (qName.equals("alias")) {
                 String identifier = attValue.toString();
-                if (identifier != null && !identifier.equals("")) {
-                    identifier = formatString(identifier);
-                    identifiers.put(attName, identifier);
+                if (StringUtils.isNotEmpty(identifier)) {
+                    identifiers.put(attName, formatString(identifier));
                 }
-            // <interactorList><interactor id="4"></interactor>
-            } else if (gene != null && qName.equals("interactor")) {
-                gene = null;
-            //<interactionList><interaction>
-            //<participantList><participant id="5"><interactorRef>
+                
+                
+            //  ----------------- interactions ----------------------- //
+                
+            //<interactionList><interaction><participantList><participant id="5"><interactorRef>
             } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
                 String id = attValue.toString();
-                if (validGenes.get(id) != null) {
-                    Item interactor = validGenes.get(id);
-                    String geneRefId = interactor.getIdentifier();
-                    interactorHolder = new InteractorHolder(geneRefId);
-                    String ident = fetchIdentifier(interactor);
-                    if (ident != null) {
-                        interactorHolder.identifier = ident;
-                        holder.addInteractor(interactorHolder);
-                        holder.addGene(geneRefId);
-                        holder.addIdentifier(ident);
-                    } else {
-                        holder.isValid = false;
-                    }
+                if (genes.get(id) != null) {
+                    interactorHolder = (InteractorHolder) genes.get(id);
+                    String geneRefId = interactorHolder.geneRefId;
+                    holder.addInteractor(interactorHolder);
+                    holder.addGene(geneRefId);
+                    holder.addIdentifier(interactorHolder.identifier);
                 } else {
                     holder.isValid = false;
+                    
                 }
             // <interactionList><interaction><names><shortLabel>
             } else if (qName.equals("shortLabel") && attName != null
                             && attName.equals("interactionName")) {
                 holder = new InteractionHolder(attValue.toString());
-                //<interactionList><interaction><experimentList><experimentRef>
+            //<interactionList><interaction><experimentList><experimentRef>
             } else if (qName.equals("experimentRef") && stack.peek().equals("experimentList")) {
                 String experimentRef = attValue.toString();
                 if (experimentIds.get(experimentRef) != null) {
@@ -420,15 +416,14 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("shortLabel") && attName != null
                             && attName.equals("confidenceUnit") && holder != null) {
                 String shortLabel = attValue.toString();
-                if (shortLabel != null) {
+                if (StringUtils.isNotEmpty(shortLabel)) {
                     holder.confidenceUnit = shortLabel;
                 }
             //<interactionList><interaction><confidenceList><confidence><value>
             } else if (qName.equals("value") && attName != null && attName.equals("confidence")
                             && holder != null) {
                 if (holder.confidenceUnit.equals("author-confidence")) {
-                    String value = attValue.toString();
-                    holder.setConfidence(value);
+                    holder.setConfidence(attValue.toString());
                 }
             // <interactionList><interaction><participantList><participant id="5">
             // <experimentalRole><names><shortLabel>
@@ -464,19 +459,17 @@ public class PsiConverter extends BioFileConverter
         }
 
         private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException {
-            Set interactors = interactionHolder.interactors;
-            // loop through proteins/interactors in this interaction
+            Set<InteractorHolder> interactors = interactionHolder.interactors;
             for (Iterator iter = interactors.iterator(); iter.hasNext();) {
-
-                interactorHolder =  (InteractorHolder) iter.next();
+                InteractorHolder ih =  (InteractorHolder) iter.next();
 
                 // build & store interactions - one for each gene
                 Item interaction = createItem("Interaction");
-                String geneRefId = interactorHolder.geneRefId;
-                String identifier = interactorHolder.identifier;
+                String geneRefId = ih.geneRefId;
+                String identifier = ih.identifier;
                 String shortName = interactionHolder.shortName;
                 interaction.setAttribute("shortName", shortName);
-                interaction.setAttribute("role", interactorHolder.role);
+                interaction.setAttribute("role", ih.role);
                 interaction.setAttribute("interactionType", INTERACTION_TYPE);
 
                 String name = buildName(interactionHolder.primaryIdentifiers, identifier);
@@ -511,25 +504,25 @@ public class PsiConverter extends BioFileConverter
                 /* store all protein interaction-related items */
                 store(interaction);
 
-                if (interactorHolder.interactionRegion != null) {
-                    Item region = interactorHolder.interactionRegion;
-                    if (interactorHolder.startStatus != null) {
-                        region.setAttribute("startStatus", interactorHolder.startStatus);
+                if (ih.interactionRegion != null) {
+                    Item region = ih.interactionRegion;
+                    if (ih.startStatus != null) {
+                        region.setAttribute("startStatus", ih.startStatus);
                     }
-                    if (interactorHolder.endStatus != null) {
-                        region.setAttribute("endStatus", interactorHolder.endStatus);
+                    if (ih.endStatus != null) {
+                        region.setAttribute("endStatus", ih.endStatus);
                     }
                     region.setReference("interaction", interaction);
 
-                    String regionIdentifier = buildRegionIdentifier(interactorHolder, shortName,
+                    String regionIdentifier = buildRegionIdentifier(ih, shortName,
                                                                     identifier);
                     region.setAttribute("primaryIdentifier", regionIdentifier);
 
-                    if (locationValid(interactorHolder)) {
+                    if (locationValid(ih)) {
                         Item location = createItem("Location");
-                        location.setAttribute("start", interactorHolder.start);
-                        location.setAttribute("end", interactorHolder.end);
-                        location.setReference("object", interactorHolder.geneRefId);
+                        location.setAttribute("start", ih.start);
+                        location.setAttribute("end", ih.end);
+                        location.setReference("object", ih.geneRefId);
                         location.setReference("subject", region.getIdentifier());
                         region.setReference("location", location);
                         store(location);
@@ -628,8 +621,7 @@ public class PsiConverter extends BioFileConverter
             return regionIdentifier;
         }
 
-
-        private Item getGene(String taxonId)
+        private String storeGene(String taxonId, String intactId)
         throws ObjectStoreException, SAXException {
 
             if (config.get(taxonId) == null) {
@@ -661,15 +653,22 @@ public class PsiConverter extends BioFileConverter
                 return null;
             }
 
-            Item item = genes.get(identifier);
-            if (item == null) {
-                item = createItem("Gene");
+            InteractorHolder ih = (InteractorHolder) genes.get(identifier);
+            String refId = null;
+            if (ih == null) {
+                Item item = createItem("Gene");
                 item.setAttribute(field, identifier);
                 item.setReference("organism", getOrganism(taxonId));
-                genes.put(identifier, item);
+                refId = item.getIdentifier();
                 store(item);
+                getSynonym(refId, "identifier", identifier);
+                ih = new InteractorHolder(refId);
+                ih.identifier = identifier;
+                genes.put(intactId, ih);
+            } else {
+                refId = ih.geneRefId;
             }
-            return item;
+            return refId;
         }
 
         private String resolveGene(IdResolver resolver, String taxonId, String id) {
@@ -711,6 +710,16 @@ public class PsiConverter extends BioFileConverter
             return eh;
         }
 
+        private void processComment(String s) {
+            comment.setAttribute("text", s);
+            try {
+                store(comment);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Couldn't store comment: ", e);
+            }
+            experimentHolder.comments.add(comment.getIdentifier());
+
+        }
 
         /**
          * {@inheritDoc}
@@ -762,11 +771,11 @@ public class PsiConverter extends BioFileConverter
             private Double confidence;
             private String confidenceText;
             private String confidenceUnit;
-            private Set<InteractorHolder> interactors = new LinkedHashSet<InteractorHolder>();
+            private Set<InteractorHolder> interactors = new LinkedHashSet();
             private boolean isValid = true;
-            private Set<String> geneIds = new HashSet<String>();
-            private List<String> primaryIdentifiers = new ArrayList<String>();
-            private Set<String> regionIds = new HashSet<String>();
+            private Set<String> geneIds = new HashSet();
+            private List<String> primaryIdentifiers = new ArrayList();
+            private Set<String> regionIds = new HashSet();
             private String termRefId;
 
             /**
@@ -846,7 +855,7 @@ public class PsiConverter extends BioFileConverter
             private Item interactionRegion; // for storage later
             private String startStatus, start;
             private String endStatus, end;
-            protected String identifier;
+            private String identifier;
 
             /* we only want to process the binding site feature.  this flag is FALSE until
              *
@@ -881,6 +890,118 @@ public class PsiConverter extends BioFileConverter
                 this.end = end;
             }
 
+            /**
+             * @return the endStatus
+             */
+            public String getEndStatus() {
+                return endStatus;
+            }
+
+            /**
+             * @param endStatus the endStatus to set
+             */
+            public void setEndStatus(String endStatus) {
+                this.endStatus = endStatus;
+            }
+
+            /**
+             * @return the geneRefId
+             */
+            public String getGeneRefId() {
+                return geneRefId;
+            }
+
+            /**
+             * @param geneRefId the geneRefId to set
+             */
+            public void setGeneRefId(String geneRefId) {
+                this.geneRefId = geneRefId;
+            }
+
+            /**
+             * @return the identifier
+             */
+            public String getIdentifier() {
+                return identifier;
+            }
+
+            /**
+             * @param identifier the identifier to set
+             */
+            public void setIdentifier(String identifier) {
+                this.identifier = identifier;
+            }
+
+            /**
+             * @return the interactionRegion
+             */
+            public Item getInteractionRegion() {
+                return interactionRegion;
+            }
+
+            /**
+             * @param interactionRegion the interactionRegion to set
+             */
+            public void setInteractionRegion(Item interactionRegion) {
+                this.interactionRegion = interactionRegion;
+            }
+
+            /**
+             * @return the isRegionFeature
+             */
+            public boolean isRegionFeature() {
+                return isRegionFeature;
+            }
+
+            /**
+             * @param isRegionFeature the isRegionFeature to set
+             */
+            public void setRegionFeature(boolean isRegionFeature) {
+                this.isRegionFeature = isRegionFeature;
+            }
+
+            /**
+             * @return the role
+             */
+            public String getRole() {
+                return role;
+            }
+
+            /**
+             * @param role the role to set
+             */
+            public void setRole(String role) {
+                this.role = role;
+            }
+
+            /**
+             * @return the startStatus
+             */
+            public String getStartStatus() {
+                return startStatus;
+            }
+
+            /**
+             * @param startStatus the startStatus to set
+             */
+            public void setStartStatus(String startStatus) {
+                this.startStatus = startStatus;
+            }
+
+            /**
+             * @return the end
+             */
+            public String getEnd() {
+                return end;
+            }
+
+            /**
+             * @return the start
+             */
+            public String getStart() {
+                return start;
+            }
+
         }
 
         /**
@@ -891,10 +1012,10 @@ public class PsiConverter extends BioFileConverter
         public class ExperimentHolder
         {
 
-            protected String name, description;
-            protected Item experiment;
-            protected List<String> comments = new ArrayList();
-            protected boolean isStored = false;
+            private String name, description;
+            private Item experiment;
+            private List<String> comments = new ArrayList();
+            private boolean isStored = false;
 
             /**
              * Constructor
@@ -921,15 +1042,18 @@ public class PsiConverter extends BioFileConverter
            }
 
             /**
-             *
-             * @param publication publication of this experiment
+             * @param pubMedId of this experiment
+             * @throws SAXException if publication can't be stored
              */
-            protected void setPublication(String publication) {
-                experiment.setReference("publication", publication);
+           protected void setPublication(String pubMedId)
+           throws SAXException {
+               if (StringUtil.allDigits(pubMedId)) {
+                   String pubRefId = getPub(pubMedId);
+                   experiment.setReference("publication", pubRefId);
+               }
             }
 
             /**
-             *
              * @param whichMethod method
              * @param termItemId termID
              */
@@ -987,21 +1111,21 @@ public class PsiConverter extends BioFileConverter
         return refId;
     }
 
-    private String fetchIdentifier(Item interactor) {
-        String ident = null;
-        if (interactor.getAttribute("primaryIdentifier") != null) {
-            ident = interactor.getAttribute("primaryIdentifier").getValue();
-        }
-        if ((ident == null || ident.equals(""))
-                        && interactor.getAttribute("secondaryIdentifier") != null) {
-            ident = interactor.getAttribute("secondaryIdentifier").getValue();
-        }
-        if ((ident == null || ident.equals(""))
-                        && interactor.getAttribute("symbol") != null) {
-            ident = interactor.getAttribute("symbol").getValue();
-        }
-        return ident;
-    }
+//    private String fetchIdentifier(Item interactor) {
+//        String ident = null;
+//        if (interactor.getAttribute("primaryIdentifier") != null) {
+//            ident = interactor.getAttribute("primaryIdentifier").getValue();
+//        }
+//        if ((ident == null || ident.equals(""))
+//                        && interactor.getAttribute("secondaryIdentifier") != null) {
+//            ident = interactor.getAttribute("secondaryIdentifier").getValue();
+//        }
+//        if ((ident == null || ident.equals(""))
+//                        && interactor.getAttribute("symbol") != null) {
+//            ident = interactor.getAttribute("symbol").getValue();
+//        }
+//        return ident;
+//    }
 
     private String formatString(String ident) {
         String identifier = ident;
@@ -1012,6 +1136,23 @@ public class PsiConverter extends BioFileConverter
             identifier = "CG" + identifier.substring(2);
         }
         return identifier;
+    }
+
+    private void getSynonym(String subjectId, String type, String value)
+    throws ObjectStoreException {
+        String key = subjectId + type + value;
+        if (!synonyms.contains(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("type", type);
+            syn.setAttribute("value", value);
+            synonyms.add(key);
+            try {
+                store(syn);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
     }
 
 }

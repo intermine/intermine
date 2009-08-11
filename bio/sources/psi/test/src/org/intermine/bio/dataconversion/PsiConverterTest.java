@@ -33,7 +33,7 @@ public class PsiConverterTest extends MockItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap());
         converter = new PsiConverter(itemWriter,  Model.getInstanceByName("genomic"));
-
+        converter.setIntactOrganisms("7227");
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
@@ -45,7 +45,6 @@ public class PsiConverterTest extends MockItemsTestCase
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                             .getResourceAsStream("PsiConverterTest_src.xml"));
-
         converter.process(reader);
         converter.close();
 
