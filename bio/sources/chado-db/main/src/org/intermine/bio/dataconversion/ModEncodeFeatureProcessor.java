@@ -171,8 +171,15 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
         processLocationTable(connection, matchESTLocRes);
         
-//        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
-//        processLocationTable(connection, matchUSTLocRes);
+        // for piano (sub 515) 
+        // Note: UST gives no results (?)
+        // TODO: check
+        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
+        processLocationTable(connection, matchUSTLocRes);
+
+        ResultSet matchRSTLocRes = getRSTMatchLocResultSet(connection);
+        processLocationTable(connection, matchRSTLocRes);
+
     }
 
     /**
@@ -190,6 +197,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
+    
+    //
+    // TODO: make a function getMatchLocResultSet(connection, EST, EST_match) 
+    //
     
     /**
      * Return the interesting EST matches from the featureloc and feature tables.
@@ -234,33 +245,67 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-//    protected ResultSet getUSTMatchLocResultSet(Connection connection) throws SQLException {
-//        String query =       
-//            "SELECT -1 AS featureloc_id, ust.feature_id, chrloc.fmin, " 
-//            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, " 
-//            + " ustloc.strand "
-//            + " FROM feature ust, featureloc ustloc, cvterm ustcv, feature mf, "
-//            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
-//            + " WHERE ust.type_id = ustcv.cvterm_id "
-//            + " AND ustcv.name = 'three_prime_UST' " 
-//            + " AND ust.feature_id = ustloc.srcfeature_id "
-//            + " AND ustloc.feature_id = mf.feature_id "
-//            + " AND mf.feature_id = chrloc.feature_id "
-//            + " AND chrloc.srcfeature_id = chr.feature_id "
-//            + " AND chr.type_id = chrcv.cvterm_id "
-//            + " AND chrcv.name = 'chromosome' "
-//            + " AND mf.type_id = mfcv.cvterm_id "
-//            + " AND mfcv.name = 'UST_match' "
-//            + " AND ust.feature_id IN " 
-//            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-//        LOG.info("executing: " + query);
-//        long bT = System.currentTimeMillis();
-//        Statement stmt = connection.createStatement();
-//        ResultSet res = stmt.executeQuery(query);
-//        LOG.info("TIME QUERYING USTMATCH " + ":" + (System.currentTimeMillis() - bT));
-//        return res;
-//    }
+    protected ResultSet getUSTMatchLocResultSet(Connection connection) throws SQLException {
+        String query =       
+            "SELECT -1 AS featureloc_id, ust.feature_id, chrloc.fmin, " 
+            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, " 
+            + " ustloc.strand "
+            + " FROM feature ust, featureloc ustloc, cvterm ustcv, feature mf, "
+            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+            + " WHERE ust.type_id = ustcv.cvterm_id "
+            + " AND ustcv.name = 'three_prime_UST' " 
+            + " AND ust.feature_id = ustloc.srcfeature_id "
+            + " AND ustloc.feature_id = mf.feature_id "
+            + " AND mf.feature_id = chrloc.feature_id "
+            + " AND chrloc.srcfeature_id = chr.feature_id "
+            + " AND chr.type_id = chrcv.cvterm_id "
+            + " AND chrcv.name = 'chromosome' "
+            + " AND mf.type_id = mfcv.cvterm_id "
+            + " AND mfcv.name = 'UST_match' "
+            + " AND ust.feature_id IN " 
+            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING USTMATCH " + ":" + (System.currentTimeMillis() - bT));
+        return res;
+    }
     
+    /**
+     * Return the interesting RST matches from the featureloc and feature tables.
+     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getRSTMatchLocResultSet(Connection connection) throws SQLException {
+        String query =       
+            "SELECT -1 AS featureloc_id, rst.feature_id, chrloc.fmin, " 
+            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, " 
+            + " rstloc.strand "
+            + " FROM feature rst, featureloc rstloc, cvterm rstcv, feature mf, "
+            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+            + " WHERE rst.type_id = rstcv.cvterm_id "
+            + " AND rstcv.name = 'three_prime_RST' " 
+            + " AND rst.feature_id = rstloc.srcfeature_id "
+            + " AND rstloc.feature_id = mf.feature_id "
+            + " AND mf.feature_id = chrloc.feature_id "
+            + " AND chrloc.srcfeature_id = chr.feature_id "
+            + " AND chr.type_id = chrcv.cvterm_id "
+            + " AND chrcv.name = 'chromosome' "
+            + " AND mf.type_id = mfcv.cvterm_id "
+            + " AND mfcv.name = 'RST_match' "
+            + " AND rst.feature_id IN " 
+            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING RSTMATCH " + ":" + (System.currentTimeMillis() - bT));
+        return res;
+    }
     /**
      * {@inheritDoc}
      */
