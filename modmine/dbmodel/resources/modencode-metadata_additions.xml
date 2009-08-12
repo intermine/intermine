@@ -17,15 +17,46 @@
   <class name="CopyNumberVariation"
     extends="SequenceVariant" is-interface="true"/>
   <class name="PolyASite"
-    extends="Region" is-interface="true"/>
+    extends="Region" is-interface="true">
+    <reference name="threePrimeRACEClone"
+      referenced-type="ThreePrimeRACEClone"
+      reverse-reference="polyASite" />        
+  </class>
   <class name="ThreePrimeRACEClone"
-    extends="Region" is-interface="true"/>
+    extends="Region" is-interface="true">
+    <reference name="polyASite"
+      referenced-type="PolyASite"
+      reverse-reference="threePrimeRACEClone"/>            
+    <reference name="threePrimeRST"
+      referenced-type="ThreePrimeRST"
+      reverse-reference="threePrimeRACEClone" />        
+  </class>
   <class name="ThreePrimeRST"
-    extends="Region" is-interface="true"/>
+    extends="Region" is-interface="true">
+    <reference name="threePrimeRACEClone"
+      referenced-type="ThreePrimeRACEClone"
+      reverse-reference="threePrimeRST" />            
+  </class>  
   <class name="ThreePrimeUST"
-    extends="Region" is-interface="true"/>
+    extends="Region" is-interface="true">
+    <reference name="threePrimeUTR"
+      referenced-type="ThreePrimeUTR"
+      reverse-reference="threePrimeUST" />        
+  </class>
   <class name="ThreePrimeUTR"
-    extends="Region" is-interface="true"/>
+    extends="Region" is-interface="true">
+    <reference name="cds"
+      referenced-type="CDS"
+      reverse-reference="threePrimeUTR" />    
+    <reference name="threePrimeUST"
+      referenced-type="ThreePrimeUST"
+      reverse-reference="threePrimeUTR" />        
+    </class>
+
+  <class name="CDS" is-interface="true">
+      <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="cds"/>
+    </class>
+    
 
   <class name="Project"
     is-interface="true">
