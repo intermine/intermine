@@ -15,19 +15,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.HashSet;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
+import org.intermine.bio.chado.config.ConfigAction;
+import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.xml.full.Item;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Item;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -57,11 +61,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "binding_site", "protein_binding_site", "TF_binding_site",
          "transcript_region", "histone_binding_site", "copy_number_variation",
          "natural_transposable_element", "start_codon", "stop_codon"
-         ,"cDNA"
-         ,"three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
-         ,"three_prime_UTR", "polyA_site"
+         , "cDNA"
+         , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
+         , "three_prime_UTR", "polyA_site"
     );
 
+
+    
+    // the configuration for this processor, set when getConfig() is called the first time
+    private final Map<Integer, MultiKeyMap> config = new HashMap();
+    
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
     /**
@@ -162,6 +171,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
         processLocationTable(connection, matchESTLocRes);
         
+//        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
+//        processLocationTable(connection, matchUSTLocRes);
     }
 
     /**
@@ -215,6 +226,40 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return res;
     }
 
+    /**
+     * Return the interesting UST matches from the featureloc and feature tables.
+     * feature<->featureloc<->match_feature<->featureloc<->feature
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+//    protected ResultSet getUSTMatchLocResultSet(Connection connection) throws SQLException {
+//        String query =       
+//            "SELECT -1 AS featureloc_id, ust.feature_id, chrloc.fmin, " 
+//            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, " 
+//            + " ustloc.strand "
+//            + " FROM feature ust, featureloc ustloc, cvterm ustcv, feature mf, "
+//            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+//            + " WHERE ust.type_id = ustcv.cvterm_id "
+//            + " AND ustcv.name = 'three_prime_UST' " 
+//            + " AND ust.feature_id = ustloc.srcfeature_id "
+//            + " AND ustloc.feature_id = mf.feature_id "
+//            + " AND mf.feature_id = chrloc.feature_id "
+//            + " AND chrloc.srcfeature_id = chr.feature_id "
+//            + " AND chr.type_id = chrcv.cvterm_id "
+//            + " AND chrcv.name = 'chromosome' "
+//            + " AND mf.type_id = mfcv.cvterm_id "
+//            + " AND mfcv.name = 'UST_match' "
+//            + " AND ust.feature_id IN " 
+//            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+//        LOG.info("executing: " + query);
+//        long bT = System.currentTimeMillis();
+//        Statement stmt = connection.createStatement();
+//        ResultSet res = stmt.executeQuery(query);
+//        LOG.info("TIME QUERYING USTMATCH " + ":" + (System.currentTimeMillis() - bT));
+//        return res;
+//    }
     
     /**
      * {@inheritDoc}
@@ -283,6 +328,69 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
 
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * see FlyBaseProcessor for many more examples of configuration
+     */
+    @Override
+    protected Map<MultiKey, List<ConfigAction>> getConfig(int taxonId) {
+        MultiKeyMap map = config.get(new Integer(taxonId));
+        if (map == null) {
+            map = new MultiKeyMap();
+            config.put(new Integer(taxonId), map);
+
+            map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
+                    Arrays.asList(new SetFieldConfigAction("cds")));
+
+            map.put(new MultiKey("relationship", "PolyASite", "derives_from", "ThreePrimeRACEClone"),
+                    Arrays.asList(new SetFieldConfigAction("threePrimeRACEClone")));
+
+            map.put(new MultiKey("relationship", "ThreePrimeRST", "derives_from", "ThreePrimeRACEClone"),
+                    Arrays.asList(new SetFieldConfigAction("threePrimeRACEClone")));
+
+            map.put(new MultiKey("relationship", "ThreePrimeUST", "complete_evidence_for_feature", "ThreePrimeUTR"),
+                    Arrays.asList(new SetFieldConfigAction("threePrimeUTR")));
+
+//            map.put(new MultiKey("relationship", "CDNAClone", "derived_assoc_cdna_clone", "Gene"),
+//                    Arrays.asList(new SetFieldConfigAction("gene")));
+//
+//            map.put(new MultiKey("relationship", "Gene", "producedby", "Protein"),
+//                    Arrays.asList(new SetFieldConfigAction("proteins")));
+
+            
+            // synomym configuration example: for features of class "Gene", if the type name of
+            // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
+            // the new Gene to be this synonym and then make a Synonym object
+//            map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
+//                    Arrays.asList(new SetFieldConfigAction("name"),
+//                                  CREATE_SYNONYM_ACTION));
+
+//            // null for the "is_current" means either TRUE or FALSE is OK.
+
+            // featureprop configuration example: for features of class "Gene", if the type name
+            // of the prop is "cyto_range", set the "cytoLocation" attribute of the
+            // new Gene to be this property
+//            map.put(new MultiKey("prop", "Gene", "cyto_range"),
+//                    Arrays.asList(new SetFieldConfigAction("cytoLocation")));
+
+            // feature configuration example: for features of class "Exon", from "FlyBase",
+            // set the Gene.symbol to be the "name" field from the chado feature
+//            map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
+//                    Arrays.asList(new SetFieldConfigAction("symbol"),
+//                                  CREATE_SYNONYM_ACTION));
+            // DO_NOTHING_ACTION means skip the name from this feature
+//            map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
+//                    Arrays.asList(DO_NOTHING_ACTION));
+
+        }
+        return map;
+    }
+
+    
+    
+    
     /**
      * copied from FlyBaseProcessor
      * {@inheritDoc}
