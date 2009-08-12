@@ -12,6 +12,7 @@ package org.intermine.xml.full;
 
 import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
+import org.intermine.util.XmlUtil;
 
 /**
 * Class providing Item utility methods
@@ -141,7 +142,8 @@ public class ItemHelper
         }
         StringBuffer sb = new StringBuffer();
         for (String s : StringUtil.tokenize(classNames)) {
-            sb.append(model.getPackageName() + "." + s + " ");
+            sb.append(model.getPackageName() + "." +
+                    XmlUtil.getFragmentFromURI(s + " ")); 
         }
         return sb.toString().trim();
     }
