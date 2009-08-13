@@ -175,6 +175,14 @@ echo
 echo "current directory: $MINEDIR"
 echo
 
+if [ -n "$1" ]
+then
+echo "Processing submission $1.."
+echo
+fi
+
+
+
 # TODO: actually only read n ...
 function interact {
 # if testing, wait here before continuing
