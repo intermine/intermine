@@ -231,6 +231,12 @@ sub starts_with_main
   return $path =~ m:^main($|/):;
 }
 
+sub starts_with_test
+{
+  my $path = shift;
+  return $path =~ m:^test($|/):;
+}
+
 my $full_source_dir = "$start_dir/$BIO_DIR/sources/$source_name";
 
 if (-e $full_source_dir) {
@@ -262,6 +268,9 @@ sub process
     }
   } else {
     if (starts_with_main($dest_path)) {
+        return;
+    }
+    if (starts_with_test($dest_path)) {
         return;
     }
   }
