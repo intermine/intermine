@@ -76,6 +76,14 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Tissue">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="species"/>
+      <fieldconfig fieldExpr="sex"/>
+      <fieldconfig fieldExpr="organismPart"/>
+    </fields>
+  </class>
 
   <class className="org.intermine.model.bio.AppliedProtocol">
     <fields>
