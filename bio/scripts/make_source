@@ -14,6 +14,7 @@ my $ITEMS_XML_FILE_TYPE = 'intermine-items-xml-file';
 my $LARGE_ITEMS_XML_FILE_TYPE = 'intermine-items-large-xml-file';
 my $GFF_FILE_TYPE = 'gff';
 my $DB_TYPE = 'db';
+my $OBO_TYPE = 'obo';
 
 sub custom_file_props;
 sub xml_items_props;
@@ -36,19 +37,43 @@ my %type_properties = (
                           $DB_TYPE => { 
 			      project_props_gen => \&db_props,
 			      create_main => 1,
-			      base_class => 'BioDBConverter' }
+			      base_class => 'BioDBConverter' },
+                          $OBO_TYPE => { 
+			      project_props_gen => \&obo_props,
+			      create_main => 0 }
     );
 
 my $source_types = join "\n", map { ' ' x 20 . $_ } sort keys %type_properties;
 
 if (@ARGV != 2) {
-  usage (<<USAGE);
-Error: needs two arguments.
+    if (@ARGV > 2 && $ARGV[1] =~ $OBO_TYPE) {
+        if (@ARGV != 5) {
+          
+            obo_usage(<<OBO_USAGE);
+Error: the obo source type needs five arguments.
+OBO_USAGE
+        }
+} else {
+usage (<<USAGE);
+ Error: needs two arguments.
+
 USAGE
+}
+}
+
+if (@ARGV == 2 && $ARGV[1] =~ $OBO_TYPE) {
+    obo_usage(<<OBO_USAGE);
+Error: the obo source type needs five arguments.
+OBO_USAGE
 }
 
 my $source_name = shift;
 my $source_type = shift;
+
+# only used for obo source_type
+my $ontology_name = shift;
+my $ontology_url = shift;
+my $term_class = shift;
 
 (my $camel_case_source_name = $source_name) =~ s/(\w)([^\-_]+)[_\-]?/\U$1\E$2/g;
 
@@ -90,6 +115,24 @@ have.large.file.xml.tgt = true
 PROPS
 }
 
+sub obo_props
+{
+  return <<PROPS;
+have.file.obo = true
+
+\# specify the name of the ontology
+obo.ontology.name = ${ontology_name}
+
+\# set a URL at which more information on the ontology can be found
+obo.ontology.url = ${ontology_url}
+
+\# set the class name for terms that will be created, you may need to define
+\# this class in a ${source_name}_additions.xml file for this source
+obo.term.class = ${term_class}
+PROPS
+}
+
+
 sub usage
 {
   my $message = shift;
@@ -103,6 +146,29 @@ usage:
                 eg. foobase-gene-data
 <source-type> - possible source types are:
 $source_types
+MESSAGE
+}
+
+sub obo_usage
+{
+    my $message = shift;
+
+    die <<"MESSAGE";
+$0: $message
+For the obo source_type you need to specify additional parameters:
+
+usage:
+  $0 <source-name> <source-type> <ontology-name> <ontology-url> <term-class>
+
+<source-name> - the name of the directory to create in $BIO_DIR/sources
+                eg. foobase-gene-data
+<source-type> - the source type is 'obo'
+<ontology-name> - the name of the ontology
+                e.g. 'Gene Ontology'
+<ontology-url> - a url to find more information about the ontology
+                e.g. 'http://www.geneontology.org'
+<term-class> - the name of the class used to represent each ontology term
+                e.g. GOTerm 
 MESSAGE
 }
 
@@ -233,3 +299,6 @@ find({
      $STRUCTURE_DIR);
 
 warn "created $full_source_dir directory for $source_name\n";
+if ($source_type  =~ $OBO_TYPE) {
+    warn "\n You may need to add $term_class to the data model in $full_source_dir/", $source_name, "_additions.xml\n\n";
+}
