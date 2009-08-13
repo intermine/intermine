@@ -39,8 +39,6 @@ public abstract class DataConverter
     private Map ids = new HashMap();
     private Model model;
     private ItemFactory itemFactory;
-    private MultiKeyMap itemsMap = new MultiKeyMap();
-
     private DataConverterStoreHook storeHook = null;
 
     /**
