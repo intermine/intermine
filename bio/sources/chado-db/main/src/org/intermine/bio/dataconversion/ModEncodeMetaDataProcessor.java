@@ -1819,8 +1819,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         }));
             }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
-            
-            
+                        
             // STRAIN
             List<String> strainIds = new ArrayList<String>();
             strainIds.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
@@ -1835,16 +1834,40 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<String> lineIds = new ArrayList<String>();
             lineIds.addAll(createFromWikiPage("CellLine", typeToProp, 
                     new String[] {"cell line", "cell id"}));
+            // this was capturing too much noise..good for subs like 650,651,652
+
+            //            if (lineIds.isEmpty()) {
+            //                lineIds.addAll(lookForAttributesInOtherWikiPages("CellLine",
+            //                        typeToProp, new String[] {
+            //                        "RNA extract.Cell Type"
+            //                        }));
+            //            }
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineIds);
             
             // ANTIBODY
             List<String> antibodyIds = new ArrayList<String>();
             antibodyIds.addAll(createFromWikiPage("Antibody", typeToProp, 
                     new String[] {"antibody"}));
+            if (antibodyIds.isEmpty()) {
+                antibodyIds.addAll(lookForAttributesInOtherWikiPages("Antibody",
+                        typeToProp, new String[] {
+                        "antibody.official name"
+                        }));
+            }
             storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyIds);
-
-            // TISSUE
             
+            // TISSUE
+            List<String> tissueIds = new ArrayList<String>();
+            tissueIds.addAll(createFromWikiPage("Tissue", typeToProp, new String[] {"tissue"}));
+            if (tissueIds.isEmpty()) {
+                tissueIds.addAll(lookForAttributesInOtherWikiPages("Tissue",
+                        typeToProp, new String[] {
+                        "stage.tissue"
+                        , "cell line.tissue"
+                        , "cell id.tissue"
+                        }));
+            }
+            storeSubmissionCollection(storedSubmissionId, "tissues", tissueIds);
         }  
     }
 
@@ -1940,6 +1963,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
+                }  else if (clsName.equals("Tissue")) {
+                    setAttributeOnProp(prop, propItem, "species", "species");
+                    setAttributeOnProp(prop, propItem, "sex", "sex");
+                    setAttributeOnProp(prop, propItem, "organismPart", "organismPart");
                 }
                 getChadoDBConverter().store(propItem);
             }
