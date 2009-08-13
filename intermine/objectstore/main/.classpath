@@ -21,5 +21,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/base64.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
