@@ -53,6 +53,7 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String> pubs = new HashMap();
     private Map<String, Object> experimentNames = new HashMap();
     private Map<String, String> terms = new HashMap();
+    private Map<String, String> regions = new HashMap();
     private String termId = null;
     protected IdResolverFactory resolverFactory;
     private static final String INTERACTION_TYPE = "physical";
@@ -60,10 +61,11 @@ public class PsiConverter extends BioFileConverter
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet();
     private Set<String> synonyms = new HashSet();
-
-    // key --> intact ID, refId
-    // value --> temporary gene object holding refId and identifier
-    private Map genes = new HashMap();
+    
+    // intact internal id to gene identifier
+    private Map<String, String> intactIdToIdentifier = new HashMap();
+    // identifier to temporary holding object
+    private Map identifierToHolder = new HashMap();
 
     /**
      * Constructor
@@ -286,16 +288,7 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("primaryRef") && stack.search("featureType") == 2
                             && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
-                // create interacting region
-                Item interactionRegion = createItem("InteractionRegion");
-                interactionRegion.setAttribute("name", regionName);
-                interactionRegion.setReference("gene", interactorHolder.geneRefId);
-                interactionRegion.setReference("ontologyTerm", termId);
-
-                // add location and region to interaction object
-                interactorHolder.interactionRegion = interactionRegion;
-                holder.addRegion(interactionRegion.getIdentifier());
-
+                interactorHolder.regionName = regionName;
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><begin position="470"/>
             } else if (qName.equals("begin") && stack.peek().equals("featureRange")
@@ -389,15 +382,14 @@ public class PsiConverter extends BioFileConverter
             //<interactionList><interaction><participantList><participant id="5"><interactorRef>
             } else if (qName.equals("interactorRef") && stack.peek().equals("participant")) {
                 String id = attValue.toString();
-                if (genes.get(id) != null) {
-                    interactorHolder = (InteractorHolder) genes.get(id);
-                    String geneRefId = interactorHolder.geneRefId;
+                String identifier = intactIdToIdentifier.get(id);
+                if (identifier != null) {
+                    interactorHolder = (InteractorHolder) identifierToHolder.get(identifier);
                     holder.addInteractor(interactorHolder);
-                    holder.addGene(geneRefId);
+                    holder.addGene(interactorHolder.geneRefId);
                     holder.addIdentifier(interactorHolder.identifier);
                 } else {
-                    holder.isValid = false;
-                    
+                    holder.isValid = false;                    
                 }
             // <interactionList><interaction><names><shortLabel>
             } else if (qName.equals("shortLabel") && attName != null
@@ -496,41 +488,13 @@ public class PsiConverter extends BioFileConverter
                 interaction.setCollection("interactingGenes", geneIds);
 
                 // interactingRegions
-                Set<String> regionIds = interactionHolder.regionIds;
-                if (!regionIds.isEmpty()) {
-                    interaction.setCollection("interactingRegions", new ArrayList(regionIds));
+                if (ih.isRegionFeature()) {
+                   String refId = getRegion(ih, interaction.getIdentifier(), shortName);
+                   interaction.addToCollection("interactingRegions", refId);
                 }
-
-                /* store all protein interaction-related items */
+                
+                /* store all interaction-related items */
                 store(interaction);
-
-                if (ih.interactionRegion != null) {
-                    Item region = ih.interactionRegion;
-                    if (ih.startStatus != null) {
-                        region.setAttribute("startStatus", ih.startStatus);
-                    }
-                    if (ih.endStatus != null) {
-                        region.setAttribute("endStatus", ih.endStatus);
-                    }
-                    region.setReference("interaction", interaction);
-
-                    String regionIdentifier = buildRegionIdentifier(ih, shortName,
-                                                                    identifier);
-                    region.setAttribute("primaryIdentifier", regionIdentifier);
-
-                    if (locationValid(ih)) {
-                        Item location = createItem("Location");
-                        location.setAttribute("start", ih.start);
-                        location.setAttribute("end", ih.end);
-                        location.setReference("object", ih.geneRefId);
-                        location.setReference("subject", region.getIdentifier());
-                        region.setReference("location", location);
-                        store(location);
-                    } else {
-                        LOG.info("no region for " + regionIdentifier);
-                    }
-                    store(region);
-                }
             }
 
             /* store all experiment-related items */
@@ -653,18 +617,22 @@ public class PsiConverter extends BioFileConverter
                 return null;
             }
 
-            InteractorHolder ih = (InteractorHolder) genes.get(identifier);
+            InteractorHolder ih = (InteractorHolder) identifierToHolder.get(identifier);
             String refId = null;
             if (ih == null) {
                 Item item = createItem("Gene");
                 item.setAttribute(field, identifier);
                 item.setReference("organism", getOrganism(taxonId));
-                refId = item.getIdentifier();
                 store(item);
+                
+                refId = item.getIdentifier();
+                                
                 getSynonym(refId, "identifier", identifier);
+                
                 ih = new InteractorHolder(refId);
                 ih.identifier = identifier;
-                genes.put(intactId, ih);
+                intactIdToIdentifier.put(intactId, identifier);
+                identifierToHolder.put(identifier, ih);
             } else {
                 refId = ih.geneRefId;
             }
@@ -710,6 +678,42 @@ public class PsiConverter extends BioFileConverter
             return eh;
         }
 
+        private String getRegion(InteractorHolder ih, String interactionRefId, 
+                                 String interactionName) 
+        throws ObjectStoreException {
+            String refId = regions.get(ih.regionName);            
+            if (refId == null) {
+                Item region = createItem("InteractionRegion");
+                refId = region.getIdentifier();
+                
+                region.setAttribute("name", ih.regionName);
+                region.setReference("gene", ih.geneRefId);
+                region.setReference("ontologyTerm", termId);
+                if (ih.startStatus != null) {
+                    region.setAttribute("startStatus", ih.startStatus);
+                }
+                if (ih.endStatus != null) {
+                    region.setAttribute("endStatus", ih.endStatus);
+                }
+                region.setReference("interaction", interactionRefId);
+
+                String regionIdentifier = buildRegionIdentifier(ih, interactionName, ih.identifier);
+                region.setAttribute("primaryIdentifier", regionIdentifier);
+                regions.put(regionName, refId);
+                if (locationValid(ih)) {
+                    Item location = createItem("Location");
+                    location.setAttribute("start", ih.start);
+                    location.setAttribute("end", ih.end);
+                    location.setReference("object", ih.geneRefId);
+                    location.setReference("subject", refId);
+                    region.setReference("location", location);
+                    store(location);
+                }
+                store(region);
+            } 
+            return refId;
+        }
+        
         private void processComment(String s) {
             comment.setAttribute("text", s);
             try {
@@ -764,7 +768,7 @@ public class PsiConverter extends BioFileConverter
          * it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public class InteractionHolder
+        protected class InteractionHolder
         {
             private String shortName;
             private ExperimentHolder eh;
@@ -848,11 +852,11 @@ public class PsiConverter extends BioFileConverter
          * interaction until it's verified that all organisms are in the list given.
          * @author Julie Sullivan
          */
-        public class InteractorHolder
+        protected class InteractorHolder
         {
             private String geneRefId;   // protein.getIdentifier()
             private String role;
-            private Item interactionRegion; // for storage later
+            private String regionName; // for storage later
             private String startStatus, start;
             private String endStatus, end;
             private String identifier;
@@ -933,20 +937,6 @@ public class PsiConverter extends BioFileConverter
             }
 
             /**
-             * @return the interactionRegion
-             */
-            public Item getInteractionRegion() {
-                return interactionRegion;
-            }
-
-            /**
-             * @param interactionRegion the interactionRegion to set
-             */
-            public void setInteractionRegion(Item interactionRegion) {
-                this.interactionRegion = interactionRegion;
-            }
-
-            /**
              * @return the isRegionFeature
              */
             public boolean isRegionFeature() {
@@ -1009,7 +999,7 @@ public class PsiConverter extends BioFileConverter
          * an interaction is verified to have only valid organisms
          * @author Julie Sullivan
          */
-        public class ExperimentHolder
+        protected class ExperimentHolder
         {
 
             private String name, description;
@@ -1077,7 +1067,7 @@ public class PsiConverter extends BioFileConverter
      * @return id representing term object
      * @throws SAXException if term can't be stored
      */
-    protected String getTerm(String identifier) throws SAXException {
+    private String getTerm(String identifier) throws SAXException {
         String itemId = terms.get(identifier);
         if (itemId == null) {
             try {
