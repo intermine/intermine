@@ -16,7 +16,7 @@
 
 <div class="body">
 
-<c:set var="LIMIT" value="2"/>
+<c:set var="LIMIT" value="1"/>
 <em>${LIMIT+1} most recent submissions for each project:</em>
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
@@ -96,20 +96,18 @@
 <tr>
       <td><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}">
- ${sub.title}
+ ${fn:replace(sub.title,"_", " ")}
+<%-- ${sub.dCCid} --%>
     </html:link>
-    </td>    
+    </td>
+<%--    <td> ${sub.experimentType }</td> --%>   
     <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
     </td>
-    
       </tr>
 </c:forEach>
 </table>
 
 
-
-
-<br>
       <c:forEach items="${counts}" var="nr">
         <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
           <c:set var="nrSubs" value="${nr.value}" />
@@ -173,7 +171,65 @@
   </c:forEach>
 
 --%>
-
 </table>
 </div>
+
+<!-- links to all subs -->
+
+<table cellspacing="4"><tr>
+
+<td>    
+<im:querylink text="Fly" showArrow="true" skipBuilder="true">
+  <query name="" model="genomic"
+    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
+  </node>
+  <node path="Submission.organism" type="Organism">
+  <constraint op="LOOKUP" value="Drosophila melanogaster" description=""
+    identifier="" code="A" extraValue="">
+  </constraint>
+  </node>
+  </query>
+</im:querylink>
+    </td>
+
+<td>
+<im:querylink text="Worm" showArrow="true" skipBuilder="true">
+  <query name="" model="genomic"
+    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
+  </node>
+  <node path="Submission.organism" type="Organism">
+  <constraint op="LOOKUP" value="Caenorhabditis elegans" description=""
+    identifier="" code="A" extraValue="">
+  </constraint>
+  </node>
+  </query>
+</im:querylink>
+</td>
+
+<td>    
+<im:querylink text="All submissions" showArrow="true" skipBuilder="true">
+  <query name="" model="genomic"
+    view="Submission.title Submission.DCCid Submission.design Submission.factorName Submission.publicReleaseDate"
+    sortOrder="Submission.title">
+  <node path="Submission" type="Submission">
+  </node>
+  </query>
+</im:querylink>
+    </td>
+
+
+
+<%--
+<td>
+<html:link
+          href="/${WEB_PROPERTIES['webapp.path']}/submissions.do"> All submissions <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
+    </html:link>
+<br>
+</td>
+--%>
+  </tr></table>
 
