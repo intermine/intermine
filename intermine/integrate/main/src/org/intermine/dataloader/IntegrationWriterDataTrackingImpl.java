@@ -288,8 +288,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         if (!ignoreDuplicates) {
                             // Yes, this *can* happen, if two items in the tgt-items-database have
                             // the same item.identifier.
-                            throw new IllegalArgumentException("Duplicate objects exist. Storing "
-                                    + "again to id " + newId + " object from source " + o);
+                            throw new IllegalArgumentException("There are duplicate objects in the source being loaded, "
+                                                               + "multiple items exist with the same item.identifer. "
+                                                               + "Storing again to id " + newId + " object from source " + o);
                         }
                         duplicateObjects.add(newId);
                         isDuplicates = true;
@@ -366,8 +367,9 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 if (writtenObjects.contains(newObj.getId())) {
                     // There are duplicate objects
                     if (!ignoreDuplicates) {
-                        throw new IllegalArgumentException("Duplicate objects exist. Storing "
-                                + "again to id " + newId + " object from source " + o);
+                        throw new IllegalArgumentException("There are duplicate objects in the source being loaded, multiple "
+                                                           + "items are the identical according to the primary key being used. "
+                                                           + "Storing again to id " + newId + " object from source " + o);
                     }
                     duplicateObjects.add(newObj.getId());
                     isDuplicates = true;
