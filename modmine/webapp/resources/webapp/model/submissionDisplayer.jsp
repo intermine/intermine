@@ -122,7 +122,7 @@ div#submissionDescription {
                   <im:querylink text="RESULTS TABLE" skipBuilder="true">
                     <query name="" model="genomic"
                            view="${fc.key}.secondaryIdentifier ${fc.key}.length
-                                 ${fc.key}.chromosomeLocation.object.primaryIdentifier ${fc.key}.chromosomeLocation.start ${fc.key}:chromosomeLocation.end ${fc.key}.dataSets.title"
+                                 ${fc.key}:chromosomeLocation.object.primaryIdentifier ${fc.key}:chromosomeLocation.start ${fc.key}:chromosomeLocation.end ${fc.key}.dataSets.title"
                            sortOrder="${fc.key}.secondaryIdentifier asc">
                       <node path="${fc.key}" type="${fc.key}">
                       </node>
