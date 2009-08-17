@@ -61,11 +61,9 @@ public class PsiConverter extends BioFileConverter
     private Set<String> taxonIds = null;
     private Set<String> regionPrimaryIdentifiers = new HashSet();
     private Set<String> synonyms = new HashSet();
-    
-    // intact internal id to gene identifier
-    private Map<String, String> intactIdToIdentifier = new HashMap();
-    // identifier to temporary holding object
-    private Map identifierToHolder = new HashMap();
+    private Map<String, String> genes = new HashMap();
+
+
 
     /**
      * Constructor
@@ -161,7 +159,11 @@ public class PsiConverter extends BioFileConverter
         private Stack<String> stack = new Stack();
         private String attName = null;
         private StringBuffer attValue = null;
-
+        // intact internal id to gene identifier
+        private Map<String, String> intactIdToIdentifier = new HashMap();
+        // identifier to temporary holding object
+        private Map identifierToHolder = new HashMap();
+        
         /**
          * {@inheritDoc}
          */
@@ -508,6 +510,8 @@ public class PsiConverter extends BioFileConverter
                     throw new RuntimeException("Couldn't store experiment: ", e);
                 }
             }
+            
+
         }
 
         private boolean locationValid(InteractorHolder ih) {
@@ -620,15 +624,7 @@ public class PsiConverter extends BioFileConverter
             InteractorHolder ih = (InteractorHolder) identifierToHolder.get(identifier);
             String refId = null;
             if (ih == null) {
-                Item item = createItem("Gene");
-                item.setAttribute(field, identifier);
-                item.setReference("organism", getOrganism(taxonId));
-                store(item);
-                
-                refId = item.getIdentifier();
-                                
-                getSynonym(refId, "identifier", identifier);
-                
+                refId = getGene(field, identifier, taxonId);                
                 ih = new InteractorHolder(refId);
                 ih.identifier = identifier;
                 intactIdToIdentifier.put(intactId, identifier);
@@ -652,15 +648,35 @@ public class PsiConverter extends BioFileConverter
             return identifier;
         }
 
+        private String getGene(String field, String identifier, String taxonId)
+        throws SAXException, ObjectStoreException {
+            String itemId = genes.get(identifier);
+            if (itemId == null) {
+                Item item = createItem("Gene");
+                item.setAttribute(field, identifier);
+                item.setReference("organism", getOrganism(taxonId));
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
+                }
+                itemId = item.getIdentifier();                
+                genes.put(identifier, itemId);
+                getSynonym(itemId, "identifier", identifier);
+
+            }
+            return itemId;
+        }
+        
         private String getPub(String pubMedId)
         throws SAXException {
             String itemId = pubs.get(pubMedId);
             if (itemId == null) {
+                Item pub = createItem("Publication");
+                pub.setAttribute("pubMedId", pubMedId);
+                itemId = pub.getIdentifier();
+                pubs.put(pubMedId, itemId);
                 try {
-                    Item pub = createItem("Publication");
-                    pub.setAttribute("pubMedId", pubMedId);
-                    itemId = pub.getIdentifier();
-                    pubs.put(pubMedId, itemId);
                     store(pub);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
