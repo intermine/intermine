@@ -1804,6 +1804,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
             
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
+
+            String dccId = dccIdMap.get(submissionId);
             
             // DEVELOPMENTAL STAGE
             List<String> devStageIds = new ArrayList<String>();
@@ -1817,6 +1819,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         "cell line.developmental stage",
                         "cell id.developmental stage"
                         }));
+                if (!devStageIds.isEmpty()) {
+                    LOG.info("Attribute found in other wiki pages: " 
+                            + dccId + " DEV STAGE");                    
+                }
+                
             }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
                         
@@ -1853,6 +1860,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         typeToProp, new String[] {
                         "antibody.official name"
                         }));
+                if (!antibodyIds.isEmpty()) {
+                    LOG.info("Attribute found in other wiki pages: " 
+                            + dccId + " ANTIBODY ");                    
+                }
             }
             storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyIds);
             
@@ -1866,6 +1877,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         , "cell line.tissue"
                         , "cell id.tissue"
                         }));
+                if (!tissueIds.isEmpty()) {
+                    LOG.info("Attribute found in other wiki pages: " 
+                            + dccId + " TISSUE");                    
+                }
             }
             storeSubmissionCollection(storedSubmissionId, "tissues", tissueIds);
         }  
