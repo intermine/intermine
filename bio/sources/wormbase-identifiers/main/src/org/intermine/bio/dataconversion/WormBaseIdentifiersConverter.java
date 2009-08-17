@@ -85,6 +85,8 @@ public class WormBaseIdentifiersConverter extends BioFileConverter
             }
             if (symbol != null && !symbol.equals("")) {
                 gene.setAttribute("symbol", symbol);
+                // per Rachel.  We can't seem to get the gene names out of wormmart.
+                gene.setAttribute("name", symbol); 
                 synonyms.add(createSynonym(gene, "symbol", symbol));
             }
 

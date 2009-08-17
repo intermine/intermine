@@ -54,6 +54,7 @@
     <attribute name="secondaryIdentifier" value="B0393.2"/>
     <attribute name="primaryIdentifier" value="WBGene00007167"/>
     <attribute name="symbol" value="rbg-3"/>
+    <attribute name="name" value="rbg-3"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="dataSets">
       <reference ref_id="1_1"/>
