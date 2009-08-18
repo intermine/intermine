@@ -27,11 +27,11 @@ import org.intermine.task.ConverterTask;
  * @author Mark Woodbridge
  * @author Richard Smith
  */
-public class DagConverterTask extends ConverterTask
+public class OboConverterTask extends ConverterTask
 {
-    protected static final Logger LOG = Logger.getLogger(DagConverterTask.class);
+    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
 
-    private String file, dagName, osName, url, termClass;
+    private String file, ontologyName, osName, url, termClass;
 
     /**
      * Set the input file name
@@ -42,11 +42,11 @@ public class DagConverterTask extends ConverterTask
     }
 
     /**
-     * Set the name of the dag
-     * @param dagName the name
+     * Set the name of the ontology
+     * @param ontologyName name of the ontology
      */
-    public void setDagName(String dagName) {
-        this.dagName = dagName;
+    public void setOntologyName(String ontologyName) {
+        this.ontologyName = ontologyName;
     }
 
     /**
@@ -83,8 +83,8 @@ public class DagConverterTask extends ConverterTask
         if (file == null) {
             throw new BuildException("database attribute is not set");
         }
-        if (dagName == null) {
-            throw new BuildException("dagName attribute is not set");
+        if (ontologyName == null) {
+            throw new BuildException("ontologyName attribute is not set");
         }
         if (osName == null) {
             throw new BuildException("model attribute is not set");
@@ -102,7 +102,7 @@ public class DagConverterTask extends ConverterTask
 
             OboConverter converter;
             if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, model, file, dagName, url, termClass);
+                converter = new OboConverter(writer, model, file, ontologyName, url, termClass);
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }

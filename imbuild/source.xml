@@ -68,7 +68,8 @@
     Flags that control the integration process:
       have.file.gff - source is read from a GFF file into a tgt items objectstore
       have.file.custom.tgt - read from a custom file into a src items objectstore
-      have.file.dag - this source in read from a DAG file into a tgt items objectstore
+      have.file.obo - this source in read from a .obo file into a tgt items objectstore
+      [have.file.dag - this is a legacy property for have.file.obo but is still supported]
       have.file.xml.tgt - source is XML that is loaded directly
       have.large.file.xml.tgt - source is XML that is converted to tgt items
       have.file.custom.direct - source is read from a custom file using a DirectDataLoader
@@ -258,31 +259,47 @@
   </target>
 
   <!--
-    Convert a dag/obo file - converter accepts both .dag and .obo files.
+    Provide option of supporting old project.properties files when required properties change name.
   -->
-  <target name="-retrieve-from-dag" if="have.file.dag">
-    <taskdef name="convert-dag-file" classname="org.intermine.bio.task.DagConverterTask">
+  <target name="-init-legacy-properties" depends="-init-legacy-dag-properties"/>
+
+  <!--
+    'dag' has now been replaced by 'obo' but old sources are still supported by mapping properties.
+  -->
+  <target name="-init-legacy-dag-properties" if="have.file.dag">
+    <property name="have.file.obo" value="true"/> 
+    <property name="obo.ontology.name" value="${dag.ontology.name}"/> 
+    <property name="obo.ontology.url" value="${dag.source.url}"/> 
+    <property name="obo.term.class" value="${dag.term.class}"/> 
+  </target>
+
+  <!--
+    Convert an obo file.
+  -->
+  <target name="-retrieve-from-obo" if="have.file.obo">
+    <taskdef name="convert-obo-file" classname="org.intermine.bio.task.OboConverterTask">
       <classpath refid="task.class.path"/>
     </taskdef>
 
-    <convert-dag-file file="${src.data.file}"
+    <convert-obo-file file="${src.data.file}"
                       osName="osw.${common.os.prefix}-tgt-items"
                       modelName="${target.model}"
-                      dagName="${dag.ontology.name}"
-                      url="${dag.source.url}"
-                      termClass="${dag.term.class}"/>
+                      ontologyName="${obo.ontology.name}"
+                      url="${obo.ontology.url}"
+                      termClass="${obo.term.class}"/>
   </target>
 
 
   <!-- retrieve from a foreign file or database into an InterMine tgt items objectstore -->
   <target name="tgt-retrieve" depends="init,
                                        -init-deps,
+                                       -init-legacy-properties,
                                        build-db-tgt-items,
                                        -pre-retrieve,
                                        -retrieve-tgt-from-custom-file,
                                        -retrieve-tgt-from-db,
                                        -retrieve-from-gff3,
-                                       -retrieve-from-dag,
+                                       -retrieve-from-obo,
                                        -retrieve-tgt-from-xml-file,
                                        -retrieve-tgt-from-large-xml-file,
                                        -index-analyse-tgt-items,
