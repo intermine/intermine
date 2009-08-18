@@ -26,6 +26,9 @@
 <action path="/initLatestSubs"
   type="org.modmine.web.LatestSubsController" />
 
+<action path="/initExperiments"
+  type="org.modmine.web.ExperimentsController" />
+
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
 
