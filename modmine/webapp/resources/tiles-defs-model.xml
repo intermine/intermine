@@ -19,6 +19,9 @@
 
 <definition name="latestSubs.tile" path="/model/latestSubs.jsp"
         controllerUrl="/initLatestSubs.do"/>
+<definition name="experiments.tile" path="/model/experiments.jsp"
+        controllerUrl="/initExperiments.do"/>
+        
 <definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>
 <definition name="projectsSummary.tile" path="/model/projectsSummary.jsp"
