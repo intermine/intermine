@@ -517,7 +517,7 @@ public class MainHelper
                         BagQueryResult bagQueryResult;
                         List identifierList = new ArrayList();
                         StrTokenizer st = new StrTokenizer(identifiers,
-                                StrMatcher.charSetMatcher("\n\t, "),
+                                StrMatcher.charSetMatcher("\n\t,"),
                                 StrMatcher.doubleQuoteMatcher());
                         while (st.hasNext()) {
                             String token = st.nextToken();
