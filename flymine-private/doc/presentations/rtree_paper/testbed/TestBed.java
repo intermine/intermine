@@ -19,11 +19,11 @@ public class TestBed
             executeTest(args[0], args[1], IncrementalLoader.INSTANCE, penaltyCalc, GeometricAreaStartEndSplitCalculator.INSTANCE, PAGE_SIZE);
             executeTest(args[0], args[1], IncrementalLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
             executeTest(args[0], args[1], STRBulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, MidAverageSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, StartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, SizeStartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricAreaStartEndSplitCalculator.INSTANCE, PAGE_SIZE);
-            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
+//            executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, MidAverageSplitCalculator.INSTANCE, PAGE_SIZE);
+ //           executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, StartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
+  //          executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, SizeStartEndMidSplitCalculator.INSTANCE, PAGE_SIZE);
+   //         executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricAreaStartEndSplitCalculator.INSTANCE, PAGE_SIZE);
+    //        executeTest(args[0], args[1], SplittingBulkLoader.INSTANCE, penaltyCalc, GeometricSizeSplitCalculator.INSTANCE, PAGE_SIZE);
         } else {
             executeTest(args[0], null, IncrementalLoader.INSTANCE, penaltyCalc, splitCalc, PAGE_SIZE);
         }
