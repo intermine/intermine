@@ -27,6 +27,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 
 /**
  * Object to represent a path through an InterMine model.  Construction from
@@ -384,10 +385,13 @@ public class Path
      * @return the Class of the last element
      */
     public Class getEndType() {
+        Class retval = null;
         if (endFld != null && endFld.isAttribute()) {
-            return ((AttributeDescriptor) endFld).getType().getClass();
+            retval = Util.getClassFromString(((AttributeDescriptor) endFld).getType());
+        } else {
+            retval = getLastClassDescriptor().getType();
         }
-        return getLastClassDescriptor().getType();
+        return retval;
     }
 
     /**
