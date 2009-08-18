@@ -75,7 +75,8 @@ my $ontology_name = shift;
 my $ontology_url = shift;
 my $term_class = shift;
 
-(my $camel_case_source_name = $source_name) =~ s/(\w)([^\-_]+)[_\-]?/\U$1\E$2/g;
+my $camel_case_source_name = $source_name;
+$source_name = lc($source_name);
 
 sub custom_file_props
 {
