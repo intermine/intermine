@@ -16,28 +16,48 @@
 
 
 <div class="body">
+<em>All modENCODE experiments and their submissions</em>
 
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-  <tr>
-    <th>Experiment</th>
-    <th>Project</th>
-    <th>Submissions</th>
-  </tr>
   
-  
-  
-  
-  <c:forEach items="${subs}" var="item">
-    <tr>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
- ${item.key.name}
-    </html:link>
-      <td><html:link href="${item.key.project.url}">
- ${item.key.project.surnamePI}
-    </html:link>
+  <c:forEach items="${subs}" var="item"  varStatus="status">
+    <c:if test="${status.count%2 eq 1}"><tr></c:if>
 
 <td>
+    <c:forEach items="${item.key.project.organisms}" var="organism" varStatus="orgStatus">
+    <c:if test="${organism.taxonId eq 7227}"> 
+        <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
+    </c:if>
+    <c:if test="${organism.taxonId eq 6239}"> 
+        <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
+    </c:if>
+      </c:forEach> 
+</td>
+
+    <td>
+
+     <c:choose>
+      <c:when test="${fn:contains(item.key.name,'&oldid')}">
+       <c:set var="displayName" value="${fn:substringBefore(item.key.name,'&oldid=')}"></c:set> 
+      </c:when>
+      <c:when test="${fn:contains(item.key.name,'%E2%80%99')}">
+       <c:set var="displayName" value="${fn:replace(item.key.name,'%E2%80%99','&#039;')}"></c:set> 
+      </c:when>
+      <c:otherwise>
+       <c:set var="displayName" value="${item.key.name}"></c:set> 
+      </c:otherwise>
+     </c:choose>
+    
+    <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
+${displayName}
+    </html:link>
+
+
+<hr>
+<html:link href="${item.key.project.url}"> ${item.key.project.surnamePI}
+</html:link>
+
+&nbsp;&nbsp;&nbsp;&nbsp;
 
       <c:forEach items="${counts}" var="nr">
         <c:if test="${nr.key.name eq item.key.name}">
@@ -45,11 +65,6 @@
         </c:if>
       </c:forEach> 
 
-      <c:choose>
-        <c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-        <c:when test="${nrSubs gt 0}">
           <im:querylink text="${nrSubs} submissions " showArrow="true" skipBuilder="true">
 <query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
   <node path="Experiment" type="Experiment">
@@ -62,105 +77,30 @@
   </node>
 </query>
           </im:querylink>
-        </c:when>
-      </c:choose>
-      
+
+<%-- does not work..
+<span style="float:rigth">
+||
+</span>
+--%>
+
+
+</td>      
   </c:forEach>
 
-
-
-<%--
-      <table cellpadding="0" cellspacing="0" border="0" class="internal">
-      <c:forEach items="${item.value}" var="prov">
-        
-        <tr><td>
-        <html:link
-          href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
- ${prov.dCCid}
-    </html:link>
-    <td>
-    ${prov.title}
-      </c:forEach>
-      </table>
---%>
-            
   </tr>
 
 
 </table>
 </div>
 
-<%--
-<div class="body">
-
-<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<tr>
-		<th>Project</th>
-		<th>Title</th>
-		<th>Principal Investigator</th>
-    <th>Labs</th>
-    <th>Submissions</th>
-	</tr>
-	<c:forEach items="${labs}" var="item">
-		<tr>
-			<td><html:link
-				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
- ${item.key.name}
-    </html:link>
-			<td><html:link href="${item.key.url}">
- ${item.key.title}
-    </html:link>
-			<td>${item.key.namePI} ${item.key.surnamePI} <br>
-
-
-			<td><table cellpadding="0" cellspacing="0" border="0" class="internal">
-			<c:forEach items="${item.value}" var="prov">
-				
-				<tr><td>
-				<html:link
-					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prov.id}">
- ${prov.name}
-    </html:link>
-    <td>
-    ${prov.affiliation}
-			</c:forEach>
-			</table>
-			
-      <td>
-			
-			<c:forEach items="${counts}" var="nr">
-				<c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-					<c:set var="nrSubs" value="${nr.value}" />
-				</c:if>
-			</c:forEach> 
-
-			<c:choose>
-				<c:when test="${nrSubs eq 0}">
+<%-- 
+      <c:choose>
+        <c:when test="${nrSubs eq 0}">
         -
         </c:when>
-				<c:when test="${nrSubs gt 0}">
-					<im:querylink text="${nrSubs} submissions " skipBuilder="true">
-						<query name="" model="genomic"
-							view="Project.labs.submissions.title 
-							Project.labs.submissions.design 
-							Project.labs.submissions.experimentalFactors.type 
-							Project.labs.submissions.experimentalFactors.name"
-							sortOrder="Project.labs.submissions.title">
-						<node path="Project" type="Project">
-						</node>
-						<node path="Project.surnamePI" type="String">
-						<constraint op="=" value="${item.key.surnamePI}" description=""
-							identifier="" code="A">
-						</constraint>
-						</node>
-						</query>
-					</im:querylink>
-				</c:when>
-			</c:choose>
-			
-	</c:forEach>
-	</tr>
+        <c:when test="${nrSubs gt 0}">
+        </c:when>
+      </c:choose>
 
-</table>
-</div>
 --%>

@@ -23,9 +23,6 @@
 <action path="/initProjectsSummary"
   type="org.modmine.web.ProjectsSummaryController" />
 
-<action path="/initLatestSubs"
-  type="org.modmine.web.LatestSubsController" />
-
 <action path="/initExperiments"
   type="org.modmine.web.ExperimentsController" />
 
@@ -34,12 +31,6 @@
 
 <action path="/projects" forward="projects.page" />
 
-<!-- 
-<action path="/initLabs"
-  type="org.modmine.web.LabsController" />
-
-<action path="/labs" forward="labs.page"/>
--->
 
 <action path="/initSubmissions"
   type="org.modmine.web.SubmissionsController" />
@@ -56,4 +47,14 @@
       <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
 </action>
+
+<!-- 
+<action path="/initLatestSubs"
+  type="org.modmine.web.LatestSubsController" />
+
+<action path="/initLabs"
+  type="org.modmine.web.LabsController" />
+
+<action path="/labs" forward="labs.page"/>
+-->
   
