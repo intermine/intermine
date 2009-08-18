@@ -17,8 +17,6 @@
 <definition name="submissions.tile" path="/model/submissions.jsp"
         controllerUrl="/initSubmissions.do"/>
 
-<definition name="latestSubs.tile" path="/model/latestSubs.jsp"
-        controllerUrl="/initLatestSubs.do"/>
 <definition name="experiments.tile" path="/model/experiments.jsp"
         controllerUrl="/initExperiments.do"/>
         
@@ -38,6 +36,9 @@
 
 
 <!-- 
+<definition name="latestSubs.tile" path="/model/latestSubs.jsp"
+        controllerUrl="/initLatestSubs.do"/>
+
 <definition name="labs.tile" path="/model/labs.jsp"
         controllerUrl="/initLabs.do"/>
   <definition name="labs.page" extends="layout.template">

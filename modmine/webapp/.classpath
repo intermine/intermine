@@ -13,7 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/modmine-dbmodel"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>

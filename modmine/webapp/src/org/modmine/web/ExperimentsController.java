@@ -52,53 +52,6 @@ public class ExperimentsController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-/*
-        try {
-            HttpSession session = request.getSession();
-            ObjectStore os =
-                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-            
-            //get the list of projects 
-            Query q = new Query();  
-            QueryClass qc = new QueryClass(Project.class);
-            QueryField qcName = new QueryField(qc, "name");
-
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            q.addToOrderBy(qcName);
-            
-            Results results = os.executeSingleton(q);
-
-            Map<Project, Set<Lab>> pp =
-                new LinkedHashMap<Project, Set<Lab>>();
-            Map<Project, Integer> nr =
-                new LinkedHashMap<Project, Integer>();
-            
-            // for each project, get its labs
-            Iterator i = results.iterator();
-            while (i.hasNext()) {
-                Project project = (Project) i.next();
-                Set<Lab> labs = project.getLabs();
-                pp.put(project, labs);
-                Integer subNr = 0;
-                // for each lab, get its experiments
-                Iterator p = labs.iterator();
-                while (p.hasNext()) {
-                    Lab lab = (Lab) p.next();
-                    Set<Submission> subs = lab.getSubmissions();
-                    subNr = subNr + subs.size();
-                }
-                nr.put(project, subNr);
-            }
-            request.setAttribute("labs", pp);
-            request.setAttribute("counts", nr);
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return null;
-    }
-}
-        */
         try {
             HttpSession session = request.getSession();
             ObjectStore os =
@@ -117,14 +70,14 @@ public class ExperimentsController extends TilesAction
 
             Map<Experiment, Set<Submission>> es =
                 new LinkedHashMap<Experiment, Set<Submission>>();
-
-            Map<Project, Set<Lab>> pp =
-                new LinkedHashMap<Project, Set<Lab>>();
-            Map<Project, Set<Experiment>> pe =
-                new LinkedHashMap<Project, Set<Experiment>>();
-
             Map<Experiment, Integer> nr =
                 new LinkedHashMap<Experiment, Integer>();
+
+//            Map<Project, Set<Lab>> pp =
+//                new LinkedHashMap<Project, Set<Lab>>();
+//            Map<Project, Set<Experiment>> pe =
+//                new LinkedHashMap<Project, Set<Experiment>>();
+
             
             // for each experiment, get its submissions
             Integer subNr = 0;
