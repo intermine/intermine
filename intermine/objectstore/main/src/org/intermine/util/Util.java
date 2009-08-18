@@ -231,4 +231,35 @@ public class Util
         // perl checksum returns lowercase, uniprot has to match
         return checksum.toLowerCase();
     }
+
+    /**
+     * Returns the class (not primitive) associated with the given String type.
+     *
+     * @param type the String type name
+     * @return a Class
+     * @throws IllegalArgumentException if the String is an invalid name
+     */
+    public static Class getClassFromString(String type) throws IllegalArgumentException {
+        if (type.equals("short") || type.equals("java.lang.Short")) {
+            return Short.class;
+        } else if (type.equals("int") || type.equals("java.lang.Integer")) {
+            return Integer.class;
+        } else if (type.equals("long") || type.equals("java.lang.Long")) {
+            return Long.class;
+        } else if (type.equals("java.lang.String")) {
+            return String.class;
+        } else if (type.equals("boolean") || type.equals("java.lang.Boolean")) {
+            return Boolean.class;
+        } else if (type.equals("float") || type.equals("java.lang.Float")) {
+            return Float.class;
+        } else if (type.equals("double") || type.equals("java.lang.Double")) {
+            return Double.class;
+        } else if (type.equals("java.util.Date")) {
+            return java.util.Date.class;
+        } else if (type.equals("java.math.BigDecimal")) {
+            return java.math.BigDecimal.class;
+        } else {
+            throw new IllegalArgumentException("Unknown type \"" + type + "\"");
+        }
+    }
 }

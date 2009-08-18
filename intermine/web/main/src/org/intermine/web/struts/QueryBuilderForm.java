@@ -16,6 +16,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -39,6 +41,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class QueryBuilderForm extends ActionForm
 {
+    private static final Logger LOG = Logger.getLogger(QueryBuilderForm.class);
+    
     protected String bagOp, bagValue;
     protected String attributeOp, attributeValue, attributeOptions, extraValue;
     protected String subclassValue;
@@ -364,7 +368,7 @@ public class QueryBuilderForm extends ActionForm
             Path pathObj = PathQuery.makePath(model, query, path);
             Class fieldClass;
             if (pathObj.endIsAttribute()) {
-                fieldClass = PathQuery.makePath(model, query, path).getEndType();
+                fieldClass = pathObj.getEndType();
             } else {
                 fieldClass = String.class;
             }

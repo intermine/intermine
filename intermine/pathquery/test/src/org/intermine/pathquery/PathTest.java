@@ -63,6 +63,13 @@ public class PathTest extends TestCase
         assertEquals(cld, path.getStartClassDescriptor());
     }
 
+    public void testValid3() {
+        String stringPath = "Employee.age";
+        Path path = new Path(model, stringPath);
+        assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"), path.getStartClassDescriptor());
+        assertEquals(Integer.class, path.getEndType());
+    }
+
     public void testValidWithClassConstraint() {
         String stringPath = "Department.manager[CEO].company.departments.employees[Manager].seniority";
         Path path = new Path(model, stringPath);
@@ -121,7 +128,7 @@ public class PathTest extends TestCase
         assertEquals("employees", path.getElements().get(3));
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getElementClassDescriptors().get(4));
         assertEquals("seniority", path.getElements().get(4));
-        assertEquals(String.class, path.getEndType());
+        assertEquals(Integer.class, path.getEndType());
     }
 
     public void testNullPath() {
