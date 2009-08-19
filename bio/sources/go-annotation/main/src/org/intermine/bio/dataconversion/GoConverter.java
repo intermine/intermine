@@ -67,6 +67,11 @@ public class GoConverter extends FileConverter
     private Map<Integer, List<String>> productCollectionsMap;
     private Map<String, Integer> storedProductIds;
 
+    // These should be altered for different ontologies:
+    protected String termClassName = "GOTerm";
+    protected String termCollectionName = "goAnnotation";
+    protected String annotationClassName = "GOAnnotation";
+    
     protected IdResolverFactory resolverFactory;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
@@ -227,7 +232,7 @@ public class GoConverter extends FileConverter
         for (Map.Entry<Integer, List<String>> entry : productCollectionsMap.entrySet()) {
             Integer storedProductId = entry.getKey();
             List<String> annotationIds = entry.getValue();
-            ReferenceList goAnnotation = new ReferenceList("goAnnotation", annotationIds);
+            ReferenceList goAnnotation = new ReferenceList(termCollectionName, annotationIds);
             store(goAnnotation, storedProductId);
         }
     }
@@ -252,7 +257,7 @@ public class GoConverter extends FileConverter
             String termIdentifier, Item organism, String qualifier, String withText, 
             String dataSourceCode) 
     throws ObjectStoreException {
-        Item goAnnotation = createItem("GOAnnotation");
+        Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
         goAnnotation.setReference("ontologyTerm", termIdentifier);
 
@@ -454,7 +459,7 @@ public class GoConverter extends FileConverter
     private String newGoTerm(String goId, String dataSourceCode) throws ObjectStoreException {
         String goTermIdentifier = goTerms.get(goId);
         if (goTermIdentifier == null) {
-            Item item = createItem("GOTerm");
+            Item item = createItem(termClassName);
             item.setAttribute("identifier", goId);
             item.addToCollection("dataSets", getDataset(dataSourceCode));
             store(item);
