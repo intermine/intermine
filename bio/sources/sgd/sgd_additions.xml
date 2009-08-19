@@ -6,6 +6,7 @@
     <reference name="protein" referenced-type="Protein" reverse-reference="CDSs"/>
   </class>
   <class name="Gene" extends="BioEntity" is-interface="true">
+	  <attribute name="featureType" type="java.lang.String"/>
       <reference name="plasmid" referenced-type="Plasmid" reverse-reference="genes"/>
       <reference name="plasmidLocation" referenced-type="Location"/>
     <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
