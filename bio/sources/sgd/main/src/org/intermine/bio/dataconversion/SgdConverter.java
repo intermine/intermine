@@ -175,8 +175,7 @@ public class SgdConverter extends BioDBConverter
             end = (strand.equals("W") ? start : end);
 
             item.setAttribute("length", getLength(start, end));
-            String locationRefId = getLocation(geneRefId, refId, start, end, 
-                                               res.getString("strand"));
+            String locationRefId = getLocation(geneRefId, refId, start, end, strand);
 
             if (featureType.equalsIgnoreCase("plasmid")) {
                 item.setReference("plasmidLocation", locationRefId);
@@ -347,17 +346,45 @@ public class SgdConverter extends BioDBConverter
 
             Item item = createItem("TFBindingSite");
             item.setAttribute("primaryIdentifier", primaryIdentifier); 
-            item.setAttribute("featureType", res.getString("feature_type"));                
             item.setAttribute("secondaryIdentifier", secondaryIdentifier);
             item.setReference("organism", organism);
             String refId = item.getIdentifier();
+            
+            String chromosomeFeatureNo = res.getString("chromosome_feature_no");
+            String chromosomeRefId = getChromosome(chromosomeFeatureNo, 
+                                                   res.getString("chromosomeIdentifier"));
+            item.setReference("chromosome", chromosomeRefId);
 
+            // ~~~ location ~~~
+            String strand = res.getString("strand");
+            String start =  res.getString("start_coord"); 
+            String end = res.getString("stop_coord");
 
+            if (start == null) {
+                start = "0";
+            }
+
+            if (end == null) {
+                end = "0";
+            }
+
+            start = (strand.equals("W") ? start : end);
+            end = (strand.equals("W") ? start : end);
+
+            item.setAttribute("length", getLength(start, end));
+            String locationRefId = getLocation(refId, chromosomeRefId, start, end, strand);
+            item.setReference("chromosomeLocation", locationRefId);
+            
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            
             // ~~~ synonyms ~~~
             getSynonym(refId, "identifier", secondaryIdentifier);
             getSynonym(refId, "identifier", primaryIdentifier);
-
-        }      
+        }
     }
 
     private void addCollection(String collectionName) {
@@ -449,7 +476,7 @@ public class SgdConverter extends BioDBConverter
         throws SQLException {
         String query = " SELECT f.feature_no, f.feature_name, f.dbxref_id, f.feature_type,  "
             + " f.source, f.coord_version, f.start_coord, f.stop_coord, f.strand, f.gene_name,  "
-            + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, f.strand, "
+            + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, "
             + " j.parent_feature_no as gene_feature_no, s.residues, s.seq_length "
             + " FROM feature f, feat_relationship j, seq s "
             + " WHERE f.feature_type = 'CDS' "
@@ -507,16 +534,14 @@ public class SgdConverter extends BioDBConverter
         throws SQLException {
         String query = "SELECT f.feature_no, f.feature_name, f.dbxref_id,   "
         + " f.source, f.coord_version, f.start_coord, f.stop_coord, f.strand, f.gene_name,  "
-        + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, f.strand, "
-        + " g.feature_no AS gene_feature_no "
-        + " c.feature_no AS gene_feature_no "
-        + " FROM feature f, feature g, feat_relationship j "
+        + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, "
+        + " c.feature_no AS chromosome_feature_no, c.feature_name AS chromosome_identifier "
+        + " FROM feature f, feature c, feat_relationship j "
         + " WHERE f.feature_type = 'TF_binding_site' "
-        + "   AND g.feature_type = 'Chromosome' " 
+        + "   AND c.feature_type = 'Chromosome' " 
         + "   AND f.feature_no = j.child_feature_no "
-        + "   AND g.feature_no = j.parent_feature_no ";
+        + "   AND c.feature_no = j.parent_feature_no ";
 
-        
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
