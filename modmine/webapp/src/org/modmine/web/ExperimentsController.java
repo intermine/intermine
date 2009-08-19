@@ -24,14 +24,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.Project;
+import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.Submission;
+
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 
@@ -59,12 +62,25 @@ public class ExperimentsController extends TilesAction
             
             //get the list of projects 
             Query q = new Query();  
-            QueryClass qc = new QueryClass(Experiment.class);
-            QueryField qcName = new QueryField(qc, "name");
+            QueryClass qcExp = new QueryClass(Experiment.class);
+            QueryClass qcProject = new QueryClass(Project.class);
+            QueryField qfName = new QueryField(qcExp, "name");
 
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            q.addToOrderBy(qcName);
+            // Now relate the Gene to the Organism we have just constrained, link by Gene.organism
+            // reference.
+            QueryObjectReference ref1 = new QueryObjectReference(qcExp, "project");
+            ContainsConstraint cc = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcProject);
+            q.setConstraint(cc);
+            
+            q.addFrom(qcExp);
+            q.addFrom(qcProject);
+            q.addToSelect(qcExp);
+            q.addToOrderBy(qfName);
+ 
+         // Filter out any null Gene.primaryIdentifier values
+//            SimpleConstraint sc = new SimpleConstraint(qcProject, ConstraintOp.IS_NOT_NULL);
+//            // Set the constraint of the query
+//            q.setConstraint(sc);
             
             Results results = os.executeSingleton(q);
 
