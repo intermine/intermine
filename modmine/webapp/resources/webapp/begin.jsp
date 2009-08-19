@@ -23,12 +23,44 @@
 
 	<tr valign=top>
 		<td>
+
+        <im:boxarea title="Query Builder"
+      titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
+      stylename="gradientbox">
+      <p><em><fmt:message key="begin.querybuilder" /></em></p>
+      <br />
+      <div>
+      <div id="qbStartQuery">Start a query from: <!-- loop through starting classes -->
+      <c:forEach var="entry"
+        items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status">
+        <c:if test="${status.count != 1}">,</c:if>&nbsp;<a
+          href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&amp;className=${entry}"
+          rel="NOFOLLOW">${entry}</a>
+      </c:forEach></div>
+      </div>      
+      <div id="qbImport"><a
+        href="/${WEB_PROPERTIES['webapp.path']}/importQueries.do?query_builder=yes">
+      <fmt:message key="begin.importQuery" /> </a></div>
+      
+      <html:link href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
+        styleClass="fp_button">
+        <img src="/theme/build_a_query.png" id="build_a_query"
+          title="Click here to Build A Query" height="22px" width="120px" />
+      </html:link>
+      <br clear="right" />
+    </im:boxarea>
+    </div>
+
+<%--
+
     <im:boxarea title="Experiments"
       stylename="plainbox">
       <tiles:insert name="experiments.tile" />
     </im:boxarea> 
-		</td>
+--%>
 
+
+		</td>
 
 		<!-- Second column -->
 		<td>
@@ -105,32 +137,6 @@
 
 		
 		
-		    <im:boxarea title="Query Builder"
-      titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
-      stylename="gradientbox">
-      <p><em><fmt:message key="begin.querybuilder" /></em></p>
-      <br />
-      <div>
-      <div id="qbStartQuery">Start a query from: <!-- loop through starting classes -->
-      <c:forEach var="entry"
-        items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status">
-        <c:if test="${status.count != 1}">,</c:if>&nbsp;<a
-          href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&amp;className=${entry}"
-          rel="NOFOLLOW">${entry}</a>
-      </c:forEach></div>
-      </div>      
-      <div id="qbImport"><a
-        href="/${WEB_PROPERTIES['webapp.path']}/importQueries.do?query_builder=yes">
-      <fmt:message key="begin.importQuery" /> </a></div>
-      
-      <html:link href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
-        styleClass="fp_button">
-        <img src="/theme/build_a_query.png" id="build_a_query"
-          title="Click here to Build A Query" height="22px" width="120px" />
-      </html:link>
-      <br clear="right" />
-    </im:boxarea>
-    </div>
 		
 		
     </td>
