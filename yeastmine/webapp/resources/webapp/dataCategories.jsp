@@ -44,8 +44,8 @@
         <p> Proteins </p></html:link></td>
     <td> <i>Saccharomyces cerevisiae</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.8</td>
-    <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
+    <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 20 Mar, 2009</td>
+    <td>Saccharomyces Genome Database - <a href="http://www.ncbi.nlm.nih.gov/pubmed/9169866" target="_new">PubMed: 9169866</a></td>
   </tr>
 
   <tr><td class="leftcol">

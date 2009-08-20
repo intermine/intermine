@@ -11,7 +11,7 @@
         <property name="dataSourceName" value="SGD"/>
 	    <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
-    
+
    <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -19,7 +19,7 @@
       <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/> 
     </source>
     
-    <!--
+ <!--
     <source name="uniprot" type="uniprot" >
       <property name="uniprot.organisms" value="4932"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
@@ -67,21 +67,11 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/sgd/current"/>
       <property name="src.data.dir.includes" value="gene_association.sgd"/>
     </source>
-
+<!--
     <source name="entrez-organism" type="entrez-organism">
-      <!-- this source finds the taxon ids in the objectstore, retrieves
-           species name and genus from Entrez into an InterMine format XML
-           file, loads that file into a target items DB, then into the final
-           objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    <source name="update-publications" type="update-publications">
-      <!-- this source finds the publication ids (pubmed ids) in the
-           objectstore, retrieves the details of the publication from Entrez
-           into an InterMine format XML file, loads that file into a target
-           items DB, then into the final objectstore -->
-      <property name="src.data.file" location="build/publications.xml"/>
-    </source>
+    -->
 
 
   </sources>
@@ -101,9 +91,9 @@
 <!--
     <post-process name="create-intron-features">
       <property name="organisms" value="7165,7460"/>
-    </post-process>   
+    </post-process>    -->
     <post-process name="create-bioseg-location-index"/> 
-    <post-process name="create-overlap-view"/> -->
+    <post-process name="create-overlap-view"/>
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
