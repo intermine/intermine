@@ -67,13 +67,9 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/sgd/current"/>
       <property name="src.data.dir.includes" value="gene_association.sgd"/>
     </source>
-<!--
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    -->
-
-
   </sources>
 
   <post-processing>
