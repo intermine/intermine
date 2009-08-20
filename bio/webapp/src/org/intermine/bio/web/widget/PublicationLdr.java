@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Publication;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -30,6 +30,7 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
@@ -78,6 +79,8 @@ public class PublicationLdr extends EnrichmentWidgetLdr
         // constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        cs.addConstraint(new SimpleConstraint(qfId, ConstraintOp.IS_NOT_NULL));
+        
         // constrain genes to be in subset of list the user selected
         if (keys != null) {
             cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, keys));
@@ -100,6 +103,7 @@ public class PublicationLdr extends EnrichmentWidgetLdr
         QueryCollectionReference qcr = new QueryCollectionReference(qcGene, "publications");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcPub));
 
+        
 
         Query q = new Query();
         q.setDistinct(true);
