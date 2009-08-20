@@ -80,7 +80,7 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
         q.addConstraint(bagType,  Constraints.in(imBag.getName()));
         q.addConstraint(bagType + ".chromosome.primaryIdentifier",  Constraints.eq(category));
         if (organism != null) {
-            q.addConstraint(bagType + ".organism",  Constraints.eq(organism));
+            q.addConstraint(bagType + ".organism.name",  Constraints.eq(organism));
             q.setConstraintLogic("A and B and C");
         } else {
             q.setConstraintLogic("A and B");
