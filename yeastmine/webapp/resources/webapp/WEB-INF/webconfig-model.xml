@@ -77,7 +77,6 @@
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
@@ -86,9 +85,6 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
-      <displayer src="geneMicroArrayDisplayer.tile"/>
-      <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
   </class>
 
@@ -178,6 +174,16 @@
       <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
+  
+<class className="org.intermine.model.bio.Organism">
+ 	    <fields>
+ 	      <fieldconfig fieldExpr="name"/>
+ 	      <fieldconfig fieldExpr="taxonId" />
+ 	    </fields>
+ 	    <longdisplayers>
+ 	      <displayer src="attributeLinkDisplayer.tile"/>
+ 	    </longdisplayers>
+ 	  </class>
 
   <class className="org.intermine.model.bio.Publication">
     <fields>
