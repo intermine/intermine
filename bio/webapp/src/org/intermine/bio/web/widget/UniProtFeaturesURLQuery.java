@@ -43,13 +43,13 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name"
+        q.setView("Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name,"
                       + "Protein.features.feature.name,Protein.features.type,"
                       + "Protein.features.description,"
                       + "Protein.features.begin,Protein.features.end");
         q.setOrderBy("Protein.features.feature.name, Protein.primaryAccession");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.features.feature", Constraints.eq(key));
+        q.addConstraint("Protein.features.feature", Constraints.lookup(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;

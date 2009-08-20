@@ -46,11 +46,11 @@ public class InteractionURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
                   + "Gene.interactions.shortName,Gene.interactions.type,"
-                  + "Gene.interactions.geneRole,"
+                  + "Gene.interactions.role,"
                   + "Gene.interactions.interactingGenes.primaryIdentifier,"
                   + "Gene.interactions.experiment.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.interactions.interactingGenes", Constraints.eq(key));
+        q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"

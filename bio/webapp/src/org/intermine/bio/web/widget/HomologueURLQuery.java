@@ -49,7 +49,7 @@ public class HomologueURLQuery implements WidgetURLQuery
                 + "Gene.homologues.homologue.organism.name,Gene.homologues.type";
         q.setView(paths);
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.homologues.homologue.organism", Constraints.eq(key));
+        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(key));
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");

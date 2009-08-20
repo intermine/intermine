@@ -73,7 +73,7 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         // go term
         pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm";
-        q.addConstraint(pathString, Constraints.eq(key), "C", "GOTerm");
+        q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
 
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
