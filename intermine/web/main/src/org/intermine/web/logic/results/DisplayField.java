@@ -15,15 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.intermine.objectstore.query.Results;
-
+import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
+import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
-
-import org.apache.log4j.Logger;
 
 /**
  * Class to represent a field of an object for the webapp

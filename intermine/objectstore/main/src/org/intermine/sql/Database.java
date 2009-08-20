@@ -13,6 +13,7 @@ package org.intermine.sql;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,14 +25,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.math.BigDecimal;
+
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.util.StringUtil;
-
-import org.apache.log4j.Logger;
 import org.postgresql.util.PSQLException;
 
 /**
@@ -215,9 +215,19 @@ public class Database implements Shutdownable
      * @return the URL for this database
      */
     public String getURL() {
-        return "jdbc:" + platform.toLowerCase() + "://"
+
+        String url = "jdbc:" + platform.toLowerCase() + "://"
             + (String) settings.get("datasource.serverName")
             + "/" + (String) settings.get("datasource.databaseName");
+//        if (platform.equalsIgnoreCase("oracle")) {
+//            //jdbc:oracle:thin:@oracle.flymine.org:1521:XE
+//            url = "jdbc:" + platform.toLowerCase() + ":"                    // oracle
+//                  + (String) settings.get("datasource.driverType") + ":@"   // thin
+//                  + (String) settings.get("datasource.serverName") + ":"    // oracle.flymine.org 
+//                  + (String) settings.get("datasource.portNumber") + ":"    // 1521
+//                  + (String) settings.get("datasource.databaseName");       // XE
+//        }
+        return url;
     }
 
     /**

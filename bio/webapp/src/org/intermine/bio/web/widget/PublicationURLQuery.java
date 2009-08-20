@@ -43,13 +43,13 @@ public class PublicationURLQuery implements WidgetURLQuery
      */
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
-        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name"
+        q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
                       + "Gene.publications.title,Gene.publications.firstAuthor,"
                       + "Gene.publications.journal,Gene.publications.year,"
                       + "Gene.publications.pubMedId");
         q.setOrderBy("Gene.publications.pubMedId, Gene.primaryIdentifier");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.publications", Constraints.eq(key));
+        q.addConstraint("Gene.publications", Constraints.lookup(key));
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
         return q;

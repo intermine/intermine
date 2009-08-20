@@ -65,7 +65,7 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
         q.addConstraint(bagType,  Constraints.in(bag.getName()));
 
         // constrain to domains user selected
-        q.addConstraint(prefix + ".proteinDomains",  Constraints.eq(key));
+        q.addConstraint(prefix + ".proteinDomains",  Constraints.lookup(key));
 
         q.setConstraintLogic("A and B");
         q.syncLogicExpression("and");
