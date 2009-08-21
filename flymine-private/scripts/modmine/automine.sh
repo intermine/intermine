@@ -8,7 +8,7 @@
 # sc 09/08
 #
 # TODO: ant failing and exiting with 0!
-#       if -M -f stops after stag. check
+#       clean up. check directory preparation
 #       improve logs!!
 #
 
@@ -18,7 +18,7 @@ FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
 REPORTS=$SUBDIR/reports
 DATADIR=$SUBDIR/chado
-FAILDIR=$DATADIR/chado/new/failed
+#FAILDIR=$DATADIR/new/failed
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
 
@@ -59,6 +59,7 @@ WGET=y           # use wget to get files from ftp
 GAM=y            # run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
 STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
+SUB=n            # if we are using a single submission, SUB=dccid
 
 # these are mutually exclusive
 # should be enforced
@@ -177,7 +178,8 @@ echo
 
 if [ -n "$1" ]
 then
-echo "Processing submission $1.."
+SUB=$1
+echo "Processing submission $SUB.."
 echo
 fi
 
@@ -286,10 +288,90 @@ echo
 echo "$1  stag-storenode FAILED. SKIPPING SUBMISSION."
 echo
 STAGFAIL=y
-mv $sub $FAILDIR
+#mv $sub $FAILDIR
 fi
 
 }
+
+function dochadosubs {
+# dochadosub {new|update}
+cd $DATADIR/$1
+# 
+# for sub in $LOOPVAR
+# #for sub in *.chadoxml
+# do
+
+# if it is a symbolic link and this is not the given input
+# we skip that file
+if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
+ then
+ continue
+ fi
+
+echo "================"
+echo "$sub..."
+echo "================"
+
+#
+# for validation, we rebuild chado for each file
+#
+if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
+then
+chadorebuild
+fi
+
+#cd $DATADIR/$1
+chadofill $sub
+
+if [ "$STAGFAIL" = "y" ]
+then
+STAGFAIL=n
+mv $sub $DATADIR/$1/failed
+continue
+fi
+
+#TODO!!
+# if building the release, we move the file
+if [ "$FULL" = "y" ]
+then
+mv $sub $DATADIR
+ln -s ../$sub $sub
+fi
+
+#if we are validating, we'll process an entry at a time
+if [ "$VALIDATING" = "y" ]
+then
+
+cd $MINEDIR
+echo "Building modMine $REL"
+echo
+# new build. static, metadata
+../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
+|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+
+# to name the acceptance tests file
+NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
+runtest $NAMESTAMP
+
+# go back to the chado directory and mv chado file in 'done'
+# this is to allow to run the validation as a cronjob
+cd $DATADIR/$1
+mv $sub validated
+cd $DATADIR/new
+rm -f ./$sub
+if [ "$1" = "new" ]
+then 
+cp -s ./validated/$sub .
+else
+cp -s ../$1/validated/$sub .
+fi
+
+fi #VAL=y
+
+#done
+
+}
+
 
 interact
 
@@ -437,77 +519,116 @@ then
 LOOPVAR=`sed 's/$/.chadoxml/g' $INFILE | cat`
 echo "********"
 echo $LOOPVAR
-
 else
 LOOPVAR="*.chadoxml"
 fi
 
+# echo "________"
+# echo $LOOPVAR
+# echo "+++++++++"
+# 
+#dochadosubs new
+
+#for validation of update directory too (cronmine)
+if [ "$VALIDATING" = "y" ] && [ $LOOPVAR="*.chadoxml" ]
+then
+
 cd $DATADIR/new
+echo "====================="
+echo "validating new..."
+echo "====================="
 
 for sub in $LOOPVAR
 do
-# if it is a symbolic link and this is not the given input
-# we skip that file
-#if [ -L "$sub" -a ! -n "$1" ]
-if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
-then
-continue
-fi
-
-echo "================"
-echo "$sub..."
-echo "================"
-
-#
-# for validation, we rebuild chado for each file
-#
-if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
-then
-chadorebuild
-fi
-
-chadofill $sub
-
-if [ "$STAGFAIL" = "y" ]
-then
-STAGFAIL=n
-continue
-fi
-
-# if building the release, we move the file
-if [ "$FULL" = "y" ]
-then
-mv $sub $DATADIR
-ln -s ../$sub $sub
-fi
-
-#if we are validating, we'll process an entry at a time
-if [ "$VALIDATING" = "y" ]
-then
-
-cd $MINEDIR
-echo "Building modMine $REL"
-echo
-# new build. static, metadata
-../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
-|| { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
-
-# to name the acceptance tests file
-NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
-runtest $NAMESTAMP
-
-# go back to the chado directory and mv chado file in 'done'
-# this is to allow to run the validation as a cronjob
-cd $DATADIR/new
-mv $sub validated
-cp -s validated/$sub .
-fi #VAL=y
-
+dochadosubs new
 done
+
+
+cd $DATADIR/update
+echo "====================="
+echo "validating UpDaTe..."
+echo "====================="
+
+for sub in $LOOPVAR
+#for sub in *.chadoxml
+do
+#dochadosubs update $sub
+dochadosubs update
+done
+
+fi
+
+################
+# cd $DATADIR/new
+# 
+# for sub in $LOOPVAR
+# do
+# # if it is a symbolic link and this is not the given input
+# # we skip that file
+# #if [ -L "$sub" -a ! -n "$1" ]
+# if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
+# then
+# continue
+# fi
+# 
+# echo "================"
+# echo "$sub..."
+# echo "================"
+# 
+# #
+# # for validation, we rebuild chado for each file
+# #
+# if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
+# then
+# chadorebuild
+# fi
+# 
+# chadofill $sub
+# 
+# if [ "$STAGFAIL" = "y" ]
+# then
+# STAGFAIL=n
+# continue
+# fi
+# 
+# # if building the release, we move the file
+# if [ "$FULL" = "y" ]
+# then
+# mv $sub $DATADIR
+# ln -s ../$sub $sub
+# fi
+# 
+# #if we are validating, we'll process an entry at a time
+# if [ "$VALIDATING" = "y" ]
+# then
+# 
+# cd $MINEDIR
+# echo "Building modMine $REL"
+# echo
+# # new build. static, metadata
+# ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
+# || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+# 
+# # to name the acceptance tests file
+# NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
+# runtest $NAMESTAMP
+# 
+# # go back to the chado directory and mv chado file in 'done'
+# # this is to allow to run the validation as a cronjob
+# cd $DATADIR/new
+# mv $sub validated
+# cp -s validated/$sub .
+# fi #VAL=y
+# 
+# done
+#################
 
 # if we are validating, that's all
 if [ "$VALIDATING" = "y" ]
 then
+echo
+echo "**VALIDATION FINISHED**"
+echo
 exit;
 fi
 
