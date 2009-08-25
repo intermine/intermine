@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.dataconversion.DataConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -181,7 +180,6 @@ public class TreefamConverter extends BioFileConverter
     /**
      * Process the text file
      * @param reader the Reader
-     * @see DataConverter#process
      * @throws Exception if something goes wrong
      */
     @Override
