@@ -361,7 +361,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             osModel.getClassDescriptorByName(classes[i]);
                         if (truncatedClassDescriptor == null) {
                             throw new ObjectStoreException("Truncated class " + classes[i]
-                                                           + " does not exist in the model");
+                                    + " does not exist in the model");
                         }
                         truncatedClasses.add(truncatedClassDescriptor);
                     }

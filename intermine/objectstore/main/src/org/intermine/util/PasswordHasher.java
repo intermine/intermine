@@ -16,8 +16,6 @@ import java.security.SecureRandom;
 
 import net.sourceforge.iharder.Base64;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * Utility methods for managing hashed passwords
  *

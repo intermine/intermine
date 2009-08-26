@@ -142,8 +142,7 @@ public class ItemHelper
         }
         StringBuffer sb = new StringBuffer();
         for (String s : StringUtil.tokenize(classNames)) {
-            sb.append(model.getPackageName() + "." +
-                    XmlUtil.getFragmentFromURI(s + " ")); 
+            sb.append(model.getPackageName() + "." + XmlUtil.getFragmentFromURI(s + " ")); 
         }
         return sb.toString().trim();
     }

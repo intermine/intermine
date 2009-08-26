@@ -394,19 +394,13 @@ implements WebTable
                     try {
                         fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
                     } catch (PathError e) {
-                            throw new IllegalArgumentException(
-                            "Path: \""
-                            + columnName
-                            + "\", pathToIndex: \""
-                            + pathToIndex
-                            + "\", prefix: \""
-                            + parentColumnName
-                            + "\", query: \""
-                            + PathQueryBinding.marshal(pathQuery, "",
-                                            pathQuery.getModel().getName(),
-                                            PathQuery.USERPROFILE_VERSION)
-                            + "\", columnIndex: \"" + columnIndex
-                            + "\", initialList: \"" + initialList + "\"", e);
+                        throw new IllegalArgumentException("Path: \"" + columnName
+                                + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
+                                + parentColumnName + "\", query: \""
+                                + PathQueryBinding.marshal(pathQuery, "",
+                                    pathQuery.getModel().getName(), PathQuery.USERPROFILE_VERSION)
+                                + "\", columnIndex: \"" + columnIndex + "\", initialList: \""
+                                + initialList + "\"", e);
                     }
                     if (o != null) {
                         String fieldCDName = path.getLastClassDescriptor().getName();
@@ -417,7 +411,7 @@ implements WebTable
                             isKeyField = false;
                         } else {
                             isKeyField = ClassKeyHelper.isKeyField(classKeys, unqualifiedFieldCD,
-                                            fieldName);
+                                    fieldName);
                         }
                         ResultElement resultElement = new ResultElement(o, path, isKeyField);
                         if (rowspan >= 0) {

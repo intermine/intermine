@@ -52,20 +52,21 @@ import org.intermine.webservice.server.WebService;
  * Web service that returns a widget for a given list of identifiers See
  * {@link WidgetsRequestProcessor} for parameter description
  * URL examples: get an EnrichmentWidget
- * /service/widgets?widgetId=go_enrichment&className=Gene&extraAttributes=Bonferroni,0.1,biological_process&ids=S000000003,S000000004&format=html
+ * /service/widgets?widgetId=go_enrichment&amp;className=Gene&amp;extraAttributes=Bonferroni,0.1,biological_process&amp;ids=S000000003,S000000004&amp;format=html
  * get a GraphWidget
  * /service/widgets?widgetId=flyatlas
- *   &className=Gene&extraAttributes=
- *   &ids=FBgn0011648,FBgn0011655,FBgn0025800
- *   &format=html
+ *   &amp;className=Gene&amp;extraAttributes=
+ *   &amp;ids=FBgn0011648,FBgn0011655,FBgn0025800
+ *   &amp;format=html
  *
- * @author "Xavier Watkins"
+ * @author Xavier Watkins
  */
 public class WidgetsService extends WebService
 {
 
     /**
      * Executes service specific logic.
+     *
      * @param request request
      * @param response response
      * @throws Exception an error has occured

@@ -42,7 +42,7 @@ public class DirectoryConverterTask extends ConverterTask
     /**
      * Set the dataDir.
      *
-     * @param dataDir
+     * @param dataDir the name of a directory with data input files
      */
     public void setDataDir(String dataDir) {
         this.dataDir = dataDir;

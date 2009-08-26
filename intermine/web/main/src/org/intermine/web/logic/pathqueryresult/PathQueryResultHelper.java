@@ -42,7 +42,7 @@ import org.intermine.web.logic.config.WebConfig;
 /**
  * Helper for everything related to PathQueryResults
  *
- * @author "Xavier Watkins"
+ * @author Xavier Watkins
  */
 public class PathQueryResultHelper
 {

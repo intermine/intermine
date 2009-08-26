@@ -238,6 +238,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 
     /**
      * Read the Model from the classpath.
+     *
      * @param osAlias the alias of the ObjectStore properties to get the model name from.
      * @param properties the Properties object containing the model name
      * @return a Model
@@ -247,9 +248,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         throws MetaDataException {
         String modelName = properties.getProperty("model");
         if (modelName == null) {
-            throw new MetaDataException(osAlias
-                                        + " does not have a model specified ("
-                                        + modelName + ") - check properties");
+            throw new MetaDataException(osAlias + " does not have a model specified ("
+                    + modelName + ") - check properties");
         }
         Model classpathModel = Model.getInstanceByName(modelName);
         if (classpathModel == null) {

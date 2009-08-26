@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,9 +33,9 @@ public abstract class DataConverter
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
     private ItemWriter writer;
-    private Map aliases = new HashMap();
+    private Map<String, String> aliases = new HashMap<String, String>();
     private int nextClsId = 0;
-    private Map ids = new HashMap();
+    private Map<String, Integer> ids = new HashMap<String, Integer>();
     private Model model;
     private ItemFactory itemFactory;
     private DataConverterStoreHook storeHook = null;
@@ -74,7 +73,7 @@ public abstract class DataConverter
      * @return the alias
      */
     protected String alias(String className) {
-        String alias = (String) aliases.get(className);
+        String alias = aliases.get(className);
         if (alias != null) {
             return alias;
         }
@@ -112,7 +111,7 @@ public abstract class DataConverter
      * @return a new identifier with the next sequential id for the given class
      */
     protected String newId(String className) {
-        Integer id = (Integer) ids.get(className);
+        Integer id = ids.get(className);
         if (id == null) {
             id = new Integer(0);
             ids.put(className, id);
