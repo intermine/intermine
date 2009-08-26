@@ -102,14 +102,15 @@ public class MainHelper
     private static final Logger LOG = Logger.getLogger(MainHelper.class);
 
     /**
-     * Given a path, render a set of metadata Nodes to the relevant depth
+     * Given a path, render a set of metadata Nodes to the relevant depth.
+     *
      * @param path of form Gene.organism.name
      * @param model the model used to resolve class names
      * @param isSuperUser true if the user is the superuser
      * @return an ordered Set of nodes
      */
     public static Collection<MetadataNode> makeNodes(String path, Model model,
-                                                     boolean isSuperUser) {
+            boolean isSuperUser) {
         String className, subPath;
         if (path.indexOf(".") == -1) {
             className = path;

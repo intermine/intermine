@@ -58,6 +58,7 @@ import org.apache.tools.ant.Task;
  * attributes instead.
  * Note that all "id" columns are indexed automatically by virtue of InterMineTorqueModelOuput
  * specifying them as primary key columns.
+ *
  * @author Mark Woodbridge
  * @author Kim Rutherford
  */

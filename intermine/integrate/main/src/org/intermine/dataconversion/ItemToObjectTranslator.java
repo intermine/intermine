@@ -304,7 +304,7 @@ public class ItemToObjectTranslator extends Translator
                 Attribute attr = (Attribute) i.next();
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
-                    String message = "Attribute not found in model: "
+                    String message = "Attribute not found in class: "
                                                 + DynamicUtil.decomposeClass(obj.getClass())
                                                 + "." + attr.getName() + " - Attribute id = "
                                                 + attr.getId() + ", attributes = "
@@ -346,7 +346,7 @@ public class ItemToObjectTranslator extends Translator
                     obj.setFieldValue(refName, new ProxyReference(os, identifier,
                                 InterMineObject.class));
                 } else {
-                    String message = "Reference not found in model: "
+                    String message = "Reference not found in class: "
                         + DynamicUtil.decomposeClass(obj.getClass())
                         + "." + ref.getName();
                     LOG.error(message);
@@ -379,7 +379,7 @@ public class ItemToObjectTranslator extends Translator
                 if (TypeUtil.getFieldInfo(obj.getClass(), refsName) != null) {
                     obj.setFieldValue(refsName, os.executeSingleton(q));
                 } else {
-                    String message = "Collection not found in model: "
+                    String message = "Collection not found in class: "
                         + DynamicUtil.decomposeClass(obj.getClass())
                         + "." + refsName + " fileInfos: " + TypeUtil.getFieldInfos(obj.getClass());
                     LOG.error(message);

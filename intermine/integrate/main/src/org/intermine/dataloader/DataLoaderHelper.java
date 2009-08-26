@@ -13,6 +13,7 @@ package org.intermine.dataloader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -51,7 +52,7 @@ public class DataLoaderHelper
 
     protected static Map sourceKeys = new HashMap();
     protected static Map<Model, Map<String, List<String>>> modelDescriptors
-        = new HashMap<Model, Map<String, List<String>>>();
+        = new IdentityHashMap<Model, Map<String, List<String>>>();
     protected static Set verifiedSources = new HashSet();
 
     /**

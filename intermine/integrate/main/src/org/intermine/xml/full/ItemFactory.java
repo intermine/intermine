@@ -151,7 +151,7 @@ public class ItemFactory
         Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()
                 .toString() : null);
         item.setClassName(className.equals("") ? ""
-                : TypeUtil.unqualifiedName(XmlHelper.getClassName(obj, model)));
+                : TypeUtil.unqualifiedName(className));
         item.setImplementations(getImplements(obj, model));
 
         try {

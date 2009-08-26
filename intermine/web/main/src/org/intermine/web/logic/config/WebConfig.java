@@ -265,9 +265,10 @@ public class WebConfig
     }
 
     /**
-     * For each class/Type mentioned in XML files, copy it's displayers and FieldConfigs to all
+     * For each class/Type mentioned in XML files, copy its displayers and FieldConfigs to all
      * subclasses that don't already have any configuration.
      * This method has package scope so that it can be called from the tests.
+     *
      * @param model the Model to use to find sub-classes
      * @throws ClassNotFoundException if any of the classes mentioned in the XML file aren't in the
      * Model

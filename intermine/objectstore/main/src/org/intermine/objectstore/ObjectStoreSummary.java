@@ -103,7 +103,7 @@ public class ObjectStoreSummary
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
             if (cld == null) {
                 throw new RuntimeException("a class mentioned in ObjectStore summary properties "
-                                           + "file (" + className + ") is not in the model");
+                        + "file (" + className + ") is not in the model");
             }
             List<String> fieldNames = Arrays.asList(value.split(" "));
             summariseField(cld, fieldNames, os, maxValues);
