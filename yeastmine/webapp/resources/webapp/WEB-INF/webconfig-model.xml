@@ -185,6 +185,21 @@
  	    </longdisplayers>
  	  </class>
 
+  <class className="org.intermine.model.bio.Phenotype">
+    <fields>
+      <fieldconfig fieldExpr="experimentType" />
+      <fieldconfig fieldExpr="mutantType" />
+      <fieldconfig fieldExpr="observable"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.PhenotypeAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" />
+      <fieldconfig fieldExpr="phenotype.observable" />
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Publication">
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>

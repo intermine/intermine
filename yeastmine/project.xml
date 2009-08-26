@@ -11,6 +11,11 @@
         <property name="dataSourceName" value="SGD"/>
 	    <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
+    
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
+      <property name="src.data.dir.includes" value="BIOGRID-ORGANISM-SACCHAROMYCES-CEREVISIAE*"/>
+    </source>
 
    <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/shared/data/treefam/current"/>
