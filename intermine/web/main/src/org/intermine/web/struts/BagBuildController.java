@@ -27,6 +27,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -40,11 +44,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

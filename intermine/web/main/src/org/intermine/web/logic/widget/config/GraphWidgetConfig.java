@@ -19,9 +19,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.WidgetUtil;
 

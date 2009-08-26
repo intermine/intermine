@@ -20,6 +20,16 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.search.SearchFilterEngine;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -29,16 +39,7 @@ import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.Query;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SynchronisedIterator;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.search.SearchFilterEngine;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.query.QueryCreationHelper;
 
 /**
  * Class to run a performance test on a production database by loading a set of template queries
@@ -136,7 +137,7 @@ public class PerformanceTester
         try {
             //Query q = TemplateHelper.getPrecomputeQuery(entry.getValue(), new ArrayList(), null);
             long queryStartTime = System.currentTimeMillis();
-            Query q = MainHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), pm,
+            Query q = QueryCreationHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), pm,
                     null, false, productionOs, classKeys, bagQueryConfig);
             String sqlString = SqlGenerator.generate(q, 0, Integer.MAX_VALUE,
                     ((ObjectStoreInterMineImpl) productionOs).getSchema(),

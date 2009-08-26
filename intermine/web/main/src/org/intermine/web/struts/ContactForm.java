@@ -17,10 +17,10 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
+import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * Form bean representing feedback form.

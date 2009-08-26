@@ -16,13 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.ConvertedObjectPair;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +27,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.ConvertedObjectPair;
+import org.intermine.model.InterMineObject;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
 
 /**
  * Controller for the bagUploadConfirm

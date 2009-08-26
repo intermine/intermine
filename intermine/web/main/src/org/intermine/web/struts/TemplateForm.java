@@ -22,6 +22,8 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
@@ -29,9 +31,7 @@ import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 
 /**

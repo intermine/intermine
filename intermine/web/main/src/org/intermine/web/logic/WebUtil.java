@@ -33,15 +33,13 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.widget.BenjaminiHochberg;
 import org.intermine.web.logic.widget.Bonferroni;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
@@ -83,17 +81,6 @@ public abstract class WebUtil
         return intVal;
     }
 
-    /**
-     * Make a copy of a Results object, but with a different batch size.
-     * @param oldResults the original Results objects
-     * @param newBatchSize the new batch size
-     * @return a new Results object with a new batch size
-     */
-    public static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
-        Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery(),
-                newBatchSize, true, true, true);
-        return newResults;
-    }
 
     /**
      * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
@@ -247,26 +234,6 @@ public abstract class WebUtil
 
     }
 
-    /**
-     * @param searchRepository search repository
-     * @param userBags list of user's bags
-     * @return map containing all bags
-     */
-    public static Map<String, InterMineBag> getAllBags(Map<String, InterMineBag> userBags,
-                                                       SearchRepository searchRepository) {
-        Map<String, InterMineBag> searchBags = new HashMap<String, InterMineBag>();
-
-        Map<String, InterMineBag> publicBagMap =
-            (Map<String, InterMineBag>) searchRepository.getWebSearchableMap(TagTypes.BAG);
-
-        if (publicBagMap != null) {
-            searchBags.putAll(publicBagMap);
-        }
-
-        // user bags override public ones
-        searchBags.putAll(userBags);
-        return searchBags;
-    }
 
     /**
      * Return the contents of the page given by prefixURLString + '/' + path as a String.  Any

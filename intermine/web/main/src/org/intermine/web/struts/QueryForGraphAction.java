@@ -10,22 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
-
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +23,18 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
 /**
  * Action class to run an IQL query and constraint the results to

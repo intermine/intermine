@@ -26,6 +26,17 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.AspectTagUtil;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -37,18 +48,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.PathUtil;
-import org.intermine.web.logic.aspects.AspectTagUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * Helper methods for template lists.

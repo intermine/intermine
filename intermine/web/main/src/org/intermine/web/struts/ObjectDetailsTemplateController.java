@@ -23,16 +23,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for an inline table created by running a template on an object details page.

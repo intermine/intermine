@@ -30,13 +30,13 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.ProfileUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -114,7 +114,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
 
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
-                    Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
+                    Map<String, InterMineBag> allBags = 
+                        ProfileUtil.getAllBags(profile.getSavedBags(),
                             SessionMethods.getGlobalSearchRepository(sc));
                     PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
                             PathQuery.USERPROFILE_VERSION);

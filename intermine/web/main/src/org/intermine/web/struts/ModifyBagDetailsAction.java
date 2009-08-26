@@ -21,6 +21,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.bag.TypeConverterHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.search.SearchRepository;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
@@ -29,13 +36,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -146,7 +147,7 @@ public class ModifyBagDetailsAction extends InterMineAction
             ProfileManager pm = 
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER); 
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,
-                BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()),
+                TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile()),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);

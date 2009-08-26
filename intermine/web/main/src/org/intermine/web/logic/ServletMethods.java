@@ -12,10 +12,10 @@ package org.intermine.web.logic;
 import java.io.StringReader;
 import java.util.Map;
 
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.query.MainHelper;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.MainHelper;
 
 /**
  * Helper methods for ServletContext.

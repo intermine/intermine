@@ -24,6 +24,12 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,12 +40,6 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.template.TemplateQuery;
 
 import servletunit.ServletContextSimulator;
 

@@ -234,10 +234,6 @@ public interface Constants
      */
     public static final String WEB_STATE = "WEB_STATE";
 
-    /**
-     * Batch size for the underlying objectstore
-     */
-    public static final int BATCH_SIZE = 500;
 
     /**
      * Current version of InterMine. This constant must changed by every new InteMine release.

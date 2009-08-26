@@ -21,11 +21,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

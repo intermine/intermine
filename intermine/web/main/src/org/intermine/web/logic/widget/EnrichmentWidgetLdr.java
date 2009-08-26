@@ -13,8 +13,9 @@ package org.intermine.web.logic.widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.bag.InterMineBag;
 
 /**
  * Prepares the data and queries for the enrichment widget controller to process.

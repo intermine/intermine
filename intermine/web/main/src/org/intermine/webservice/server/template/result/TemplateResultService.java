@@ -17,11 +17,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;

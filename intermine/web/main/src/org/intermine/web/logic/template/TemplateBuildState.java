@@ -1,5 +1,7 @@
 package org.intermine.web.logic.template;
 
+import org.intermine.api.template.TemplateQuery;
+
 /*
  * Copyright (C) 2002-2009 FlyMine
  *

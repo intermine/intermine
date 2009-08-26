@@ -24,16 +24,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplatePrecomputeHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Tiles controller for history tile (page).
@@ -115,7 +115,7 @@ public class MyMineController extends TilesAction
                     && session.getAttribute("precomputing_" + template.getName()).equals("true")) {
                     precomputedTemplateMap.put(template.getName(), "precomputing");
                 } else {
-                    Query query = TemplateHelper
+                    Query query = TemplatePrecomputeHelper
                                     .getPrecomputeQuery(template, new ArrayList(), null);
                     precomputedTemplateMap.put(template.getName(), Boolean.toString(os
                                     .isPrecomputed(query, "template")));

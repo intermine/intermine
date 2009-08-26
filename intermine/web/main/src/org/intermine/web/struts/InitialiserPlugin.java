@@ -33,6 +33,15 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagNames;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -49,20 +58,11 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectBinding;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
 
 /**
  * Initialiser for the InterMine web application.

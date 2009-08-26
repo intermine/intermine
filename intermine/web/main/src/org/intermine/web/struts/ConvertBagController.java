@@ -26,20 +26,20 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.bag.TypeConverterHelper;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagConversionHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * @author Xavier Watkins
@@ -66,7 +66,7 @@ public class ConvertBagController extends TilesAction
 
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
-            BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()), 
+            TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile()), 
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();
         Map fastaMap = new HashMap();

@@ -15,7 +15,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.web.struts.ObjectDetailsController;
 
 /**

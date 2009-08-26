@@ -25,6 +25,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -33,15 +39,10 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.search.SearchRepository;
+import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to create a new TemplateQuery from current query.
@@ -152,9 +153,9 @@ public class CreateTemplateAction extends InterMineAction
             try {
                 if (query.getInfo() == null) {
                     Map<String, InterMineBag> allBags =
-                        WebUtil.getAllBags(profile.getSavedBags(), 
+                        ProfileUtil.getAllBags(profile.getSavedBags(), 
                         SessionMethods.getGlobalSearchRepository(servletContext));
-                    query.setInfo(os.estimate(MainHelper.makeQuery(query, allBags,
+                    query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
                                     servletContext, null)));
                 }
             } catch (ObjectStoreException e) {

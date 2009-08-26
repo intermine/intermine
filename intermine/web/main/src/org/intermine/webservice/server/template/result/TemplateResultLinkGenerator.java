@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;

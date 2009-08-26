@@ -19,6 +19,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -26,8 +28,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.ProfileBinding;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Dump templates and configuration tags.
