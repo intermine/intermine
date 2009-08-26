@@ -46,10 +46,10 @@ public class BioPAXConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set expected = readItemSet("BioPAXConverterTest_tgt.xml");
 
-//        assertEquals(expected, itemWriter.getItems());
+        assertEquals(expected, itemWriter.getItems());
     }
 }
