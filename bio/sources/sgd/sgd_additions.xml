@@ -7,12 +7,27 @@
   </class>
   <class name="Gene" extends="BioEntity" is-interface="true">
 	  <attribute name="featureType" type="java.lang.String"/>
+	  <attribute name="description" type="java.lang.String"/>
       <reference name="plasmid" referenced-type="Plasmid" reverse-reference="genes"/>
       <reference name="plasmidLocation" referenced-type="Location"/>
-    <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
+      <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
+      <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="gene"/>
   </class>
-    <class name="Plasmid" extends="BioEntity" is-interface="true">
-	    <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
-    </class>
+  <class name="Plasmid" extends="BioEntity" is-interface="true">
+	  <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
+  </class>
+  <class name="Phenotype" is-interface="true">
+  	<attribute name="experimentType" type="java.lang.String"/>
+  	<attribute name="mutantType" type="java.lang.String"/>
+  	<attribute name="observable" type="java.lang.String"/>
+	<attribute name="qualifier" type="java.lang.String"/>
+  </class>
+  <class name="Experiment" is-interface="true">
+    <attribute name="comment" type="java.lang.String"/>
+   </class>
+     <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
+      <reference name="gene" referenced-type="Gene" reverse-reference="phenotypeAnnotations"/>
+      <reference name="experiment" referenced-type="Experiment"/>
+      <reference name="phenotype" referenced-type="Phenotype"/>
+  </class>
 </classes>
-
