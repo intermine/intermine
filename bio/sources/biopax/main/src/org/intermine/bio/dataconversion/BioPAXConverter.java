@@ -108,14 +108,14 @@ public class BioPAXConverter extends BioFileConverter
                     // Do whatever you want with the pe here
 //                    org.biopax.paxtools.model.level2.physicalEntity pe = (org.biopax.paxtools.model.level2.physicalEntity) bpe;
                     org.biopax.paxtools.model.level2.unificationXref xref = (org.biopax.paxtools.model.level2.unificationXref) bpe;
-                    System.out.println("pe.getNAME() = " + xref.getDB());
+//                    System.out.println("pe.getNAME() = " + xref.getDB());
 
 //                    ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref> unis=
 //                    new ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref>(pe.getXREF(),
 //                                    org.biopax.paxtools.model.level2.unificationXref.class);
 //                    for (org.biopax.paxtools.model.level2.unificationXref uni : unis)
 //                    {
-                        System.out.println("uni = " + xref.getID());
+//                        System.out.println("uni = " + xref.getID());
 //                    }
                 }
             }
