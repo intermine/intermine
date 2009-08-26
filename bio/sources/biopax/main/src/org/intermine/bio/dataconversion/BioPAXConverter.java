@@ -13,10 +13,19 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.biopax.paxtools.controller.PropertyEditor;
+import org.biopax.paxtools.controller.Traverser;
+import org.biopax.paxtools.controller.Visitor;
 import org.biopax.paxtools.io.jena.JenaIOHandler;
+import org.biopax.paxtools.io.simpleIO.SimpleEditorMap;
+import org.biopax.paxtools.model.level2.pathwayComponent;
+import org.biopax.paxtools.model.BioPAXElement;
+import org.biopax.paxtools.model.BioPAXLevel;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -31,7 +40,7 @@ public class BioPAXConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(BioPAXConverter.class);
     private static final String DATASET_TITLE = "BioPAX";
     private static final String DATA_SOURCE_NAME = "BioPAX data set";
-
+    List<String> canons = new ArrayList();
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -65,21 +74,71 @@ public class BioPAXConverter extends BioFileConverter
         
         Set objects = jenaModel.getObjects();
         
-        for (Object object : objects) {
-            if (object.getClass().getCanonicalName().equals("org.biopax.paxtools.impl.level2.pathwayImpl")) {
-                storePathways((org.biopax.paxtools.model.level2.pathway) object);
-            } else if (object.getClass().getCanonicalName().contains("biochemicalReaction")) {
-                org.biopax.paxtools.model.level2.biochemicalReaction br = (org.biopax.paxtools.model.level2.biochemicalReaction) object;
-                Set<org.biopax.paxtools.model.level2.InteractionParticipant> participants = br.getPARTICIPANTS();
+        
+        
+        
+//        for (Object object : objects) {
+//            if (object.getClass().getCanonicalName().equals("org.biopax.paxtools.impl.level2.pathwayImpl")) {
+//                storePathways((org.biopax.paxtools.model.level2.pathway) object);
+//            }
+//        }
+
+
+        
+//        ProteinNameLister lister = new ProteinNameLister();
+//        lister.listProteinUnificationXrefsPerPathway(jenaModel);
+        
+        // This is a visitor for elements in a pathway - direct and indirect
+        Visitor visitor = new Visitor() {
+            //This is the only method to implement
+            //You define what to do when the visitor object visited
+            // bpe in the model
+            public void visit(BioPAXElement bpe, org.biopax.paxtools.model.Model model, PropertyEditor editor) {
                 
-                for (org.biopax.paxtools.model.level2.InteractionParticipant participant : participants) {
-                    
+//                String name = bpe.getClass().getCanonicalName().toString();
+//                if (!canons.contains(name)) {
+//                    canons.add(name);
+//                    System.out.println(name);
+//                }
+                
+                
+                
+                if (bpe.getClass().getCanonicalName().contains("unificationXrefImpl")) {
+//                if (bpe instanceof org.biopax.paxtools.model.level2.physicalEntity) {
+                    // Do whatever you want with the pe here
+//                    org.biopax.paxtools.model.level2.physicalEntity pe = (org.biopax.paxtools.model.level2.physicalEntity) bpe;
+                    org.biopax.paxtools.model.level2.unificationXref xref = (org.biopax.paxtools.model.level2.unificationXref) bpe;
+                    System.out.println("pe.getNAME() = " + xref.getDB());
+
+//                    ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref> unis=
+//                    new ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref>(pe.getXREF(),
+//                                    org.biopax.paxtools.model.level2.unificationXref.class);
+//                    for (org.biopax.paxtools.model.level2.unificationXref uni : unis)
+//                    {
+                        System.out.println("uni = " + xref.getID());
+//                    }
                 }
-                
             }
-//            physicalEntityParticipant
-        }
-    }
+        };
+       
+        //Now we have defined what we want to do with the traversed objects
+        // Let's actually go ahead and traverse the model with our new visitor,
+        //for every pathway in the model.
+
+        Traverser traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), visitor); 
+        
+        Set<org.biopax.paxtools.model.level2.pathway> pathways = jenaModel.getObjects(org.biopax.paxtools.model.level2.pathway.class);
+        for (org.biopax.paxtools.model.level2.pathway pathway : pathways) {
+            traverser.traverse(pathway, jenaModel);
+            Set<pathwayComponent> components = pathway.getPATHWAY_COMPONENTS();
+           
+            for (pathwayComponent component : components) {
+                System.out.println(component.getClass().getCanonicalName().toString());
+            }
+        }        
+    } 
+        
+
     
     private void storePathways(org.biopax.paxtools.model.level2.pathway pathway) 
     throws ObjectStoreException {
@@ -105,7 +164,11 @@ public class BioPAXConverter extends BioFileConverter
             store(item);
         } catch (ObjectStoreException e) {
             throw new ObjectStoreException(e);
-        }        
-    }
-    
+        }    
+        
+        
+        
+        
+        
+    }    
   }
