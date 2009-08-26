@@ -19,6 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -26,8 +28,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 
 
 /**

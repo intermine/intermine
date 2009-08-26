@@ -25,6 +25,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -42,18 +49,12 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template tile. This tile can be used for real template
@@ -169,7 +170,7 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
-        Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(),
+        Map<String, InterMineBag> searchBags = ProfileUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();

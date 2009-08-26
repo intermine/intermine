@@ -22,13 +22,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to summarise all templates.

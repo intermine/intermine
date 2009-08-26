@@ -18,12 +18,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.Path;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 

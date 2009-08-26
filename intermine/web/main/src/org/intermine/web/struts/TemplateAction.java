@@ -24,14 +24,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
 
@@ -95,7 +95,7 @@ public class TemplateAction extends InterMineAction
         String userName = profile.getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, templateType);
-        Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
+        Map savedBags = ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
                 .getGlobalSearchRepository(servletContext));
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {

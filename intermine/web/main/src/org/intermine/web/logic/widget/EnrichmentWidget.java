@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -31,7 +32,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 
 

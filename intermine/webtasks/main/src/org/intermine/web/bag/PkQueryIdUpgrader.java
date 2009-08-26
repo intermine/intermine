@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.IdUpgrader;
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
 import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;
@@ -27,7 +28,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.IntToIntMap;
-import org.intermine.web.logic.bag.IdUpgrader;
 
 /**
  * Bag object id upgrader that uses the primary keys to find the objects in the new ObjectStore.

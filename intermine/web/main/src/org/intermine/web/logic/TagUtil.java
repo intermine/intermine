@@ -12,12 +12,12 @@ package org.intermine.web.logic;
 
 import java.util.Properties;
 
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.profile.Profile;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.intermine.api.profile.Profile;
+import org.intermine.util.StringUtil;
 
 /**
  * Utility methods for tags.

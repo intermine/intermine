@@ -21,8 +21,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.bag.BagQueryResult;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
 
 /**
  * @author Matthew Wakeling

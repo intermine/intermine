@@ -27,6 +27,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -40,8 +43,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -115,7 +116,7 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(request.getSession().getServletContext()));
         ObjectStoreWriter userOSW = profile.getProfileManager().getProfileObjectStoreWriter();
 
@@ -228,7 +229,7 @@ public class ModifyBagAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext
                 .getAttribute(Constants.OBJECTSTORE);
 
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile
                 .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
 
         String[] selectedBags = mbf.getSelectedBags();

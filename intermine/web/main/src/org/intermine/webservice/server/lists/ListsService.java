@@ -17,6 +17,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -27,8 +29,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.PathQueryExecutor;
-import org.intermine.web.logic.results.ResultElement;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;

@@ -28,6 +28,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -35,8 +38,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -44,7 +45,6 @@ import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
 import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
 import org.intermine.web.logic.export.string.StringTableExporter;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
@@ -123,7 +123,7 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
@@ -204,7 +204,7 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
         InterMineBag bag = allBags.get(bagName);
 
@@ -279,7 +279,7 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getPValue());
                 attributes.add(widgetForm.getNumberOpt());
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-                Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile
+                Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile
                         .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
                 InterMineBag bag = allBags.get(widgetForm.getBagName());
                 Widget widget = widgetConfig.getWidget(bag, os, attributes);

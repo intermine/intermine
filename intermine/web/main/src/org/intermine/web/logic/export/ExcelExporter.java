@@ -18,7 +18,7 @@ import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.api.results.ResultElement;
 
 
 /**

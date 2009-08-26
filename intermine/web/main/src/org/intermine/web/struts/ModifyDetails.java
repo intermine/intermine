@@ -27,22 +27,22 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateListHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to handle events from the object details page
@@ -93,7 +93,7 @@ public class ModifyDetails extends DispatchAction
             InterMineObject object = os.getObjectById(objectId);
             TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+            Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
                     SessionMethods.getGlobalSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
             TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
@@ -279,7 +279,7 @@ public class ModifyDetails extends DispatchAction
             return mapping.findForward("objectDetailsTemplateTable");
         }
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
                 SessionMethods.getGlobalSearchRepository(sc));
         InterMineBag interMineIdBag = allBags.get(id);
         cc.putAttribute("interMineIdBag", interMineIdBag);

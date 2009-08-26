@@ -12,7 +12,7 @@ package org.intermine.web.logic.bag;
 
 import java.io.Serializable;
 
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.api.results.ResultElement;
 
 /**
  * @author Xavier Watkins

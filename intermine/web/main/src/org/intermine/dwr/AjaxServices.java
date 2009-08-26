@@ -39,6 +39,22 @@ import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.bag.TypeConverterHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.results.WebTable;
+import org.intermine.api.search.SearchFilterEngine;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplatePrecomputeHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
@@ -57,32 +73,16 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.TypeConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
+import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.search.SearchFilterEngine;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.GridWidget;
@@ -163,7 +163,7 @@ public class AjaxServices
             ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
                     .getAttribute(Constants.OBJECTSTORE);
             List indexes = new ArrayList();
-            Query query = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+            Query query = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
 
             try {
                 if (!os.isPrecomputed(query, "template")) {
@@ -404,13 +404,13 @@ public class AjaxServices
             Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
             allBags.putAll(globalWsMap);
 
-            Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
+            Query distinctQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
 
             Results results = os.execute(distinctQuery);
 
             // Start the count of results
-            Query countQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
+            Query countQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
             QueryCountQueryMonitor clientState
                 = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
@@ -645,11 +645,11 @@ public class AjaxServices
 
                 ProfileManager pm =
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-                PathQuery pathQuery = TypeConverter.getConversionQuery(BagConversionHelper.
+                PathQuery pathQuery = TypeConverter.getConversionQuery(TypeConverterHelper.
                     getConversionTemplates(pm.getSuperuserProfile()),
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
-                Query query = MainHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
+                Query query = QueryCreationHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
                     pm, null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                     getClassKeys(servletContext),

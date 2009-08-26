@@ -29,6 +29,14 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.AspectTagUtil;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -40,20 +48,12 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.aspects.AspectTagUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an

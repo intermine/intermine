@@ -28,16 +28,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.results.Column;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.stringtree.json.JSONWriter;
 
 /**

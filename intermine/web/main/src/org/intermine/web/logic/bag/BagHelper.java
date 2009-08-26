@@ -15,14 +15,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.InterMineException;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * Helper methods for bags.

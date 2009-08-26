@@ -14,17 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +23,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Imports templates in XML format.
@@ -56,7 +56,7 @@ public class TemplatesImportAction extends InterMineAction
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
                 SessionMethods.getGlobalSearchRepository(servletContext));
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
                 PathQuery.USERPROFILE_VERSION);

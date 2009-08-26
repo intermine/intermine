@@ -22,6 +22,12 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplatePrecomputeHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -33,12 +39,6 @@ import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 import servletunit.ServletContextSimulator;
 
@@ -183,7 +183,7 @@ public class PrecomputeTemplatesTask extends Task
             }
 
             List indexes = new ArrayList();
-            Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+            Query q = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
 
             if (q.getConstraint() == null) {
                 // see ticket #255

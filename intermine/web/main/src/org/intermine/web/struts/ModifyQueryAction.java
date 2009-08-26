@@ -10,9 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
 import java.io.PrintStream;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +21,12 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.SavedQuery;
 
 /**
  * Action that results from a button press on the user profile page.

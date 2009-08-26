@@ -12,10 +12,10 @@ package org.intermine.webservice.server.core;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 
 /**

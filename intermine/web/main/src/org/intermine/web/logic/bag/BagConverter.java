@@ -16,9 +16,9 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.results.WebResults;
 
 /**
  * @author "Xavier Watkins"

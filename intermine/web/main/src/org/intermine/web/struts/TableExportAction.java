@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -31,7 +32,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 

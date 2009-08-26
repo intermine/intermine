@@ -18,8 +18,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * Controller for the submenu at the top of every page

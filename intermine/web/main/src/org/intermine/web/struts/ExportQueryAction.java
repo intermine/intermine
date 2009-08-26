@@ -13,24 +13,6 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +23,25 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.ProfileUtil;
+import org.intermine.api.query.MainHelper;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.util.XmlUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.query.QueryCreationHelper;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.util.URLGenerator;
+import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
 
 /**
  * Export the current query in XML format.
@@ -108,10 +109,10 @@ public class ExportQueryAction extends InterMineAction
             response.getWriter().write(xml);
         } else if (format.equals("iql")) {
             Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
+                ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
                 .getGlobalSearchRepository(servletContext));
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-            Query osQuery = MainHelper.makeQuery(query, allBags, pathToQueryNode,
+            Query osQuery = QueryCreationHelper.makeQuery(query, allBags, pathToQueryNode,
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
                     null, false,
                     (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
@@ -122,9 +123,9 @@ public class ExportQueryAction extends InterMineAction
             //response.getWriter().println("\npathToQueryNode: " + pathToQueryNode);
         } else if (format.equals("sql")) {
             Map<String, InterMineBag> allBags =
-                WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
+                ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
                 .getGlobalSearchRepository(servletContext));
-            Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
+            Query osQuery = QueryCreationHelper.makeQuery(query, allBags, servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             if (os instanceof ObjectStoreInterMineImpl) {

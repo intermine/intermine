@@ -22,6 +22,15 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.results.Column;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.results.WebTable;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
+import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -51,11 +60,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -92,7 +96,7 @@ public class PagedTable
      * Construct a PagedTable with a list of column names
      * @param webTable the WebTable that this PagedTable will display
      */
-    public PagedTable(WebTable webTable) {
+    public PagedTable(WebResults webResults) {
         super();
         this.webTable = webTable;
     }

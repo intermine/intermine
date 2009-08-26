@@ -25,14 +25,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * @author Xavier Watkins

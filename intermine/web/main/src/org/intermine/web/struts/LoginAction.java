@@ -12,10 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.ProfileManager;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +21,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.LoginHandler;
 
 /**
  * Action to handle button presses on the main tile

@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -23,7 +24,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.

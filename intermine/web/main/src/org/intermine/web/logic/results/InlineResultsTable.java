@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -28,8 +31,6 @@ import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
