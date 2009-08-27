@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.lang.reflect.Constructor;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +151,6 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
         }
-        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
         boolean bagExists = true;
@@ -188,8 +186,7 @@ public class PortalQueryAction extends InterMineAction
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os, 
-                                              profile.getUserId(), uosw);
+        InterMineBag imBag = profile.createBag(bagName, className, "");
         List <Integer> bagList = new ArrayList();
 
         // There's only one node, get the first value
@@ -223,8 +220,7 @@ public class PortalQueryAction extends InterMineAction
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
                     WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
                         addparameter, bagList, className);
-                    imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                                             profile.getUserId(), uosw);
+                    imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = new ArrayList();
                     for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
                             : convertedWebResult) {

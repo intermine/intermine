@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Date;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +22,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -85,8 +82,6 @@ public class SaveBagAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm sbf = (SaveBagForm) form;
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(Constants
-                    .PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         String operation = "";
@@ -122,9 +117,7 @@ public class SaveBagAction extends InterMineAction
         ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
-                bag = new InterMineBag(bagName, pt.getSelectedClass(), null, new Date(), os,
-                        profile.getUserId(), uosw);
-                profile.saveBag(bagName, bag);
+                bag = profile.createBag(bagName, pt.getSelectedClass(), "");
             }
             osw = new ObjectStoreWriterInterMineImpl(os);
             pt.addSelectedToBag(osw, bag.getOsb());

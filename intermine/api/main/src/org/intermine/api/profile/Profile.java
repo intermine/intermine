@@ -321,11 +321,14 @@ public class Profile
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void createBag(String name, String type, String description, ObjectStore os,
-            ObjectStoreWriter uosw) throws ObjectStoreException {
+    public InterMineBag createBag(String name, String type, String description) 
+    throws ObjectStoreException {
+        ObjectStore os = manager.getProductionObjectStore();
+        ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw);
         savedBags.put(name, bag);
         reindex(TagTypes.BAG);
+        return bag;
     }
 
     /**

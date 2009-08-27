@@ -41,7 +41,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -248,10 +247,7 @@ public class ModifyBagAction extends InterMineAction
 
         // Now combine
         String name = BagHelper.findNewBagName(allBags, mbf.getNewBagName());
-        ObjectStoreWriter uosw = profile.getProfileManager()
-                .getProfileObjectStoreWriter();
-        InterMineBag combined = new InterMineBag(name, type, null, new Date(),
-                os, profile.getUserId(), uosw);
+        InterMineBag combined = profile.createBag(name, type, "");
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
         for (int i = 0; i < selectedBags.length; i++) {
             osbc.addBag(allBags.get(selectedBags[i]).getOsb());

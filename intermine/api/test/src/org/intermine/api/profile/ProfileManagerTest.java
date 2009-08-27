@@ -107,12 +107,11 @@ public class ProfileManagerTest extends StoreDataTestCase
         // bob's details
         String bobName = "bob";
 
-        InterMineBag bag = new InterMineBag("bag1", "Department",
-                                            "This is some description", date, os, bobId, uosw);
+        InterMineBag bag = bobProfile.createBag("bag1", "Department", "This is some description");
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
-        Set fieldNames = new HashSet();
+        Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
         Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
         osw.addToBag(bag.getOsb(), departmentA1.getId());
@@ -147,12 +146,11 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         CEO ceoEx = new CEO();
         ceoEx.setName("EmployeeB1");
-        fieldNames = new HashSet();
+        fieldNames = new HashSet<String>();
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = new InterMineBag("bag2", "Employee",
-                                                  "description", date, os, sallyId, uosw);
+        InterMineBag objectBag = sallyProfile.createBag("bag2", "Employee", "description");
         osw.addToBag(objectBag.getOsb(), ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
@@ -277,13 +275,13 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         Employee employeeEx = new Employee();
         employeeEx.setName("EmployeeA3");
-        Set fieldNames = new HashSet();
+        Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
         Employee employeeA3 = (Employee) os.getObjectByExample(employeeEx, fieldNames);
         Employee employeeEx2 = new Employee();
         employeeEx2.setName("EmployeeB2");
         Employee employeeB2 = (Employee) os.getObjectByExample(employeeEx2, fieldNames);
-        Set expectedBagContents = new HashSet();
+        Set<Integer> expectedBagContents = new HashSet<Integer>();
 
         expectedBagContents.add(employeeA3.getId());
         expectedBagContents.add(employeeB2.getId());
@@ -295,7 +293,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         assertEquals(1, sallyProfile.getSavedQueries().size());
         assertEquals(1, sallyProfile.getSavedTemplates().size());
 
-        Set expectedTags = new HashSet();
+        Set<Tag> expectedTags = new HashSet<Tag>();
         Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
 
         tag1.setTagName("test-tag");
@@ -326,20 +324,20 @@ public class ProfileManagerTest extends StoreDataTestCase
         expectedTags.add(tag3);
         expectedTags.add(tag4);
 
-        Set actualTags = new HashSet(getTagManager().getTags(null, null, null, "bob"));
+        Set<Tag> actualTags = new HashSet<Tag>(getTagManager().getTags(null, null, null, "bob"));
 
         assertEquals(expectedTags.size(), actualTags.size());
 
-        Iterator actualTagsIter = actualTags.iterator();
+        Iterator<Tag> actualTagsIter = actualTags.iterator();
 
       ACTUAL:
         while (actualTagsIter.hasNext()) {
-            Tag actualTag = (Tag) actualTagsIter.next();
+            Tag actualTag = actualTagsIter.next();
 
-            Iterator expectedTagIter = expectedTags.iterator();
+            Iterator<Tag> expectedTagIter = expectedTags.iterator();
 
             while (expectedTagIter.hasNext()) {
-                Tag expectedTag = (Tag) expectedTagIter.next();
+                Tag expectedTag = expectedTagIter.next();
                 if (actualTag.getTagName().equals(expectedTag.getTagName())
                     && actualTag.getObjectIdentifier().equals(expectedTag.getObjectIdentifier())
                     && actualTag.getType().equals(expectedTag.getType())
