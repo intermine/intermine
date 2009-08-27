@@ -194,15 +194,6 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns the ID of the profile to which this bag is attached, or null if it is not logged in.
-     *
-     * @return an Integer
-     */
-    public Integer getProfileId() {
-        return profileId;
-    }
-
-    /**
      * Sets the profileId - moves this bag from one profile to another.
      *
      * @param profileId the ID of the new userprofile
@@ -265,13 +256,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         store(uosw);
     }
 
-    /**
-     * Get the value of savedBagId
-     * @return an Integer
-     */
-    public Integer getSavedBagId() {
-        return savedBagId;
-    }
 
     /**
      * Get the type of this bag (a class from InterMine model)
@@ -282,7 +266,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Get the fully qualifie type of this bag
+     * Get the fully qualified type of this bag
      * @return the type of objects in this bag
      */
     public String getQualifiedType() {
