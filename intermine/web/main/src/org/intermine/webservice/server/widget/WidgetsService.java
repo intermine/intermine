@@ -12,7 +12,6 @@ package org.intermine.webservice.server.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -112,10 +110,6 @@ public class WidgetsService extends WebService
         } catch (ClassNotFoundException clse) {
             return null;
         }
-//      ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
-
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                                 Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
@@ -161,11 +155,10 @@ public class WidgetsService extends WebService
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
-        List <Integer> bagList = new ArrayList();
+        List <Integer> bagList = new ArrayList<Integer>();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                                              profile.getUserId(), uosw);
+        InterMineBag imBag = profile.createBag(bagName, className, "");
         ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         osw.addAllToBag(imBag.getOsb(), bagList);
         osw.close();

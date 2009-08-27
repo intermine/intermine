@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -25,7 +24,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -89,13 +87,7 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        ProfileManager profileManager =
-            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ObjectStoreWriter profileOs = profileManager.getProfileObjectStoreWriter();
-
-        InterMineBag bag = new InterMineBag(bagName, bagType, null, new Date(), os,
-                                            profile.getUserId(),
-                profileOs);
+        InterMineBag bag = profile.createBag(bagName, bagType, "");
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
