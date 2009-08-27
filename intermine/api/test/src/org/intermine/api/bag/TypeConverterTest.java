@@ -1,4 +1,4 @@
-package org.intermine.web.logic.bag;
+package org.intermine.api.bag;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -21,6 +21,8 @@ import java.util.Map;
 
 import junit.framework.Test;
 
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
@@ -41,9 +43,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.profile.ProfileManagerTest;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateQueryBinding;
 
 /**
  * @author Matthew Wakeling

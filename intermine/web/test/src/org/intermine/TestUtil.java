@@ -15,11 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.logic.ClassKeyHelper;
 
 /**
  * @author Jakub Kulaviak

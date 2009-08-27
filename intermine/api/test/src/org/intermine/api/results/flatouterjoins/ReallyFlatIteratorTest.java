@@ -1,4 +1,4 @@
-package org.intermine.web.logic.results.flatouterjoins;
+package org.intermine.api.results.flatouterjoins;
 
 /*
  * Copyright (C) 2002-2007 FlyMine
@@ -12,28 +12,18 @@ package org.intermine.web.logic.results.flatouterjoins;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Contractor;
 import org.intermine.objectstore.Failure;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.Lazy;
-import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 

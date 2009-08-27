@@ -1,4 +1,4 @@
-package org.intermine.web.logic.bag;
+package org.intermine.api.bag;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +15,9 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
@@ -26,9 +29,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateQueryBinding;
 
 /*
  * NOTE - this test depends on data being present in os.unittest which is

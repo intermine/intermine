@@ -1,16 +1,14 @@
-package org.intermine.web.logic.bag;
+package org.intermine.api.bag;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.intermine.metadata.Model;
 import org.intermine.util.SAXParser;
-import org.intermine.web.logic.bag.BagQueryHandler;
 import org.xml.sax.InputSource;
-
-import junit.framework.TestCase;
 
 public class BagQueryHandlerTest extends TestCase
 {

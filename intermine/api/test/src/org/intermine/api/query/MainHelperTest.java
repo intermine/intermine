@@ -1,4 +1,4 @@
-package org.intermine.web.logic.query;
+package org.intermine.api.query;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -11,6 +11,7 @@ package org.intermine.web.logic.query;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -24,10 +25,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.intermine.TestUtil;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
@@ -54,9 +59,6 @@ import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
-import org.intermine.web.logic.bag.BagQueryRunner;
 
 /**
  * Tests for the MainHelper class
@@ -77,7 +79,14 @@ public class MainHelperTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
-        classKeys = TestUtil.getClassKeys(TestUtil.getModel());
+        Properties classKeyProps = new Properties();
+        try {
+            classKeyProps.load(MainHelperTest.class.getClassLoader()
+                                   .getResourceAsStream("class_keys.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException("Some IO error happened getting class keys ", e);
+        }
+        classKeys = ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
         InputStream config = MainHelperTest.class.getClassLoader()
             .getResourceAsStream("bag-queries.xml");
         bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), config);

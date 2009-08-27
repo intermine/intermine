@@ -13,10 +13,10 @@ package org.intermine.webservice.server.template.result;
 import junit.framework.TestCase;
 
 import org.intermine.TestUtil;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.webservice.server.WebServiceConstants;
 
 

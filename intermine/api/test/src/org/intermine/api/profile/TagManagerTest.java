@@ -1,4 +1,4 @@
-package org.intermine.web.logic.profile;
+package org.intermine.api.profile;
 
 /*
  * Copyright (C) 2002-2009 FlyMine

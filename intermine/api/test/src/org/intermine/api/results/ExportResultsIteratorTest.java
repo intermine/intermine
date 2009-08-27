@@ -1,4 +1,4 @@
-package org.intermine.web.logic.results;
+package org.intermine.api.results;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -14,34 +14,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.metadata.Model;
-import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
 
 /**
  * Tests for the ExportResultsIterator class

@@ -1,4 +1,4 @@
-package org.intermine.web.logic.bag;
+package org.intermine.api.xml;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
