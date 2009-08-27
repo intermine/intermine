@@ -12,6 +12,8 @@ package org.intermine.web.logic.query;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.query.PathQueryAPI;
+
 /**
  * Tests the PathQueryAPI class.
  *
