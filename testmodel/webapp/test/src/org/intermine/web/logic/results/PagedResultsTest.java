@@ -23,6 +23,10 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
@@ -40,8 +44,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
 
 public class PagedResultsTest extends TestCase
 {

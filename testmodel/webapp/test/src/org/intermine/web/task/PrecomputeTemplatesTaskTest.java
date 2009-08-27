@@ -10,29 +10,27 @@ package org.intermine.web.task;
  *
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
+import org.intermine.api.template.TemplatePrecomputeHelper;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
-
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
-
-import java.io.InputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for PrecomputeTemplatesTask.
@@ -90,7 +88,7 @@ public class PrecomputeTemplatesTaskTest extends TestCase
         System.out.println("query: " + q);
 
         List indexes = new ArrayList();
-        Query actualQ = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+        Query actualQ = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
         assertEquals(q.toString(), actualQ.toString());
         List expIndexes = new ArrayList(Arrays.asList(new Object[] {qcEmp, qcDept, qfAge, qfName}));
         assertEquals(expIndexes.toString(), indexes.toString());

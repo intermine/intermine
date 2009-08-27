@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
@@ -28,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;

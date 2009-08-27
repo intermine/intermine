@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 
 import servletunit.struts.MockStrutsTestCase;
 
