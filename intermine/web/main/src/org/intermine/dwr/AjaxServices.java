@@ -45,6 +45,7 @@ import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.results.WebTable;
@@ -392,17 +393,9 @@ public class AjaxServices
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
 
-            SearchRepository globalRepository =
-                (SearchRepository) servletContext.getAttribute(Constants.
-                                                               GLOBAL_SEARCH_REPOSITORY);
-            Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository userSearchRepository = currentProfile.getSearchRepository();
-            Map<String, InterMineBag> userWsMap =
-                (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
-            Map<String, InterMineBag> globalWsMap =
-                (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
-            Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
-            allBags.putAll(globalWsMap);
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
+                    SessionMethods.getGlobalSearchRepository(servletContext));
 
             Query distinctQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
