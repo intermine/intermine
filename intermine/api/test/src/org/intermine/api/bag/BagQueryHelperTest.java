@@ -1,4 +1,4 @@
-package org.intermine.web.logic.bag;
+package org.intermine.api.bag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,10 +9,10 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Department;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.ClassKeyHelper;
 
 public class BagQueryHelperTest extends TestCase {
 

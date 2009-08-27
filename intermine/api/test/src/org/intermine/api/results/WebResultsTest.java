@@ -1,4 +1,4 @@
-package org.intermine.web.logic.results;
+package org.intermine.api.results;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -19,9 +19,11 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -38,9 +40,6 @@ import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.query.MainHelper;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
 
 /**
  * Tests for the WebResults class

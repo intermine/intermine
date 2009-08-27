@@ -14,5 +14,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
 	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

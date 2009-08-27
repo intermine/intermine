@@ -1,22 +1,15 @@
-package org.intermine.web.logic;
+package org.intermine.api.config;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Thing;
-import org.intermine.util.DynamicUtil;
 
 public class ClassKeyHelperTest extends TestCase {
     private Model model;

@@ -1,13 +1,12 @@
 package org.intermine.web.logic;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.web.logic.widget.Hypergeometric;
-
-import java.math.BigDecimal;
-
 import junit.framework.TestCase;
+
+import org.intermine.web.logic.widget.Hypergeometric;
 
 public class WebUtilTest extends TestCase
 {

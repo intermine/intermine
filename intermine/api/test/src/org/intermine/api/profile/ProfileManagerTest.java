@@ -1,4 +1,4 @@
-package org.intermine.web.logic.profile;
+package org.intermine.api.profile;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -28,6 +28,8 @@ import javax.xml.stream.XMLStreamWriter;
 import junit.framework.Test;
 
 import org.custommonkey.xmlunit.XMLUnit;
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.CEO;
@@ -52,9 +54,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Tests for the Profile class.

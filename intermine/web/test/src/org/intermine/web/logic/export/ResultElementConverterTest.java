@@ -6,7 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.api.results.ResultElement;
 
 /*
  * Copyright (C) 2002-2007 FlyMine

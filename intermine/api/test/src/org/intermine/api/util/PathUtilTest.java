@@ -1,4 +1,4 @@
-package org.intermine.web.logic;
+package org.intermine.api.util;
 
 import java.util.Collections;
 
