@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
   <class name="Protein" is-interface="true">
-	<collection name="pathways" referenced-type="Pathway" />
+	<collection name="pathways" referenced-type="Pathway" reverse-reference="proteins"/>
   </class>  
   <class name="Pathway" extends="BioProperty" is-interface="true" >
  	 <attribute name="identifier" type="java.lang.String"/>

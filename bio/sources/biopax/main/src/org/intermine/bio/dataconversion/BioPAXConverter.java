@@ -14,161 +14,216 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biopax.paxtools.controller.PropertyEditor;
 import org.biopax.paxtools.controller.Traverser;
 import org.biopax.paxtools.controller.Visitor;
 import org.biopax.paxtools.io.jena.JenaIOHandler;
 import org.biopax.paxtools.io.simpleIO.SimpleEditorMap;
-import org.biopax.paxtools.model.level2.pathwayComponent;
 import org.biopax.paxtools.model.BioPAXElement;
 import org.biopax.paxtools.model.BioPAXLevel;
+import org.biopax.paxtools.model.Model;
+import org.biopax.paxtools.model.level2.pathway;
+import org.intermine.bio.util.OrganismData;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-
 /**
  * 
  * @author
  */
-public class BioPAXConverter extends BioFileConverter
+public class BioPAXConverter extends BioFileConverter implements Visitor
 {
     private static final Logger LOG = Logger.getLogger(BioPAXConverter.class);
     private static final String DATASET_TITLE = "BioPAX";
     private static final String DATA_SOURCE_NAME = "BioPAX data set";
-    List<String> canons = new ArrayList();
+    private static final String NAMESPACE = "Reactome";
+    private static final String PROTEIN_DATASOURCE = "Flybase";
+    private Map<String, String> pathways = new HashMap();
+    private Map<String, Item> proteins = new HashMap();
+    Traverser traverser;
+    private Set<BioPAXElement> visited = new HashSet();
+    private int depth=0;
+    private Item organism;
+    private String pathwayRefId = null;
+    private List<MultiKey> synonyms = new ArrayList(); 
+    private Set<String> taxonIds = null;
+    OrganismRepository or;
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
-     * @param model the Model
+     * @param intermineModel the Model
+     * @throws ObjectStoreException if organism can't be stored
      */
-    public BioPAXConverter(ItemWriter writer, Model model) 
+    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) 
     throws ObjectStoreException {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        Item o = createItem("Organism");
-        o.setAttribute("taxonId", "4932");
-        try {
-            store(o);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
+        super(writer, intermineModel, DATA_SOURCE_NAME, DATASET_TITLE);
+        or = OrganismRepository.getOrganismRepository();
+       
+        traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void process(Reader reader) throws Exception {
-
-        // TODO the reader is never used
+    public void process(@SuppressWarnings("unused") Reader reader) throws Exception {
         
-        JenaIOHandler jenaIOHandler = new JenaIOHandler();
         File file = getCurrentFile();
-        org.biopax.paxtools.model.Model jenaModel 
-            = jenaIOHandler.convertFromOWL(new FileInputStream(file));
-//        Set<org.biopax.paxtools.model.level2.pathway> pathways = jenaModel.getObjects(org.biopax.paxtools.model.level2.pathway.class);
+        String filename = file.getName();
+        String[] bits = filename.split(" ");
         
-        Set objects = jenaModel.getObjects();
+        String genus = bits[0];
+        String species = bits[1].split("\\.")[0];
         
-        
-        
-        
-//        for (Object object : objects) {
-//            if (object.getClass().getCanonicalName().equals("org.biopax.paxtools.impl.level2.pathwayImpl")) {
-//                storePathways((org.biopax.paxtools.model.level2.pathway) object);
-//            }
-//        }
-
-
-        
-//        ProteinNameLister lister = new ProteinNameLister();
-//        lister.listProteinUnificationXrefsPerPathway(jenaModel);
-        
-        // This is a visitor for elements in a pathway - direct and indirect
-        Visitor visitor = new Visitor() {
-            //This is the only method to implement
-            //You define what to do when the visitor object visited
-            // bpe in the model
-            public void visit(BioPAXElement bpe, org.biopax.paxtools.model.Model model, PropertyEditor editor) {
-                
-//                String name = bpe.getClass().getCanonicalName().toString();
-//                if (!canons.contains(name)) {
-//                    canons.add(name);
-//                    System.out.println(name);
-//                }
-                
-                
-                
-                if (bpe.getClass().getCanonicalName().contains("unificationXrefImpl")) {
-//                if (bpe instanceof org.biopax.paxtools.model.level2.physicalEntity) {
-                    // Do whatever you want with the pe here
-//                    org.biopax.paxtools.model.level2.physicalEntity pe = (org.biopax.paxtools.model.level2.physicalEntity) bpe;
-                    org.biopax.paxtools.model.level2.unificationXref xref = (org.biopax.paxtools.model.level2.unificationXref) bpe;
-//                    System.out.println("pe.getNAME() = " + xref.getDB());
-
-//                    ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref> unis=
-//                    new ClassFilterSet<org.biopax.paxtools.model.level2.unificationXref>(pe.getXREF(),
-//                                    org.biopax.paxtools.model.level2.unificationXref.class);
-//                    for (org.biopax.paxtools.model.level2.unificationXref uni : unis)
-//                    {
-//                        System.out.println("uni = " + xref.getID());
-//                    }
-                }
-            }
-        };
-       
-        //Now we have defined what we want to do with the traversed objects
-        // Let's actually go ahead and traverse the model with our new visitor,
-        //for every pathway in the model.
-
-        Traverser traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), visitor); 
-        
-        Set<org.biopax.paxtools.model.level2.pathway> pathways = jenaModel.getObjects(org.biopax.paxtools.model.level2.pathway.class);
-        for (org.biopax.paxtools.model.level2.pathway pathway : pathways) {
-            traverser.traverse(pathway, jenaModel);
-            Set<pathwayComponent> components = pathway.getPATHWAY_COMPONENTS();
-           
-            for (pathwayComponent component : components) {
-                System.out.println(component.getClass().getCanonicalName().toString());
-            }
-        }        
-    } 
-        
-
-    
-    private void storePathways(org.biopax.paxtools.model.level2.pathway pathway) 
-    throws ObjectStoreException {
-        String shortName = pathway.getSHORT_NAME();
-        String name = pathway.getNAME();
-        Set<String> comments = pathway.getCOMMENT();
-        Set<org.biopax.paxtools.model.level2.dataSource> datasources = pathway.getDATA_SOURCE();
-        org.biopax.paxtools.model.level2.bioSource organism = pathway.getORGANISM();
-        Set<org.biopax.paxtools.model.level2.evidence> evidences = pathway.getEVIDENCE();
-        Set<org.biopax.paxtools.model.level2.pathwayComponent> components = pathway.getPATHWAY_COMPONENTS();
-        String rfId = pathway.getRDFId();
-        Set<String> synonyms = pathway.getSYNONYMS();
-        Set<org.biopax.paxtools.model.level2.xref> xrefs = pathway.getXREF();
-        String id = "";
-        for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
-            id = xref.getID();
-        }
-            
-        Item item = createItem("Pathway");
-        item.setAttribute("identifier", id);
-        item.setAttribute("name", name);
+        organism = createItem("Organism");
+        organism.setAttribute("name", genus + " " + species);
         try {
-            store(item);
+            store(organism);
         } catch (ObjectStoreException e) {
             throw new ObjectStoreException(e);
-        }    
+        }
         
-        
-        
-        
-        
-    }    
-  }
+        JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L2);
+        Model model = jenaIOHandler.convertFromOWL(new FileInputStream(file));
+        Set<pathway> pathwaySet = model.getObjects(pathway.class);
+        for (pathway pathwayObj : pathwaySet) {
+            // System.out.println("PATHWAY: "+ pathway.getNAME());
+            visited= new HashSet();
+            traverser.traverse(pathwayObj, model);
+        }
+    }
+
+    /**
+     * Sets the list of taxonIds that should be imported if using split input files.
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setBioPAXOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
+        LOG.info("Setting list of organisms to " + this.taxonIds);
+    }
+    
+    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway) 
+    throws ObjectStoreException {
+        String rdfId = pathway.getRDFId();
+        String refId = pathways.get(rdfId);
+        if (refId == null) {
+            Item item = createItem("Pathway");
+            item.setAttribute("name", pathway.getNAME());
+            Set<org.biopax.paxtools.model.level2.xref> xrefs = pathway.getXREF();
+            for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
+                String xrefId = xref.getRDFId();
+                if (xrefId.contains(NAMESPACE)) {
+                    String identifier = StringUtils.substringAfter(xrefId, NAMESPACE);
+                    item.setAttribute("identifier", identifier);
+                }
+            }
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            refId = item.getIdentifier();
+            pathways.put(rdfId, refId);
+        }
+        return refId;
+    }
+    
+    private Item getProtein(String accession) {        
+        Item item = proteins.get(accession);
+        if (item == null) {
+            item = createItem("Protein");
+            item.setAttribute("primaryAccession", accession);
+            item.setReference("organism", organism);
+            proteins.put(accession, item);
+        }
+        return item;
+    }
+    
+    /**
+     * Adds the BioPAX element into the model and traverses the element for its dependent elements.
+     *
+     * @param bpe    the BioPAX element to be added into the model
+     * @param model  model into which the element will be added
+     * @param editor editor that is going to be used for traversing functionallity
+     * @see org.biopax.paxtools.controller.Traverser
+     */
+    public void visit(BioPAXElement bpe, Model model, @SuppressWarnings("unused") 
+                      PropertyEditor editor) {
+        if (bpe != null) {
+            if (bpe instanceof org.biopax.paxtools.model.level2.entity) {
+                org.biopax.paxtools.model.level2.entity entity = (org.biopax.paxtools.model.level2.entity) bpe;
+                String className = entity.getModelInterface().getSimpleName();
+                if (className.equalsIgnoreCase("PATHWAY")) {
+                    try {
+                        pathwayRefId = getPathway((org.biopax.paxtools.model.level2.pathway) entity);
+                    } catch  (ObjectStoreException e) {
+                        return;
+                    }
+                }
+                if (className.equalsIgnoreCase("protein")) {                    
+                    String accession = entity.getRDFId();
+                    if (accession.contains(PROTEIN_DATASOURCE)) {
+                        accession = StringUtils.substringAfter(accession, PROTEIN_DATASOURCE + "_");
+                        Item protein = getProtein(accession);
+                        if (StringUtils.isNotEmpty(pathwayRefId)) {
+                            protein.addToCollection("pathways", pathwayRefId);
+                            try {
+                                setSynonym(protein.getIdentifier(), accession);
+                            } catch (ObjectStoreException e) {
+                                return;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            if(!visited.contains(bpe)) {
+                visited.add(bpe);
+                depth++;
+                traverser.traverse(bpe, model);
+                depth--;
+            }
+        }
+    }
+    
+    private void setSynonym(String subjectId, String value)
+    throws ObjectStoreException {
+        MultiKey key = new MultiKey(subjectId, value);
+        if (synonyms.contains(key)) {
+            Item syn = createItem("Synonym");
+            syn.setReference("subject", subjectId);
+            syn.setAttribute("value", value);
+            synonyms.add(key);
+            try {
+                store(syn);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
+    }
+    
+    public void close() 
+    throws ObjectStoreException{
+        for (Item protein : proteins.values()) {
+            try {
+                store(protein);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
+    }
+    
+}

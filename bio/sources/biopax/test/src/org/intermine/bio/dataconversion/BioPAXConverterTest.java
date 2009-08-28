@@ -37,16 +37,17 @@ public class BioPAXConverterTest extends ItemsTestCase
         converter = new BioPAXConverter(itemWriter, Model.getInstanceByName("genomic"));
         
         ClassLoader loader = getClass().getClassLoader();
-        String input = IOUtils.toString(loader.getResourceAsStream("BioPAXConverterTest_src.owl"));
+        String input = IOUtils.toString(loader.getResourceAsStream("Drosophila melanogaster.owl"));
         
         
-        File currentFile = new File(getClass().getClassLoader().getResource("BioPAXConverterTest_src.owl").toURI());
+        File currentFile = new File(getClass().getClassLoader().getResource("Drosophila melanogaster.owl").toURI());
         converter.setCurrentFile(currentFile);
+        converter.setBioPAXOrganisms("7227");
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set expected = readItemSet("BioPAXConverterTest_tgt.xml");
 
