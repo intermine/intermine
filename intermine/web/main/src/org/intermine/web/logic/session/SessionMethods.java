@@ -42,6 +42,7 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -815,11 +816,10 @@ public class SessionMethods
                                                  ServletContext servletContext, InterMineBag imBag)
                     throws ObjectStoreException {
         HttpSession session = request.getSession();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os
-                        .getModel());
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
         
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery);

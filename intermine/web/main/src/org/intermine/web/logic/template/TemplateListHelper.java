@@ -41,7 +41,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
@@ -112,7 +111,7 @@ public class TemplateListHelper
         }
 
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) context.getAttribute(Constants.MODEL);
         List<TemplateQuery> all = getAspectTemplates(aspect, context);
         Set<Class> types = new HashSet<Class>();
         types.addAll(DynamicUtil.decomposeClass(object.getClass()));
@@ -123,8 +122,6 @@ public class TemplateListHelper
             sc = sc.getSuperclass();
         }
 
-
-        Model model = os.getModel();
       TEMPLATE:
         for (Iterator<TemplateQuery> iter = all.iterator(); iter.hasNext();) {
             TemplateQuery template = iter.next();
@@ -272,8 +269,7 @@ public class TemplateListHelper
 
         Map<String, ? extends WebSearchable> globalTemplates =
             searchRepository.getWebSearchableMap(TagTypes.TEMPLATE);
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) context.getAttribute(Constants.MODEL);
         List<TemplateQuery> templates = new ArrayList<TemplateQuery>();
         List tags = tagManager.getTags(null, null, TagTypes.TEMPLATE, sup);
 

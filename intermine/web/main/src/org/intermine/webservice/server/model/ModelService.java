@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -33,8 +32,8 @@ public class ModelService extends WebService
      */
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
-        Model model = ((ObjectStore) request.getSession().getServletContext().
-                getAttribute(Constants.OBJECTSTORE)).getModel();
+        Model model = (Model) request.getSession().getServletContext().
+                getAttribute(Constants.MODEL);
         try {
             response.getWriter().append(model.toString());
         } catch (IOException e) {

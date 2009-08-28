@@ -29,7 +29,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -66,7 +65,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
         SearchRepository globalRepository =
             (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
@@ -142,7 +141,6 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
-            Model model = os.getModel();
             ProfileManager pm = 
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER); 
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,

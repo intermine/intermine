@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +27,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.TagManager;
+import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -54,12 +53,13 @@ public class ClassChooserController extends TilesAction
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ObjectStoreSummary oss =
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
-        Collection qualifiedTypes = os.getModel().getClassNames();
-        Map classDescrs = (Map) servletContext.getAttribute("classDescriptions");
+        Collection<String> qualifiedTypes = model.getClassNames();
+        Map<String, String> classDescrs = 
+            (Map<String, String>) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
 
         String superUserName = SessionMethods.getProfileManager(servletContext).getSuperuser();
@@ -75,9 +75,7 @@ public class ClassChooserController extends TilesAction
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
 
-        for (Iterator iter = qualifiedTypes.iterator(); iter.hasNext();) {
-
-            String className = (String) iter.next();
+        for (String className : qualifiedTypes) {
             String unqualifiedName = TypeUtil.unqualifiedName(className);
 
             if (oss.getClassCount(className) > 0) {

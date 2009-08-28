@@ -29,6 +29,7 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -62,7 +63,7 @@ public class ObjectDetailsTemplateController extends TilesAction
         TemplateQuery templateQuery = (TemplateQuery) context.getAttribute("templateQuery");
 
         TemplateForm templateForm = new TemplateForm();
-        Model model = SessionMethods.getObjectStore(servletContext).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         
         // this is either a report page for an InterMineObject or a list analysis page        
         if (displayObject != null) {

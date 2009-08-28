@@ -95,7 +95,7 @@ public class FindInListAction extends InterMineAction
             }
             if (foundId == -1) {
                 // no class key fields match so try all keys
-                List<String> allStringFields = getStringFields(os, bagQualifiedType);
+                List<String> allStringFields = getStringFields(os.getModel(), bagQualifiedType);
                 Query q = makeQuery(textToFind, bag, allStringFields, os.getModel());
                 foundId = findFirst(os, q);
             }
@@ -112,9 +112,8 @@ public class FindInListAction extends InterMineAction
         return forwardParameters.forward();
     }
 
-    private List<String> getStringFields(ObjectStore os, String bagQualifiedType) {
+    private List<String> getStringFields(Model model, String bagQualifiedType) {
         List<String> retList = new ArrayList<String>();
-        Model model = os.getModel();
         ClassDescriptor cd = model.getClassDescriptorByName(bagQualifiedType);
         for (AttributeDescriptor ad: cd.getAllAttributeDescriptors()) {
             if (ad.getType().equals(String.class.getName())) {

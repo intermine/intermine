@@ -134,7 +134,7 @@ public class PathQueryResultHelper
      * Create a PathQuery to get results for a collection of items from an InterMineObject
      *
      * @param webConfig the WebConfig
-     * @param os the ObjectStore
+     * @param os the production ObjectStore
      * @param object the InterMineObject
      * @param referencedClassName the collection type
      * @param field the name of the field for the collection in the InterMineObject
@@ -159,30 +159,30 @@ public class PathQueryResultHelper
         } else if (path.endIsReference()) {
             sr.add(path.getLastClassDescriptor().getType());
         }
-        return makePathQueryForCollectionForClass(webConfig, os, object, field, sr);
+        return makePathQueryForCollectionForClass(webConfig, os.getModel(), object, field, sr);
     }
 
     /**
      * Called by makePathQueryForCollection
      *
      * @param webConfig the webConfig
-     * @param os the objectstore
+     * @param model the object model
      * @param object the InterMineObject
      * @param field the name of the field for the collection in the InterMineObject
      * @param sr the list of classes and subclasses
      * @return a PathQuery
      */
-     static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, ObjectStore os,
+     static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, Model model,
                                                         InterMineObject object,
                                    String field, List<Class> sr) {
         Class commonClass = CollectionUtil.findCommonSuperclass(sr);
         List<Path> view = PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(DynamicUtil
-                            .getSimpleClassName(commonClass)), os.getModel(),
+                            .getSimpleClassName(commonClass)), model,
                             webConfig, TypeUtil.unqualifiedName(DynamicUtil
                                             .getSimpleClassName(object.getClass()))
                                        + "." + field, false);
 
-        PathQuery pathQuery = new PathQuery(os.getModel());
+        PathQuery pathQuery = new PathQuery(model);
         pathQuery.setViewPaths(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,

@@ -44,7 +44,6 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
@@ -135,9 +134,8 @@ public class PortalQueryAction extends InterMineAction
             .addParameter("qid", qid).forward();
         }
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
         BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
 

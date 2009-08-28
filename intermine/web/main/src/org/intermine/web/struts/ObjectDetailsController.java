@@ -39,6 +39,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
@@ -274,11 +275,11 @@ public class ObjectDetailsController extends InterMineAction
     public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
     throws Exception {
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        return new DisplayObject(object, os.getModel(), webConfig, webPropertiesMap, classKeys);
+        return new DisplayObject(object, model, webConfig, webPropertiesMap, classKeys);
     }
 
     private static String getBags(ObjectStore os, HttpSession session,

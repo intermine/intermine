@@ -10,29 +10,27 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.Map;
-import java.util.Comparator;
-
-import org.apache.struts.tiles.ComponentContext;
-import org.apache.struts.tiles.actions.TilesAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import org.intermine.metadata.Model;
+import org.apache.struts.tiles.ComponentContext;
+import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.TreeNode;
 
@@ -62,8 +60,7 @@ public class TreeController extends TilesAction
         }
 
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
 
         String rootClass = (String) request.getAttribute("rootClass");
         List<ClassDescriptor> rootClasses = new ArrayList<ClassDescriptor>();

@@ -22,7 +22,6 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
@@ -67,7 +66,7 @@ public class BagConversionHelper
         }
         Path configuredPath = pq.getView().get(0);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         pq.setViewPaths(PathQueryResultHelper
                         .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
                                         webConfig, configuredPath.getPrefix()
