@@ -24,24 +24,6 @@ public interface Constants
     public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
-     * ServletContext attribute maps category name to List of TemplateQuerys
-     */
-    //public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
-
-    /**
-     * ServletContext attribute maps a class name to a Map of category names to List of
-     * TemplateQuerys.
-     */
-    //public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
-
-    /**
-     * ServletContext attribute maps a class name to a Map of template names to simple expressions -
-     * the expression describes a field that should be set when a template is linked to from the
-     * object details page.  eg. Gene.identifier
-     */
-    //public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
-
-    /**
      * ServletContext attribute, List of category names.
      */
     public static final String CATEGORIES = "CATEGORIES";
@@ -76,6 +58,11 @@ public interface Constants
      * ServletContext attribute used to store the ObjectStore
      */
     public static final String OBJECTSTORE = "OBJECTSTORE";
+
+    /**
+     * ServletContext attribute used to store the Model
+     */
+    public static final String MODEL = "MODEL";
 
     /**
      * ServletContext attribute used to store the ProfileManager
@@ -233,7 +220,6 @@ public interface Constants
      * Session attribute used to store WebState object.
      */
     public static final String WEB_STATE = "WEB_STATE";
-
 
     /**
      * Current version of InterMine. This constant must changed by every new InteMine release.

@@ -36,7 +36,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
@@ -426,13 +425,13 @@ public class QueryBuilderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         
         PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
-        String prefixWithSubs = getPrefixWithSubclasses(prefix, query, os.getModel());
+        String prefixWithSubs = getPrefixWithSubclasses(prefix, query, model);
         
         // We want an inner join style, as we are about to add a constraint.
         if ((prefixWithSubs != null) && (prefixWithSubs.length() > 0)) {
@@ -580,8 +579,7 @@ public class QueryBuilderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         List<Path> view = SessionMethods.getEditingView(session);
         Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);

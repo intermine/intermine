@@ -102,9 +102,8 @@ public class ListsService extends WebService
 
     private Integer resolveMineId(HttpServletRequest request,
             ListsServiceInput input) {
-        ObjectStore os = (ObjectStore) request.getSession().getServletContext().
-            getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) request.getSession().getServletContext()
+            .getAttribute(Constants.OBJECTSTORE);
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {

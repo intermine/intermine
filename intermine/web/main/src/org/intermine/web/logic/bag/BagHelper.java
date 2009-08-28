@@ -21,8 +21,8 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 
 /**
@@ -60,11 +60,11 @@ public class BagHelper
      *
      * @param bag the InterMineIdBag
      * @param o the InterMineObject
-     * @param os the ObjectStore
+     * @param model the model
      * @return a boolean
      */
-    public static boolean isOfBagType (InterMineBag bag, InterMineObject o, ObjectStore os) {
-        Set classDescriptors = os.getModel().getClassDescriptorsForClass(o.getClass());
+    public static boolean isOfBagType (InterMineBag bag, InterMineObject o, Model model) {
+        Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
         for (Iterator iter = classDescriptors.iterator(); iter.hasNext();) {
             ClassDescriptor cld = (ClassDescriptor) iter.next();
             String className = cld.getName();

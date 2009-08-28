@@ -32,7 +32,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.Query;
@@ -218,15 +217,13 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
-
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile
                 .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
 
         String[] selectedBags = mbf.getSelectedBags();
 
-        String type = getTypesMatch(allBags, selectedBags, os);
+        String type = getTypesMatch(allBags, selectedBags, model);
         if (type == null) {
             // TODO this didn't get message from message bundle correctly
             SessionMethods.recordError(
@@ -284,11 +281,9 @@ public class ModifyBagAction extends InterMineAction
      *            the obejct store
      * @return a String containing the type name or null if there was no match
      */
-    private static String getTypesMatch(Map bags, String selectedBags[],
-            ObjectStore os) {
+    private static String getTypesMatch(Map bags, String selectedBags[], Model model) {
         // Check that all selected bags are of the same type
         String type = ((InterMineBag) bags.get(selectedBags[0])).getType();
-        Model model = os.getModel();
         String packageName = model.getPackageName();
         StringBuffer className = new StringBuffer(packageName + "." + type);
         try {

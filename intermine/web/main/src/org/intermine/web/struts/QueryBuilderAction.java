@@ -17,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
@@ -30,8 +30,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-
-import org.apache.log4j.Logger;
 
 /**
  * Action to handle button presses on the main tile
@@ -91,8 +89,7 @@ public class QueryBuilderAction extends InterMineAction
         // this should remove any invalid order by elements
         if ((mf.getUseJoin() != null) && mf.getUseJoin().equals("true") && (joinType != null)
             && (joinType.length() != 0) && (request.getParameter("loop") == null)) {
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            Model model = os.getModel();
+            Model model = (Model) servletContext.getAttribute(Constants.MODEL);
             Path path = PathQuery.makePath(model, query, mf.getPath());
             String rootPath = null;
             if (path.endIsAttribute()) {

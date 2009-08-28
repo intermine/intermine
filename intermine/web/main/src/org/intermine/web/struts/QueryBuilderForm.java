@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -25,7 +24,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
@@ -355,8 +353,7 @@ public class QueryBuilderForm extends ActionForm
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 

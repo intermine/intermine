@@ -36,7 +36,6 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
@@ -73,8 +72,7 @@ public class QueryBuilderConstraintController extends TilesAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
@@ -203,7 +201,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 Map<String, InterMineBag> allBags =
                     ProfileUtil.getAllBags(profile.getSavedBags(),
                             SessionMethods.getGlobalSearchRepository(servletContext));
-                Map bags = WebUtil.getBagsOfType(allBags, nodeType, os.getModel());
+                Map bags = WebUtil.getBagsOfType(allBags, nodeType, model);
                 if (!bags.isEmpty()) {
                         request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
                         request.setAttribute("bags", bags);

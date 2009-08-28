@@ -99,9 +99,8 @@ public class WidgetsService extends WebService
     protected InterMineBag getBag(String className, List<String> ids,
                                   ServletContext servletContext, Profile profile)
     throws ObjectStoreException {
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
         try {
             className = StringUtil.capitalise(className);
             Class.forName(model.getPackageName() + "." + className);

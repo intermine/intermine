@@ -113,6 +113,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os);
+        servletContext.setAttribute(Constants.MODEL, os.getModel());
 
         loadWebConfig(servletContext, os);
 

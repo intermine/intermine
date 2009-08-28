@@ -58,7 +58,7 @@ public class AddToBagAction extends InterMineAction
         if (existingBag != null) {
             try {
                 InterMineObject o = os.getObjectById(id);
-                if (BagHelper.isOfBagType(existingBag, o, os)) {
+                if (BagHelper.isOfBagType(existingBag, o, os.getModel())) {
                     existingBag.addIdToBag(id);
                     recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName())
                                     , request);

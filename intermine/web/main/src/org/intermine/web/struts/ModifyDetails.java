@@ -85,7 +85,7 @@ public class ModifyDetails extends DispatchAction
                                                              name, scope);
         
         TemplateForm templateForm = new TemplateForm();
-        Model model = SessionMethods.getObjectStore(servletContext).getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         
         if (idForLookup != null && idForLookup.length() != 0) {
             Integer objectId = new Integer(idForLookup);

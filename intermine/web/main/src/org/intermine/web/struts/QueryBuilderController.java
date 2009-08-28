@@ -34,7 +34,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
@@ -88,8 +87,7 @@ public class QueryBuilderController extends TilesAction
                                        @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         assureCorrectSortOrder(query);
 
