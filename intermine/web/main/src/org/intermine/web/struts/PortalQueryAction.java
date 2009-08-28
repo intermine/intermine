@@ -46,8 +46,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraint;
@@ -244,7 +242,7 @@ public class PortalQueryAction extends InterMineAction
                     if (converted.size() == 1) {
                         return goToObjectDetails(mapping, converted.get(0).toString());
                     }
-                    return goToBagDetails(mapping, os, imBag, converted, profile);
+                    return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
             }
         }
@@ -277,20 +275,17 @@ public class PortalQueryAction extends InterMineAction
             return goToObjectDetails(mapping, bagList.get(0).toString());
         // Make a bag
         } else if (bagList.size() >= 1) {
-            return goToBagDetails(mapping, os, imBag, bagList, profile);
+            return createBagAndGoToBagDetails(mapping, imBag, bagList);
         // No matches
         } else {
             return goToResults(mapping, session, webResults);
         }
     }
 
-    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag,
-                                         List bagList, Profile profile)
-                                         throws ObjectStoreException {
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        osw.addAllToBag(imBag.getOsb(), bagList);
-        osw.close();
-        profile.saveBag(imBag.getName(), imBag);
+    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag, 
+            List<Integer> bagList)
+    throws ObjectStoreException {
+        imBag.addIdsToBag(bagList);
         return new ForwardParameters(mapping.findForward("bagDetails"))
         .addParameter("bagName", imBag.getName()).forward();
     }

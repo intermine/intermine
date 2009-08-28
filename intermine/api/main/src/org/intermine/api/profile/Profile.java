@@ -312,13 +312,12 @@ public class Profile
     }
 
     /**
-     * Create a bag - saves it to the user profile database too.
+     * Create a bag and save it to the userprofile database.
      *
      * @param name the bag name
      * @param type the bag type
      * @param description the bag description
-     * @param os the production ObjectStore
-     * @param uosw the ObjectStoreWriter of the userprofile database
+     * @return the new bag
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description) 

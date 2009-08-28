@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.api.bag.InterMineBag;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
@@ -35,13 +34,10 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
-import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -1054,40 +1050,17 @@ public class PagedTable
         this.selectionIds = selectionIds;
     }
 
-    /**
-     * Adds the selected objects to the given bag in the given objectstore.
-     *
-     * @param osw the ObjectStoreWriter
-     * @param osb the bag to write to
-     * @throws ObjectStoreException if an error occurs
-     */
-    public void addSelectedToBag(ObjectStoreWriter osw, ObjectStoreBag osb)
-    throws ObjectStoreException {
-        if (allSelected == -1) {
-            osw.addAllToBag(osb, selectionIds.keySet());
-        } else {
-            osw.addToBagFromQuery(osb, getBagCreationQuery());
-        }
-    }
 
     /**
-     * Adds the selected objects to the given bag in the given objectstore.
-     * Assumes table contains same type of object as bag.
-     * @param os object store
-     * @param bag bag to add to
+     * Adds the selected object ids to the given bag.
+     * @param bag the bag to add ids to
      * @throws ObjectStoreException if an error occurs
      */
-    public void addSelectedToBag(ObjectStore os, InterMineBag bag)
-    throws ObjectStoreException {
-        ObjectStoreWriter osw = null;
-        try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            ObjectStoreBag osb = bag.getOsb();
-            addSelectedToBag(osw, osb);
-        } finally {
-            if (osw != null) {
-                osw.close();
-            }
+    public void addSelectedToBag(InterMineBag bag) throws ObjectStoreException {
+        if (allSelected == -1) {
+            bag.addIdsToBag(selectionIds.keySet());
+        } else {
+            bag.addToBagFromQuery(getBagCreationQuery());
         }
     }
 
@@ -1096,48 +1069,35 @@ public class PagedTable
      * remove the selected elements from the bag.  No action is taken if user selects all records
      * to be deleted.
      *
-     * @param bagName name of bag
-     * @param profile user's profile
-     * @param os object store
+     * @param bag the bag to remove ids from
      * @param session user's session
-     * @param bagSize size of bag
-     * @return number of objects removed from the list
+     * @return number of objects removed from the bag
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public int removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session,
-                              int bagSize)
-    throws Exception {
-        int i = 0;
-        if (bagSize == selectionIds.size()) {
-            return i;
+    public int removeSelectedFromBag(InterMineBag bag, HttpSession session) throws Exception {
+        int removedCount = 0;
+        // don't remove all ids from bag
+        if (bag.size() == selectionIds.size()) {
+            return removedCount;
         }
 
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        InterMineBag interMineBag = savedBags.get(bagName);
-        ObjectStoreWriter osw = null;
-        try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            if (allSelected != -1) {
-                Set<Integer> keys = selectionIds.keySet();
-                for (Integer key : interMineBag.getContentsAsIds()) {
-                    if (!keys.contains(key)) {
-                        osw.removeFromBag(interMineBag.getOsb(), key);
-                        i++;
-                    }
-                }
-            } else {
-                for (Integer key : selectionIds.keySet()) {
-                    osw.removeFromBag(interMineBag.getOsb(), key);
-                    i++;
+        if (allSelected == -1) {
+            Set<Integer> idsToRemove = selectionIds.keySet();
+            bag.removeIdsFromBag(idsToRemove);
+            removedCount = idsToRemove.size();
+        } else {
+            // selection is reversed, so selectionIds.keySet() are the ids to keep
+            Set<Integer> idsToRemove = new HashSet<Integer>();
+            for (Integer id : bag.getContentsAsIds()) {
+                if (!selectionIds.keySet().contains(id)) {
+                    idsToRemove.add(id);
                 }
             }
-        } finally {
-            if (osw != null) {
-                osw.close();
-            }
-        }
-        SessionMethods.invalidateBagTable(session, bagName);
-        return i;
+            bag.removeIdsFromBag(idsToRemove);
+            removedCount = idsToRemove.size();
+        } 
+        SessionMethods.invalidateBagTable(session, bag.getName());
+        return removedCount;
     }
 }

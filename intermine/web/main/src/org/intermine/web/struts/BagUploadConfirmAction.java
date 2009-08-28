@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,9 +23,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 
@@ -56,8 +52,6 @@ public class BagUploadConfirmAction extends InterMineAction
         }
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = confirmForm.getNewBagName();
@@ -88,15 +82,7 @@ public class BagUploadConfirmAction extends InterMineAction
         }
 
         InterMineBag bag = profile.createBag(bagName, bagType, "");
-        ObjectStoreWriter osw = null;
-        try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            osw.addAllToBag(bag.getOsb(), contents);
-        } finally {
-            if (osw != null) {
-                osw.close();
-            }
-        }
+        bag.addIdsToBag(contents);
 
         profile.saveBag(bagName, bag);
         session.removeAttribute("bagQueryResult");

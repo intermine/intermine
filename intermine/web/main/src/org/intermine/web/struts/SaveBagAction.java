@@ -24,8 +24,6 @@ import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -114,28 +112,20 @@ public class SaveBagAction extends InterMineAction
             return mapping.findForward("results");
         }
 
-        ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
                 bag = profile.createBag(bagName, pt.getSelectedClass(), "");
             }
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            pt.addSelectedToBag(osw, bag.getOsb());
+            
+            pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
         } catch (ObjectStoreException e) {
             LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");
-        } finally {
-            try {
-                if (osw != null) {
-                    osw.close();
-                }
-            } catch (ObjectStoreException e) {
-                // empty
-            }
-        }
+        } 
+
         if (operation.equals("saveNewBag")) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
                 bag.getName()).forward();
