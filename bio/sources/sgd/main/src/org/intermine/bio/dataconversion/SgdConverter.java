@@ -13,60 +13,49 @@ package org.intermine.bio.dataconversion;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
-import org.intermine.util.Util;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 /**
- *
- * @author
+ * Converts results sets into intermine objects
+ * @author Julie Sullivan
  */
 public class SgdConverter extends BioDBConverter
 {
-    private static final Logger LOG = Logger.getLogger(SgdConverter.class);
+//    private static final Logger LOG = Logger.getLogger(SgdConverter.class);
     private static final String DATASET_TITLE = "SGD data set";
     private static final String DATA_SOURCE_NAME = "SGD";
     private Map<String, String> chromosomes = new HashMap(); 
     private Map<String, String> plasmids = new HashMap();
+    private Map<String, String> phenotypes = new HashMap();
+    private Map<String, String> literatureTopics = new HashMap();
     private Map<String, Item> genes = new HashMap();
     private Map<String, String> synonyms = new HashMap(); 
     private Map<String, String> publications = new HashMap();
     private static final String TAXON_ID = "4932";
     private Item organism;
     private Map<String, List<String>> featureMap = new HashMap();
-    private static final String GENE_CONSTRAINT = "(g.feature_type = 'ORF' "
-        + "    OR g.feature_type = 'tRNA' "
-        + "    OR g.feature_type = 'pseudogene' "
-        + "    OR g.feature_type = 'snRNA' "
-        + "    OR g.feature_type = 'snoRNA' "
-        + "    OR g.feature_type = 'rRNA' "
-        + "    OR g.feature_type = 'ncRNA') ";
-    private static final String GENE_LOCATION_CONSTRAINT = " (c.feature_type = 'chromosome' "
-        + "    OR c.feature_type = 'plasmid') ";
-    
+    private static final SgdProcessor PROCESSOR = new SgdProcessor();
     
     /**
      * Construct a new SgdConverter.
      * @param database the database to read from
      * @param model the Model used by the object store we will write to with the ItemWriter
      * @param writer an ItemWriter used to handle Items created
+     * @throws ObjectStoreException if organism can't be stored
      */
     public SgdConverter(Database database, Model model, ItemWriter writer) 
     throws ObjectStoreException {
         super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
-        
         organism = createItem("Organism");
         organism.setAttribute("taxonId", TAXON_ID);
         store(organism);
@@ -88,11 +77,12 @@ public class SgdConverter extends BioDBConverter
         
         processCDSs(connection);
         processBindingSites(connection);
+        processPhenotypes(connection);
     }
    
     private void processGenes(Connection connection) 
     throws SQLException, ObjectStoreException {
-        ResultSet res = getGeneResults(connection);
+        ResultSet res = PROCESSOR.getGeneResults(connection);
         while (res.next()) {
             String featureNo = res.getString("feature_no");
             if (genes.get(featureNo) == null) {
@@ -102,13 +92,17 @@ public class SgdConverter extends BioDBConverter
                 String secondaryIdentifier = res.getString("feature_name");                
                 String symbol = res.getString("gene_name");                
                 String name = res.getString("name_description");
+                String description = res.getString("headline");
                 
                 Item item = createItem("Gene");
                 item.setAttribute("primaryIdentifier", primaryIdentifier); 
                 if (StringUtils.isNotEmpty(name)) {
-                    item.setAttribute("name", res.getString("name_description")); 
+                    item.setAttribute("name", name); 
                 }
-                item.setAttribute("featureType", res.getString("feature_type"));                
+                item.setAttribute("featureType", res.getString("feature_type"));  
+                if (StringUtils.isNotEmpty(description)) {
+                    item.setAttribute("description", description); 
+                }
                 item.setAttribute("secondaryIdentifier", secondaryIdentifier);
                 item.setReference("organism", organism);
                 if (StringUtils.isNotEmpty(symbol)) {
@@ -121,7 +115,6 @@ public class SgdConverter extends BioDBConverter
                 getSynonym(refId, "symbol", symbol);
                 getSynonym(refId, "identifier", secondaryIdentifier);
                 getSynonym(refId, "identifier", primaryIdentifier);
-                
             }
         }      
     }
@@ -139,7 +132,7 @@ public class SgdConverter extends BioDBConverter
 
     private void processGeneLocations(Connection connection) 
     throws SQLException, ObjectStoreException {
-        ResultSet res = getGeneLocationResults(connection);
+        ResultSet res = PROCESSOR.getGeneLocationResults(connection);
         while (res.next()) {
             String featureNo = res.getString("feature_no");
             String geneFeatureNo = res.getString("gene_feature_no");
@@ -171,7 +164,7 @@ public class SgdConverter extends BioDBConverter
                 end = "0";
             }
             
-            start = (strand.equals("W") ? start : end);
+            start = (strand.equals("W") ? end : start);
             end = (strand.equals("W") ? start : end);
 
             item.setAttribute("length", getLength(start, end));
@@ -185,64 +178,46 @@ public class SgdConverter extends BioDBConverter
                 
         }      
     }
-    
-    // TODO implement this when we have sequences
-    private void processProteins(Connection connection) 
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getProteinResults(connection);
-        while (res.next()) {
-
-            Item gene = genes.get(res.getString("feature_no"));
-            if (gene == null) {
-                return;
-            }
-            
-            // ~~~ sequence ~~~
-            String seq = getSequence(res.getString("seq_length"), res.getString("residues"));
-            
-            // ~~~ protein ~~~            
-            Item protein = createItem("Protein");
-            protein.setReference("sequence", seq);
-            protein.setReference("organism", organism);
-            protein.addToCollection("genes", gene.getIdentifier());
-            
-            try {
-                store(protein);
-            } catch (ObjectStoreException e) {
-                throw new ObjectStoreException(e);
-            }
-            
-        }
-    }
-    
-    
+        
     private void processCDSs(Connection connection) 
     throws SQLException, ObjectStoreException {
-        ResultSet res = getCDSResults(connection);
+        ResultSet res = PROCESSOR.getCDSResults(connection);
         while (res.next()) {
-            
-// TODO no seq yet
-//            String residues = res.getString("residues");
-//            String length = res.getString("seq_length");
+            String secondaryIdentifier = res.getString("feature_name");
+            String primaryIdentifier = res.getString("dbxref_id"); 
             String gene_feature_no = res.getString("gene_feature_no");
             Item gene =  genes.get(gene_feature_no);
             if (gene == null) {
                 throw new RuntimeException("Gene not found:  " + gene_feature_no);
             }
+            Item item = createItem("Exon");
+            item.setAttribute("primaryIdentifier", primaryIdentifier);
+            item.setAttribute("secondaryIdentifier", secondaryIdentifier);
+            item.setReference("organism", organism);
+            item.setReference("gene", gene.getIdentifier());
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            /**
+            String residues = res.getString("residues");
+            String length = res.getString("seq_length");
+
+
             String geneRefId = gene.getIdentifier();
             
             // ~~~ sequence ~~~
-//            String seq = getSequence(length, residues);
+            String seq = getSequence(length, residues);
             
-            String secondaryIdentifier = res.getString("feature_name");
-            String primaryIdentifier = res.getString("dbxref_id");            
+    
             
             // ~~~ CDS ~~~            
             Item transcript = createItem("Transcript");
             transcript.setAttribute("primaryIdentifier", primaryIdentifier);
             transcript.setAttribute("secondaryIdentifier", secondaryIdentifier);
-//            transcript.setAttribute("length", length);
-//            transcript.setReference("sequence", seq);
+            transcript.setAttribute("length", length);
+            transcript.setReference("sequence", seq);
             transcript.setReference("organism", organism);
             transcript.setReference("gene", geneRefId);
             
@@ -255,8 +230,8 @@ public class SgdConverter extends BioDBConverter
             Item CDS = createItem("CDS");
             CDS.setAttribute("primaryIdentifier", primaryIdentifier);
             CDS.setAttribute("secondaryIdentifier", secondaryIdentifier);
-//            transcript.setAttribute("length", length);
-//            transcript.setReference("sequence", seq);
+            transcript.setAttribute("length", length);
+            transcript.setReference("sequence", seq);
             CDS.setReference("organism", organism);
             CDS.setReference("gene", geneRefId);
             
@@ -267,16 +242,16 @@ public class SgdConverter extends BioDBConverter
             getSynonym(refId, "identifier", primaryIdentifier);
             
             // ~~~ location ~~~
-//            String strand = res.getString("strand");
-//            String start = (strand.equals("C") ? res.getString("start_coord") : 
-//                res.getString("stop_coord"));
-//            String stop = (strand.equals("C") ? res.getString("stop_coord") : 
-//                res.getString("start_coord"));
-//            
-//            transcript.setAttribute("length", getLength(start, stop));
-//            String locationRefId = getLocation(transcript.getIdentifier(), 
-//                                               geneRefId, start, stop, strand);
-//            transcript.setReference("chromosomeLocation", locationRefId);
+            String strand = res.getString("strand");
+            String start = (strand.equals("C") ? res.getString("start_coord") : 
+                res.getString("stop_coord"));
+            String stop = (strand.equals("C") ? res.getString("stop_coord") : 
+                res.getString("start_coord"));
+            
+            transcript.setAttribute("length", getLength(start, stop));
+            String locationRefId = getLocation(transcript.getIdentifier(), 
+                                               geneRefId, start, stop, strand);
+            transcript.setReference("chromosomeLocation", locationRefId);
             
             try {
                 store(transcript);
@@ -284,61 +259,51 @@ public class SgdConverter extends BioDBConverter
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-            
+            **/
         }
     }
     
     private void processPubs(Connection connection)     
     throws SQLException, ObjectStoreException {
-        ResultSet res = getPubResults(connection);
+        ResultSet res = PROCESSOR.getPubResults(connection);
         while (res.next()) {
             
             String featureNo = res.getString("reference_no");
             String geneFeatureNo = res.getString("gene_feature_no");
-            String refId = publications.get(featureNo);
+            Item gene = genes.get(geneFeatureNo);
+            if (gene == null) {
+                continue;
+            }
             
-            if (refId == null) {
-                String issue = res.getString("issue");                
-                String volume = res.getString("volume");
-                String pubMedId = res.getString("pubmed");
-                String pages = res.getString("page");
-                String title = res.getString("title");
-                
-                Item item = createItem("Publication");
-                if (StringUtils.isNotEmpty(issue)) {
-                    item.setAttribute("issue", issue);
-                }
-                if (StringUtils.isNotEmpty(pubMedId)) {
-                    item.setAttribute("pubMedId", pubMedId);
-                }
-                if (StringUtils.isNotEmpty(title)) {
-                    item.setAttribute("title", title);
-                }
-                if (StringUtils.isNotEmpty(volume)) {
-                    item.setAttribute("volume", volume);
-                }
-                item.setAttribute("year", res.getString("year"));
-                if (StringUtils.isNotEmpty(pages)) {
-                    item.setAttribute("pages", pages);
-                }
-                //item.setAttribute("citation", res.getString("citation"));                
-                refId = item.getIdentifier();
-                publications.put(featureNo, refId);
-                
+            String issue = res.getString("issue");                
+            String volume = res.getString("volume");
+            String pubMedId = res.getString("pubmed");
+            String pages = res.getString("page");
+            String title = res.getString("title");
+            String year = res.getString("year");
+            String citation = res.getString("citation");
+            String refId = getPub(featureNo, issue, volume, pubMedId, pages, title, year, citation);
+            
+            gene.addToCollection("publications", refId);
+            
+            String topic = res.getString("property_value");            
+            if (gene != null && res.getString("property_type").equals("literature_topic")) {
+                Item item = createItem("PublicationAnnotation");
+                item.setReference("gene", gene);
+                item.setReference("literatureTopic", getLiteratureTopic(topic));
+                item.addToCollection("publications", refId);
                 try {
                     store(item);
                 } catch (ObjectStoreException e) {
                     throw new ObjectStoreException(e);
-                }
-                addFeature(geneFeatureNo, item.getIdentifier());
+                }                
             }
         }
-        addCollection("publications");
     }
     
     private void processBindingSites(Connection connection) 
     throws SQLException, ObjectStoreException {
-        ResultSet res = getBindingSiteResults(connection);
+        ResultSet res = PROCESSOR.getBindingSiteResults(connection);
         while (res.next()) {
             // ~~~ binding site ~~~                 
             String primaryIdentifier = res.getString("dbxref_id");
@@ -350,31 +315,6 @@ public class SgdConverter extends BioDBConverter
             item.setReference("organism", organism);
             String refId = item.getIdentifier();
             
-            String chromosomeFeatureNo = res.getString("chromosome_feature_no");
-            String chromosomeRefId = getChromosome(chromosomeFeatureNo, 
-                                                   res.getString("chromosomeIdentifier"));
-            item.setReference("chromosome", chromosomeRefId);
-
-            // ~~~ location ~~~
-            String strand = res.getString("strand");
-            String start =  res.getString("start_coord"); 
-            String end = res.getString("stop_coord");
-
-            if (start == null) {
-                start = "0";
-            }
-
-            if (end == null) {
-                end = "0";
-            }
-
-            start = (strand.equals("W") ? start : end);
-            end = (strand.equals("W") ? start : end);
-
-            item.setAttribute("length", getLength(start, end));
-            String locationRefId = getLocation(refId, chromosomeRefId, start, end, strand);
-            item.setReference("chromosomeLocation", locationRefId);
-            
             try {
                 store(item);
             } catch (ObjectStoreException e) {
@@ -384,6 +324,43 @@ public class SgdConverter extends BioDBConverter
             // ~~~ synonyms ~~~
             getSynonym(refId, "identifier", secondaryIdentifier);
             getSynonym(refId, "identifier", primaryIdentifier);
+        }
+    }
+
+    private void processPhenotypes(Connection connection) 
+    throws SQLException, ObjectStoreException {
+        ResultSet res = PROCESSOR.getPhenotypeResults(connection);
+        while (res.next()) {
+
+            String geneFeatureNo = res.getString("gene_feature_no");
+            Item gene = genes.get(geneFeatureNo);
+            if (gene == null) {
+                // TODO this shouldn't happen, throw an exception!
+                continue;
+            }
+            
+            String phenotypeNo = res.getString("phenotype2_no");
+            String experimentType = res.getString("experiment_type");
+            String mutantType = res.getString("mutant_type");
+            String qualifier = res.getString("qualifier");
+            String observable = res.getString("observable");            
+//            String experimentComment = res.getString("experiment_comment");
+//            String experimentNo = res.getString("experiment_no");
+            
+            String phenotypeRefId = getPhenotype(phenotypeNo, experimentType, mutantType, 
+                                                 qualifier, observable);
+            
+            Item item = createItem("PhenotypeAnnotation");
+// TODO this doesn't seem to do anything right now
+//            item.setReference("experiment", getExperiment(experimentNo, experimentComment));
+            item.setReference("gene", gene.getIdentifier());
+            item.setReference("phenotype", phenotypeRefId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+
         }
     }
 
@@ -405,149 +382,6 @@ public class SgdConverter extends BioDBConverter
         }
         featureMap.get(featureNo).add(refId);
     }
-    
-    /**
-     * Return the results of running a query for genes
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getGeneResults(Connection connection)
-        throws SQLException {
-        String query = " SELECT g.feature_no, g.feature_name, g.dbxref_id, "
-            + " g.source, g.coord_version, g.start_coord, g.stop_coord, g.strand, g.gene_name,  "
-            + " g.name_description, g.genetic_position, g.headline, g.dbxref_id, g.strand, "
-            + " g.feature_type "
-            + " FROM feature g "         
-            + " WHERE " + GENE_CONSTRAINT; 
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-   
-    /**
-     * Return the results of running a query for genes and chromosomes
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getGeneLocationResults(Connection connection)
-        throws SQLException {
-        String query = " SELECT g.feature_no AS gene_feature_no, "
-            + " c.feature_name AS identifier, c.feature_no, c.feature_type, "
-            + " g.strand, g.stop_coord, g.start_coord "
-            + " FROM feature g, feature c, feat_relationship j "         
-            + " WHERE " + GENE_CONSTRAINT            
-            + "   AND g.feature_no = j.child_feature_no "
-            + "   AND j.parent_feature_no = c.feature_no "
-            + "   AND " + GENE_LOCATION_CONSTRAINT;
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-
-    /**
-     * Return the results of running a query for protein sequences
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getProteinResults(Connection connection)
-        throws SQLException {
-        String query = " SELECT feature_no, seq_length, residues "
-            + " FROM seq s "         
-            + " WHERE s.seq_type = 'protein'"; 
-       
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
-    /**
-     * Return the results of running a query for CDSs and their sequences
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getCDSResults(Connection connection)
-        throws SQLException {
-        String query = " SELECT f.feature_no, f.feature_name, f.dbxref_id, f.feature_type,  "
-            + " f.source, f.coord_version, f.start_coord, f.stop_coord, f.strand, f.gene_name,  "
-            + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, "
-            + " j.parent_feature_no as gene_feature_no, s.residues, s.seq_length "
-            + " FROM feature f, feat_relationship j, seq s "
-            + " WHERE f.feature_type = 'CDS' "
-            + "   AND f.feature_no = j.child_feature_no "
-            + "   AND s.feature_no = f.feature_no "
-            + "   AND s.seq_type = 'genomic' ";
-        
-        // TODO no sequences yet
-        query = "SELECT c.feature_no, c.feature_name, c.dbxref_id,   "
-        + " c.source, c.coord_version, c.start_coord, c.stop_coord, c.strand, c.gene_name,  "
-        + " c.name_description, c.genetic_position, c.headline, c.dbxref_id, c.strand, "
-        + " g.feature_no AS gene_feature_no "
-        + " FROM feature c, feature g, feat_relationship j "
-        + " WHERE c.feature_type = 'CDS' "
-        + "   AND " + GENE_CONSTRAINT 
-        + "   AND c.feature_no = j.child_feature_no "
-        + "   AND g.feature_no = j.parent_feature_no ";
-        
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-        
-    /**
-     * Return the results of running a query for all publications.  
-     * TODO only retreive publications for features we are interested in
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getPubResults(Connection connection)
-        throws SQLException {
-        String query = " SELECT r.reference_no, r.citation, r.issue, r.journal_no, "
-                + " r.page, r.pdf_status, r.pubmed, p.source, r.status, r.title, r.volume, r.year, "
-                + " g.feature_no AS gene_feature_no "
-                + " FROM reference r, feature g, refprop_feat f, ref_property p "
-                + " WHERE r.reference_no = p.reference_no "
-                + "   AND p.ref_property_no = f.refprop_feat_no "
-                + "   AND g.feature_no = f.feature_no ";
-                
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
-    /**
-     * Return the results of running a query for CDSs and their sequences
-     * @param connection the connection
-     * @return the results
-     * @throws SQLException if there is a database problem
-     */
-    protected ResultSet getBindingSiteResults(Connection connection)
-        throws SQLException {
-        String query = "SELECT f.feature_no, f.feature_name, f.dbxref_id,   "
-        + " f.source, f.coord_version, f.start_coord, f.stop_coord, f.strand, f.gene_name,  "
-        + " f.name_description, f.genetic_position, f.headline, f.dbxref_id, "
-        + " c.feature_no AS chromosome_feature_no, c.feature_name AS chromosome_identifier "
-        + " FROM feature f, feature c, feat_relationship j "
-        + " WHERE f.feature_type = 'TF_binding_site' "
-        + "   AND c.feature_type = 'Chromosome' " 
-        + "   AND f.feature_no = j.child_feature_no "
-        + "   AND c.feature_no = j.parent_feature_no ";
-
-        LOG.info("executing: " + query);
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        return res;
-    }
-    
         
     private String getLocation(String refId, String chromosomeRefId, String start, String stop, 
                                String strand) 
@@ -564,21 +398,6 @@ public class SgdConverter extends BioDBConverter
             throw new ObjectStoreException(e);
         }
         return location.getIdentifier();
-    }
-    
-    private String getSequence(String length, String residues) 
-    throws ObjectStoreException {
-        Item seq = createItem("Sequence");
-        seq.setAttribute("residues", residues);
-        seq.setAttribute("length", length);
-        String md5checksum = Util.getMd5checksum(residues);
-        seq.setAttribute("md5checksum", md5checksum);            
-        try {
-            store(seq);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-        return seq.getIdentifier();
     }
     
     private String getLength(String start, String end)
@@ -662,7 +481,83 @@ public class SgdConverter extends BioDBConverter
         return refId;
     }
 
+    private String getPhenotype(String phenotypeNo, String experimentType, String mutantType, 
+                                String qualifier, String observable) 
+    throws ObjectStoreException {
+        
+        String refId = phenotypes.get(phenotypeNo);
+        if (refId == null) {
+            Item item = createItem("Phenotype");
+            item.setAttribute("mutantType", mutantType);
+            if (StringUtils.isNotEmpty(qualifier)) {
+                item.setAttribute("qualifier", qualifier);
+            }
+            item.setAttribute("observable", observable);
+            item.setAttribute("experimentType", experimentType);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }            
+            refId = item.getIdentifier();
+            phenotypes.put(phenotypeNo, refId);
+        }
+        return refId;
+    }
     
+    private String getLiteratureTopic(String topic) 
+    throws ObjectStoreException {        
+        String refId = literatureTopics.get(topic);
+        if (refId == null) {
+            Item item = createItem("LiteratureTopic");
+            item.setAttribute("name", topic);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            refId = item.getIdentifier();
+            literatureTopics.put(topic, refId);
+        }
+        return refId;
+    }
+    
+    private String getPub(String featureNo, String issue, String volume, String pubMedId, 
+                          String pages, String title, String year, String citation) 
+    throws ObjectStoreException {  
+        String refId = publications.get(featureNo);
+        if (refId == null) {
+            Item item = createItem("Publication");
+            if (StringUtils.isNotEmpty(issue)) {
+                item.setAttribute("issue", issue);
+            }
+            if (StringUtils.isNotEmpty(pubMedId)) {
+                item.setAttribute("pubMedId", pubMedId);
+            }
+            if (StringUtils.isNotEmpty(title)) {
+                item.setAttribute("title", title);
+            }
+            if (StringUtils.isNotEmpty(volume)) {
+                item.setAttribute("volume", volume);
+            }
+            item.setAttribute("year", year);
+            if (StringUtils.isNotEmpty(pages)) {
+                item.setAttribute("pages", pages);
+            }
+            if (StringUtils.isNotEmpty(citation)) {
+                item.setAttribute("citation", citation);
+            }
+            refId = item.getIdentifier();
+            publications.put(featureNo, refId);
+
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
+        return refId;
+    }
     /**
      * {@inheritDoc}
      */
