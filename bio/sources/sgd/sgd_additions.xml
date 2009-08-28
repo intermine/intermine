@@ -12,6 +12,7 @@
       <reference name="plasmidLocation" referenced-type="Location"/>
       <collection name="CDSs" referenced-type="CDS" reverse-reference="gene"/>
       <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="gene"/>
+      <collection name="publicationAnnotations" referenced-type="PublicationAnnotation" reverse-reference="gene"/>
   </class>
   <class name="Plasmid" extends="BioEntity" is-interface="true">
 	  <collection name="genes" referenced-type="Gene" reverse-reference="plasmid"/>
@@ -25,6 +26,17 @@
   <class name="Experiment" is-interface="true">
     <attribute name="comment" type="java.lang.String"/>
    </class>
+   <class name="Publication" is-interface="true">
+    <attribute name="status" type="java.lang.String"/>
+    <attribute name="citation" type="java.lang.String"/>
+   </class>
+   <class name="LiteratureTopic" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+   </class>
+   <class name="PublicationAnnotation" extends="Annotation" is-interface="true">
+      <reference name="gene" referenced-type="Gene" reverse-reference="publicationAnnotations"/>
+      <reference name="literatureTopic" referenced-type="LiteratureTopic"/>
+  </class>
      <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
       <reference name="gene" referenced-type="Gene" reverse-reference="phenotypeAnnotations"/>
       <reference name="experiment" referenced-type="Experiment"/>
