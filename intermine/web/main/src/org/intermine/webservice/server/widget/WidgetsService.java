@@ -27,8 +27,6 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
@@ -85,8 +83,8 @@ public class WidgetsService extends WebService
             ((TableWidgetConfig) widgetConfig).setClassKeys((Map) servletContext
                                                             .getAttribute(Constants.CLASS_KEYS));
         }
-        response.getWriter().print(
-                                   getHtml(widgetConfig, imBag, new URLGenerator(request).getBaseURL(), os));
+        response.getWriter().print(getHtml(widgetConfig, imBag, 
+                new URLGenerator(request).getBaseURL(), os));
     }
 
     /**
@@ -159,9 +157,7 @@ public class WidgetsService extends WebService
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
         InterMineBag imBag = profile.createBag(bagName, className, "");
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        osw.addAllToBag(imBag.getOsb(), bagList);
-        osw.close();
+        imBag.addIdsToBag(bagList);
         profile.saveBag(imBag.getName(), imBag);
         return imBag;
     }

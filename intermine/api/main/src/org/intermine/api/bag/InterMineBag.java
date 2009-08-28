@@ -10,12 +10,15 @@ package org.intermine.api.bag;
  *
  */
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
@@ -31,7 +34,6 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.api.search.WebSearchable;
 
 
 /**
@@ -348,5 +350,79 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void setDate(Date date) {
         this.dateCreated = date;
+    }
+    
+    
+    /**
+     * Add the given id to the bag, this updates the bag contents in the database.
+     * @param id the id to add
+     * @throws ObjectStoreException
+     */
+    public void addIdToBag(Integer id) throws ObjectStoreException {
+        addIdsToBag(Collections.singleton(id));
+    }
+    
+    /**
+     * Add the given ids to the bag, this updates the bag contents in the database.
+     * @param ids the ids to add
+     * @throws ObjectStoreException
+     */
+    public void addIdsToBag(Collection<Integer> ids) throws ObjectStoreException {
+        ObjectStoreWriter oswProduction = null;
+        try {
+            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction.addAllToBag(osb, ids);
+        } finally {
+            if (oswProduction != null) {
+                oswProduction.close();
+            }
+        }
+    }
+    
+    
+    /**
+     * Add elements to the bag from a query, this is able to operate entirely in the database
+     * without needing to read objects into memory.  The query should have a single column on the
+     * select list returning an object id.
+     * @param query to select object ids
+     * @throws ObjectStoreException
+     */
+    public void addToBagFromQuery(Query query) throws ObjectStoreException {
+        // query is checked in ObjectStoreWriter method
+        ObjectStoreWriter oswProduction = null;
+        try {
+            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction.addToBagFromQuery(osb, query);
+        } finally {
+            if (oswProduction != null) {
+                oswProduction.close();
+            }
+        }
+    }
+    
+    /**
+     * Remove the given id from the bag, this updates the bag contents in the database
+     * @param id the id to remove
+     * @throws ObjectStoreException
+     */
+    public void removeIdFromBag(Integer id) throws ObjectStoreException {
+       removeIdsFromBag(Collections.singleton(id));
+    }
+    
+    /**
+     * Remove the given ids from the bag, this updates the bag contents in the database
+     * @param ids the ids to remove
+     * @throws ObjectStoreException
+     */
+    public void removeIdsFromBag(Collection<Integer> ids) throws ObjectStoreException {
+        ObjectStoreWriter oswProduction = null;
+        try {
+            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction.removeAllFromBag(osb, ids);
+        } finally {
+            if (oswProduction != null) {
+                oswProduction.close();
+            }
+        }
     }
 }

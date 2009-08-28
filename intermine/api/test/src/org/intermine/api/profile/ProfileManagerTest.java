@@ -107,19 +107,20 @@ public class ProfileManagerTest extends StoreDataTestCase
         // bob's details
         String bobName = "bob";
 
-        InterMineBag bag = bobProfile.createBag("bag1", "Department", "This is some description");
+        InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description", 
+                new Date(), os, bobId, uosw);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
         Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
-        osw.addToBag(bag.getOsb(), departmentA1.getId());
+        bag.addIdToBag(departmentA1.getId());
 
         Department deptEx2 = new Department();
         deptEx2.setName("DepartmentB1");
         Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
-        osw.addToBag(bag.getOsb(), departmentB1.getId());
+        bag.addIdToBag(departmentB1.getId());
 
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
@@ -150,8 +151,9 @@ public class ProfileManagerTest extends StoreDataTestCase
         fieldNames.add("name");
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
-        InterMineBag objectBag = sallyProfile.createBag("bag2", "Employee", "description");
-        osw.addToBag(objectBag.getOsb(), ceoB1.getId());
+        InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description", 
+                new Date(), os, sallyId, uosw);
+        objectBag.addIdToBag(ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")),

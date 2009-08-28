@@ -81,8 +81,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 // TODO these messages need to be moved to properties file
                 msg = "You can't remove all items from your list.  Try deleting your list instead.";
             } else {
-                int removed = pc.removeFromBag(mbdf.getBagName(),
-                                               profile, os, session, imBag.getSize());
+                int removed = pc.removeSelectedFromBag(imBag, session);
                 msg = "You have removed " + removed + " items from your list.";
             }
             SessionMethods.recordMessage(msg, session);
@@ -93,7 +92,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 if (newBag.getType().equals(imBag.getType())) {
                     PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
                     int oldSize = newBag.size();
-                    pc.addSelectedToBag(os, newBag);
+                    pc.addSelectedToBag(newBag);
                     int newSize = newBag.size();
                     int added = newSize - oldSize;
                     msg = "You have added " + added + " items from list <strong>"

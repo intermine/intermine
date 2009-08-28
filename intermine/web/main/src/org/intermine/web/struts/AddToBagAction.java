@@ -24,8 +24,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
 
@@ -58,12 +56,10 @@ public class AddToBagAction extends InterMineAction
 
         InterMineBag existingBag = profile.getSavedBags().get(bagName);
         if (existingBag != null) {
-            ObjectStoreWriter osw = null;
             try {
-                InterMineObject o = os.getObjectById(new Integer(id));
+                InterMineObject o = os.getObjectById(id);
                 if (BagHelper.isOfBagType(existingBag, o, os)) {
-                    osw = new ObjectStoreWriterInterMineImpl(os);
-                    osw.addToBag(existingBag.getOsb(), new Integer(id));
+                    existingBag.addIdToBag(id);
                     recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName())
                                     , request);
                 } else {
@@ -74,14 +70,6 @@ public class AddToBagAction extends InterMineAction
                 recordError(new ActionMessage("bag.error"), request, e);
 
                 return mapping.findForward("objectDetails");
-            } finally {
-                try {
-                    if (osw != null) {
-                        osw.close();
-                    }
-                } catch (ObjectStoreException e) {
-                    // oops
-                }
             }
         } else {
             recordError(new ActionMessage("bag.noSuchBag"), request);

@@ -27,12 +27,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -88,11 +86,9 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         Results r = getEmployeesAndAddresses();
         
         assertEquals("Results: " + r, 2, r.size());
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
-        ObjectStoreBag osb = imb.getOsb();
-        osw.addToBag(osb, ((Employee) ((List) r.get(0)).get(0)).getId());
-        osw.addToBag(osb, ((Employee) ((List) r.get(1)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId());
         profile.saveBag("Fred", imb);
         List expected = new ArrayList();
         expected.add(((List) r.get(0)).get(1));
