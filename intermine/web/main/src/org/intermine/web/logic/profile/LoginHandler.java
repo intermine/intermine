@@ -12,11 +12,9 @@ package org.intermine.web.logic.profile;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,7 +25,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.struts.InterMineAction;
 /**
@@ -40,7 +37,6 @@ public abstract class LoginHandler extends InterMineAction
      * Abstract class containing the methods for login in and copying current
      * history, bags,... into profile
      *
-     * @param servletContext The servlet context
      * @param request The HttpServletRequest
      * @param response The HttpServletResponse
      * @param session The session
@@ -49,13 +45,11 @@ public abstract class LoginHandler extends InterMineAction
      * @param password The password
      * @return the map containing the renamed bags the user created before they were logged in
      */
-    public Map<String, String> doLogin(ServletContext servletContext, HttpServletRequest request,
-            HttpServletResponse response, HttpSession session, ProfileManager pm, String username,
+    public Map<String, String> doLogin(HttpServletRequest request, HttpServletResponse response,
+            HttpSession session, ProfileManager pm, String username,
             String password) {
         // Merge current history into loaded profile
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
         Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
@@ -66,10 +60,8 @@ public abstract class LoginHandler extends InterMineAction
         Profile profile = setUpProfile(session, pm, username, password);
 
         // Merge in anonymous query history
-        for (Iterator iter = mergeQueries.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            SavedQuery query = (SavedQuery) entry.getValue();
-            profile.saveHistory(query);
+        for (SavedQuery savedQuery : mergeQueries.values()) { 
+            profile.saveHistory(savedQuery);
         }
         // Merge anonymous bags
         Map<String, String> renamedBags = new HashMap<String, String>();
@@ -77,12 +69,12 @@ public abstract class LoginHandler extends InterMineAction
             InterMineBag bag = entry.getValue();
             // Make sure the userId gets set to be the profile one
             try {
-                bag.setProfileId(profile.getUserId(), uosw);
+                bag.setProfileId(profile.getUserId());
                 String name = makeUniqueQueryName(entry.getKey(), profile.getSavedBags().keySet());
                 if (!entry.getKey().equals(name)) {
                     renamedBags.put(entry.getKey(), name);
                 }
-                bag.setName(name, uosw);
+                bag.setName(name);
                 profile.saveBag(name, bag);
             } catch (ObjectStoreException iex) {
                 throw new RuntimeException(iex.getMessage());

@@ -82,7 +82,7 @@ public class CreateAccountAction extends LoginHandler
          * md5.digest(); String encoded = HexBin.encode(array); } catch
          * (NoSuchAlgorithmException e) { }
          */
-        doLogin(servletContext, request, response, session, pm, username, password);
+        doLogin(request, response, session, pm, username, password);
         return mapping.findForward("mymine");
     }
 

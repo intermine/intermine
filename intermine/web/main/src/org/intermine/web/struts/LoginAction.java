@@ -56,7 +56,7 @@ public class LoginAction extends LoginHandler
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         LoginForm lf = (LoginForm) form;
 
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm,
+        Map<String, String> renamedBags = doLogin(request, response, session, pm,
             lf.getUsername(), lf.getPassword());
 
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
