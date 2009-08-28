@@ -55,7 +55,8 @@ public class InterMineBag implements WebSearchable, Cloneable
     private Date dateCreated;
     private ObjectStoreBag osb;
     private ObjectStore os;
-
+    private ObjectStoreWriter uosw;
+    
     private Set<ClassDescriptor> classDescriptors;
 
     /**
@@ -80,8 +81,9 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.os = os;
         this.profileId = profileId;
         this.osb = os.createObjectStoreBag();
+        this.uosw = uosw;
         this.savedBagId = null;
-        SavedBag savedBag = store(uosw);
+        SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
         setClassDescriptors();
     }
@@ -95,7 +97,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private SavedBag store(ObjectStoreWriter uosw) throws ObjectStoreException {
+    private SavedBag store() throws ObjectStoreException {
         SavedBag savedBag = new SavedBag();
         savedBag.setId(savedBagId);
         if (profileId != null) {
@@ -199,13 +201,12 @@ public class InterMineBag implements WebSearchable, Cloneable
      * Sets the profileId - moves this bag from one profile to another.
      *
      * @param profileId the ID of the new userprofile
-     * @param uosw an ObjectStoreWriter for the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void setProfileId(Integer profileId, ObjectStoreWriter uosw)
+    public void setProfileId(Integer profileId)
     throws ObjectStoreException {
         this.profileId = profileId;
-        SavedBag savedBag = store(uosw);
+        SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
     }
 
@@ -220,15 +221,14 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Set the value of name
      * @param name the bag name
-     * @param uosw an ObjectStoreWriter for the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void setName(String name, ObjectStoreWriter uosw) throws ObjectStoreException {
+    public void setName(String name) throws ObjectStoreException {
         if (StringUtils.isEmpty(name)) {
             throw new RuntimeException("No name specified for the list to save.");
         }
         this.name = name;
-        store(uosw);
+        store();
     }
 
     /**
@@ -249,13 +249,12 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * @param description the description to set
-     * @param uosw an ObjectStoreWriter for the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void setDescription(String description, ObjectStoreWriter uosw)
+    public void setDescription(String description)
     throws ObjectStoreException {
         this.description = description;
-        store(uosw);
+        store();
     }
 
 
@@ -293,11 +292,10 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Create copy of bag. Bag is saved to objectstore.
-     * @param userOSW objectstore writer used for saving bag
      * @return create bag
      */
-    public Object clone(ObjectStoreWriter userOSW) {
-        InterMineBag ret = cloneShallowIntermineBag(userOSW);
+    public Object clone() {
+        InterMineBag ret = cloneShallowIntermineBag();
         cloneInternalObjectStoreBag(ret);
         return ret;
     }
@@ -325,17 +323,15 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private InterMineBag cloneShallowIntermineBag(ObjectStoreWriter userOSW) {
+    private InterMineBag cloneShallowIntermineBag() {
         // doesn't clone class descriptions and object store because they shouldn't change
         // -> cloned instance shares it with the original instance
         InterMineBag copy;
         try {
             copy = (InterMineBag) super.clone();
             copy.savedBagId = null;
-            SavedBag savedBag = copy.store(userOSW);
+            SavedBag savedBag = copy.store();
             copy.savedBagId = savedBag.getId();
-//            copy = new InterMineBag(name, type, description, dateCreated,
-//                    os, profileId, userOSW);
         } catch (ObjectStoreException ex) {
             throw new RuntimeException("Clone failed.", ex);
         } catch (CloneNotSupportedException ex) {
@@ -356,7 +352,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Add the given id to the bag, this updates the bag contents in the database.
      * @param id the id to add
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem storing
      */
     public void addIdToBag(Integer id) throws ObjectStoreException {
         addIdsToBag(Collections.singleton(id));
@@ -365,7 +361,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Add the given ids to the bag, this updates the bag contents in the database.
      * @param ids the ids to add
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem storing
      */
     public void addIdsToBag(Collection<Integer> ids) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
@@ -385,7 +381,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * without needing to read objects into memory.  The query should have a single column on the
      * select list returning an object id.
      * @param query to select object ids
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem storing
      */
     public void addToBagFromQuery(Query query) throws ObjectStoreException {
         // query is checked in ObjectStoreWriter method
@@ -403,7 +399,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Remove the given id from the bag, this updates the bag contents in the database
      * @param id the id to remove
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem storing
      */
     public void removeIdFromBag(Integer id) throws ObjectStoreException {
        removeIdsFromBag(Collections.singleton(id));
@@ -412,7 +408,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     /**
      * Remove the given ids from the bag, this updates the bag contents in the database
      * @param ids the ids to remove
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if problem storing
      */
     public void removeIdsFromBag(Collection<Integer> ids) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;

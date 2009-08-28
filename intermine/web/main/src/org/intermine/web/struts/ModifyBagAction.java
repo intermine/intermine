@@ -34,8 +34,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.Query;
 import org.intermine.util.StringUtil;
@@ -117,7 +115,6 @@ public class ModifyBagAction extends InterMineAction
         String[] selectedBagNames = frm.getSelectedBags();
         Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(request.getSession().getServletContext()));
-        ObjectStoreWriter userOSW = profile.getProfileManager().getProfileObjectStoreWriter();
 
         String newNameTextBox = getNewNameTextBox(request, frm);
 
@@ -135,7 +132,7 @@ public class ModifyBagAction extends InterMineAction
                 recordError(new ActionMessage("errors.bag.notfound"), request);
                 return;
             }
-            if (createBag(origBag, newBagName, allBags, userOSW, profile, request)) {
+            if (createBag(origBag, newBagName, profile)) {
                 recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
             }
         } else {
@@ -152,7 +149,7 @@ public class ModifyBagAction extends InterMineAction
                     recordError(new ActionMessage("errors.bag.notfound"), request);
                     return;
                 }
-                if (createBag(origBag, newBagName, allBags, userOSW, profile, request)) {
+                if (createBag(origBag, newBagName, profile)) {
                     msg += newBagName + ", ";
                 }
             }
@@ -179,16 +176,12 @@ public class ModifyBagAction extends InterMineAction
         return ret;
     }
 
-    private boolean createBag(InterMineBag origBag, String newBagName,
-                              @SuppressWarnings("unused") Map<String, InterMineBag> allBags,
-                              ObjectStoreWriter userOSW,
-                              Profile profile,
-                              @SuppressWarnings("unused") HttpServletRequest request)
-            throws ObjectStoreException {
+    private boolean createBag(InterMineBag origBag, String newBagName, Profile profile)
+    throws ObjectStoreException {
         // Clone method clones the bag in the database
-        InterMineBag newBag = (InterMineBag) origBag.clone(userOSW);
+        InterMineBag newBag = (InterMineBag) origBag.clone();
         newBag.setDate(new Date());
-        newBag.setName(newBagName, userOSW);
+        newBag.setName(newBagName);
         profile.saveBag(newBagName, newBag);
         return true;
     }
@@ -254,24 +247,14 @@ public class ModifyBagAction extends InterMineAction
         }
         Query q = new Query();
         q.addToSelect(osbc);
-        ObjectStoreWriter osw = null;
         try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            osw.addToBagFromQuery(combined.getOsb(), q);
+            combined.addToBagFromQuery(q);
         } catch (ObjectStoreException e) {
             LOG.error(e);
             ActionMessage actionMessage = new ActionMessage(
                     "An error occurred while saving the list");
             recordError(actionMessage, request);
             return getReturn(mbf.getPageName(), mapping);
-        } finally {
-            try {
-                if (osw != null) {
-                    osw.close();
-                }
-            } catch (ObjectStoreException e) {
-                // empty
-            }
         }
 
         if (combined.size() > 0) {
@@ -364,11 +347,9 @@ public class ModifyBagAction extends InterMineAction
     // Remove a bag from userprofile database and session cache
     private void deleteBag(HttpSession session, Profile profile,
             InterMineBag bag) throws ObjectStoreException {
-        ObjectStoreWriter uosw = profile.getProfileManager()
-                .getProfileObjectStoreWriter();
         // removed a cached bag table from the session
         SessionMethods.invalidateBagTable(session, bag.getName());
-        bag.setProfileId(null, uosw); // Deletes from database
+        bag.setProfileId(null); // Deletes from database
         profile.deleteBag(bag.getName());
     }
 

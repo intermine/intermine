@@ -428,7 +428,7 @@ public class ProfileManager
             osw.store(userProfile);
             profile.setUserId(userProfile.getId());
             for (InterMineBag bag : profile.getSavedBags().values()) {
-                bag.setProfileId(userProfile.getId(), osw);
+                bag.setProfileId(userProfile.getId());
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);

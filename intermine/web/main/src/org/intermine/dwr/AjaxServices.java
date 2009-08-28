@@ -236,9 +236,6 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            ServletContext servletContext = ctx.getServletContext();
-            ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             SavedQuery sq;
             if (name.equals(newName) || StringUtils.isEmpty(newName)) {
                 return name;
@@ -274,7 +271,7 @@ public class AjaxServices
                     return "<i>" + newName + " already exists</i>";
                 }
                 InterMineBag bag = profile.getSavedBags().get(name);
-                bag.setName(newName, uosw);
+                bag.setName(newName);
                 TagManager tagManager = getTagManager();
                 moveTagsToNewObject(name, newName, TagTypes.BAG,
                         profile.getUsername(), tagManager);
@@ -319,14 +316,11 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            ServletContext servletContext = ctx.getServletContext();
-            ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             InterMineBag bag = profile.getSavedBags().get(bagName);
             if (bag == null) {
                 throw new InterMineException("List \"" + bagName + "\" not found.");
             }
-            bag.setDescription(description, uosw);
+            bag.setDescription(description);
             profile.getSearchRepository().descriptionChanged(bag);
             return description;
         } catch (RuntimeException e) {
