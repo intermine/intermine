@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -46,7 +46,7 @@ public class PathQueryAPI
      */
     public static PathQueryExecutor getPathQueryExecutor() {
         return new PathQueryExecutor(getObjectStore(), getClassKeys(), getBagQueryConfig(),
-                getProfile(), getConversionTemplates(), getSearchRepository());
+                getProfile(), getConversionTemplates(), getBagManager());
     }
 
     /**
@@ -171,16 +171,16 @@ public class PathQueryAPI
         return conversionTemplates;
     }
 
-    private static SearchRepository searchRepository = null;
+    
+    private static BagManager bagManager = null;
     /**
-     * Returns a SearchRepository.
-     *
-     * @return a SearchRepository
+     * Returns a BagManager.
+     * @return a BagManager
      */
-    public static SearchRepository getSearchRepository() {
-        if (searchRepository == null) {
-            searchRepository = new SearchRepository(getProfile(), SearchRepository.GLOBAL);
+    public static BagManager getBagManager() {
+        if (bagManager == null) {
+            bagManager = new BagManager(getProfile(), getObjectStore().getModel());
         }
-        return searchRepository;
+        return bagManager;
     }
 }

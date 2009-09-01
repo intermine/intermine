@@ -39,13 +39,13 @@ import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.results.WebTable;
@@ -74,7 +74,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -382,14 +381,14 @@ public class AjaxServices
             HttpSession session = ctx.getSession();
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
 
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                    SessionMethods.getGlobalSearchRepository(servletContext));
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
             Query distinctQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
@@ -620,12 +619,12 @@ public class AjaxServices
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             String pckName =  os.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository searchRepository =
-                SessionMethods.getGlobalSearchRepository(servletContext);
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
             InterMineBag imBag = null;
             int count = 0;
             try {
-                imBag = BagHelper.getBag(profile, searchRepository, bagName);
+                imBag = bagManager.getUserOrGlobalBag(profile, bagName);
                 Map<String, QuerySelectable> pathToQueryNode = new HashMap();
                 Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
                 bagMap.put(imBag.getName(), imBag);
@@ -705,7 +704,8 @@ public class AjaxServices
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            
             // TODO get message text from the properties file
             if (bagName.equals("")) {
                 return "You cannot save a list with a blank name";
@@ -719,11 +719,7 @@ public class AjaxServices
                 return "The list name you have chosen is already in use";
             }
 
-            SearchRepository searchRepository =
-                SessionMethods.getGlobalSearchRepository(servletContext);
-            Map<String, ? extends WebSearchable> publicBagMap =
-                searchRepository.getWebSearchableMap(TagTypes.BAG);
-            if (publicBagMap.get(bagName) != null) {
+            if (bagManager.getGlobalBag(bagName) != null) {
                 return "The list name you have chosen is already in use -"
                 + " there is a public list called " + bagName;
             }
@@ -822,9 +818,8 @@ public class AjaxServices
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository searchRepository =
-                SessionMethods.getGlobalSearchRepository(servletContext);
-            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
 
             Type type = webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
@@ -839,8 +834,6 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
-        } catch (InterMineException e) {
             processException(e);
         }
         return null;
@@ -860,9 +853,8 @@ public class AjaxServices
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository searchRepository =
-                SessionMethods.getGlobalSearchRepository(servletContext);
-            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
             Map classKeys = getClassKeys(servletContext);
 
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -879,9 +871,7 @@ public class AjaxServices
             }
         } catch (RuntimeException e) {
             processException(e);
-        } catch (InterMineException e) {
-            processException(e);
-        }
+        } 
         return null;
     }
 
@@ -908,9 +898,9 @@ public class AjaxServices
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             Model model = os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            SearchRepository searchRepository = SessionMethods
-                            .getGlobalSearchRepository(servletContext);
-            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
+            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
             Type type = webConfig.getTypes().get(model.getPackageName()
                     + "." + imBag.getType());
             List<WidgetConfig> widgets = type.getWidgets();
@@ -927,8 +917,6 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
-        } catch (InterMineException e) {
             processException(e);
         }
         return null;
@@ -958,9 +946,9 @@ public class AjaxServices
            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
            Model model = os.getModel();
            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-           SearchRepository searchRepository = SessionMethods
-                           .getGlobalSearchRepository(servletContext);
-           InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+           BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
+           InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
            Type type = webConfig.getTypes().get(model.getPackageName()
                    + "." + imBag.getType());
            List<WidgetConfig> widgets = type.getWidgets();
@@ -976,8 +964,6 @@ public class AjaxServices
                }
            }
        } catch (RuntimeException e) {
-           processException(e);
-       } catch (InterMineException e) {
            processException(e);
        }
        return null;

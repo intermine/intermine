@@ -21,12 +21,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +31,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.InterMineBag;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -204,34 +199,6 @@ public abstract class WebUtil
             returnMap.put(key, map.get(key));
         }
         return returnMap;
-    }
-
-    /**
-     * Returns all bags of a given type
-     * @param bagMap a Map from bag name to InterMineBag
-     * @param type the type
-     * @param model the Model
-     * @return a Map of bag name to bag
-     */
-    public static Map getBagsOfType(Map<String, InterMineBag> bagMap, String type, Model model) {
-        String bagType = model.getPackageName() + "." + type;
-        Set<String> classAndSubs = new HashSet<String>();
-        classAndSubs.add(bagType);
-        Iterator subIter = model.getAllSubs(model.getClassDescriptorByName(bagType)).iterator();
-        while (subIter.hasNext()) {
-            classAndSubs.add(((ClassDescriptor) subIter.next()).getType().getName());
-        }
-
-        TreeMap map = new TreeMap();
-        for (Iterator iter = bagMap.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            InterMineBag bag = (InterMineBag) entry.getValue();
-            if (classAndSubs.contains(model.getPackageName() + "." + bag.getType())) {
-                map.put(entry.getKey(), bag);
-            }
-        }
-        return map;
-
     }
 
 

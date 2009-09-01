@@ -15,7 +15,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -28,9 +27,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -123,9 +122,8 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(ldr);
 
@@ -204,9 +202,8 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(link);
         Constructor<?> constr = clazz.getConstructor(new Class[]
@@ -278,10 +275,11 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getHighlight());
                 attributes.add(widgetForm.getPValue());
                 attributes.add(widgetForm.getNumberOpt());
+
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-                Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(currentProfile
-                        .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
-                InterMineBag bag = allBags.get(widgetForm.getBagName());
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile,
+                        widgetForm.getBagName());
                 Widget widget = widgetConfig.getWidget(bag, os, attributes);
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
             }

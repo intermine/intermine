@@ -21,9 +21,9 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.query.MainHelper;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -133,11 +133,11 @@ public class ImportQueriesForm extends ValidatorForm
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        
         try {
-            Map<String, InterMineBag> allBags =
-                ProfileUtil.getAllBags(profile.getSavedBags(), 
-                        SessionMethods.getGlobalSearchRepository(servletContext));
+            
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             if (getQueryMap(allBags).size() == 0) {
                 if (errors == null) {
                     errors = new ActionErrors();

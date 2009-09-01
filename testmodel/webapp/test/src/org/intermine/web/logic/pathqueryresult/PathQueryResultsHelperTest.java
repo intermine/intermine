@@ -112,7 +112,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         d1.setEmployees(employees);
         List<Class> sr = new ArrayList<Class>();
         sr.add(Employee.class);
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os, (InterMineObject)d1, "employees",sr);
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os.getModel(), (InterMineObject)d1, "employees",sr);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\">" +
         		"<node path=\"Department\" type=\"Department\"></node>" +
         		"<node path=\"Department.employees\" type=\"Employee\"></node>" +

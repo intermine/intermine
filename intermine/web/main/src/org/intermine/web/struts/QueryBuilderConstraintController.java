@@ -27,11 +27,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -47,7 +47,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -198,13 +197,12 @@ public class QueryBuilderConstraintController extends TilesAction
             }
 
             if (useBags) {
-                Map<String, InterMineBag> allBags =
-                    ProfileUtil.getAllBags(profile.getSavedBags(),
-                            SessionMethods.getGlobalSearchRepository(servletContext));
-                Map bags = WebUtil.getBagsOfType(allBags, nodeType, model);
-                if (!bags.isEmpty()) {
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                Map<String, InterMineBag> bagsOfType = 
+                    bagManager.getUserOrGlobalBagsOfType(profile, nodeType);
+                if (!bagsOfType.isEmpty()) {
                         request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-                        request.setAttribute("bags", bags);
+                        request.setAttribute("bags", bagsOfType);
                 }
             }
             Integer index = (Integer) request.getAttribute("editingConstraintOperand");

@@ -21,20 +21,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.results.WebResults;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -67,9 +66,9 @@ public class ModifyBagDetailsAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-        SearchRepository globalRepository =
-            (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        InterMineBag imBag = BagHelper.getBag(profile, globalRepository, mbdf.getBagName());
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
+        InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, mbdf.getBagName());
         String bagIdentifier = "bag." + imBag.getName();
 
         if (request.getParameter("removeFromBag") != null) {
@@ -85,8 +84,8 @@ public class ModifyBagDetailsAction extends InterMineAction
             }
             SessionMethods.recordMessage(msg, session);
         } else if (request.getParameter("addToBag") != null) {
-                InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
-                                                                        mbdf.getExistingBagName());
+                InterMineBag newBag = bagManager.getUserOrGlobalBag(profile,
+                        mbdf.getExistingBagName());
                 String msg = "";
                 if (newBag.getType().equals(imBag.getType())) {
                     PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);

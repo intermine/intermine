@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
@@ -132,6 +133,9 @@ public class InitialiserPlugin implements PlugIn
         final ProfileManager pm = createProfileManager(servletContext, os);
 
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+        
+        final BagManager bagManager = new BagManager(superProfile, os.getModel());
+        servletContext.setAttribute(Constants.BAG_MANAGER, bagManager);
         
         // index global webSearchables
         SearchRepository searchRepository =

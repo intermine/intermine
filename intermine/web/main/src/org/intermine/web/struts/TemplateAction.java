@@ -24,8 +24,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
@@ -95,8 +96,8 @@ public class TemplateAction extends InterMineAction
         String userName = profile.getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              templateName, templateType);
-        Map savedBags = ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
             TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,

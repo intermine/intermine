@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -23,9 +22,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
@@ -56,19 +55,18 @@ public class TemplatesImportAction extends InterMineAction
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
                 PathQuery.USERPROFILE_VERSION);
 
         try {
             profile.disableSaving();
 
-            if (tif.isOverwriting()
-                            && profile.getSavedTemplates().size() > 0) {
-                Iterator iter = new HashSet(profile.getSavedTemplates().keySet()).iterator();
-                while (iter.hasNext()) {
-                    profile.deleteTemplate((String) iter.next());
+            if (tif.isOverwriting() && profile.getSavedTemplates().size() > 0) {
+                for (String templateName : profile.getSavedTemplates().keySet()) {
+                    profile.deleteTemplate(templateName);
                     deleted++;
                 }
             }

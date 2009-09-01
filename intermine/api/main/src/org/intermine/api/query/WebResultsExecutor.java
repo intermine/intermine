@@ -16,15 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.Constants;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.results.WebResults;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -48,7 +47,7 @@ public class WebResultsExecutor
     private BagQueryConfig bagQueryConfig;
     private Profile profile;
     private List<TemplateQuery> conversionTemplates;
-    private SearchRepository searchRepository;
+    private BagManager bagManager;
     private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
         = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
 
@@ -62,19 +61,19 @@ public class WebResultsExecutor
      * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
      * @param profile the user executing the query - for access to saved lists
      * @param conversionTemplates templates used for converting bag query results between types
-     * @param searchRepository global search repository to fetch saved bags from
+     * @param bagManager access to global and user bags
      */
     public WebResultsExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
             Profile profile, List<TemplateQuery> conversionTemplates, 
-            SearchRepository searchRepository) {
+            BagManager bagManager) {
         this.os = os;
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.profile = profile;
         this.conversionTemplates = conversionTemplates;
-        this.searchRepository = searchRepository;
+        this.bagManager = bagManager;
     }
 
     /**
@@ -106,8 +105,8 @@ public class WebResultsExecutor
         BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
 
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                searchRepository);
+        
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
         
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
                 pathToBagQueryResult, false);

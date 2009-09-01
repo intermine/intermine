@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -34,9 +35,6 @@ import org.intermine.api.results.WebTable;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.search.WebSearchable;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -72,6 +70,9 @@ public class BagDetailsController extends TilesAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        
+        
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
 
@@ -88,7 +89,7 @@ public class BagDetailsController extends TilesAction
         if (scope.equals(TemplateHelper.USER_TEMPLATE)
                         || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            imBag = profile.getSavedBags().get(bagName);
+            bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
                 myBag = Boolean.TRUE;
             }
@@ -97,12 +98,8 @@ public class BagDetailsController extends TilesAction
         if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
             || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             // scope == all or global
-            SearchRepository searchRepository = SessionMethods
-                            .getGlobalSearchRepository(servletContext);
-            Map<String, ? extends WebSearchable> publicBagMap = searchRepository
-                            .getWebSearchableMap(TagTypes.BAG);
-            if (publicBagMap.get(bagName) != null) {
-                imBag = (InterMineBag) publicBagMap.get(bagName);
+            if (bagManager.getGlobalBag(bagName) != null) {
+                imBag = (InterMineBag) bagManager.getGlobalBag(bagName);
             }
         }
 

@@ -25,11 +25,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.AttributeDescriptor;
@@ -50,7 +50,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
@@ -155,7 +154,7 @@ public class TemplateController extends TilesAction
         Map displayConstraints = new HashMap();
         Map names = new HashMap();
         Map constraints = new HashMap();
-        Map bags = new HashMap();
+        Map<Constraint, Map<String, InterMineBag>> bags = new HashMap();
         Map constraintBagTypes = new HashMap();
         Map selectedBagNames = new HashMap();
         Map keyFields = new HashMap();
@@ -170,8 +169,7 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
-        Map<String, InterMineBag> searchBags = ProfileUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
         for (PathNode node : template.getEditableNodes()) {
@@ -240,8 +238,8 @@ public class TemplateController extends TilesAction
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
-                    Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, parent.getType(), os.getModel());
+                    Map<String, InterMineBag> constraintBags = 
+                        bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -252,8 +250,8 @@ public class TemplateController extends TilesAction
                 }
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
-                    Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, node.getType(), os.getModel());
+                    Map<String, InterMineBag> constraintBags = 
+                        bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (bagName != null && constraintBags.containsKey(bagName)) {
@@ -334,7 +332,7 @@ public class TemplateController extends TilesAction
         // A List of values for the extra constraint
         request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
                     bagQueryConfig.getConstrainField()));
-        if (searchBags.size() > 0) {
+        if (bagManager.getUserAndGlobalBags(profile).size() > 0) {
             request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
         }
         return null;
