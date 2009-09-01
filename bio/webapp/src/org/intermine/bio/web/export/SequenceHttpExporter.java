@@ -20,10 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.api.results.Column;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.SequenceExportForm;
 import org.intermine.bio.web.struts.SequenceExportOptionsController;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
@@ -33,8 +35,6 @@ import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 

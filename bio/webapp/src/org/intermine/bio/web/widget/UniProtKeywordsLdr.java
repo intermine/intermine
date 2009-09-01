@@ -15,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Ontology;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;
-import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -34,7 +35,6 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**

@@ -16,6 +16,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.api.bag.InterMineBag;
+import org.intermine.model.bio.FlyAtlasResult;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MicroArrayAssay;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -26,15 +31,7 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
-
-import org.intermine.model.bio.FlyAtlasResult;
-import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.MicroArrayAssay;
-
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 

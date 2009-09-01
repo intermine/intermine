@@ -10,9 +10,9 @@ package org.flymine.web.widget;
  *
  */
 
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**
