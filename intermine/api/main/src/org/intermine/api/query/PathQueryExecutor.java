@@ -13,14 +13,13 @@ package org.intermine.api.query;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -38,12 +37,10 @@ public class PathQueryExecutor
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
-    private Map<String, InterMineBag> allBags;
-
+    private BagManager bagManager;
     private BagQueryRunner runner;
-
     private ObjectStore os;
-
+    private Profile profile;
     private int batchSize = DEFAULT_BATCH_SIZE;
 
     /**
@@ -63,18 +60,18 @@ public class PathQueryExecutor
      * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
      * @param profile the user executing the query - for access to saved lists
      * @param conversionTemplates templates used for converting bag query results between types
-     * @param searchRepository global search repository to fetch saved bags from
+     * @param bagManager access to global and user bags
      */
     public PathQueryExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, Profile profile,
             List<TemplateQuery> conversionTemplates,
-            SearchRepository searchRepository) {
+            BagManager bagManager) {
         this.os = os;
         this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
-        this.allBags = ProfileUtil.getAllBags(profile.getSavedBags(),
-                searchRepository);
+        this.bagManager = bagManager;
+        this.profile = profile;
     }
 
     /**
@@ -86,6 +83,7 @@ public class PathQueryExecutor
      */
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             return new ExportResultsIterator(os, pathQuery, allBags, runner,
                     batchSize);
         } catch (ObjectStoreException e) {
@@ -107,6 +105,7 @@ public class PathQueryExecutor
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
             final int limit) {
         try {
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             return new ResultIterator(os, pathQuery, allBags, runner, batchSize, start, limit);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(

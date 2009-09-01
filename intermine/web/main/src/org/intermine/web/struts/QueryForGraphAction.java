@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.lang.reflect.Constructor;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +22,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.search.WebSearchable;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -66,7 +63,8 @@ public class QueryForGraphAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        
         String bagName = request.getParameter("bagName");
         String urlGen = request.getParameter("urlGen");
         String series = request.getParameter("series");
@@ -77,16 +75,7 @@ public class QueryForGraphAction extends InterMineAction
 
         /* get bag from user profile */
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        bag = profile.getSavedBags().get(bagName);
-
-        /* public bag - since user doesn't have it */
-        if (bag == null) {
-            SearchRepository searchRepository =
-                SessionMethods.getGlobalSearchRepository(servletContext);
-            Map<String, ? extends WebSearchable> publicBagMap =
-                searchRepository.getWebSearchableMap(TagTypes.BAG);
-            bag = (InterMineBag) publicBagMap.get(bagName);
-        }
+        bag = bagManager.getUserOrGlobalBag(profile, bagName);
 
         /* its all gone horribly wrong, no one has the bag! */
         if (bag == null) {

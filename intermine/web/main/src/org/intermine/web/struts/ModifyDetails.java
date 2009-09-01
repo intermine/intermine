@@ -27,9 +27,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;
@@ -93,8 +93,8 @@ public class ModifyDetails extends DispatchAction
             InterMineObject object = os.getObjectById(objectId);
             TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
-            Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                    SessionMethods.getGlobalSearchRepository(servletContext));
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             InterMineBag interMineBag = allBags.get(bagName);
             TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
         }
@@ -279,15 +279,15 @@ public class ModifyDetails extends DispatchAction
             return mapping.findForward("objectDetailsTemplateTable");
         }
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getGlobalSearchRepository(sc));
-        InterMineBag interMineIdBag = allBags.get(id);
-        cc.putAttribute("interMineIdBag", interMineIdBag);
+        BagManager bagManager = SessionMethods.getBagManager(sc);
+
+        InterMineBag interMineBag = bagManager.getUserOrGlobalBag(profile, id);
+        cc.putAttribute("interMineIdBag", interMineBag);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));
         Map fieldExprs = new HashMap();
         TemplateListHelper.getAspectTemplatesForType(request.getParameter("placement"), sc,
-                                                     interMineIdBag, fieldExprs);
+                                                     interMineBag, fieldExprs);
         cc.putAttribute("fieldExprMap", fieldExprs);
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.web.logic.Constants;
@@ -53,22 +54,22 @@ public class BeginAction extends InterMineAction
 
        HttpSession session = request.getSession();
        ServletContext servletContext = session.getServletContext();
-       SearchRepository searchRepository = (SearchRepository)
-                               servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+       SearchRepository searchRepository = SessionMethods.getGlobalSearchRepository(servletContext);
+       BagManager bagManager = SessionMethods.getBagManager(servletContext);
+       
        if (request.getParameter("GALAXY_URL") != null) {
            request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
            SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
        }
 
+       Integer bagCount = bagManager.getGlobalBags().size();
        Map<String, ? extends WebSearchable> webSearchables =
-                                                       searchRepository.getWebSearchableMap("bag");
-       int bagCount = webSearchables.size();
-       webSearchables = searchRepository.getWebSearchableMap("template");
-       int templateCount = webSearchables.size();
+           searchRepository.getWebSearchableMap("template");
+       Integer templateCount = webSearchables.size();
 
        /* count number of templates and bags */
-       request.setAttribute("bagCount", new Integer(bagCount));
-       request.setAttribute("templateCount", new Integer(templateCount));
+       request.setAttribute("bagCount", bagCount);
+       request.setAttribute("templateCount", templateCount);
 
        Properties properties = (Properties) request.getSession()
                                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);

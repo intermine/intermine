@@ -27,9 +27,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -112,8 +112,9 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(request.getSession().getServletContext()));
+        
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         String newNameTextBox = getNewNameTextBox(request, frm);
 
@@ -218,8 +219,9 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile
-                .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
+        
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);        
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         String[] selectedBags = mbf.getSelectedBags();
 

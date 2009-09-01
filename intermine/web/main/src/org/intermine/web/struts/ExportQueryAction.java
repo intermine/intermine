@@ -23,11 +23,11 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -68,6 +68,7 @@ public class ExportQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);             
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;
@@ -106,9 +107,8 @@ public class ExportQueryAction extends InterMineAction
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
         } else if (format.equals("iql")) {
-            Map<String, InterMineBag> allBags =
-                ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
             Query osQuery = QueryCreationHelper.makeQuery(query, allBags, pathToQueryNode,
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
@@ -120,9 +120,8 @@ public class ExportQueryAction extends InterMineAction
             response.getWriter().println(iql);
             //response.getWriter().println("\npathToQueryNode: " + pathToQueryNode);
         } else if (format.equals("sql")) {
-            Map<String, InterMineBag> allBags =
-                ProfileUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+
             Query osQuery = QueryCreationHelper.makeQuery(query, allBags, servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);

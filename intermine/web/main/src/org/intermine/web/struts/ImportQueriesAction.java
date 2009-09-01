@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,9 +23,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
@@ -52,9 +51,9 @@ public class ImportQueriesAction extends InterMineAction
         HttpSession session = request.getSession();
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
 

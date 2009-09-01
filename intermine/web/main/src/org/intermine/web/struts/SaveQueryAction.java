@@ -24,9 +24,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
@@ -81,8 +81,8 @@ public class SaveQueryAction extends InterMineAction
         try {
 
             if (query.getInfo() == null) {
-                Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                        SessionMethods.getGlobalSearchRepository(servletContext));
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);              
+                Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
                 query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
                                 servletContext, null)));
             }

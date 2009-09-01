@@ -29,14 +29,12 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -285,7 +283,9 @@ public class ObjectDetailsController extends InterMineAction
     private static String getBags(ObjectStore os, HttpSession session,
             ServletContext servletContext, Integer id, boolean isGlobal) {
 
-        Results results = getBagsAsResults(os, session, servletContext, id, isGlobal);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        Profile profile = SessionMethods.getProfile(session);
+        Results results = getBagsAsResults(os, profile, bagManager, id, isGlobal);
         StringBuffer sb = new StringBuffer();
         for (Object object : results) {
             List list = (List) object;
@@ -300,7 +300,10 @@ public class ObjectDetailsController extends InterMineAction
     private static List<String> getGlobalBagsIds(HttpSession session, Integer id) {
         ObjectStore os = (ObjectStore) session.getServletContext().
             getAttribute(Constants.OBJECTSTORE);
-        Results results = getBagsAsResults(os, session, session.getServletContext(), id, true);
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        Profile profile = SessionMethods.getProfile(session);
+        
+        Results results = getBagsAsResults(os, profile, bagManager, id, true);
         List<String> ret = new ArrayList<String>();
         for (Object object : results) {
             List list = (List) object;
@@ -319,13 +322,10 @@ public class ObjectDetailsController extends InterMineAction
         List<InterMineBag> ret = new ArrayList<InterMineBag>();
 
         List<String> list = getGlobalBagsIds(session, objectId);
-        SearchRepository searchRepository = (SearchRepository) session.getServletContext().
-            getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        Map<String, ? extends WebSearchable> webSearchables =
-            searchRepository.getWebSearchableMap(TagTypes.BAG);
-
-        for (WebSearchable webSearchable : webSearchables.values()) {
-            InterMineBag bag = (InterMineBag) webSearchable;
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        
+        Map <String, InterMineBag> globalBags = bagManager.getGlobalBags();
+        for (InterMineBag bag : globalBags.values()) {
             ObjectStoreBag osb = bag.getOsb();
             Integer i = new Integer(osb.getBagId());
            // check that this is in our list
@@ -336,24 +336,20 @@ public class ObjectDetailsController extends InterMineAction
         return ret;
     }
 
-    private static Results getBagsAsResults(ObjectStore os, HttpSession session,
-            ServletContext servletContext, Integer id, boolean isGlobal) {
-        Map webSearchables = null;
+    private static Results getBagsAsResults(ObjectStore os, Profile profile,
+            BagManager bagManager, Integer id, boolean isGlobal) {
+        Map<String, InterMineBag> bags = null;
         // get all of the bags with this object
         if (isGlobal) {
-            SearchRepository searchRepository = (SearchRepository) servletContext
-                    .getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-            webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
+            bags = bagManager.getGlobalBags();
         } else {
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            webSearchables = profile.getSavedBags();
+            bags = bagManager.getUserBags(profile);
         }
-        Collection<WebSearchable> webSearchableColl = webSearchables.values();
+
         Collection<ObjectStoreBag> objectStoreBags = new ArrayList<ObjectStoreBag>();
 
         // loop though and convert InterMineBag to ObjectStoreBag
-        for (WebSearchable o : webSearchableColl) {
-            InterMineBag bag = (InterMineBag) o;
+        for (InterMineBag bag : bags.values()) {
             ObjectStoreBag osb = bag.getOsb();
             objectStoreBags.add(osb);
         }

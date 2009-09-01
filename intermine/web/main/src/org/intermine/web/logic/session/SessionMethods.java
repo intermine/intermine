@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.bag.TypeConverterHelper;
@@ -964,7 +965,7 @@ public class SessionMethods
                 getBagQueryConfig(servletContext),
                 profile,
                 conversionTemplates,
-                getGlobalSearchRepository(servletContext));
+                getBagManager(servletContext));
         return ret;
     
     }
@@ -986,7 +987,7 @@ public class SessionMethods
                 getBagQueryConfig(servletContext),
                 getProfile(session),
                 conversionTemplates,
-                getGlobalSearchRepository(servletContext));
+                getBagManager(servletContext));
         return ret;
     }
     
@@ -1009,4 +1010,13 @@ public class SessionMethods
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }    
+    
+    /**
+     * Fetch the BagManager for finding global and user bags.
+     * @param servletContext servlet context to fetch attribute from
+     * @return the BagManager
+     */
+    public static final BagManager getBagManager(ServletContext servletContext) {
+        return (BagManager) servletContext.getAttribute(Constants.BAG_MANAGER);
+    }
 }

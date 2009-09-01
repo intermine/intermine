@@ -23,10 +23,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -74,9 +74,9 @@ public class FindInListAction extends InterMineAction
         String textToFind = qsf.getTextToFind().trim();
         String bagName = qsf.getBagName();
         Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
-        Map<String, InterMineBag> allBags = ProfileUtil.getAllBags(profile.getSavedBags(), 
-                SessionMethods.getGlobalSearchRepository(context));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(context);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
         forwardParameters.addParameter("name", bagName);

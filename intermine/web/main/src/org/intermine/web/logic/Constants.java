@@ -207,6 +207,11 @@ public interface Constants
     public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
 
     /**
+     * Servlet attribute.  The BagManager for fetching global and user bags.
+     */
+    public static final String BAG_MANAGER = "BAG_MANAGER";
+
+    /**
      * Default size of table implemented by PagedTable.
      */
     public static final int DEFAULT_TABLE_SIZE = 10;
@@ -225,4 +230,5 @@ public interface Constants
      * Current version of InterMine. This constant must changed by every new InteMine release.
      */
     public static final int INTERMINE_VERSION = 1;
+    
 }

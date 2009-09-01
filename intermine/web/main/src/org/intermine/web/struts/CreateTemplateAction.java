@@ -25,9 +25,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileUtil;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
@@ -152,9 +152,8 @@ public class CreateTemplateAction extends InterMineAction
         if (!seenProblem) {
             try {
                 if (query.getInfo() == null) {
-                    Map<String, InterMineBag> allBags =
-                        ProfileUtil.getAllBags(profile.getSavedBags(), 
-                        SessionMethods.getGlobalSearchRepository(servletContext));
+                    BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                    Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
                     query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
                                     servletContext, null)));
                 }
