@@ -13,6 +13,7 @@ package org.flymine.web.widget;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.intermine.api.bag.InterMineBag;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNAExpressionResult;
@@ -32,7 +33,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;

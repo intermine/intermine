@@ -17,15 +17,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
+import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.ResultElement;
 
 /**
  * Exports LocatedSequenceFeature objects in GFF3 format.

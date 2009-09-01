@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.api.results.Column;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
@@ -36,10 +38,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.results.Column;
-import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
