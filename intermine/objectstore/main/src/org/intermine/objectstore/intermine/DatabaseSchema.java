@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -38,17 +40,19 @@ public class DatabaseSchema
     private static final Logger LOG = Logger.getLogger(DatabaseSchema.class);
 
     private Model model;
-    private List truncated;
+    private List<ClassDescriptor> truncated;
     private boolean noNotXml;
     private boolean flatMode;
-    private Set missingTables;
+    private Set<String> missingTables;
     private boolean fetchFromInterMineObject;
     private int version;
     private boolean hasBioSeg;
 
-    private Set truncatedSet;
-    private Map tableMasterToFieldDescriptors = new HashMap();
-    private Map classDescriptorToTableClassDescriptor = new HashMap();
+    private Set<ClassDescriptor> truncatedSet;
+    private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors
+        = new IdentityHashMap<ClassDescriptor, Fields>();
+    private Map<ClassDescriptor, ClassDescriptor> classDescriptorToTableClassDescriptor
+        = new IdentityHashMap<ClassDescriptor, ClassDescriptor>();
 
     /**
      * Returns an instance of DatabaseSchema, for the given Model and and List of truncated classes.
@@ -62,8 +66,9 @@ public class DatabaseSchema
      * @param hasBioSeg true if the database has the bioseg type installed
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
-    public DatabaseSchema(Model model, List truncated, boolean noNotXml, Set missingTables,
-            int version, boolean hasBioSeg) throws IllegalArgumentException {
+    public DatabaseSchema(Model model, List<ClassDescriptor> truncated, boolean noNotXml,
+            Set<String> missingTables, int version,
+            boolean hasBioSeg) throws IllegalArgumentException {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
@@ -73,16 +78,16 @@ public class DatabaseSchema
         this.version = version;
         this.hasBioSeg = hasBioSeg;
         for (int i = 0; i < truncated.size(); i++) {
-            Class cA = ((ClassDescriptor) truncated.get(i)).getType();
+            Class cA = truncated.get(i).getType();
             for (int o = 0; o < i; o++) {
-                Class cB = ((ClassDescriptor) truncated.get(o)).getType();
+                Class cB = truncated.get(o).getType();
                 if (cB.isAssignableFrom(cA)) {
                     throw new IllegalArgumentException("Truncated class " + cB.getName()
                             + " is completely overridden by truncated class " + cA.getName());
                 }
             }
         }
-        truncatedSet = new HashSet(truncated);
+        truncatedSet = new HashSet<ClassDescriptor>(truncated);
     }
 
     /**
@@ -92,11 +97,11 @@ public class DatabaseSchema
      * @return the ClassDescriptor that masters the table
      */
     public synchronized ClassDescriptor getTableMaster(ClassDescriptor cld) {
-        ClassDescriptor retval = (ClassDescriptor) classDescriptorToTableClassDescriptor.get(cld);
+        ClassDescriptor retval = classDescriptorToTableClassDescriptor.get(cld);
         if (retval == null) {
-            Iterator truncIter = truncated.iterator();
+            Iterator<ClassDescriptor> truncIter = truncated.iterator();
             while (truncIter.hasNext() && (retval == null)) {
-                ClassDescriptor truncCld = (ClassDescriptor) truncIter.next();
+                ClassDescriptor truncCld = truncIter.next();
                 if (truncCld.getType().isAssignableFrom(cld.getType())) {
                     retval = truncCld;
                 }
@@ -175,7 +180,7 @@ public class DatabaseSchema
      *
      * @return a Set of lowercase Strings
      */
-    public Set getMissingTables() {
+    public Set<String> getMissingTables() {
         return missingTables;
     }
 
@@ -200,30 +205,27 @@ public class DatabaseSchema
      * @throws ObjectStoreException if two similar-named fields are found of different types
      */
     public synchronized Fields getTableFields(ClassDescriptor cld) throws ObjectStoreException {
-        Fields retval = (Fields) tableMasterToFieldDescriptors.get(cld);
+        Fields retval = tableMasterToFieldDescriptors.get(cld);
         if (retval == null) {
             if (isTruncated(cld)) {
-                Map attributeMap = new HashMap();
-                Map referenceMap = new HashMap();
-                Set added = new HashSet();
-                Stack todo = new Stack();
+                Map<String, AttributeDescriptor> attributeMap
+                    = new HashMap<String, AttributeDescriptor>();
+                Map<String, ReferenceDescriptor> referenceMap
+                    = new HashMap<String, ReferenceDescriptor>();
+                Set<ClassDescriptor> added = new HashSet<ClassDescriptor>();
+                Stack<ClassDescriptor> todo = new Stack<ClassDescriptor>();
                 todo.push(cld);
                 added.add(cld);
                 while (!todo.empty()) {
-                    ClassDescriptor subCld = (ClassDescriptor) todo.pop();
-                    Set subClassDescriptors = subCld.getSubDescriptors();
-                    Iterator subIter = subClassDescriptors.iterator();
-                    while (subIter.hasNext()) {
-                        Object subSubCld = subIter.next();
+                    ClassDescriptor subCld = todo.pop();
+                    for (ClassDescriptor subSubCld : subCld.getSubDescriptors()) {
                         if (!added.contains(subSubCld)) {
                             todo.push(subSubCld);
                             added.add(subSubCld);
                         }
                     }
                 }
-                Iterator subIter = added.iterator();
-                while (subIter.hasNext()) {
-                    ClassDescriptor subCld = (ClassDescriptor) subIter.next();
+                for (ClassDescriptor subCld : added) {
                     // Nasty - one truncated class can have priority over another, or even be a
                     // proper subset of another. We check this here, as not all subclasses of
                     // the table master are necessarily mapped onto the same table.
@@ -233,14 +235,12 @@ public class DatabaseSchema
                         // FieldDescriptors of this class, but we can give a small warning if this
                         // results in fields from classes that are not a subclass of the table
                         // master being included.
-                        Iterator fieldIter = subCld.getAllFieldDescriptors().iterator();
-                        while (fieldIter.hasNext()) {
-                            FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                        for (FieldDescriptor field : subCld.getAllFieldDescriptors()) {
                             if (field instanceof AttributeDescriptor) {
                                 AttributeDescriptor origField = (AttributeDescriptor) attributeMap
                                     .get(field.getName());
                                 if (origField == null) {
-                                    attributeMap.put(field.getName(), field);
+                                    attributeMap.put(field.getName(), (AttributeDescriptor) field);
                                 } else if (origField != field) {
                                     String type = ((AttributeDescriptor) field).getType();
                                     String origType = origField.getType();
@@ -255,7 +255,7 @@ public class DatabaseSchema
                                     }
                                 }
                             } else if (!field.isCollection()) {
-                                referenceMap.put(field.getName(), field);
+                                referenceMap.put(field.getName(), (ReferenceDescriptor) field);
                             }
                             // Now we check for our warning:
                             if ((!added.contains(field.getClassDescriptor()))
@@ -273,18 +273,16 @@ public class DatabaseSchema
                 }
                 // At this point, we have a filled attributeMap and referenceMap with all the
                 // fields present. Now, we simply transfer that into a Set and return it.
-                retval = new Fields(new HashSet(attributeMap.values()),
-                        new HashSet(referenceMap.values()));
+                retval = new Fields(new HashSet<AttributeDescriptor>(attributeMap.values()),
+                        new HashSet<ReferenceDescriptor>(referenceMap.values()));
             } else {
-                Set attributes = new HashSet();
-                Set references = new HashSet();
-                Iterator iter = cld.getAllFieldDescriptors().iterator();
-                while (iter.hasNext()) {
-                    FieldDescriptor f = (FieldDescriptor) iter.next();
+                Set<AttributeDescriptor> attributes = new HashSet<AttributeDescriptor>();
+                Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
+                for (FieldDescriptor f : cld.getAllFieldDescriptors()) {
                     if (f instanceof AttributeDescriptor) {
-                        attributes.add(f);
+                        attributes.add((AttributeDescriptor) f);
                     } else if (!f.isCollection()) {
-                        references.add(f);
+                        references.add((ReferenceDescriptor) f);
                     }
                 }
                 retval = new Fields(attributes, references);
@@ -343,8 +341,8 @@ public class DatabaseSchema
      */
     public static class Fields
     {
-        private Set attributes;
-        private Set references;
+        private Set<AttributeDescriptor> attributes;
+        private Set<ReferenceDescriptor> references;
 
         /**
          * Construct a new Fields object.
@@ -352,7 +350,7 @@ public class DatabaseSchema
          * @param attributes the Set of attributes
          * @param references the Set of references
          */
-        private Fields(Set attributes, Set references) {
+        private Fields(Set<AttributeDescriptor> attributes, Set<ReferenceDescriptor> references) {
             this.attributes = attributes;
             this.references = references;
         }
@@ -362,7 +360,7 @@ public class DatabaseSchema
          *
          * @return a Set
          */
-        public Set getAttributes() {
+        public Set<AttributeDescriptor> getAttributes() {
             return attributes;
         }
 
@@ -371,7 +369,7 @@ public class DatabaseSchema
          *
          * @return a Set
          */
-        public Set getReferences() {
+        public Set<ReferenceDescriptor> getReferences() {
             return references;
         }
     }

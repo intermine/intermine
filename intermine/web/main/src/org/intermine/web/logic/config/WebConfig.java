@@ -12,10 +12,8 @@ package org.intermine.web.logic.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -287,11 +285,7 @@ public class WebConfig
             }
 
             Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(className));
-            List<ClassDescriptor> cdList = new ArrayList<ClassDescriptor>(cds);
-
-            for (Iterator<ClassDescriptor> cdIter = cdList.iterator(); cdIter.hasNext(); ) {
-                ClassDescriptor cd = cdIter.next();
-
+            for (ClassDescriptor cd : cds) {
                 if (className.equals(cd.getName())) {
                     continue;
                 }

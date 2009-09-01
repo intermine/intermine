@@ -67,7 +67,8 @@ public class ObjectStoreSummary
     static final String FIELD_DELIM = "$_^";
 
     /**
-     * Construct a summary from an objectstore
+     * Construct a summary from an objectstore.
+     *
      * @param os the objectstore
      * @param configuration the configuration for summarization
      * @throws ClassNotFoundException if a class cannot be found
@@ -120,7 +121,8 @@ public class ObjectStoreSummary
     }
 
     /**
-     * Construct a summary from a properties object
+     * Construct a summary from a properties object.
+     *
      * @param properties the properties
      */
     public ObjectStoreSummary(Properties properties) {
@@ -150,6 +152,7 @@ public class ObjectStoreSummary
 
     /**
      * Get the number of instances of a particular class in the ObjectStore.
+     *
      * @param className the class name to look up
      * @return the count of the instances of the class
      */
@@ -163,6 +166,7 @@ public class ObjectStoreSummary
 
     /**
      * Get a list of the possible values (as Strings) for a given field in a given class.
+     *
      * @param className the class to search for
      * @param fieldName the field name to search for
      * @return a list of the possible values for the class and field, or null if the summary isn't
@@ -175,6 +179,7 @@ public class ObjectStoreSummary
     /**
      * Get a list of the reference and collection names that, for a given class, are always
      * null or empty.
+     *
      * @param className the class name to look up
      * @return Set of null reference and empty collection names
      */
@@ -222,7 +227,8 @@ public class ObjectStoreSummary
     }
 
     /**
-     * Get the possible field values all instances of a specified class
+     * Get the possible field values all instances of a specified class.
+     *
      * @param cld the class descriptor for the class
      * @param fieldNames the fields to consider
      * @param os the object store to retrieve data from
@@ -276,6 +282,7 @@ public class ObjectStoreSummary
 
     /**
      * Look for empty fields and collections on all instances of a particular class.
+     *
      * @param cld the class of objects to be examined
      * @param nullFieldNames output set of null/empty references/collections
      * @param nonNullFieldNames set of non-null/empty references/collections

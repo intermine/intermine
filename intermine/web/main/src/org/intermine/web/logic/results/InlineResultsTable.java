@@ -248,13 +248,10 @@ public class InlineResultsTable
     protected List<FieldConfig> getRowFieldConfigs(Object rowObject) {
         List<FieldConfig> returnFieldConfigs = new ArrayList<FieldConfig>();
 
-        Set objectClassDescriptors = DisplayObject.getLeafClds(rowObject.getClass(), model);
+        Set<ClassDescriptor> objectClassDescriptors
+            = DisplayObject.getLeafClds(rowObject.getClass(), model);
 
-        Iterator classDescriptorsIter = objectClassDescriptors.iterator();
-
-        while (classDescriptorsIter.hasNext()) {
-            ClassDescriptor thisClassDescriptor = (ClassDescriptor) classDescriptorsIter.next();
-
+        for (ClassDescriptor thisClassDescriptor : objectClassDescriptors) {
             for (FieldConfig fc : getClassFieldConfigs(thisClassDescriptor)) {
                 if (fc.getShowInInlineCollection()) {
                     returnFieldConfigs.add(fc);

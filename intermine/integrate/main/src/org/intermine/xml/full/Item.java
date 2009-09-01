@@ -10,6 +10,7 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class Item implements Comparable
     private Map<String, ReferenceList> collections = new HashMap<String, ReferenceList>();
     private Model model = null;
     private ClassDescriptor classDescriptor = null;
-    private Set<ClassDescriptor> implementationClassDescriptors = null;
+    private List<ClassDescriptor> implementationClassDescriptors = null;
 
     /**
      * Construct an item.
@@ -559,18 +560,39 @@ public class Item implements Comparable
         }
     }
 
+    private static ThreadLocal<Map<String, List<ClassDescriptor>>> getAllClassDescriptorsCache
+        = new ThreadLocal<Map<String, List<ClassDescriptor>>>() {
+            @Override protected Map<String, List<ClassDescriptor>> initialValue() {
+                return new HashMap<String, List<ClassDescriptor>>();
+            }
+        };
+
     /**
      * Return the ClassDescriptors of the class of this Item (as given by className) and all the
      * implementations.  Call only if model, className and implementations are set.
      *
      * @return all the ClassDescriptors for this Item
      */
-    protected Set<ClassDescriptor> getAllClassDescriptors() {
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
-        clds.addAll(getImplementClassDescriptors(implementations));
-        clds.add(classDescriptor);
-        return clds;
+    protected List<ClassDescriptor> getAllClassDescriptors() {
+        Map<String, List<ClassDescriptor>> cache = getAllClassDescriptorsCache.get();
+        String key = implementations + "___" + classDescriptor.getName();
+        List<ClassDescriptor> retval = cache.get(key);
+        if (retval == null) {
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+            clds.addAll(getImplementClassDescriptors(implementations));
+            clds.add(classDescriptor);
+            retval = new ArrayList<ClassDescriptor>(clds);
+            cache.put(key, retval);
+        }
+        return retval;
     }
+
+    private static ThreadLocal<Map<String, List<ClassDescriptor>>> getImplementClassDescriptorsCache
+        = new ThreadLocal<Map<String, List<ClassDescriptor>>>() {
+            @Override protected Map<String, List<ClassDescriptor>> initialValue() {
+                return new HashMap<String, List<ClassDescriptor>>();
+            }
+        };
 
     /**
      * Returns the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
@@ -581,17 +603,20 @@ public class Item implements Comparable
      * @return the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
      * been set
      */
-    protected Set<ClassDescriptor> getImplementClassDescriptors(String implementations) {
-        if (implementationClassDescriptors != null) {
-            return implementationClassDescriptors;
-        } else {
-            implementationClassDescriptors = new HashSet<ClassDescriptor>();
-            String [] bits = StringUtil.split(implementations, " ");
+    protected List<ClassDescriptor> getImplementClassDescriptors(String implementations) {
+        if (implementationClassDescriptors == null) {
+            Map<String, List<ClassDescriptor>> cache = getImplementClassDescriptorsCache.get();
+            implementationClassDescriptors = cache.get(implementations);
+            if (implementationClassDescriptors == null) {
+                implementationClassDescriptors = new ArrayList<ClassDescriptor>();
+                String [] bits = StringUtil.split(implementations, " ");
 
-            for (String clsName : bits) {
-                if (!StringUtil.isEmpty(clsName)) {
-                    implementationClassDescriptors.add(getClassDescriptorByName(clsName));
+                for (String clsName : bits) {
+                    if (!StringUtil.isEmpty(clsName)) {
+                        implementationClassDescriptors.add(getClassDescriptorByName(clsName));
+                    }
                 }
+                cache.put(implementations, implementationClassDescriptors);
             }
         }
         return implementationClassDescriptors;

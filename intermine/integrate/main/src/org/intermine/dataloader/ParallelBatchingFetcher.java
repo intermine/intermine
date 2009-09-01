@@ -12,8 +12,8 @@ package org.intermine.dataloader;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +73,7 @@ public class ParallelBatchingFetcher extends BatchingFetcher
             Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)
     throws ObjectStoreException {
         Map<PrimaryKey, ClassDescriptor> pksNotDone
-            = new HashMap<PrimaryKey, ClassDescriptor>(pksToDo);
+            = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());
         synchronized (pksNotDone) {
             while (!pksToDo.isEmpty()) {

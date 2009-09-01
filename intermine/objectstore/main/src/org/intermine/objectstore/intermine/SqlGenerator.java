@@ -110,8 +110,10 @@ public class SqlGenerator
     protected static final int QUERY_SUBQUERY_EXISTS = 5;
     protected static final int QUERY_FOR_GOFASTER = 6;
 
-    protected static Map sqlCache = new WeakHashMap();
-    protected static Map tablenamesCache = new WeakHashMap();
+    protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
+        = new WeakHashMap<DatabaseSchema, Map<Query, CacheEntry>>();
+    protected static Map<DatabaseSchema, Map<Query, Set<Object>>> tablenamesCache
+        = new WeakHashMap<DatabaseSchema, Map<Query, Set<Object>>>();
 
     /**
      * Generates a query to retrieve a single object from the database, by id.
@@ -194,7 +196,7 @@ public class SqlGenerator
      *        contents of the bag that are relevant for the BagConstraint
      */
     public static void registerOffset(Query q, int start, DatabaseSchema schema, Database db,
-                                      Object value, Map bagTableNames) {
+            Object value, Map<Object, String> bagTableNames) {
         LOG.debug("registerOffset() called with offset: " + start);
 
         try {
@@ -208,8 +210,8 @@ public class SqlGenerator
                 return;
             }
             synchronized (q) {
-                Map schemaCache = getCacheForSchema(schema);
-                CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
+                Map<Query, CacheEntry> schemaCache = getCacheForSchema(schema);
+                CacheEntry cacheEntry = schemaCache.get(q);
                 if (cacheEntry != null) {
                     if ((cacheEntry.getLastOffset() - start >= 100000)
                             || (start - cacheEntry.getLastOffset() >= 10000)) {
@@ -227,7 +229,8 @@ public class SqlGenerator
                         String sql = generate(q, schema, db, c, QUERY_NORMAL, bagTableNames);
                         cacheEntry.setLast(start, sql);
                     }
-                    SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
+                    SortedMap<Integer, String> headMap = cacheEntry.getCached()
+                        .headMap(new Integer(start + 1));
                     Integer lastKey = null;
                     try {
                         lastKey = (Integer) headMap.lastKey();
@@ -342,12 +345,13 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, int start, int limit, DatabaseSchema schema, Database db,
-            Map bagTableNames) throws ObjectStoreException {
+            Map<Object, String> bagTableNames) throws ObjectStoreException {
         synchronized (q) {
-            Map schemaCache = getCacheForSchema(schema);
-            CacheEntry cacheEntry = (CacheEntry) schemaCache.get(q);
+            Map<Query, CacheEntry> schemaCache = getCacheForSchema(schema);
+            CacheEntry cacheEntry = schemaCache.get(q);
             if (cacheEntry != null) {
-                SortedMap headMap = cacheEntry.getCached().headMap(new Integer(start + 1));
+                SortedMap<Integer, String> headMap = cacheEntry.getCached()
+                    .headMap(new Integer(start + 1));
                 Integer lastKey = null;
                 try {
                     lastKey = (Integer) headMap.lastKey();
@@ -387,11 +391,11 @@ public class SqlGenerator
      * @param schema the DatabaseSchema
      * @return a Map
      */
-    private static Map getCacheForSchema(DatabaseSchema schema) {
+    private static Map<Query, CacheEntry> getCacheForSchema(DatabaseSchema schema) {
         synchronized (sqlCache) {
-            Map retval = (Map) sqlCache.get(schema);
+            Map<Query, CacheEntry> retval = sqlCache.get(schema);
             if (retval == null) {
-                retval = Collections.synchronizedMap(new WeakHashMap());
+                retval = Collections.synchronizedMap(new WeakHashMap<Query, CacheEntry>());
                 sqlCache.put(schema, retval);
             }
             return retval;
@@ -412,10 +416,10 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     public static String generate(Query q, DatabaseSchema schema, Database db,
-                                     Constraint offsetCon, int kind,
-                                     Map bagTableNames) throws ObjectStoreException {
+            Constraint offsetCon, int kind,
+            Map<Object, String> bagTableNames) throws ObjectStoreException {
         State state = new State();
-        List selectList = q.getSelect();
+        List<QuerySelectable> selectList = q.getSelect();
         if ((selectList.size() == 1) && (selectList.get(0) instanceof ObjectStoreBag)) {
             // Special case - we are fetching the contents of an ObjectStoreBag.
             return "SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE "
@@ -536,27 +540,25 @@ public class SqlGenerator
             return false;
         }
 
-        Set selectClasses = new HashSet();
-        Iterator selectIter = q.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QuerySelectable n = (QuerySelectable) selectIter.next();
+        Set<QueryClass> selectClasses = new HashSet<QueryClass>();
+        for (QuerySelectable n : q.getSelect()) {
             if (n instanceof QueryClass) {
-                selectClasses.add(n);
+                selectClasses.add((QueryClass) n);
             } else if (n instanceof QueryField) {
                 QueryField f = (QueryField) n;
                 if ("id".equals(f.getFieldName())) {
                     FromElement qc = f.getFromElement();
                     if (qc instanceof QueryClass) {
-                        selectClasses.add(qc);
+                        selectClasses.add((QueryClass) qc);
                     }
                 }
             }
         }
 
         boolean allPresent = true;
-        Iterator fromIter = q.getFrom().iterator();
+        Iterator<FromElement> fromIter = q.getFrom().iterator();
         while (fromIter.hasNext() && allPresent) {
-            FromElement qc = (FromElement) fromIter.next();
+            FromElement qc = fromIter.next();
             allPresent = selectClasses.contains(qc);
         }
 
@@ -573,13 +575,13 @@ public class SqlGenerator
      * @return a Set of table names
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Set findTableNames(Query q, DatabaseSchema schema, boolean individualOsbs)
+    public static Set<Object> findTableNames(Query q, DatabaseSchema schema, boolean individualOsbs)
     throws ObjectStoreException {
+        Map<Query, Set<Object>> schemaCache = getTablenamesCacheForSchema(schema);
         synchronized (q) {
-            Map schemaCache = getTablenamesCacheForSchema(schema);
-            Set tablenames = (Set) schemaCache.get(q);
+            Set<Object> tablenames = schemaCache.get(q);
             if (tablenames == null) {
-                tablenames = new HashSet();
+                tablenames = new HashSet<Object>();
                 findTableNames(tablenames, q, schema, true, individualOsbs);
                 schemaCache.put(q, tablenames);
             }
@@ -593,11 +595,11 @@ public class SqlGenerator
      * @param schema the DatabaseSchema
      * @return a Map
      */
-    private static Map getTablenamesCacheForSchema(DatabaseSchema schema) {
+    private static Map<Query, Set<Object>> getTablenamesCacheForSchema(DatabaseSchema schema) {
         synchronized (tablenamesCache) {
-            Map retval = (Map) tablenamesCache.get(schema);
+            Map<Query, Set<Object>> retval = tablenamesCache.get(schema);
             if (retval == null) {
-                retval = Collections.synchronizedMap(new WeakHashMap());
+                retval = Collections.synchronizedMap(new WeakHashMap<Query, Set<Object>>());
                 tablenamesCache.put(schema, retval);
             }
             return retval;
@@ -616,23 +618,16 @@ public class SqlGenerator
      * adds the table name instead
      * @throws ObjectStoreException if something goes wrong
      */
-    private static void findTableNames(Set tablenames, Query q,
+    private static void findTableNames(Set<Object> tablenames, Query q,
             DatabaseSchema schema, boolean addInterMineObject, boolean individualOsbs)
     throws ObjectStoreException {
         if (completelyFalse(q.getConstraint())) {
             return;
         }
         findTableNamesInConstraint(tablenames, q.getConstraint(), schema, individualOsbs);
-        Set fromElements = q.getFrom();
-        Iterator fromIter = fromElements.iterator();
-        while (fromIter.hasNext()) {
-            FromElement fromElement = (FromElement) fromIter.next();
+        for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
-                QueryClass qc = (QueryClass) fromElement;
-                Set classes = DynamicUtil.decomposeClass(qc.getType());
-                Iterator classIter = classes.iterator();
-                while (classIter.hasNext()) {
-                    Class cls = (Class) classIter.next();
+                for (Class cls : DynamicUtil.decomposeClass(((QueryClass) fromElement).getType())) {
                     ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
                         throw new ObjectStoreException(cls + " is not in the model");
@@ -651,9 +646,7 @@ public class SqlGenerator
         }
         String interMineObject = DatabaseUtil.getTableName(schema.getModel()
                 .getClassDescriptorByName(InterMineObject.class.getName()));
-        Iterator selectIter = q.getSelect().iterator();
-        while (selectIter.hasNext()) {
-            QuerySelectable selectable = (QuerySelectable) selectIter.next();
+        for (QuerySelectable selectable : q.getSelect()) {
             if (selectable instanceof QueryClass) {
                 if (addInterMineObject && schema.isMissingNotXml()) {
                     tablenames.add(interMineObject);
@@ -711,9 +704,7 @@ public class SqlGenerator
     private static void findTableNamesInConstraint(Set tablenames, Constraint c,
             DatabaseSchema schema, boolean individualOsbs) throws ObjectStoreException {
         if (c instanceof ConstraintSet) {
-            Iterator conIter = ((ConstraintSet) c).getConstraints().iterator();
-            while (conIter.hasNext()) {
-                Constraint subC = (Constraint) conIter.next();
+            for (Constraint subC : ((ConstraintSet) c).getConstraints()) {
                 findTableNamesInConstraint(tablenames, subC, schema, individualOsbs);
             }
         } else if (c instanceof SubqueryConstraint) {
@@ -760,30 +751,24 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void buildFromComponent(State state, Query q, DatabaseSchema schema,
-                                             Map bagTableNames)
-            throws ObjectStoreException {
-        Set fromElements = q.getFrom();
-        Iterator fromIter = fromElements.iterator();
-        while (fromIter.hasNext()) {
-            FromElement fromElement = (FromElement) fromIter.next();
+            Map<Object, String> bagTableNames) throws ObjectStoreException {
+        for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
                 String baseAlias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
                         .get(qc));
-                Set classes = DynamicUtil.decomposeClass(qc.getType());
-                Map aliases = new LinkedHashMap();
+                Set<Class> classes = DynamicUtil.decomposeClass(qc.getType());
+                List<ClassDescriptorAndAlias> aliases = new ArrayList<ClassDescriptorAndAlias>();
                 int sequence = 0;
                 String lastAlias = "";
-                Iterator classIter = classes.iterator();
-                while (classIter.hasNext()) {
-                    Class cls = (Class) classIter.next();
+                for (Class cls : classes) {
                     ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
                         throw new ObjectStoreException(cls.toString() + " is not in the model");
                     }
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     if (sequence == 0) {
-                        aliases.put(cld, baseAlias);
+                        aliases.add(new ClassDescriptorAndAlias(cld, baseAlias));
                         state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
                                 + baseAlias);
                         if (schema.isTruncated(tableMaster)) {
@@ -793,7 +778,7 @@ public class SqlGenerator
                             state.addToWhere(baseAlias + ".tableclass = '" + cls.getName() + "'");
                         }
                     } else {
-                        aliases.put(cld, baseAlias + "_" + sequence);
+                        aliases.add(new ClassDescriptorAndAlias(cld, baseAlias + "_" + sequence));
                         state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS " + baseAlias
                                 + "_" + sequence);
                         if (state.getWhereBuffer().length() > 0) {
@@ -809,29 +794,29 @@ public class SqlGenerator
                     }
                     sequence++;
                 }
-                Map fields = schema.getModel().getFieldDescriptorsForClass(qc.getType());
-                Map fieldToAlias = state.getFieldToAlias(qc);
-                Iterator fieldIter = null;
+                Map<String, FieldDescriptor> fields = schema.getModel()
+                    .getFieldDescriptorsForClass(qc.getType());
+                Map<String, String> fieldToAlias = state.getFieldToAlias(qc);
+                Iterator<FieldDescriptor> fieldIter = null;
                 if (schema.isFlatMode(qc.getType())) {
-                    List iterators = new ArrayList();
+                    List<Iterator<? extends FieldDescriptor>> iterators
+                        = new ArrayList<Iterator<? extends FieldDescriptor>>();
                     ClassDescriptor cld = schema.getTableMaster((ClassDescriptor) schema.getModel()
                         .getClassDescriptorsForClass(qc.getType()).iterator().next());
                     DatabaseSchema.Fields dbsFields = schema.getTableFields(schema
                             .getTableMaster(cld));
                     iterators.add(dbsFields.getAttributes().iterator());
                     iterators.add(dbsFields.getReferences().iterator());
-                    fieldIter = new CombinedIterator(iterators);
+                    fieldIter = new CombinedIterator<FieldDescriptor>(iterators);
                 } else {
                     fieldIter = fields.values().iterator();
                 }
                 while (fieldIter.hasNext()) {
-                    FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                    FieldDescriptor field = fieldIter.next();
                     String name = field.getName();
-                    Iterator aliasIter = aliases.entrySet().iterator();
-                    while (aliasIter.hasNext()) {
-                        Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
-                        ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
-                        String alias = (String) aliasEntry.getValue();
+                    for (ClassDescriptorAndAlias aliasEntry : aliases) {
+                        ClassDescriptor cld = aliasEntry.getClassDescriptor();
+                        String alias = aliasEntry.getAlias();
                         if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode(qc
                                     .getType())) {
                             fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
@@ -841,11 +826,9 @@ public class SqlGenerator
                 }
                 // Deal with OBJECT column
                 if (schema.isMissingNotXml()) {
-                    Iterator aliasIter = aliases.entrySet().iterator();
-                    while (aliasIter.hasNext()) {
-                        Map.Entry aliasEntry = (Map.Entry) aliasIter.next();
-                        ClassDescriptor cld = (ClassDescriptor) aliasEntry.getKey();
-                        String alias = (String) aliasEntry.getValue();
+                    for (ClassDescriptorAndAlias aliasEntry : aliases) {
+                        ClassDescriptor cld = aliasEntry.getClassDescriptor();
+                        String alias = aliasEntry.getAlias();
                         ClassDescriptor tableMaster = schema.getTableMaster(cld);
                         if (InterMineObject.class.equals(tableMaster.getType())) {
                             fieldToAlias.put("OBJECT", alias + ".OBJECT");
@@ -857,9 +840,8 @@ public class SqlGenerator
                 }
                 fieldToAlias.put("class", baseAlias + ".class");
             } else if (fromElement instanceof Query) {
-                state.addToFrom("(" + generate((Query) fromElement, schema,
-                                               state.getDb(), null, QUERY_SUBQUERY_FROM,
-                                               bagTableNames) + ") AS "
+                state.addToFrom("(" + generate((Query) fromElement, schema, state.getDb(), null,
+                                QUERY_SUBQUERY_FROM, bagTableNames) + ") AS "
                         + DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
                             .get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(DatabaseUtil
@@ -1106,9 +1088,7 @@ public class SqlGenerator
             if ((bc.getBag() != null) && (bc.getOp() == ConstraintOp.NOT_IN)) {
                 boolean empty = true;
                 Class type = bc.getQueryNode().getType();
-                Iterator bagIter = bc.getBag().iterator();
-                while (bagIter.hasNext() && empty) {
-                    Object bagItem = bagIter.next();
+                for (Object bagItem : bc.getBag()) {
                     if (!(ProxyReference.class.equals(bagItem.getClass())
                                 || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
@@ -1173,9 +1153,7 @@ public class SqlGenerator
             if ((bc.getBag() != null) && (bc.getOp() == ConstraintOp.IN)) {
                 boolean empty = true;
                 Class type = bc.getQueryNode().getType();
-                Iterator bagIter = bc.getBag().iterator();
-                while (bagIter.hasNext() && empty) {
-                    Object bagItem = bagIter.next();
+                for (Object bagItem : bc.getBag()) {
                     if (!(ProxyReference.class.equals(bagItem.getClass())
                                 || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
@@ -1280,11 +1258,8 @@ public class SqlGenerator
         } else {
             buffer.append(negate ? "(NOT (" : (loseBrackets && (!disjunctive) ? "" : "("));
             boolean needComma = false;
-            Map subqueryConstraints = new HashMap();
-            Set constraints = c.getConstraints();
-            Iterator constraintIter = constraints.iterator();
-            while (constraintIter.hasNext()) {
-                Constraint subC = (Constraint) constraintIter.next();
+            Map<String, StringBuffer> subqueryConstraints = new HashMap<String, StringBuffer>();
+            for (Constraint subC : c.getConstraints()) {
                 if (disjunctive && (subC instanceof SubqueryConstraint)) {
                     SubqueryConstraint subQC = (SubqueryConstraint) subC;
                     Query subQCQuery = subQC.getQuery();
@@ -1298,7 +1273,7 @@ public class SqlGenerator
                                 state);
                     }
                     left.append(" " + subQC.getOp().toString() + " (");
-                    StringBuffer existing = (StringBuffer) subqueryConstraints.get(left.toString());
+                    StringBuffer existing = subqueryConstraints.get(left.toString());
                     if (existing == null) {
                         existing = new StringBuffer();
                         subqueryConstraints.put(left.toString(), existing);
@@ -1321,11 +1296,9 @@ public class SqlGenerator
                     }
                 }
             }
-            Iterator subqueryConstraintIter = subqueryConstraints.entrySet().iterator();
-            while (subqueryConstraintIter.hasNext()) {
-                Map.Entry entry = (Map.Entry) subqueryConstraintIter.next();
-                String left = (String) entry.getKey();
-                String right = ((StringBuffer) entry.getValue()).toString();
+            for (Map.Entry<String, StringBuffer> entry : subqueryConstraints.entrySet()) {
+                String left = entry.getKey();
+                String right = entry.getValue().toString();
                 if (needComma) {
                     buffer.append(" OR ");
                 }
@@ -1454,8 +1427,8 @@ public class SqlGenerator
         QueryReference arg1 = c.getReference();
         QueryClass arg2 = c.getQueryClass();
         InterMineObject arg2Obj = c.getObject();
-        Map fieldNameToFieldDescriptor = schema.getModel().getFieldDescriptorsForClass(arg1
-                .getQcType());
+        Map<String, FieldDescriptor> fieldNameToFieldDescriptor = schema.getModel()
+            .getFieldDescriptorsForClass(arg1.getQcType());
         ReferenceDescriptor arg1Desc = (ReferenceDescriptor)
             fieldNameToFieldDescriptor.get(arg1.getFieldName());
         if (arg1Desc == null) {
@@ -1510,7 +1483,7 @@ public class SqlGenerator
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias + " AND ");
                     } else if (arg1Qcb != null) {
-                        Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                        Map<String, String> fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
                             buffer.append(arg2Alias + " = " + fieldToAlias.get("id") + " AND ");
                         } else {
@@ -1548,7 +1521,7 @@ public class SqlGenerator
                         buffer.append((c.getOp() == ConstraintOp.CONTAINS ? " = " : " != ")
                                 + arg2Alias);
                     } else if (arg1Qcb != null) {
-                        Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                        Map<String, String> fieldToAlias = state.getFieldToAlias(arg1Qcb);
                         if (fieldToAlias.containsKey("id")) {
                             buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                         } else {
@@ -1596,7 +1569,7 @@ public class SqlGenerator
                     buffer.append(" = " + arg2Alias);
                     buffer.append(" AND ");
                 } else if (arg1Qcb != null) {
-                    Map fieldToAlias = state.getFieldToAlias(arg1Qcb);
+                    Map<String, String> fieldToAlias = state.getFieldToAlias(arg1Qcb);
                     if (fieldToAlias.containsKey("id")) {
                         buffer.append(arg2Alias + " = " + fieldToAlias.get("id"));
                         buffer.append(" AND ");
@@ -1669,7 +1642,7 @@ public class SqlGenerator
             queryClassToString(lhsBuffer, (QueryClass) c.getQueryNode(), q, schema, ID_ONLY, state);
             leftHandSide = lhsBuffer.toString();
         }
-        SortedSet filteredBag = new TreeSet();
+        SortedSet<Object> filteredBag = new TreeSet<Object>();
         Collection bagColl = c.getBag();
         if (bagColl == null) {
             ObjectStoreBag osb = c.getOsb();
@@ -1699,11 +1672,9 @@ public class SqlGenerator
                 buffer.append("))");
             }
         } else {
-            Iterator bagIter = bagColl.iterator();
             //int lowest = Integer.MAX_VALUE;
             //int highest = Integer.MIN_VALUE;
-            while (bagIter.hasNext()) {
-                Object bagItem = bagIter.next();
+            for (Object bagItem : bagColl) {
                 if (ProxyReference.class.equals(bagItem.getClass())
                         || DynamicUtil.isInstance(bagItem, type)) {
                     if (bagItem instanceof InterMineObject) {
@@ -1738,8 +1709,7 @@ public class SqlGenerator
                     //}
                     boolean parenthesesForGroups = (filteredBag.size() > 9000)
                         && ((c.getOp() == ConstraintOp.IN) || limitRange);
-                    Iterator orIter = filteredBag.iterator();
-                    while (orIter.hasNext()) {
+                    for (Object orNext : filteredBag) {
                         if (needComma == 0) {
                             buffer.append((parenthesesForGroups ? "(" : "") + leftHandSide
                                     + " IN (");
@@ -1750,7 +1720,7 @@ public class SqlGenerator
                         }
                         needComma++;
                         StringBuffer constraint = new StringBuffer();
-                        objectToString(buffer, orIter.next());
+                        objectToString(buffer, orNext);
                     }
                     buffer.append(")");
                     //if (limitRange) {
@@ -1932,7 +1902,7 @@ public class SqlGenerator
                     + " have an ID");
         }
         String alias = (String) q.getAliases().get(qc);
-        Map fieldToAlias = state.getFieldToAlias(qc);
+        Map<String, String> fieldToAlias = state.getFieldToAlias(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
                     + " but the QueryClass is not in the FROM list of that query. QueryClass: "
@@ -1965,21 +1935,22 @@ public class SqlGenerator
                     || (((kind == QUERY_NORMAL) || (kind == QUERY_FOR_GOFASTER))
                         && schema.isFlatMode(qc.getType()))
                     || (kind == QUERY_FOR_PRECOMP)) {
-                Iterator fieldIter = null;
+                Iterator<FieldDescriptor> fieldIter = null;
                 ClassDescriptor cld = schema.getModel().getClassDescriptorByName(qc.getType()
                         .getName());
                 if (schema.isFlatMode(qc.getType()) && ((kind == QUERY_NORMAL)
                             || (kind == QUERY_FOR_GOFASTER))) {
-                    List iterators = new ArrayList();
+                    List<Iterator<? extends FieldDescriptor>> iterators
+                        = new ArrayList<Iterator<? extends FieldDescriptor>>();
                     DatabaseSchema.Fields fields = schema.getTableFields(schema
                             .getTableMaster(cld));
                     iterators.add(fields.getAttributes().iterator());
                     iterators.add(fields.getReferences().iterator());
-                    fieldIter = new CombinedIterator(iterators);
+                    fieldIter = new CombinedIterator<FieldDescriptor>(iterators);
                 } else {
                     fieldIter = cld.getAllFieldDescriptors().iterator();
                 }
-                Map fieldMap = new TreeMap();
+                Map<String, FieldDescriptor> fieldMap = new TreeMap<String, FieldDescriptor>();
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = (FieldDescriptor) fieldIter.next();
                     String columnName = DatabaseUtil.getColumnName(field);
@@ -1987,17 +1958,15 @@ public class SqlGenerator
                         fieldMap.put(columnName, field);
                     }
                 }
-                Iterator fieldMapIter = fieldMap.entrySet().iterator();
-                while (fieldMapIter.hasNext()) {
-                    Map.Entry fieldEntry = (Map.Entry) fieldMapIter.next();
-                    FieldDescriptor field = (FieldDescriptor) fieldEntry.getValue();
+                for (Map.Entry<String, FieldDescriptor> fieldEntry : fieldMap.entrySet()) {
+                    FieldDescriptor field = fieldEntry.getValue();
                     String columnName = DatabaseUtil.getColumnName(field);
 
                     if (needComma) {
                         buffer.append(", ");
                     }
                     needComma = true;
-                    buffer.append((String) fieldToAlias.get(field.getName()));
+                    buffer.append(fieldToAlias.get(field.getName()));
                     if (kind == QUERY_SUBQUERY_FROM) {
                         buffer.append(" AS ")
                             .append(DatabaseUtil.generateSqlCompatibleName(alias) + columnName);
@@ -2013,7 +1982,7 @@ public class SqlGenerator
                 if (schema.isFlatMode(qc.getType())
                         && schema.isTruncated(schema.getTableMaster(cld))) {
                     buffer.append(", ")
-                        .append((String) fieldToAlias.get("class"))
+                        .append(fieldToAlias.get("class"))
                         .append(" AS ")
                         .append(alias.equals(alias.toLowerCase())
                                 ? DatabaseUtil.generateSqlCompatibleName(alias) + "objectclass"
@@ -2048,8 +2017,8 @@ public class SqlGenerator
             QueryField nodeF = (QueryField) node;
             FromElement nodeClass = nodeF.getFromElement();
             if (state != null) {
-                Map aliasMap = state.getFieldToAlias(nodeClass);
-                String classAlias = (String) aliasMap.get(nodeF.getFieldName());
+                Map<String, String> aliasMap = state.getFieldToAlias(nodeClass);
+                String classAlias = aliasMap.get(nodeF.getFieldName());
 
                 buffer.append(classAlias);
                 if (aliasMap instanceof AlwaysMap) {
@@ -2196,12 +2165,12 @@ public class SqlGenerator
             int kind) throws ObjectStoreException {
         boolean needComma = false;
         StringBuffer retval = new StringBuffer();
-        Iterator iter = q.getSelect().iterator();
+        Iterator<QuerySelectable> iter = q.getSelect().iterator();
         if (!iter.hasNext()) {
             throw new ObjectStoreException("SELECT list is empty in Query");
         }
         while (iter.hasNext()) {
-            QuerySelectable node = (QuerySelectable) iter.next();
+            QuerySelectable node = iter.next();
             String alias = (String) q.getAliases().get(node);
             if (node instanceof QueryClass) {
                 if (needComma) {
@@ -2254,9 +2223,7 @@ public class SqlGenerator
             State state) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         boolean needComma = false;
-        Iterator groupByIter = q.getGroupBy().iterator();
-        while (groupByIter.hasNext()) {
-            QueryNode node = (QueryNode) groupByIter.next();
+        for (QueryNode node : q.getGroupBy()) {
             retval.append(needComma ? ", " : " GROUP BY ");
             needComma = true;
             if (node instanceof QueryClass) {
@@ -2282,11 +2249,9 @@ public class SqlGenerator
     protected static String buildOrderBy(State state, Query q, DatabaseSchema schema, int kind)
             throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
-        HashSet seen = new HashSet();
+        HashSet<String> seen = new HashSet<String>();
         boolean needComma = false;
-        Iterator orderByIter = q.getEffectiveOrderBy().iterator();
-        while (orderByIter.hasNext()) {
-            Object node = orderByIter.next();
+        for (Object node : q.getEffectiveOrderBy()) {
             boolean desc = false;
             if (node instanceof OrderDescending) {
                 desc = true;
@@ -2400,12 +2365,13 @@ public class SqlGenerator
         private StringBuffer fromText = new StringBuffer();
         private Map<String, String> orderBy = new LinkedHashMap<String, String>();
         private int number = 0;
-        private Map fromToFieldToAlias = new HashMap();
+        private Map<FromElement, Map<String, String>> fromToFieldToAlias
+            = new HashMap<FromElement, Map<String, String>>();
         private Database db;
 
         // a Map from BagConstraints to table names, where the table contains the contents of the
         // bag that are relevant for the BagConstraint
-        private Map bagTableNames = new HashMap();
+        private Map<Object, String> bagTableNames = new HashMap();
 
         public State() {
             // empty
@@ -2467,25 +2433,25 @@ public class SqlGenerator
         }
 
         public Map getFieldToAlias(FromElement from) {
-            Map retval = (Map) fromToFieldToAlias.get(from);
+            Map<String, String> retval = fromToFieldToAlias.get(from);
             if (retval == null) {
-                retval = new HashMap();
+                retval = new HashMap<String, String>();
                 fromToFieldToAlias.put(from, retval);
             }
             return retval;
         }
 
-        public void setFieldToAlias(FromElement from, Map map) {
+        public void setFieldToAlias(FromElement from, Map<String, String> map) {
             fromToFieldToAlias.put(from, map);
         }
 
-        public void setBagTableNames(Map bagTableNames) {
+        public void setBagTableNames(Map<Object, String> bagTableNames) {
             if (bagTableNames != null) {
                 this.bagTableNames = bagTableNames;
             }
         }
 
-        public Map getBagTableNames() {
+        public Map<Object, String> getBagTableNames() {
             return bagTableNames;
         }
 
@@ -2500,7 +2466,7 @@ public class SqlGenerator
 
     private static class CacheEntry
     {
-        private TreeMap cached = new TreeMap();
+        private TreeMap<Integer, String> cached = new TreeMap<Integer, String>();
         private int lastOffset;
         private String lastSQL;
 
@@ -2509,7 +2475,7 @@ public class SqlGenerator
             this.lastSQL = lastSQL;
         }
 
-        public TreeMap getCached() {
+        public TreeMap<Integer, String> getCached() {
             return cached;
         }
 
@@ -2524,6 +2490,25 @@ public class SqlGenerator
 
         public String getLastSQL() {
             return lastSQL;
+        }
+    }
+
+    private static class ClassDescriptorAndAlias
+    {
+        private ClassDescriptor cld;
+        private String alias;
+
+        public ClassDescriptorAndAlias(ClassDescriptor cld, String alias) {
+            this.cld = cld;
+            this.alias = alias;
+        }
+
+        public ClassDescriptor getClassDescriptor() {
+            return cld;
+        }
+
+        public String getAlias() {
+            return alias;
         }
     }
 }

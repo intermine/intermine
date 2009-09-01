@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,19 +81,19 @@ public class AvailableColumnsController extends InterMineAction
     private List<String> getPathsThatCanBeAdded(PagedTable pt) {
         List<Path> paths = pt.getWebTable().getPathQuery().getView();
         List<String> ret = new ArrayList<String>();
-        Set<ClassDescriptor> processedDescs = new TreeSet<ClassDescriptor>();
 
-        ret.addAll(getAllLastFieldsPaths(paths, processedDescs));
+        ret.addAll(getAllLastFieldsPaths(paths));
         return getWithoutOriginalPaths(ret, paths);
     }
 
-    private List<String> getAllLastFieldsPaths(List<Path> paths, 
-            Set<ClassDescriptor> processedDescs) {
+    private List<String> getAllLastFieldsPaths(List<Path> paths) { 
+        Set<String> processed = new HashSet<String>();
         List<String> ret = new ArrayList<String>();
         for (Path path : paths) {
             ClassDescriptor desc = getPenultimateDescriptor(path);
-            if (!processedDescs.contains(desc)) {
-                processedDescs.add(desc);
+            String key = path.getPrefix().toStringNoConstraints();
+            if (!processed.contains(key)) {
+                processed.add(key);
                 ret.addAll(getFieldPaths(desc, path.getPrefix().toStringNoConstraints()));    
             }
         }
