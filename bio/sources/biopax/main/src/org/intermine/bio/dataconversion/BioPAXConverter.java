@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
@@ -45,20 +47,24 @@ import org.intermine.xml.full.Item;
 public class BioPAXConverter extends BioFileConverter implements Visitor
 {
     private static final Logger LOG = Logger.getLogger(BioPAXConverter.class);
+    private static final String PROP_FILE = "biopax_config.properties";
     private static final String DATASET_TITLE = "BioPAX";
     private static final String DATA_SOURCE_NAME = "BioPAX data set";
     private static final String NAMESPACE = "Reactome";
-    private static final String PROTEIN_DATASOURCE = "Flybase";
+    private static final String DEFAULT_SOURCE = "UniProt";
     private Map<String, String> pathways = new HashMap();
     private Map<String, Item> proteins = new HashMap();
-    Traverser traverser;
+    private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet();
     private int depth=0;
     private Item organism;
     private String pathwayRefId = null;
     private List<MultiKey> synonyms = new ArrayList(); 
     private Set<String> taxonIds = null;
-    OrganismRepository or;
+    private Map<String, String> sources = new HashMap();
+    private OrganismRepository or;
+    private String source = null;
+    int nopathwaycount = 0;
     
     /**
      * Constructor
@@ -66,12 +72,11 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      * @param intermineModel the Model
      * @throws ObjectStoreException if organism can't be stored
      */
-    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) 
-    throws ObjectStoreException {
+    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) {
         super(writer, intermineModel, DATA_SOURCE_NAME, DATASET_TITLE);
-        or = OrganismRepository.getOrganismRepository();
-       
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
+        readConfig();
+        or = OrganismRepository.getOrganismRepository();
     }
 
     /**
@@ -87,12 +92,31 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         String genus = bits[0];
         String species = bits[1].split("\\.")[0];
         
+        String organismName = genus + " " + species;
+        OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
+        if (od == null) {
+            LOG.error("no data for " + organismName + ".  Please add to repository.");
+        }
+        int taxonId = od.getTaxonId();
+        String taxonIdString = String.valueOf(taxonId);
+        
+        // only process the taxonids set in the project XML file
+        if (!taxonIds.contains(taxonIdString)) {
+            return;
+        }
+        
         organism = createItem("Organism");
-        organism.setAttribute("name", genus + " " + species);
+        organism.setAttribute("name", organismName);
+        organism.setAttribute("taxonId", taxonIdString);
         try {
             store(organism);
         } catch (ObjectStoreException e) {
             throw new ObjectStoreException(e);
+        }
+        
+        source = sources.get(taxonIdString);
+        if (source == null) {
+            source = DEFAULT_SOURCE;
         }
         
         JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L2);
@@ -114,6 +138,21 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
+    
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+            sources.put(key, value);
+        }
+    }
+    
     
     private String getPathway(org.biopax.paxtools.model.level2.pathway pathway) 
     throws ObjectStoreException {
@@ -141,15 +180,24 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return refId;
     }
     
-    private Item getProtein(String accession) {        
+    private void getProtein(String identifier, String pathway, String identifierSource) {
+        String acc = StringUtils.substringAfter(identifier, identifierSource + "_");
+        String accession = acc.replace("_", "-");
+        
         Item item = proteins.get(accession);
         if (item == null) {
             item = createItem("Protein");
             item.setAttribute("primaryAccession", accession);
             item.setReference("organism", organism);
             proteins.put(accession, item);
+            try {
+                setSynonym(item.getIdentifier(), accession);
+            } catch (ObjectStoreException e) {
+                return;
+            }
         }
-        return item;
+        item.addToCollection("pathways", pathway);
+        return;
     }
     
     /**
@@ -173,21 +221,24 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
                         return;
                     }
                 }
-                if (className.equalsIgnoreCase("protein")) {                    
+                if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
                     String accession = entity.getRDFId();
-                    if (accession.contains(PROTEIN_DATASOURCE)) {
-                        accession = StringUtils.substringAfter(accession, PROTEIN_DATASOURCE + "_");
-                        Item protein = getProtein(accession);
-                        if (StringUtils.isNotEmpty(pathwayRefId)) {
-                            protein.addToCollection("pathways", pathwayRefId);
-                            try {
-                                setSynonym(protein.getIdentifier(), accession);
-                            } catch (ObjectStoreException e) {
-                                return;
+                    if (accession.contains(source)) {
+                        getProtein(accession, pathwayRefId, source);                        
+                    } else if (accession.contains(DEFAULT_SOURCE)) {
+                        getProtein(accession, pathwayRefId, DEFAULT_SOURCE);
+                    } else {
+                        Set<org.biopax.paxtools.model.level2.xref> xrefs = entity.getXREF();
+                        for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
+                            accession = xref.getRDFId();
+                            if (accession.contains(source)) {
+                                getProtein(accession, pathwayRefId, source);
+                            } else if (accession.contains(DEFAULT_SOURCE)) {
+                                getProtein(accession, pathwayRefId, DEFAULT_SOURCE);
                             }
                         }
-                        
                     }
+
                 }
             }
             if(!visited.contains(bpe)) {
