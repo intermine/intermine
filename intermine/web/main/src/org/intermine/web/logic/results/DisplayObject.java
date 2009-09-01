@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -83,6 +84,13 @@ public class DisplayObject
         clds = getLeafClds(object.getClass(), model);
     }
 
+    private static ThreadLocal<Map<Model, Map<Class, Set<ClassDescriptor>>>> getLeafCldsCache
+        = new ThreadLocal<Map<Model, Map<Class, Set<ClassDescriptor>>>>() {
+            @Override protected Map<Model, Map<Class, Set<ClassDescriptor>>> initialValue() {
+                return new IdentityHashMap<Model, Map<Class, Set<ClassDescriptor>>>();
+            }
+        };
+
     /**
      * Get the set of leaf ClassDescriptors for a given InterMineObject class.
      * @param clazz object type
@@ -90,14 +98,24 @@ public class DisplayObject
      * @return Set of ClassDescriptor objects
      */
     public static Set<ClassDescriptor> getLeafClds(Class clazz, Model model) {
-        Set<ClassDescriptor> leafClds = new LinkedHashSet<ClassDescriptor>();
-        for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
-            j.hasNext();) {
-            Class c = (Class) j.next();
-            ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
-            if (cld != null) {
-                leafClds.add(cld);
+        Map<Model, Map<Class, Set<ClassDescriptor>>> cache = getLeafCldsCache.get();
+        Map<Class, Set<ClassDescriptor>> classCache = cache.get(model);
+        if (classCache == null) {
+            classCache = new HashMap<Class, Set<ClassDescriptor>>();
+            cache.put(model, classCache);
+        }
+        Set<ClassDescriptor> leafClds = classCache.get(clazz);
+        if (leafClds == null) {
+            leafClds = new LinkedHashSet<ClassDescriptor>();
+            for (Iterator j = DynamicUtil.decomposeClass(clazz).iterator();
+                j.hasNext();) {
+                Class c = (Class) j.next();
+                ClassDescriptor cld = model.getClassDescriptorByName(c.getName());
+                if (cld != null) {
+                    leafClds.add(cld);
+                }
             }
+            classCache.put(clazz, leafClds);
         }
         return leafClds;
     }
@@ -206,9 +224,7 @@ public class DisplayObject
         if (fieldConfigMap == null) {
             fieldConfigMap = new LinkedHashMap<String, FieldConfig>();
 
-            for (Iterator<ClassDescriptor> i = clds.iterator(); i.hasNext();) {
-                ClassDescriptor cld = i.next();
-
+            for (ClassDescriptor cld : clds) {
                 for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                     fieldConfigMap.put(fc.getFieldExpr(), fc);
                 }
@@ -255,12 +271,8 @@ public class DisplayObject
         attributeDescriptors = new HashMap<String, FieldDescriptor>();
 
         try {
-            for (Iterator<ClassDescriptor> i = clds.iterator(); i.hasNext();) {
-                ClassDescriptor cld = i.next();
-
-                for (Iterator j = cld.getAllFieldDescriptors().iterator(); j.hasNext();) {
-                    FieldDescriptor fd = (FieldDescriptor) j.next();
-
+            for (ClassDescriptor cld : clds) {
+                for (FieldDescriptor fd : cld.getAllFieldDescriptors()) {
                     if (fd.isAttribute() && !fd.getName().equals("id")) {
                         Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                         if (fieldValue != null) {

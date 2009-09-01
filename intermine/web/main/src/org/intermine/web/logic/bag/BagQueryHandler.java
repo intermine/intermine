@@ -11,10 +11,8 @@ package org.intermine.web.logic.bag;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,10 +131,13 @@ public class BagQueryHandler extends DefaultHandler
                 throw new SAXException("Invalid target type for additional converter: "
                                        + targetType);
             }
-            Set<ClassDescriptor> clds = new HashSet(Collections.singleton(typeCld));
-            clds.addAll(model.getAllSubs(typeCld));
-            for (ClassDescriptor nextCld : clds) {
-                additionalConverters.put(TypeUtil.unqualifiedName(nextCld.getName()), converterMap);
+            Set<String> clds = new HashSet<String>();
+            clds.add(typeCld.getName());
+            for (ClassDescriptor cld : model.getAllSubs(typeCld)) {
+                clds.add(cld.getName());
+            }
+            for (String nextCld : clds) {
+                additionalConverters.put(TypeUtil.unqualifiedName(nextCld), converterMap);
             }
         }
     }
@@ -196,11 +197,9 @@ public class BagQueryHandler extends DefaultHandler
         // add bag query to map for specified class and all subclasses
         if (qName.equals("bag-type")) {
             ClassDescriptor cld = model.getClassDescriptorByName(pkg + "." + type);
-            Set<ClassDescriptor> clds = model.getAllSubs(cld);
+            List<ClassDescriptor> clds = new ArrayList<ClassDescriptor>(model.getAllSubs(cld));
             clds.add(cld);
-            Iterator<ClassDescriptor> cldIter = clds.iterator();
-            while (cldIter.hasNext()) {
-                ClassDescriptor nextCld = cldIter.next();
+            for (ClassDescriptor nextCld : clds) {
                 String clsName = TypeUtil.unqualifiedName(nextCld.getName());
                 List<BagQuery> typeQueries = bagQueries.get(clsName);
                 if (typeQueries == null) {

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -183,15 +184,17 @@ public class BatchingFetcher extends HintingFetcher
             results.put(object, Collections.synchronizedSet(new HashSet<InterMineObject>()));
         }
 
-        Map<PrimaryKey, ClassDescriptor> pksToDo = new HashMap();
-        Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld = new HashMap();
+        Map<PrimaryKey, ClassDescriptor> pksToDo
+            = new IdentityHashMap<PrimaryKey, ClassDescriptor>();
+        Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld
+            = new IdentityHashMap<ClassDescriptor, List<InterMineObject>>();
         Map<Class, List<InterMineObject>> categorised = CollectionUtil.groupByClass(objects, false);
-        Set<ClassDescriptor> cldsDone = new HashSet<ClassDescriptor>();
+        Map<ClassDescriptor, Boolean> cldsDone = new IdentityHashMap<ClassDescriptor, Boolean>();
         for (Class c : categorised.keySet()) {
             Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(c);
             for (ClassDescriptor cld : classDescriptors) {
-                if (!cldsDone.contains(cld)) {
-                    cldsDone.add(cld);
+                if (!cldsDone.containsKey(cld)) {
+                    cldsDone.put(cld, Boolean.TRUE);
                     Set<PrimaryKey> keysForClass;
                     if (source == null) {
                         keysForClass = new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
@@ -248,7 +251,7 @@ public class BatchingFetcher extends HintingFetcher
     throws ObjectStoreException {
         Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet());
         Map<PrimaryKey, ClassDescriptor> pksNotDone
-            = new HashMap<PrimaryKey, ClassDescriptor>(pksToDo);
+            = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         while (!pksToDo.isEmpty()) {
             int startPksToDoSize = pksToDo.size();
             Iterator<PrimaryKey> pkIter = pksToDo.keySet().iterator();
