@@ -194,7 +194,6 @@
 
    <%-- bags that contain this object --%>
    <tiles:insert name="objectDetailsInList.tile">
-     <tiles:put name="list" value="${bagsWithThisObject}"/>
      <tiles:put name="objectid" value="${object.id}"/>
    </tiles:insert>
    </td>
