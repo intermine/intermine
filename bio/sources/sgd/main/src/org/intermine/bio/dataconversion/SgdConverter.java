@@ -153,19 +153,19 @@ public class SgdConverter extends BioDBConverter
 
             // ~~~ location ~~~
             String strand = res.getString("strand");
-            String start =  res.getString("start_coord"); 
-            String end = res.getString("stop_coord");
+            String startCoord =  res.getString("start_coord"); 
+            String stopCoord = res.getString("stop_coord");
 
-            if (start == null) {
-                start = "0";
+            if (StringUtils.isEmpty(startCoord)) {
+                startCoord = "0";
             }
-            
-            if (end == null) {
-                end = "0";
+            if (StringUtils.isEmpty(stopCoord)) {
+                stopCoord = "0";
             }
+
             
-            start = (strand.equals("W") ? end : start);
-            end = (strand.equals("W") ? start : end);
+            String start = (strand.equals("C") ? stopCoord : startCoord);
+            String end = (strand.equals("C") ? startCoord : stopCoord);
 
             item.setAttribute("length", getLength(start, end));
             String locationRefId = getLocation(geneRefId, refId, start, end, strand);
@@ -407,10 +407,10 @@ public class SgdConverter extends BioDBConverter
 
         // if the coordinates are on the crick strand, they need to be reversed or they
         // result in a negative number
-        if (a.compareTo(b) > 0) {
-            a = new Integer(end);
-            b = new Integer(start);
-        }
+//        if (a.compareTo(b) > 0) {
+//            a = new Integer(end);
+//            b = new Integer(start);
+//        }
 
         Integer length = new Integer(b.intValue() - a.intValue());
         return length.toString();
