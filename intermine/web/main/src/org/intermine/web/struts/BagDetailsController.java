@@ -89,7 +89,7 @@ public class BagDetailsController extends TilesAction
         if (scope.equals(TemplateHelper.USER_TEMPLATE)
                         || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            bagManager.getUserBag(profile, bagName);
+            imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
                 myBag = Boolean.TRUE;
             }
