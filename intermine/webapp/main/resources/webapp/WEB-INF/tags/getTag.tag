@@ -12,7 +12,7 @@
     variable-class="java.util.List" alias="outVar" scope="AT_END" %>
 
 <%
-   org.intermine.web.ProfileManager manager =
+   org.intermine.api.profile.ProfileManager manager =
        org.intermine.web.SessionMethods.getProfileManager(application);
 
    java.util.List tags = 
