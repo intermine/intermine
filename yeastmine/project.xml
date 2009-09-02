@@ -12,7 +12,7 @@
 	    <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
     
-    <source name="sgd-fasta" type="fasta" dump="true">
+    <source name="sgd-fasta" type="fasta">
       <property name="fasta.taxonId" value="4932"/>
       <property name="fasta.dataSetTitle" value="SGD data set"/>
       <property name="fasta.dataSourceName" value="SGD"/>
@@ -82,7 +82,7 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/sgd/current"/>
       <property name="src.data.dir.includes" value="gene_association.sgd"/>
     </source>
-    <source name="entrez-organism" type="entrez-organism">
+    <source name="entrez-organism" type="entrez-organism" dump="true">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
   </sources>

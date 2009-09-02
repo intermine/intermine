@@ -48,7 +48,7 @@
         <ul>
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>D. Rerio</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.secondaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -73,7 +73,7 @@
 
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type " constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -98,7 +98,7 @@
 
           <li>
            <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>H. sapiens</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type " constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -123,7 +123,7 @@
 
           <li>
            <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>M. musculus</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.secondaryIdentifier Homologue.type" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -148,7 +148,7 @@
 
 
           <li>
-          <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
+          <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>R. norvegicus</i> " skipBuilder="true">
 <query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
@@ -165,7 +165,7 @@
   <node path="Homologue.homologue.organism" type="Organism">
   </node>
   <node path="Homologue.homologue.organism.name" type="String">
-    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" editable="true" code="B">
+    <constraint op="=" value="Rattus norvegicus" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -174,7 +174,7 @@
 
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae </i> vs <i>D. melanogaster</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
