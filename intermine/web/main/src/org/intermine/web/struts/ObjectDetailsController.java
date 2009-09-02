@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,9 +28,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.InterMineBag;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
@@ -41,10 +37,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.ObjectStoreBagsForObject;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
@@ -141,18 +133,6 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
 
-        String publicBagsWithThisObject = getBags(os, session, servletContext,
-                id, true);
-        String myBagsWithThisObject = getBags(os, session, servletContext, id,
-                false);
-
-        request.setAttribute("bagsWithThisObject",
-                             publicBagsWithThisObject
-                                + ((publicBagsWithThisObject.length() != 0
-                                    && myBagsWithThisObject.length() != 0)
-                                   ? ","
-                                   : "")
-                                + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
         Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
@@ -278,91 +258,5 @@ public class ObjectDetailsController extends InterMineAction
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         return new DisplayObject(object, model, webConfig, webPropertiesMap, classKeys);
-    }
-
-    private static String getBags(ObjectStore os, HttpSession session,
-            ServletContext servletContext, Integer id, boolean isGlobal) {
-
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
-        Profile profile = SessionMethods.getProfile(session);
-        Results results = getBagsAsResults(os, profile, bagManager, id, isGlobal);
-        StringBuffer sb = new StringBuffer();
-        for (Object object : results) {
-            List list = (List) object;
-            if (sb.length() != 0) {
-                sb.append(",");
-            }
-            sb.append(list.get(0));
-        }
-        return sb.toString();
-    }
-
-    private static List<String> getGlobalBagsIds(HttpSession session, Integer id) {
-        ObjectStore os = (ObjectStore) session.getServletContext().
-            getAttribute(Constants.OBJECTSTORE);
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
-        Profile profile = SessionMethods.getProfile(session);
-        
-        Results results = getBagsAsResults(os, profile, bagManager, id, true);
-        List<String> ret = new ArrayList<String>();
-        for (Object object : results) {
-            List list = (List) object;
-            ret.add(list.get(0).toString());
-        }
-        return ret;
-    }
-
-    /**
-     * Returns global bags containing object with specified id.
-     * @param session session
-     * @param objectId object id
-     * @return bags
-     */
-    public static List<InterMineBag> getGlobalBags(HttpSession session, Integer objectId) {
-        List<InterMineBag> ret = new ArrayList<InterMineBag>();
-
-        List<String> list = getGlobalBagsIds(session, objectId);
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
-        
-        Map <String, InterMineBag> globalBags = bagManager.getGlobalBags();
-        for (InterMineBag bag : globalBags.values()) {
-            ObjectStoreBag osb = bag.getOsb();
-            Integer i = new Integer(osb.getBagId());
-           // check that this is in our list
-           if (list.contains(i.toString())) {
-              ret.add(bag);
-           }
-        }
-        return ret;
-    }
-
-    private static Results getBagsAsResults(ObjectStore os, Profile profile,
-            BagManager bagManager, Integer id, boolean isGlobal) {
-        Map<String, InterMineBag> bags = null;
-        // get all of the bags with this object
-        if (isGlobal) {
-            bags = bagManager.getGlobalBags();
-        } else {
-            bags = bagManager.getUserBags(profile);
-        }
-
-        Collection<ObjectStoreBag> objectStoreBags = new ArrayList<ObjectStoreBag>();
-
-        // loop though and convert InterMineBag to ObjectStoreBag
-        for (InterMineBag bag : bags.values()) {
-            ObjectStoreBag osb = bag.getOsb();
-            objectStoreBags.add(osb);
-        }
-
-        // this searches bags for an object
-        ObjectStoreBagsForObject osbo = new ObjectStoreBagsForObject(id,
-                objectStoreBags);
-
-        // run query
-        Query q = new Query();
-        q.addToSelect(osbo);
-
-        // this should return all bags with that object
-        return os.execute(q);
     }
 }
