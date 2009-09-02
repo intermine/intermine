@@ -190,7 +190,7 @@ function interact {
 # if testing, wait here before continuing
 if [ $INTERACT = "y" -o $STOP = "y" ]
 then
-echo
+echo "$1"
 echo "Press return to continue (^C to exit).."
 echo -n "->"
 read
@@ -296,11 +296,6 @@ fi
 function dochadosubs {
 # dochadosub {new|update}
 cd $DATADIR/$1
-# 
-# for sub in $LOOPVAR
-# #for sub in *.chadoxml
-# do
-
 # if it is a symbolic link and this is not the given input
 # we skip that file
 if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
@@ -323,6 +318,7 @@ fi
 #cd $DATADIR/$1
 chadofill $sub
 
+# if stag failed, we set aside the sub
 if [ "$STAGFAIL" = "y" ]
 then
 STAGFAIL=n
@@ -368,10 +364,7 @@ fi
 
 fi #VAL=y
 
-#done
-
 }
-
 
 interact
 
@@ -426,7 +419,7 @@ fi
 
 for sub in $LOOPVAR
 do
- wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+ wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee $DATADIR/wget.log
 done
 
 
@@ -523,13 +516,7 @@ else
 LOOPVAR="*.chadoxml"
 fi
 
-# echo "________"
-# echo $LOOPVAR
-# echo "+++++++++"
-# 
-#dochadosubs new
-
-#for validation of update directory too (cronmine)
+#for validation of new and update directory (cronmine)
 if [ "$VALIDATING" = "y" ] && [ $LOOPVAR="*.chadoxml" ]
 then
 
@@ -546,82 +533,23 @@ done
 
 cd $DATADIR/update
 echo "====================="
-echo "validating UpDaTe..."
+echo "validating update..."
 echo "====================="
 
 for sub in $LOOPVAR
-#for sub in *.chadoxml
 do
-#dochadosubs update $sub
 dochadosubs update
 done
 
-fi
+else
+# when not validating or using given (list of) sub(s)
+cd $DATADIR/new
+for sub in $LOOPVAR
+do
+chadofill $sub
+done
 
-################
-# cd $DATADIR/new
-# 
-# for sub in $LOOPVAR
-# do
-# # if it is a symbolic link and this is not the given input
-# # we skip that file
-# #if [ -L "$sub" -a ! -n "$1" ]
-# if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
-# then
-# continue
-# fi
-# 
-# echo "================"
-# echo "$sub..."
-# echo "================"
-# 
-# #
-# # for validation, we rebuild chado for each file
-# #
-# if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
-# then
-# chadorebuild
-# fi
-# 
-# chadofill $sub
-# 
-# if [ "$STAGFAIL" = "y" ]
-# then
-# STAGFAIL=n
-# continue
-# fi
-# 
-# # if building the release, we move the file
-# if [ "$FULL" = "y" ]
-# then
-# mv $sub $DATADIR
-# ln -s ../$sub $sub
-# fi
-# 
-# #if we are validating, we'll process an entry at a time
-# if [ "$VALIDATING" = "y" ]
-# then
-# 
-# cd $MINEDIR
-# echo "Building modMine $REL"
-# echo
-# # new build. static, metadata
-# ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
-# || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
-# 
-# # to name the acceptance tests file
-# NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
-# runtest $NAMESTAMP
-# 
-# # go back to the chado directory and mv chado file in 'done'
-# # this is to allow to run the validation as a cronjob
-# cd $DATADIR/new
-# mv $sub validated
-# cp -s validated/$sub .
-# fi #VAL=y
-# 
-# done
-#################
+fi
 
 # if we are validating, that's all
 if [ "$VALIDATING" = "y" ]
@@ -638,7 +566,7 @@ echo "Using previously loaded chado."
 echo
 fi # if $STAG=y
 
-interact
+interact chadoloading_finished
 
 #---------------------------------------
 # build modmine
