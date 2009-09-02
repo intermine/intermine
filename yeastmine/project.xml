@@ -12,6 +12,16 @@
 	    <property name="converter.class" value="org.intermine.bio.dataconversion.SgdConverter"/>
     </source>
     
+    <source name="sgd-fasta" type="fasta" dump="true">
+      <property name="fasta.taxonId" value="4932"/>
+      <property name="fasta.dataSetTitle" value="SGD data set"/>
+      <property name="fasta.dataSourceName" value="SGD"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="*.fasta"/>
+      <property name="src.data.dir" location="/shared/data/sgd/fasta"/>
+    </source>    
+    
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="BIOGRID-ORGANISM-SACCHAROMYCES-CEREVISIAE*"/>
@@ -80,20 +90,21 @@
   <post-processing>
     <post-process name="create-references"/>
      <post-process name="create-chromosome-locations-and-lengths"/>
-  <!--   
+
     <post-process name="create-utr-references"/> 
     <post-process name="make-spanning-locations"/>   
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
--->
+
     <post-process name="do-sources"/>
 <!--
     <post-process name="create-intron-features">
       <property name="organisms" value="7165,7460"/>
     </post-process>    
+        -->
     <post-process name="create-bioseg-location-index"/> 
     <post-process name="create-overlap-view"/>
-    -->
+
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
