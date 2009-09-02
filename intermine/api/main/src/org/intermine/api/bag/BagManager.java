@@ -65,18 +65,24 @@ public class BagManager
         return getBagsWithTag(superProfile, TagNames.IM_PUBLIC);
     }
     
-    private Map<String, InterMineBag> getBagsWithTag(Profile profile, String tag) {
-        Map<String, InterMineBag> globalBags = new HashMap<String, InterMineBag>();
+    /**
+     * Fetch bags from given protocol with a particular tag assigned to them.
+     * @param profile the user to fetch bags from
+     * @param tag the tag to filter
+     * @return a map from bag name to bag
+     */
+    protected Map<String, InterMineBag> getBagsWithTag(Profile profile, String tag) {
+        Map<String, InterMineBag> bagsWithTag = new HashMap<String, InterMineBag>();
         
         for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             InterMineBag bag = entry.getValue();
-            List<Tag> tags = tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(), TagTypes.BAG,
+            List<Tag> tags = tagManager.getTags(tag, bag.getName(), TagTypes.BAG,
                     profile.getUsername());
             if (tags.size() > 0) {
-                globalBags.put(entry.getKey(), entry.getValue());
+                bagsWithTag.put(entry.getKey(), entry.getValue());
             }
         }
-        return globalBags;
+        return bagsWithTag;
     }
     
     /**
