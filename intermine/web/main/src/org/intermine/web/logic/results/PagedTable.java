@@ -92,7 +92,7 @@ public class PagedTable
      * Construct a PagedTable with a list of column names
      * @param webTable the WebTable that this PagedTable will display
      */
-    public PagedTable(WebResults webResults) {
+    public PagedTable(WebTable webTable) {
         super();
         this.webTable = webTable;
     }
