@@ -19,11 +19,11 @@
     <td>
       <div class="body">
         <p>
-          FishMine contains <i>Saccharomyces cerevisiae</i> genome data from:
+          YeastMine contains <i>Saccharomyces cerevisiae</i> genome data from:
         </p>
         <ul>
           <li>
-            <a href="http://www.zfin.org/">
+            <a href="http://www.yeastgenome.org/">
               Gene identifiers for <i>Saccharomyces cerevisiae</i></a>
           </li>
         </ul>
