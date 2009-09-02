@@ -97,12 +97,6 @@
     <td> &nbsp; </td>
   </tr>
 
-
-
-
-
-
-
   <tr><td rowspan="8"  class="leftcol">
         <html:link action="/aspect?name=Proteins">
         <p> <img src="model/images/proteins.png" /></p>

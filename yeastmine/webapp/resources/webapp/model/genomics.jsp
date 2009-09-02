@@ -19,14 +19,7 @@
     <td>
       <div class="body">
         <p>
-          YeastMine contains <i>Saccharomyces cerevisiae</i> genome data from:
-        </p>
-        <ul>
-          <li>
-            <a href="http://www.yeastgenome.org/">
-              Gene identifiers for <i>Saccharomyces cerevisiae</i></a>
-          </li>
-        </ul>
+          YeastMine contains <i>Saccharomyces cerevisiae</i> genome data from <a href="http://www.yeastgenome.org/">SGD</a>
       </div>
     </td>
     <td width="40%" valign="top">
