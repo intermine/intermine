@@ -39,7 +39,7 @@
     <icon-image>model/images/geneOntology.png</icon-image>
     <large-image>model/images/geneOntology.png</large-image>
     <intro-text>
-      Gene Ontology (GO) annotations for &lt;i&gt;Saccharomyces cerevisiaelt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
+      Gene Ontology (GO) annotations for &lt;i&gt;Saccharomyces cerevisiae&lt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
     </intro-text>
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
