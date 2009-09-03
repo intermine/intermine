@@ -459,9 +459,9 @@ public class BatchingFetcher extends HintingFetcher
                     }
                     fetchedObjectIds.add(((InterMineObject) row.get(0)).getId());
                 }
-                LOG.info("Fetched " + res.size() + " equivalent objects for " + objCount
-                        + " objects in " + (System.currentTimeMillis() - time) + " ms for "
-                        + cld.getName() + "." + pk.getName());
+                //LOG.info("Fetched " + res.size() + " equivalent objects for " + objCount
+                //        + " objects in " + (System.currentTimeMillis() - time) + " ms for "
+                //        + cld.getName() + "." + pk.getName());
             }
         }
     }
