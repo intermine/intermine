@@ -1,5 +1,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<!-- GO.jsp -->
+
 <table width="100%">
   <tr>
     <td valign="top">
@@ -24,7 +26,7 @@
       processes, cellular components and molecular functions in a species-independent manner.
       </p>
       <p>
-      FishMine has GO annotations for <i>Saccharomyces cerevisiae</i>.
+      YeastMine has GO annotations for <i>Saccharomyces cerevisiae</i>.
       </p>
       </div>
 
@@ -122,3 +124,5 @@
     </td>
   </tr>
 </table>
+
+<!-- /GO.jsp -->
