@@ -62,7 +62,7 @@ public class ParallelBatchingFetcher extends BatchingFetcher
         jobs.finish();
         LOG.info("Parallel Batching equivalent object query summary for source " + source + " :"
                 + getSummary(source).toString() + "\nQueried " + batchQueried
-                + " objects by batch");
+                + " objects by batch, cache misses: " + cacheMisses);
     }
 
     /**

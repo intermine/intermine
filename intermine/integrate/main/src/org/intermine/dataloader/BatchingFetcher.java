@@ -65,6 +65,7 @@ public class BatchingFetcher extends HintingFetcher
     protected DataTracker dataTracker;
     protected Source source;
     protected int batchQueried = 0;
+    protected int cacheMisses = 0;
     protected long timeSpentExecute = 0;
     protected long timeSpentPrefetchEquiv = 0;
     protected long timeSpentPrefetchTracker = 0;
@@ -99,8 +100,8 @@ public class BatchingFetcher extends HintingFetcher
      */
     public void close(Source source) {
         LOG.info("Batching equivalent object query summary for source " + source + " :"
-                + getSummary(source).toString() + "\nQueried " + batchQueried
-                + " objects by batch");
+                + getSummary(source).toString() + "\nFetched " + batchQueried
+                + " objects by batch, cache misses: " + cacheMisses);
     }
 
     /**
@@ -118,6 +119,7 @@ public class BatchingFetcher extends HintingFetcher
                 //}
                 return retval;
             } else {
+                cacheMisses++;
                 retval = super.queryEquivalentObjects(obj, source);
                 //equivalents.put(obj, retval);
                 return retval;
@@ -485,6 +487,51 @@ public class BatchingFetcher extends HintingFetcher
          */
         public Results execute(Query q) {
             return new Results(q, this, getSequence(getComponentsForQuery(q)));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+                boolean prefetch) {
+            Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            return retval;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+                boolean explain, boolean prefetch) {
+            SingletonResults retval = new SingletonResults(q, this,
+                    getSequence(getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            return retval;
         }
 
         /**
