@@ -6,6 +6,9 @@
   <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
   <collection name="proteins" referenced-type="Protein" reverse-reference="pathways"/>
 </class>
+<class name="Protein" extends="BioEntity" is-interface="true">
+  <collection name="pathways" referenced-type="Pathway" reverse-reference="proteins"/>
+</class>
 <class name="Gene" extends="BioEntity" is-interface="true">
   <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
 </class>
