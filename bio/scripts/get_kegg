@@ -15,10 +15,18 @@ BEGIN {
 }
 use InterMine::DataDownloader;
 
+
 #Define ARGVs
 my ($logdir,$logname,$home);
+
+$logdir="/shared/data/download_logs/";
+$tempname="temp_log.txt";
+$shared_data="/shared/data";
+
 if(@ARGV!=3){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+	print "using default values";
+	$logname = $tempname;
+	$home = $shared_data;
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
@@ -63,9 +71,9 @@ if(&checkdir_exists($download_dir)==1){
 	
 	#get the KEGG release number from the webpage
 	#my $kegg_server = "http://www.genome.jp/kegg/";
-        my $kegg_server = "http://www.genome.jp/kegg/docs/relnote.html";
+   my $kegg_server = "http://www.genome.jp/kegg/docs/relnote.html";
 
-	my $expression = qr/KEGG Release ([\d\.]+),/;
+	my $expression = qr/Release ([\d\.]+),/;
 	my $release = &search_webpage($kegg_server,$expression);
 	
 	&make_link($date_string,$current_link);
