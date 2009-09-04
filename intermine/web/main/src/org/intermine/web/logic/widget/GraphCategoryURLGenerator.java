@@ -10,7 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.jfree.chart.urls.CategoryURLGenerator;

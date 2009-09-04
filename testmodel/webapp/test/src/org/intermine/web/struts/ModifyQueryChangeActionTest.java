@@ -2,7 +2,7 @@ package org.intermine.web.struts;
 
 import java.util.Date;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;

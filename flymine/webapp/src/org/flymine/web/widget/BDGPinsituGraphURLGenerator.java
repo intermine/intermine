@@ -10,7 +10,7 @@ package org.flymine.web.widget;
  *
  */
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;

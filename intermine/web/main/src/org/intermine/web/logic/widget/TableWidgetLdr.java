@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;

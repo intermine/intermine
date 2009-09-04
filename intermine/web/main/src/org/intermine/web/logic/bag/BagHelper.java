@@ -13,7 +13,7 @@ package org.intermine.web.logic.bag;
 import java.util.Collection;
 import java.util.Set;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;

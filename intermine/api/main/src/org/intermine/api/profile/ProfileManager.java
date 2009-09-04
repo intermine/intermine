@@ -26,7 +26,6 @@ import net.sourceforge.iharder.Base64;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;

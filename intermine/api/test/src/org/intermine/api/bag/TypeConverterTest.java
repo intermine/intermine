@@ -21,6 +21,7 @@ import java.util.Map;
 
 import junit.framework.Test;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.testmodel.Address;

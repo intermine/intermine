@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MicroArrayAssay;

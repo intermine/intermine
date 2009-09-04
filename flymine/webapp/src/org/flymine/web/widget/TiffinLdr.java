@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;

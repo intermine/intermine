@@ -22,7 +22,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;

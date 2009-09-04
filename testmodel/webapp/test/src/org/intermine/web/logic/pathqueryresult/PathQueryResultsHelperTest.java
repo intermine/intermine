@@ -18,7 +18,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;

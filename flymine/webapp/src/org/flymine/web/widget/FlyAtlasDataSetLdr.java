@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MicroArrayAssay;
