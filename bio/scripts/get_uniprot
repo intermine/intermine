@@ -43,7 +43,7 @@ my $keywords_file = "keywlist.xml.gz";
 my $connection = &ftp_connect($uniprot_address,$username,$password);
 
 $connection->cwd($uniprot_base_path)
-or die "Cannot change working directory ", $connection->message;
+or die "Cannot change to $uniprot_base_path", $connection->message;
 
 #download the release notes file
 my $local_release_notes_copy = "$uniprot_main_dir/$release_notes_file";
@@ -74,7 +74,7 @@ my ($version_buffer,$log_buffer);
 my $download_dir = "$uniprot_main_dir/$version";
 if (&checkdir_exists($download_dir)==1) {
   $connection->cwd("/$uniprot_full_path")
-  or die "Cannot change working directory ", $connection->message;
+  or die "Cannot change working directory to $uniprot_full_path", $connection->message;
 
   my $date = &convert_date();
   $log_buffer = "Uniprot\nNew data available (release $version) in $download_dir containing file(s):\n";
@@ -87,11 +87,11 @@ if (&checkdir_exists($download_dir)==1) {
 
   #download keydefs.xml
   $connection->cwd("/$uniprot_full_path/docs")
-  or die "Cannot change working directory ", $connection->message;
+  or die "Cannot change working directory to $uniprot_full_path/docs ", $connection->message;
   &ftp_download($connection,$download_dir,$keywords_file);
   &unzip_dir($download_dir);
 
-  $log_buffer .= "keydef.xml\n\n";
+  $log_buffer .= "keydefs.xml\n\n";
   &write_version($uniprot_main_dir,$version_buffer);
 
   my $uniprot_link = "$home/uniprot/current";
