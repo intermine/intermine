@@ -21,6 +21,8 @@
       <property name="fasta.includes" value="*.fasta"/>
       <property name="src.data.dir" location="/shared/data/sgd/fasta"/>
     </source>    
+
+<!--xxxtemp
     
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
@@ -33,7 +35,7 @@
       <property name="geneFile" value="/shared/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 6239 7165 4932 9606 10090 10116 7955"/> 
     </source>
-    
+    -->
  <!--
     <source name="uniprot" type="uniprot" >
       <property name="uniprot.organisms" value="4932"/>
@@ -74,6 +76,8 @@
       <property name="gene.peptide.files" value="/shared/data/orthologues/inparanoid/geneid2peptideid/"/>
     </source>
     -->
+
+<!-- xxxTemp
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
@@ -82,6 +86,7 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/sgd/current"/>
       <property name="src.data.dir.includes" value="gene_association.sgd"/>
     </source>
+-->
     <source name="entrez-organism" type="entrez-organism" dump="true">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>

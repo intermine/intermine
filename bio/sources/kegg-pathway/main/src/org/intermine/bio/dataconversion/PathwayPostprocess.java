@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
-import org.intermine.model.bio.GOAnnotation;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Pathway;
 import org.intermine.model.bio.Protein;
@@ -32,7 +31,6 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.postprocess.PostProcessor;
@@ -70,10 +68,24 @@ public class PathwayPostprocess extends PostProcessor
 
         osw.beginTransaction();
         
-        // get all kegg pathways
-        Iterator iter = getGenePathways();
-
         int count = 0;
+        // get biopax (metacyc, reactome, etc) pathways
+
+        Iterator iter = getProteinPathways();
+        
+        while (iter.hasNext()) {
+            ResultsRow rr = (ResultsRow) iter.next();
+            Gene gene = (Gene) rr.get(0);
+            Pathway pathway = (Pathway) rr.get(1);
+            if (genesToPathways.get(gene) == null) {
+                genesToPathways.put(gene, new HashSet());
+            }
+            genesToPathways.get(gene).add(pathway);
+            count++;
+        }
+        
+        // get all kegg pathways
+        iter = getGenePathways();
         
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
@@ -86,45 +98,25 @@ public class PathwayPostprocess extends PostProcessor
             count++;
         }
         
-        
-        LOG.info("Created " + count + " new pathway objects for proteins"
-                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
-        osw.commitTransaction();
-        
-        osw.beginTransaction();
-        
-        while (iter.hasNext()) {
-            ResultsRow rr = (ResultsRow) iter.next();
-            Gene gene = (Gene) rr.get(0);
-            Pathway pathway = (Pathway) rr.get(1);
-
-
-            if (genesToPathways.get(gene) == null) {
-                genesToPathways.put(gene, new HashSet());
-            }
-            
-            
-            count++;
+        // store all gene.pathways and protein.pathways 
+        for (Map.Entry<Gene, Set<Pathway>> entry : genesToPathways.entrySet()) {
+            Gene gene = entry.getKey();
+            Set<Pathway> pathwayCollection = entry.getValue();
+            gene.setPathways(pathwayCollection);
+            osw.store(gene);
         }
-
-
-
-        LOG.info("Created " + count + " new pathway objects for Genes"
-                + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
+        for (Map.Entry<Protein, Set<Pathway>> entry : proteinsToPathways.entrySet()) {
+            Protein protein = entry.getKey();
+            Set<Pathway> pathwayCollection = entry.getValue();
+            protein.setPathways(pathwayCollection);
+            osw.store(protein);
+        }
         osw.commitTransaction();
-        
-        // get all biopax pathways
-        Iterator resIter = getProteinPathways();
-        
     }
 
 
     /**
-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
-     *  Protein and GOTerm.
-     *
-     * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
-     *  and the go term.
+     * Query Protein->Pathway
      */
     private Iterator getProteinPathways()
     throws ObjectStoreException {
@@ -140,67 +132,58 @@ public class PathwayPostprocess extends PostProcessor
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
 
-        QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
-        q.addFrom(qcAnnotation);
-        q.addToSelect(qcAnnotation);
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
-        ContainsConstraint geneProtConstraint =
-            new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene);
-        cs.addConstraint(geneProtConstraint);
-
-        QueryObjectReference annSubjectRef =
-            new QueryObjectReference(qcAnnotation, "subject");
-        ContainsConstraint annSubjectConstraint =
-            new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein);
-        cs.addConstraint(annSubjectConstraint);
-
-
-        q.setConstraint(cs);
-
-        ObjectStore os = osw.getObjectStore();
-
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants
-                                                   .PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 5000, true, true, true);
-        return res.iterator();
-    }
-    
-    /**
-     * return all the genes and pathways
-     */
-    private Iterator getGenePathways()
-    throws ObjectStoreException {
-        Query q = new Query();
-
-        q.setDistinct(false);
-
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-        q.addToOrderBy(qcGene);
-
         QueryClass qcPathway = new QueryClass(Pathway.class);
         q.addFrom(qcPathway);
         q.addToSelect(qcPathway);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryCollectionReference qc = new QueryCollectionReference(qcGene, "pathways");
-        cs.addConstraint(new ContainsConstraint(qc, ConstraintOp.CONTAINS, qcGene));
+        // protein.genes
+        QueryCollectionReference qc1 = new QueryCollectionReference(qcProtein, "genes");
+        cs.addConstraint(new ContainsConstraint(qc1, ConstraintOp.CONTAINS, qcGene));
 
-//        QueryObjectReference annSubjectRef =
-//            new QueryObjectReference(qcAnnotation, "subject");
-//        ContainsConstraint annSubjectConstraint =
-//            new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein);
-//        cs.addConstraint(annSubjectConstraint);
-
+        // protein.pathways
+        QueryCollectionReference qc2 = new QueryCollectionReference(qcProtein, "pathways");
+        cs.addConstraint(new ContainsConstraint(qc2, ConstraintOp.CONTAINS, qcPathway));
 
         q.setConstraint(cs);
+        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+        Results res = os.execute(q, 5000, true, true, true);
+        return res.iterator();
+    }
+    
+    /**
+     * get Gene->Pathway
+     */
+    private Iterator getGenePathways()
+    throws ObjectStoreException {
+        Query q = new Query();
+        
+        q.setDistinct(false);
 
-        ObjectStore os = osw.getObjectStore();
+        QueryClass qcProtein = new QueryClass(Protein.class);
+        q.addFrom(qcProtein);
+        q.addToSelect(qcProtein);
+        q.addToOrderBy(qcProtein);
+        
+        QueryClass qcGene = new QueryClass(Gene.class);
+        q.addFrom(qcGene);
+       
+        QueryClass qcPathway = new QueryClass(Pathway.class);
+        q.addFrom(qcPathway);
+        q.addToSelect(qcPathway);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        // gene.proteins
+        QueryCollectionReference qc1 = new QueryCollectionReference(qcGene, "proteins");
+        cs.addConstraint(new ContainsConstraint(qc1, ConstraintOp.CONTAINS, qcProtein));
+
+        // gene.pathways
+        QueryCollectionReference qc2 = new QueryCollectionReference(qcGene, "pathways");
+        cs.addConstraint(new ContainsConstraint(qc2, ConstraintOp.CONTAINS, qcPathway));
+
+        q.setConstraint(cs);
 
         ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 5000, true, true, true);

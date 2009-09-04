@@ -122,7 +122,8 @@ public class OracleConnectionTest {
     }
 
     public static void main(String[] args) {
-        testDriver();
+        return;
+//        testDriver();
 //        testConnection();
     } 
 }
