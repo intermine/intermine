@@ -87,7 +87,7 @@ public class OracleConnectionTest {
      * test the connection to the database by running a sample query and outputting the first column of results
      * @param conn connection to the database
      */    
-    private static void runQuery(Connection conn) {
+    private static boolean runQuery(Connection conn) {
         Statement stmt = null;
         ResultSet rset = null;
         
@@ -97,15 +97,16 @@ public class OracleConnectionTest {
 
             // execute query 
             rset = stmt.executeQuery(TEST_QUERY);
-            System.out.println("running query ....");
+//            System.out.println("running query ....");
             
             // loop through results
             while (rset.next()) {
-                System.out.println(rset.getString(1));
+//                System.out.println(rset.getString(1));
+                return true;
             }
             
             // done!
-            System.out.println("query done!");
+//            System.out.println("query done!");
             
             // clean up
             rset.close();
@@ -117,6 +118,7 @@ public class OracleConnectionTest {
         } catch (SQLException e) {
             throw new RuntimeException("oops", e);
         }
+        return false;
     }
 
     public static void main(String[] args) {
