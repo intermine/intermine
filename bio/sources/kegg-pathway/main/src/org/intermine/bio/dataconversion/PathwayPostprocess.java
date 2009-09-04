@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.postprocess.PostProcessUtil;
 import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.GOAnnotation;
 import org.intermine.model.bio.Gene;
