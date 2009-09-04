@@ -95,8 +95,8 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         String organismName = genus + " " + species;
         OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
         if (od == null) {
-            LOG.error("no data for " + organismName + ".  Please add to repository.");
-            System.out.println("no data for " + organismName + ".  Please add to repository.");
+            throw new RuntimeException("no data for " + organismName 
+                                       + ".  Please add to repository.");
         }
         int taxonId = od.getTaxonId();
         String taxonIdString = String.valueOf(taxonId);
