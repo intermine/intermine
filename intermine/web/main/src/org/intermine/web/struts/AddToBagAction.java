@@ -60,8 +60,8 @@ public class AddToBagAction extends InterMineAction
                 InterMineObject o = os.getObjectById(id);
                 if (BagHelper.isOfBagType(existingBag, o, os.getModel())) {
                     existingBag.addIdToBag(id);
-                    recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName())
-                                    , request);
+                    recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
+                            request);
                 } else {
                     recordError(new ActionMessage("bag.typesDontMatch"), request);
                 }
