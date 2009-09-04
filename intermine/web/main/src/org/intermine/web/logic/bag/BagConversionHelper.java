@@ -16,8 +16,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.InterMineException;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;

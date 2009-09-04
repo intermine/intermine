@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.IdUpgrader;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;

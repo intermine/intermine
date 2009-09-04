@@ -13,7 +13,7 @@ package org.flymine.web.widget;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNAExpressionResult;

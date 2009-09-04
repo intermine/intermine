@@ -26,8 +26,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;

@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamWriter;
 import junit.framework.Test;
 
 import org.custommonkey.xmlunit.XMLUnit;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;

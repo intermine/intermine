@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 
 /**
  *

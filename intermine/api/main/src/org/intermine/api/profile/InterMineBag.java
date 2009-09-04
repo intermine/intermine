@@ -1,4 +1,4 @@
-package org.intermine.api.bag;
+package org.intermine.api.profile;
 
 /*
  * Copyright (C) 2002-2009 FlyMine

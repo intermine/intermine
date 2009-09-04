@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;

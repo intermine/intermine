@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryHandler;
 import org.xml.sax.Attributes;

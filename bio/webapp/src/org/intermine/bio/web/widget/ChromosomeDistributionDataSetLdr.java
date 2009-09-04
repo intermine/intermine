@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;

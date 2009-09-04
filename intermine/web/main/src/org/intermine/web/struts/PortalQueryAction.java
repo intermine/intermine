@@ -34,7 +34,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.ResultElement;

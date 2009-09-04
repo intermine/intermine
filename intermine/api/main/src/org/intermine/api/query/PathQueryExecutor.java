@@ -16,7 +16,7 @@ import java.util.Map;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;

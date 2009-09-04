@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleBagTypesException;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;

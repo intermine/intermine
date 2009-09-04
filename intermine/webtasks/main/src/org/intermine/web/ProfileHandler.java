@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.bag.IdUpgrader;
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;

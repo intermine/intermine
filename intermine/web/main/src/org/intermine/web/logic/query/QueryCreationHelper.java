@@ -17,8 +17,8 @@ import javax.servlet.ServletContext;
 
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.bag.TypeConverterHelper;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.template.TemplateQuery;

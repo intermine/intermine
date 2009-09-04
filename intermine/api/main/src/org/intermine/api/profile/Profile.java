@@ -20,7 +20,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
-import org.intermine.api.bag.InterMineBag;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;

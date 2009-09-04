@@ -19,7 +19,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.api.bag.InterMineBag;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.SAXParser;
