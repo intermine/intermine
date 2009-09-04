@@ -10,8 +10,7 @@ package org.intermine.web.logic.bag;
  *
  */
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Set;
 
 import org.intermine.api.bag.InterMineBag;
@@ -33,17 +32,17 @@ public class BagHelper
     /**
      * Return a bag name that isn't currently in use.
      *
-     * @param savedBags the Map of current saved bags
+     * @param bagNames the existing bagNames
      * @param nameWanted the desired name
      * @return the new bag name
      */
-    public static String findNewBagName(Map savedBags, String nameWanted) {
-        if (!savedBags.containsKey(nameWanted)) {
+    public static String findNewBagName(Collection<String> bagNames, String nameWanted) {
+        if (!bagNames.contains(nameWanted)) {
             return nameWanted;
         }
         for (int i = 1;; i++) {
             String testName = nameWanted + "_" + i;
-            if (savedBags == null || savedBags.get(testName) == null) {
+            if (bagNames == null || bagNames.contains(testName)) {
                 return testName;
             }
         }
@@ -59,9 +58,8 @@ public class BagHelper
      * @return a boolean
      */
     public static boolean isOfBagType (InterMineBag bag, InterMineObject o, Model model) {
-        Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
-        for (Iterator iter = classDescriptors.iterator(); iter.hasNext();) {
-            ClassDescriptor cld = (ClassDescriptor) iter.next();
+        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
+        for (ClassDescriptor cld: classDescriptors) {
             String className = cld.getName();
             if (TypeUtil.unqualifiedName(className).equals(bag.getType())) {
                 return true;

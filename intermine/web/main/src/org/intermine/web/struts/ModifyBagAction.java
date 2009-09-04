@@ -71,7 +71,7 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
         String[] selectedBagNames = mbf.getSelectedBags();
 
-        // TODO why isn't validateBagName() catching this?
+        // This should already be caught by Ajax code
         if (selectedBagNames.length == 0) {
             recordError(new ActionMessage("errors.bag.listnotselected"), request);
             return getReturn(mbf.getPageName(), mapping);
@@ -80,33 +80,32 @@ public class ModifyBagAction extends InterMineAction
         if (request.getParameter("union") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
                         .equals("union"))) {
-            combine(mapping, form, request, ObjectStoreBagCombination.UNION,
+            combine(form, request, ObjectStoreBagCombination.UNION,
                     "UNION");
         } else if (request.getParameter("intersect") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
                         .equals("intersect"))) {
-            combine(mapping, form, request,
+            combine(form, request,
                     ObjectStoreBagCombination.INTERSECT, "INTERSECT");
         } else if (request.getParameter("subtract") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
                         .equals("subtract"))) {
-            combine(mapping, form, request,
+            combine(form, request,
                     ObjectStoreBagCombination.ALLBUTINTERSECT, "SUBTRACT");
         } else if (request.getParameter("delete") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
                         .equals("delete"))) {
-            delete(mapping, form, request);
+            delete(form, request);
         } else if (request.getParameter("copy") != null
                 || (mbf.getListsButton() != null && mbf.getListsButton()
                         .equals("copy"))) {
-            copy(mapping, form, request);
+            copy(form, request);
         }
 
         return getReturn(mbf.getPageName(), mapping);
     }
 
-    private void copy(@SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
-        HttpServletRequest request) throws ObjectStoreException {
+    private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
 
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -194,26 +193,9 @@ public class ModifyBagAction extends InterMineAction
         return origName + "_copy" + i;
     }
 
-    /**
-     * Union the selected bags
-     *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param op
-     *            the operation to pass to the ObjectStoreBagCombination
-     *            constructor
-     * @param opText
-     *            the operation's name
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
-     */
-    public ActionForward combine(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, int op, String opText) throws Exception {
+
+    private void combine(ActionForm form, HttpServletRequest request, int op, 
+            String opText) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
@@ -234,11 +216,11 @@ public class ModifyBagAction extends InterMineAction
                             + StringUtil
                                     .prettyList(Arrays.asList(selectedBags))
                             + " do not match.", session);
-            return getReturn(mbf.getPageName(), mapping);
+            return;
         }
 
         // Now combine
-        String name = BagHelper.findNewBagName(allBags, mbf.getNewBagName());
+        String name = BagHelper.findNewBagName(allBags.keySet(), mbf.getNewBagName());
         InterMineBag combined = profile.createBag(name, type, "");
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(op);
         for (int i = 0; i < selectedBags.length; i++) {
@@ -253,7 +235,7 @@ public class ModifyBagAction extends InterMineAction
             ActionMessage actionMessage = new ActionMessage(
                     "An error occurred while saving the list");
             recordError(actionMessage, request);
-            return getReturn(mbf.getPageName(), mapping);
+            return;
         }
 
         if (combined.size() > 0) {
@@ -268,8 +250,6 @@ public class ModifyBagAction extends InterMineAction
                     + StringUtil.prettyList(Arrays.asList(selectedBags))
                     + " produced no results.", session);
         }
-
-        return getReturn(mbf.getPageName(), mapping);
     }
 
     /**
@@ -313,21 +293,8 @@ public class ModifyBagAction extends InterMineAction
         return type;
     }
 
-    /**
-     * Delete the selected bags
-     *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
-     */
-    public ActionForward delete(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request) throws Exception {
+
+    private void delete(ActionForm form, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
@@ -337,8 +304,6 @@ public class ModifyBagAction extends InterMineAction
                     mbf.getSelectedBags()[i]);
             deleteBag(session, profile, bag);
         }
-
-        return getReturn(mbf.getPageName(), mapping);
     }
 
     // Remove a bag from userprofile database and session cache
