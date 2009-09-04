@@ -60,7 +60,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private Item organism;
     private String pathwayRefId = null;
     private List<MultiKey> synonyms = new ArrayList(); 
-    private Set<String> taxonIds = null;
+    private Set<String> taxonIds = new HashSet();
     private Map<String, String> sources = new HashMap();
     private OrganismRepository or;
     private String source = null;
@@ -96,12 +96,13 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
         if (od == null) {
             LOG.error("no data for " + organismName + ".  Please add to repository.");
+            System.out.println("no data for " + organismName + ".  Please add to repository.");
         }
         int taxonId = od.getTaxonId();
         String taxonIdString = String.valueOf(taxonId);
         
-        // only process the taxonids set in the project XML file
-        if (!taxonIds.contains(taxonIdString)) {
+        // only process the taxonids set in the project XML file - if any
+        if (!taxonIds.isEmpty() && !taxonIds.contains(taxonIdString)) {
             return;
         }
         
@@ -134,7 +135,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      *
      * @param taxonIds a space-separated list of taxonIds
      */
-    public void setBioPAXOrganisms(String taxonIds) {
+    public void setBiopaxOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
