@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.InterMineBag;
@@ -32,6 +33,7 @@ import org.intermine.web.logic.widget.WidgetUtil;
  */
 public class GraphWidgetConfig extends WidgetConfig
 {
+    private static final Logger LOG = Logger.getLogger(GraphWidgetConfig.class);
     private String domainLabel;
     private String rangeLabel;
     private String graphType;
@@ -160,7 +162,8 @@ public class GraphWidgetConfig extends WidgetConfig
                 WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[] {});
                 extraAttributes = widgetUtil.getExtraAttributes(os, imBag);
             } catch (Exception e) {
-                throw new Exception(e.getMessage());
+                LOG.error(e.getMessage());
+                return returnMap;
             }
         }
         if (extraAttributes.size() > 0) {
