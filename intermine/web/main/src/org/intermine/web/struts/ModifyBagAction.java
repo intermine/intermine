@@ -265,7 +265,6 @@ public class ModifyBagAction extends InterMineAction
             InterMineBag bag) throws ObjectStoreException {
         // removed a cached bag table from the session
         SessionMethods.invalidateBagTable(session, bag.getName());
-        bag.setProfileId(null); // Deletes from database
         profile.deleteBag(bag.getName());
     }
 

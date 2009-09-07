@@ -88,6 +88,31 @@ public class InterMineBag implements WebSearchable, Cloneable
         setClassDescriptors();
     }
 
+    
+    /**
+     * Loads an InterMineBag from the UserProfile database.
+     *
+     * @param os the production ObjectStore
+     * @param savedBagId the ID of the bag in the userprofile database
+     * @param uosw the ObjectStoreWriter of the userprofile database
+     * @throws ObjectStoreException if something goes wrong
+     */
+    public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw)
+    throws ObjectStoreException {
+        this.os = os;
+        this.uosw = uosw;
+        this.savedBagId = savedBagId;
+        ObjectStore uos = uosw.getObjectStore();
+        SavedBag savedBag = (SavedBag) uos.getObjectById(savedBagId, SavedBag.class);
+        this.name = savedBag.getName();
+        this.type = savedBag.getType();
+        this.description = savedBag.getDescription();
+        this.dateCreated = savedBag.getDateCreated();
+        this.profileId = savedBag.proxGetUserProfile().getId();
+        this.osb = new ObjectStoreBag(savedBag.getOsbId());
+        setClassDescriptors();
+    }
+    
     private void setClassDescriptors() {
         try {
             Class<?> cls = Class.forName(getQualifiedType());
@@ -108,33 +133,26 @@ public class InterMineBag implements WebSearchable, Cloneable
             savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
             savedBag.setOsbId(osb.getBagId());
             uosw.store(savedBag);
-        } else if (savedBagId != null) {
-            uosw.delete(savedBag);
         }
         return savedBag;
     }
 
+    
     /**
-     * Loads an InterMineBag from the UserProfile database.
-     *
-     * @param os the production ObjectStore
-     * @param savedBagId the ID of the bag in the userprofile database
-     * @param uos the ObjectStore of the userprofile database
-     * @throws ObjectStoreException if something goes wrong
+     * Delete this bag from the userprofile database, bag should not be used after this method has
+     * been called.
+     * @throws ObjectStoreException if problem deleting bag
      */
-    public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStore uos)
-    throws ObjectStoreException {
-        this.os = os;
-        this.savedBagId = savedBagId;
-        SavedBag savedBag = (SavedBag) uos.getObjectById(savedBagId, SavedBag.class);
-        this.name = savedBag.getName();
-        this.type = savedBag.getType();
-        this.description = savedBag.getDescription();
-        this.dateCreated = savedBag.getDateCreated();
-        this.profileId = savedBag.proxGetUserProfile().getId();
-        this.osb = new ObjectStoreBag(savedBag.getOsbId());
-        setClassDescriptors();
+    protected void delete() throws ObjectStoreException {
+        if (profileId != null) {
+            SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
+                    SavedBag.class);
+            uosw.delete(savedBag);
+            this.profileId = null;
+            this.savedBagId = null;
+        }
     }
+
 
     /**
      * Returns a List which contains the contents of this bag as Integer IDs.

@@ -67,7 +67,7 @@ public class ProfileManager
     private static final Logger LOG = Logger.getLogger(ProfileManager.class);
 
     protected ObjectStore os;
-    protected ObjectStoreWriter osw;
+    protected ObjectStoreWriter uosw;
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
     protected CacheMap profileCache = new CacheMap();
     private String superuser = null;
@@ -81,9 +81,9 @@ public class ProfileManager
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
         superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        this.osw = userProfileOS;
+        this.uosw = userProfileOS;
         try {
-            String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) osw)
+            String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) uosw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
             LOG.info("Database has userprofile version \"" + versionString + "\"");
             if (versionString == null) {
@@ -101,16 +101,16 @@ public class ProfileManager
                 QueryClass qc = new QueryClass(SavedQuery.class);
                 q.addFrom(qc);
                 q.addToSelect(qc);
-                List results = osw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                List results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
                     q = new Query();
                     qc = new QueryClass(SavedTemplateQuery.class);
                     q.addFrom(qc);
                     q.addToSelect(qc);
-                    results = osw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                    results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                     if (results.isEmpty()) {
                         // We can safely upgrade the database
-                        MetadataManager.store(((ObjectStoreInterMineImpl) osw).getDatabase(),
+                        MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
                                 MetadataManager.PROFILE_FORMAT_VERSION, ""
                                 + PathQuery.USERPROFILE_VERSION);
                         version = PathQuery.USERPROFILE_VERSION;
@@ -137,7 +137,7 @@ public class ProfileManager
      * @return the userprofile  ObjectStoreWriter from the constructor
      */
     public ObjectStoreWriter getProfileObjectStoreWriter() {
-        return osw;
+        return uosw;
     }
 
     /**
@@ -155,7 +155,7 @@ public class ProfileManager
      * @throws ObjectStoreException in exceptional circumstances
      */
     public void close() throws ObjectStoreException {
-        osw.close();
+        uosw.close();
     }
 
     /**
@@ -188,7 +188,7 @@ public class ProfileManager
         UserProfile userProfile = getUserProfile(username);
         userProfile.setPassword(PasswordHasher.hashPassword(password));
         try {
-            osw.store(userProfile);
+            uosw.store(userProfile);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
@@ -249,11 +249,11 @@ public class ProfileManager
                         UserProfile.class)));
         Results bags;
         try {
-            bags = osw.execute(q, 0, false, false, true);
+            bags = uosw.execute(q, 0, false, false, true);
             for (Iterator i = bags.iterator(); i.hasNext();) {
                 List row = (List) i.next();
                 Integer bagId = (Integer) row.get(0);
-                InterMineBag bag = new InterMineBag(os, bagId, osw);
+                InterMineBag bag = new InterMineBag(os, bagId, uosw);
                 savedBags.put(bag.getName(), bag);
             }
         } catch (ObjectStoreException e) {
@@ -357,12 +357,12 @@ public class ProfileManager
             UserProfile userProfile = getUserProfile(userId);
             if (userProfile != null) {
                 for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
-                    osw.delete((InterMineObject) i.next());
+                    uosw.delete((InterMineObject) i.next());
                 }
 
                 for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
                      i.hasNext();) {
-                    osw.delete((InterMineObject) i.next());
+                    uosw.delete((InterMineObject) i.next());
                 }
             } else {
                 // Should not happen
@@ -381,7 +381,7 @@ public class ProfileManager
                     SavedQuery savedQuery = new SavedQuery();
                     savedQuery.setQuery(SavedQueryBinding.marshal(query, version));
                     savedQuery.setUserProfile(userProfile);
-                    osw.store(savedQuery);
+                    uosw.store(savedQuery);
                 } catch (Exception e) {
                     LOG.error("Failed to marshal and save query: " + query, e);
                 }
@@ -398,14 +398,14 @@ public class ProfileManager
                     }
                     savedTemplate.setTemplateQuery(templateBinding.marshal(template, version));
                     savedTemplate.setUserProfile(userProfile);
-                    osw.store(savedTemplate);
+                    uosw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);
                 } catch (Exception e) {
                     LOG.error("Failed to marshal and save template: " + template, e);
                 }
             }
 
-            osw.store(userProfile);
+            uosw.store(userProfile);
             profile.setUserId(userProfile.getId());
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
@@ -424,7 +424,7 @@ public class ProfileManager
         //userProfile.setId(userId);
 
         try {
-            osw.store(userProfile);
+            uosw.store(userProfile);
             profile.setUserId(userProfile.getId());
             for (InterMineBag bag : profile.getSavedBags().values()) {
                 bag.setProfileId(userProfile.getId());
@@ -446,7 +446,7 @@ public class ProfileManager
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
         try {
-            profile = (UserProfile) osw.getObjectByExample(profile, fieldNames);
+            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }
@@ -464,7 +464,7 @@ public class ProfileManager
             return null;
         }
         try {
-            return (UserProfile) osw.getObjectById(userId, UserProfile.class);
+            return (UserProfile) uosw.getObjectById(userId, UserProfile.class);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }
@@ -482,7 +482,7 @@ public class ProfileManager
         q.addFrom(qcUserProfile);
         q.addToSelect(qfUserName);
 
-        SingletonResults res = osw.executeSingleton(q);
+        SingletonResults res = uosw.executeSingleton(q);
 
         // TODO: Why does this copy the data?
         List usernames = new ArrayList();
