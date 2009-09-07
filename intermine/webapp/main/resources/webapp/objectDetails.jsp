@@ -39,13 +39,11 @@
     <tr>
       <td valign="top" width="30%">
 
-
           <div class="heading">Summary for selected
           <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
           </c:forEach>
           </div>
-
 
         <im:body id="summary">
           <table cellpadding="5" border="0" cellspacing="0" class="objSummary">
