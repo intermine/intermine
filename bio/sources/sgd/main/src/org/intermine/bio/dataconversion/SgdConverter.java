@@ -13,9 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,7 +41,7 @@ public class SgdConverter extends BioDBConverter
     private Map<String, String> publications = new HashMap();
     private static final String TAXON_ID = "4932";
     private Item organism;
-    private Map<String, List<String>> featureMap = new HashMap();
+//    private Map<String, List<String>> featureMap = new HashMap();
     private static final SgdProcessor PROCESSOR = new SgdProcessor();
     
     /**
@@ -139,7 +137,6 @@ public class SgdConverter extends BioDBConverter
             String featureType = res.getString("feature_type");
             
             Item item = genes.get(geneFeatureNo);
-            String geneRefId = item.getIdentifier();
 
             //  ~~~ chromosome OR plasmid ~~~                   
             String refId = null;            
@@ -152,23 +149,9 @@ public class SgdConverter extends BioDBConverter
             }
 
             // ~~~ location ~~~
-            String strand = res.getString("strand");
-            String startCoord =  res.getString("start_coord"); 
-            String stopCoord = res.getString("stop_coord");
-
-            if (StringUtils.isEmpty(startCoord)) {
-                startCoord = "0";
-            }
-            if (StringUtils.isEmpty(stopCoord)) {
-                stopCoord = "0";
-            }
-
-            
-            String start = (strand.equals("C") ? stopCoord : startCoord);
-            String end = (strand.equals("C") ? startCoord : stopCoord);
-
-            item.setAttribute("length", getLength(start, end));
-            String locationRefId = getLocation(geneRefId, refId, start, end, strand);
+            String locationRefId = getLocation(item, refId, res.getString("start_coord"), 
+                                               res.getString("stop_coord"), 
+                                               res.getString("strand"));
 
             if (featureType.equalsIgnoreCase("plasmid")) {
                 item.setReference("plasmidLocation", locationRefId);
@@ -315,6 +298,11 @@ public class SgdConverter extends BioDBConverter
             item.setReference("organism", organism);
             String refId = item.getIdentifier();
             
+            // TODO store binding site locations.  the relationship to chromosome isn't clear
+//            String locationRefId = getLocation(item, refId, res.getString("start_coord"), 
+//                                               res.getString("stop_coord"), 
+//                                               res.getString("strand"));
+//            item.setReference("chromosomeLocation", locationRefId);
             try {
                 store(item);
             } catch (ObjectStoreException e) {
@@ -364,33 +352,46 @@ public class SgdConverter extends BioDBConverter
         }
     }
 
-    private void addCollection(String collectionName) {
-        for (Map.Entry<String, List<String>> entry : featureMap.entrySet()) {
-            String featureNo = entry.getKey();
-            List<String> pubRefIds = entry.getValue();
-            Item gene = genes.get(featureNo);
-            if (gene != null) {
-                gene.setCollection(collectionName, pubRefIds);
-            }
-        }
-        featureMap = new HashMap();
-    }
+//    private void addCollection(String collectionName) {
+//        for (Map.Entry<String, List<String>> entry : featureMap.entrySet()) {
+//            String featureNo = entry.getKey();
+//            List<String> pubRefIds = entry.getValue();
+//            Item gene = genes.get(featureNo);
+//            if (gene != null) {
+//                gene.setCollection(collectionName, pubRefIds);
+//            }
+//        }
+//        featureMap = new HashMap();
+//    }
+//        
+//    private void addFeature(String featureNo, String refId) {
+//        if (featureMap.get(featureNo) == null) {
+//            featureMap.put(featureNo, new ArrayList());            
+//        }
+//        featureMap.get(featureNo).add(refId);
+//    }
         
-    private void addFeature(String featureNo, String refId) {
-        if (featureMap.get(featureNo) == null) {
-            featureMap.put(featureNo, new ArrayList());            
-        }
-        featureMap.get(featureNo).add(refId);
-    }
-        
-    private String getLocation(String refId, String chromosomeRefId, String start, String stop, 
-                               String strand) 
+    private String getLocation(Item subject, String chromosomeRefId, String startCoord, 
+                               String stopCoord, String strand) 
     throws ObjectStoreException {
+
+        String start = (strand.equals("C") ? stopCoord : startCoord);
+        String end = (strand.equals("C") ? startCoord : stopCoord);
+
+        if (StringUtils.isEmpty(startCoord)) {
+            start = "0";
+        }
+        if (StringUtils.isEmpty(stopCoord)) {
+            end = "0";
+        }
+        
+        subject.setAttribute("length", getLength(start, end));
+        
         Item location = createItem("Location");
         location.setAttribute("start", start);
-        location.setAttribute("end", stop);                
+        location.setAttribute("end", end);                
         location.setAttribute("strand", strand);
-        location.setReference("subject", refId);
+        location.setReference("subject", subject);
         location.setReference("object", chromosomeRefId);
         try {
             store(location);
@@ -558,6 +559,7 @@ public class SgdConverter extends BioDBConverter
         }
         return refId;
     }
+    
     /**
      * {@inheritDoc}
      */
