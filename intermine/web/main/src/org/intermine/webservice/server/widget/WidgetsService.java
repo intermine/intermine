@@ -157,7 +157,6 @@ public class WidgetsService extends WebService
 
         InterMineBag imBag = profile.createBag(bagName, className, "");
         imBag.addIdsToBag(bagList);
-        profile.saveBag(imBag.getName(), imBag);
         return imBag;
     }
 
