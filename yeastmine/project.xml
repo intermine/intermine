@@ -93,7 +93,7 @@
 
     <post-process name="create-utr-references"/> 
     <post-process name="make-spanning-locations"/>   
-    <post-process name="create-intergenic-region-features"/>
+    <!--<post-process name="create-intergenic-region-features"/>        -->
     <post-process name="transfer-sequences"/>
 
     <post-process name="do-sources"/>
@@ -101,10 +101,10 @@
     <post-process name="create-intron-features">
       <property name="organisms" value="7165,7460"/>
     </post-process>    
-        -->
+
     <post-process name="create-bioseg-location-index"/> 
     <post-process name="create-overlap-view"/>
-
+        -->
     <post-process name="synonym-update"/>
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
