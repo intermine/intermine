@@ -24,8 +24,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -59,39 +57,36 @@ public class OrthologueConverter implements BagConverter
     public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
                                       throws ObjectStoreException {
+        
         ServletContext servletContext = session.getServletContext();
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        PathQuery pathQuery = new PathQuery(model);
+        PathQuery q = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
                         "Gene.homologues.homologue", false);
         view = getFixedView(view);
-        pathQuery.setViewPaths(view);
-        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
+        q.setViewPaths(view);
+        
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
-        Constraint c = new Constraint(ConstraintOp.IN, objectList,
-                                        false, label, code, id, null);
-        pathQuery.addNode(type).getConstraints().add(c);
 
-        code = pathQuery.getUnusedConstraintCode();
-        Constraint c2 = new Constraint(ConstraintOp.LOOKUP, organism,
-                                        false, label, code, id, null);
+        // gene 
+        q.addConstraint("Gene", Constraints.in(objectList));
+        
+        // organism 
+        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(organism));
 
-        pathQuery.addNode("Gene.homologues.homologue.organism").getConstraints().add(c2);
+        // homologue.type = "orthologue"
+        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+        
 
-        Constraint c3 = new Constraint(ConstraintOp.EQUALS, "orthologue",
-                                        false, label, code, id , null);
-        pathQuery.addNode(pathQuery.getCorrectJoinStyle("Gene.homologues.type"))
-            .getConstraints().add(c3);
-
-        pathQuery.setConstraintLogic("A and B and C");
-        pathQuery.syncLogicExpression("and");
-        LOG.info("PATH QUERY:" + pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
+        q.setConstraintLogic("A and B and C");
+        q.syncLogicExpression("and");
+        LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
 
-        return executor.execute(pathQuery);
+        return executor.execute(q);
     }
 
     /**
@@ -125,8 +120,8 @@ public class OrthologueConverter implements BagConverter
         // add columns to the output
         q.setView("Gene.primaryIdentifier, "
                   + "Gene.organism.shortName,"
-                  + "Gene.homologues.homologue.primaryIdentifier"
-                  + "Gene.homologues.homologue.organism.shortName"
+                  + "Gene.homologues.homologue.primaryIdentifier,"
+                  + "Gene.homologues.homologue.organism.shortName,"
                   + "Gene.homologues.type");
 
         // homologue.type = "orthologue"
