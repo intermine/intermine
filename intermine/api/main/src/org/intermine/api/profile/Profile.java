@@ -330,11 +330,18 @@ public class Profile
     }
 
     /**
-     * Delete a bag
+     * Delete a bag from the user account, if user is logged in also deletes from the userprofile
+     * database.
      * @param name the bag name
+     * @throws ObjectStoreException if problems deleting bag
      */
-    public void deleteBag(String name) {
+    public void deleteBag(String name) throws ObjectStoreException {
+        InterMineBag bagToDelete = savedBags.get(name);
+        if (isLoggedIn()) {
+            bagToDelete.delete();            
+        }
         savedBags.remove(name);
+     
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);

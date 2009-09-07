@@ -103,7 +103,6 @@ public class BagOperations
         combined.addToBagFromQuery(q);
 
         if (combined.size() == 0) {
-            combined.setProfileId(null);
             profile.deleteBag(combined.getName());
         }
         return combined.size();
