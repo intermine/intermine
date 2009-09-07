@@ -45,6 +45,7 @@ import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
@@ -53,12 +54,10 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -263,19 +262,13 @@ public class AjaxServices
                 sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
                 profile.saveQuery(sq.getName(), sq);
             } else if (type.equals("bag")) {
-                if (profile.getSavedBags().get(name) == null) {
+                try {
+                    profile.renameBag(name, newName);
+                } catch (IllegalArgumentException e) {
                     return "<i>" + name + " does not exist</i>";
-                }
-                if (profile.getSavedBags().get(newName) != null) {
+                } catch (ProfileAlreadyExistsException e) {
                     return "<i>" + newName + " already exists</i>";
                 }
-                InterMineBag bag = profile.getSavedBags().get(name);
-                bag.setName(newName);
-                TagManager tagManager = getTagManager();
-                moveTagsToNewObject(name, newName, TagTypes.BAG,
-                        profile.getUsername(), tagManager);
-                profile.deleteBag(name);
-                profile.saveBag(newName, bag);
             } else {
                 return "Type unknown";
             }
@@ -286,22 +279,6 @@ public class AjaxServices
         }
     }
 
-    /**
-     * Moves tags from one object to another.
-     * @param oldTaggedObj name of original tagged object
-     * @param newTaggedObj name of new tagged object
-     * @param type tag type
-     * @param userName user name
-     * @param tagManager tag manager
-     */
-    public static void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type,
-            String userName, TagManager tagManager) {
-        List<Tag> tags = tagManager.getTags(null, oldTaggedObj, type, userName);
-        for (Tag tag : tags) {
-            tagManager.addTag(tag.getTagName(), newTaggedObj, type, userName);
-            tagManager.deleteTag(tag);
-        }
-    }
 
     /**
      * For a given bag, set its description
