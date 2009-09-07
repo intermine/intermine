@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -28,11 +27,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 
 
@@ -167,21 +163,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         return res;
     }
 
-    /**
-     * Returns a List which contains the contents of this bag as InterMineObjects.
-     *
-     * @return a List of InterMineObjects
-     */
-    public List<Object> getContentsAsObjects() {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(InterMineObject.class);
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
-        q.setDistinct(false);
-        SingletonResults res = os.executeSingleton(q, 0, false, true, true);
-        return res;
-    }
 
     /**
      * Returns the size of the bag.
