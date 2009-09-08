@@ -35,6 +35,10 @@
         <li>Name
         <li>Length
         <li>Description
+        <li>Feature type
+        <li>Sequences
+        <li>Binding sites
+        <li>Exons
       </ul>
     </td>
     <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 02 Sep, 2009</td>
