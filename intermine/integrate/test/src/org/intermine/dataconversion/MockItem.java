@@ -208,7 +208,9 @@ public class MockItem {
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
             xml += "\t<reference name=\"" + entry.getKey() + "\">";
             MockItem item = entry.getValue();
-            xml += item.referencedItemXML();
+            if (item != null) {
+                xml += item.referencedItemXML();
+            }
             xml += "</reference>" + ENDL;
         }
         return xml;
@@ -259,8 +261,17 @@ public class MockItem {
     public String getPrettyReferences() {
         String xml = "";
         for (Map.Entry<String, MockItem> entry : references.entrySet()) {
-            xml += "\t<reference name=\"" + entry.getKey() + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"/>"
+            if (entry.getValue() != null) {
+                xml += "\t<reference name=\"" + entry.getKey() 
+                    + "\" ref_id=\"" + entry.getValue().getIdentifier() + "\"/>"
+                    + ENDL;
+            } else {
+
+                xml += "\t<reference name=\"" + entry.getKey() 
+                + "\" ref_id=\"" + entry.getValue() + "\"/>"
                 + ENDL;
+    
+            }
         }
         return xml;
     }
