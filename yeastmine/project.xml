@@ -89,11 +89,11 @@
 
   <post-processing>
     <post-process name="create-references"/>
+ <!--
      <post-process name="create-chromosome-locations-and-lengths"/>
-
     <post-process name="create-utr-references"/> 
     <post-process name="make-spanning-locations"/>   
-    <!--<post-process name="create-intergenic-region-features"/>        -->
+    <post-process name="create-intergenic-region-features"/>        -->
     <post-process name="transfer-sequences"/>
 
     <post-process name="do-sources"/>
