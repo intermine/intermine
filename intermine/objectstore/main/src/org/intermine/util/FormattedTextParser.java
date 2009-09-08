@@ -67,6 +67,21 @@ public class FormattedTextParser
         return parseDelimitedReader(reader, true, ",");
     }
 
+    /**
+     * Return an Iterator over a delimited file.  Iterator.next() splits the current line
+     * and returns a String[] of the bits.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @param delim character to split the files, eg "|"
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    public static Iterator<String[]> parseDelimitedReader(final Reader reader, char delim)
+    throws IOException {
+        return parseDelimitedReader(reader, false, String.valueOf(delim));
+    }
+    
+    
     private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes,
                                                  final String delim)
     throws IOException {
@@ -97,14 +112,19 @@ public class FormattedTextParser
 
                 if (stripQuotes) {
                     StrMatcher delimMatcher = null;
-
+                    StrTokenizer tokeniser = null;
                     if (delim.equals(",")) {
                         delimMatcher = StrMatcher.commaMatcher();
-                    } else {
+                        tokeniser
+                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                    } else if (delim.equals("\t")) {
                         delimMatcher = StrMatcher.tabMatcher();
+                        tokeniser
+                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                    } else {
+                        tokeniser = new StrTokenizer(lastLine, delim);
                     }
-                    StrTokenizer tokeniser
-                    = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+
                     tokeniser.setEmptyTokenAsNull(false);
                     tokeniser.setIgnoreEmptyTokens(false);
                     return tokeniser.getTokenArray();
