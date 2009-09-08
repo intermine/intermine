@@ -13,6 +13,7 @@ package org.intermine.dataloader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,10 +50,10 @@ public class DataLoaderHelper
 {
     private static final Logger LOG = Logger.getLogger(DataLoaderHelper.class);
 
-    protected static Map sourceKeys = new HashMap();
+    protected static Map<Source, Properties> sourceKeys = new HashMap<Source, Properties>();
     protected static Map<Model, Map<String, List<String>>> modelDescriptors
-        = new HashMap<Model, Map<String, List<String>>>();
-    protected static Set verifiedSources = new HashSet();
+        = new IdentityHashMap<Model, Map<String, List<String>>>();
+    protected static Set<Source> verifiedSources = new HashSet<Source>();
 
     /**
      * Build a map from class and field names to a priority-ordered List of source name Strings.
@@ -101,8 +102,8 @@ public class DataLoaderHelper
      * @param source the Source
      * @return a Set of PrimaryKeys
      */
-    public static Set getPrimaryKeys(ClassDescriptor cld, Source source) {
-        Set keySet = new LinkedHashSet();
+    public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source) {
+        Set<PrimaryKey> keySet = new LinkedHashSet();
         Properties keys = getKeyProperties(source);
         if (keys != null) {
             if (!verifiedSources.contains(source)) {
@@ -138,7 +139,7 @@ public class DataLoaderHelper
                 }
                 verifiedSources.add(source);
             }
-            Map map = PrimaryKeyUtil.getPrimaryKeys(cld);
+            Map<String, PrimaryKey> map = PrimaryKeyUtil.getPrimaryKeys(cld);
             String cldName = TypeUtil.unqualifiedName(cld.getName());
             String keyList = (String) keys.get(cldName);
             if (keyList != null) {
@@ -172,7 +173,7 @@ public class DataLoaderHelper
     protected static Properties getKeyProperties(Source source) {
         Properties keys = null;
         synchronized (sourceKeys) {
-            keys = (Properties) sourceKeys.get(source);
+            keys = sourceKeys.get(source);
             if (keys == null) {
                 String sourceNameKeysFileName = source.getName() + "_keys.properties";
                 keys = PropertiesUtil.loadProperties(sourceNameKeysFileName);
@@ -296,6 +297,13 @@ public class DataLoaderHelper
         return true;
     }
 
+    private static ThreadLocal<Map<PrimaryKeyCacheKey, Set<String>>> primaryKeyCache
+        = new ThreadLocal<Map<PrimaryKeyCacheKey, Set<String>>>() {
+            @Override protected Map<PrimaryKeyCacheKey, Set<String>> initialValue() {
+                return new HashMap<PrimaryKeyCacheKey, Set<String>>();
+            }
+        };
+
     /**
      * Returns true if the given field is a member of any primary key on the given class, for the
      * given source.
@@ -308,19 +316,44 @@ public class DataLoaderHelper
      */
     public static boolean fieldIsPrimaryKey(Model model, Class clazz, String fieldName,
             Source source) {
-        Set classDescriptors = model.getClassDescriptorsForClass(clazz);
-        Iterator cldIter = classDescriptors.iterator();
-        while (cldIter.hasNext()) {
-            ClassDescriptor cld = (ClassDescriptor) cldIter.next();
-            Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
-            Iterator pkIter = primaryKeys.iterator();
-            while (pkIter.hasNext()) {
-                PrimaryKey pk = (PrimaryKey) pkIter.next();
-                if (pk.getFieldNames().contains(fieldName)) {
-                    return true;
+        Map<PrimaryKeyCacheKey, Set<String>> cache = primaryKeyCache.get();
+        PrimaryKeyCacheKey key = new PrimaryKeyCacheKey(model, clazz, source);
+        Set<String> fields = cache.get(key);
+        if (fields == null) {
+            fields = new HashSet<String>();
+            for (ClassDescriptor cld : model.getClassDescriptorsForClass(clazz)) {
+                for (PrimaryKey pk : getPrimaryKeys(cld, source)) {
+                    fields.addAll(pk.getFieldNames());
                 }
             }
+            cache.put(key, fields);
         }
-        return false;
+        return fields.contains(fieldName);
+    }
+
+    private static class PrimaryKeyCacheKey
+    {
+        private Model model;
+        private Class clazz;
+        private Source source;
+
+        public PrimaryKeyCacheKey(Model model, Class clazz, Source source) {
+            this.model = model;
+            this.clazz = clazz;
+            this.source = source;
+        }
+
+        public int hashCode() {
+            return clazz.hashCode();
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof PrimaryKeyCacheKey) {
+                PrimaryKeyCacheKey pkck = (PrimaryKeyCacheKey) o;
+                return (model == pkck.model) && clazz.equals(pkck.clazz)
+                    && source.equals(pkck.source);
+            }
+            return false;
+        }
     }
 }

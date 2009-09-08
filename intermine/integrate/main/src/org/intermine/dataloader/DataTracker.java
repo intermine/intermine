@@ -182,8 +182,9 @@ public class DataTracker
                             Statement s = prefetchConn.createStatement();
                             long beforeExecute = System.currentTimeMillis();
                             ResultSet r = s.executeQuery(sql.toString());
-                            LOG.info("Prefetching " + (((count + 499) % 500) + 1) + " tracks took "
-                                    + (System.currentTimeMillis() - beforeExecute) + " ms");
+                            //LOG.info("Prefetching " + (((count + 499) % 500) + 1)
+                            //        + " tracks took " + (System.currentTimeMillis()
+                            //            - beforeExecute) + " ms");
                             while (r.next()) {
                                 ObjectDescription objectDescription =
                                     idsFetched.get(new Integer(r.getInt(1)));

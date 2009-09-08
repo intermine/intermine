@@ -113,8 +113,6 @@ public class KeggPathwayConverter extends BioFileConverter
         }
     }
 
-
-
     /**
      * Read each line from flat file, create genes and synonyms.
      *

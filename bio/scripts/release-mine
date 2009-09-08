@@ -333,7 +333,7 @@ $tomcat_host =~ s/(:\d+).*$//; # cut :8080
 
     if ($line =~ m:</VirtualHost>:i) {
       $apache_config .= <<CONF;
-    ProxyPass /release-$new_version ajp://$tomcat_host:8009/release-$new_version
+    ProxyPass /release-$new_version ajp://$tomcat_host:8009/release-$new_version timeout=600
     ProxyPassReverse /release-$new_version http://$tomcat_host:8009/release-$new_version
 CONF
     }

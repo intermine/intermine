@@ -47,8 +47,7 @@ public abstract class TagUtil
 
         if (prop == null) {
             return new String[0];
-        } else {
-            return StringUtil.split(prop, ":");
         }
+        return StringUtil.split(prop, ":");        
     }
 }

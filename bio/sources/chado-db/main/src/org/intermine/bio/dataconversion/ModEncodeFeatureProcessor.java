@@ -137,7 +137,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         /*
          * tried also other queries (using union, without join), this seems better
          */
-
+        
         return "(cvterm.name = 'chromosome' OR cvterm.name = 'chromosome_arm') AND "
         + " feature_id IN ( SELECT featureloc.srcfeature_id "
         + " FROM featureloc, " + SUBFEATUREID_TEMP_TABLE_NAME
@@ -389,13 +389,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
                     Arrays.asList(new SetFieldConfigAction("cds")));
 
-            map.put(new MultiKey("relationship", "PolyASite", "derives_from", "ThreePrimeRACEClone"),
+            map.put(new MultiKey("relationship", "PolyASite", 
+                    "derives_from", "ThreePrimeRACEClone"),
                     Arrays.asList(new SetFieldConfigAction("threePrimeRACEClone")));
 
-            map.put(new MultiKey("relationship", "ThreePrimeRST", "derives_from", "ThreePrimeRACEClone"),
+            map.put(new MultiKey("relationship", "ThreePrimeRST", 
+                    "derives_from", "ThreePrimeRACEClone"),
                     Arrays.asList(new SetFieldConfigAction("threePrimeRACEClone")));
 
-            map.put(new MultiKey("relationship", "ThreePrimeUST", "complete_evidence_for_feature", "ThreePrimeUTR"),
+            map.put(new MultiKey("relationship", "ThreePrimeUST", 
+                    "complete_evidence_for_feature", "ThreePrimeUTR"),
                     Arrays.asList(new SetFieldConfigAction("threePrimeUTR")));
 
 //            map.put(new MultiKey("relationship", "CDNAClone", "derived_assoc_cdna_clone", "Gene"),
@@ -519,9 +522,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
    protected void earlyExtraProcessing(Connection connection) throws  SQLException {
+        // to limit the process to the current submission
         createSubFeatureIdTempTable(connection);
-
-        // override in subclasses as necessary
     }
 
 

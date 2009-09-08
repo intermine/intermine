@@ -39,13 +39,14 @@ public class UniprotEntry
     private List<String> isoformSynonyms = new ArrayList();
     private List<String> components = new ArrayList();
     private List<String> proteinNames = new ArrayList();
+    private List<String> goTerms = new ArrayList();
     private boolean isDuplicate = false, isIsoform = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String seqRefId, md5checksum;
     private String commentType;
     private List<UniprotGene> geneEntries = new ArrayList();
-    private Map<String, String> dbrefs = new HashMap();
+    private Map<String, List<String>> dbrefs = new HashMap();
 
     // map of gene designation (normally the primary name) to dbref (eg. FlyBase, FBgn001)
     // this map is used when there is more than one gene but the dbref is needed to set an
@@ -534,7 +535,7 @@ public class UniprotEntry
     /**
      * @param dbrefs the dbrefs to set
      */
-    public void setDbrefs(Map<String, String> dbrefs) {
+    public void setDbrefs(Map<String, List<String>> dbrefs) {
         this.dbrefs = dbrefs;
     }
 
@@ -603,6 +604,29 @@ public class UniprotEntry
     }
 
     /**
+     * @return the goterms
+     */
+    public List<String> getGOTerms() {
+        return goTerms;
+    }
+
+    /**
+     * @param refId id representing a go term object
+     */
+    public void addGOTerm(String refId) {
+        if (!goTerms.contains(refId)) {
+            goTerms.add(refId);
+        }
+    }
+
+    /**
+     * @param goterms list of go term refIds for this protein
+     */
+    public void setGOTerms(List<String> goterms) {
+        this.goTerms = goterms;
+    }
+    
+    /**
      * @return the primaryIdentifier
      */
     public String getPrimaryIdentifier() {
@@ -634,7 +658,7 @@ public class UniprotEntry
     /**
      * @return the dbrefs
      */
-    public Map<String, String> getDbrefs() {
+    public Map<String, List<String>> getDbrefs() {
         return dbrefs;
     }
 
@@ -656,7 +680,10 @@ public class UniprotEntry
          * id will be checked on the next line to ensure we still have the same name/value
          * pair */
         dbref = new Dbref(type, id);
-        dbrefs.put(type, id);
+        if (dbrefs.get(type) == null) {
+            dbrefs.put(type, new ArrayList());
+        }
+        dbrefs.get(type).add(id);
     }
 
     /**
@@ -734,12 +761,20 @@ public class UniprotEntry
     }
 
     // using all identifiers, find dbrefs with valid "gene designation" values
-    private Map<String, String> getValidDbrefs(List<String> identifiers) {
-        Map<String, String> validDbrefs = new HashMap();
+    private Map<String, List<String>> getValidDbrefs(List<String> identifiers) {
+        Map<String, List<String>> validDbrefs = new HashMap();
+
+        // get all gene designation entries
         for (Map.Entry<String, Dbref> refs : geneDesignationToDbref.entrySet()) {
             String geneDesignation = refs.getKey();
+            Dbref geneDesignationDbref = refs.getValue();
+            String dbname = geneDesignationDbref.getType();        // eg. flybase
+            String identifier = geneDesignationDbref.getValue();   // eg. FBgn001
             if (identifiers.contains(geneDesignation)) {
-                validDbrefs.putAll(refs.getValue().toMap());
+                if (validDbrefs.get(dbname) == null) {
+                    validDbrefs.put(dbname, new ArrayList());
+                }
+                validDbrefs.get(dbname).add(identifier);
             }
         }
         return validDbrefs;
@@ -804,7 +839,8 @@ public class UniprotEntry
     {
         // map of name type to name value, eg ORF --> CG1234
         protected Map<String, String> geneIdentifiers = new HashMap();
-
+        protected List<String> goTerms = new ArrayList();
+        
         /**
          * @param type type of variable, eg. ORF, primary
          * @param value value of variable, eg FBgn, CG
@@ -826,7 +862,22 @@ public class UniprotEntry
         protected void setGeneNames(Map<String, String> geneNames) {
             this.geneIdentifiers = geneNames;
         }
+        
+        
+        /**
+         * @return list of refIds representing go term objects
+         */
+        protected List<String> getGOTerms() {
+            return goTerms;
+        }
 
+        /**
+         * @param goTerms list of refIds representing go terms
+         */
+        protected void setGOTerms(List<String> goTerms) {
+            this.goTerms = goTerms;
+        }
+        
         /**
          * @return list of gene names
          */
@@ -855,7 +906,9 @@ public class UniprotEntry
 
             // set gene names
             entry.setGeneNames(gene.getGeneNames());
-
+            
+            entry.setGOTerms(goTerms);
+            
             // add to list
             dummyEntries.add(entry);
         }
@@ -894,6 +947,7 @@ public class UniprotEntry
         entry.setProteinNames(proteinNames);
         entry.setGeneEntries(geneEntries);
         entry.setGeneDesignations(geneDesignationToDbref);
+        entry.setGOTerms(goTerms);
         return entry;
     }
 }

@@ -22,16 +22,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
 
-/*
- * Copyright (C) 2002-2009 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 /**
  * Tiles controller for templates tile (page).
  *

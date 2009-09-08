@@ -480,4 +480,19 @@ sub as_xml
   $writer->endTag();
 }
 
+=head2 destroy
+
+ Title   : destroy
+ Usage   : $item = $item->destroy;
+ Function: deletes the item object and its contents
+
+=cut
+sub destroy
+{
+	my $self = shift;
+	my @keys = keys(%$self);
+	foreach my $key (@keys) { delete $self->{$key} }
+	return undef;
+}
+
 1;

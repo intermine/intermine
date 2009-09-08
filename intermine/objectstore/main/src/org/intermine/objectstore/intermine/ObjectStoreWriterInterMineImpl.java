@@ -22,15 +22,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
@@ -53,7 +54,6 @@ import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
-import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
@@ -79,12 +79,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Batch batch;
     protected String createSituation;
     protected String closeSituation;
-    protected Map recentSequences;
-    protected Map tableToInfo;
-    protected Map tableToColNameArray;
-    protected Map tableToCollections;
+    protected Map<Integer, Boolean> recentSequences;
+    protected Map<String, TableInfo> tableToInfo;
+    protected Map<String, String[]> tableToColNameArray;
+    protected Map<String, Set<CollectionDescriptor>> tableToCollections;
     protected String connectionTakenBy = null;
-    protected Set tablesAltered = new HashSet();
+    protected Set<Object> tablesAltered = new HashSet<Object>();
 
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
@@ -123,13 +123,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         createSituation = message.toString();
         int index = createSituation.indexOf("at junit.framework.TestCase.runBare");
         createSituation = (index < 0 ? createSituation : createSituation.substring(0, index));
-        recentSequences = Collections.synchronizedMap(new CacheMap(getClass().getName()
-                    + " with sequence = " + sequenceNumber + ", model = \"" + model.getName()
-                    + "\" recentSequences cache"));
+        recentSequences = Collections.synchronizedMap(new WeakHashMap<Integer, Boolean>());
         batch = new Batch(new BatchWriterPostgresCopyImpl());
-        tableToInfo = new HashMap();
-        tableToColNameArray = new HashMap();
-        tableToCollections = new HashMap();
+        tableToInfo = new HashMap<String, TableInfo>();
+        tableToColNameArray = new HashMap<String, String[]>();
+        tableToCollections = new HashMap<String, Set<CollectionDescriptor>>();
     }
 
     /**
@@ -529,12 +527,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         (InterMineObject) o) : false);
             StringConstructor xml = null;
             String objectClass = null;
-            Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
+            Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
 
             if (doDeletes) {
-                Iterator cldIter = classDescriptors.iterator();
-                while (cldIter.hasNext()) {
-                    ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                for (ClassDescriptor cld : classDescriptors) {
                     ClassDescriptor tableMaster = schema.getTableMaster(cld);
                     String tableName = DatabaseUtil.getTableName(tableMaster);
                     if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
@@ -544,31 +540,25 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             }
             int tablesWritten = 0;
-            Iterator validFieldEntryIter = TypeUtil.getFieldInfos(o.getClass()).entrySet()
-                .iterator();
-            Set validFieldNames = new HashSet();
-            while (validFieldEntryIter.hasNext()) {
-                Map.Entry entry = (Map.Entry) validFieldEntryIter.next();
-                String fieldName = (String) entry.getKey();
-                TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) entry.getValue();
+            Set<String> validFieldNames = new HashSet<String>();
+            for (Map.Entry<String, TypeUtil.FieldInfo> entry : TypeUtil.getFieldInfos(o.getClass())
+                    .entrySet()) {
+                String fieldName = entry.getKey();
+                TypeUtil.FieldInfo fieldInfo = entry.getValue();
                 if (!Collection.class.isAssignableFrom(fieldInfo.getType())) {
                     validFieldNames.add(fieldName);
                 }
             }
-            Iterator cldIter = classDescriptors.iterator();
-            while (cldIter.hasNext()) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            for (ClassDescriptor cld : classDescriptors) {
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
                 TableInfo tableInfo = getTableInfo(tableMaster);
-                Set collections = (Set) tableToCollections.get(cld.getName());
+                Set<CollectionDescriptor> collections = tableToCollections.get(cld.getName());
                 if (collections == null) {
                     LOG.info("Generating cached metadata for ClassDescriptor " + cld.getName());
                     collections = new HashSet();
-                    Iterator fieldIter = cld.getAllFieldDescriptors().iterator();
-                    while (fieldIter.hasNext()) {
-                        FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                    for (FieldDescriptor field : cld.getAllFieldDescriptors()) {
                         if (field instanceof CollectionDescriptor) {
-                            collections.add(field);
+                            collections.add((CollectionDescriptor) field);
                         }
                     }
                     tableToCollections.put(cld.getName(), collections);
@@ -594,16 +584,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             value = cld.getName();
                         } else if ("class".equals(tableInfo.colNames[colNo])) {
                             if (objectClass == null) {
-                                Iterator objectClassIter = DynamicUtil.decomposeClass(o.getClass())
-                                    .iterator();
                                 StringBuffer sb = new StringBuffer();
                                 boolean needComma = false;
-                                while (objectClassIter.hasNext()) {
+                                for (Class objectClazz : DynamicUtil.decomposeClass(o.getClass())) {
                                     if (needComma) {
                                         sb.append(" ");
                                     }
                                     needComma = true;
-                                    sb.append(((Class) objectClassIter.next()).getName());
+                                    sb.append(objectClazz.getName());
                                 }
                                 objectClass = sb.toString();
                             }
@@ -658,9 +646,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         values[colNo] = value;
                     }
                     if (schema.isFlatMode(cld.getType())) {
-                        Iterator validFieldNameIter = validFieldNames.iterator();
-                        while (validFieldNameIter.hasNext()) {
-                            String validFieldName = (String) validFieldNameIter.next();
+                        for (String validFieldName : validFieldNames) {
                             if (!fieldNamesWritten.contains(validFieldName)) {
                                 Set decomposed = DynamicUtil.decomposeClass(o.getClass());
                                 throw new ObjectStoreException("Cannot store object " + decomposed
@@ -675,11 +661,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     tablesAltered.add(tableInfo.tableName);
                 }
 
-                Iterator collectionIter = collections.iterator();
-                while (collectionIter.hasNext()) {
-                    CollectionDescriptor collection = (CollectionDescriptor) collectionIter.next();
-                    Collection coll = (Collection) ((InterMineObject) o).getFieldValue(collection
-                            .getName());
+                for (CollectionDescriptor collection : collections) {
+                    Collection<InterMineObject> coll
+                        = (Collection<InterMineObject>) ((InterMineObject) o)
+                        .getFieldValue(collection.getName());
                     boolean needToStoreCollection = true;
 
                     if (coll instanceof Lazy) {
@@ -704,7 +689,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                 DatabaseUtil.getOutwardIndirectionColumnName(collection,
                                         schema.getVersion());
                             boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
-                            String indirColNames[] = (String []) tableToColNameArray
+                            String indirColNames[] = tableToColNameArray
                                 .get(indirectTableName);
                             if (indirColNames == null) {
                                 indirColNames = new String[2];
@@ -712,10 +697,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                                 indirColNames[1] = (swap ? outwardColumnName : inwardColumnName);
                                 tableToColNameArray.put(indirectTableName, indirColNames);
                             }
-                            Iterator collIter = coll.iterator();
-                            while (collIter.hasNext()) {
-                                InterMineObject inCollection = (InterMineObject)
-                                    collIter.next();
+                            for (InterMineObject inCollection : coll) {
                                 batch.addRow(c, indirectTableName, indirColNames[0],
                                              indirColNames[1],
                                              (swap ? ((InterMineObject) o).getId()
@@ -801,7 +783,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 String outwardColumnName = DatabaseUtil.getOutwardIndirectionColumnName(coll,
                         schema.getVersion());
                 boolean swap = (inwardColumnName.compareTo(outwardColumnName) > 0);
-                String indirColNames[] = (String []) tableToColNameArray.get(indirectTableName);
+                String indirColNames[] = tableToColNameArray.get(indirectTableName);
                 if (indirColNames == null) {
                     indirColNames = new String[2];
                     indirColNames[0] = (swap ? inwardColumnName : outwardColumnName);
@@ -839,7 +821,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected TableInfo getTableInfo(ClassDescriptor tableMaster)
         throws ObjectStoreException {
         String tableName = DatabaseUtil.getTableName(tableMaster);
-        TableInfo retval = (TableInfo) tableToInfo.get(tableName);
+        TableInfo retval = tableToInfo.get(tableName);
         if (retval == null) {
             retval = new TableInfo();
             retval.tableName = tableName;
@@ -878,18 +860,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     colNo++;
                 }
             }
-            Iterator fieldIter = allColumns.getAttributes().iterator();
-            while (fieldIter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+            for (AttributeDescriptor field : allColumns.getAttributes()) {
                 retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
                 retval.fieldNames[colNo] = field.getName();
                 retval.fields[colNo] = field;
                 colNo++;
             }
             retval.referencesFrom = colNo;
-            fieldIter = allColumns.getReferences().iterator();
-            while (fieldIter.hasNext()) {
-                FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+            for (ReferenceDescriptor field : allColumns.getReferences()) {
                 retval.colNames[colNo] = DatabaseUtil.getColumnName(field);
                 retval.fieldNames[colNo] = field.getName();
                 retval.fields[colNo] = field;
@@ -923,10 +901,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
 
         // Make sure all objects pointed to have IDs
         Map fieldInfos = TypeUtil.getFieldInfos(o.getClass());
-        Iterator fieldIter = fieldInfos.entrySet().iterator();
-        while (fieldIter.hasNext()) {
-            Map.Entry fieldEntry = (Map.Entry) fieldIter.next();
-            TypeUtil.FieldInfo fieldInfo = (TypeUtil.FieldInfo) fieldEntry.getValue();
+        for (Map.Entry<String, TypeUtil.FieldInfo> fieldEntry
+                : TypeUtil.getFieldInfos(o.getClass()).entrySet()) {
+            TypeUtil.FieldInfo fieldInfo = fieldEntry.getValue();
             if (InterMineObject.class.isAssignableFrom(fieldInfo.getType())) {
                 InterMineObject obj = (InterMineObject) TypeUtil.getFieldProxy(o,
                         fieldInfo.getName());
@@ -934,11 +911,10 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     obj.setId(getSerialWithConnection(c));
                 }
             } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
-                Collection coll = (Collection) TypeUtil.getFieldValue(o, fieldInfo.getName());
+                Collection<InterMineObject> coll = (Collection<InterMineObject>) TypeUtil
+                    .getFieldValue(o, fieldInfo.getName());
                 if (!(coll instanceof Lazy)) {
-                    Iterator collIter = coll.iterator();
-                    while (collIter.hasNext()) {
-                        InterMineObject obj = (InterMineObject) collIter.next();
+                    for (InterMineObject obj : coll) {
                         if (obj.getId() == null) {
                             obj.setId(getSerialWithConnection(c));
                         }
@@ -981,17 +957,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if there is an error in the underlying database
      */
-    protected void addAllToBagWithConnection(Connection c, ObjectStoreBag osb, Collection coll)
-    throws ObjectStoreException {
+    protected void addAllToBagWithConnection(Connection c, ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
         }
 
         try {
-            Iterator iter = coll.iterator();
-            while (iter.hasNext()) {
-                Integer element = (Integer) iter.next();
+            for (Integer element : coll) {
                 batch.addRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
                 tablesAltered.add(osb);
@@ -1043,17 +1017,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if there is an error in the underlying database
      */
-    protected void removeAllFromBagWithConnection(Connection c, ObjectStoreBag osb, Collection coll)
-    throws ObjectStoreException {
+    protected void removeAllFromBagWithConnection(Connection c, ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
         }
 
         try {
-            Iterator iter = coll.iterator();
-            while (iter.hasNext()) {
-                Integer element = (Integer) iter.next();
+            for (Integer element : coll) {
                 batch.deleteRow(c, INT_BAG_TABLE_NAME, BAGID_COLUMN, BAGVAL_COLUMN, osb.getBagId(),
                         element.intValue());
                 tablesAltered.add(osb);
@@ -1205,11 +1177,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                         + o.toString());
             }
 
-            Set classDescriptors = model.getClassDescriptorsForClass(o.getClass());
-
-            Iterator cldIter = classDescriptors.iterator();
-            while (cldIter.hasNext()) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+            for (ClassDescriptor cld : model.getClassDescriptorsForClass(o.getClass())) {
                 ClassDescriptor tableMaster = schema.getTableMaster(cld);
                 String tableName = DatabaseUtil.getTableName(tableMaster);
                 if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
@@ -1593,7 +1561,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      */
     protected Integer getSerialWithConnection(Connection c) throws SQLException {
         Integer retval = super.getSerialWithConnection(c);
-        recentSequences.put(retval, retval);
+        recentSequences.put(retval, Boolean.TRUE);
         return retval;
     }
 

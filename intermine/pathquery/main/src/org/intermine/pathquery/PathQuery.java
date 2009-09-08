@@ -1492,6 +1492,9 @@ public class PathQuery
     }
 
     /**
+     * This equals method is expensive - avoid using it, or putting PathQuery objects in Sets or as
+     * keys in Maps.
+     *
      * {@inheritDoc}
      */
     public boolean equals(Object o) {

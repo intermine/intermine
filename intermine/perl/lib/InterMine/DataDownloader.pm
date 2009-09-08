@@ -215,7 +215,7 @@ sub write_file(){
 		print FH $buffer;
 		close(FH);
 	}else{
-	open(FH, ">$path") || die "$!";
+		open(FH, ">$path") || die "$!";
 		print FH $buffer;
 		close(FH);
 	}

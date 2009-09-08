@@ -57,9 +57,8 @@ public class DelimitedFileConfiguration
         if (className == null) {
             throw new IllegalArgumentException("className not set in property file for "
                                                + "DelimitedFileConfiguration");
-        } else {
-            configClassDescriptor = model.getClassDescriptorByName(className);
         }
+        configClassDescriptor = model.getClassDescriptorByName(className);
 
         if (configClassDescriptor == null) {
             throw new IllegalArgumentException("cannot find ClassDescriptor for: " + className);

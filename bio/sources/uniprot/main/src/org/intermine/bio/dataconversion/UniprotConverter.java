@@ -61,10 +61,13 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> ontologies = new HashMap();
     private Map<String, String> keywords = new HashMap();
     private Map<String, String> genes = new HashMap();
+    private Map<String, String> goterms = new HashMap();
+    
     // don't allow duplicate identifiers
     private List<String> geneIdentifiers = new ArrayList();
 
     private boolean createInterpro = false;
+    private boolean creatego = false;
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory resolverFactory;
@@ -186,6 +189,18 @@ public class UniprotConverter extends DirectoryConverter
             this.createInterpro = false;
         }
     }
+    
+    /**
+     * Toggle whether or not to import GO data
+     * @param creatego whether or not to import GO terms (true/false)
+     */
+    public void setCreatego(String creatego) {
+        if (creatego.equals("true")) {
+            this.creatego = true;
+        } else {
+            this.creatego = false;
+        }
+    }
 
     /**
      * Sets the list of taxonIds that should be imported if using split input files.
@@ -262,14 +277,16 @@ public class UniprotConverter extends DirectoryConverter
                 if (!entry.getComponents().isEmpty()) {
                     processComponents(protein, entry);
                 }
-
+                
+                
                 List<String> synonymRefIds = new ArrayList();
                 try {
+                    /* dbrefs (go terms, refseq) */
                     processDbrefs(protein, entry, synonymRefIds);
-
+                    
                     /* genes */
                     processGene(protein, entry);
-
+                    
                     store(protein);
 
                     processSynonyms(synonymRefIds, protein.getIdentifier(), entry);
@@ -391,15 +408,40 @@ public class UniprotConverter extends DirectoryConverter
 
     private void processDbrefs(Item protein, UniprotEntry entry, List<String> synonymRefIds)
     throws SAXException {
-        Map<String, String> dbrefs = entry.getDbrefs();
-        if (dbrefs.containsKey("EC")) {
-            protein.setAttribute("ecNumber", dbrefs.get("EC"));
-        }
-        if (dbrefs.containsKey("RefSeq")) {
-            String synonym = dbrefs.get("RefSeq");
-            String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, "false",
-                                      entry.getDatasetRefId());
-            synonymRefIds.add(refId);
+        Map<String, List<String>> dbrefs = entry.getDbrefs();
+
+        for (Map.Entry<String, List<String>> dbref : dbrefs.entrySet()) {
+            
+            String key = dbref.getKey();
+            List<String> values = dbref.getValue();
+            
+            if (key.equals("EC")) {
+                protein.setAttribute("ecNumber", values.get(0));
+            } else if (key.equals("RefSeq")) {
+                for (String synonym : values) {
+                    String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, 
+                                              "false", entry.getDatasetRefId());
+                    synonymRefIds.add(refId);
+                }
+            } else if (creatego && key.equals("GO")) {
+                for (String identifier : values) {
+                    entry.addGOTerm(getGoTerm(identifier));
+                }
+            }
+        }        
+    }
+    
+    private void processGoAnnotation(UniprotEntry entry, Item gene) 
+    throws SAXException {
+        for (String goTermRefId : entry.getGOTerms()) {
+            Item goAnnotation = createItem("GOAnnotation");
+            goAnnotation.setReference("subject", gene);
+            goAnnotation.setReference("ontologyTerm", goTermRefId);
+            try {
+                store(goAnnotation);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
         }
     }
 
@@ -449,6 +491,7 @@ public class UniprotConverter extends DirectoryConverter
     private String createGene(UniprotEntry entry, String taxonId, Set<String> geneFields,
                               String uniqueIdentifierFieldType)
     throws SAXException {
+        
         List<String> geneSynonyms = new ArrayList();
 
         String uniqueIdentifierValue = getGeneIdentifier(entry, taxonId, uniqueIdentifierFieldType,
@@ -492,6 +535,10 @@ public class UniprotConverter extends DirectoryConverter
                 gene.setAttribute(geneField, identifier);
             }
 
+            if (creatego) {
+                processGoAnnotation(entry, gene);
+            }
+            
             // store gene
             try {
                 gene.setReference("organism", getOrganism(taxonId));
@@ -544,7 +591,7 @@ public class UniprotConverter extends DirectoryConverter
                 // See #2122
                 identifierValue = entry.getGeneDesignation("Ensembl");   
             } else {
-                identifierValue = entry.getDbrefs().get(value);
+                identifierValue = entry.getDbrefs().get(value).get(0);
             }
         } else {
             LOG.error("error processing line in config file for organism " + taxonId);
@@ -1012,6 +1059,23 @@ public class UniprotConverter extends DirectoryConverter
         return refId;
     }
 
+    private String getGoTerm(String identifier)
+    throws SAXException {
+        String refId = goterms.get(identifier);
+        if (refId == null) {
+            Item item = createItem("GOTerm");
+            item.setAttribute("identifier", identifier);            
+            refId = item.getIdentifier();
+            goterms.put(identifier, refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+        return refId;
+    }
+    
     private String setOntology(String title)
     throws SAXException {
         String refId = ontologies.get(title);
@@ -1062,7 +1126,7 @@ public class UniprotConverter extends DirectoryConverter
      * Get a value from SAX attributes and trim() the returned string.
      * @param attrs SAX Attributes map
      * @param name the attribute to fetch
-     * @return
+     * @return attValue
      */
     private String getAttrValue(Attributes attrs, String name) {
         if (attrs.getValue(name) != null) {

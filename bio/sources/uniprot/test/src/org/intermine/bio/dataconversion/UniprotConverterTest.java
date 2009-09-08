@@ -44,6 +44,7 @@ public class UniprotConverterTest extends MockItemsTestCase
         File tmp = new File(getClass().getClassLoader().getResource("UniprotConverterTest_tgt.xml").toURI());
         File datadir = tmp.getParentFile();
         converter.setCreateinterpro("true");
+        converter.setCreatego("true");
         converter.setUniprotOrganisms("7227");
         converter.process(datadir);
         converter.close();

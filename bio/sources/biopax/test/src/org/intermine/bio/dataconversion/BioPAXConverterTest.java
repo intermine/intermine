@@ -16,16 +16,16 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
+import org.intermine.dataconversion.MockItemsTestCase;
 import org.intermine.metadata.Model;
 
 
-public class BioPAXConverterTest extends ItemsTestCase
+public class BioPAXConverterTest extends MockItemsTestCase
 {
     private BioPAXConverter converter;
     private MockItemWriter itemWriter;
-    
+    private static final String TEST_FILE = "Bos taurus.owl";
     
     public BioPAXConverterTest(String arg) {
         super(arg);
@@ -37,16 +37,17 @@ public class BioPAXConverterTest extends ItemsTestCase
         converter = new BioPAXConverter(itemWriter, Model.getInstanceByName("genomic"));
         
         ClassLoader loader = getClass().getClassLoader();
-        String input = IOUtils.toString(loader.getResourceAsStream("BioPAXConverterTest_src.owl"));
+        String input = IOUtils.toString(loader.getResourceAsStream(TEST_FILE));
         
         
-        File currentFile = new File(getClass().getClassLoader().getResource("BioPAXConverterTest_src.owl").toURI());
+        File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
         converter.setCurrentFile(currentFile);
+
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set expected = readItemSet("BioPAXConverterTest_tgt.xml");
 

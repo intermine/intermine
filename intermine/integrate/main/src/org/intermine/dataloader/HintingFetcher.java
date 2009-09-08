@@ -135,10 +135,11 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
         Boolean allPkClassesEmpty = allPkClassesEmptyForClass.get(obj.getClass());
         if (allPkClassesEmpty == null) {
             allPkClassesEmpty = Boolean.TRUE;
-            Set classDescriptors = lookupOs.getModel().getClassDescriptorsForClass(obj.getClass());
-            Iterator cldIter = classDescriptors.iterator();
+            Set<ClassDescriptor> classDescriptors = lookupOs.getModel()
+                .getClassDescriptorsForClass(obj.getClass());
+            Iterator<ClassDescriptor> cldIter = classDescriptors.iterator();
             while (cldIter.hasNext() && allPkClassesEmpty.booleanValue()) {
-                ClassDescriptor cld = (ClassDescriptor) cldIter.next();
+                ClassDescriptor cld = cldIter.next();
                 Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
                 if (!primaryKeys.isEmpty()) {
                     time = System.currentTimeMillis();
