@@ -468,7 +468,7 @@ public class StringUtil
     /**
      * Converts all the colons in a String into dots.
      *
-     * @param in
+     * @param in an input String
      * @return a new String
      */
     public static String colonsToDots(String in) {

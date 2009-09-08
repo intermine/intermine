@@ -19,11 +19,12 @@ import java.util.NoSuchElementException;
  * be followed one by one, until the last Iterator has no remaining elements.
  *
  * @author Matthew Wakeling
+ * @param <E> the element type of the iterator
  */
-public class CombinedIterator implements Iterator
+public class CombinedIterator<E> implements Iterator<E>
 {
-    protected Iterator iteratorIterator = null;
-    protected Iterator currentIterator = null;
+    protected Iterator<Iterator<? extends E>> iteratorIterator = null;
+    protected Iterator<? extends E> currentIterator = null;
 
     /**
      * Constructs a CombinedIterator from a List of Iterators. The provided Iterators should be in a
@@ -32,7 +33,7 @@ public class CombinedIterator implements Iterator
      *
      * @param iterators a List of Iterators to be followed in order
      */
-    public CombinedIterator(List iterators) {
+    public CombinedIterator(List<Iterator<? extends E>> iterators) {
         iteratorIterator = iterators.iterator();
     }
 
@@ -42,7 +43,7 @@ public class CombinedIterator implements Iterator
     public boolean hasNext() {
         while (((currentIterator == null) || (!currentIterator.hasNext()))
                 && iteratorIterator.hasNext()) {
-            currentIterator = (Iterator) iteratorIterator.next();
+            currentIterator = iteratorIterator.next();
         }
         return currentIterator.hasNext() || iteratorIterator.hasNext();
     }
@@ -50,7 +51,7 @@ public class CombinedIterator implements Iterator
     /**
      * {@inheritDoc}
      */
-    public Object next() {
+    public E next() {
         if (hasNext()) {
             return currentIterator.next();
         } else {

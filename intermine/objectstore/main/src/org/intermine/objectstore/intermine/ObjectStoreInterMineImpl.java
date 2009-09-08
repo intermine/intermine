@@ -129,7 +129,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     // don't use a table to represent bags if the bag is smaller than this value
     protected int minBagTableSize = -1;
-    protected Map bagConstraintTables = Collections.synchronizedMap(new WeakHashMap());
+    protected Map<Object, String> bagConstraintTables = Collections.synchronizedMap(
+            new WeakHashMap<Object, String>());
     protected Set bagTablesInDatabase = Collections.synchronizedSet(new HashSet());
     protected Map<Query, Set<PrecomputedTable>> goFasterMap = Collections.synchronizedMap(
             new IdentityHashMap<Query, Set<PrecomputedTable>>());
@@ -353,7 +354,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + " " + osAlias);
                     }
                 }
-                List truncatedClasses = new ArrayList();
+                List<ClassDescriptor> truncatedClasses = new ArrayList<ClassDescriptor>();
                 if (truncatedClassesString != null) {
                     String classes[] = truncatedClassesString.split(",");
                     for (int i = 0; i < classes.length; i++) {
@@ -361,7 +362,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             osModel.getClassDescriptorByName(classes[i]);
                         if (truncatedClassDescriptor == null) {
                             throw new ObjectStoreException("Truncated class " + classes[i]
-                                                           + " does not exist in the model");
+                                    + " does not exist in the model");
                         }
                         truncatedClasses.add(truncatedClassDescriptor);
                     }

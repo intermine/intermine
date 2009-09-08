@@ -417,7 +417,7 @@ public abstract class WebUtil
 
 
     /**
-     * Formats column name. Replaces " > " with "&nbsp;&gt; ".
+     * Formats column name. Replaces " &gt; " with "&amp;nbsp;&amp;gt; ".
      * @param original original column name
      * @return modified string
      */

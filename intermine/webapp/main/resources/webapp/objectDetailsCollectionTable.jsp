@@ -100,18 +100,26 @@
     </table>
   </td></tr>
 </table>
-
-<div class="refSummary">
-  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-    <c:choose>
-      <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-        <fmt:message key="results.showallintable"/>
-      </c:when>
-      <c:otherwise>
-        <fmt:message key="results.showintable"/>
-      </c:otherwise>
-    </c:choose>
-  </html:link>]
-</div>
-
+<%-- if field isn't in webconfig, we don't know how to build the summary query --%>
+<c:choose>
+	<c:when test="${!empty collection.table.fieldConfigs}">
+		<div class="refSummary">
+		  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+		    <c:choose>
+	    	  <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
+        		<fmt:message key="results.showallintable"/>
+		      </c:when>
+		      <c:otherwise>
+    	    	<fmt:message key="results.showintable"/>
+	    	  </c:otherwise>
+    		</c:choose>
+		  </html:link>]
+		</div>
+	</c:when>
+	<c:otherwise>
+		<!-- class not configured in webconfig-model.xml -->
+		[<fmt:message key="results.showintable"/>]
+	</c:otherwise>
+</c:choose>
+	
 <!-- /objectDetailsCollectionTable -->

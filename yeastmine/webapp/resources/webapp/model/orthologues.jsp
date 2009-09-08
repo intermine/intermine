@@ -18,52 +18,26 @@
 
 <div id="hiddenDiv1" class="dataSetDescription">
 
-
-        <p>Orthologue and inparalogue relationships calculated by <A href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</A> between the following organisms:</p>
+7227 6239 7165 4932 9606 10090 10116 7955
+        <p>Orthologue relationships calculated by <A href="http://www.treefam.org/" target="_new">TreeFam</A> between the following organisms:</p>
         <ul>
+          <li><I>S. cerevisiae</I></li>
+          <li><I>D. rerio</I></li>
           <li><I>D. melanogaster</I></li>
-          <li><I>D. pseudoobscura</I></li>
+          <li><I>M. musculus</I></li>
           <li><I>A. gambiae</I></li>
-          <li><I>A. mellifera</I></li>
+          <li><I>H. Sapiens</I></li>
+          <li><I>R. norvegicus</I></li>
           <li><I>C. elegans</I></li>
         </ul><br/>
 
-        <p>
-          In addition, orthologues/inparalogues from these five species to several others:
-        </p>
-        <p>
-          <i>C. familiaris , D. discoideum, D. rerio, G. gallus, H. sapiens, M. musculus, P. troglodytes, R. norvegicus, S. cerevisiae, S. pombe</i>
-        </p>
+
 
           <p><im:querylink text="Show all pairs of organisms linked by orthologues" skipBuilder="true">
             <query name="" model="genomic" view="Homologue.gene.organism.shortName Homologue.homologue.organism.shortName"><node path="Homologue" type="Homologue"></node></query>
           </im:querylink></p>
 
 
-  <p>The inparanoid program calculates orthologue and
-inparalogue clusters, pairwise between two organisms, by first finding
-the best recipricol blast match for each gene. This becomes the
-seed-orthologue to which inparalogues are clustered (outparalogues are
-excluded - see definitions below).  Each member in the cluster
-receives an inparalog score which reflects the distance to the
-seed-orthologue.  A score of 1.0 means there is identical distance to
-the seed orthologue (and so all orthologues in the cluster will have
-an inparanoid score of 1.0).  Each inparalogue in the cluster will
-have a score less than one which reflects how similar it is to the
-seed orthologue.  In addition to the inparanoid score, each orthologue
-within the cluster has a bootstrap score, which is the confidence that
-this seed-ortholog pair are true orthologues. (This is estimated by
-sampling how often the pair is found as recipricolly best matches by a
-bootstrapping procedure applied to the original Blast alignment). </p>
-
-   <p>   Glossary according to Sonnhammer and Koonin </a> (<a href="http://www.ncbi.nlm.nih.gov/pubmed/12446146" target="_new">PubMed: 12446146</a>) ...</p>
-      <ul>
-       <li>Homologous genes: genes with common ancestry.</li>
-       <li>Orthologous genes: genes in two species that have directly evolved from a single gene in the last common ancestor and are likely to be functionally related.</li>
-       <li>Paralogous genes: homologous genes related by a duplication event. Might be in the same or in a different genome.</li>
-       <li>Inparalogous genes: genes that derive from a duplication event after a speciation of interest. Inparalogs are together orthologs to the corresponding orthologous gene/genes in the other species.</li>
-       <li>Outparalogous genes: genes that derive from a duplication event before a speciation event of interest, thus not orthologs according to definition.</li>
-      </ul>
 </div>
 
     <td width="40%" valign="top">
@@ -74,7 +48,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
         <ul>
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>D. Rerio</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.secondaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -99,7 +73,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>C. elegans</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type " constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -124,7 +98,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
            <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>H. sapiens</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.type " constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -149,7 +123,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
            <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>M. musculus</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.secondaryIdentifier Homologue.type" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">
@@ -174,7 +148,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
 
           <li>
-          <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>D. pseudoobscura</i> " skipBuilder="true">
+          <im:querylink text="Homologues: <i>S. cerevisiae</i> vs <i>R. norvegicus</i> " skipBuilder="true">
 <query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
@@ -191,7 +165,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
   <node path="Homologue.homologue.organism" type="Organism">
   </node>
   <node path="Homologue.homologue.organism.name" type="String">
-    <constraint op="=" value="Drosophila pseudoobscura" description="" identifier="" editable="true" code="B">
+    <constraint op="=" value="Rattus norvegicus" description="" identifier="" editable="true" code="B">
     </constraint>
   </node>
 </query>
@@ -200,7 +174,7 @@ bootstrapping procedure applied to the original Blast alignment). </p>
 
           <li>
             <im:querylink text="Homologues: <i>S. cerevisiae </i> vs <i>D. melanogaster</i> " skipBuilder="true">
-<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type Homologue.inParanoidScore" constraintLogic="A and B">
+<query name="" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.type " sortOrder="Homologue.gene.primaryIdentifier Homologue.gene.secondaryIdentifier Homologue.homologue.primaryIdentifier Homologue.homologue.secondaryIdentifier Homologue.homologue.symbol Homologue.type" constraintLogic="A and B">
   <node path="Homologue" type="Homologue">
   </node>
   <node path="Homologue.gene" type="Gene">

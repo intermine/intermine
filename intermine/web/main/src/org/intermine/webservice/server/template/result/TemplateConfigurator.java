@@ -38,13 +38,14 @@ public class TemplateConfigurator
      * Makes copy of original template and configures it with new constraints that have
      * new values. New constraints must correspond to old constraints. Actually this creates
      * very similar TemplateQuery with only different values.
+     *
      * @param origTemplate original template
      * @param newConstraints new constraints
      * @return new template
      */
     public TemplateQuery getConfiguredTemplate(TemplateQuery origTemplate,
                                                Map<String, List<ConstraintLoad>> newConstraints) {
-        /* Be carefull when changing this code. If you replace constraint
+        /* Be careful when changing this code. If you replace constraint
          * in list that was returned for example from getEditableConstraints method,
          * this change won't have effect to template */
         checkPaths(origTemplate.getModel(), newConstraints.values());

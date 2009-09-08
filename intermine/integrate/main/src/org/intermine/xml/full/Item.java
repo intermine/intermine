@@ -10,6 +10,7 @@ package org.intermine.xml.full;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class Item implements Comparable
     private Map<String, ReferenceList> collections = new HashMap<String, ReferenceList>();
     private Model model = null;
     private ClassDescriptor classDescriptor = null;
-    private Set<ClassDescriptor> implementationClassDescriptors = null;
+    private List<ClassDescriptor> implementationClassDescriptors = null;
 
     /**
      * Construct an item.
@@ -48,6 +49,7 @@ public class Item implements Comparable
 
     /**
      * Construct an item.
+     *
      * @see ItemFactory
      * @param model the Model used to type-check set methods; if null no type checking is done
      * @param identifier item identifier
@@ -62,8 +64,9 @@ public class Item implements Comparable
     }
 
     /**
-     * Construct an item withno Model.  The calls to the set methods won't be type checked unless
+     * Construct an item with no Model.  The calls to the set methods won't be type checked unless
      * setModel() is called.
+     *
      * @see ItemFactory
      * @param identifier item identifier
      * @param className name of described class
@@ -75,6 +78,7 @@ public class Item implements Comparable
 
     /**
      * Set the Model to use when checking calls to the other set methods
+     *
      * @param model the Model
      */
     public void setModel(Model model) {
@@ -85,6 +89,7 @@ public class Item implements Comparable
 
     /**
      * Return the model that was passed to the constructor or set with setModel().
+     *
      * @return the Model
      */
     public Model getModel() {
@@ -93,7 +98,8 @@ public class Item implements Comparable
 
 
     /**
-     * Set the identifier of this item
+     * Set the identifier of this item.
+     *
      * @param identifier the identifier
      */
     public void setIdentifier(String identifier) {
@@ -101,7 +107,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get the identifier of this item
+     * Get the identifier of this item.
+     *
      * @return the identifier
      */
     public String getIdentifier() {
@@ -109,7 +116,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Set the class of this item
+     * Set the class of this item.
+     *
      * @param className the class
      */
     public void setClassName(String className) {
@@ -121,7 +129,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get the class name of this item
+     * Get the class name of this item.
+     *
      * @return the class name
      */
     public String getClassName() {
@@ -129,7 +138,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Set the "implements" of this item
+     * Set the "implements" of this item.
+     *
      * @param implementations the interfaces that this item implements
      */
     public void setImplementations(String implementations) {
@@ -142,7 +152,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get the interfaces implemented by this item
+     * Get the interfaces implemented by this item.
+     *
      * @return the implemented interfaces
      */
     public String getImplementations() {
@@ -150,7 +161,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add an attribute
+     * Add an attribute.
+     *
      * @param attribute the Attribute to add
      */
     public void addAttribute(Attribute attribute) {
@@ -172,7 +184,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Remove a attribute of the specified name if it exists
+     * Remove a attribute of the specified name if it exists.
+     *
      * @param attributeName name of the attribute to remove
      */
     public void removeAttribute(String attributeName) {
@@ -184,7 +197,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get all the attributes
+     * Get all the attributes.
+     *
      * @return all the attributes
      */
     public Collection<Attribute> getAttributes() {
@@ -192,7 +206,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get a named attribute
+     * Get a named attribute.
+     *
      * @param attributeName the attribute name
      * @return the Attribute with the given name
      */
@@ -205,7 +220,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Return true if named attribute exists
+     * Return true if named attribute exists.
+     *
      * @param attributeName the attribute name
      * @return true if the attribute exists
      */
@@ -214,7 +230,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add a reference
+     * Add a reference.
+     *
      * @param reference the reference to add
      */
     public void addReference(Reference reference) {
@@ -223,7 +240,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Remove a reference of the specified name if it exists
+     * Remove a reference of the specified name if it exists.
+     *
      * @param referenceName name of the reference to remove
      */
     public void removeReference(String referenceName) {
@@ -232,7 +250,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get all the references
+     * Get all the references.
+     *
      * @return all the references
      */
     public Collection<Reference> getReferences() {
@@ -240,7 +259,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get a named reference
+     * Get a named reference.
+     *
      * @param referenceName the reference name
      * @return the Reference with the given name
      */
@@ -250,7 +270,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Return true if named reference exists
+     * Return true if named reference exists.
+     *
      * @param referenceName the reference name
      * @return true if the reference exists
      */
@@ -260,7 +281,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add a collection
+     * Add a collection.
+     *
      * @param collection the collection to add
      */
     public void addCollection(ReferenceList collection) {
@@ -269,7 +291,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Remove a collection of the specified name if it exists
+     * Remove a collection of the specified name if it exists.
+     *
      * @param collectionName name of the collection to remove
      */
     public void removeCollection(String collectionName) {
@@ -278,7 +301,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get all the collections
+     * Get all the collections.
+     *
      * @return all the collections
      */
     public Collection<ReferenceList> getCollections() {
@@ -286,7 +310,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Return true if named collection exists
+     * Return true if named collection exists.
+     *
      * @param collectionName the collection name
      * @return true if the collection exists
      */
@@ -296,7 +321,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Get a named collection
+     * Get a named collection.
+     *
      * @param collectionName the collection name
      * @return the Collection with the given name
      */
@@ -307,6 +333,7 @@ public class Item implements Comparable
 
     /**
      * Set a collection.
+     *
      * @param collectionName collection name
      * @param refIds ids to reference
      */
@@ -315,7 +342,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add an attribute to this item
+     * Add an attribute to this item.
+     *
      * @param name the name of the attribute
      * @param value the value of the attribute - cannot be null or empty
      */
@@ -332,7 +360,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add an attribute to this item and set it to the empty string
+     * Add an attribute to this item and set it to the empty string.
+     *
      * @param name the name of the attribute
      */
     public void setAttributeToEmptyString(String name) {
@@ -340,7 +369,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add a reference to this item
+     * Add a reference to this item.
+     *
      * @param name the name of the attribute
      * @param refId the value of the attribute
      */
@@ -353,6 +383,7 @@ public class Item implements Comparable
 
     /**
      * Add a reference that points to a particular item.
+     *
      * @param name the name of the attribute
      * @param item the item to refer to
      */
@@ -361,7 +392,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add the identifier of the given Item to a collection
+     * Add the identifier of the given Item to a collection.
+     *
      * @param name the name of the collection
      * @param item the item whose identifier is to be added to the collection
      */
@@ -375,7 +407,8 @@ public class Item implements Comparable
     }
 
     /**
-     * Add a reference to a collection of this item
+     * Add a reference to a collection of this item.
+     *
      * @param name the name of the collection
      * @param refId the item to add to the collection
      */
@@ -394,6 +427,7 @@ public class Item implements Comparable
     /**
      * Return true if the name parameter is an attribute of the class for this Item or if
      * the Model or the className of this Item haven't been set.
+     *
      * @param name the attribute name
      * @return true if the name is a valid attribute name
      */
@@ -415,6 +449,7 @@ public class Item implements Comparable
      * Throw a RuntimeException if the name parameter isn't an reference in the class set by
      * setClassName() in the Model set by setModel().  Returns immediately if the Model or the
      * className of this Item haven't been set.
+     *
      * @param name the reference name
      *
      */
@@ -432,6 +467,7 @@ public class Item implements Comparable
     /**
      * Return true if and only if the argument names a possible reference for this Item.  ie. the
      * ClassDescriptor for this Item contains a ReferenceDescriptor for this name.
+     *
      * @param name the field name
      * @return Return true if and only if this Item has a reference of the given name in the model
      */
@@ -442,6 +478,7 @@ public class Item implements Comparable
     /**
      * Return true if and only if the argument names a possible collection for this Item.  ie. the
      * ClassDescriptor for this Item contains a CollectionDescriptor for this name.
+     *
      * @param name the field name
      * @return Return true if and only if this Item has a collection of the given name in the model
      */
@@ -453,6 +490,7 @@ public class Item implements Comparable
      * Throw a RuntimeException if the name parameter isn't an collection in the class set by
      * setClassName() in the Model set by setModel().  Returns immediately if the Model or the
      * className of this Item haven't been set.
+     *
      * @param name the collection name
      */
     protected void checkCollection(String name) {
@@ -468,6 +506,7 @@ public class Item implements Comparable
 
     /**
      * Throw RuntimeException if the given implementations don't match the model.
+     *
      * @param implementations the interfaces that this item implements
      */
     protected void checkImplementations(String implementations) {
@@ -481,6 +520,7 @@ public class Item implements Comparable
     /**
      * Throw a RuntimeException if any of the named class isn't in the Model set by setModel().
      * Returns null if the model isn't set or className is "".
+     *
      * @param className the class name
      * @return the ClassDescriptor for the given class
      */
@@ -499,7 +539,7 @@ public class Item implements Comparable
 
         if (cd == null) {
             throw new IllegalArgumentException("class \"" + fullClassName
-                                               + "\" is not in the Model");
+                    + "\" is not in the Model");
         }
 
         return cd;
@@ -509,6 +549,7 @@ public class Item implements Comparable
      * Set the classDescriptor attribute to be the ClassDescriptor for the given className in the
      * Model set by setModel().  Returns immediately if the Model hasn't been set or the className
      * parameter is "".
+     *
      * @param className the class name
      */
     protected void setClassDescriptor(String className) {
@@ -519,37 +560,63 @@ public class Item implements Comparable
         }
     }
 
+    private static ThreadLocal<Map<String, List<ClassDescriptor>>> getAllClassDescriptorsCache
+        = new ThreadLocal<Map<String, List<ClassDescriptor>>>() {
+            @Override protected Map<String, List<ClassDescriptor>> initialValue() {
+                return new HashMap<String, List<ClassDescriptor>>();
+            }
+        };
+
     /**
      * Return the ClassDescriptors of the class of this Item (as given by className) and all the
      * implementations.  Call only if model, className and implementations are set.
+     *
      * @return all the ClassDescriptors for this Item
      */
-    protected Set<ClassDescriptor> getAllClassDescriptors() {
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
-        clds.addAll(getImplementClassDescriptors(implementations));
-        clds.add(classDescriptor);
-        return clds;
+    protected List<ClassDescriptor> getAllClassDescriptors() {
+        Map<String, List<ClassDescriptor>> cache = getAllClassDescriptorsCache.get();
+        String key = implementations + "___" + classDescriptor.getName();
+        List<ClassDescriptor> retval = cache.get(key);
+        if (retval == null) {
+            Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+            clds.addAll(getImplementClassDescriptors(implementations));
+            clds.add(classDescriptor);
+            retval = new ArrayList<ClassDescriptor>(clds);
+            cache.put(key, retval);
+        }
+        return retval;
     }
+
+    private static ThreadLocal<Map<String, List<ClassDescriptor>>> getImplementClassDescriptorsCache
+        = new ThreadLocal<Map<String, List<ClassDescriptor>>>() {
+            @Override protected Map<String, List<ClassDescriptor>> initialValue() {
+                return new HashMap<String, List<ClassDescriptor>>();
+            }
+        };
 
     /**
      * Returns the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
      * been set.  Throw a RuntimeException if any of the classes named in the implementations
      * parameter aren't in the Model.
+     *
      * @param implementations the interfaces that this item implements
      * @return the ClassDescriptors for the given implementations.  Returns null if the Model hasn't
      * been set
      */
-    protected Set<ClassDescriptor> getImplementClassDescriptors(String implementations) {
-        if (implementationClassDescriptors != null) {
-            return implementationClassDescriptors;
-        } else {
-            implementationClassDescriptors = new HashSet<ClassDescriptor>();
-            String [] bits = StringUtil.split(implementations, " ");
+    protected List<ClassDescriptor> getImplementClassDescriptors(String implementations) {
+        if (implementationClassDescriptors == null) {
+            Map<String, List<ClassDescriptor>> cache = getImplementClassDescriptorsCache.get();
+            implementationClassDescriptors = cache.get(implementations);
+            if (implementationClassDescriptors == null) {
+                implementationClassDescriptors = new ArrayList<ClassDescriptor>();
+                String [] bits = StringUtil.split(implementations, " ");
 
-            for (String clsName : bits) {
-                if (!StringUtil.isEmpty(clsName)) {
-                    implementationClassDescriptors.add(getClassDescriptorByName(clsName));
+                for (String clsName : bits) {
+                    if (!StringUtil.isEmpty(clsName)) {
+                        implementationClassDescriptors.add(getClassDescriptorByName(clsName));
+                    }
                 }
+                cache.put(implementations, implementationClassDescriptors);
             }
         }
         return implementationClassDescriptors;
@@ -574,6 +641,7 @@ public class Item implements Comparable
     /**
      * Compare items first by class, then by identifier, intended for creating
      * ordered output files.
+     *
      * {@inheritDoc}
      */
     public int compareTo(Object o) {

@@ -39,13 +39,15 @@ public class InteractionURLQuery implements WidgetURLQuery
         this.os = os;
     }
 
+    
+    
     /**
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
-                  + "Gene.interactions.shortName,Gene.interactions.type,"
+                  + "Gene.interactions.shortName,Gene.interactions.type.name,"
                   + "Gene.interactions.role,"
                   + "Gene.interactions.interactingGenes.primaryIdentifier,"
                   + "Gene.interactions.experiment.name");

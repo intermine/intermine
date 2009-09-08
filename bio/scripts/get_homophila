@@ -18,8 +18,16 @@ use InterMine::DataDownloader;
 
 #Define ARGVs
 my ($logdir,$logname,$home);
+
+$logdir="/shared/data/download_logs/";
+my $tempname="temp_log.txt";
+my $shared_data="/shared/data";
+
 if(@ARGV!=3){
-	die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+	#die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
+	warn "no arguments passed, using default values\n";
+	$logname = $tempname;
+	$home = $shared_data;
 }else{
 	$logdir = $ARGV[0];
 	$logname= $ARGV[1];
@@ -154,8 +162,7 @@ if(-e $sequences_file){
 }else{
 	print "Querying NCBI Entrez and writing sequences.gp\n";
 	# URL for esearch
-	my $esearch = "$utils/esearch.fcgi?" .
-	              "db=$db&retmax=1&usehistory=y&term=";
+	my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 				  
 	#open file handle for writing
 	open SEQUENCES, ">$sequences_file"
@@ -176,15 +183,16 @@ if(-e $sequences_file){
 		my $Count    = $1;
 		my $QueryKey = $2;
 		my $WebEnv   = $3;
-		#print "Count = $Count; QueryKey = $QueryKey; WebEnv = $WebEnv\n\n";
+		print "Count = $Count; QueryKey = $QueryKey; WebEnv = $WebEnv\n\n";
 
 		my $retstart;
 		my $retmax=3;
 	
 		# for each record found by esearch, use efetch to retrieve it
 		for($retstart = 0; $retstart < $Count; $retstart += $retmax) {
-			my $efetch = "$utils/efetch.fcgi?"."rettype=$report&retmode=text&retstart=$retstart&retmax=$retmax&" .
-		  	            "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";     
+			my $efetch = "$utils/efetch.fcgi?rettype=$report&retmode=text&"
+			          . "retstart=$retstart&retmax=$retmax&" 
+			          . "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";     
 			my $efetch_result = get($efetch);
 	  		print SEQUENCES "$efetch_result\n";		
 		}

@@ -44,6 +44,10 @@ public class PriorityConfig
         for (String key : descriptors.keySet()) {
             if (key.indexOf(".") == -1) {
                 ClassDescriptor cld = model.getClassDescriptorByName(key);
+                if (cld == null) {
+                    throw new IllegalArgumentException("Class '" + key + "' not found in model, check "
+                                                       + " priorities configuration file.");
+                }
                 Class clazz = cld.getType();
                 for (FieldDescriptor field : cld.getFieldDescriptors()) {
                     if (!field.isCollection()) {
@@ -55,11 +59,16 @@ public class PriorityConfig
                 String fieldName = key.substring(key.indexOf(".") + 1);
                 ClassDescriptor cld = model.getClassDescriptorByName(className);
                 Class clazz = cld.getType();
+                if (cld == null) {
+                    throw new IllegalArgumentException("Class '" + key + "' not found in model, check "
+                                                       + "priorities configuration file.");
+                }                
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if ((field != null) && (!field.isCollection())) {
                     getPriorities(clazz, fieldName);
                 } else {
-                    throw new IllegalArgumentException("Bad entry in priorities file: " + key);
+                    throw new IllegalArgumentException("Bad entry in priorities file: " + key + " - " + className 
+                                                       + " does not have a field " + fieldName);
                 }
             }
         }

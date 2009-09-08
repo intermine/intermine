@@ -10,15 +10,17 @@
     <tile-name>model/genomics.jsp</tile-name>
     <aspect-source name="SGD" url="http://www.yeastgenome.org"/>
   </aspect>
-  <aspect name="Proteins">
-    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
-    <icon-image>model/images/proteins.png</icon-image>
-    <large-image>model/images/proteins.png</large-image>
+
+   <aspect name="Interactions">
+    <subtitle>IntAct</subtitle>
+    <icon-image>model/images/interaction.gif</icon-image>
+    <large-image>model/images/interaction.gif</large-image>
+    <tile-name></tile-name>
     <intro-text>
-      Protein annotation (including family and domain annotation) from UniProt.
+      Interactions from the BioGRID.
     </intro-text>
-    <tile-name>model/proteins.jsp</tile-name>
-    <aspect-source name="UniProt" url="http://www.uniprot.org"/>
+    <tile-name>model/interactions.jsp</tile-name>
+    <aspect-source name="BioGRID" url="http://www.thebiogrid.org/"/>
   </aspect>
 
     <aspect name="Comparative Genomics">
@@ -26,10 +28,10 @@
     <icon-image>model/images/comparativeGenomics.png</icon-image>
     <large-image>model/images/comparativeGenomics.png</large-image>
     <intro-text>
-      Orthologues and Paralogues.
+      Orthologues from TreeFam.
     </intro-text>
     <tile-name>model/inparanoid.jsp</tile-name>
-    <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
+    <aspect-source name="TreeFam" url="http://www.treefam.org"/>
   </aspect>
 
     <aspect name="Gene Ontology">
@@ -37,11 +39,32 @@
     <icon-image>model/images/geneOntology.png</icon-image>
     <large-image>model/images/geneOntology.png</large-image>
     <intro-text>
-      Gene Ontology (GO) annotations for &lt;i&gt;Saccharomyces cerevisiaelt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
+      Gene Ontology (GO) annotations for &lt;i&gt;Saccharomyces cerevisiae&lt;/i&gt;.  The GO annotations are 'attached' to Genes and so each Gene has a reference (link) to a list of its GO annotations (if available).
     </intro-text>
     <tile-name>model/GO.jsp</tile-name>
     <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
   </aspect>
 
-
+  <aspect name="Phenotypes">
+    <subtitle>Phenotypes</subtitle>
+    <icon-image>model/images/phenotypes.png</icon-image>
+    <large-image>model/images/phenotypes.png</large-image>
+    <intro-text>
+     Phenotype data
+    </intro-text>
+    <tile-name>model/phenotypes.jsp</tile-name>
+    <aspect-source name="SGD" url="http://www.yeastgenome.org"/>
+  </aspect>
+  
+  <aspect name="Literature">
+    <subtitle></subtitle>
+    <icon-image>model/images/book.png</icon-image>
+    <large-image>model/images/book.png</large-image>
+    <intro-text>
+      A mapping between genes and publications for &lt;i&gt;S. cerevisiae&lt;/i&gt;. 
+    </intro-text>
+    <tile-name>model/literature.jsp</tile-name>
+    <aspect-source name="NCBI" url="http://www.ncbi.nlm.nih.gov/"/>
+    <aspect-source name="SGD" url="http://www.yeastgenome.org"/>
+  </aspect>
 </aspects>

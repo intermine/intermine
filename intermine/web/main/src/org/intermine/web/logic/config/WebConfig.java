@@ -12,10 +12,8 @@ package org.intermine.web.logic.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -265,9 +263,10 @@ public class WebConfig
     }
 
     /**
-     * For each class/Type mentioned in XML files, copy it's displayers and FieldConfigs to all
+     * For each class/Type mentioned in XML files, copy its displayers and FieldConfigs to all
      * subclasses that don't already have any configuration.
      * This method has package scope so that it can be called from the tests.
+     *
      * @param model the Model to use to find sub-classes
      * @throws ClassNotFoundException if any of the classes mentioned in the XML file aren't in the
      * Model
@@ -286,11 +285,7 @@ public class WebConfig
             }
 
             Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(Class.forName(className));
-            List<ClassDescriptor> cdList = new ArrayList<ClassDescriptor>(cds);
-
-            for (Iterator<ClassDescriptor> cdIter = cdList.iterator(); cdIter.hasNext(); ) {
-                ClassDescriptor cd = cdIter.next();
-
+            for (ClassDescriptor cd : cds) {
                 if (className.equals(cd.getName())) {
                     continue;
                 }

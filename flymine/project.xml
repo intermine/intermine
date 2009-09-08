@@ -6,6 +6,7 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
+  
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
@@ -449,7 +450,12 @@
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
     </source>
-
+    
+    <source name="reactome" type="biopax">
+      <property name="src.data.dir" location="/shared/data/biopax/reactome"/>
+      <property name="organisms" value="7227 6239 4932"/>
+    </source>
+    
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/shared/data/bdgp_insitu/current"/>
       <property name="src.data.dir.includes" value="*annot.csv"/>

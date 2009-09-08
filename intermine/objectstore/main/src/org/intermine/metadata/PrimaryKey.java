@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
- * Class represing a primary key as a list of field names
+ * Class representing a primary key as a list of field names
  *
  * @author Andrew Varley
  * @author Mark Woodbridge

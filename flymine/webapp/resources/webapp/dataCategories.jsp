@@ -97,12 +97,6 @@
     <td> &nbsp; </td>
   </tr>
 
-
-
-
-
-
-
   <tr><td rowspan="8"  class="leftcol">
         <html:link action="/aspect?name=Proteins">
         <p> <img src="model/images/proteins.png" /></p>
@@ -422,7 +416,7 @@
         <p> Pathways</p></html:link></td>
     <td> <i>D. melanogaster</i></td>
     <td> Pathway information and the genes involved in them</td>
-    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - 10th August 2009</td>
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 51.0, July 1, 2009</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>

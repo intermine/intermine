@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class BatchingFetcher extends HintingFetcher
     protected DataTracker dataTracker;
     protected Source source;
     protected int batchQueried = 0;
+    protected int cacheMisses = 0;
     protected long timeSpentExecute = 0;
     protected long timeSpentPrefetchEquiv = 0;
     protected long timeSpentPrefetchTracker = 0;
@@ -98,8 +100,8 @@ public class BatchingFetcher extends HintingFetcher
      */
     public void close(Source source) {
         LOG.info("Batching equivalent object query summary for source " + source + " :"
-                + getSummary(source).toString() + "\nQueried " + batchQueried
-                + " objects by batch");
+                + getSummary(source).toString() + "\nFetched " + batchQueried
+                + " objects by batch, cache misses: " + cacheMisses);
     }
 
     /**
@@ -117,6 +119,7 @@ public class BatchingFetcher extends HintingFetcher
                 //}
                 return retval;
             } else {
+                cacheMisses++;
                 retval = super.queryEquivalentObjects(obj, source);
                 //equivalents.put(obj, retval);
                 return retval;
@@ -183,15 +186,17 @@ public class BatchingFetcher extends HintingFetcher
             results.put(object, Collections.synchronizedSet(new HashSet<InterMineObject>()));
         }
 
-        Map<PrimaryKey, ClassDescriptor> pksToDo = new HashMap();
-        Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld = new HashMap();
+        Map<PrimaryKey, ClassDescriptor> pksToDo
+            = new IdentityHashMap<PrimaryKey, ClassDescriptor>();
+        Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld
+            = new IdentityHashMap<ClassDescriptor, List<InterMineObject>>();
         Map<Class, List<InterMineObject>> categorised = CollectionUtil.groupByClass(objects, false);
-        Set<ClassDescriptor> cldsDone = new HashSet<ClassDescriptor>();
+        Map<ClassDescriptor, Boolean> cldsDone = new IdentityHashMap<ClassDescriptor, Boolean>();
         for (Class c : categorised.keySet()) {
             Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(c);
             for (ClassDescriptor cld : classDescriptors) {
-                if (!cldsDone.contains(cld)) {
-                    cldsDone.add(cld);
+                if (!cldsDone.containsKey(cld)) {
+                    cldsDone.put(cld, Boolean.TRUE);
                     Set<PrimaryKey> keysForClass;
                     if (source == null) {
                         keysForClass = new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
@@ -248,7 +253,7 @@ public class BatchingFetcher extends HintingFetcher
     throws ObjectStoreException {
         Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet());
         Map<PrimaryKey, ClassDescriptor> pksNotDone
-            = new HashMap<PrimaryKey, ClassDescriptor>(pksToDo);
+            = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         while (!pksToDo.isEmpty()) {
             int startPksToDoSize = pksToDo.size();
             Iterator<PrimaryKey> pkIter = pksToDo.keySet().iterator();
@@ -454,9 +459,9 @@ public class BatchingFetcher extends HintingFetcher
                     }
                     fetchedObjectIds.add(((InterMineObject) row.get(0)).getId());
                 }
-                LOG.info("Fetched " + res.size() + " equivalent objects for " + objCount
-                        + " objects in " + (System.currentTimeMillis() - time) + " ms for "
-                        + cld.getName() + "." + pk.getName());
+                //LOG.info("Fetched " + res.size() + " equivalent objects for " + objCount
+                //        + " objects in " + (System.currentTimeMillis() - time) + " ms for "
+                //        + cld.getName() + "." + pk.getName());
             }
         }
     }
@@ -482,6 +487,51 @@ public class BatchingFetcher extends HintingFetcher
          */
         public Results execute(Query q) {
             return new Results(q, this, getSequence(getComponentsForQuery(q)));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
+                boolean prefetch) {
+            Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            return retval;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public SingletonResults executeSingleton(Query q, int batchSize, boolean optimise,
+                boolean explain, boolean prefetch) {
+            SingletonResults retval = new SingletonResults(q, this,
+                    getSequence(getComponentsForQuery(q)));
+            if (batchSize != 0) {
+                retval.setBatchSize(batchSize);
+            }
+            if (!optimise) {
+                retval.setNoOptimise();
+            }
+            if (!explain) {
+                retval.setNoExplain();
+            }
+            if (!prefetch) {
+                retval.setNoPrefetch();
+            }
+            retval.setImmutable();
+            return retval;
         }
 
         /**

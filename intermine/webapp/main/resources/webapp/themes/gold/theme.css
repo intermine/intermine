@@ -1,5 +1,5 @@
 html, body {
-	color: #000000;background-color: #FFF;
+	color: #333;background-color: #FFF;
 }
 
 body {
@@ -18,7 +18,7 @@ h1 a:hover,h1 a:visited:hover  {
 }
 
 div.heading, div.heading2, div.heading a,div .heading2  a {
-    background-color:#B9E6F9;
+    background-color:#FFF5B2;
     color:#192F39;
 }
 
@@ -128,7 +128,7 @@ div#filter_tool_bar {
     
 .imbox {
     padding:5px 5px 10px 5px; border-top:solid 1px #888; border-bottom:solid 1px #888; height:1.2em;
-    font-size:0.8em; background:#9F67AD; color:white;}
+    font-size:0.8em; background:#362923; color:white;}
 
 
 /* =RESULTS TABLES
@@ -145,18 +145,18 @@ table.results tfoot tr td {
 }
 
 table.results tr.even TD{
-  background-color: #B9E6F9;}
+  background-color: #FFF5B2;}
 
 table.results tr.odd TD{
-  border-right:1px solid #B9E6F9;
-  border-bottom:1px solid #B9E6F9;}
+  border-right:1px solid #FFF5B2;
+  border-bottom:1px solid #FFF5B2;}
 
 table.results tr.stepE TD{
-  background-color: #B9E6F9;}
+  background-color: #FFF5B2;}
 
 table.results tr.stepO TD{
-  border-right:1px solid #B9E6F9;
-  border-bottom:1px solid #B9E6F9;}
+  border-right:1px solid #FFF5B2;
+  border-bottom:1px solid #FFF5B2;}
 
 
 table.results tr.stepOeven TD{
@@ -170,12 +170,12 @@ table.results tr.stepOodd TD{
   border-bottom:1px solid #FFF;}
 
 table.results tr.stepEodd TD{
-  background-color: #B9E6F9;}
+  background-color: #FFF5B2;}
 
 table.results tr.stepEeven TD{
 	background-color: #63B7DE;
-  border-right:1px solid #B9E6F9;
-  border-bottom:1px solid #B9E6F9;}
+  border-right:1px solid #FFF5B2;
+  border-bottom:1px solid #FFF5B2;}
 
 
 

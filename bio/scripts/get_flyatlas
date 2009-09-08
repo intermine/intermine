@@ -17,9 +17,10 @@ use InterMine::DataDownloader;
 my ($logdir,$logname,$home,$tempname);
 if(@ARGV!=3){
 #    die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
-    $logdir = "/shared/data/download_logs/";
-    $tempname="temp_log.txt";
-    $home = "/shared/data";
+	warn "no arguments passed, using default values\n";
+   $logdir = "/shared/data/download_logs/";
+   $tempname="temp_log.txt";
+   $home = "/shared/data";
 } else {
     $logdir = $ARGV[0];
     $tempname=$ARGV[1];    
