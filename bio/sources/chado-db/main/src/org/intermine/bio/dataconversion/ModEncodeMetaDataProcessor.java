@@ -1663,10 +1663,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         SubmissionProperty buildSubProperty = null;
         Integer lastDataId = new Integer(-1);
         Map<String, SubmissionProperty> props = new HashMap <String, SubmissionProperty>();
-        Map<String, List<String>> propToSubmissionItems = new HashMap <String, List<String>>();
-
-        Map<Integer, List<String>> subIdDataType = new HashMap <Integer, List<String>>();
         Map<String, List<Integer>> propSubIds = new HashMap <String, List<Integer>>();
+
+        
         Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes = 
             new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
 
@@ -1679,7 +1678,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attHeading = res.getString("att_heading");
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
-
+            
             Integer submissionId = dataSubmissionMap.get(dataId);
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
@@ -1687,6 +1686,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             writer.write(dccId + comma + dataHeading + comma + dataName + comma 
                     + wikiPageUrl + comma + cvTerm + comma + attHeading + comma + attName 
                     + comma + attValue + System.getProperty("line.separator"));
+            
             
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
@@ -1698,40 +1698,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     props.put(wikiPageUrl, buildSubProperty);
                 }
 
-                List<String> subItems = propToSubmissionItems.get(wikiPageUrl);
-                if (subItems == null) {
-                    subItems = new ArrayList<String>();
-                    propToSubmissionItems.put(wikiPageUrl, subItems);
-                }
-                subItems.add(getSubmissionItemIdentifier(dccId));
                 // mapping datavalues to subids, so we know which sub associate with the EF
                 addToMap(propSubIds, wikiPageUrl, submissionId);
                 
                 // submissionId -> [type -> SubmissionProperty]
-                Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
-                if (typeToSubProp == null) {
-                    typeToSubProp = new HashMap<String, List<SubmissionProperty>>();
-                    subToTypes.put(submissionId, typeToSubProp);
-                }
-                List<SubmissionProperty> subProps = typeToSubProp.get(dataName);
-                if (subProps == null) {
-                    subProps = new ArrayList<SubmissionProperty>();
-                    typeToSubProp.put(dataName, subProps);
-                } 
-                subProps.add(props.get(wikiPageUrl));
-            
-                addToMap(subIdDataType, submissionId, wikiPageUrl);
+                addToSubToTypes(subToTypes, submissionId, props.get(wikiPageUrl));
             }
             if (buildSubProperty != null) {
                 // we are building a new submission attribute, this is the first time we have
                 // seen a data.value that points to modencodewiki
-                buildSubProperty.addDetail(attHeading, attValue);                
+                buildSubProperty.addDetail(attHeading, attValue);
             }
             lastDataId = dataId;
         }
 
         writer.flush();
         writer.close();
+        
+        // Characteristics are modeled differently to protocol inputs/outputs, read in extra
+        // properties here
+        addSubmissionPropsFromCharacteristics(subToTypes, connection);
         
         
         // create and store experimental factors
@@ -1798,7 +1784,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
 
-
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -1814,6 +1799,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (devStageIds.isEmpty()) {
                 devStageIds.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
                         typeToProp, new String[] {
+                        "developmental stage.developmental stage",
                         "tissue.developmental stage",
                         "tissue source.developmental stage",
                         "cell line.developmental stage",
@@ -1856,6 +1842,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             antibodyIds.addAll(createFromWikiPage("Antibody", typeToProp, 
                     new String[] {"antibody"}));
             if (antibodyIds.isEmpty()) {
+                LOG.info("ANTIBODY: " + typeToProp.get("antibody"));
                 antibodyIds.addAll(lookForAttributesInOtherWikiPages("Antibody",
                         typeToProp, new String[] {
                         "antibody.official name"
@@ -1886,6 +1873,78 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }  
     }
 
+    
+    private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, 
+            Integer submissionId, SubmissionProperty prop) {
+     // submissionId -> [type -> SubmissionProperty]
+        Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
+        if (typeToSubProp == null) {
+            typeToSubProp = new HashMap<String, List<SubmissionProperty>>();
+            subToTypes.put(submissionId, typeToSubProp);
+        }
+        List<SubmissionProperty> subProps = typeToSubProp.get(prop.type);
+        if (subProps == null) {
+            subProps = new ArrayList<SubmissionProperty>();
+            typeToSubProp.put(prop.type, subProps);
+        } 
+        subProps.add(prop);
+    }
+    
+    
+    private void addSubmissionPropsFromCharacteristics(
+            Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, Connection connection) 
+    throws SQLException {
+        
+        ResultSet res = getAppliedDataResultSetCharacteristics(connection);
+
+        Integer lastAttDbXref = new Integer(-1);
+        Map<Integer, SubmissionProperty> createdProps = new HashMap<Integer, SubmissionProperty>();
+        SubmissionProperty buildSubProperty = null;
+        
+        while (res.next()) {
+            Integer dataId = new Integer(res.getInt("data_id"));
+            String attHeading = res.getString("att_heading");
+            String attName = res.getString("att_name");
+            String attValue = res.getString("att_value");
+            Integer attDbxref = new Integer(res.getInt("att_dbxref"));
+            
+            Integer submissionId = dataSubmissionMap.get(dataId);
+            LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
+         
+            if (attDbxref.intValue() != lastAttDbXref.intValue()) {
+                
+                // store the last build property if created, type is set only if we found an
+                // attHeading of Characteristics
+                if (buildSubProperty != null && buildSubProperty.type != null) {
+                    createdProps.put(lastAttDbXref, buildSubProperty);    
+                    addToSubToTypes(subToTypes, submissionId, buildSubProperty);
+                }
+                
+                // set up for next attDbxref 
+                if (createdProps.containsKey(attDbxref)) {
+                    // seen this property before so just add for this submission, don't build again
+                    buildSubProperty = null;
+                    addToSubToTypes(subToTypes, submissionId, createdProps.get(attDbxref));
+                } else {
+                    buildSubProperty = new SubmissionProperty();
+                }
+            }
+            
+            if (buildSubProperty != null) {
+                if (attHeading.equals("Characteristics")) {
+                    buildSubProperty.type = attName;
+                    buildSubProperty.wikiPageUrl = attValue;
+                    // add detail here as some Characteristics that don't reference a wiki page
+                    // have all information on single row
+                    buildSubProperty.addDetail(attName, attValue);
+                } else {
+                    buildSubProperty.addDetail(attHeading, attValue);
+                }
+            }
+            lastAttDbXref = attDbxref;
+        }
+    }
+    
     
     private List<String> createFromWikiPage(String clsName, 
             Map<String, List<SubmissionProperty>> typeToProp, String[] types) 
@@ -1928,6 +1987,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         
     private String getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
     throws ObjectStoreException {
+        LOG.info("CHH prop: " + clsName + ", " + prop.type + ", " + prop.wikiPageUrl + ", " + prop.details.entrySet());
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
         if (propItem == null) {
 
@@ -2142,11 +2202,38 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query = "select d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " c.name as cv_term,"
-            + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value"
+            + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
+            + " a.dbxref_id"
             + " from data d"
             + " LEFT JOIN data_attribute da ON (d.data_id = da.data_id)"
             + " LEFT JOIN attribute a on (da.attribute_id = a.attribute_id)"
-            + " LEFT JOIN cvterm c on (d.type_id = c.cvterm_id)";
+            + " LEFT JOIN cvterm c on (d.type_id = c.cvterm_id)"
+            + " ORDER BY d.data_id";
+        
+        LOG.info("executing: " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    /**
+     * Return the rows needed for data from the applied_protocol_data table.
+     *
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getAppliedDataResultSetCharacteristics(Connection connection)
+    throws SQLException {
+        String query = "select d.data_id, d.heading as data_heading,"
+            + " d.name as data_name, d.value as data_value,"
+            + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
+            + " a.dbxref_id as att_dbxref"
+            + " FROM data d, data_attribute da, attribute a, dbxref ax"
+             + " WHERE d.data_id = da.data_id"
+            + " AND da.attribute_id = a.attribute_id"
+            + " AND a.dbxref_id = ax.dbxref_id"
+            + " ORDER BY d.data_id, a.dbxref_id";
 
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
@@ -2154,13 +2241,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return res;
     }
 
-
     private class SubmissionProperty 
     {
         protected String type;
         protected String wikiPageUrl;
         protected Map<String, List<String>> details;
 
+        protected SubmissionProperty() {
+            details = new HashMap<String, List<String>>();
+        }
+        
         public SubmissionProperty(String type, String wikiPageUrl) {
             this.type = type;
             this.wikiPageUrl = wikiPageUrl;
