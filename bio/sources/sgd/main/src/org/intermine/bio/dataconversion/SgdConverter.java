@@ -266,7 +266,7 @@ public class SgdConverter extends BioDBConverter
             String year = res.getString("year");
             String citation = res.getString("citation");
             String refId = getPub(featureNo, issue, volume, pubMedId, pages, title, year, citation);
-            
+
             gene.addToCollection("publications", refId);
             
             String topic = res.getString("property_value");            
