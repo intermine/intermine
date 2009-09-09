@@ -230,13 +230,13 @@
 
   <class className="org.intermine.model.bio.Publication">
     <fields>
-      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="pubMedId"/>
+      <fieldconfig fieldExpr="citation"/>
       <fieldconfig fieldExpr="title"/>
       <fieldconfig fieldExpr="year"/>
       <fieldconfig fieldExpr="journal"/>
       <fieldconfig fieldExpr="volume"/>
       <fieldconfig fieldExpr="pages"/>
-      <fieldconfig fieldExpr="pubMedId"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>

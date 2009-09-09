@@ -111,7 +111,7 @@
                                              document.body.onclick = function clearHelpMsg() {
                                              newDate = new Date().getTime();
                                              if(newDate > (ourDate + 100)){
-     for(var i=0;i<helpMsgArray.length;i++) {
+    										 for(var i=0;i<helpMsgArray.length;i++) {
                                             jQuery('#' + helpMsgArray[i]).hide(300);
                                             $('DivShim').style.display = "none";
                                             }
@@ -192,8 +192,12 @@
       <div class="templateDescription">${templateQuery.description}</div>
       <ol class="templateForm">
         <c:set var="index" value="${0}"/>
+        
+        <%-- constraint list --%>
         <c:forEach items="${templateQuery.editableNodes}" var="node">
+        
           <c:forEach items="${constraints[node]}" var="con" >
+          
             <c:set var="index" value="${index+1}"/>
             <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
             <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
@@ -204,7 +208,6 @@
               <c:set var="bags" value="${constraintBags[con]}"/>
               <c:set var="bagType" value="${constraintBagTypes[con]}"/>
             </c:if>
-
             <c:if test="${!empty con.description}">
               <li class="firstLine">
                 <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
@@ -221,12 +224,20 @@
                    </c:forEach>
                    //-->
               </script>
+              
+              <%-- this isn't lining up --%>
+              
+              <%-- number --%>
               <c:if test="${empty con.description}">
                 <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
               </c:if>
+              
+              <%-- constraint name --%>
               <label>
                 <c:out value="${names[con]}"/>:
               </label>
+              
+              <%-- operator --%>
               <c:choose>
                 <c:when test="${fn:length(validOps) == 1}">
                   <input type="hidden" name="attributeOps(${index})" value="18"/>
@@ -243,6 +254,8 @@
                   </span>
                 </c:otherwise>
               </c:choose>
+              
+              <%-- autocomplete --%>              
               <span nowrap>
                 <span id="operandEditSpan${index-1}">
 
@@ -273,7 +286,7 @@
                     </c:if>
                   </c:forEach>
 
-                  <%-- if no auto completer exist --%>
+                  <%-- no auto completer exists --%>
                   <c:if test="${hasAutoC eq 0}">
 
                     <c:set var="datePickerClass" value=""/>
@@ -281,8 +294,7 @@
                       <c:set var="datePickerClass" value="date-pick"/>
                     </c:if>
 
-                    <html:text property="attributeValues(${index})"
-                               styleClass="${datePickerClass}"/>
+                    <html:text property="attributeValues(${index})" styleClass="${datePickerClass}" size="20" />
 
                     <c:if test="${node.type == 'Date'}">
                       <script type="text/javascript">
@@ -299,7 +311,8 @@
                       </script>
                     </c:if>
                   </c:if>
-
+                  
+				<%-- help link --%>
                 <c:if test="${!empty keyFields[con]}">
                   <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
                   <div class="smallnote helpnote" id="lookupHelp" style="display:none" >
@@ -308,11 +321,14 @@
                     </fmt:message>
                   </div>
                 </c:if>
+                
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
                   <img src="images/left-arrow.gif" title="&lt;-" border="0" height="13" width="13"/>
                 </c:if>
               </span>
+              
+              <%-- dropdown (probably organism) --%>
               <c:if test="${!empty options}">
                 <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
                   <c:forEach items="${options}" var="option">
@@ -323,12 +339,14 @@
                 </select>
               </c:if>
             </span>
+            
+         <%-- list constraint --%>
           <c:if test="${haveExtraConstraint[con]}">
-          <c:if test="${empty keyFields[con]}">
-            </li>
-            <li>
-          </c:if>
-              <span valign="top" colspan="4">
+          	<c:if test="${empty keyFields[con]}">
+	       	  </li>
+              <li>
+          	</c:if>
+              <span valign="top" colspan="4" style="color:#eee;">
                 <label class="marg">
                   <fmt:message key="bagBuild.extraConstraint">
                     <fmt:param value="${extraBagQueryClass}"/>
