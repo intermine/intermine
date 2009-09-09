@@ -26,7 +26,7 @@
   </tr>
   <tr>
     <td class="leftcol"><html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p><p> Genomics </p></html:link></td>
-    <td><i>Saccharomyces cerevisiae</i></td>
+    <td><i>S. cerevisiae</i></td>
     <td>Genome annotation for <i>Saccharomyces cerevisiae</i>.  Data loaded includes:
       <ul>
         <li>PrimaryIdentifier
@@ -60,7 +60,7 @@
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
-    <td> <i>Saccharomyces cerevisiae</i> </td>
+    <td> <i>S. cerevisiae</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 02 Sep 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
@@ -70,8 +70,8 @@
        <html:link action="/aspect?name=Phenotypes">
         <p> <img src="model/images/phenotypes.png" /></p>
         <p> Phenotypes</p></html:link></td>
-   <td> <i>S. cerevisiae</i> </td>
-    <td> Phenotypes</td>
+    <td><i>S. cerevisiae</i> </td>
+    <td>Phenotypes</td>
     <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 02 Sep, 2009</td>
     <td>Saccharomyces Genome Database - <a href="http://www.ncbi.nlm.nih.gov/pubmed/9169866" target="_new">PubMed: 9169866</a></td>
     <td> &nbsp;</td>
@@ -80,8 +80,8 @@
  <tr><td class="leftcol">
        <html:link action="/aspect?name=Literature">
         <p> <img src="model/images/book.png" /></p>
-        <p> Literature</p></html:link></td>
-    <td> <i>Saccharomyces cerevisiae</i> </td>
+        <p>Literature</p></html:link></td>
+    <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
     <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 02 Sep, 2009</td>
     <td>Saccharomyces Genome Database - <a href="http://www.ncbi.nlm.nih.gov/pubmed/9169866" target="_new">PubMed: 9169866</a></td>
