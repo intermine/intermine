@@ -94,8 +94,8 @@ public class Drosophila2ProbeConverter extends FileConverter
             String chromosomeRefId = createChromosome(chromosomeIdentifier);
             String geneRefId = createGene(fbgn);
             if (geneRefId != null) {
-                String transcriptRefId = createBioentity("Transcript", transcriptIdentifier,
-                                                          geneRefId);
+                String transcriptRefId = createBioentity("Transcript", transcriptIdentifier, 
+                                                         geneRefId);
                 ProbeSetHolder holder = getHolder(probesetIdentifier);
                 holder.transcripts.add(transcriptRefId);
                 holder.genes.add(geneRefId);
