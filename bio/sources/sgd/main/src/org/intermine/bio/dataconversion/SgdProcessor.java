@@ -31,7 +31,7 @@ public class SgdProcessor
         + "    OR g.feature_type = 'snoRNA' "
         + "    OR g.feature_type = 'rRNA' "
         + "    OR g.feature_type = 'ncRNA') ";
-    private static final String GENE_LOCATION_CONSTRAINT = " (c.feature_type = 'chromosome' "
+    private static final String GENE_LOCATION_CONSTRAINT = " (c.feature_type = 'chromosome' " 
         + "    OR c.feature_type = 'plasmid') ";
     
     /**

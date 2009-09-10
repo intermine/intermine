@@ -141,10 +141,10 @@ public class SgdConverter extends BioDBConverter
             //  ~~~ chromosome OR plasmid ~~~                   
             String refId = null;            
             if (featureType.equalsIgnoreCase("plasmid")) {
-                refId = getPlasmid(featureNo,res.getString("identifier"));
+                refId = getPlasmid(featureNo, res.getString("identifier"));
                 item.setReference("plasmid", refId);
             } else if (featureType.equalsIgnoreCase("chromosome")) {
-                refId = getChromosome(featureNo,res.getString("identifier"));
+                refId = getChromosome(featureNo, res.getString("identifier"));
                 item.setReference("chromosome", refId);
             }
 
@@ -168,10 +168,10 @@ public class SgdConverter extends BioDBConverter
         while (res.next()) {
             String secondaryIdentifier = res.getString("feature_name");
             String primaryIdentifier = res.getString("dbxref_id"); 
-            String gene_feature_no = res.getString("gene_feature_no");
-            Item gene =  genes.get(gene_feature_no);
+            String geneFeatureNo = res.getString("gene_feature_no");
+            Item gene =  genes.get(geneFeatureNo);
             if (gene == null) {
-                throw new RuntimeException("Gene not found:  " + gene_feature_no);
+                throw new RuntimeException("Gene not found:  " + geneFeatureNo);
             }
             Item item = createItem("Exon");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
@@ -270,7 +270,7 @@ public class SgdConverter extends BioDBConverter
             gene.addToCollection("publications", refId);
             
             String topic = res.getString("property_value");            
-            if (gene != null && res.getString("property_type").equals("literature_topic")) {
+            if (res.getString("property_type").equals("literature_topic")) {
                 Item item = createItem("PublicationAnnotation");
                 item.setReference("gene", gene);
                 item.setReference("literatureTopic", getLiteratureTopic(topic));
@@ -564,7 +564,7 @@ public class SgdConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(@SuppressWarnings("unused") int taxonId) {
         return DATASET_TITLE;
     }
 }
