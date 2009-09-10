@@ -29,16 +29,15 @@
     <td><i>S. cerevisiae</i></td>
     <td>Genome annotation for <i>Saccharomyces cerevisiae</i>.  Data loaded includes:
       <ul>
-        <li>PrimaryIdentifier
+		<li>PrimaryIdentifier
         <li>SecondaryIdentifier
-        <li>Symbol
+		<li>Symbol
         <li>Name
         <li>Length
         <li>Description
         <li>Feature type
+        <li>Locations
         <li>Sequences
-        <li>Binding sites
-        <li>Exons
       </ul>
     </td>
     <td><a href="http://www.yeastgenome.org" target="_new">SGD</a> - 02 Sep, 2009</td>
