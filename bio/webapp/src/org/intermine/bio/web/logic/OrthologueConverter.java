@@ -130,7 +130,7 @@ public class OrthologueConverter implements BagConverter
         // organism
         q.addConstraint("Gene.organism", Constraints.lookup(organism));
 
-        // if the XML is too long, the link generates "HTTP Error 414 - Request URI too long"        
+        // if the XML is too long, the link generates "HTTP Error 414 - Request URI too long"
         if (externalids.length() < 4000) {
             q.addConstraint("Gene", Constraints.lookup(externalids));
         }
