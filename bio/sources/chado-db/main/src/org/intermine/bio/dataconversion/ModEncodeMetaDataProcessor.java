@@ -46,6 +46,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
 
+    // used in the experimental factors
+    private static final String COMPOUND = "compound";
+    private static final String ORGPART = "organism_part";
+
+    private static final String COMPOUND_KEYS = "scaled data.Factor Value";
+    private static final String ORGPART_KEYS = "tissue.official name";
+
     // submission maps
     // ---------------
 
@@ -242,7 +249,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        processFeatures(connection, submissionMap);
+//        processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
@@ -1166,9 +1173,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             prevRank = rank;
             prevSub = submissionId;
+            count++;
         }
         res.close();
-        LOG.info("created " + eFactorIdTEMPMap.size() + " experimental factors");
+        LOG.info("created " + count + " experimental factors");
     }
 
     /**
@@ -1731,7 +1739,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         writer.flush();
         writer.close();
         
-        // Characteristics are modeled differently to protocol inputs/outputs, read in extra
+        // Characteristics are modelled differently to protocol inputs/outputs, read in extra
         // properties here
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
         
@@ -1754,90 +1762,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (String exFactor : exFactorNames) {
 
                 List<String> synonyms = makeLookupList(exFactor.trim());
-                String factorValue = getOfficialNameFromTypes(typeToProp, synonyms);
+                String[] factor = getOfficialNameFromTypes(typeToProp, synonyms);
+                String factorValue = factor[1];
+                String factorType = factor[0];
                 if (factorValue == null) {
                     LOG.info("EX factor not found: " + dccId + ", factor = " + exFactor 
                             + ", types = " + typeToProp.keySet());
                 } else {
-                    Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
-                    ef.setAttribute ("name", factorValue);
-                    // TODO set type
-                    //ef.setAttribute ("type", factorType);
-
-                    // TODO add factors/submission link.  Add submission reference to factor?
-                    
-                    Integer intermineObjectId = getChadoDBConverter().store(ef);
-                    
-                    // TODO copied from previous version:
-                    //eFactorIdMap .put(efName, intermineObjectId);
-                    //eFactorIdRefMap .put(efName, ef.getIdentifier());
+                    createEFItem(submissionId, factorType, factorValue);
                 }
             }
         }
-            
-        // create and store experimental factors
-//        for (Map.Entry<String, SubmissionProperty> entry : props.entrySet()) {
-//            String dataValue = entry.getKey();
-//            SubmissionProperty prop = entry.getValue();
-//
-//            List<Integer> subs = propSubIds.get(dataValue);
-//
-//            // set experimentalFactors:
-//            // given a map of submission to experimental factor type (e.g. developmental_stage)
-//            // could match the type against prop.type in sections below and create
-//            // ExperimentalFactor with details.getValue().get(0)
-//
-//            for (Integer current : submissionEFTypeMap.keySet()) {
-//                for (String type : submissionEFTypeMap.get(current)) {
-//                    int index = 0; // used to fetch the proper name from the list (see below)
-//                    String efName = null;                        
-//                    if (type.equalsIgnoreCase(prop.type) 
-//                            || (type.equalsIgnoreCase("developmental_stage") 
-//                                    && prop.type.equalsIgnoreCase("stage"))
-//                                    || (type.equalsIgnoreCase("CellLine") 
-//                                            && prop.type.equalsIgnoreCase("cell line"))) {
-//                        // getting the EF name from the attributes..
-//                        for (Map.Entry<String, List<String>> detail 
-//                                : prop.details.entrySet()) {
-//                            if (detail.getKey().equalsIgnoreCase("official name")) {
-//                                efName = detail.getValue().get(0);
-//                            }
-//                        }
-//                    }
-//                    else if (type.equalsIgnoreCase("compound") || type.equalsIgnoreCase("tissue")
-//                            || type.equalsIgnoreCase("organism_part")
-//                            || type.equalsIgnoreCase("PCR_primer")) {
-//                        // this is not a recognised attribute, use what you find 
-//                        // in the experiment properties
-//                        efName = submissionEFNameMap.get(current).get(index);
-//                    }
-//                    else {
-//                        continue;
-//                    }
-//
-//                    if (efName == null) {
-//                        LOG.error("EF has null name: " + current + "|" + type);
-//                        continue;
-//                    }
-//                    
-//                    // create the EF, if not there already
-//                    if (!eFactorIdMap.containsKey(efName)) {
-//                        Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
-//                        ef.setAttribute ("name", efName);
-//                        ef.setAttribute ("type", type);
-//
-//                        Integer intermineObjectId = getChadoDBConverter().store(ef);
-//                        eFactorIdMap .put(efName, intermineObjectId);
-//                        eFactorIdRefMap .put(efName, ef.getIdentifier());
-//                    }
-//                    // if pertinent to the current sub, add to the map for the references
-//                    if (subs.contains(current)) {
-//                        addToMap(submissionEFactorMap, current, efName);
-//                    }
-//                    index++;                        
-//                }
-//            }
-//        }
+        
+        
+// ex----            
 
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
@@ -1883,14 +1821,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<String> lineIds = new ArrayList<String>();
             lineIds.addAll(createFromWikiPage("CellLine", typeToProp, 
                     new String[] {"cell line", "cell id"}));
-            // this was capturing too much noise..good for subs like 650,651,652
-
-            //            if (lineIds.isEmpty()) {
-            //                lineIds.addAll(lookForAttributesInOtherWikiPages("CellLine",
-            //                        typeToProp, new String[] {
-            //                        "RNA extract.Cell Type"
-            //                        }));
-            //            }
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineIds);
             
             // ANTIBODY
@@ -1926,22 +1856,213 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             }
             storeSubmissionCollection(storedSubmissionId, "tissues", tissueIds);
-        }  
+        }
+        
+        
+/*        
+        // create and store experimental factors
+        for (Map.Entry<String, SubmissionProperty> entry : props.entrySet()) {
+            String dataValue = entry.getKey();
+            SubmissionProperty prop = entry.getValue();
+
+            List<Integer> subs = propSubIds.get(dataValue);
+            LOG.info("++++++++++++++++++++++++++++++++++++++++++++++++++START: " + subs);
+            LOG.info("EF dataValue: " + dataValue);
+            LOG.info("EF prop: " + prop.type);
+
+            // set experimentalFactors:
+            // given a map of submission to experimental factor type (e.g. developmental_stage)
+            // could match the type against prop.type in sections below and create
+            // ExperimentalFactor with details.getValue().get(0)
+
+            
+            for (Integer current : submissionEFTypeMap.keySet()) {
+                LOG.info("EF dataValue: " + dataValue);
+                LOG.info("++EF sub: " + current);
+                if (prop.type.isEmpty())
+                {
+                    continue;
+                }
+                for (String type : submissionEFTypeMap.get(current)) {
+                    LOG.info("++EF type: ->" + type + "<- prop.type->" + prop.type );
+                    int index = 0; // used to fetch the proper name from the list (see below)
+                    String efName = null;                        
+                    //original
+//                    if (type.equalsIgnoreCase(prop.type) 
+//                            || (type.equalsIgnoreCase("developmental_stage") 
+//                                    && prop.type.equalsIgnoreCase("stage"))
+//                                    || (type.equalsIgnoreCase("CellLine") 
+//                                            && prop.type.equalsIgnoreCase("cell line"))) {
+
+                    if (type.equalsIgnoreCase(prop.type) 
+                            || (type.equalsIgnoreCase("developmental_stage") && prop.type.equalsIgnoreCase("stage"))
+                            || (type.equalsIgnoreCase("cell_line") && prop.type.equalsIgnoreCase("cell line"))
+                            || (type.equalsIgnoreCase("strain_or_line") && prop.type.equalsIgnoreCase("strain"))
+                    ) {
+
+                        
+                        LOG.info("**EF if list: " + prop.type + "|" + type);
+                        // getting the EF name from the attributes..
+                        for (Map.Entry<String, List<String>> detail 
+                                : prop.details.entrySet()) {
+                            if (detail.getKey().equalsIgnoreCase("official name")) {
+                                efName = detail.getValue().get(index);
+                                LOG.info("EF name " + current +": " + efName + "|" + detail);
+                            }
+                        }
+                    } else {
+                        Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(current);
+                        efName = matchEFactorToAttribute(current,index,typeToProp,type);
+                    }
+                    if (efName != null) {
+                        createEFItem(subs, current, type, efName);
+//                      LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
+                        index++;                        
+                    } 
+                    
+                }
+            }
+        }
+
+        // ===============
+  */      
+        
     }
 
-    private String getOfficialNameFromTypes(Map<String, List<SubmissionProperty>> typeProps, List<String> types) {
+    
+    
+    
+    
+    // ========================|
+
+    
+    
+    private void createEFItem(Integer current, String type,
+            String efName) throws ObjectStoreException {
+        // create the EF, if not there already
+        if (!eFactorIdMap.containsKey(efName)) {
+            Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
+            ef.setAttribute ("name", efName);
+            ef.setAttribute ("type", type);
+            LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
+
+            Integer intermineObjectId = getChadoDBConverter().store(ef);
+            eFactorIdMap .put(efName, intermineObjectId);
+            eFactorIdRefMap .put(efName, ef.getIdentifier());
+        }
+        // if pertinent to the current sub, add to the map for the references
+//        if (subs.contains(current)) {
+            addToMap(submissionEFactorMap, current, efName);
+//        }
+    }
+
+
+    
+    private String matchEFactorToAttribute(Integer currentSub, Integer index,
+            Map<String, List<SubmissionProperty>> typeToProp, String declaredEFType) 
+            throws ObjectStoreException {
+
+        String efName = null;
+
+
+
+//      Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(current);
+        List<String> eFactorIds = new ArrayList<String>();
+        eFactorIds.addAll(createFromWikiPage("ExperimentalFactor", typeToProp, 
+                new String[] {declaredEFType}));
+        if (eFactorIds.isEmpty()) {
+//            LOG.info("createFromWikiPage no results: " + declaredEFType ); 
+            
+            if (declaredEFType.equalsIgnoreCase(COMPOUND)) {
+                eFactorIds.addAll(lookForAttributesInOtherWikiPages3(typeToProp, 
+                        new String[] {
+                        COMPOUND_KEYS
+                }));
+            } else if (declaredEFType.equalsIgnoreCase(ORGPART)) {
+                eFactorIds.addAll(lookForAttributesInOtherWikiPages3(typeToProp, 
+                        new String[] {
+                        ORGPART_KEYS
+                }));                   
+            } else {
+                // we don't know this EF type
+                //LOG.error("EF - " + declaredEFType + " is not a recognised EF type.");
+            }
+            if (!eFactorIds.isEmpty()) {
+                LOG.info("Attribute found in other wiki pages: " 
+                        + eFactorIds + " of type " + currentSub + "|" + declaredEFType);
+                efName = eFactorIds.get(0);
+            }
+            else {
+                
+//               efName = submissionEFNameMap.get(currentSub).get(0);
+//               LOG.info("Attribute: using experiment_prop:" + efName); 
+            }
+        } else {
+          LOG.info("EF: FOUND with createFromWikiPage" + declaredEFType);             
+        }
+           
+        return efName;
+
+    }
+
+    
+    
+    
+    private List<String> lookForAttributesInOtherWikiPages3(
+            Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
+            throws ObjectStoreException {
+
+        List<String> itemIds = new ArrayList<String>();
+        for (String typeProp : lookFor) {
+            if (typeProp.indexOf(".") > 0) {
+                String[] bits = StringUtils.split(typeProp, '.');
+
+                String type = bits[0];
+                String propName = bits[1];
+
+                if (typeToProp.containsKey(type)) {
+                    for (SubmissionProperty subProp : typeToProp.get(type)) { 
+                        if (subProp.details.containsKey(propName)) {
+                            for (String value : subProp.details.get(propName)) {
+                                itemIds.add(value);
+                            }
+                        }
+                    }
+                    if (!itemIds.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
+        return itemIds;
+    }
+
+    // =============================^^^^^^^^^^^
+    
+    
+    
+    
+    
+    
+    private String[] getOfficialNameFromTypes(
+            Map<String, List<SubmissionProperty>> typeProps, List<String> types) {
         for (String type : types) {
             if (typeProps.containsKey(type)) {
                 SubmissionProperty prop = typeProps.get(type).get(0);
                 if (prop.details.containsKey("official name")) {
                     String officialName = prop.details.get("official name").get(0);
                     if (officialName != null) {
-                        return officialName;
+                        String[] qq = new String[2];
+                        qq[0] = type;
+                        qq[1] = officialName;
+                        return qq;
+//                        return officialName;
                     }
                 }
             }
         }
-        return null;
+        String[] nada = {null, null};
+        return nada;
     }
 
     
