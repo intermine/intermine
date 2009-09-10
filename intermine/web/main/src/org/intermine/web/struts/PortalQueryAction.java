@@ -76,7 +76,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static int index = 0;
+    private static int INDEX = 0;
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -91,7 +91,7 @@ public class PortalQueryAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionForm form,
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
@@ -302,7 +302,7 @@ public class PortalQueryAction extends InterMineAction
     private ActionForward goToResults(ActionMapping mapping,
                                       HttpSession session, WebResults webResults) {
         PagedTable pc = new PagedTable(webResults);
-        String identifier = "col" + index++;
+        String identifier = "col" + INDEX++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))
         .addParameter("table", identifier)
