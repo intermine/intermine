@@ -181,6 +181,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
+     * Experimental Factor class
+     * to store the couples (type, name/value) of EF
+     * note that in chado sometime the name is given, other times is the value
+     */
+    private static class ExperimentalFactor
+    {
+        private String efType;
+        private String efName;
+        // the submissionId associated with a specific ef
+        private Integer submissionId;
+    }
+
+    
+    
+    
+    /**
      * Create a new ChadoProcessor object
      * @param chadoDBConverter the converter that created this Processor
      */
@@ -247,7 +263,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-//        processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
@@ -1141,6 +1157,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int prevRank = -1;
         int prevSub = -1;
         String efName = null;
+        ExperimentalFactor ef = null;
 
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
@@ -1150,10 +1167,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (rank != prevRank || submissionId != prevSub) {
                 efName = value;
                 addToMap(submissionEFNameMap, submissionId, value);
+
+                ef = new ExperimentalFactor();
+                ef.submissionId = submissionId;
+                ef.efName = value;
             } else {
                 // build map to use in setting EF in processSubmissionProperties
                 addToMap(submissionEFTypeMap, submissionId, value);
-
+                ef.efType = value;
+                
                 // TODO: remove. here for checking
 //                if (!eFactorIdTEMPMap.containsKey(efName)) {
 //                    Item ef = getChadoDBConverter().createItem("ExpFac");
