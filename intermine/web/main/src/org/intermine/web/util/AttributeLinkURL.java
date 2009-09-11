@@ -20,7 +20,7 @@ import java.util.Map;
  * base url (without query string) and request parameters from url.
  * @author Jakub Kulaviak
  **/
-public class POSTLink
+public class AttributeLinkURL
 {
 
     private String baseUrl;
@@ -32,9 +32,8 @@ public class POSTLink
      * @param urlString parsed url
      * @throws MalformedURLException if url is invalid
      */
-    public POSTLink(String urlString) throws MalformedURLException {
+    public AttributeLinkURL(String urlString) throws MalformedURLException {
         // Just validates that it is valid url
-        URL url = new URL(urlString);
         String[] parts = urlString.split("\\?", 2);
         baseUrl = parts[0];
         if (parts.length == 2) {

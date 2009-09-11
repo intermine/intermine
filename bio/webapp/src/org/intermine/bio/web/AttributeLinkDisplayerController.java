@@ -49,7 +49,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.util.POSTLink;
+import org.intermine.web.util.AttributeLinkURL;
 
 /**
  * Set up maps for the attributeLinkDisplayer.jsp
@@ -134,7 +134,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost)";
+            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -246,6 +246,9 @@ public class AttributeLinkDisplayerController extends TilesAction
      */
     private void processConfigs(Map<String, ConfigMap> linkConfigs) {
         for (ConfigMap config : linkConfigs.values()) {
+            if (config.get("delimiter") != null) {
+                modifyIdString(config);
+            }
             if (config.get("usePost") != null
                     && ((String) config.get("usePost")).equalsIgnoreCase("true")) {
                 modifyConfigToPost(config);
@@ -253,12 +256,24 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
     }
 
+    private void modifyIdString(ConfigMap config) {
+        String delim = (String) config.get("delimiter");
+        String urlString = (String) config.get("url");
+
+        urlString = urlString.replace(",", delim);
+        config.put("url", urlString);
+        
+        String idString = (String) config.get("attributeValue");
+        idString = idString.replace(",", delim);
+        config.put("attributeValue", idString);
+    }
+    
     private void modifyConfigToPost(ConfigMap config) {
         String urlString = (String) config.get("url");
-        POSTLink link;
+        AttributeLinkURL link;
         try {
             // Verifies, that url is valid
-            link = new POSTLink(urlString);
+            link = new AttributeLinkURL(urlString);
         } catch (MalformedURLException e) {
             LOG.error("Converting url from GET to POST form failed. Url retained in GET form.", e);
             return;
