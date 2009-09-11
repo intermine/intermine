@@ -41,7 +41,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -77,7 +77,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 public class PortalQueryAction extends InterMineAction
 {
     private static int INDEX = 0;
-
+//    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
     /**
      * Link-ins from other sites end up here (after some redirection).
      *
@@ -173,18 +173,13 @@ public class PortalQueryAction extends InterMineAction
         }
 
         PathQuery pathQuery = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig,
-            null, true);
+        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null, 
+                                                               true);
         pathQuery.setViewPaths(view);
-        String label = null, id = null, code = pathQuery.getUnusedConstraintCode();
-        Constraint c = new Constraint(ConstraintOp.LOOKUP, StringUtils.replace(extId, ",", "\t"),
-                        false, label, code, id, null);
-        pathQuery.addNode(className).getConstraints().add(c);
-        pathQuery.setConstraintLogic("A and B and C");
-        pathQuery.syncLogicExpression("and");
+        pathQuery.addConstraint(className, 
+                                Constraints.lookup(StringUtils.replace(extId, ",", "\t")));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
-
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
