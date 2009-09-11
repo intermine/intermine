@@ -581,7 +581,7 @@ public class UniprotConverter extends DirectoryConverter
 
         if (method.equals("name")) {
             if (entry.getGeneNames() == null || entry.getGeneNames().isEmpty()) {
-                LOG.error(" ~~~ No gene names for " + taxonId + ". protein accession:"
+                LOG.error("No gene names for " + taxonId + ". protein accession:"
                           + entry.getPrimaryAccession());
                 return null;
             }
@@ -591,6 +591,12 @@ public class UniprotConverter extends DirectoryConverter
                 // See #2122
                 identifierValue = entry.getGeneDesignation("Ensembl");   
             } else {
+                List<String> dbrefs = entry.getDbrefs().get(value);
+                if (dbrefs.isEmpty()) {
+                    LOG.error("no " + value + " identifier found for gene attached to protein: " 
+                              + entry.getPrimaryAccession());
+                    return null;
+                }
                 identifierValue = entry.getDbrefs().get(value).get(0);
             }
         } else {
