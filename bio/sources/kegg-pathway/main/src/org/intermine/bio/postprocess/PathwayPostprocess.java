@@ -1,4 +1,4 @@
-package org.intermine.bio.dataconversion;
+package org.intermine.bio.postprocess;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Pathway;
@@ -43,7 +42,7 @@ import org.intermine.postprocess.PostProcessor;
  */
 public class PathwayPostprocess extends PostProcessor
 {
-    private static final Logger LOG = Logger.getLogger(PathwayPostprocess.class);
+//    private static final Logger LOG = Logger.getLogger(PathwayPostprocess.class);
     protected ObjectStore os;
     private Map<Gene, Set<Pathway>> genesToPathways = new HashMap();
     private Map<Protein, Set<Pathway>> proteinsToPathways = new HashMap();
@@ -64,7 +63,7 @@ public class PathwayPostprocess extends PostProcessor
     public void postProcess()
     throws ObjectStoreException {
 
-        long startTime = System.currentTimeMillis();
+//        long startTime = System.currentTimeMillis();
 
         osw.beginTransaction();
         
