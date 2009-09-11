@@ -61,6 +61,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // chado submission id to list of top level attributes, e.g. dev stage, organism_part
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
 
+
+    
+    private Map<Integer, ExperimentalFactor> submissionEFMap =
+        new HashMap<Integer, ExperimentalFactor>();
+
+    
     // applied_protocol/data/attribute maps
     // -------------------
 
@@ -116,13 +122,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Integer> eFactorIdMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
     private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
-    private Map<Integer, List<String>> submissionEFTypeMap = new HashMap<Integer, List<String>>();
-    private Map<Integer, List<String>> submissionEFNameMap = new HashMap<Integer, List<String>>();
-    // TO REMOVE
-    private Map<Integer, List<String>> submissionEFactorTEMPMap = 
-        new HashMap<Integer, List<String>>();
-    private Map<String, Integer> eFactorIdTEMPMap = new HashMap<String, Integer>();
-    private Map<String, String> eFactorIdRefTEMPMap = new HashMap<String, String>();
 
     // caches
     // ------
@@ -187,8 +186,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private static class ExperimentalFactor
     {
-        private String efType;
-        private String efName;
+        private String itemIdentifier;     // e.g. "0_12"
+        private Integer intermineObjectId;
+        private List<String> efTypes = new ArrayList<String>();
+        private List<String> efNames = new ArrayList<String>();
         // the submissionId associated with a specific ef
         private Integer submissionId;
     }
@@ -1156,7 +1157,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int count = 0;
         int prevRank = -1;
         int prevSub = -1;
-        String efName = null;
         ExperimentalFactor ef = null;
 
         while (res.next()) {
@@ -1164,36 +1164,30 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer rank = new Integer(res.getInt("rank"));
             String  value    = res.getString("value");
 
-            if (rank != prevRank || submissionId != prevSub) {
-                efName = value;
-                addToMap(submissionEFNameMap, submissionId, value);
-
+            // the data is alternating between EF types and names, in order.
+            if (submissionId != prevSub) {
+                // except for the first record, this is a new EF object
+                if (!res.isFirst()) {
+                    submissionEFMap.put(prevSub, ef);
+                    LOG.debug("EF MAP: " + submissionId + "|" + rank + "|" + ef.efNames );                    
+                }
                 ef = new ExperimentalFactor();
-                ef.submissionId = submissionId;
-                ef.efName = value;
+                ef.submissionId = submissionId;                
+            }
+            if (rank != prevRank || submissionId != prevSub) {
+                // this is a name                
+                ef.efNames.add(value);                
+                count++;
             } else {
-                // build map to use in setting EF in processSubmissionProperties
-                addToMap(submissionEFTypeMap, submissionId, value);
-                ef.efType = value;
+                // this is a type
+                ef.efTypes.add(value);
                 
-                // TODO: remove. here for checking
-//                if (!eFactorIdTEMPMap.containsKey(efName)) {
-//                    Item ef = getChadoDBConverter().createItem("ExpFac");
-//                    ef.setAttribute ("name", efName);
-//                    ef.setAttribute ("type", value);
-//
-//                    Integer intermineObjectId = getChadoDBConverter().store(ef);
-//                    eFactorIdTEMPMap .put(efName, intermineObjectId);
-//                    eFactorIdRefTEMPMap .put(efName, ef.getIdentifier());
-//                }
-//                addToMap(submissionEFactorTEMPMap, submissionId, efName);
-//                LOG.info("EF MAP TEMP" + submissionEFactorTEMPMap);
-//                count++;
-                // --remove END
+                if (res.isLast()) {
+                    submissionEFMap.put(submissionId, ef);
+                }
             }
             prevRank = rank;
             prevSub = submissionId;
-            count++;
         }
         res.close();
         LOG.info("created " + count + " experimental factors");
@@ -1669,7 +1663,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     private String[][] synonyms = new String[][]{
-            new String[] {"developmental_stage", "stage", "developmental stage", "dev stage", "devstage"},
+            new String[] {"developmental_stage", "stage", 
+                    "developmental stage", "dev stage", "devstage"},
             new String[] {"strain", "strain_or_line"}
     };
 
@@ -1765,19 +1760,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         
         
         for (Integer submissionId : subToTypes.keySet()) {
-//            Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
-            
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
 
             String dccId = dccIdMap.get(submissionId);
-        
-            LOG.info("EX submissionEFNameMap.keySet(): " + submissionEFNameMap.entrySet());
             LOG.info("EX typeToProp: " + typeToProp.keySet());
 
-            //TODO change this to fetch exFactor objects that contain type/name pairs
-            List<String> exFactorNames = submissionEFNameMap.get(submissionId);
-
+            ExperimentalFactor ef = submissionEFMap.get(submissionId);
+            List<String> exFactorNames = ef.efNames;
             
+            Integer efRank = 0;
             LOG.info("EX exFactors: " + exFactorNames);
             for (String exFactor : exFactorNames) {
                 if (exFactor.startsWith(PCRPRIMER)) {
@@ -1785,7 +1776,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     continue;
                 }
                
-                
                 List<String> synonyms = makeLookupList(exFactor.trim());
                 String[] factor = getOfficialNameFromTypes(typeToProp, synonyms);
                 String factorValue = factor[1];
@@ -1793,20 +1783,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (factorValue == null) {
                     if (exFactor.equalsIgnoreCase(COMPOUND)) {
                         factor = lookForEFactorInOtherWikiPages(typeToProp, 
-                                new String[] { COMPOUND_KEYS });
+                                new String[]{COMPOUND_KEYS});
                         factorValue = factor[1];
                         factorType = COMPOUND;
                     }
                 }
                 if (factorValue == null) {
-                    LOG.info("EX factor value not found: " + dccId + ", factor = " + exFactor 
+                    LOG.error("EX factor value not found: " + dccId + ", factor = " + exFactor 
                             + ", types = " + typeToProp.keySet());
                     // in this case we put what was declared as value in the experiment_prop
                     // table
-                    createEFItem(submissionId, exFactor, exFactor);
+                    String efType = ef.efTypes.get(efRank);
+                    createEFItem(submissionId, efType, exFactor);
                 } else {
                     createEFItem(submissionId, factorType, factorValue);
                 }
+                efRank++;
             }
         }
         
