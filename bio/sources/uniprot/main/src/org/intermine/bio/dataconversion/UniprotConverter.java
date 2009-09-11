@@ -591,12 +591,19 @@ public class UniprotConverter extends DirectoryConverter
                 // See #2122
                 identifierValue = entry.getGeneDesignation("Ensembl");   
             } else {
-                List<String> dbrefs = entry.getDbrefs().get(value);
-                if (dbrefs.isEmpty()) {
-                    LOG.error("no " + value + " identifier found for gene attached to protein: " 
-                              + entry.getPrimaryAccession());
+                Map<String, List<String>> dbrefs = entry.getDbrefs();
+                String msg = "no " + value + " identifier found for gene attached to protein: " 
+                                + entry.getPrimaryAccession();
+                if (dbrefs == null || dbrefs.isEmpty()) {
+                    LOG.error(msg);
                     return null;
                 }
+                List<String> identifiers = dbrefs.get(value);
+                if (identifiers == null || identifiers.isEmpty()) {
+                    LOG.error(msg);
+                    return null;
+                }
+                // TODO handle multiple identifiers somehow
                 identifierValue = entry.getDbrefs().get(value).get(0);
             }
         } else {
