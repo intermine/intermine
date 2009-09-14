@@ -299,6 +299,12 @@ function dochadosubs {
 cd $DATADIR/$1
 # if it is a symbolic link and this is not the given input
 # we skip that file
+
+echo $LOOPVAR
+echo "---->--------------<-"
+
+interact qq
+
 if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
  then
  continue
@@ -543,26 +549,32 @@ else
 LOOPVAR="*.chadoxml"
 fi
 
-#for validation of new and update directory (cronmine)
-if [ "$VALIDATING" = "y" ] && [ $LOOPVAR="*.chadoxml" ]
+if [ -n "$1" ]
 then
-
-cd $DATADIR/new
-echo "====================="
-echo "validating new..."
-echo "====================="
-
+# doing one sub only, using loop because so expects dochadosubs
 for sub in $LOOPVAR
 do
 dochadosubs new
 done
 
+elif [ "$VALIDATING" = "y" -a $LOOPVAR="*.chadoxml" ]
+then
+# validating all: is the configurtation used by cronmine.
+# run dochadosubs both in new and update directories
+
+cd $DATADIR/new
+echo "====================="
+echo "validating new..."
+echo "====================="
+for sub in $LOOPVAR
+do
+dochadosubs new
+done
 
 cd $DATADIR/update
 echo "====================="
 echo "validating update..."
 echo "====================="
-
 for sub in $LOOPVAR
 do
 dochadosubs update
@@ -570,12 +582,11 @@ done
 
 else
 # when not validating or using given (list of) sub(s)
-#cd $DATADIR/new
-#for sub in $LOOPVAR
-#do
+cd $DATADIR/new
+for sub in $LOOPVAR
+do
 dochadosubs new
-#chadofill $sub
-#done
+done
 
 fi
 
