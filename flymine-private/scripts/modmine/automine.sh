@@ -190,6 +190,7 @@ function interact {
 # if testing, wait here before continuing
 if [ $INTERACT = "y" -o $STOP = "y" ]
 then
+echo
 echo "$1"
 echo "Press return to continue (^C to exit).."
 echo -n "->"
@@ -366,6 +367,41 @@ fi #VAL=y
 
 }
 
+
+function prepareForFull {
+#------------------------------------------------------
+# prepare directories for stag in case of FULL release
+#------------------------------------------------------
+# TODO: if no $1, no infile, no incr -> do all
+cd $DATADIR
+mv *.chadoxml $DATADIR/new
+mv $DATADIR/update/validated/*.chadoxml $DATADIR/new
+mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
+cd $DATADIR/new
+for sub in *.chadoxml
+ do
+ # if found symbolic link not to err directory throw an error
+ if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
+   then
+     echo "WARNING: $sub is missing from load directory" | tee -a $LOG
+	   STOP=y # TODO: if incr you should exit! or exit always
+   fi
+# CHECK XML and experiment title
+if [ ! -L "$sub" ]
+then
+echo $sub
+xmllint -noout $sub
+grep -2 "<experiment id"  $sub | grep "ename></uniquen"
+fi
+
+ done
+
+# TODO: add check deletions 
+
+}
+
+
+
 interact
 
 #---------------------------------------
@@ -449,27 +485,6 @@ then
 	exit 0;
 fi
 
-#------------------------------------------------------
-# prepare directories for stag in case of FULL release
-#------------------------------------------------------
-# TODO: if no $1, no infile, no incr -> do all
-    if [ "$FULL" = "y" ]
-     then
-      cd $DATADIR
-      mv *.chadoxml $DATADIR/new
-      mv $DATADIR/update/*.chadoxml $DATADIR/new
-      mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
-      cd $DATADIR/new
-   		for sub in *.chadoxml 
-   		do
-       # if found symbolic link not to err directory throw an error
-       if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
-        then
-        echo "WARNING: $sub is missing from load directory" | tee -a $LOG
-			  STOP=y # TODO: if incr you should exit! or exit always
-       fi
-		  done
-    fi
 
 interact
 cd $DATADIR
@@ -498,6 +513,18 @@ interact
 #---------------------------------------
 # fill chado db
 #---------------------------------------
+
+if [ "$STAG" = "y" -a "$FULL" = "y" ]
+then
+prepareForFull
+
+interact "just finished: directories preparation"
+
+cd $MINEDIR
+$SCRIPTDIR/checkdel.sh
+
+fi
+
 
 if [ "$STAG" = "y" ]
 then
@@ -543,11 +570,12 @@ done
 
 else
 # when not validating or using given (list of) sub(s)
-cd $DATADIR/new
-for sub in $LOOPVAR
-do
-chadofill $sub
-done
+#cd $DATADIR/new
+#for sub in $LOOPVAR
+#do
+dochadosubs new
+#chadofill $sub
+#done
 
 fi
 
