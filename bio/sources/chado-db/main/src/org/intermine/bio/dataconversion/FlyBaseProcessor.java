@@ -266,7 +266,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   AND feature_cvtermprop.type_id = prop_term.cvterm_id AND prop_term.name = '"
             + WT_CLASS_CVTERM + "'";
 
-        LOG.info("executing: " + query);
+        LOG.info("executing getChromosomeStructureVariationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -319,7 +319,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createLocatedGenesTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + LOCATED_GENES_TEMP_TABLE_NAME + "_feature_index ON "
             + LOCATED_GENES_TEMP_TABLE_NAME + "(feature_id)";
@@ -356,7 +356,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createAllelesTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + ALLELE_TEMP_TABLE_NAME + "_feature_index ON "
             + ALLELE_TEMP_TABLE_NAME + "(feature_id)";
@@ -401,7 +401,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
 
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createInsertionTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + INSERTION_TEMP_TABLE_NAME + "index ON "
             + INSERTION_TEMP_TABLE_NAME + "(sub_id)";
@@ -484,7 +484,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
         String query = getLocatedGenesSql();
-        LOG.info("executing: " + query);
+        LOG.info("executing getLocatedGenesResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1229,7 +1229,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "          WHERE feature.feature_id = feature_cvterm.feature_id"
             + "            AND feature.feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "            AND feature_cvterm.cvterm_id = cvterm.cvterm_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAlleleCVTermsResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1463,7 +1463,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "           AND NOT feature.is_obsolete AND NOT other_feature.is_obsolete "
             + "           AND feature.feature_id IN (" + getLocatedGenesSql() + ")"
             + "           AND other_feature.feature_id IN (" + getLocatedGenesSql() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getInteractionResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1483,7 +1483,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "   ORDER BY feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAllelePropResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1523,7 +1523,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   AND break_type.name = 'breakpoint'"
             // ignore the progenitors so we only set element1 and element2 to be the "descendants"
             + "   AND ins.feature_id NOT IN (SELECT obj_id FROM " + INSERTION_TEMP_TABLE_NAME + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getIndelResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1542,7 +1542,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getInsertionLocationsResultSet(Connection connection) throws SQLException  {
         String query = "SELECT * from " + INSERTION_TEMP_TABLE_NAME;
-        LOG.info("executing: " + query);
+        LOG.info("executing getInsertionLocationsResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1567,7 +1567,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "    AND feature.feature_id = featureprop.feature_id"
             + "    AND feature.type_id = feature_type.cvterm_id"
             + "    AND feature_type.name = 'chromosome_structure_variation'";
-        LOG.info("executing: " + query);
+        LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1592,7 +1592,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "        AND db.name = 'pubmed'"
             + "        AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "    ORDER BY featureprop_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAllelePropPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
