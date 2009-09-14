@@ -56,7 +56,7 @@ public class SequenceProcessor extends ChadoProcessor
 {
     // incremented each time we make a new SequenceProcessor to make sure we have a unique
     // name for temporary tables
-    private static int tempTableCount = 0;
+    private static int TEMP_TABLE_COUNT = 0;
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
@@ -124,8 +124,8 @@ public class SequenceProcessor extends ChadoProcessor
     public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
         synchronized (this) {
-            tempTableCount++;
-            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
+            TEMP_TABLE_COUNT++;
+            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + TEMP_TABLE_COUNT;
         }
     }
 
@@ -998,6 +998,7 @@ public class SequenceProcessor extends ChadoProcessor
         return fds;
     }
 
+    @SuppressWarnings("boxing")
     private void processDbxrefTable(Connection connection)
         throws SQLException, ObjectStoreException {
 
@@ -1072,18 +1073,17 @@ public class SequenceProcessor extends ChadoProcessor
                         String newFieldValue = createSynonymAction.processValue(accession);
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
-                        } else {
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, "identifier", newFieldValue,
-                                                         isPrimary, null);
+                        } 
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, "identifier", newFieldValue,
+                                                     isPrimary, null);
 
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
                         }
                     }
                 }
@@ -1147,23 +1147,21 @@ public class SequenceProcessor extends ChadoProcessor
                         Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
-                        } else {
-                            String synonymType = synonymAction.getSynonymType();
-                            if (synonymType == null) {
-                                synonymType = propTypeName;
-                            }
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                         isPrimary, null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        } 
+                        String synonymType = synonymAction.getSynonymType();
+                        if (synonymType == null) {
+                            synonymType = propTypeName;
                         }
-
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                     isPrimary, null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
                     }
                 }
             }
@@ -1237,20 +1235,18 @@ public class SequenceProcessor extends ChadoProcessor
                         Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
-                        } else {
-                            String synonymType = synonymAction.getSynonymType();
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                         isPrimary, null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
                         }
-
+                        String synonymType = synonymAction.getSynonymType();
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                     isPrimary, null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
                     } else {
                         if (action instanceof CreateCollectionAction) {
                             CreateCollectionAction cca = (CreateCollectionAction) action;
@@ -1321,17 +1317,17 @@ public class SequenceProcessor extends ChadoProcessor
                     throw new RuntimeException("found more than one object for reference "
                                                + fd + " in class "
                                                + interMineType + " items: " + itemList);
-                } else {
-                    Item item = itemList.iterator().next();
-                    Reference reference = new Reference();
-                    reference.setName(fd.getName());
-                    String itemIdentifier = item.getIdentifier();
-                    reference.setRefId(itemIdentifier);
-                    getChadoDBConverter().store(reference, intermineObjectId);
-
-                    // XXX FIXME TODO: special case for 1-1 relations - we need to set the reverse
-                    // reference
                 }
+                Item item = itemList.iterator().next();
+                Reference reference = new Reference();
+                reference.setName(fd.getName());
+                String itemIdentifier = item.getIdentifier();
+                reference.setRefId(itemIdentifier);
+                getChadoDBConverter().store(reference, intermineObjectId);
+
+                // XXX FIXME TODO: special case for 1-1 relations - we need to set the reverse
+                // reference
+                
             } else {
                 ReferenceList referenceList = new ReferenceList();
                 referenceList.setName(referenceName);
@@ -1343,6 +1339,7 @@ public class SequenceProcessor extends ChadoProcessor
         }
     }
 
+    @SuppressWarnings("boxing")
     private void processSynonymTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getSynonymResultSet(connection);
@@ -1366,9 +1363,8 @@ public class SequenceProcessor extends ChadoProcessor
             // it is a not null in db
             if (identifier == null) {
                 throw new RuntimeException("found null synonym name in synonym table.");
-            } else {
-                identifier = fixIdentifier(featureMap.get(featureId), identifier);
             }
+            identifier = fixIdentifier(featureMap.get(featureId), identifier);           
 
             if (currentFeatureId != null && currentFeatureId != featureId) {
                 existingAttributes = new HashSet<String>();
@@ -1422,14 +1418,13 @@ public class SequenceProcessor extends ChadoProcessor
                         String newFieldValue = createSynonymAction.processValue(identifier);
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
-                        } else {
-                            Item synonym =
-                                createSynonym(fdat, synonymTypeName, newFieldValue, setField,
-                                              null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        }
+                        Item synonym =
+                            createSynonym(fdat, synonymTypeName, newFieldValue, setField,
+                                          null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
                         }
                     }
                 }
@@ -1453,6 +1448,7 @@ public class SequenceProcessor extends ChadoProcessor
         return identifier;
     }
 
+    @SuppressWarnings("boxing")
     private void processPubTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
@@ -1503,14 +1499,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected String makePublication(Integer pubMedId) throws ObjectStoreException {
         if (publications.containsKey(pubMedId)) {
             return publications.get(pubMedId);
-        } else {
-            Item publication = getChadoDBConverter().createItem("Publication");
-            publication.setAttribute("pubMedId", pubMedId.toString());
-            getChadoDBConverter().store(publication); // Stores Publication
-            String publicationId = publication.getIdentifier();
-            publications.put(pubMedId, publicationId);
-            return publicationId;
         }
+        Item publication = getChadoDBConverter().createItem("Publication");
+        publication.setAttribute("pubMedId", pubMedId.toString());
+        getChadoDBConverter().store(publication); // Stores Publication
+        String publicationId = publication.getIdentifier();
+        publications.put(pubMedId, publicationId);
+        return publicationId;
     }
 
     /**
@@ -1628,9 +1623,8 @@ public class SequenceProcessor extends ChadoProcessor
         String organismIdsString = getOrganismIdsString();
         if (StringUtils.isEmpty(organismIdsString)) {
             return "";
-        } else {
-            return "organism_id IN (" + organismIdsString + ")";
         }
+        return "organism_id IN (" + organismIdsString + ")";        
     }
 
     /**
