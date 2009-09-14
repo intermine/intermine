@@ -638,8 +638,11 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             } else {
-                throw new RuntimeException("srcfeature_id (" + srcFeatureId + ") from location "
-                                           + featureLocId + " was not found in the feature table");
+                // TODO
+                String msg = "srcfeature_id (" + srcFeatureId + ") from location "
+                            + featureLocId + " was not found in the feature table";
+                LOG.error(msg);
+//              throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");
@@ -1537,7 +1540,7 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getFeatureTableResultSet(Connection connection)
         throws SQLException {
         String query = "SELECT * FROM " + tempFeatureTableName;
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureTableResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1599,7 +1602,7 @@ public class SequenceProcessor extends ChadoProcessor
                ? " AND (" + getExtraFeatureConstraint() + ")"
                : "");
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createFeatureTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_feature_index ON "
             + tempFeatureTableName + "(feature_id)";
@@ -1653,6 +1656,7 @@ public class SequenceProcessor extends ChadoProcessor
         return
             "SELECT feature_id FROM feature, cvterm"
             + "  WHERE type_id = cvterm.cvterm_id"
+            + "    AND feature.is_obsolete = 'f' "
             + "    AND cvterm.name IN (" + getFeaturesString(getChromosomeFeatureTypes()) + ")"
             + (getExtraFeatureConstraint() != null
                ? " AND (" + getExtraFeatureConstraint() + ")"
@@ -1692,7 +1696,7 @@ public class SequenceProcessor extends ChadoProcessor
                         + "      AND object_id IN (" + getFeatureIdQuery() + ")"
                         + extraQueryBits
                         + " ORDER BY feature1_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureRelationshipResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1755,7 +1759,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "     AND srcfeature_id IN"
             + "         (" + getChromosomeFeatureIdQuery() + ")"
             + "     AND locgroup = 0";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1782,7 +1786,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND f1.feature_id <> f2.feature_id"
             + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
             + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getMatchLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1804,7 +1808,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND feature.feature_id IN"
             + "        (" + getFeatureIdQuery() + ")"
             + "    AND dbxref.db_id = db.db_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getDbxrefResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1822,7 +1826,7 @@ public class SequenceProcessor extends ChadoProcessor
             "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN (" + getFeatureIdQuery() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeaturePropResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1845,7 +1849,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "   AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
             + "   AND cvterm.cv_id = cv.cv_id "
             + " ORDER BY feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureCVTermResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1867,7 +1871,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "     AND synonym.type_id = cvterm.cvterm_id"
             + "     AND feature_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY is_current DESC";
-        LOG.info("executing: " + query);
+        LOG.info("executing getSynonymResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1891,7 +1895,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND db.name = 'pubmed'"
             + "    AND feature_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY feature_pub.feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
