@@ -139,7 +139,7 @@ echo "==========================================================="
 echo
 echo "==========================================================="
 echo "Getting Ensembl Anopheles files"
-./get_ensembl_anoph $logdir $tempname $shared_data
+./get_ensembl_anoph $shared_data anopheles_gambiae core 
     if [ $? -ne 0 ]
     then
         "error getting Ensembl Anopheles files" 2>&1 >> tempfile
