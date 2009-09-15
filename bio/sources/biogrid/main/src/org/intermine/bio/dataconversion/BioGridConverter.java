@@ -10,11 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -57,6 +59,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class BioGridConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
+    private static final String PROP_FILE = "biogrid_config.properties";
     protected IdResolverFactory resolverFactory;
     private Map<String, String> terms = new HashMap();
     private Map<String, String> pubs = new HashMap();
@@ -64,7 +67,8 @@ public class BioGridConverter extends BioFileConverter
     private static final Map<String, String> PSI_TERMS = new HashMap();
     private Map<String, String> genes = new HashMap();
     private Set<String> synonyms = new HashSet();
-
+    private Map<String, Map<String, String>> config = new HashMap();
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -72,7 +76,7 @@ public class BioGridConverter extends BioFileConverter
      */
     public BioGridConverter(ItemWriter writer, Model model) {
         super(writer, model, "BioGRID", "BioGRID interaction data set");
-
+        readConfig();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
@@ -100,6 +104,41 @@ public class BioGridConverter extends BioFileConverter
         }
     }
 
+    private void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry: props.entrySet()) {
+
+            String key = (String) entry.getKey();
+            String value = ((String) entry.getValue()).trim();
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
+                                           + key);
+            }
+            String taxonId = attributes[0];
+            if (config.get(taxonId) == null) {
+                Map<String, String> configs = new HashMap();
+                config.put(taxonId, configs);
+            }
+            if (attributes[1].equals("xref")) {
+                config.get(taxonId).put(value, attributes[2].toLowerCase());
+            } else if (attributes[1].equals("shortLabel")) {
+                config.get(taxonId).put(value, "shortLabel");
+            } else {
+                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
+                    + ".  This line has not been processed.";
+                LOG.error(msg);
+            }
+        }
+    }
+    
     /**
      * Handles xml file
      */
@@ -167,26 +206,37 @@ public class BioGridConverter extends BioFileConverter
             } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
                             && stack.search("interactor") == 2) {
                 String db = attrs.getValue("db");
-                if (db != null && (db.equalsIgnoreCase("sgd") || db.equalsIgnoreCase("flybase")
-                                || db.equalsIgnoreCase("wormbase"))) {
-                    interactorHolder.primaryIdentifier = attrs.getValue("id");
+                if (db != null) {
+                    db = db.toLowerCase();
+                    interactorHolder.xrefs.put(db, attrs.getValue("id"));
                 }
 
-              // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
+            // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (qName.equals("shortLabel") && stack.search("interactor") == 2) {
-
-                attName = "secondaryIdentifier";
-
-             // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
+                attName = "shortLabel";
+           // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
                 try {
                     interactorHolder.organismRefId = getOrganism(taxId);
-                    setGene(taxId, interactorHolder);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store organism:" + taxId);
                 }
-
+                Map<String, String> identifierConfigs = config.get(taxId);
+                
+                if (identifierConfigs != null) {
+                    for (Map.Entry<String, String> entry : identifierConfigs.entrySet()) {
+                        try {
+                            boolean validGene 
+                            = setGene(taxId, interactorHolder, entry.getKey(), entry.getValue());
+                            if (validGene) {
+                                break;
+                            }
+                        } catch (ObjectStoreException e) {
+                            LOG.error("couldn't store gene for organism:" + taxId);
+                        }
+                    }
+                }
 
             /*********************************** INTERACTIONS ***********************************/
 
@@ -282,15 +332,15 @@ public class BioGridConverter extends BioFileConverter
 
             /********************************* GENES ***********************************/
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
-            } else if (attName != null && attName.equals("secondaryIdentifier")
+            } else if (attName != null && attName.equals("shortLabel")
                             && qName.equals("shortLabel") && stack.search("interactor") == 2) {
 
-                String secondaryIdentifier = attValue.toString();
-                if (secondaryIdentifier.startsWith("Dmel")) {
-                    secondaryIdentifier = secondaryIdentifier.substring(4);
-                    secondaryIdentifier = secondaryIdentifier.trim();
+                String shortLabel = attValue.toString();
+                if (shortLabel.startsWith("Dmel")) {
+                    shortLabel = shortLabel.substring(4);
+                    shortLabel = shortLabel.trim();
                 }
-                interactorHolder.secondaryIdentifier = secondaryIdentifier;
+                interactorHolder.shortLabel = shortLabel;
 
             /******************* INTERACTIONS ***************************************************/
 
@@ -372,35 +422,30 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        /**
-         * create/store gene (if new)
-         * @param taxonId id of organism for this gene
-         * @param ih interactor holder
-         * @throws ObjectStoreException
-         */
-        private void setGene(String taxonId, InteractorHolder ih)
+        private boolean setGene(String taxonId, InteractorHolder ih, String identifierField, 
+                                String db)
         throws ObjectStoreException, SAXException {
 
             IdResolver resolver = resolverFactory.getIdResolver(false);
 
-            // try primaryIdentifier
-            String label = "primaryIdentifier";
-            String identifier = resolveGene(resolver, taxonId, ih.primaryIdentifier);
-
-            // try again
-            if (identifier == null) {
-                if (!taxonId.equals("7227")) {  // resolver returns primaryIdentifier
-                    label = "secondaryIdentifier";
-                }
-                identifier = resolveGene(resolver, taxonId, ih.secondaryIdentifier);
+            String identifier = null;
+            String label = identifierField;
+           
+            if (db.equals("shortLabel")) {
+                identifier = ih.shortLabel;
+            } else {
+                identifier = ih.xrefs.get(db);
             }
-
+            
+            if (resolver != null) {
+                identifier = resolveGene(resolver, taxonId, identifier);
+                label = "primaryIdentifier";
+            }
+            
             // no valid identifiers
             if (identifier == null) {
                 ih.valid = false;
-                LOG.error("could not resolve bioentity == " + identifier + ", participantId: "
-                          + ih.biogridId);
-                return;
+                return false;
             }
 
             String refId = genes.get(identifier);
@@ -416,8 +461,8 @@ public class BioGridConverter extends BioFileConverter
 
             ih.identifier = identifier;
             ih.refId = refId;
-
-            return;
+            ih.valid = true;
+            return true;
         }
 
         private void setSynonym(String subjectRefId, String type, String value)
@@ -574,8 +619,8 @@ public class BioGridConverter extends BioFileConverter
             protected String biogridId;
             protected String identifier;
             protected String refId;
-            protected String primaryIdentifier;
-            protected String secondaryIdentifier;
+            protected Map<String, String> xrefs = new HashMap();
+            protected String shortLabel;
             protected boolean valid = true;
             protected String organismRefId;
 
