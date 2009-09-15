@@ -454,6 +454,7 @@
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome"/>
       <property name="organisms" value="7227 6239 4932"/>
+      <property name="dataSourceName" value="Reactome"/>
     </source>
     
     <source name="bdgp-insitu" type="bdgp-insitu">
