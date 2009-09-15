@@ -38,11 +38,11 @@ public class BioPAXConverterTest extends MockItemsTestCase
         
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream(TEST_FILE));
-        
-        
-        File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
-        converter.setCurrentFile(currentFile);
 
+        File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
+        converter.setBiopaxDataSourceName("Reactome");
+        converter.setCurrentFile(currentFile);
+        converter.setBiopaxOrganisms("9913");
         converter.process(new StringReader(input));
         converter.close();
 
