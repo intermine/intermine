@@ -60,19 +60,34 @@ public class PathwayPostprocessTest extends XMLTestCase
     }
 
     public void testPostProcess() throws Exception {
+        
+        // make sure gene has no pathways
+        Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
+        assertEquals(1, resGene.getPathways().size());
+        
+        // run postprocess
         PathwayPostprocess gp = new PathwayPostprocess(osw);
         gp.postProcess();
         
-        Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
+        // get gene from db again
+        resGene = (Gene) getFromDb(Gene.class).iterator().next();
 
-        // Gene should come back with a collection pathways
-        assertEquals(2, resGene.getPathways().size());
+        // Gene should now have pathways
+        assertEquals(3, resGene.getPathways().size());
+        
     }
-
+   
 
     // Store a gene with two protein, each protein has a pathway
     private void setUpData() throws Exception {
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        
+        // add pathway to gene
+        Pathway pathway3 = (Pathway) DynamicUtil.createObject(Collections.singleton(Pathway.class));        
+        Set<Pathway> coll3 = new HashSet();
+        coll3.add(pathway3);        
+        gene.setPathways(coll3);
+        
         Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene);
         Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
@@ -90,7 +105,7 @@ public class PathwayPostprocessTest extends XMLTestCase
         protein1.setPathways(coll1);
         protein2.setPathways(coll2);
         
-        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2,pathway1, pathway2 }));
+        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2, pathway1, pathway2, pathway3}));
 
         osw.beginTransaction();
         Iterator i = toStore.iterator();
