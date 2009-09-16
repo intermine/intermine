@@ -62,20 +62,21 @@ public class PathwayPostprocess extends PostProcessor
      */
     public void postProcess()
     throws ObjectStoreException {
-
-//        long startTime = System.currentTimeMillis();
-
         osw.beginTransaction();
         
         int count = 0;
-        // get biopax (metacyc, reactome, etc) pathways
 
         Iterator iter = getProteinPathways();
         
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
             Gene gene = (Gene) rr.get(0);
-            Pathway pathway = (Pathway) rr.get(1);
+            Protein protein = (Protein) rr.get(1);
+            Pathway pathway = (Pathway) rr.get(2);
+            if (proteinsToPathways.get(protein) == null) {
+                proteinsToPathways.put(protein, new HashSet());
+            }
+            proteinsToPathways.get(protein).add(pathway);
             if (genesToPathways.get(gene) == null) {
                 genesToPathways.put(gene, new HashSet());
             }
@@ -89,11 +90,16 @@ public class PathwayPostprocess extends PostProcessor
         while (iter.hasNext()) {
             ResultsRow rr = (ResultsRow) iter.next();
             Protein protein = (Protein) rr.get(0);
-            Pathway pathway = (Pathway) rr.get(1);
+            Gene gene = (Gene) rr.get(1);
+            Pathway pathway = (Pathway) rr.get(2);
             if (proteinsToPathways.get(protein) == null) {
                 proteinsToPathways.put(protein, new HashSet());
             }
             proteinsToPathways.get(protein).add(pathway);
+            if (genesToPathways.get(gene) == null) {
+                genesToPathways.put(gene, new HashSet());
+            }
+            genesToPathways.get(gene).add(pathway);
             count++;
         }
         
@@ -130,7 +136,8 @@ public class PathwayPostprocess extends PostProcessor
 
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
-
+        q.addToSelect(qcProtein);
+        
         QueryClass qcPathway = new QueryClass(Pathway.class);
         q.addFrom(qcPathway);
         q.addToSelect(qcPathway);
@@ -167,7 +174,8 @@ public class PathwayPostprocess extends PostProcessor
         
         QueryClass qcGene = new QueryClass(Gene.class);
         q.addFrom(qcGene);
-       
+        q.addToSelect(qcGene);
+        
         QueryClass qcPathway = new QueryClass(Pathway.class);
         q.addFrom(qcPathway);
         q.addToSelect(qcPathway);
