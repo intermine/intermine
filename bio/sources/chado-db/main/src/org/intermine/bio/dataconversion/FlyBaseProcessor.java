@@ -315,7 +315,10 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "     WHERE feature.type_id = cvterm.cvterm_id"
             + "       AND cvterm.name = 'gene' "
             + "       AND NOT feature.is_obsolete "
-            + "       AND feature.feature_id IN (SELECT feature_id FROM featureloc) "
+            + "       AND feature.feature_id IN "
+            + "          (SELECT l.feature_id " 
+            + "           FROM featureloc l, feature c "
+            + "           WHERE l.srcfeature_id = c.feature_id and c.is_obsolete='true')"
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
