@@ -51,7 +51,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private static final String PROP_FILE = "biopax_config.properties";
     private static final String DEFAULT_DB_NAME = "UniProt";
     protected IdResolverFactory resolverFactory;
-    private Map<String, String> pathways = new HashMap();
     private Map<String, Item> genes = new HashMap();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet();
@@ -74,7 +73,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();
-        
     }
 
     /**
@@ -97,6 +95,12 @@ public class BioPAXConverter extends FileConverter implements Visitor
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
         Set<pathway> pathwaySet = model.getObjects(pathway.class);
         for (pathway pathwayObj : pathwaySet) {
+            try {
+                pathwayRefId = getPathway(pathwayObj);
+            } catch (ObjectStoreException e) {
+                pathwayRefId = null;
+                continue;
+            }
             visited = new HashSet();
             traverser.traverse(pathwayObj, model);
         }
@@ -177,34 +181,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
             identifierField = "primaryIdentifier";
         }
     }
-    
-    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway) 
-    throws ObjectStoreException {
-        String rdfId = pathway.getRDFId();
-        String refId = pathways.get(rdfId);
-        if (refId == null) {
-            Item item = createItem("Pathway");
-            item.setAttribute("name", pathway.getNAME());
-            item.addToCollection("dataSets", dataset);
-            Set<org.biopax.paxtools.model.level2.xref> xrefs = pathway.getXREF();
-            for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
-                String xrefId = xref.getRDFId();
-                // xrefIds look like:  Reactome12345
-                if (xrefId.contains(dataSourceName)) {
-                    String identifier = StringUtils.substringAfter(xrefId, dataSourceName);
-                    item.setAttribute("identifier", identifier);
-                    try {
-                        store(item);
-                    } catch (ObjectStoreException e) {
-                        throw new ObjectStoreException(e);
-                    }
-                }
-            }
-            refId = item.getIdentifier();
-            pathways.put(rdfId, refId);
-        }
-        return refId;
-    }
 
     /**
      * Adds the BioPAX element into the model and traverses the element for its dependent elements.
@@ -220,14 +196,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
                 org.biopax.paxtools.model.level2.entity entity 
                 = (org.biopax.paxtools.model.level2.entity) bpe;
                 String className = entity.getModelInterface().getSimpleName();
-                if (className.equalsIgnoreCase("PATHWAY")) {
-                    try {
-                        pathwayRefId 
-                        = getPathway((org.biopax.paxtools.model.level2.pathway) entity);
-                    } catch (ObjectStoreException e) {
-                        return;
-                    }
-                }
                 if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
                     processProteinEntry(entity);
                 }
@@ -307,6 +275,29 @@ public class BioPAXConverter extends FileConverter implements Visitor
         return;
     }
     
+
+    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway) 
+    throws ObjectStoreException {
+        Item item = createItem("Pathway");
+        item.setAttribute("name", pathway.getNAME());
+        item.addToCollection("dataSets", dataset);
+        for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
+            String xrefId = xref.getRDFId();
+            // xrefIds look like:  Reactome12345
+            if (xrefId.contains(dataSourceName)) {
+                String identifier = StringUtils.substringAfter(xrefId, dataSourceName);
+                item.setAttribute("identifier", identifier);
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new ObjectStoreException(e);
+                }
+                return item.getIdentifier();
+            }
+        }
+        return null;
+    }
+    
     private Item getGene(String fieldName, String identifier) {
        Item item = genes.get(identifier);
         if (item == null) {
@@ -367,6 +358,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         String species = bits[1].split("\\.")[0];
 
         String organismName = genus + " " + species;
+        
         OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
         if (od == null) {
             throw new RuntimeException("no data for " + organismName 

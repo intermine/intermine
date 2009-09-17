@@ -25,7 +25,8 @@ public class BioPAXConverterTest extends MockItemsTestCase
 {
     private BioPAXConverter converter;
     private MockItemWriter itemWriter;
-    private static final String TEST_FILE = "Bos taurus.owl";
+    //private static final String TEST_FILE = "Bos taurus.owl";
+    private static final String TEST_FILE = "Saccharomyces cerevisiae.owl";
     
     public BioPAXConverterTest(String arg) {
         super(arg);
@@ -42,12 +43,12 @@ public class BioPAXConverterTest extends MockItemsTestCase
         File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
         converter.setBiopaxDatasourcename("Reactome");
         converter.setCurrentFile(currentFile);
-        converter.setBiopaxOrganisms("9913");
+        converter.setBiopaxOrganisms("4932");
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set expected = readItemSet("BioPAXConverterTest_tgt.xml");
 
