@@ -1827,8 +1827,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (!devStageIds.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " DEV STAGE");                    
-                }
-                
+                }                
             }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
                         
@@ -1840,6 +1839,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // ARRAY
             List<String> arrayIds = new ArrayList<String>();
             arrayIds.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
+            if (arrayIds.isEmpty()) {
+                LOG.info("ARRAY: " + typeToProp.get("array"));
+                arrayIds.addAll(lookForAttributesInOtherWikiPages("Array",
+                        typeToProp, new String[] {
+                        "adf.official name"
+                        }));
+                if (!arrayIds.isEmpty()) {
+                    LOG.info("Attribute found in other wiki pages: " 
+                            + dccId + " ARRAY ");                    
+                }
+            }
             storeSubmissionCollection(storedSubmissionId, "arrays", arrayIds);
             
             // CELL LINE
@@ -1878,7 +1888,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (!tissueIds.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " TISSUE");                    
-                }
+                } 
+                // if we want to fill it with 'whole organism' 
+                //   else {
+                //         tissueIds.add(createNonWikiSubmissionPropertyItem("Tissue", "whole organism"));
+                //        }
             }
             storeSubmissionCollection(storedSubmissionId, "tissues", tissueIds);
         }
@@ -1899,13 +1913,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             eFactorIdRefMap .put(efName, ef.getIdentifier());
         }
         // if pertinent to the current sub, add to the map for the references
-//        if (subs.contains(current)) {
             addToMap(submissionEFactorMap, current, efName);
-//        }
     }
 
-
-    
     
     private String[] lookForEFactorInOtherWikiPages(
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
@@ -2017,9 +2027,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             
             if (buildSubProperty != null) {
-                if (attHeading.equals("Characteristics")) {
+                // to cater for singular and plural..
+                if (attHeading.startsWith("Characteristic")) {
                     buildSubProperty.type = attName;
                     buildSubProperty.wikiPageUrl = attValue;
+                    
                     // add detail here as some Characteristics that don't reference a wiki page
                     // have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
@@ -2069,7 +2081,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
         return itemIds;
-        
     }
         
     private String getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
