@@ -1660,15 +1660,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
     }
 
-
-
-    private String[][] synonyms = new String[][]{
-            new String[] {"developmental_stage", "stage", 
-                    "developmental stage", "dev stage", "devstage"},
-            new String[] {"strain", "strain_or_line"}
+    // first value in the list of synonyms is the 'preferred' value
+    private static String[][] synonyms = new String[][]{
+            new String[] {"developmental stage", "stage", 
+                    "developmental_stage", "dev stage", "devstage"},
+                    new String[] {"strain", "strain_or_line"},
+                    new String[] {"cell line", "cell_line"}
     };
 
-    private List<String> makeLookupList(String initialLookup) {
+    private static List<String> makeLookupList(String initialLookup) {
         for (String[] synonymType : synonyms) {
             for (String synonym : synonymType) {
                 if (synonym.equals(initialLookup)) {
@@ -1679,6 +1679,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return new ArrayList<String>(Collections.singleton(initialLookup));
     }
 
+    private static String getPreferredSynonym(String initialLookup) {
+        return makeLookupList(initialLookup).get(0);
+    }
     
     // process new query
     // get DCC id
@@ -1763,13 +1766,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
 
             String dccId = dccIdMap.get(submissionId);
-            LOG.info("EX typeToProp: " + typeToProp.keySet());
 
             ExperimentalFactor ef = submissionEFMap.get(submissionId);
+            if (ef == null) {
+                LOG.warn("No exprimental factors found for submission: " + dccId);
+                continue;
+            }
             List<String> exFactorNames = ef.efNames;
             
             Integer efRank = 0;
-            LOG.info("EX exFactors: " + exFactorNames);
             for (String exFactor : exFactorNames) {
                 if (exFactor.startsWith(PCRPRIMER)) {
                     createEFItem(submissionId, PCRPRIMER, exFactor);
@@ -1905,7 +1910,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (!eFactorIdMap.containsKey(efName)) {
             Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
             ef.setAttribute ("name", efName);
-            ef.setAttribute ("type", type);
+            String preferredType = getPreferredSynonym(type);
+            ef.setAttribute ("type", preferredType);
             LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
@@ -1955,7 +1961,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (typeProps.containsKey(type)) {
                 SubmissionProperty prop = typeProps.get(type).get(0);
                 if (prop.details.containsKey("official name")) {
-                    String officialName = prop.details.get("official name").get(0);
+                    String officialName = getCorrectedOfficialName(prop);
                     if (officialName != null) {
                         String[] factor = new String[2];
                         factor[0] = type;
@@ -2035,7 +2041,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // add detail here as some Characteristics that don't reference a wiki page
                     // have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
-                    buildSubProperty.addDetail("official name", attValue);
                 } else {
                     buildSubProperty.addDetail(attHeading, attValue);
                 }
@@ -2083,6 +2088,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return itemIds;
     }
         
+    
+
     private String getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
     throws ObjectStoreException {
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
@@ -2100,7 +2107,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             + checkOfficialName);
                 }
 
-                String officialName = prop.details.get("official name").get(0);
+                String officialName = getCorrectedOfficialName(prop);
                 propItem = createSubmissionProperty(clsName, officialName);
 
                 if (clsName.equals("DevelopmentalStage")) {                    
@@ -2208,11 +2215,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     private Item createSubmissionProperty(String clsName, String name) {
         Item subProp = getChadoDBConverter().createItem(clsName);        
-        name = correctOfficialName(name, clsName);
         if (name != null) {           
             subProp.setAttribute("name", name);
         }
         return subProp;
+    }
+    
+    
+    private String getCorrectedOfficialName(SubmissionProperty prop) {
+        String preferredType = getPreferredSynonym(prop.type);
+        String name = prop.details.get("official name").get(0);
+        if (name == null) {
+            name = prop.details.get("Characteristic").get(0);
+        }
+        return correctOfficialName(name, preferredType);
     }
     
     /**
@@ -2221,8 +2237,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @param clsName behaviour different depending class to be created
      * @return a unified official name
      */
-    protected String correctOfficialName(String name, String clsName) {
-        if (clsName.equals("DevelopmentalStage")) {
+    protected String correctOfficialName(String name, String type) {
+        if (type.equals("developmental stage")) {
             name = name.replace("_", " ");
             name = name.replaceFirst("embryo", "Embryo");
             name = name.replaceFirst("Embyro", "Embryo");
@@ -2364,6 +2380,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    
     /**
      * Query to get data attributes
      * This is a protected method so that it can be overridden for testing.
