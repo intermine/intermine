@@ -1665,7 +1665,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             new String[] {"developmental stage", "stage", 
                     "developmental_stage", "dev stage", "devstage"},
                     new String[] {"strain", "strain_or_line"},
-                    new String[] {"cell line", "cell_line"}
+                    new String[] {"cell line", "cell_line", "Cell line"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1769,7 +1769,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             ExperimentalFactor ef = submissionEFMap.get(submissionId);
             if (ef == null) {
-                LOG.warn("No exprimental factors found for submission: " + dccId);
+                LOG.warn("No experimental factors found for submission: " + dccId);
                 continue;
             }
             List<String> exFactorNames = ef.efNames;
@@ -1798,6 +1798,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             + ", types = " + typeToProp.keySet());
                     // in this case we put what was declared as value in the experiment_prop
                     // table
+                    if (typeToProp.containsKey(exFactor)) {
+                        for (SubmissionProperty prop : typeToProp.get(exFactor)) {
+                            LOG.error("EX " + dccId + " values for type: " + prop.details.entrySet());
+                        }
+                    }
                     String efType = ef.efTypes.get(efRank);
                     createEFItem(submissionId, efType, exFactor);
                 } else {
@@ -1960,14 +1965,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (String type : types) {
             if (typeProps.containsKey(type)) {
                 SubmissionProperty prop = typeProps.get(type).get(0);
-                if (prop.details.containsKey("official name")) {
-                    String officialName = getCorrectedOfficialName(prop);
-                    if (officialName != null) {
-                        String[] factor = new String[2];
-                        factor[0] = type;
-                        factor[1] = officialName;
-                        return factor;
-                    }
+                String officialName = getCorrectedOfficialName(prop);
+                if (officialName != null) {
+                    String[] factor = new String[2];
+                    factor[0] = type;
+                    factor[1] = officialName;
+                    return factor;
                 }
             }
         }
@@ -2224,9 +2227,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     private String getCorrectedOfficialName(SubmissionProperty prop) {
         String preferredType = getPreferredSynonym(prop.type);
-        String name = prop.details.get("official name").get(0);
-        if (name == null) {
-            name = prop.details.get("Characteristic").get(0);
+        String name = null;
+        if (prop.details.containsKey("official name")) {
+            name = prop.details.get("official name").get(0);
+        } else {
+            // no official name so maybe there is a key that matches the type - sometimes the
+            // setup for Characteristics
+            for (String lookup : makeLookupList(prop.type)) {
+                if (prop.details.containsKey(lookup)) {
+                    name = prop.details.get(lookup).get(0);            
+                    LOG.info("EX - fetched name via Characteristic: " + name);
+                }
+            }
         }
         return correctOfficialName(name, preferredType);
     }
@@ -2238,6 +2250,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @return a unified official name
      */
     protected String correctOfficialName(String name, String type) {
+        if (name == null) {
+            return null;
+        }
+        
         if (type.equals("developmental stage")) {
             name = name.replace("_", " ");
             name = name.replaceFirst("embryo", "Embryo");
