@@ -1762,11 +1762,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
         
         
+        // let's deal with experimental factors
+        // let's check first that there is any
+        if (submissionEFMap.isEmpty()) {
+            LOG.error("NO SUBMISSION HAS EXPERIMENTAL FACTORS");
+        } else {
         for (Integer submissionId : subToTypes.keySet()) {
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
 
             String dccId = dccIdMap.get(submissionId);
 
+            if (submissionEFMap.get(submissionId).efNames.isEmpty()) {
+                LOG.error("SUBMISSION " + dccId + " HAS NO EXPERIMENTAL FACTOR");
+                continue;
+            }
+            
             ExperimentalFactor ef = submissionEFMap.get(submissionId);
             if (ef == null) {
                 LOG.warn("No experimental factors found for submission: " + dccId);
@@ -1811,7 +1821,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 efRank++;
             }
         }
-        
+        }
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
