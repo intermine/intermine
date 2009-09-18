@@ -616,6 +616,19 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
 
+//            it would be great if FlyMine would also have the Stage, Tissue 
+//            Source and Length ("Total bases") of the clones, all of which are in FlyBase.
+          
+            // library config example: for features of class "CDNAClone", if the type name
+            // of the library is "stage", set the "stage" attribute of the
+            // new CDNAClone to be this property
+            map.put(new MultiKey("library", "CDNAClone", "stage"),
+                    Arrays.asList(new SetFieldConfigAction("stage")));
+            map.put(new MultiKey("library", "CDNAClone", "tissue_source"),
+                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
+            map.put(new MultiKey("library", "CDNAClone", "length"),
+                    Arrays.asList(new SetFieldConfigAction("total_bases")));
+            
             // feature_cvterm example for Transposition: we create a featureTerms collection in the
             // Transposition objects containing SequenceOntologyTerm objects.  For the current
             // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
@@ -865,7 +878,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
             "point_mutation", "natural_transposable_element",
-            "transposable_element"
+            "transposable_element", "cDNA_clone"
     );
 
     /**

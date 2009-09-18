@@ -199,8 +199,11 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             {
                 8862364, "PBac{WH}f07990", "FBti0068355",
                 "transposable_element_insertion_site", null, null, null, 1
+            },
+            {
+                11507367, "UUGC0315", "FBcl0000001",
+                "cDNA_clone", null, null, null, 1
             }
-
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
@@ -369,6 +372,30 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getLibraryFeatureResultSet(@SuppressWarnings("unused")
+                                                Connection connection) {
+        String[] columnNames = new String[] {
+            "feature_id", "value", "type_name"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, "stage", "adult stage | female"
+            },
+            {
+                11507367, "foo", "bar"
+            }
+        };
+        
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
     /**
      * {@inheritDoc}
      */

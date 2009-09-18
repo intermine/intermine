@@ -177,7 +177,8 @@ public class SequenceProcessor extends ChadoProcessor
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
-
+        processLibraryFeatureTable(connection);
+        
         // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);
         // overridden by subclasses if necessary
@@ -1173,6 +1174,81 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
+    private void processLibraryFeatureTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getLibraryFeatureResultSet(connection);
+        int count = 0;
+        while (res.next()) {
+
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String identifier = res.getString("value");
+
+            if (identifier == null) {
+                continue;
+            }
+
+            String propTypeName = res.getString("type_name");
+
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
+                MultiKey key = new MultiKey("library", fdat.getInterMineType(), propTypeName);
+                int taxonId = fdat.organismData.getTaxonId();
+                List<ConfigAction> actionList = getConfig(taxonId).get(key);
+                if (actionList == null) {
+                    // no actions configured for this prop
+                    continue;
+                }
+                Set<String> fieldsSet = new HashSet<String>();
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (setAction.isValidValue(identifier)) {
+                            String newFieldValue = setAction.processValue(identifier);
+                            setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
+                                         newFieldValue);
+                            fieldsSet.add(newFieldValue);
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+                            }
+                        }
+                    }
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof CreateSynonymAction) {
+                        CreateSynonymAction synonymAction = (CreateSynonymAction) action;
+                        if (!synonymAction.isValidValue(identifier)) {
+                            continue;
+                        }
+                        String newFieldValue = synonymAction.processValue(identifier);
+                        Set<String> existingSynonyms = fdat.getExistingSynonyms();
+                        if (existingSynonyms.contains(newFieldValue)) {
+                            continue;
+                        } 
+                        String synonymType = synonymAction.getSynonymType();
+                        if (synonymType == null) {
+                            synonymType = propTypeName;
+                        }
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                     isPrimary, null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        LOG.info("created " + count + " synonyms from the libraryprop table");
+        res.close();
+    }
+
+    
     /**
      * Read the feature, feature_cvterm and cvterm tables, then set fields, create synonyms or
      * create objects based on the cvterms.
@@ -1532,7 +1608,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the features table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1574,7 +1650,7 @@ public class SequenceProcessor extends ChadoProcessor
     /**
      * Create a temporary table containing only the features that interest us.  Also create indexes
      * for the type and feature_id columns.
-     * The table is used in later queries.  This is a protected method so that it can be overriden
+     * The table is used in later queries.  This is a protected method so that it can be overridden
      * for testing.
      * @param connection the Connection
      * @throws SQLException if there is a problem
@@ -1667,7 +1743,7 @@ public class SequenceProcessor extends ChadoProcessor
      * Return the interesting rows from the feature_relationship table.  The feature pairs are
      * returned in both subject, object and object, subject orientations so that the relationship
      * processing can be configured in a natural way.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @param subjectFirst if true the subject_id column from the relationship table will be before
      *   the object_id in the results, otherwise it will be after.  ie.
@@ -1744,7 +1820,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the featureloc table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1769,7 +1845,7 @@ public class SequenceProcessor extends ChadoProcessor
     /**
      * Return the interesting matches from the featureloc and feature tables.
      * feature<->featureloc<->match_feature<->featureloc<->feature
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1794,7 +1870,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the dbxref table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1816,7 +1892,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the featureprop table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1833,9 +1909,37 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     /**
+     * Return the interesting rows from the libraryprop table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getLibraryFeatureResultSet(Connection connection) throws SQLException {
+        String query =
+            "select f.feature_id, lp.value, lp_type.name AS type_name "            
+            + "FROM feature f, library_feature lf, library l, libraryprop lp, cvterm lp_type "
+            + "WHERE  f.feature_id=lf.feature_id "
+            + "     AND lf.library_id=l.library_id "
+            + "     AND l.library_id=lp.library_id " 
+            + "     AND lp.type_id=lp_type.cvterm_id "            
+            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+        LOG.info("executing getLibraryFeatureResultSet(): " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+    
+//    SELECT fls.seqlen
+//    FROM feature cl, feature fls, feature_relationship fr, cvterm fls_type
+//    WHERE cl.uniquename='FBcl0000003' AND fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') AND 
+//      cl.feature_id=fr.object_id AND fr.subject_id=fls.feature_id AND 
+//      fls.type_id=fls_type.cvterm_id;
+    
+    /**
      * Return the interesting rows from the feature_cvterm/cvterm table.  Only returns rows for
      * those features returned by getFeatureIdQuery().
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1857,7 +1961,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the synonym table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1879,7 +1983,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the pub table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
