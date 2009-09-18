@@ -1198,7 +1198,7 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this prop
                     continue;
                 }
-                Set<String> fieldsSet = new HashSet<String>();
+                Set<String> fieldsSet = new HashSet();
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
@@ -1219,15 +1219,27 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
+    /**
+     * @param identifier identifier for term, eg. FB00004958
+     * @return an id representing the term object
+     * @throws ObjectStoreException if somethign goes wrong
+     */
+    protected String makeAnatomyTerm(String identifier) 
+    throws ObjectStoreException {
+        // override in subclasses as necessary
+        return null;
+    }
+    
     private void processLibraryCVTermTable(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryCVTermResultSet(connection);
+
         while (res.next()) {
 
             Integer featureId = new Integer(res.getInt("feature_id"));
-            String tissueSource = res.getString("value");
+            String identifier = res.getString("term_identifier");
 
-            if (tissueSource == null) {
+            if (identifier == null) {
                 continue;
             }
             if (featureMap.containsKey(featureId)) {
@@ -1239,19 +1251,19 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this prop
                     continue;
                 }
-                Set<String> fieldsSet = new HashSet<String>();
 
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
-                        if (setAction.isValidValue(tissueSource)) {
-                            String newFieldValue = setAction.processValue(tissueSource);
-                            setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                         newFieldValue);
-                            fieldsSet.add(newFieldValue);
-                            if (setAction.getFieldName().equals("primaryIdentifier")) {
-                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+                        if (setAction.isValidValue(identifier)) {
+                            Reference termReference = new Reference();
+                            termReference.setName(setAction.getFieldName());
+                            String termRefId = makeAnatomyTerm(identifier);
+                            if (termRefId == null) {
+                                continue;
                             }
+                            termReference.setRefId(termRefId);
+                            getChadoDBConverter().store(termReference, fdat.getIntermineObjectId());
                         }
                     }
                 }
@@ -1942,6 +1954,7 @@ public class SequenceProcessor extends ChadoProcessor
         return res;
     }
 
+    // TODO this shouldn't specify flybase
     /**
      * Return the interesting rows from the librarycvterm table.
      * This is a protected method so that it can be overridden for testing
@@ -1951,11 +1964,13 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getLibraryCVTermResultSet(Connection connection) throws SQLException {
         String query =
-            "select f.feature_id, cvt.name "            
-            + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv "
+            "select f.feature_id, d.accession AS term_identifier "
+            + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv, "
+            + "     dbxref d "
             + "WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "   
             + "     AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id " 
             + "     AND lcvt.cvterm_id=cvt.cvterm_id "
+            + "     AND cvt.dbxref_id = d.dbxref_id "
             + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getLibraryFeatureResultSet(): " + query);
         Statement stmt = connection.createStatement();

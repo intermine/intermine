@@ -59,6 +59,8 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private static final String FLYBASE_DB_NAME = "FlyBase";
 
+
+    
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
@@ -299,7 +301,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * Create a temporary table containing the ids of the located genes.  This is a protected
-     * method so that it can be overriden for testing
+     * method so that it can be overridden for testing
      * @param connection the Connection
      * @throws SQLException if there is a database problem
      */
@@ -318,7 +320,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "       AND feature.feature_id IN "
             + "          (SELECT l.feature_id " 
             + "           FROM featureloc l, feature c "
-            + "           WHERE l.srcfeature_id = c.feature_id and c.is_obsolete='true')"
+            + "           WHERE l.srcfeature_id = c.feature_id and c.is_obsolete='false')"
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
@@ -627,7 +629,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 //                    Arrays.asList(new SetFieldConfigAction("total_bases")));
             
             // anatomy term config example:  for features of class "CDNAClone" if there is an 
-            // anatomy term, set it to be CDNAClone.tissueSource
+            // anatomy term, set a reference in CDNAClone.tissueSource
             map.put(new MultiKey("anatomyterm", "CDNAClone", null),
                     Arrays.asList(new SetFieldConfigAction("tissueSource")));
             
@@ -1157,7 +1159,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private Map<String, String> developmentTermMap = new HashMap<String, String>();
     // map from FlyBase cv identifier (eg. "FBcv0001234") to Item identifier
     private Map<String, String> cvTermMap = new HashMap<String, String>();
-
+    
     private void processAlleleProps(Connection connection,
                                     Map<Integer, FeatureData> features)
         throws SQLException, ObjectStoreException {
@@ -1298,7 +1300,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 m.appendReplacement(sb, field);
             } else {
                 String identifier = field.substring(0, colonPos);
-                if (identifier.startsWith("FBbt")) {
+                if (identifier.startsWith(FLYBASE_ANATOMY_TERM_PREFIX)) {
                     dbAnatomyTermIdentifiers.add(addCVTermColon(identifier));
                 } else {
                     if (identifier.startsWith("FBdv")) {
@@ -1369,6 +1371,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         return phenotypeAnnotation;
     }
 
+    private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
+    
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");
 
@@ -1422,12 +1426,24 @@ public class FlyBaseProcessor extends SequenceProcessor
         return alleleItemIdentifiers;
     }
 
-    private String makeAnatomyTerm(String identifier) throws ObjectStoreException {
-        if (anatomyTermMap.containsKey(identifier)) {
-            return anatomyTermMap.get(identifier);
+    /**
+     * phenotype annotation creates and stores anatomy terms.  so does librarycvterm
+     * @param identifier identifier for anatomy term
+     * @return refId for anatomy term object
+     * @throws ObjectStoreException if term can't be stored
+     */
+    protected String makeAnatomyTerm(String identifier) throws ObjectStoreException {
+        String newIdentifier = identifier;
+        if (!newIdentifier.startsWith(FLYBASE_ANATOMY_TERM_PREFIX)) {
+            newIdentifier = FLYBASE_ANATOMY_TERM_PREFIX + identifier;
+            newIdentifier = addCVTermColon(newIdentifier);
+        }
+            
+        if (anatomyTermMap.containsKey(newIdentifier)) {
+            return anatomyTermMap.get(newIdentifier);
         }
         Item anatomyTerm = getChadoDBConverter().createItem("AnatomyTerm");
-        anatomyTerm.setAttribute("identifier", identifier);
+        anatomyTerm.setAttribute("identifier", newIdentifier);
         getChadoDBConverter().store(anatomyTerm);
         anatomyTermMap.put(identifier, anatomyTerm.getIdentifier());
         return anatomyTerm.getIdentifier();

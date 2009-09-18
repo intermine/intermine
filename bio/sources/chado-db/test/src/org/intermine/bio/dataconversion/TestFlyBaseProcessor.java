@@ -12,6 +12,8 @@ package org.intermine.bio.dataconversion;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVTerm;
@@ -371,7 +373,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -403,14 +405,14 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     protected ResultSet getLibraryCVTermResultSet(@SuppressWarnings("unused")
                                                 Connection connection) {
         String[] columnNames = new String[] {
-            "feature_id", "value"
+            "feature_id", "term_identifier"
         };
         Object[][] resObjects = new Object[][] {
             {
-                11507367, "adult"
+                11507367, "00004958"
             },
             {
-                2340000, "foobar"
+                2340000, "00001234"
             }
         };
         
