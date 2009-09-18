@@ -193,11 +193,13 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+    @SuppressWarnings("boxing")
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
         ResultSet res = getFeatureTableResultSet(connection);
         int count = 0;
+        Map<Integer, Integer> lengthMap = getLengths(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             String name = res.getString("name");
@@ -212,6 +214,10 @@ public class SequenceProcessor extends ChadoProcessor
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
+            } else {
+                if (lengthMap.get(featureId) != null) {
+                    seqlen = lengthMap.get(featureId);
+                }
             }
 
             if (processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
@@ -222,7 +228,15 @@ public class SequenceProcessor extends ChadoProcessor
         LOG.info("created " + count + " features");
         res.close();
     }
-
+    
+    /**
+     * @return map of feature_id to seqlen
+     */
+    protected Map<Integer, Integer> getLengths(Connection connection) {
+        return null;
+    }
+    
+    
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
      */
@@ -256,7 +270,6 @@ public class SequenceProcessor extends ChadoProcessor
                                            Integer organismId)
     throws ObjectStoreException {
 
-
         if (featureMap.containsKey(featureId)) {
             return false;
         }
@@ -272,6 +285,7 @@ public class SequenceProcessor extends ChadoProcessor
         String fixedUniqueName = fixIdentifier(fdat, uniqueName);
 
         if (seqlen > 0) {
+
             setAttributeIfNotSet(fdat, "length", String.valueOf(seqlen));
         }
         ChadoDBConverter chadoDBConverter = getChadoDBConverter();
@@ -1978,13 +1992,6 @@ public class SequenceProcessor extends ChadoProcessor
         return res;
     }
 
-    // sequence length
-//    SELECT fls.seqlen
-//    FROM feature cl, feature fls, feature_relationship fr, cvterm fls_type
-//    WHERE cl.uniquename='FBcl0000003' AND fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') 
-    //AND 
-//      cl.feature_id=fr.object_id AND fr.subject_id=fls.feature_id AND 
-//      fls.type_id=fls_type.cvterm_id;
     
     /**
      * Return the interesting rows from the feature_cvterm/cvterm table.  Only returns rows for
