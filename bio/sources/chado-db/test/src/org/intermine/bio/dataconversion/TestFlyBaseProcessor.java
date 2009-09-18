@@ -34,8 +34,10 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
+     * @throws SQLException 
      */
-    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) {
+    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) 
+    throws SQLException {
         super(chadoDBConverter);
     }
 
@@ -416,6 +418,27 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             }
         };
         
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getCDNALengthResultSet(Connection connection)
+                    throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "seqlen"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, 100
+            }
+        };
+
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
         res.setupColumnNames(columnNames);
