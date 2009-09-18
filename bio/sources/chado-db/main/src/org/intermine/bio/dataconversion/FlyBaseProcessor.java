@@ -878,7 +878,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
             "point_mutation", "natural_transposable_element",
-            "transposable_element", "cDNA_clone"
+            "transposable_element"
     );
 
     /**
