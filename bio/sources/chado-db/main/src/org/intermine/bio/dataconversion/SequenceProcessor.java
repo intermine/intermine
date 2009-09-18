@@ -178,6 +178,7 @@ public class SequenceProcessor extends ChadoProcessor
         processSynonymTable(connection);
         processFeaturePropTable(connection);
         processLibraryFeatureTable(connection);
+        processLibraryCVTermTable(connection);
         
         // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);
@@ -1177,7 +1178,6 @@ public class SequenceProcessor extends ChadoProcessor
     private void processLibraryFeatureTable(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryFeatureResultSet(connection);
-        int count = 0;
         while (res.next()) {
 
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -1214,37 +1214,49 @@ public class SequenceProcessor extends ChadoProcessor
                         }
                     }
                 }
+            }
+        }
+        res.close();
+    }
+
+    private void processLibraryCVTermTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getLibraryCVTermResultSet(connection);
+        while (res.next()) {
+
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String tissueSource = res.getString("value");
+
+            if (tissueSource == null) {
+                continue;
+            }
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
+                MultiKey key = new MultiKey("anatomyterm", fdat.getInterMineType(), null);
+                int taxonId = fdat.organismData.getTaxonId();
+                List<ConfigAction> actionList = getConfig(taxonId).get(key);
+                if (actionList == null) {
+                    // no actions configured for this prop
+                    continue;
+                }
+                Set<String> fieldsSet = new HashSet<String>();
 
                 for (ConfigAction action: actionList) {
-                    if (action instanceof CreateSynonymAction) {
-                        CreateSynonymAction synonymAction = (CreateSynonymAction) action;
-                        if (!synonymAction.isValidValue(identifier)) {
-                            continue;
-                        }
-                        String newFieldValue = synonymAction.processValue(identifier);
-                        Set<String> existingSynonyms = fdat.getExistingSynonyms();
-                        if (existingSynonyms.contains(newFieldValue)) {
-                            continue;
-                        } 
-                        String synonymType = synonymAction.getSynonymType();
-                        if (synonymType == null) {
-                            synonymType = propTypeName;
-                        }
-                        boolean isPrimary = false;
-                        if (fieldsSet.contains(newFieldValue)) {
-                            isPrimary = true;
-                        }
-                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                     isPrimary, null);
-                        if (synonym != null) {
-                            getChadoDBConverter().store(synonym);
-                            count++;
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (setAction.isValidValue(tissueSource)) {
+                            String newFieldValue = setAction.processValue(tissueSource);
+                            setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
+                                         newFieldValue);
+                            fieldsSet.add(newFieldValue);
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+                            }
                         }
                     }
                 }
             }
         }
-        LOG.info("created " + count + " synonyms from the libraryprop table");
         res.close();
     }
 
@@ -1929,10 +1941,33 @@ public class SequenceProcessor extends ChadoProcessor
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-    
+
+    /**
+     * Return the interesting rows from the librarycvterm table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getLibraryCVTermResultSet(Connection connection) throws SQLException {
+        String query =
+            "select f.feature_id, cvt.name "            
+            + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv "
+            + "WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "   
+            + "     AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id " 
+            + "     AND lcvt.cvterm_id=cvt.cvterm_id "
+            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+        LOG.info("executing getLibraryFeatureResultSet(): " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    // sequence length
 //    SELECT fls.seqlen
 //    FROM feature cl, feature fls, feature_relationship fr, cvterm fls_type
-//    WHERE cl.uniquename='FBcl0000003' AND fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') AND 
+//    WHERE cl.uniquename='FBcl0000003' AND fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') 
+    //AND 
 //      cl.feature_id=fr.object_id AND fr.subject_id=fls.feature_id AND 
 //      fls.type_id=fls_type.cvterm_id;
     

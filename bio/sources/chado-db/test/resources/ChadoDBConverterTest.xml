@@ -17,6 +17,7 @@
 <attribute name="primaryIdentifier" value="FBcl0000001"/>
 <attribute name="secondaryIdentifier" value="UUGC0315"/>
 <attribute name="stage" value="adult stage | female"/>
+<attribute name="tissueSource" value="adult"/>
 <reference name="organism" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>

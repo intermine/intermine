@@ -400,6 +400,30 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
      * {@inheritDoc}
      */
     @Override
+    protected ResultSet getLibraryCVTermResultSet(@SuppressWarnings("unused")
+                                                Connection connection) {
+        String[] columnNames = new String[] {
+            "feature_id", "value"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, "adult"
+            },
+            {
+                2340000, "foobar"
+            }
+        };
+        
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected ResultSet getFeatureLocResultSet(@SuppressWarnings("unused") Connection connection) {
         String[] columnNames = new String[] {
             "featureloc_id", "feature_id", "srcfeature_id", "fmin", "is_fmin_partial",
