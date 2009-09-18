@@ -13,6 +13,13 @@
 <reference name="subject" ref_id="12_2"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
+<item id="14_1" class="CDNAClone">
+<attribute name="primaryIdentifier" value="FBcl0000001"/>
+<attribute name="secondaryIdentifier" value="UUGC0315"/>
+<attribute name="stage" value="adult stage | female"/>
+<reference name="organism" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
+</item>
 <item id="15_2" class="SequenceOntologyTerm">
 <attribute name="name" value="chromosomal_inversion"/>
 </item>
@@ -885,11 +892,5 @@
 <item id="4_7" class="Sequence">
 <attribute name="length" value="27905053"/>
 <attribute name="residues" value="ggtggaacttgagaacgagttcaagagcaacatgtactgatgaatctgtcgtggggcgagcctgctgccaagtcgagaaagctgag"/>
-</item>
-<item id="14_1" class="CDNAClone">
-<attribute name="primaryIdentifier" value="FBcl0000001"/>
-<attribute name="secondaryIdentifier" value="UUGC0315"/>
-<reference name="organism" ref_id="1_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 </items>
