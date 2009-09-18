@@ -383,10 +383,10 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         };
         Object[][] resObjects = new Object[][] {
             {
-                11507367, "stage", "adult stage | female"
+                11507367, "adult stage | female", "stage"
             },
             {
-                11507367, "foo", "bar"
+                11507367, "bar", "foo"
             }
         };
         
