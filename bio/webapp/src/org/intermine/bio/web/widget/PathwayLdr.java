@@ -1,0 +1,161 @@
+package org.intermine.bio.web.widget;
+
+/*
+ * Copyright (C) 2002-2009 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.metadata.Model;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Protein;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.web.logic.bag.InterMineBag;
+import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
+
+/**
+ * {@inheritDoc}
+ * @author Julie Sullivan
+ */
+public class PathwayLdr extends EnrichmentWidgetLdr
+{
+    private static final Logger LOG = Logger.getLogger(PathwayLdr.class);
+    private Collection<String> taxonIds;
+    private InterMineBag bag;
+    private String namespace;
+    private Model model;
+
+    /**
+     * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
+     * or cellular_component)
+     * @param bag list of objects for this widget
+     * @param os object store
+     */
+    public PathwayLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
+        this.bag = bag;
+        taxonIds = BioUtil.getOrganisms(os, bag, false, true);
+        model = os.getModel();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Query getQuery(String action, List<String> keys) {
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcPathway = null;
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        
+        try {
+            qcPathway = new QueryClass(Class.forName(model.getPackageName() + ".Pathway"));
+        } catch (ClassNotFoundException e) {
+            LOG.error(e);
+            return null;
+        }        
+
+        QueryField qfPathwayIdentifier = new QueryField(qcPathway, "identifier");
+        QueryField qfPathwayName = new QueryField(qcPathway, "name");        
+        QueryField qfTaxonId = new QueryField(qcOrganism, "taxonId");
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        // gene.pathways CONTAINS Pathway
+        QueryCollectionReference c1 = new QueryCollectionReference(qcGene, "pathways");
+        cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcPathway));
+
+        Collection<Integer> taxonIdInts = new ArrayList();
+        // constrained only for memory reasons
+        for (String taxonId : taxonIds) {
+            try {
+                taxonIdInts.add(new Integer(taxonId));
+            } catch (NumberFormatException e) {
+                LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
+                return null;
+            }
+        }
+        cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));
+
+        // gene is from organism
+        QueryObjectReference c9 = new QueryObjectReference(qcGene, "organism");
+        cs.addConstraint(new ContainsConstraint(c9, ConstraintOp.CONTAINS, qcOrganism));
+
+        if (!action.startsWith("population")) {
+            cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
+        }
+
+        Query q = new Query();
+        q.setDistinct(true);
+        q.addFrom(qcGene);
+        q.addFrom(qcPathway);
+        q.addFrom(qcOrganism);
+
+        q.setConstraint(cs);
+
+        if (action.equals("analysed")) {
+            q.addToSelect(qfGeneId);
+        } else if (action.equals("export")) {
+            q.addToSelect(qfPathwayIdentifier);
+            q.addToSelect(qfPrimaryIdentifier);
+            q.addToOrderBy(qfPathwayIdentifier);
+        } else if (action.endsWith("Total")) {
+            q.addToSelect(qfGeneId);
+            Query subQ = q;
+            q = new Query();
+            q.addFrom(subQ);
+            q.addToSelect(new QueryFunction());
+        } else {    // calculating enrichment
+
+            q.addToSelect(qfPathwayIdentifier);
+            q.addToGroupBy(qfPathwayIdentifier);
+            q.addToSelect(new QueryFunction()); // gene count
+            if (action.equals("sample")) {
+                q.addToSelect(qfPathwayName);
+                q.addToGroupBy(qfPathwayName);
+            }
+        }
+        return q;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * @param namespace the namespace to set
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+}
+
+
+
