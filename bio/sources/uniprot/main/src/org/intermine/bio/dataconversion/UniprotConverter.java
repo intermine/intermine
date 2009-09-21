@@ -437,6 +437,7 @@ public class UniprotConverter extends DirectoryConverter
             Item goAnnotation = createItem("GOAnnotation");
             goAnnotation.setReference("subject", gene);
             goAnnotation.setReference("ontologyTerm", goTermRefId);
+            gene.addToCollection("goAnnotation", goAnnotation);
             try {
                 store(goAnnotation);
             } catch (ObjectStoreException e) {

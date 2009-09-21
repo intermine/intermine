@@ -34,4 +34,7 @@
     <attribute name="shortName" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains"/>
   </class>
+<class name="Gene" is-interface="true">
+  <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+</class>
 </classes>
