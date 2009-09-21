@@ -371,7 +371,6 @@
 <attribute name="residues" value="cttgtccctgtg"/>
 </item>
 <item id="14_1" class="CDNAClone">
-<attribute name="length" value="100"/>
 <attribute name="primaryIdentifier" value="FBcl0000001"/>
 <attribute name="secondaryIdentifier" value="UUGC0315"/>
 <attribute name="stage" value="adult stage | female"/>
