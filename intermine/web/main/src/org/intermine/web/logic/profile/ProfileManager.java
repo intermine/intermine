@@ -185,7 +185,7 @@ public class ProfileManager
      * @param username the username
      * @param password the password
      */
-    public void setPassword(String username, String password) {
+    public synchronized void setPassword(String username, String password) {
         UserProfile userProfile = getUserProfile(username);
         userProfile.setPassword(PasswordHasher.hashPassword(password));
         try {
@@ -212,7 +212,7 @@ public class ProfileManager
      * @param password the password
      * @return the Profile, or null if one doesn't exist
      */
-    public Profile getProfile(String username, String password) {
+    public synchronized Profile getProfile(String username, String password) {
         if (hasProfile(username) && validPassword(username, password)) {
             return getProfile(username);
         }
@@ -352,7 +352,7 @@ public class ProfileManager
      * Synchronise a user's Profile with the backing store
      * @param profile the Profile
      */
-    public void saveProfile(Profile profile) {
+    public synchronized void saveProfile(Profile profile) {
         Integer userId = profile.getUserId();
         try {
             UserProfile userProfile = getUserProfile(userId);
@@ -374,11 +374,10 @@ public class ProfileManager
 //                 userProfile.setId(userId);
             }
 
-            for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                org.intermine.web.logic.query.SavedQuery query = null;
+            for (Map.Entry<String, org.intermine.web.logic.query.SavedQuery> entry
+                    : profile.getSavedQueries().entrySet()) {
+                org.intermine.web.logic.query.SavedQuery query = entry.getValue();
                 try {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    query = (org.intermine.web.logic.query.SavedQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
                     savedQuery.setQuery(SavedQueryBinding.marshal(query, version));
                     savedQuery.setUserProfile(userProfile);
@@ -388,11 +387,9 @@ public class ProfileManager
                 }
             }
 
-            for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                TemplateQuery template = null;
+            for (Map.Entry<String, TemplateQuery> entry : profile.getSavedTemplates().entrySet()) {
+                TemplateQuery template = (TemplateQuery) entry.getValue();
                 try {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    template = (TemplateQuery) entry.getValue();
                     SavedTemplateQuery savedTemplate = template.getSavedTemplateQuery();
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
@@ -418,7 +415,7 @@ public class ProfileManager
      *
      * @param profile a Profile object
      */
-    public void createProfile(Profile profile) {
+    public synchronized void createProfile(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
         userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
@@ -441,7 +438,7 @@ public class ProfileManager
      * @param username the username
      * @return the relevant UserProfile
      */
-    public UserProfile getUserProfile(String username) {
+    public synchronized UserProfile getUserProfile(String username) {
         UserProfile profile = new UserProfile();
         profile.setUsername(username);
         Set<String> fieldNames = new HashSet<String>();
@@ -460,7 +457,7 @@ public class ProfileManager
      * @param userId the id of the user
      * @return the relevant UserProfile
      */
-    public UserProfile getUserProfile(Integer userId) {
+    public synchronized UserProfile getUserProfile(Integer userId) {
         if (userId == null) {
             return null;
         }
@@ -476,7 +473,7 @@ public class ProfileManager
      *
      * @return the usernames
      */
-    public List getProfileUserNames() {
+    public synchronized List getProfileUserNames() {
         Query q = new Query();
         QueryClass qcUserProfile = new QueryClass(UserProfile.class);
         QueryField qfUserName = new QueryField(qcUserProfile, "username");
@@ -485,16 +482,9 @@ public class ProfileManager
 
         SingletonResults res = osw.executeSingleton(q);
 
-        // TODO: Why does this copy the data?
-        List usernames = new ArrayList();
-
-        Iterator resIter = res.iterator();
-
-        while (resIter.hasNext()) {
-            usernames.add(resIter.next());
-        }
-
-        return usernames;
+        // TODO: We copy the data here in order to avoid any future ConcurrentModificationException
+        // in the SingletonResults
+        return new ArrayList(res);
     }
 
 
