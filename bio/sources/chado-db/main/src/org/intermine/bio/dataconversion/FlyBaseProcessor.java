@@ -134,7 +134,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private Map<String, String> mutagensMap = new HashMap();
 
     // a map from featureId to seqlen
-    private Map<Integer, Integer> cdnaLengths = new HashMap();
+    private Map<Integer, Integer> cdnaLengths = null;
     
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
@@ -202,10 +202,10 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
         
+
         try {
             cdnaLengths = makeCDNALengthMap(connection);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -215,11 +215,13 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @return map of feature_id to seqlen
      */
     protected Map<Integer, Integer> getLengths(Connection connection) {
-        try {
-            cdnaLengths = makeCDNALengthMap(connection);
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (cdnaLengths == null) {
+            try {
+                cdnaLengths = makeCDNALengthMap(connection);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         return cdnaLengths;
     }
@@ -1672,7 +1674,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getCDNALengthResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT f.feature_id, fls.seqlen "
+            "SELECT cl.feature_id, fls.seqlen "
             + "FROM feature cl, feature fls, feature_relationship fr, cvterm fls_type "
             + "WHERE fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') "
             + "  AND cl.feature_id=fr.object_id "
@@ -1706,7 +1708,6 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
-        int length = seqlen;
         if (type.equals("protein")) {
             // TODO what data are we trying to avoid with this?
             if (!uniqueName.startsWith("FBpp")) {
@@ -1735,7 +1736,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             proteinFeatureDataMap.put(md5checksum, fdat);
             return fdat;
         }
-        return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, length,
+        return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
                                          organismId);
     }
 
