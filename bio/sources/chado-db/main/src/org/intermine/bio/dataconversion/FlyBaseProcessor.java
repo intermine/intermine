@@ -134,7 +134,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private Map<String, String> mutagensMap = new HashMap();
 
     // a map from featureId to seqlen
-    private Map<Integer, Integer> cdnaLengths = null;
+//    private Map<Integer, Integer> cdnaLengths = null;
     
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
@@ -203,28 +203,28 @@ public class FlyBaseProcessor extends SequenceProcessor
         chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
         
 
-        try {
-            cdnaLengths = makeCDNALengthMap(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            cdnaLengths = makeCDNALengthMap(connection);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
     
     /**
      * @param connection database connection
      * @return map of feature_id to seqlen
      */
-    protected Map<Integer, Integer> getLengths(Connection connection) {
-        if (cdnaLengths == null) {
-            try {
-                cdnaLengths = makeCDNALengthMap(connection);
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        return cdnaLengths;
-    }
+//    protected Map<Integer, Integer> getLengths(Connection connection) {
+//        if (cdnaLengths == null) {
+//            try {
+//                cdnaLengths = makeCDNALengthMap(connection);
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//        return cdnaLengths;
+//    }
 
     /**
      * Return a map from chromosome_structure_variation feature_ids to the cvterm_id of the
@@ -1298,18 +1298,18 @@ public class FlyBaseProcessor extends SequenceProcessor
      * Return a map from feature_id to seqlen
      * @throws SQLException if somethign goes wrong
      */
-    private Map<Integer, Integer> makeCDNALengthMap(Connection connection) 
-    throws SQLException {
-        Map<Integer, Integer> retMap = new HashMap();
-
-        ResultSet res = getCDNALengthResultSet(connection);
-        while (res.next()) {
-            Integer featureId = new Integer(res.getInt("feature_id"));
-            Integer seqlen = new Integer(res.getInt("seqlen"));
-            retMap.put(featureId, seqlen);
-        }
-        return retMap;
-    }
+//    private Map<Integer, Integer> makeCDNALengthMap(Connection connection) 
+//    throws SQLException {
+//        Map<Integer, Integer> retMap = new HashMap();
+//
+//        ResultSet res = getCDNALengthResultSet(connection);
+//        while (res.next()) {
+//            Integer featureId = new Integer(res.getInt("feature_id"));
+//            Integer seqlen = new Integer(res.getInt("seqlen"));
+//            retMap.put(featureId, seqlen);
+//        }
+//        return retMap;
+//    }
 
     private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value,
                                          Item dataSetItem, List<String> publicationsItemIdList)
