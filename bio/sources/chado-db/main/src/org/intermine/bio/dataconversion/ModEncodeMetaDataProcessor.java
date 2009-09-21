@@ -38,6 +38,8 @@ import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
 
+import com.sun.org.omg.CORBA.AttrDescriptionSeqHelper;
+
 /**
  * Create items from the modENCODE metadata extensions to the chado schema.
  * @author Kim Rutherford,sc,rns
@@ -1665,7 +1667,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             new String[] {"developmental stage", "stage", 
                     "developmental_stage", "dev stage", "devstage"},
                     new String[] {"strain", "strain_or_line"},
-                    new String[] {"cell line", "cell_line", "Cell line"}
+                    new String[] {"cell line", "cell_line", "Cell line", "cell id"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1723,6 +1725,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attHeading = res.getString("att_heading");
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
+            String attDbxref = res.getString("att_dbxref");
             
             Integer submissionId = dataSubmissionMap.get(dataId);
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
@@ -1730,7 +1733,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             writer.write(dccId + comma + dataHeading + comma + dataName + comma 
                     + wikiPageUrl + comma + cvTerm + comma + attHeading + comma + attName 
-                    + comma + attValue + System.getProperty("line.separator"));
+                    + comma + attValue + comma + attDbxref + System.getProperty("line.separator"));
             
             
             // we are starting a new data row
@@ -1772,7 +1775,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             String dccId = dccIdMap.get(submissionId);
 
-            if (submissionEFMap.get(submissionId).efNames.isEmpty()) {
+            if (submissionEFMap.get(submissionId) == null ||
+                    (submissionEFMap.get(submissionId) != null
+                            && submissionEFMap.get(submissionId).efNames.isEmpty())) {
                 LOG.error("SUBMISSION " + dccId + " HAS NO EXPERIMENTAL FACTOR");
                 continue;
             }
@@ -2015,6 +2020,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Integer lastAttDbXref = new Integer(-1);
         Map<Integer, SubmissionProperty> createdProps = new HashMap<Integer, SubmissionProperty>();
         SubmissionProperty buildSubProperty = null;
+        boolean isValidCharacteristic = false;
         
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -2024,8 +2030,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer attDbxref = new Integer(res.getInt("att_dbxref"));
             
             Integer submissionId = dataSubmissionMap.get(dataId);
-            LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
-         
             if (attDbxref.intValue() != lastAttDbXref.intValue()) {
                 
                 // store the last build property if created, type is set only if we found an
@@ -2036,13 +2040,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
                 
                 // set up for next attDbxref 
-                if (createdProps.containsKey(attDbxref)) {
+                if (createdProps.containsKey(attDbxref) && isValidCharacteristic) {
                     // seen this property before so just add for this submission, don't build again
                     buildSubProperty = null;
+                    isValidCharacteristic = false;
                     addToSubToTypes(subToTypes, submissionId, createdProps.get(attDbxref));
                 } else {
                     buildSubProperty = new SubmissionProperty();
+                    isValidCharacteristic = false;
                 }
+            }
+            
+            if (attHeading.startsWith("Characteristic")) {
+                isValidCharacteristic = true;                
             }
             
             if (buildSubProperty != null) {
@@ -2050,9 +2060,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (attHeading.startsWith("Characteristic")) {
                     buildSubProperty.type = attName;
                     buildSubProperty.wikiPageUrl = attValue;
-                    
                     // add detail here as some Characteristics that don't reference a wiki page
-                    // have all information on single row
+                    // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
                 } else {
                     buildSubProperty.addDetail(attHeading, attValue);
@@ -2246,7 +2255,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (String lookup : makeLookupList(prop.type)) {
                 if (prop.details.containsKey(lookup)) {
                     name = prop.details.get(lookup).get(0);            
-                    LOG.info("EX - fetched name via Characteristic: " + name);
                 }
             }
         }
@@ -2342,7 +2350,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " d.name as data_name, d.value as data_value,"
             + " c.name as cv_term,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id"
+            + " a.dbxref_id as att_dbxref"
             + " from data d"
             + " LEFT JOIN data_attribute da ON (d.data_id = da.data_id)"
             + " LEFT JOIN attribute a on (da.attribute_id = a.attribute_id)"
