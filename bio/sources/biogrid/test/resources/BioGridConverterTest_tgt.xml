@@ -2,6 +2,7 @@
 <item id="8_3" class="Interaction">
 <attribute name="interactionType" value="physical"/>
 <attribute name="name" value="BioGRID:FBgn001"/>
+<attribute name="shortName" value="BioGRID:FBgn001"/>
 <attribute name="role" value="prey"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_1"/>
@@ -17,6 +18,7 @@
 <item id="8_2" class="Interaction">
 <attribute name="interactionType" value="genetic"/>
 <attribute name="name" value="BioGRID:FBgn001_FBgn003"/>
+<attribute name="shortName" value="BioGRID:FBgn001_FBgn003"/>
 <attribute name="role" value="bait"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_1"/>
@@ -36,6 +38,7 @@
 <item id="8_1" class="Interaction">
 <attribute name="interactionType" value="genetic"/>
 <attribute name="name" value="BioGRID:FBgn003_FBgn001"/>
+<attribute name="shortName" value="BioGRID:FBgn003_FBgn001"/>
 <attribute name="role" value="prey"/>
 <reference name="experiment" ref_id="4_1"/>
 <reference name="gene" ref_id="6_2"/>
