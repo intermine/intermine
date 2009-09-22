@@ -395,6 +395,7 @@ public class BioGridConverter extends BioFileConverter
                     }
                 }
                 interaction.setAttribute("name", interactionName);
+                interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
 
                 try {
