@@ -29,9 +29,12 @@
 <class name="TranscriptionEndSite" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptionEndSite"/>
 </class>
- <class name="Intron" is-interface="true">
-   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="intron"/>
- </class>
+<class name="Intron" is-interface="true">
+  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="intron"/>
+</class>
+<class name="Gene" is-interface="true">
+  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="gene"/>
+</class>
 
 
 <!-- NEW FEATURE classes for modENCODE -->
@@ -40,7 +43,9 @@
 <class name="StopCodon" extends="Codon" is-interface="true"/>
 <class name="StartCodon" extends="Codon" is-interface="true"/>
 <class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"/>
-<class name="TranscriptRegion" extends="Region" is-interface="true"/>
+<class name="TranscriptRegion" extends="Region" is-interface="true">
+  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptRegion"/>
+</class>
 <class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
 <!-- PolyASite is already in so_additions but as extending 'GenePart', not in miso -->
 <class name="PolyASite" extends="Region" is-interface="true">
@@ -59,25 +64,28 @@
 </class>
 <class name="OverlappingESTSet" extends="Region" is-interface="true">
   <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSet" />
+  <reference name="gene" referenced-type="Gene" reverse-reference="overlappingESTSet" />
   <reference name="mRNA" referenced-type="MRNA" reverse-reference="overlappingESTSet" />
   <reference name="intron" referenced-type="Intron" reverse-reference="overlappingESTSet"/>
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="overlappingESTSet"/>
   <reference name="SL1AcceptorSite" referenced-type="SL1AcceptorSite" reverse-reference="overlappingESTSet"/>
   <reference name="SL2AcceptorSite" referenced-type="SL2AcceptorSite" reverse-reference="overlappingESTSet"/>
   <reference name="transcriptionEndSite" referenced-type="TranscriptionEndSite" reverse-reference="overlappingESTSet"/>
+  <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
   <reference name="TSS" referenced-type="TSS" reverse-reference="overlappingESTSet"/>
 </class>
-<class name="SL1AcceptorSite" extends="TranscriptRegion" is-interface="true">
+<class name="SL1AcceptorSite" extends="Region" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL1AcceptorSite"/>
 </class>
-<class name="SL2AcceptorSite" extends="TranscriptRegion" is-interface="true">
+<class name="SL2AcceptorSite" extends="Region" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL2AcceptorSite"/>
 </class>
 <class name="ExperimentalFeature" extends="Region" is-interface="true">
   <reference name="transcript" referenced-type="Transcript" reverse-reference="experimentalFeature"/>
   <reference name="exon" referenced-type="Exon" reverse-reference="experimentalFeature"/>
 </class>
-<class name="TSS" extends="TranscriptRegion" is-interface="true">
+<!-- these should be actually the same class -->
+<class name="TSS" extends="TranscriptionStartSite" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="TSS"/>
 </class>
 
