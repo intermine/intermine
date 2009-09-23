@@ -1,0 +1,5 @@
+<project name="ensemblHumanOrthologue" default="default" basedir=".">
+  <description>build, test, package ensemblHumanOrthologue</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

@@ -12,7 +12,7 @@
  <h4>
   <a href="javascript:toggleDiv('hiddenDiv1');">
     <img id='hiddenDiv1Toggle' src="images/disclosed.gif"/>
-      Homology data from inparanoid ...
+      Homology data from TreeFam ...
   </a>
  </h4>
 

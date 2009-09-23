@@ -23,6 +23,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -48,7 +49,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.util.POSTLink;
+import org.intermine.web.util.AttributeLinkURL;
 
 /**
  * Set up maps for the attributeLinkDisplayer.jsp
@@ -133,7 +134,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost)";
+            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -196,8 +197,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                             }
                         }
                         if (attrValue != null) {
-                        config.put("attributeValue", attrValue);
-                        config.put("valid", Boolean.TRUE);
+                            config.put("attributeValue", attrValue);
+                            config.put("valid", Boolean.TRUE);
                         }
                     } catch (IllegalAccessException e) {
                         config.put("attributeValue", e);
@@ -218,14 +219,13 @@ public class AttributeLinkDisplayerController extends TilesAction
                         }
                         config.put("url", url);
                     }
-                }
-                else if (propType.equals("imageName")) {
+                } else if (propType.equals("imageName")) {
                     config.put("imageName", value);
-                }
-                else if (propType.equals("usePost")) {
+                } else if (propType.equals("usePost")) {
                     config.put("usePost", value);
-                }
-                else if (propType.equals("text")) {
+                } else if (propType.equals("delimiter")) {
+                    config.put("delimiter", value);
+                } else if (propType.equals("text")) {
                     String text;
                     text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
                     config.put("text", text);
@@ -246,6 +246,9 @@ public class AttributeLinkDisplayerController extends TilesAction
      */
     private void processConfigs(Map<String, ConfigMap> linkConfigs) {
         for (ConfigMap config : linkConfigs.values()) {
+            if (config.get("delimiter") != null) {
+                modifyIdString(config);
+            }
             if (config.get("usePost") != null
                     && ((String) config.get("usePost")).equalsIgnoreCase("true")) {
                 modifyConfigToPost(config);
@@ -253,12 +256,24 @@ public class AttributeLinkDisplayerController extends TilesAction
         }
     }
 
+    private void modifyIdString(ConfigMap config) {
+        String delim = (String) config.get("delimiter");
+        String urlString = (String) config.get("url");
+
+        urlString = urlString.replace(",", delim);
+        config.put("url", urlString);
+        
+        String idString = (String) config.get("attributeValue");
+        idString = idString.replace(",", delim);
+        config.put("attributeValue", idString);
+    }
+    
     private void modifyConfigToPost(ConfigMap config) {
         String urlString = (String) config.get("url");
-        POSTLink link;
+        AttributeLinkURL link;
         try {
             // Verifies, that url is valid
-            link = new POSTLink(urlString);
+            link = new AttributeLinkURL(urlString);
         } catch (MalformedURLException e) {
             LOG.error("Converting url from GET to POST form failed. Url retained in GET form.", e);
             return;
@@ -308,10 +323,13 @@ public class AttributeLinkDisplayerController extends TilesAction
 
         results = os.executeSingleton(q, 10000, true, true, true);
 
+        String delim = null;
         if (dbName.equalsIgnoreCase("flybase")) {
-            return StringUtil.join(results, "|");
+            delim = "|";
+        } else if (StringUtils.isEmpty(delim)) {
+            delim = ",";
         }
-        return StringUtil.join(results, ",");
+        return StringUtil.join(results, delim);
 }
 
     /**

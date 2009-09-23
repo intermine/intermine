@@ -30,7 +30,7 @@
     <intro-text>
       Orthologues from TreeFam.
     </intro-text>
-    <tile-name>model/inparanoid.jsp</tile-name>
+    <tile-name>model/orthologues.jsp</tile-name>
     <aspect-source name="TreeFam" url="http://www.treefam.org"/>
   </aspect>
 

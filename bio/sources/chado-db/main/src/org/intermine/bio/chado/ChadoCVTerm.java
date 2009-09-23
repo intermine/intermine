@@ -91,9 +91,8 @@ public class ChadoCVTerm
     public boolean equals(Object obj) {
         if (obj instanceof ChadoCVTerm) {
             return ((ChadoCVTerm) obj).name.equals(name);
-        } else {
-            return false;
-        }
+        } 
+        return false;    
     }
 
     /**

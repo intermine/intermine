@@ -39,7 +39,7 @@
       superfamily found in another part of the genome of a particular
       taxon. Paralogues are the result of gene duplication.
     </intro-text>
-    <tile-name>model/inparanoid.jsp</tile-name>
+    <tile-name>model/orthologues.jsp</tile-name>
     <aspect-source name="Inparanoid" url="http://inparanoid.cgb.ki.se/"/>
   </aspect>
 

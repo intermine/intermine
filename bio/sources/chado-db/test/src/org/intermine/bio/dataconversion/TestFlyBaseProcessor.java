@@ -12,6 +12,8 @@ package org.intermine.bio.dataconversion;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.intermine.bio.chado.ChadoCV;
 import org.intermine.bio.chado.ChadoCVTerm;
@@ -32,8 +34,10 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
+     * @throws SQLException 
      */
-    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) {
+    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) 
+    throws SQLException {
         super(chadoDBConverter);
     }
 
@@ -199,8 +203,11 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             {
                 8862364, "PBac{WH}f07990", "FBti0068355",
                 "transposable_element_insertion_site", null, null, null, 1
+            },
+            {
+                11507367, "UUGC0315", "FBcl0000001",
+                "cDNA_clone", null, null, null, 1
             }
-
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
@@ -368,7 +375,76 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getLibraryFeatureResultSet(@SuppressWarnings("unused")
+                                                Connection connection) {
+        String[] columnNames = new String[] {
+            "feature_id", "value", "type_name"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, "adult stage | female", "stage"
+            },
+            {
+                11507367, "bar", "foo"
+            }
+        };
+        
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getLibraryCVTermResultSet(@SuppressWarnings("unused")
+                                                Connection connection) {
+        String[] columnNames = new String[] {
+            "feature_id", "term_identifier"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, "00004958"
+            },
+            {
+                2340000, "00001234"
+            }
+        };
+        
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ResultSet getCDNALengthResultSet(Connection connection)
+                    throws SQLException {
+        String[] columnNames = new String[] {
+            "feature_id", "seqlen"
+        };
+        Object[][] resObjects = new Object[][] {
+            {
+                11507367, 100
+            }
+        };
 
+        MockMultiRowResultSet res = new MockMultiRowResultSet();
+        res.setupRows(resObjects);
+        res.setupColumnNames(columnNames);
+        return res;
+    }
+    
     /**
      * {@inheritDoc}
      */

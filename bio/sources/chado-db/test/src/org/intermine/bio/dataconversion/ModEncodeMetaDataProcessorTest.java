@@ -34,14 +34,14 @@ public class ModEncodeMetaDataProcessorTest extends TestCase {
     public void testCorrectOfficialName() throws Exception {
 
         // actual examples from metadata
-        assertEquals("Adult Female", processor.correctOfficialName("Adult_Female", "DevelopmentalStage"));
-        assertEquals("Embryo 0-4 h", processor.correctOfficialName("E0-4h", "DevelopmentalStage"));
-        assertEquals("Embryo 0-12 h", processor.correctOfficialName("Embryo 0-12h", "DevelopmentalStage"));
-        assertEquals("Embryo 0-4 h", processor.correctOfficialName("E0-4", "DevelopmentalStage"));
-        assertEquals("Embryo 2-4 h", processor.correctOfficialName("Embryo 2-4 hr", "DevelopmentalStage"));
-        assertEquals("L1 stage larvae", processor.correctOfficialName("DevStage: L1 stage larvae", "DevelopmentalStage"));
-        assertEquals("L1 stage larvae", processor.correctOfficialName("L1", "DevelopmentalStage"));
-        assertEquals("White prepupae (WPP) + 12 h", processor.correctOfficialName("WPP + 12 h", "DevelopmentalStage"));
+        assertEquals("Adult Female", processor.correctOfficialName("Adult_Female", "developmental stage"));
+        assertEquals("Embryo 0-4 h", processor.correctOfficialName("E0-4h", "developmental stage"));
+        assertEquals("Embryo 0-12 h", processor.correctOfficialName("Embryo 0-12h", "developmental stage"));
+        assertEquals("Embryo 0-4 h", processor.correctOfficialName("E0-4", "developmental stage"));
+        assertEquals("Embryo 2-4 h", processor.correctOfficialName("Embryo 2-4 hr", "developmental stage"));
+        assertEquals("L1 stage larvae", processor.correctOfficialName("DevStage: L1 stage larvae", "developmental stage"));
+        assertEquals("L1 stage larvae", processor.correctOfficialName("L1", "developmental stage"));
+        assertEquals("White prepupae (WPP) + 12 h", processor.correctOfficialName("WPP + 12 h", "developmental stage"));
     }
     
     

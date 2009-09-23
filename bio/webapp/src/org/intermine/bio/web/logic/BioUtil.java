@@ -140,6 +140,41 @@ public class BioUtil implements WidgetUtil
         final String dmel = "drosophila melanogaster";
         ArrayList<String> chromosomes = new ArrayList<String>();
 
+	if (organisms.contains("homo sapiens")) {
+		chromosomes.add("1");
+                chromosomes.add("2");
+                chromosomes.add("3");
+                chromosomes.add("4");
+                chromosomes.add("5");
+                chromosomes.add("6");
+                chromosomes.add("7");
+                chromosomes.add("8");
+                chromosomes.add("9");
+                chromosomes.add("10");
+                chromosomes.add("11");
+                chromosomes.add("12");
+                chromosomes.add("13");
+                chromosomes.add("14");
+                chromosomes.add("15");
+                chromosomes.add("16");
+                chromosomes.add("17");
+                chromosomes.add("18");
+                chromosomes.add("19");
+                chromosomes.add("20");
+                chromosomes.add("21");
+		if (lowercase) {
+        	        chromosomes.add("x");
+	                chromosomes.add("y");
+		}
+		else
+		{
+	                chromosomes.add("X");
+        	        chromosomes.add("Y");
+		}
+		if (organisms.size()==1) return chromosomes;
+		organisms.remove("homo sapiens");
+	}
+
         // TODO this may well go away once chromosomes sorted out in #1186
         if (organisms.contains(dmel)) {
             if (lowercase) {

@@ -10,6 +10,7 @@
 # TODO: ant failing and exiting with 0!
 #       clean up. check directory preparation
 #       improve logs!!
+#       add switch logic / checks
 #
 
 # see after argument parsing for all envs related to the release
@@ -56,7 +57,7 @@ FOUND=n          # y if new files downloaded
 INFILE=undefined # not using a given list of submissions
 INTERACT=n       # y: step by step interaction
 WGET=y           # use wget to get files from ftp
-GAM=y            # run get_all_modmine (only in F mode)
+PREP4FULL=n      # run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
 STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
 SUB=n            # if we are using a single submission, SUB=dccid
@@ -82,15 +83,15 @@ $progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DC
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
-	-r release: specify which instance to use (val, dev, build). Default is dev (not with -V or -F)
+	-r release: specify which instance to use (val, dev, test, build). Default is dev (not with -V or -F)
 	-s: no new loading of chado (stag is not run)
 	-v: verbode mode
 
 In addition to those:
-Advanced Usage switches: [-a] [-b] [-e] [-t] [-w] [-x]
+Advanced Usage switches: [-a] [-b] [-p] [-t] [-w] [-x]
 	-a: append to chado
 	-b: don't build a back-up of modchado-$REL
-	-e: don't update the sources (don't run get_all_modmine). Valid only in F mode
+	-p: prepare chadoxml directories and update the sources (run get_all_modmine). Valid only in F mode
 	-t: no acceptance test run
 	-w: no new webapp will be built
 	-x: don't build modmine (!: used for running only tests)
@@ -127,7 +128,7 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVabef:gir:stvwx" opt; do
+while getopts ":FMRVabf:gipr:stvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -136,7 +137,7 @@ while getopts ":FMRVabef:gir:stvwx" opt; do
 	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
-	e )  echo; echo "don't update all sources (get_all_modmine is not run)" ; GAM=n;;
+	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is not run)" ; PREP4FULL=y;;
 	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files: "; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
@@ -190,6 +191,7 @@ function interact {
 # if testing, wait here before continuing
 if [ $INTERACT = "y" -o $STOP = "y" ]
 then
+echo
 echo "$1"
 echo "Press return to continue (^C to exit).."
 echo -n "->"
@@ -298,6 +300,9 @@ function dochadosubs {
 cd $DATADIR/$1
 # if it is a symbolic link and this is not the given input
 # we skip that file
+
+# interact qq
+
 if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
  then
  continue
@@ -365,6 +370,41 @@ fi
 fi #VAL=y
 
 }
+
+
+function prepareForFull {
+#------------------------------------------------------
+# prepare directories for stag in case of FULL release
+#------------------------------------------------------
+# TODO: if no $1, no infile, no incr -> do all
+cd $DATADIR
+mv *.chadoxml $DATADIR/new
+mv $DATADIR/update/validated/*.chadoxml $DATADIR/new
+mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
+cd $DATADIR/new
+for sub in *.chadoxml
+ do
+ # if found symbolic link not to err directory throw an error
+ if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
+   then
+     echo "WARNING: $sub is missing from load directory" | tee -a $LOG
+	   STOP=y # TODO: if incr you should exit! or exit always
+   fi
+# CHECK XML and experiment title
+if [ ! -L "$sub" ]
+then
+echo $sub
+xmllint -noout $sub
+grep -2 "<experiment id"  $sub | grep "ename></uniquen"
+fi
+
+ done
+
+# TODO: add check deletions 
+
+}
+
+
 
 interact
 
@@ -449,27 +489,6 @@ then
 	exit 0;
 fi
 
-#------------------------------------------------------
-# prepare directories for stag in case of FULL release
-#------------------------------------------------------
-# TODO: if no $1, no infile, no incr -> do all
-    if [ "$FULL" = "y" ]
-     then
-      cd $DATADIR
-      mv *.chadoxml $DATADIR/new
-      mv $DATADIR/update/*.chadoxml $DATADIR/new
-      mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
-      cd $DATADIR/new
-   		for sub in *.chadoxml 
-   		do
-       # if found symbolic link not to err directory throw an error
-       if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
-        then
-        echo "WARNING: $sub is missing from load directory" | tee -a $LOG
-			  STOP=y # TODO: if incr you should exit! or exit always
-       fi
-		  done
-    fi
 
 interact
 cd $DATADIR
@@ -499,6 +518,18 @@ interact
 # fill chado db
 #---------------------------------------
 
+if [ "$FULL" = "y" -a "$PREP4FULL" = "y" ]
+then
+prepareForFull
+
+interact "just finished: directories preparation"
+
+cd $MINEDIR
+$SCRIPTDIR/checkdel.sh
+
+fi
+
+
 if [ "$STAG" = "y" ]
 then
 
@@ -516,26 +547,32 @@ else
 LOOPVAR="*.chadoxml"
 fi
 
-#for validation of new and update directory (cronmine)
-if [ "$VALIDATING" = "y" ] && [ $LOOPVAR="*.chadoxml" ]
+if [ -n "$1" ]
 then
-
-cd $DATADIR/new
-echo "====================="
-echo "validating new..."
-echo "====================="
-
+# doing one sub only, using loop because so expects dochadosubs
 for sub in $LOOPVAR
 do
 dochadosubs new
 done
 
+elif [ "$VALIDATING" = "y" -a $INFILE="undefined" ]
+then
+# validating all: is the configurtation used by cronmine.
+# run dochadosubs both in new and update directories
+
+cd $DATADIR/new
+echo "====================="
+echo "validating new..."
+echo "====================="
+for sub in $LOOPVAR
+do
+dochadosubs new
+done
 
 cd $DATADIR/update
 echo "====================="
 echo "validating update..."
 echo "====================="
-
 for sub in $LOOPVAR
 do
 dochadosubs update
@@ -546,7 +583,7 @@ else
 cd $DATADIR/new
 for sub in $LOOPVAR
 do
-chadofill $sub
+dochadosubs new
 done
 
 fi
@@ -599,7 +636,7 @@ then
 else
 # new build, all the sources
 # get the most up to date sources ..
-if [ $GAM = "y" ]
+if [ $PREP4FULL = "y" ]
 then
 cd ../bio/scripts
 ./get_all_modmine.sh|| { printf "%b" "\n modMine build (get_all_modmine.sh) FAILED.\n" ; exit 1 ; }

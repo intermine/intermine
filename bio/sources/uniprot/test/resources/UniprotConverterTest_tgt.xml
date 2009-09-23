@@ -49,6 +49,7 @@
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
 <reference name="organism" ref_id="11_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="goAnnotation"><reference name="GOAnnotation" ref_id="15_1"/><reference name="GOAnnotation" ref_id="15_2"/><reference name="GOAnnotation" ref_id="15_3"/></collection>
 </item>
 <item id="7_18" class="Synonym">
 <attribute name="isPrimary" value="false"/>
@@ -68,6 +69,7 @@
 <attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="11_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="goAnnotation"><reference name="GOAnnotation" ref_id="15_4"/><reference name="GOAnnotation" ref_id="15_5"/><reference name="GOAnnotation" ref_id="15_6"/></collection>
 </item>
 <item id="12_1" class="Component">
 <attribute name="name" value="full component name"/>
