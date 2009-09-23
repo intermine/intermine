@@ -34,7 +34,11 @@
     <attribute name="shortName" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains"/>
   </class>
+<!-- removed because was causing build failure
+		 Exception while merging /home/modminebuild/svn/trunk/bio/sources/uniprot/uniprot_additions.xml into /home/modminebuild/svn/trunk/modmine/dbmodel/build/model/genomic_model.xml
+		 
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
+-->
 </classes>
