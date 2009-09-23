@@ -38,7 +38,7 @@ public class TreefamConverter extends BioFileConverter
 {
     private Properties props = new Properties();
     private static final String PROP_FILE = "treefam_config.properties";
-    private static final String DATASET_TITLE = "TreeFam dataset";
+    private static final String DATASET_TITLE = "TreeFam data set";
     private static final String DATA_SOURCE_NAME = "TreeFam";
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
     private Set<String> taxonIds = new HashSet();

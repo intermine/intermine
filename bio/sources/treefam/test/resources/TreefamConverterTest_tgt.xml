@@ -44,7 +44,7 @@
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="TreeFam dataset"/>
+<attribute name="title" value="TreeFam data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 </items>
