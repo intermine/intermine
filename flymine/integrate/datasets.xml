@@ -467,12 +467,22 @@
     <item id="660" class="" implements="DataSource">
         <attribute name="name" value="FlyReg"/>
         <attribute name="description" value="Drosophila DNase I Footprint Database (v2.0)"/>
-        <attribute name="url" value="http://www.flyreg.org/"/>
+        <attribute name="url" value="http://www.flyreg.org"/>
     </item>
     <item id="661" class="" implements="DataSet">
         <attribute name="title" value="FlyReg data set"/>
-        <attribute name="url" value="http://www.flyreg.org/"/>
+        <attribute name="url" value="http://www.flyreg.org"/>
         <reference name="dataSource" ref_id="660"/>
+    </item>
+
+     <item id="670" class="" implements="DataSource">
+        <attribute name="name" value="TreeFam"/>
+        <attribute name="url" value="http://www.treefam.org"/>
+    </item>
+    <item id="671" class="" implements="DataSet">
+        <attribute name="title" value="TreeFam data set"/>
+        <attribute name="url" value="http://www.treefam.org/cgi-bin/misc_page.pl?download"/>
+        <reference name="dataSource" ref_id="670"/>
     </item>
 
      <item id="680" class="" implements="DataSource">
