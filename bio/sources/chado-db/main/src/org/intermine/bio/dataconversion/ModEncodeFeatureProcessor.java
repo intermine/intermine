@@ -63,7 +63,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          "natural_transposable_element", "start_codon", "stop_codon"
          , "cDNA"
          , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
-         , "three_prime_UTR", "polyA_site"
+         , "polyA_site", "overlapping_EST_set", "exon_region"
+         , "experimental_feature", "SL1_acceptor_site", "SL2_acceptor_site"
+         , "transcription_end_site", "TSS"
     );
 
 
@@ -306,6 +308,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("TIME QUERYING RSTMATCH " + ":" + (System.currentTimeMillis() - bT));
         return res;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -386,10 +389,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map = new MultiKeyMap();
             config.put(new Integer(taxonId), map);
 
+            // for sub 515
             map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
                     Arrays.asList(new SetFieldConfigAction("cds")));
 
-            map.put(new MultiKey("relationship", "PolyASite", 
+            map.put(new MultiKey("relationship", "PolyASite",
                     "derives_from", "ThreePrimeRACEClone"),
                     Arrays.asList(new SetFieldConfigAction("threePrimeRACEClone")));
 
@@ -401,37 +405,52 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     "complete_evidence_for_feature", "ThreePrimeUTR"),
                     Arrays.asList(new SetFieldConfigAction("threePrimeUTR")));
 
-//            map.put(new MultiKey("relationship", "CDNAClone", "derived_assoc_cdna_clone", "Gene"),
+            // for sub 35
+//            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+//                    "full_evidence_for_feature", "Gene"),
 //                    Arrays.asList(new SetFieldConfigAction("gene")));
-//
-//            map.put(new MultiKey("relationship", "Gene", "producedby", "Protein"),
-//                    Arrays.asList(new SetFieldConfigAction("proteins")));
 
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "full_evidence_for_feature", "MRNA"),
+                    Arrays.asList(new SetFieldConfigAction("mRNA")));
+
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "partial_evidence_for_feature", "MRNA"),
+                    Arrays.asList(new SetFieldConfigAction("mRNA")));
+
+            // 433
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "Intron"),
+                    Arrays.asList(new SetFieldConfigAction("intron")));
             
-            // synomym configuration example: for features of class "Gene", if the type name of
-            // the synonym is "fullname" and "is_current" is true, set the "name" attribute of
-            // the new Gene to be this synonym and then make a Synonym object
-//            map.put(new MultiKey("synonym", "Gene", "fullname", Boolean.TRUE),
-//                    Arrays.asList(new SetFieldConfigAction("name"),
-//                                  CREATE_SYNONYM_ACTION));
-
-//            // null for the "is_current" means either TRUE or FALSE is OK.
-
-            // featureprop configuration example: for features of class "Gene", if the type name
-            // of the prop is "cyto_range", set the "cytoLocation" attribute of the
-            // new Gene to be this property
-//            map.put(new MultiKey("prop", "Gene", "cyto_range"),
-//                    Arrays.asList(new SetFieldConfigAction("cytoLocation")));
-
-            // feature configuration example: for features of class "Exon", from "FlyBase",
-            // set the Gene.symbol to be the "name" field from the chado feature
-//            map.put(new MultiKey("feature", "Exon", FLYBASE_DB_NAME, "name"),
-//                    Arrays.asList(new SetFieldConfigAction("symbol"),
-//                                  CREATE_SYNONYM_ACTION));
-            // DO_NOTHING_ACTION means skip the name from this feature
-//            map.put(new MultiKey("feature", "Chromosome", FLYBASE_DB_NAME, "name"),
-//                    Arrays.asList(DO_NOTHING_ACTION));
-
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "PolyASite"),
+                    Arrays.asList(new SetFieldConfigAction("polyASite")));
+            
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "SL1AcceptorSite"),
+                    Arrays.asList(new SetFieldConfigAction("SL1AcceptorSite")));
+            
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "SL2AcceptorSite"),
+                    Arrays.asList(new SetFieldConfigAction("SL2AcceptorSite")));
+            
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "TranscriptionEndSite"),
+                    Arrays.asList(new SetFieldConfigAction("transcriptionEndSite")));
+            
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "complete_evidence_for_feature", "TSS"),
+                    Arrays.asList(new SetFieldConfigAction("TSS")));
+            
+            map.put(new MultiKey("relationship", "ExperimentalFeature", 
+                    "evidence_for_feature", "Transcript"),
+                    Arrays.asList(new SetFieldConfigAction("transcript")));
+            
+            map.put(new MultiKey("relationship", "ExperimentalFeature", 
+                    "evidence_for_feature", "Exon"),
+                    Arrays.asList(new SetFieldConfigAction("exon")));
+            
         }
         return map;
     }
@@ -515,8 +534,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -525,7 +542,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         // to limit the process to the current submission
         createSubFeatureIdTempTable(connection);
     }
-
 
 
     /**
@@ -561,22 +577,19 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         //do
         String uniqueName = fdat.getChadoFeatureUniqueName();
         String name = fdat.getChadoFeatureName();
-//        String type = fdat.getInterMineType();
+        // String type = fdat.getInterMineType();
+        // LOG.info("IDI TYPE " + type);
 
         if (StringUtil.isEmpty(identifier)) {
             if (StringUtil.isEmpty(name)) {
                 String fixedName = uniqueName.substring(uniqueName.lastIndexOf('.') + 1);
-                //LOG.info("IDI " + fixedName + "|<-" + uniqueName + "|" + name + "|");
                 return fixedName;
             } else {
-                //LOG.info("IDI else " + uniqueName + "|" + name + "|");
                 return name;
             }
         } else if (identifier == name) {
-            //LOG.info("IDI name | " + uniqueName + "|" + name + "|");
             return identifier;
         } else {
-            //LOG.info("IDI rest | " + uniqueName + "|" + name + "|");
             return identifier;
         }
     }
