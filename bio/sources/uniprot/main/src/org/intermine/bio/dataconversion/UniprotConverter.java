@@ -437,6 +437,7 @@ public class UniprotConverter extends DirectoryConverter
             Item goAnnotation = createItem("GOAnnotation");
             goAnnotation.setReference("subject", gene);
             goAnnotation.setReference("ontologyTerm", goTermRefId);
+            gene.addToCollection("goAnnotation", goAnnotation);
             try {
                 store(goAnnotation);
             } catch (ObjectStoreException e) {
@@ -581,7 +582,7 @@ public class UniprotConverter extends DirectoryConverter
 
         if (method.equals("name")) {
             if (entry.getGeneNames() == null || entry.getGeneNames().isEmpty()) {
-                LOG.error(" ~~~ No gene names for " + taxonId + ". protein accession:"
+                LOG.error("No gene names for " + taxonId + ". protein accession:"
                           + entry.getPrimaryAccession());
                 return null;
             }
@@ -591,6 +592,19 @@ public class UniprotConverter extends DirectoryConverter
                 // See #2122
                 identifierValue = entry.getGeneDesignation("Ensembl");   
             } else {
+                Map<String, List<String>> dbrefs = entry.getDbrefs();
+                String msg = "no " + value + " identifier found for gene attached to protein: " 
+                                + entry.getPrimaryAccession();
+                if (dbrefs == null || dbrefs.isEmpty()) {
+                    LOG.error(msg);
+                    return null;
+                }
+                List<String> identifiers = dbrefs.get(value);
+                if (identifiers == null || identifiers.isEmpty()) {
+                    LOG.error(msg);
+                    return null;
+                }
+                // TODO handle multiple identifiers somehow
                 identifierValue = entry.getDbrefs().get(value).get(0);
             }
         } else {

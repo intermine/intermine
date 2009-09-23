@@ -7,212 +7,61 @@
 
 <!-- template.jsp -->
 
+<c:set var="index" value="${0}"/>
 
 <tiles:importAttribute/>
 <html:xhtml/>
+<script type="text/javascript" src="js/templateForm.js"></script>
 <script type="text/javascript" src="js/autocompleter.js"></script>
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="css/template.css"/>
 
-<script type="text/javascript">
-  <!--
-
-     var fixedOps = new Array();
-
-     /***********************************************************
-     * Called when user chooses a constraint operator. If the
-     * user picks an operator contained in fixedOptionsOps then
-     * the input box is hidden and the user can only choose
-     **********************************************************/
-     function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
-     {
-     if (attrOptsElement == null)
-     return;
-
-     for (var i=0 ; i<fixedOps[index].length ; i++)
-                                             {
-                                             if (attrOpElement.value == fixedOps[index][i])
-                                             {
-                                             document.getElementById("operandEditSpan" + index).style.display = "none";
-                                             attrValElement.value = attrOptsElement.value; // constrain value
-                                             return;
-                                             }
-                                             }
-                                             document.getElementById("operandEditSpan" + index).style.display = "";
-                                             }
-
-                                             /***********************************************************
-                                             * Use bag checkbox has been clicked.
-                                             **********************************************************/
-                                             function clickUseBag(index)
-                                             {
-                                             var useBag = document.templateForm["useBagConstraint("+index+")"].checked;
-
-                                             document.templateForm["attributeOps("+index+")"].disabled=useBag;
-                                             if (document.templateForm["attributeOptions("+index+")"])
-                                             document.templateForm["attributeOptions("+index+")"].disabled=useBag;
-                                             document.templateForm["attributeValues("+index+")"].disabled=useBag;
-                                             document.templateForm["bag("+index+")"].disabled=!useBag;
-                                             document.templateForm["bagOp("+index+")"].disabled=!useBag;
-                                             }
-
-                                             function initClickUseBag(index)
-                                             {
-                                             if(selectedBagName){
-                                             document.templateForm["bag("+index+")"].value=selectedBagName;
-                                             document.templateForm["useBagConstraint("+index+")"].checked = true;
-                                             }
-                                             clickUseBag(index);
-                                             }
-
-                                             /***********************************************************
-                                             * Init attribute value with selected item and hide input box if
-                                             * required
-                                             **********************************************************/
-                                             /*function initConstraintForm(index, attrOpElement, attrOptsElement, attrValElement)
-                                             {
-                                             if (attrOptsElement == null)
-                                             return;
-
-                                             attrValElement.value = attrOptsElement.value;
-                                             updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
-                                             }*/
-
-                                             /***************Handle display of help windows******************************/
-                                             var helpMsgArray = new Array();
-                                             var ourDate;
-                                             var isIE = '${iePre7}';
-                                             function displayHelpMsg(e, id) {
-                                             if(isIE != 'true') {
-                                             // IE is retarded and doesn't pass the event object
-                                             if (e == null)
-                                             e = window.event;
-
-                                             // IE uses srcElement, others use target
-                                             var target = e.target != null ? e.target : e.srcElement;
-                                             // grab the clicked element's position
-                                             _clientX = e.clientX;
-                                             _clientY = e.clientY;
-
-                                             // grab the clicked element's position
-                                             _offsetX = ExtractNumber(target.style.left);
-                                             _offsetY = ExtractNumber(target.style.top);
-
-                                             $(id).style.left = (_clientX + _offsetX) + "px";
-                                             $(id).style.top = (_clientY + _offsetY) + "px";
-                                             jQuery('#' + id).fadeIn(300);
-                                             helpMsgArray[helpMsgArray.length] = id;
-                                             ourDate = new Date().getTime();
-                                             } else {
-                                             $(id).style.position = "relative";
-                                             $(id).style.display = "block";
-                                             }
-                                             }
-                                             document.body.onclick = function clearHelpMsg() {
-                                             newDate = new Date().getTime();
-                                             if(newDate > (ourDate + 100)){
-     for(var i=0;i<helpMsgArray.length;i++) {
-                                            jQuery('#' + helpMsgArray[i]).hide(300);
-                                            $('DivShim').style.display = "none";
-                                            }
-                                            }
-                                            }
-                                            function ExtractNumber(value)
-                                            {
-                                            var n = parseInt(value);
-
-                                            return n == null || isNaN(n) ? 0 : n;
-                                            }
-
-                                            function forwardToLinks()
-                                            {
-   	                                    // needed validation that bag is not used, validation is performed in the Struts action as well
-                                            if (isBagUsed()) {
-                                            new Insertion.Bottom('error_msg','Link could not be created. This template contains list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list contraint.<br/>');
-                                            haserrors=1;
-                                            jQuery('#error_msg').fadeIn();
-                                            return;
-                                            }
-                                            document.getElementById('actionType').value = 'links';
-                                            document.templateForm.submit();
-                                            }
-
-                                            function isBagUsed() {
-                                            // checks if bag is used, the presumption is that there aren't more than 10 bag constraints
-                                            for (var i = 0; i < 10; i++) {
-                                                                if (document.templateForm["useBagConstraint("+i+")"]) {
-	                                                        if (document.templateForm["useBagConstraint("+i+")"].checked) {
-	                                                        return true;
-	                                                        }
-                                                                }
-                                                                }
-                                                                return false;
-                                                                }
-
-                                                                function filterByTag(tag) {
-                                                                if (tag != "") {
-                                                                if (origSelectValues == null) {
-        	                                                saveOriginalSelect();
-                                                                }
-                                                                var callBack = function(filteredList) {
-                                                                setSelectElement('bagSelect', '', filteredList);
-                                                                }
-                                                                AjaxServices.filterByTag('bag', tag, callBack);
-                                                                } else {
-    	                                                        restoreOriginalSelect();
-                                                                }
-                                                                }
-
-                                                                var origSelectValues = null;
-
-                                                                function saveOriginalSelect() {
-                                                                origSelectValues = getSelectValues('bagSelect');
-                                                                }
-
-                                                                function restoreOriginalSelect() {
-	                                                        if (origSelectValues != null) {
-		                                                setSelectElement('bagSelect', '', origSelectValues);
-		                                                }
-                                                                }
-                                                                //-->
-                                            </script>
-
-
+<%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
+
+
+
 <div class="body" align="center">
-  <im:boxarea stylename="plainbox" fixedWidth="60%">
-    <html:form action="/templateAction">
-      <h2 class="templateTitle">
-        <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
-        ${templateTitle}
+<im:boxarea stylename="plainbox" fixedWidth="60%">
+<html:form action="/templateAction">
+    
+    <%-- template title --%>
+	<h2 class="templateTitle">
+    	<c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
+	    ${templateTitle}        
         <tiles:insert name="setFavourite.tile">
-          <tiles:put name="name" value="${templateQuery.name}"/>
-          <tiles:put name="type" value="template"/>
-      </tiles:insert></h2>
-      <div class="templateDescription">${templateQuery.description}</div>
-      <ol class="templateForm">
-        <c:set var="index" value="${0}"/>
-        <c:forEach items="${templateQuery.editableNodes}" var="node">
-          <c:forEach items="${constraints[node]}" var="con" >
-            <c:set var="index" value="${index+1}"/>
-            <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
-            <c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
-            <c:set var="options" value="${displayConstraints[con].optionsList}"/>
-            <c:remove var="bags"/>
-            <c:remove var="bagType"/>
-            <c:if test="${! empty constraintBags[con]}">
-              <c:set var="bags" value="${constraintBags[con]}"/>
-              <c:set var="bagType" value="${constraintBagTypes[con]}"/>
-            </c:if>
-
-            <c:if test="${!empty con.description}">
-              <li class="firstLine">
-                <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
-                <i><c:out value="${con.description}"/></i>
-              </li>
-            </c:if>
-            <li>
-
+       	  <tiles:put name="name" value="${templateQuery.name}"/>
+	      <tiles:put name="type" value="template"/>
+		</tiles:insert>
+	</h2>
+      
+	<%-- description --%>
+	<div class="templateDescription">${templateQuery.description}</div>
+	
+		<ol class="templateForm">
+			        
+		<%-- constraint list --%>
+		<c:forEach items="${templateQuery.editableNodes}" var="node">
+	
+			<%-- what's this loop --%>        
+			<c:forEach items="${constraints[node]}" var="con" >
+          
+    	        <c:set var="index" value="${index+1}"/>
+        	    <c:set var="validOps" value="${displayConstraints[con].validOps}"/>
+            	<c:set var="fixedOps" value="${displayConstraints[con].fixedOpIndices}"/>
+	            <c:set var="options" value="${displayConstraints[con].optionsList}"/>
+    	        <c:remove var="bags"/>
+        	    <c:remove var="bagType"/>
+            	<c:if test="${! empty constraintBags[con]}">
+	              <c:set var="bags" value="${constraintBags[con]}"/>
+    	          <c:set var="bagType" value="${constraintBagTypes[con]}"/>
+        	    </c:if>
+	            <c:if test="${!empty con.description}">
+    	          <li class="firstLine"><c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if><i><c:out value="${con.description}"/></i></li>
+	            </c:if>
+				<li>
+				
+ 			  <%-- this should be moved --%>
               <script type="text/javascript">
                 <!--
                    fixedOps[${index-1}] = new Array();
@@ -221,12 +70,18 @@
                    </c:forEach>
                    //-->
               </script>
+                            
+              <%-- number --%>
               <c:if test="${empty con.description}">
                 <c:if test="${fn:length(templateQuery.editableNodes) > 1}"><span><c:out value="[${index}]"/></span></c:if>
               </c:if>
+              
+              <%-- constraint name --%>
               <label>
                 <c:out value="${names[con]}"/>:
               </label>
+              
+              <%-- operator --%>
               <c:choose>
                 <c:when test="${fn:length(validOps) == 1}">
                   <input type="hidden" name="attributeOps(${index})" value="18"/>
@@ -243,6 +98,8 @@
                   </span>
                 </c:otherwise>
               </c:choose>
+              
+              <%-- autocomplete --%>              
               <span nowrap>
                 <span id="operandEditSpan${index-1}">
 
@@ -273,7 +130,7 @@
                     </c:if>
                   </c:forEach>
 
-                  <%-- if no auto completer exist --%>
+                  <%-- no auto completer exists --%>
                   <c:if test="${hasAutoC eq 0}">
 
                     <c:set var="datePickerClass" value=""/>
@@ -281,8 +138,8 @@
                       <c:set var="datePickerClass" value="date-pick"/>
                     </c:if>
 
-                    <html:text property="attributeValues(${index})"
-                               styleClass="${datePickerClass}"/>
+					<%-- input box --%>
+                    <html:text property="attributeValues(${index})" styleClass="${datePickerClass}" size="10" />
 
                     <c:if test="${node.type == 'Date'}">
                       <script type="text/javascript">
@@ -299,7 +156,8 @@
                       </script>
                     </c:if>
                   </c:if>
-
+                  
+				<%-- help link --%>
                 <c:if test="${!empty keyFields[con]}">
                   <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
                   <div class="smallnote helpnote" id="lookupHelp" style="display:none" >
@@ -308,11 +166,14 @@
                     </fmt:message>
                   </div>
                 </c:if>
+                
                 <%-- might want to show up arrow --%>
                 <c:if test="${!empty options}">
                   <img src="images/left-arrow.gif" title="&lt;-" border="0" height="13" width="13"/>
                 </c:if>
               </span>
+              
+              <%-- dropdown --%>
               <c:if test="${!empty options}">
                 <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
                   <c:forEach items="${options}" var="option">
@@ -323,12 +184,14 @@
                 </select>
               </c:if>
             </span>
+            
+         <%-- dropdown (probably organism) --%>
           <c:if test="${haveExtraConstraint[con]}">
-          <c:if test="${empty keyFields[con]}">
-            </li>
-            <li>
-          </c:if>
-              <span valign="top" colspan="4">
+          	<c:if test="${empty keyFields[con]}">
+	       	  </li>
+              <li>
+          	</c:if>
+              <span valign="top" colspan="4" style="color:#eee;">
                 <label class="marg">
                   <fmt:message key="bagBuild.extraConstraint">
                     <fmt:param value="${extraBagQueryClass}"/>
@@ -347,6 +210,10 @@
           <c:if test="${empty keyFields[con]}">
             </li>
           </c:if>
+          
+          
+          <%-- list constraint --%>
+          
           <li>
             <span>
               &nbsp; <%-- for IE --%>
@@ -372,6 +239,8 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
+                
+                <%-- this breaks if there is more than one on a page --%>
                 <c:if test="${!empty PROFILE.username}">
 	                <tiles:insert name="tagSelect.tile">
 	                    <tiles:put name="type" value="bag" />
@@ -430,50 +299,35 @@
         </c:forEach>
       </c:forEach>
     </ol>
-    <c:if test="${empty previewTemplate}">
-      <br/>
-
+<c:if test="${empty previewTemplate}">
+	<br/>
      <table width="100%">
      <tr>
        <td>
+    	  <html:hidden property="name"/>
+	      <html:hidden property="type"/>
+	      <html:hidden property="actionType" value="" styleId="actionType"/>
+    	  <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
+	      <html:submit property="editQuery"><fmt:message key="template.submitToQuery"/></html:submit>
+	      <c:if test="${IS_SUPERUSER}">
+    	    <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
+	      </c:if>
+       </td>
+	  <td align="right"><html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}"><img src="images/xml.png" title="Export this template to XML"/></html:link></td>
+	</tr>
+	</table>
+</c:if>
+</html:form>
 
-      <html:hidden property="name"/>
-      <html:hidden property="type"/>
-      <html:hidden property="actionType" value="" styleId="actionType"/>
-      <html:submit property="skipBuilder" styleId="showResultsButton"><fmt:message key="template.submitToResults"/></html:submit>
-      <html:submit property="editQuery"><fmt:message key="template.submitToQuery"/></html:submit>
-      <c:if test="${IS_SUPERUSER}">
-        <html:submit property="editTemplate"><fmt:message key="template.submitToQueryEdit"/></html:submit>
-      </c:if>
+<%-- embed link --%>
+<c:if test="${empty previewTemplate}">
+	<div style="font-style: italic;"><b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a></div>
+</c:if>
 
-     </td>
-     <td align="right">
-  <html:link action="/exportTemplates?scope=all&amp;name=${templateQuery.name}">
-    <img src="images/xml.png" title="Export this template to XML"/>
-  </html:link>
-  </td>
-  </tr>
-  </table>
-
-    </c:if>
-  </html:form>
-
-  <c:if test="${empty previewTemplate}">
-    <div style="font-style: italic;">
-      <b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a>
-    </div>
-  </c:if>
-
-  <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
-    <p>
-      <i>
-        <fmt:message key="template.notlogged">
-          <fmt:param>
-            <im:login/>
-          </fmt:param>
-        </fmt:message>
-      </i>
-    </p>
-  </c:if>
+<%-- login msg --%>
+<c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
+	<p><i><fmt:message key="template.notlogged"><fmt:param><im:login/></fmt:param></fmt:message></i></p>
+</c:if>
 </im:boxarea>
 </div>
+<!-- /template.jsp -->

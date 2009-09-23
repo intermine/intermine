@@ -56,7 +56,7 @@ public class SequenceProcessor extends ChadoProcessor
 {
     // incremented each time we make a new SequenceProcessor to make sure we have a unique
     // name for temporary tables
-    private static int tempTableCount = 0;
+    private static int TEMP_TABLE_COUNT = 0;
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
@@ -124,8 +124,8 @@ public class SequenceProcessor extends ChadoProcessor
     public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
         synchronized (this) {
-            tempTableCount++;
-            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
+            TEMP_TABLE_COUNT++;
+            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + TEMP_TABLE_COUNT;
         }
     }
 
@@ -177,7 +177,9 @@ public class SequenceProcessor extends ChadoProcessor
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
-
+        processLibraryFeatureTable(connection);
+        processLibraryCVTermTable(connection);
+        
         // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);
         // overridden by subclasses if necessary
@@ -191,6 +193,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+    @SuppressWarnings("boxing")
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
@@ -211,7 +214,6 @@ public class SequenceProcessor extends ChadoProcessor
             if (res.getObject("seqlen") != null) {
                 seqlen = res.getInt("seqlen");
             }
-
             if (processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
                                        checksum, type, organismId)) {
                 count++;
@@ -220,7 +222,8 @@ public class SequenceProcessor extends ChadoProcessor
         LOG.info("created " + count + " features");
         res.close();
     }
-
+   
+    
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
      */
@@ -254,7 +257,6 @@ public class SequenceProcessor extends ChadoProcessor
                                            Integer organismId)
     throws ObjectStoreException {
 
-
         if (featureMap.containsKey(featureId)) {
             return false;
         }
@@ -270,6 +272,7 @@ public class SequenceProcessor extends ChadoProcessor
         String fixedUniqueName = fixIdentifier(fdat, uniqueName);
 
         if (seqlen > 0) {
+
             setAttributeIfNotSet(fdat, "length", String.valueOf(seqlen));
         }
         ChadoDBConverter chadoDBConverter = getChadoDBConverter();
@@ -638,8 +641,11 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             } else {
-                throw new RuntimeException("srcfeature_id (" + srcFeatureId + ") from location "
-                                           + featureLocId + " was not found in the feature table");
+                // TODO
+                String msg = "srcfeature_id (" + srcFeatureId + ") from location "
+                            + featureLocId + " was not found in the feature table";
+//                LOG.error(msg);
+              throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");
@@ -998,6 +1004,7 @@ public class SequenceProcessor extends ChadoProcessor
         return fds;
     }
 
+    @SuppressWarnings("boxing")
     private void processDbxrefTable(Connection connection)
         throws SQLException, ObjectStoreException {
 
@@ -1072,18 +1079,17 @@ public class SequenceProcessor extends ChadoProcessor
                         String newFieldValue = createSynonymAction.processValue(accession);
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
-                        } else {
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, "identifier", newFieldValue,
-                                                         isPrimary, null);
+                        } 
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, "identifier", newFieldValue,
+                                                     isPrimary, null);
 
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
                         }
                     }
                 }
@@ -1147,23 +1153,21 @@ public class SequenceProcessor extends ChadoProcessor
                         Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
-                        } else {
-                            String synonymType = synonymAction.getSynonymType();
-                            if (synonymType == null) {
-                                synonymType = propTypeName;
-                            }
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                         isPrimary, null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        } 
+                        String synonymType = synonymAction.getSynonymType();
+                        if (synonymType == null) {
+                            synonymType = propTypeName;
                         }
-
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                     isPrimary, null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
                     }
                 }
             }
@@ -1172,6 +1176,104 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
+    private void processLibraryFeatureTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getLibraryFeatureResultSet(connection);
+        while (res.next()) {
+
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String identifier = res.getString("value");
+
+            if (identifier == null) {
+                continue;
+            }
+
+            String propTypeName = res.getString("type_name");
+
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
+                MultiKey key = new MultiKey("library", fdat.getInterMineType(), propTypeName);
+                int taxonId = fdat.organismData.getTaxonId();
+                List<ConfigAction> actionList = getConfig(taxonId).get(key);
+                if (actionList == null) {
+                    // no actions configured for this prop
+                    continue;
+                }
+                Set<String> fieldsSet = new HashSet();
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (setAction.isValidValue(identifier)) {
+                            String newFieldValue = setAction.processValue(identifier);
+                            setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
+                                         newFieldValue);
+                            fieldsSet.add(newFieldValue);
+                            if (setAction.getFieldName().equals("primaryIdentifier")) {
+                                fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        res.close();
+    }
+
+    /**
+     * @param identifier identifier for term, eg. FB00004958
+     * @return an id representing the term object
+     * @throws ObjectStoreException if somethign goes wrong
+     */
+    protected String makeAnatomyTerm(String identifier) 
+    throws ObjectStoreException {
+        // override in subclasses as necessary
+        return null;
+    }
+    
+    private void processLibraryCVTermTable(Connection connection)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getLibraryCVTermResultSet(connection);
+
+        while (res.next()) {
+
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            String identifier = res.getString("term_identifier");
+
+            if (identifier == null) {
+                continue;
+            }
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fdat = featureMap.get(featureId);
+                MultiKey key = new MultiKey("anatomyterm", fdat.getInterMineType(), null);
+                int taxonId = fdat.organismData.getTaxonId();
+                List<ConfigAction> actionList = getConfig(taxonId).get(key);
+                if (actionList == null) {
+                    // no actions configured for this prop
+                    continue;
+                }
+
+                for (ConfigAction action: actionList) {
+                    if (action instanceof SetFieldConfigAction) {
+                        SetFieldConfigAction setAction = (SetFieldConfigAction) action;
+                        if (setAction.isValidValue(identifier)) {
+                            Reference termReference = new Reference();
+                            termReference.setName(setAction.getFieldName());
+                            String termRefId = makeAnatomyTerm(identifier);
+                            if (termRefId == null) {
+                                continue;
+                            }
+                            termReference.setRefId(termRefId);
+                            getChadoDBConverter().store(termReference, fdat.getIntermineObjectId());
+                        }
+                    }
+                }
+            }
+        }
+        res.close();
+    }
+
+    
     /**
      * Read the feature, feature_cvterm and cvterm tables, then set fields, create synonyms or
      * create objects based on the cvterms.
@@ -1237,20 +1339,18 @@ public class SequenceProcessor extends ChadoProcessor
                         Set<String> existingSynonyms = fdat.getExistingSynonyms();
                         if (existingSynonyms.contains(newFieldValue)) {
                             continue;
-                        } else {
-                            String synonymType = synonymAction.getSynonymType();
-                            boolean isPrimary = false;
-                            if (fieldsSet.contains(newFieldValue)) {
-                                isPrimary = true;
-                            }
-                            Item synonym = createSynonym(fdat, synonymType, newFieldValue,
-                                                         isPrimary, null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
                         }
-
+                        String synonymType = synonymAction.getSynonymType();
+                        boolean isPrimary = false;
+                        if (fieldsSet.contains(newFieldValue)) {
+                            isPrimary = true;
+                        }
+                        Item synonym = createSynonym(fdat, synonymType, newFieldValue,
+                                                     isPrimary, null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
+                        }
                     } else {
                         if (action instanceof CreateCollectionAction) {
                             CreateCollectionAction cca = (CreateCollectionAction) action;
@@ -1321,17 +1421,17 @@ public class SequenceProcessor extends ChadoProcessor
                     throw new RuntimeException("found more than one object for reference "
                                                + fd + " in class "
                                                + interMineType + " items: " + itemList);
-                } else {
-                    Item item = itemList.iterator().next();
-                    Reference reference = new Reference();
-                    reference.setName(fd.getName());
-                    String itemIdentifier = item.getIdentifier();
-                    reference.setRefId(itemIdentifier);
-                    getChadoDBConverter().store(reference, intermineObjectId);
-
-                    // XXX FIXME TODO: special case for 1-1 relations - we need to set the reverse
-                    // reference
                 }
+                Item item = itemList.iterator().next();
+                Reference reference = new Reference();
+                reference.setName(fd.getName());
+                String itemIdentifier = item.getIdentifier();
+                reference.setRefId(itemIdentifier);
+                getChadoDBConverter().store(reference, intermineObjectId);
+
+                // XXX FIXME TODO: special case for 1-1 relations - we need to set the reverse
+                // reference
+                
             } else {
                 ReferenceList referenceList = new ReferenceList();
                 referenceList.setName(referenceName);
@@ -1343,6 +1443,7 @@ public class SequenceProcessor extends ChadoProcessor
         }
     }
 
+    @SuppressWarnings("boxing")
     private void processSynonymTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getSynonymResultSet(connection);
@@ -1366,9 +1467,8 @@ public class SequenceProcessor extends ChadoProcessor
             // it is a not null in db
             if (identifier == null) {
                 throw new RuntimeException("found null synonym name in synonym table.");
-            } else {
-                identifier = fixIdentifier(featureMap.get(featureId), identifier);
             }
+            identifier = fixIdentifier(featureMap.get(featureId), identifier);           
 
             if (currentFeatureId != null && currentFeatureId != featureId) {
                 existingAttributes = new HashSet<String>();
@@ -1422,14 +1522,13 @@ public class SequenceProcessor extends ChadoProcessor
                         String newFieldValue = createSynonymAction.processValue(identifier);
                         if (fdat.getExistingSynonyms().contains(newFieldValue)) {
                             continue;
-                        } else {
-                            Item synonym =
-                                createSynonym(fdat, synonymTypeName, newFieldValue, setField,
-                                              null);
-                            if (synonym != null) {
-                                getChadoDBConverter().store(synonym);
-                                count++;
-                            }
+                        }
+                        Item synonym =
+                            createSynonym(fdat, synonymTypeName, newFieldValue, setField,
+                                          null);
+                        if (synonym != null) {
+                            getChadoDBConverter().store(synonym);
+                            count++;
                         }
                     }
                 }
@@ -1453,6 +1552,7 @@ public class SequenceProcessor extends ChadoProcessor
         return identifier;
     }
 
+    @SuppressWarnings("boxing")
     private void processPubTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
@@ -1503,14 +1603,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected String makePublication(Integer pubMedId) throws ObjectStoreException {
         if (publications.containsKey(pubMedId)) {
             return publications.get(pubMedId);
-        } else {
-            Item publication = getChadoDBConverter().createItem("Publication");
-            publication.setAttribute("pubMedId", pubMedId.toString());
-            getChadoDBConverter().store(publication); // Stores Publication
-            String publicationId = publication.getIdentifier();
-            publications.put(pubMedId, publicationId);
-            return publicationId;
         }
+        Item publication = getChadoDBConverter().createItem("Publication");
+        publication.setAttribute("pubMedId", pubMedId.toString());
+        getChadoDBConverter().store(publication); // Stores Publication
+        String publicationId = publication.getIdentifier();
+        publications.put(pubMedId, publicationId);
+        return publicationId;
     }
 
     /**
@@ -1534,7 +1633,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the features table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1542,7 +1641,7 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getFeatureTableResultSet(Connection connection)
         throws SQLException {
         String query = "SELECT * FROM " + tempFeatureTableName;
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureTableResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1576,7 +1675,7 @@ public class SequenceProcessor extends ChadoProcessor
     /**
      * Create a temporary table containing only the features that interest us.  Also create indexes
      * for the type and feature_id columns.
-     * The table is used in later queries.  This is a protected method so that it can be overriden
+     * The table is used in later queries.  This is a protected method so that it can be overridden
      * for testing.
      * @param connection the Connection
      * @throws SQLException if there is a problem
@@ -1604,7 +1703,7 @@ public class SequenceProcessor extends ChadoProcessor
                ? " AND (" + getExtraFeatureConstraint() + ")"
                : "");
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createFeatureTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_feature_index ON "
             + tempFeatureTableName + "(feature_id)";
@@ -1628,9 +1727,8 @@ public class SequenceProcessor extends ChadoProcessor
         String organismIdsString = getOrganismIdsString();
         if (StringUtils.isEmpty(organismIdsString)) {
             return "";
-        } else {
-            return "organism_id IN (" + organismIdsString + ")";
         }
+        return "organism_id IN (" + organismIdsString + ")";        
     }
 
     /**
@@ -1659,6 +1757,7 @@ public class SequenceProcessor extends ChadoProcessor
         return
             "SELECT feature_id FROM feature, cvterm"
             + "  WHERE type_id = cvterm.cvterm_id"
+            + "    AND feature.is_obsolete = 'f' "
             + "    AND cvterm.name IN (" + getFeaturesString(getChromosomeFeatureTypes()) + ")"
             + (getExtraFeatureConstraint() != null
                ? " AND (" + getExtraFeatureConstraint() + ")"
@@ -1669,7 +1768,7 @@ public class SequenceProcessor extends ChadoProcessor
      * Return the interesting rows from the feature_relationship table.  The feature pairs are
      * returned in both subject, object and object, subject orientations so that the relationship
      * processing can be configured in a natural way.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @param subjectFirst if true the subject_id column from the relationship table will be before
      *   the object_id in the results, otherwise it will be after.  ie.
@@ -1698,7 +1797,7 @@ public class SequenceProcessor extends ChadoProcessor
                         + "      AND object_id IN (" + getFeatureIdQuery() + ")"
                         + extraQueryBits
                         + " ORDER BY feature1_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureRelationshipResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1746,7 +1845,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the featureloc table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1761,7 +1860,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "     AND srcfeature_id IN"
             + "         (" + getChromosomeFeatureIdQuery() + ")"
             + "     AND locgroup = 0";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1771,7 +1870,7 @@ public class SequenceProcessor extends ChadoProcessor
     /**
      * Return the interesting matches from the featureloc and feature tables.
      * feature<->featureloc<->match_feature<->featureloc<->feature
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1788,7 +1887,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND f1.feature_id <> f2.feature_id"
             + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
             + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getMatchLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1796,7 +1895,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the dbxref table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1810,7 +1909,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND feature.feature_id IN"
             + "        (" + getFeatureIdQuery() + ")"
             + "    AND dbxref.db_id = db.db_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getDbxrefResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1818,7 +1917,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the featureprop table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1828,16 +1927,63 @@ public class SequenceProcessor extends ChadoProcessor
             "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN (" + getFeatureIdQuery() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeaturePropResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
     /**
+     * Return the interesting rows from the libraryprop table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getLibraryFeatureResultSet(Connection connection) throws SQLException {
+        String query =
+            "select f.feature_id, lp.value, lp_type.name AS type_name "            
+            + "FROM feature f, library_feature lf, library l, libraryprop lp, cvterm lp_type "
+            + "WHERE  f.feature_id=lf.feature_id "
+            + "     AND lf.library_id=l.library_id "
+            + "     AND l.library_id=lp.library_id " 
+            + "     AND lp.type_id=lp_type.cvterm_id "            
+            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+        LOG.info("executing getLibraryFeatureResultSet(): " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    // TODO this shouldn't specify flybase
+    /**
+     * Return the interesting rows from the librarycvterm table.
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getLibraryCVTermResultSet(Connection connection) throws SQLException {
+        String query =
+            "select f.feature_id, d.accession AS term_identifier "
+            + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv, "
+            + "     dbxref d "
+            + "WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "   
+            + "     AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id " 
+            + "     AND lcvt.cvterm_id=cvt.cvterm_id "
+            + "     AND cvt.dbxref_id = d.dbxref_id "
+            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+        LOG.info("executing getLibraryFeatureResultSet(): " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    
+    /**
      * Return the interesting rows from the feature_cvterm/cvterm table.  Only returns rows for
      * those features returned by getFeatureIdQuery().
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1851,7 +1997,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "   AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
             + "   AND cvterm.cv_id = cv.cv_id "
             + " ORDER BY feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getFeatureCVTermResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1859,7 +2005,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the synonym table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1873,7 +2019,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "     AND synonym.type_id = cvterm.cvterm_id"
             + "     AND feature_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY is_current DESC";
-        LOG.info("executing: " + query);
+        LOG.info("executing getSynonymResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1881,7 +2027,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     /**
      * Return the interesting rows from the pub table.
-     * This is a protected method so that it can be overriden for testing
+     * This is a protected method so that it can be overridden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
@@ -1897,7 +2043,7 @@ public class SequenceProcessor extends ChadoProcessor
             + "    AND db.name = 'pubmed'"
             + "    AND feature_id IN (" + getFeatureIdQuery() + ")"
             + "  ORDER BY feature_pub.feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;

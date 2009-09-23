@@ -228,7 +228,7 @@ public class PsiConverter extends BioFileConverter
             // <secondaryRef db="sgd" dbAc="MI:0484" id="S000006331" secondary="YPR127W"/>
             } else if ((qName.equals("primaryRef") || qName.equals("secondaryRef"))
                             && stack.search("interactor") == 2 && attrs.getValue("db") != null) {
-                identifiers.put(attrs.getValue("db").toLowerCase(), attrs.getValue("id"));                
+                identifiers.put(attrs.getValue("db").toLowerCase(), attrs.getValue("id"));
             // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
@@ -290,7 +290,7 @@ public class PsiConverter extends BioFileConverter
             } else if (qName.equals("primaryRef") && stack.search("featureType") == 2
                             && attrs.getValue("id").equals("MI:0117") && interactorHolder != null) {
                 interactorHolder.isRegionFeature = true;
-                interactorHolder.regionName = regionName;
+                interactorHolder.regionName1 = regionName;
             // <participantList><participant id="6919"><featureList><feature id="6920">
             //    <featureRangeList><featureRange><begin position="470"/>
             } else if (qName.equals("begin") && stack.peek().equals("featureRange")
@@ -697,12 +697,12 @@ public class PsiConverter extends BioFileConverter
         private String getRegion(InteractorHolder ih, String interactionRefId, 
                                  String interactionName) 
         throws ObjectStoreException {
-            String refId = regions.get(ih.regionName);            
+            String refId = regions.get(ih.regionName1);            
             if (refId == null) {
                 Item region = createItem("InteractionRegion");
                 refId = region.getIdentifier();
                 
-                region.setAttribute("name", ih.regionName);
+                region.setAttribute("name", ih.regionName1);
                 region.setReference("gene", ih.geneRefId);
                 region.setReference("ontologyTerm", termId);
                 if (ih.startStatus != null) {
@@ -872,7 +872,7 @@ public class PsiConverter extends BioFileConverter
         {
             private String geneRefId;   // protein.getIdentifier()
             private String role;
-            private String regionName; // for storage later
+            private String regionName1; // for storage later
             private String startStatus, start;
             private String endStatus, end;
             private String identifier;
@@ -1018,6 +1018,7 @@ public class PsiConverter extends BioFileConverter
         protected class ExperimentHolder
         {
 
+            @SuppressWarnings("unused")
             private String name, description;
             private Item experiment;
             private List<String> comments = new ArrayList();

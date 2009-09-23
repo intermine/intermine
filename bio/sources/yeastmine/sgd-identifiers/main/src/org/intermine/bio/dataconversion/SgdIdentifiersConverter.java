@@ -42,6 +42,7 @@ public class SgdIdentifiersConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws ObjectStoreException if organism can't be stored
      */
     public SgdIdentifiersConverter(ItemWriter writer, Model model)
     throws ObjectStoreException {
@@ -103,6 +104,7 @@ public class SgdIdentifiersConverter extends BioFileConverter
         }
     }
 
+    @SuppressWarnings("boxing")
     private void incrementCount(String a) {
         if (counts.get(a) == null) {
             counts.put(a, new Integer(1));

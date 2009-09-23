@@ -58,7 +58,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final String WT_CLASS_CVTERM = "wt_class";
 
     private static final String FLYBASE_DB_NAME = "FlyBase";
-
+    
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
@@ -133,6 +133,9 @@ public class FlyBaseProcessor extends SequenceProcessor
     // a map from mutagen description to Mutagen Item identifier
     private Map<String, String> mutagensMap = new HashMap();
 
+    // a map from featureId to seqlen
+//    private Map<Integer, Integer> cdnaLengths = null;
+    
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
     private Map<String, String> interactionExperiments = new HashMap();
@@ -198,7 +201,30 @@ public class FlyBaseProcessor extends SequenceProcessor
         locatedGeneIds = getLocatedGeneIds(connection);
 
         chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
+        
+
+//        try {
+//            cdnaLengths = makeCDNALengthMap(connection);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
+    
+    /**
+     * @param connection database connection
+     * @return map of feature_id to seqlen
+     */
+//    protected Map<Integer, Integer> getLengths(Connection connection) {
+//        if (cdnaLengths == null) {
+//            try {
+//                cdnaLengths = makeCDNALengthMap(connection);
+//            } catch (SQLException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//        return cdnaLengths;
+//    }
 
     /**
      * Return a map from chromosome_structure_variation feature_ids to the cvterm_id of the
@@ -266,7 +292,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   AND feature_cvtermprop.type_id = prop_term.cvterm_id AND prop_term.name = '"
             + WT_CLASS_CVTERM + "'";
 
-        LOG.info("executing: " + query);
+        LOG.info("executing getChromosomeStructureVariationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -299,7 +325,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     /**
      * Create a temporary table containing the ids of the located genes.  This is a protected
-     * method so that it can be overriden for testing
+     * method so that it can be overridden for testing
      * @param connection the Connection
      * @throws SQLException if there is a database problem
      */
@@ -315,11 +341,14 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "     WHERE feature.type_id = cvterm.cvterm_id"
             + "       AND cvterm.name = 'gene' "
             + "       AND NOT feature.is_obsolete "
-            + "       AND feature.feature_id IN (SELECT feature_id FROM featureloc) "
+            + "       AND feature.feature_id IN "
+            + "          (SELECT l.feature_id " 
+            + "           FROM featureloc l, feature c "
+            + "           WHERE l.srcfeature_id = c.feature_id and NOT c.is_obsolete)"
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createLocatedGenesTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + LOCATED_GENES_TEMP_TABLE_NAME + "_feature_index ON "
             + LOCATED_GENES_TEMP_TABLE_NAME + "(feature_id)";
@@ -356,7 +385,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + orgConstraintForQuery;
 
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createAllelesTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + ALLELE_TEMP_TABLE_NAME + "_feature_index ON "
             + ALLELE_TEMP_TABLE_NAME + "(feature_id)";
@@ -398,10 +427,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "generating custom chromosomal aberrations in Drosophila melanogaster.')) "
             + "   AND obj.feature_id = obj_loc.feature_id";
 
-
-
         Statement stmt = connection.createStatement();
-        LOG.info("executing: " + query);
+        LOG.info("executing createInsertionTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + INSERTION_TEMP_TABLE_NAME + "index ON "
             + INSERTION_TEMP_TABLE_NAME + "(sub_id)";
@@ -484,7 +511,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getLocatedGenesResultSet(Connection connection) throws SQLException {
         String query = getLocatedGenesSql();
-        LOG.info("executing: " + query);
+        LOG.info("executing getLocatedGenesResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -524,7 +551,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             map.put(new MultiKey("synonym", "Gene", "symbol", Boolean.FALSE),
                     Arrays.asList(new SetFieldConfigAction("GLEANRsymbol", GLEANR_PATTERN),
                                   CREATE_SYNONYM_ACTION));
-
 
             // dbxref table configuration example: for features of class "Gene", where the
             // db.name is "FlyBase Annotation IDs" and "is_current" is true, set the
@@ -612,7 +638,18 @@ public class FlyBaseProcessor extends SequenceProcessor
             ConfigAction alleleClassConfigAction = new AlleleClassSetFieldAction("alleleClass");
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
-
+          
+            // library config example: for features of class "CDNAClone", if the type name
+            // of the library is "stage", set the "stage" attribute of the
+            // new CDNAClone to be this property
+            map.put(new MultiKey("library", "CDNAClone", "stage"),
+                    Arrays.asList(new SetFieldConfigAction("stage")));
+            
+            // anatomy term config example:  for features of class "CDNAClone" if there is an 
+            // anatomy term, set a reference in CDNAClone.tissueSource
+            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
+                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
+            
             // feature_cvterm example for Transposition: we create a featureTerms collection in the
             // Transposition objects containing SequenceOntologyTerm objects.  For the current
             // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
@@ -855,9 +892,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript", "protein",
-            "intron", "exon",
-            "regulatory_region", "enhancer",
-            "EST", "cDNA_clone",
+            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
             "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
             "chromosome_band", "transposable_element_insertion_site",
             CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
@@ -895,7 +930,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         processAlleleProps(connection, features);
-
+        
         Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
         for (Integer alleleFeatureId: mutagenMap.keySet()) {
             FeatureData alleleDat = features.get(alleleFeatureId);
@@ -1139,7 +1174,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private Map<String, String> developmentTermMap = new HashMap<String, String>();
     // map from FlyBase cv identifier (eg. "FBcv0001234") to Item identifier
     private Map<String, String> cvTermMap = new HashMap<String, String>();
-
+    
     private void processAlleleProps(Connection connection,
                                     Map<Integer, FeatureData> features)
         throws SQLException, ObjectStoreException {
@@ -1177,7 +1212,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
     }
-
+    
     /**
      * Return a Map from allele feature_id to mutagen.  The mutagen is found be looking at cvterms
      * that are associated with each feature and saving those terms that have "origin of mutation"
@@ -1229,7 +1264,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "          WHERE feature.feature_id = feature_cvterm.feature_id"
             + "            AND feature.feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "            AND feature_cvterm.cvterm_id = cvterm.cvterm_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAlleleCVTermsResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1258,6 +1293,23 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return retMap;
     }
+    
+    /**
+     * Return a map from feature_id to seqlen
+     * @throws SQLException if somethign goes wrong
+     */
+//    private Map<Integer, Integer> makeCDNALengthMap(Connection connection) 
+//    throws SQLException {
+//        Map<Integer, Integer> retMap = new HashMap();
+//
+//        ResultSet res = getCDNALengthResultSet(connection);
+//        while (res.next()) {
+//            Integer featureId = new Integer(res.getInt("feature_id"));
+//            Integer seqlen = new Integer(res.getInt("seqlen"));
+//            retMap.put(featureId, seqlen);
+//        }
+//        return retMap;
+//    }
 
     private Item makePhenotypeAnnotation(String alleleItemIdentifier, String value,
                                          Item dataSetItem, List<String> publicationsItemIdList)
@@ -1280,7 +1332,7 @@ public class FlyBaseProcessor extends SequenceProcessor
                 m.appendReplacement(sb, field);
             } else {
                 String identifier = field.substring(0, colonPos);
-                if (identifier.startsWith("FBbt")) {
+                if (identifier.startsWith(FLYBASE_ANATOMY_TERM_PREFIX)) {
                     dbAnatomyTermIdentifiers.add(addCVTermColon(identifier));
                 } else {
                     if (identifier.startsWith("FBdv")) {
@@ -1351,6 +1403,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         return phenotypeAnnotation;
     }
 
+    private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
+    
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");
 
@@ -1404,12 +1458,24 @@ public class FlyBaseProcessor extends SequenceProcessor
         return alleleItemIdentifiers;
     }
 
-    private String makeAnatomyTerm(String identifier) throws ObjectStoreException {
-        if (anatomyTermMap.containsKey(identifier)) {
-            return anatomyTermMap.get(identifier);
+    /**
+     * phenotype annotation creates and stores anatomy terms.  so does librarycvterm
+     * @param identifier identifier for anatomy term
+     * @return refId for anatomy term object
+     * @throws ObjectStoreException if term can't be stored
+     */
+    protected String makeAnatomyTerm(String identifier) throws ObjectStoreException {
+        String newIdentifier = identifier;
+        if (!newIdentifier.startsWith(FLYBASE_ANATOMY_TERM_PREFIX)) {
+            newIdentifier = FLYBASE_ANATOMY_TERM_PREFIX + identifier;
+            newIdentifier = addCVTermColon(newIdentifier);
+        }
+            
+        if (anatomyTermMap.containsKey(newIdentifier)) {
+            return anatomyTermMap.get(newIdentifier);
         }
         Item anatomyTerm = getChadoDBConverter().createItem("AnatomyTerm");
-        anatomyTerm.setAttribute("identifier", identifier);
+        anatomyTerm.setAttribute("identifier", newIdentifier);
         getChadoDBConverter().store(anatomyTerm);
         anatomyTermMap.put(identifier, anatomyTerm.getIdentifier());
         return anatomyTerm.getIdentifier();
@@ -1463,7 +1529,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "           AND NOT feature.is_obsolete AND NOT other_feature.is_obsolete "
             + "           AND feature.feature_id IN (" + getLocatedGenesSql() + ")"
             + "           AND other_feature.feature_id IN (" + getLocatedGenesSql() + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getInteractionResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1483,7 +1549,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   WHERE featureprop.type_id = cvterm.cvterm_id"
             + "       AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "   ORDER BY feature_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAllelePropResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1523,7 +1589,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "   AND break_type.name = 'breakpoint'"
             // ignore the progenitors so we only set element1 and element2 to be the "descendants"
             + "   AND ins.feature_id NOT IN (SELECT obj_id FROM " + INSERTION_TEMP_TABLE_NAME + ")";
-        LOG.info("executing: " + query);
+        LOG.info("executing getIndelResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1542,7 +1608,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getInsertionLocationsResultSet(Connection connection) throws SQLException  {
         String query = "SELECT * from " + INSERTION_TEMP_TABLE_NAME;
-        LOG.info("executing: " + query);
+        LOG.info("executing getInsertionLocationsResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1567,7 +1633,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "    AND feature.feature_id = featureprop.feature_id"
             + "    AND feature.type_id = feature_type.cvterm_id"
             + "    AND feature_type.name = 'chromosome_structure_variation'";
-        LOG.info("executing: " + query);
+        LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
@@ -1592,12 +1658,35 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "        AND db.name = 'pubmed'"
             + "        AND feature_id IN (" + getAlleleFeaturesSql() + ")"
             + "    ORDER BY featureprop_id";
-        LOG.info("executing: " + query);
+        LOG.info("executing getAllelePropPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
+    /**
+     * Return a result set containing the feature_id and its seqlen
+     * The method is protected so that is can be overridden for
+     * testing.
+     * @param connection the Connection
+     * @throws SQLException if there is a database problem
+     * @return the ResultSet
+     */
+    protected ResultSet getCDNALengthResultSet(Connection connection) throws SQLException {
+        String query =
+            "SELECT cl.feature_id, fls.seqlen "
+            + "FROM feature cl, feature fls, feature_relationship fr, cvterm fls_type "
+            + "WHERE fls_type.name IN ('cDNA','BAC_cloned_genomic_insert') "
+            + "  AND cl.feature_id=fr.object_id "
+            + "  AND fr.subject_id=fls.feature_id "
+            + "  AND fls.type_id=fls_type.cvterm_id ";
+            
+        LOG.info("executing getCDNALengthResultSet(): " + query);
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+    
     /**
      * Convert ISO entities from FlyBase to HTML entities.
      * {@inheritDoc}
@@ -1614,6 +1703,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("boxing")
     @Override
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
