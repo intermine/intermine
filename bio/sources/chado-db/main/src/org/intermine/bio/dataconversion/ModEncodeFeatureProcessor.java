@@ -389,9 +389,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map = new MultiKeyMap();
             config.put(new Integer(taxonId), map);
 
+            // TODO: check possible conflicts with our sql matching
+            // map.put(new MultiKey("relationship", "ESTMatch", "evidence_for_feature", "Intron"),
+            //        Arrays.asList(new SetFieldConfigAction("intron")));
+            
+            
             // for sub 515
             map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
-                    Arrays.asList(new SetFieldConfigAction("cds")));
+                    Arrays.asList(new SetFieldConfigAction("CDS")));
 
             map.put(new MultiKey("relationship", "PolyASite",
                     "derives_from", "ThreePrimeRACEClone"),
@@ -406,9 +411,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("threePrimeUTR")));
 
             // for sub 35
-//            map.put(new MultiKey("relationship", "OverlappingESTSet", 
-//                    "full_evidence_for_feature", "Gene"),
-//                    Arrays.asList(new SetFieldConfigAction("gene")));
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "full_evidence_for_feature", "Gene"),
+                    Arrays.asList(new SetFieldConfigAction("gene")));
 
             map.put(new MultiKey("relationship", "OverlappingESTSet", 
                     "full_evidence_for_feature", "MRNA"),
@@ -419,6 +424,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("mRNA")));
 
             // 433
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "full_evidence_for_feature", "Gene"),
+                    Arrays.asList(new SetFieldConfigAction("gene")));
+            
             map.put(new MultiKey("relationship", "OverlappingESTSet", 
                     "complete_evidence_for_feature", "Intron"),
                     Arrays.asList(new SetFieldConfigAction("intron")));
@@ -438,6 +447,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             map.put(new MultiKey("relationship", "OverlappingESTSet", 
                     "complete_evidence_for_feature", "TranscriptionEndSite"),
                     Arrays.asList(new SetFieldConfigAction("transcriptionEndSite")));
+            
+            map.put(new MultiKey("relationship", "OverlappingESTSet", 
+                    "evidence_for_feature", "TranscriptRegion"),
+                    Arrays.asList(new SetFieldConfigAction("transcriptRegion")));
             
             map.put(new MultiKey("relationship", "OverlappingESTSet", 
                     "complete_evidence_for_feature", "TSS"),
