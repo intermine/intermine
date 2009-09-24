@@ -3,8 +3,10 @@
 # this script runs templates for two different releases and compares the results
 
 mine='flymine'
-release1='release-17.0'
-release2='preview-18.0'
+release1='release-19.0'
+release2='preview-20.0'
+#mailto='julie@flymine.org'
+mailto='all@flymine.org'
 
 run_performance_test() {
 # release webapp                                                                                                                                                                                               
@@ -39,19 +41,17 @@ run_performance_test() {
     ./compare_releases  $release1 $release2 > compare_releases.tmp
 
 # let everyone know                                                                                                                                                                                            
-    mail -s "Outcome of template comparison comparing $release1 and $release2" 'julie@flymine.org' < compare_releases.tmp
+    mail -s "Outcome of template comparison comparing $release1 and $release2" $mailto < compare_releases.tmp    
 }
 
 run_acceptance_tests() {
     echo "running acceptance tests"
     cd ~/svn/dev/flymine/integrate
-    #ant acceptance-tests
+    ant acceptance-tests 
 
     attfile='/home/julie/svn/dev/flymine/integrate/build/acceptance_test.html'     
     subject="Outcome of acceptance tests run for $release2"
-    mailto='all@flymine.org'
-    #mailto='julie@flymine.org'
-
+        
     mutt -s "$subject" -a $attfile $mailto < /dev/null
 }
 run_performance_test
