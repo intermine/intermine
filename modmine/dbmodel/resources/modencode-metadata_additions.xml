@@ -16,6 +16,9 @@
 <class name="ExonRegion" extends="Region" is-interface="true"/>
 <class name="MRNA" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="mRNA"/>
+  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="mRNA"/>
+  <reference name="startCodon" referenced-type="StartCodon" reverse-reference="mRNA"/>
+  <reference name="stopCodon" referenced-type="StopCodon" reverse-reference="mRNA"/>
 </class> 
 <class name="EST" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
@@ -23,11 +26,18 @@
 <class name="Exon" is-interface="true">
   <reference name="experimentalFeature" referenced-type="ExperimentalFeature" reverse-reference="exon" />
 </class>
+<!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
+  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="transcript"/>
+  <reference name="SL1AcceptorSite" referenced-type="SL1AcceptorSite" reverse-reference="transcript" />
+  <reference name="SL2AcceptorSite" referenced-type="SL2AcceptorSite" reverse-reference="transcript" />
+  <reference name="TSS" referenced-type="TSS" reverse-reference="transcript" />
+  <reference name="transcriptionEndSite" referenced-type="TranscriptionEndSite" reverse-reference="transcript"/>
   <reference name="experimentalFeature" referenced-type="ExperimentalFeature" reverse-reference="transcript" />
 </class>
 <class name="TranscriptionEndSite" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptionEndSite"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="transcriptionEndSite"/>
 </class>
 <class name="Intron" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="intron"/>
@@ -40,8 +50,12 @@
 <!-- NEW FEATURE classes for modENCODE -->
 <class name="CDNA" extends="Region" is-interface="true"/>
 <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
-<class name="StopCodon" extends="Codon" is-interface="true"/>
-<class name="StartCodon" extends="Codon" is-interface="true"/>
+<class name="StopCodon" extends="Codon" is-interface="true">
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodon"/>        
+</class>
+<class name="StartCodon" extends="Codon" is-interface="true">
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodon"/>        
+</class>
 <class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"/>
 <class name="TranscriptRegion" extends="Region" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptRegion"/>
@@ -51,6 +65,8 @@
 <class name="PolyASite" extends="Region" is-interface="true">
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="polyASite"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="polyASite"/>
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
 </class>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>            
@@ -58,9 +74,11 @@
 </class>
 <class name="ThreePrimeRST" extends="Region" is-interface="true">
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="threePrimeRST"/>            
-</class>  
+  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>            
+</class>
 <class name="ThreePrimeUST" extends="Region" is-interface="true">
   <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="threePrimeUST"/>        
+  <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>        
 </class>
 <class name="OverlappingESTSet" extends="Region" is-interface="true">
   <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSet" />
@@ -76,9 +94,11 @@
 </class>
 <class name="SL1AcceptorSite" extends="Region" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL1AcceptorSite"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="SL1AcceptorSite"/>
 </class>
 <class name="SL2AcceptorSite" extends="Region" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL2AcceptorSite"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="SL2AcceptorSite"/>
 </class>
 <class name="ExperimentalFeature" extends="Region" is-interface="true">
   <reference name="transcript" referenced-type="Transcript" reverse-reference="experimentalFeature"/>
@@ -87,42 +107,30 @@
 <!-- these should be actually the same class -->
 <class name="TSS" extends="TranscriptionStartSite" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="TSS"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="TSS"/>
 </class>
 
 <!-- OTHER modENCODE classes -->   
 
-  <class name="Project"
-    is-interface="true">
-    <attribute name="name" type="java.lang.String" />
-    <attribute name="title" type="java.lang.String" />
-    <attribute name="surnamePI" type="java.lang.String" />
-    <attribute name="namePI" type="java.lang.String" />
-    <attribute name="url" type="java.lang.String" />
-    <collection name="labs"
-      referenced-type="Lab"
-      reverse-reference="project" />
-    <collection name="experiments"
-      referenced-type="Experiment"
-      reverse-reference="project" />
-    <collection name="submissions"
-      referenced-type="Submission"
-      reverse-reference="project" />
-    <collection name="organisms" 
-      referenced-type="Organism" />
-  </class>
+<class name="Project" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <attribute name="title" type="java.lang.String" />
+  <attribute name="surnamePI" type="java.lang.String" />
+  <attribute name="namePI" type="java.lang.String" />
+  <attribute name="url" type="java.lang.String" />
+  <collection name="labs" referenced-type="Lab" reverse-reference="project" />
+  <collection name="experiments" referenced-type="Experiment" reverse-reference="project" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="project" />
+  <collection name="organisms" referenced-type="Organism" />
+</class>
 
-  <class name="Lab"
-    extends="DataSource" is-interface="true">
-    <attribute name="name" type="java.lang.String" />
-    <attribute name="surname" type="java.lang.String" />
-    <attribute name="affiliation" type="java.lang.String" />
-    <reference name="project"
-      referenced-type="Project"
-      reverse-reference="labs" />
-    <collection name="submissions"
-      referenced-type="Submission"
-      reverse-reference="lab" />
-  </class>
+<class name="Lab" extends="DataSource" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <attribute name="surname" type="java.lang.String" />
+  <attribute name="affiliation" type="java.lang.String" />
+  <reference name="project" referenced-type="Project" reverse-reference="labs" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="lab" />
+</class>
 
   <class name="Experiment"
     is-interface="true">
