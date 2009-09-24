@@ -110,7 +110,8 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException;
+    public void addAllToBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException;
 
     /**
      * Removes an element from an ObjectStoreBag.
@@ -128,7 +129,8 @@ public interface ObjectStoreWriter extends ObjectStore
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException;
+    public void removeAllFromBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException;
 
     /**
      * Adds elements to an ObjectStoreBag from the results of a Query. The data may not be loaded
