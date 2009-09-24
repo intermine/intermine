@@ -16,9 +16,11 @@
 <class name="ExonRegion" extends="Region" is-interface="true"/>
 <class name="MRNA" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="mRNA"/>
-  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="mRNA"/>
   <reference name="startCodon" referenced-type="StartCodon" reverse-reference="mRNA"/>
   <reference name="stopCodon" referenced-type="StopCodon" reverse-reference="mRNA"/>
+<!--
+  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="mRNA"/> 
+ -->
 </class> 
 <class name="EST" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
@@ -66,7 +68,8 @@
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="polyASite"/>
   <reference name="transcript" referenced-type="Transcript" reverse-reference="polyASite"/>
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
+  <!-- <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
+  -->
 </class>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>            
