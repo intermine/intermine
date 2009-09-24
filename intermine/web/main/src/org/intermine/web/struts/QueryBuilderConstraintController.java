@@ -75,6 +75,13 @@ public class QueryBuilderConstraintController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        query = query.clone();
+        for (Path p : query.getView()) {
+            String path = p.toStringNoConstraints();
+            if (!query.getNodes().containsKey(path)) {
+                query.addNode(path);
+            }
+        }
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
                                                getAttribute(Constants.OBJECT_STORE_SUMMARY);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
