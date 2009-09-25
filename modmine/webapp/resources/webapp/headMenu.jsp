@@ -79,13 +79,11 @@
     </a>
   </li>
 
-<%--
-  <li id="labs"  <c:if test="${tab == 'labs'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/labs.do">
-      <fmt:message key="menu.labs"/>
+  <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do">
+      <fmt:message key="menu.experiments"/>
     </a>
   </li>
---%>
 
   <li id="submissions"  <c:if test="${tab == 'submissions'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/submissions.do">
