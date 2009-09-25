@@ -26,10 +26,15 @@
 <action path="/initExperiments"
   type="org.modmine.web.ExperimentsController" />
 
+<action path="/initExperiment"
+  type="org.modmine.web.ExperimentController" />
+
 <action path="/initProjects"
   type="org.modmine.web.ProjectsController" />
 
 <action path="/projects" forward="projects.page" />
+
+<action path="/experiment" forward="experiment.page" />
 
 
 <action path="/initSubmissions"
