@@ -28,9 +28,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
@@ -76,11 +76,8 @@ public class TemplatesImportAction extends InterMineAction
                 TemplateQuery template = (TemplateQuery) iter.next();
 
                 String templateName = template.getName();
-                if (!WebUtil.isValidName(templateName)) {
-                    templateName = WebUtil.replaceSpecialChars(templateName);
-                    renamed++;
-                }
-                templateName = validateQueryName(templateName, profile);
+
+                templateName = NameUtil.validateName(profile.getSavedTemplates().keySet(), templateName);
                 template = renameTemplate(templateName, template);
                 profile.saveTemplate(templateName, template);
                 imported++;
@@ -116,33 +113,4 @@ public class TemplatesImportAction extends InterMineAction
 
         return newTemplate;
     }
-
-    /**
-     * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.
-     * @param queryName the query name
-     * @param profile the user profile
-     * @return a validated name for the query
-     */
-    private String validateQueryName(String queryName, Profile profile) {
-        String newQueryName = queryName;
-
-        if (!WebUtil.isValidName(queryName)) {
-            newQueryName = WebUtil.replaceSpecialChars(newQueryName);
-        }
-
-        if (profile.getSavedTemplates().containsKey(newQueryName)) {
-            int i = 1;
-            while (true) {
-                String testName = newQueryName + "_" + i;
-                if (!profile.getSavedTemplates().containsKey(testName)) {
-                    return testName;
-                }
-                i++;
-            }
-        } else {
-            return newQueryName;
-        }
-    }
-
 }

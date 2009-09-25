@@ -29,24 +29,7 @@ public class BagHelper
     /** When generating new bag names, this is used as a prefix. */
     public static final String BAG_NAME_PREFIX = "bag";
 
-    /**
-     * Return a bag name that isn't currently in use.
-     *
-     * @param bagNames the existing bagNames
-     * @param nameWanted the desired name
-     * @return the new bag name
-     */
-    public static String findNewBagName(Collection<String> bagNames, String nameWanted) {
-        if (!bagNames.contains(nameWanted)) {
-            return nameWanted;
-        }
-        for (int i = 1;; i++) {
-            String testName = nameWanted + "_" + i;
-            if (bagNames == null || bagNames.contains(testName)) {
-                return testName;
-            }
-        }
-    }
+
 
     /**
      * For a given InterMineObject and an InterMineIdBag return true if

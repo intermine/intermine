@@ -33,6 +33,7 @@ import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleBagTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -100,6 +101,15 @@ public class ModifyBagAction extends InterMineAction
         return getReturn(mbf.getPageName(), mapping);
     }
 
+    private String getNewNameTextBox(HttpServletRequest request,
+            ModifyBagForm frm) {
+        Properties properties = (Properties) request.getSession()
+                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        String defaultName = properties.getProperty("lists.input.example");
+        String newBagName = frm.getNewBagName();
+        return NameUtil.getNewNameTextBox(defaultName, newBagName);
+    }
+    
     private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -119,7 +129,7 @@ public class ModifyBagAction extends InterMineAction
             if (newNameTextBox != null) {
                 newBagName = newNameTextBox;
             } else {
-                newBagName = generateNewName(selectedBagName, allBags);
+                newBagName = NameUtil.generateNewName(selectedBagName, allBags);
             }
             if (origBag == null) {
                 recordError(new ActionMessage("errors.bag.notfound"), request);
@@ -136,7 +146,7 @@ public class ModifyBagAction extends InterMineAction
             String msg = "";
             for (int i = 0; i < selectedBagNames.length; i++) {
                 String selectedBagName = selectedBagNames[i];
-                String newBagName = generateNewName(selectedBagName, allBags);
+                String newBagName = NameUtil.generateNewName(selectedBagName, allBags);
                 InterMineBag origBag = allBags.get(selectedBagName);
                 if (origBag == null) {
                     recordError(new ActionMessage("errors.bag.notfound"), request);
@@ -155,20 +165,6 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private String getNewNameTextBox(HttpServletRequest request,
-            ModifyBagForm frm) {
-        String ret = null;
-        Properties properties = (Properties) request.getSession()
-                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String defaultName = properties.getProperty("lists.input.example");
-        if (frm.getNewBagName() != null
-                && frm.getNewBagName().trim().length() > 0
-                && !frm.getNewBagName().equalsIgnoreCase(defaultName)) {
-            ret = frm.getNewBagName().trim();
-        }
-        return ret;
-    }
-
     private boolean createBag(InterMineBag origBag, String newBagName, Profile profile)
     throws ObjectStoreException {
         // Clone method clones the bag in the database
@@ -178,15 +174,6 @@ public class ModifyBagAction extends InterMineAction
         profile.saveBag(newBagName, newBag);
         return true;
     }
-
-    private String generateNewName(String origName, Map<String, InterMineBag> allBags) {
-        int i = 1;
-        while (allBags.get(origName + "_copy" + i) != null) {
-            i++;
-        }
-        return origName + "_copy" + i;
-    }
-
 
     private void combine(ActionForm form, HttpServletRequest request, String opText) {
         HttpSession session = request.getSession();
@@ -201,7 +188,7 @@ public class ModifyBagAction extends InterMineAction
 
         Collection<InterMineBag> selectedBags = getSelectedBags(allBags, selectedBagNames);
         
-        String newBagName = BagHelper.findNewBagName(allBags.keySet(), mbf.getNewBagName());
+        String newBagName = NameUtil.validateName(allBags.keySet(), mbf.getNewBagName());
 
         int newBagSize = 0;
         try {

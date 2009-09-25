@@ -10,10 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.template.TemplateBuildState;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -21,6 +17,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.util.NameUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Form used when building a template.
@@ -118,7 +117,7 @@ public class TemplateSettingsForm extends ActionForm
                                  @SuppressWarnings("unused") HttpServletRequest request) {
          ActionErrors errors = null;
 
-        if (!WebUtil.isValidName(name)) {
+        if (!NameUtil.isValidName(name)) {
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.badChars"));
