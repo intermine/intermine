@@ -6,6 +6,10 @@
      bio/core/genomic_additions.xml
      bio/sources/so/so_additions.xml 
 -->
+
+<class name="LocatedSequenceFeature" is-interface="true">
+  <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
+</class>
 <class name="ThreePrimeUTR" is-interface="true">
   <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTR" />    
   <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeUTR" />        
@@ -47,6 +51,16 @@
 <class name="Gene" is-interface="true">
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="gene"/>
 </class>
+<!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
+<class name="PolyASite" is-interface="true">
+  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
+  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="polyASite"/>
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="polyASite"/>
+  <!-- <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
+  -->
+</class>
+
+
 
 
 <!-- NEW FEATURE classes for modENCODE -->
@@ -63,14 +77,6 @@
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptRegion"/>
 </class>
 <class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
-<!-- PolyASite is already in so_additions but as extending 'GenePart', not in miso -->
-<class name="PolyASite" extends="Region" is-interface="true">
-  <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="polyASite"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="polyASite"/>
-  <!-- <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
-  -->
-</class>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="threePrimeRACEClone"/>            
   <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeRACEClone"/>        
@@ -135,33 +141,26 @@
   <collection name="submissions" referenced-type="Submission" reverse-reference="lab" />
 </class>
 
-  <class name="Experiment"
-    is-interface="true">
-    <attribute name="name" type="java.lang.String" />
-    <reference name="project"
-      referenced-type="Project"
-      reverse-reference="experiments" />
-    <collection name="submissions"
-      referenced-type="Submission"
-      reverse-reference="experiment" />
-  </class>
+<class name="Experiment" is-interface="true">
+  <attribute name="name" type="java.lang.String" />
+  <reference name="project" referenced-type="Project" reverse-reference="experiments" />
+  <collection name="submissions" referenced-type="Submission" reverse-reference="experiment" />
+</class>
 
-  <class name="Submission"
-    extends="DataSet" is-interface="true">
-    <attribute name="title" type="java.lang.String" />
-    <attribute name="description" type="java.lang.String" />
-    <attribute name="design" type="java.lang.String" />
-    <attribute name="qualityControl" type="java.lang.String" />
-    <attribute name="replicate" type="java.lang.String" />
-    <attribute name="experimentDate" type="java.util.Date" />
-    <attribute name="publicReleaseDate" type="java.util.Date" />     
-    <attribute name="DCCid" type="java.lang.Integer" />     
-    <attribute name="experimentType" type="java.lang.String" />     
-  <reference name="organism"
-      referenced-type="Organism" />
-    <!-- 
-      <reference name="publication" referenced-type="Publication"/>
-      <attribute name="fileFormat" type="java.lang.String"/>
+<class name="Submission" extends="DataSet" is-interface="true">
+  <attribute name="title" type="java.lang.String" />
+  <attribute name="description" type="java.lang.String" />
+  <attribute name="design" type="java.lang.String" />
+  <attribute name="qualityControl" type="java.lang.String" />
+  <attribute name="replicate" type="java.lang.String" />
+  <attribute name="experimentDate" type="java.util.Date" />
+  <attribute name="publicReleaseDate" type="java.util.Date" />     
+  <attribute name="DCCid" type="java.lang.Integer" />     
+  <attribute name="experimentType" type="java.lang.String" />     
+  <reference name="organism" referenced-type="Organism" />
+  <!-- 
+  <reference name="publication" referenced-type="Publication"/>
+  <attribute name="fileFormat" type="java.lang.String"/>
     -->
     <reference name="experiment"
       referenced-type="Experiment"
@@ -184,6 +183,8 @@
     <collection name="experimentalFactors"
       referenced-type="ExperimentalFactor"
       reverse-reference="submissions" />
+
+    <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
 
     <!-- <collection name="attributes" referenced-type="SubmissionAttribute" reverse-reference="submissions"/>-->
     <collection name="antibodies" referenced-type="Antibody" reverse-reference="submissions"/>
