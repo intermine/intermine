@@ -26,10 +26,10 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -42,7 +42,7 @@ public class ImportQueriesAction extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    @Override
+	@Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -64,7 +64,7 @@ public class ImportQueriesAction extends InterMineAction
             // special case to redirect straight to the query builder
             PathQuery pathQuery = queries.values().iterator().next();
             if (!pathQuery.isValid()) {
-                recordError(new ActionError("errors.importFailed",
+                recordError(new ActionMessage("errors.importFailed",
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
             }
             SessionMethods.loadQuery(pathQuery, session,
@@ -85,7 +85,7 @@ public class ImportQueriesAction extends InterMineAction
             while (iter.hasNext()) {
                 String queryName = (String) iter.next();
                 PathQuery query = queries.get(queryName);
-                queryName = validateQueryName(queryName, profile);
+                queryName = NameUtil.validateName(queries.keySet(), queryName);
                 SessionMethods.saveQuery(session, queryName, query);
                 if (sb.length() > 0) {
                     sb.append(", ");
@@ -102,32 +102,4 @@ public class ImportQueriesAction extends InterMineAction
     }
 
 
-    /**
-     * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.
-     * @param queryName the query name
-     * @param profile the user profile
-     * @return a validated name for the query
-     */
-    private String validateQueryName(String queryName, Profile profile) {
-
-        String newQueryName = queryName;
-
-        if (!WebUtil.isValidName(queryName)) {
-            newQueryName = WebUtil.replaceSpecialChars(newQueryName);
-        }
-
-        if (profile.getSavedQueries().containsKey(newQueryName)) {
-            int i = 1;
-            while (true) {
-                String testName = newQueryName + "_" + i;
-                if (!profile.getSavedQueries().containsKey(testName)) {
-                    return testName;
-                }
-                i++;
-            }
-        } else {
-            return newQueryName;
-        }
-    }
 }

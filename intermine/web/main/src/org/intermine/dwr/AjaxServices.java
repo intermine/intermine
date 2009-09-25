@@ -56,6 +56,7 @@ import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -72,7 +73,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -239,7 +239,7 @@ public class AjaxServices
                 return name;
             }
             // TODO get error text from properties file
-            if (!WebUtil.isValidName(newName)) {
+            if (!NameUtil.isValidName(newName)) {
                 return INVALID_NAME_MSG;
             }
             if (type.equals("history")) {
@@ -688,7 +688,7 @@ public class AjaxServices
                 return "You cannot save a list with a blank name";
             }
 
-            if (!WebUtil.isValidName(bagName)) {
+            if (!NameUtil.isValidName(bagName)) {
                 return INVALID_NAME_MSG;
             }
 
@@ -746,7 +746,7 @@ public class AjaxServices
                 if (!operation.equals("copy") && (bagName.equals("")
                                 || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
-                } else if (!WebUtil.isValidName(bagName)) {
+                } else if (!NameUtil.isValidName(bagName)) {
                     return INVALID_NAME_MSG;
                 }
             }

@@ -31,6 +31,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -38,7 +39,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
@@ -143,7 +143,7 @@ public class CreateTemplateAction extends InterMineAction
         if (StringUtils.isEmpty(tbs.getName())) {
             recordError(new ActionMessage("errors.required", "Template name"), request);
             seenProblem = true;
-        } else if (!WebUtil.isValidName(tbs.getName())) {
+        } else if (!NameUtil.isValidName(tbs.getName())) {
             recordError(new ActionMessage("errors.badChars"), request);
             seenProblem = true;
         }
