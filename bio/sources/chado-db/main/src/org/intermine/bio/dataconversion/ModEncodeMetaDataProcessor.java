@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -348,12 +349,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         + " has no featureMap keys.");
                 continue;
             }
-            LOG.debug("FEATMAP: submission " + chadoExperimentId + "|"
+            LOG.info("FEATMAP: submission " + chadoExperimentId + "|"
                     + "featureMap: " + subFeatureMap.keySet().size());
 
             // removed to check role in memory error
-//            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-//            processDataFeatureTable(connection, subFeatureMap, queryList);
+            String queryList = StringUtil.join(thisSubmissionDataIds, ",");
+            processDataFeatureTable2(connection, subFeatureMap, chadoExperimentId,queryList);
         }
     }
 
@@ -363,6 +364,41 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+    private void processDataFeatureTable2(Connection connection, Map<Integer,
+            FeatureData> featureMap, Integer chadoExperimentId, String queryList)
+    throws SQLException, ObjectStoreException {
+        ResultSet res = getDataFeatureResultSet(connection, queryList);
+
+        Integer prevId = 0;              // previous id in the loop
+        Integer collectionSize = 0;
+        ReferenceList collection = null;
+
+        String submissionItemId = submissionMap.get(chadoExperimentId).itemIdentifier;
+
+        while (res.next()) {
+            Integer dataId = new Integer(res.getInt("data_id"));
+            Integer featureId = new Integer(res.getInt("feature_id"));
+            FeatureData featureData = featureMap.get(featureId);
+            if (featureData == null) {
+                LOG.debug("Check feature type: no data for feature_id: " + featureId
+                        + " in processDataFeatureTable(), data_id =" + dataId);
+                continue;
+            }
+
+            // get feature data
+            String featureItemId = featureData.getItemIdentifier();
+            LOG.debug("dataId " + dataId + " FD "
+                    + featureData.getInterMineType() + ": "
+                    + featureData.getChadoFeatureName());
+            Integer featureObjectId = featureData.getIntermineObjectId();
+
+            collection = new ReferenceList();
+            collection.setName("submissions");
+            collection.addRefId(submissionItemId);
+            getChadoDBConverter().store(collection, featureObjectId);
+        }
+    }
+
     private void processDataFeatureTable(Connection connection, Map<Integer,
             FeatureData> featureMap, String queryList)
     throws SQLException, ObjectStoreException {
@@ -2702,9 +2738,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("dcc_id", "DCCid");
         // FIELD_NAME_MAP.put("species", "organism");
         // FIELD_NAME_MAP.put("PubMed ID", "publication");
+        FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Person Mid Initials", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Affiliation", NOT_TO_BE_LOADED);
-        FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Address", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Phone", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Email", NOT_TO_BE_LOADED);
