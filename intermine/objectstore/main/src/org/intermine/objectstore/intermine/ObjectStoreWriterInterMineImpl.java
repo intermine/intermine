@@ -935,7 +935,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
-    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+    public void addAllToBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         try {
             Connection c = null;
             try {
@@ -995,7 +996,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
-    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+    public void removeAllFromBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         try {
             Connection c = null;
             try {

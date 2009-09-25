@@ -248,7 +248,8 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void addAllToBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+    public void addAllToBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         throw new RuntimeException("Not implemented");
     }
 
@@ -270,7 +271,8 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
      * @param coll a Collection of Integers
      * @throws ObjectStoreException if an error occurs
      */
-    public void removeAllFromBag(ObjectStoreBag osb, Collection coll) throws ObjectStoreException {
+    public void removeAllFromBag(ObjectStoreBag osb,
+            Collection<Integer> coll) throws ObjectStoreException {
         throw new RuntimeException("Not implemented");
     }
 

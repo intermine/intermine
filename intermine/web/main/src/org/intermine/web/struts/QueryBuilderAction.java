@@ -186,6 +186,7 @@ public class QueryBuilderAction extends InterMineAction
             // Loop constraints can't operate over outer joins, switch all outer joins to normal
             // We don't do this any more - we just forbid creating such loop constraints.
             //String updatedNodePath = query.setJoinStyleForPath(node.getPathString(), false);
+            query.addNode((String) constraintValue);
 
             Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id,
                     null);

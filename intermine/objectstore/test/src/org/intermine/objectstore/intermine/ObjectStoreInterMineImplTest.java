@@ -762,7 +762,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
     public void testObjectStoreBag() throws Exception {
         System.out.println("Starting testObjectStoreBag");
         ObjectStoreBag osb = storeDataWriter.createObjectStoreBag();
-        ArrayList coll = new ArrayList();
+        ArrayList<Integer> coll = new ArrayList<Integer>();
         coll.add(new Integer(3));
         coll.add(((Employee) data.get("EmployeeA1")).getId());
         coll.add(((Employee) data.get("EmployeeA2")).getId());
