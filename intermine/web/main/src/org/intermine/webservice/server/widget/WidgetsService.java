@@ -157,12 +157,8 @@ public class WidgetsService extends WebService
         List<Integer> bagList = new ArrayList();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                profile.getUserId(), uosw);
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        osw.addAllToBag(imBag.getOsb(), bagList);
-        osw.close();
-        profile.saveBag(imBag.getName(), imBag);
+        InterMineBag imBag = profile.createBag(bagName, className, ""); 
+        imBag.addIdsToBag(bagList); 
         return imBag;
     }
 
