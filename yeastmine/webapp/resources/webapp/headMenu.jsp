@@ -15,15 +15,10 @@
 
   <!-- Header -->
   <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
-  
+
   <c:if test="${fn:length(headerLinks) > 0}">
     <%-- Menu appearing at the top right (about, etc..) --%>
     <div id="topnav">
-
-      <a href="http://blog.modencode.org">modENCODE blog</a>
-
-<%--
-
       <c:forEach var="entry" items="${headerLinks}" varStatus="status">
         <c:if test="${status.count != 1}">&nbsp;|&nbsp;</c:if>
         <c:set value="header.links.${entry}" var="linkProp"/>
@@ -36,9 +31,6 @@
           </c:otherwise>
         </c:choose>
       </c:forEach>
-      
-      --%>
-       
     </div>
   </c:if>
   <div id="header">
@@ -72,26 +64,11 @@
           <fmt:message key="menu.customQuery"/>&nbsp;
         </a>
       </li>
-
-  <li id="project"  <c:if test="${tab == 'projects'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
-      <fmt:message key="menu.projects"/>
-    </a>
-  </li>
-
-  <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do">
-      <fmt:message key="menu.experiments"/>
-    </a>
-  </li>
-
-  <li id="submissions"  <c:if test="${tab == 'submissions'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/submissions.do">
-      <fmt:message key="menu.submissions"/>
-    </a>
-  </li>
-
-
+      <li id="tools"  <c:if test="${tab == 'tools'}">class="activelink"</c:if>>
+        <a href="/${WEB_PROPERTIES['webapp.path']}/tools.do">
+          <fmt:message key="menu.tools"/>
+        </a>
+      </li>
       <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
           <fmt:message key="menu.dataCategories"/>
@@ -107,7 +84,7 @@
         <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
         <li>|</li>
         <c:if test="${!empty PROFILE.username}">
-            <li>${PROFILE.username}&nbsp;|&nbsp;</li>
+            <li>&nbsp;${PROFILE.username}&nbsp;|&nbsp;</li>
         </c:if>
         <li><im:login/></li>
     </ul>

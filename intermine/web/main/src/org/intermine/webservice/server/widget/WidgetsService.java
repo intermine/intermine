@@ -48,7 +48,8 @@ import org.intermine.webservice.server.WebService;
  * Web service that returns a widget for a given list of identifiers See
  * {@link WidgetsRequestProcessor} for parameter description
  * URL examples: get an EnrichmentWidget
- * /service/widgets?widgetId=go_enrichment&amp;className=Gene&amp;extraAttributes=Bonferroni,0.1,biological_process&amp;ids=S000000003,S000000004&amp;format=html
+ * /service/widgets?widgetId=go_enrichment&amp;className=Gene&amp;extraAttributes=Bonferroni,0.1
+ * ,biological_process&amp;ids=S000000003,S000000004&amp;format=html
  * get a GraphWidget
  * /service/widgets?widgetId=flyatlas
  *   &amp;className=Gene&amp;extraAttributes=
@@ -84,8 +85,8 @@ public class WidgetsService extends WebService
             ((TableWidgetConfig) widgetConfig).setClassKeys((Map) servletContext
                                                             .getAttribute(Constants.CLASS_KEYS));
         }
-        response.getWriter().print(getHtml(widgetConfig, imBag, 
-                new URLGenerator(request).getBaseURL(), os));
+        response.getWriter().print(getHtml(widgetConfig, imBag,
+                    new URLGenerator(request).getBaseURL(), os));
     }
 
     /**
@@ -153,11 +154,15 @@ public class WidgetsService extends WebService
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
-        List <Integer> bagList = new ArrayList<Integer>();
+        List<Integer> bagList = new ArrayList();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        InterMineBag imBag = profile.createBag(bagName, className, "");
-        imBag.addIdsToBag(bagList);
+        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
+                profile.getUserId(), uosw);
+        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        osw.addAllToBag(imBag.getOsb(), bagList);
+        osw.close();
+        profile.saveBag(imBag.getName(), imBag);
         return imBag;
     }
 

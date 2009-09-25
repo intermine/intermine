@@ -430,7 +430,7 @@ public class PathQuery
     /**
      * Given a path through the model set each join to outer/normal according to the defaults:
      *  - collections and references are outer joins
-     * e.g. Company.departments.name -> Company:departments.name
+     * e.g. Company.departments.name -&gt; Company:departments.name
      * @param path the path to resolve
      * @return the new path
      */
@@ -1151,6 +1151,7 @@ public class PathQuery
 
     /**
      * Get a PathNode by path.
+     *
      * @param path a path
      * @return the PathNode for path path
      */
@@ -1159,8 +1160,8 @@ public class PathQuery
     }
 
     /**
-     * Get a PathNode by path, independantly of
-     * join style
+     * Get a PathNode by path, independantly of join style.
+     *
      * @param path the PathNode for path path
      * @return the PathNode for path path
      */
@@ -1174,7 +1175,8 @@ public class PathQuery
     }
 
     /**
-     * Add a node to the query using a path, adding parent nodes if necessary
+     * Add a node to the query using a path, adding parent nodes if necessary.
+     *
      * @param path the path for the new Node
      * @return the PathNode that was added to the nodes Map
      */

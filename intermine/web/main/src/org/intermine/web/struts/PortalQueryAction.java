@@ -72,7 +72,7 @@ import org.intermine.web.logic.template.TemplateHelper;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static int INDEX = 0;
+    private static int index = 0;
 //    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -178,7 +178,7 @@ public class PortalQueryAction extends InterMineAction
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         InterMineBag imBag = profile.createBag(bagName, className, "");
-        List <Integer> bagList = new ArrayList();
+        List<Integer> bagList = new ArrayList();
 
         // There's only one node, get the first value
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
@@ -212,7 +212,7 @@ public class PortalQueryAction extends InterMineAction
                     WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
                         addparameter, bagList, className);
                     imBag = profile.createBag(bagName, className, "");
-                    List<Integer> converted = new ArrayList();
+                    List<Integer> converted = new ArrayList<Integer>();
                     for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
                             : convertedWebResult) {
                         ResultElement resElement = resRow.get(0).get(0).getValue();
@@ -275,10 +275,12 @@ public class PortalQueryAction extends InterMineAction
         }
     }
 
-    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag, 
-            List<Integer> bagList)
-    throws ObjectStoreException {
-        imBag.addIdsToBag(bagList);
+    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag,
+            List<Integer> bagList, Profile profile) throws ObjectStoreException {
+        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        osw.addAllToBag(imBag.getOsb(), bagList);
+        osw.close();
+        profile.saveBag(imBag.getName(), imBag);
         return new ForwardParameters(mapping.findForward("bagDetails"))
         .addParameter("bagName", imBag.getName()).forward();
     }
@@ -286,7 +288,7 @@ public class PortalQueryAction extends InterMineAction
     private ActionForward goToResults(ActionMapping mapping,
                                       HttpSession session, WebResults webResults) {
         PagedTable pc = new PagedTable(webResults);
-        String identifier = "col" + INDEX++;
+        String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))
         .addParameter("table", identifier)

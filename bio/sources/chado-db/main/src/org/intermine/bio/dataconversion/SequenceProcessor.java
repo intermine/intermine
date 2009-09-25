@@ -177,8 +177,8 @@ public class SequenceProcessor extends ChadoProcessor
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
-        processLibraryFeatureTable(connection);
-        processLibraryCVTermTable(connection);
+//        processLibraryFeatureTable(connection);
+//        processLibraryCVTermTable(connection);
         
         // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);

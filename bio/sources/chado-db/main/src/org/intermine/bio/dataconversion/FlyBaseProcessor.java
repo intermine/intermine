@@ -647,8 +647,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             
             // anatomy term config example:  for features of class "CDNAClone" if there is an 
             // anatomy term, set a reference in CDNAClone.tissueSource
-            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
-                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
+//            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
+//                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
             
             // feature_cvterm example for Transposition: we create a featureTerms collection in the
             // Transposition objects containing SequenceOntologyTerm objects.  For the current
