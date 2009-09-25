@@ -266,7 +266,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        processFeatures(connection, submissionMap);
+     //   processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
@@ -952,7 +952,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // maybe? Gene Model Prediction:SC:1
         // (:->&)
         String s1 = StringUtils.substringBefore(StringUtils.replace(w, url, ""), ":");
-        String s = s1.replace('"', ' ');
+        String s = s1.replace('"', ' ').trim();
         return s;
     }
 
