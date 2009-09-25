@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,8 +38,6 @@ import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
-
-import com.sun.org.omg.CORBA.AttrDescriptionSeqHelper;
 
 /**
  * Create items from the modENCODE metadata extensions to the chado schema.
@@ -137,7 +136,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     List<String> submissionPropTypes = 
         Arrays.asList(
                 new String[] {"pi", "antibody", "cell line", "stage", "strain", "tissue", "array"});
-    private Map<String, String> nonWikiSubmissionProperties = new HashMap<String, String>();
+    private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
     
     
@@ -1685,6 +1684,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return makeLookupList(initialLookup).get(0);
     }
     
+    private static Set<String> unifyFactorNames(Collection<String> original) {
+        Set<String> unified = new HashSet<String>();
+        for (String name : original) {
+            unified.add(getPreferredSynonym(name));
+        }
+        return unified;
+    }
+    
+    
     // process new query
     // get DCC id
     // add antibody to types
@@ -1765,68 +1773,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
         
         
-        // let's deal with experimental factors
-        // let's check first that there is any
-        if (submissionEFMap.isEmpty()) {
-            LOG.error("NO SUBMISSION HAS EXPERIMENTAL FACTORS");
-        } else {
-        for (Integer submissionId : subToTypes.keySet()) {
-            Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
-
-            String dccId = dccIdMap.get(submissionId);
-
-            if (submissionEFMap.get(submissionId) == null ||
-                    (submissionEFMap.get(submissionId) != null
-                            && submissionEFMap.get(submissionId).efNames.isEmpty())) {
-                LOG.error("SUBMISSION " + dccId + " HAS NO EXPERIMENTAL FACTOR");
-                continue;
-            }
-            
-            ExperimentalFactor ef = submissionEFMap.get(submissionId);
-            if (ef == null) {
-                LOG.warn("No experimental factors found for submission: " + dccId);
-                continue;
-            }
-            List<String> exFactorNames = ef.efNames;
-            
-            Integer efRank = 0;
-            for (String exFactor : exFactorNames) {
-                if (exFactor.startsWith(PCRPRIMER)) {
-                    createEFItem(submissionId, PCRPRIMER, exFactor);
-                    continue;
-                }
-               
-                List<String> synonyms = makeLookupList(exFactor.trim());
-                String[] factor = getOfficialNameFromTypes(typeToProp, synonyms);
-                String factorValue = factor[1];
-                String factorType = factor[0];
-                if (factorValue == null) {
-                    if (exFactor.equalsIgnoreCase(COMPOUND)) {
-                        factor = lookForEFactorInOtherWikiPages(typeToProp, 
-                                new String[]{COMPOUND_KEYS});
-                        factorValue = factor[1];
-                        factorType = COMPOUND;
-                    }
-                }
-                if (factorValue == null) {
-                    LOG.error("EX factor value not found: " + dccId + ", factor = " + exFactor 
-                            + ", types = " + typeToProp.keySet());
-                    // in this case we put what was declared as value in the experiment_prop
-                    // table
-                    if (typeToProp.containsKey(exFactor)) {
-                        for (SubmissionProperty prop : typeToProp.get(exFactor)) {
-                            LOG.error("EX " + dccId + " values for type: " + prop.details.entrySet());
-                        }
-                    }
-                    String efType = ef.efTypes.get(efRank);
-                    createEFItem(submissionId, efType, exFactor);
-                } else {
-                    createEFItem(submissionId, factorType, factorValue);
-                }
-                efRank++;
-            }
-        }
-        }
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -1835,13 +1781,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             String dccId = dccIdMap.get(submissionId);
             
-            // DEVELOPMENTAL STAGE
-            List<String> devStageIds = new ArrayList<String>();
             
-            devStageIds.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
+            ExperimentalFactor ef = submissionEFMap.get(submissionId);
+            if (ef == null) {
+                LOG.warn("No experimental factors found for submission: " + dccId);
+                continue;
+            }
+            Set<String> exFactorNames = unifyFactorNames(ef.efNames);
+            LOG.info("EX unified factor names: " + exFactorNames);
+            
+            // DEVELOPMENTAL STAGE
+            List<Item> devStageItems = new ArrayList<Item>();
+            
+            devStageItems.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
                     new String[] {"stage", "dev stage"}));
-            if (devStageIds.isEmpty()) {
-                devStageIds.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
+            if (devStageItems.isEmpty()) {
+                devStageItems.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
                         typeToProp, new String[] {
                         "developmental stage.developmental stage",
                         "tissue.developmental stage",
@@ -1849,68 +1804,89 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         "cell line.developmental stage",
                         "cell id.developmental stage"
                         }));
-                if (!devStageIds.isEmpty()) {
+                if (!devStageItems.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " DEV STAGE");                    
                 }                
             }
-            storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageIds);
+            storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageItems);
+            if (!devStageItems.isEmpty() && exFactorNames.contains("developmental stage")) {
+                createExperimentalFactors(submissionId, "developmental stage", devStageItems);
+                exFactorNames.remove("developmental stage");
+            }
                         
             // STRAIN
-            List<String> strainIds = new ArrayList<String>();
-            strainIds.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
-            storeSubmissionCollection(storedSubmissionId, "strains", strainIds);
-
+            List<Item> strainItems = new ArrayList<Item>();
+            strainItems.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
+            storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
+            if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
+                createExperimentalFactors(submissionId, "strain", strainItems);
+                exFactorNames.remove("strain");
+            }
+            
+            
             // ARRAY
-            List<String> arrayIds = new ArrayList<String>();
-            arrayIds.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
-            if (arrayIds.isEmpty()) {
+            List<Item> arrayItems = new ArrayList<Item>();
+            arrayItems.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
+            if (arrayItems.isEmpty()) {
                 LOG.info("ARRAY: " + typeToProp.get("array"));
-                arrayIds.addAll(lookForAttributesInOtherWikiPages("Array",
+                arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
                         typeToProp, new String[] {
                         "adf.official name"
                         }));
-                if (!arrayIds.isEmpty()) {
+                if (!arrayItems.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " ARRAY ");                    
                 }
             }
-            storeSubmissionCollection(storedSubmissionId, "arrays", arrayIds);
+            storeSubmissionCollection(storedSubmissionId, "arrays", arrayItems);
+            if (!arrayItems.isEmpty() && exFactorNames.contains("array")) {
+                createExperimentalFactors(submissionId, "array", arrayItems);
+                exFactorNames.remove("array");
+            }
             
             // CELL LINE
-            List<String> lineIds = new ArrayList<String>();
-            lineIds.addAll(createFromWikiPage("CellLine", typeToProp, 
+            List<Item> lineItems = new ArrayList<Item>();
+            lineItems.addAll(createFromWikiPage("CellLine", typeToProp, 
                     new String[] {"cell line", "cell id"}));
-            storeSubmissionCollection(storedSubmissionId, "cellLines", lineIds);
+            storeSubmissionCollection(storedSubmissionId, "cellLines", lineItems);
+            if (!lineItems.isEmpty() && exFactorNames.contains("cell line")) {
+                createExperimentalFactors(submissionId, "cell line", lineItems);
+                exFactorNames.remove("cell line");
+            }
             
             // ANTIBODY
-            List<String> antibodyIds = new ArrayList<String>();
-            antibodyIds.addAll(createFromWikiPage("Antibody", typeToProp, 
+            List<Item> antibodyItems = new ArrayList<Item>();
+            antibodyItems.addAll(createFromWikiPage("Antibody", typeToProp, 
                     new String[] {"antibody"}));
-            if (antibodyIds.isEmpty()) {
+            if (antibodyItems.isEmpty()) {
                 LOG.info("ANTIBODY: " + typeToProp.get("antibody"));
-                antibodyIds.addAll(lookForAttributesInOtherWikiPages("Antibody",
+                antibodyItems.addAll(lookForAttributesInOtherWikiPages("Antibody",
                         typeToProp, new String[] {
                         "antibody.official name"
                         }));
-                if (!antibodyIds.isEmpty()) {
+                if (!antibodyItems.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " ANTIBODY ");                    
                 }
             }
-            storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyIds);
+            storeSubmissionCollection(storedSubmissionId, "antibodies", antibodyItems);
+            if (!antibodyItems.isEmpty() && exFactorNames.contains("antibody")) {
+                createExperimentalFactors(submissionId, "antibody", antibodyItems);
+                exFactorNames.remove("antibody");
+            }
             
             // TISSUE
-            List<String> tissueIds = new ArrayList<String>();
-            tissueIds.addAll(createFromWikiPage("Tissue", typeToProp, new String[] {"tissue"}));
-            if (tissueIds.isEmpty()) {
-                tissueIds.addAll(lookForAttributesInOtherWikiPages("Tissue",
+            List<Item> tissueItems = new ArrayList<Item>();
+            tissueItems.addAll(createFromWikiPage("Tissue", typeToProp, new String[] {"tissue"}));
+            if (tissueItems.isEmpty()) {
+                tissueItems.addAll(lookForAttributesInOtherWikiPages("Tissue",
                         typeToProp, new String[] {
                         "stage.tissue"
                         , "cell line.tissue"
                         , "cell id.tissue"
                         }));
-                if (!tissueIds.isEmpty()) {
+                if (!tissueItems.isEmpty()) {
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " TISSUE");                    
                 } 
@@ -1919,10 +1895,44 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 //         tissueIds.add(createNonWikiSubmissionPropertyItem("Tissue", "whole organism"));
                 //        }
             }
-            storeSubmissionCollection(storedSubmissionId, "tissues", tissueIds);
+            storeSubmissionCollection(storedSubmissionId, "tissues", tissueItems);
+            if (!tissueItems.isEmpty() && exFactorNames.contains("tissue")) {
+                createExperimentalFactors(submissionId, "tissue", tissueItems);
+                exFactorNames.remove("tissue");
+            }
+            
+            LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
+            
+            // this is the old logic used here to clean up remaining factors
+            for (String exFactor : exFactorNames) {
+                if (exFactor.startsWith(PCRPRIMER)) {
+                    createEFItem(submissionId, PCRPRIMER, exFactor);
+                    exFactorNames.remove(exFactor);
+                    continue;
+                } else if (exFactor.equalsIgnoreCase(COMPOUND)) {
+                    String[] factor = lookForEFactorInOtherWikiPages(typeToProp, 
+                            new String[]{COMPOUND_KEYS});
+                    String factorValue = factor[1];
+                    if (factorValue != null) {
+                        createEFItem(submissionId, COMPOUND, factorValue);
+                        exFactorNames.remove(COMPOUND);
+                    }
+                }
+                // TODO still need to handle any leftover factors
+            }
+            
+            LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
         }
     }
 
+    
+    private void createExperimentalFactors(Integer submissionId, String type, 
+            Collection<Item> items) throws ObjectStoreException {
+        for (Item item : items) {
+            createEFItem(submissionId, type, item.getAttribute("name").getValue());
+        }
+    }
+    
     
     private void createEFItem(Integer current, String type,
             String efName) throws ObjectStoreException {
@@ -1935,11 +1945,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
-            eFactorIdMap .put(efName, intermineObjectId);
-            eFactorIdRefMap .put(efName, ef.getIdentifier());
+            eFactorIdMap.put(efName, intermineObjectId);
+            eFactorIdRefMap.put(efName, ef.getIdentifier());
         }
         // if pertinent to the current sub, add to the map for the references
-            addToMap(submissionEFactorMap, current, efName);
+        addToMap(submissionEFactorMap, current, efName);
     }
 
     
@@ -1974,24 +1984,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return noResult;
     }
 
-    
-    private String[] getOfficialNameFromTypes(
-            Map<String, List<SubmissionProperty>> typeProps, List<String> types) {
-        for (String type : types) {
-            if (typeProps.containsKey(type)) {
-                SubmissionProperty prop = typeProps.get(type).get(0);
-                String officialName = getCorrectedOfficialName(prop);
-                if (officialName != null) {
-                    String[] factor = new String[2];
-                    factor[0] = type;
-                    factor[1] = officialName;
-                    return factor;
-                }
-            }
-        }
-        String[] noResult = {null, null};
-        return noResult;
-    }
 
     
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, 
@@ -2012,7 +2004,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     
     private void addSubmissionPropsFromCharacteristics(
-            Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, Connection connection) 
+            Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, 
+            Connection connection) 
     throws SQLException {
         
         ResultSet res = getAppliedDataResultSetCharacteristics(connection);
@@ -2028,6 +2021,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
             Integer attDbxref = new Integer(res.getInt("att_dbxref"));
+            String dbAccession = res.getString("db_accession");
+            String dbName = res.getString("db_name");
             
             Integer submissionId = dataSubmissionMap.get(dataId);
             if (attDbxref.intValue() != lastAttDbXref.intValue()) {
@@ -2072,10 +2067,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
     
     
-    private List<String> createFromWikiPage(String clsName, 
+    private List<Item> createFromWikiPage(String clsName, 
             Map<String, List<SubmissionProperty>> typeToProp, String[] types) 
             throws ObjectStoreException {
-        List<String> itemIds = new ArrayList<String>();
+        List<Item> items = new ArrayList<Item>();
 
         List<SubmissionProperty> props = new ArrayList<SubmissionProperty>();
         for (String type : types) {
@@ -2083,36 +2078,44 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 props.add(typeToProp.get(type).get(0));
             }
         }
-        itemIds.addAll(createItemsForSubmissionProperties(clsName, props));
-        return itemIds;
+        items.addAll(createItemsForSubmissionProperties(clsName, props));
+        return items;
     }
     
     
     private void storeSubmissionCollection(Integer storedSubmissionId, String name,
-            List<String> ids) 
+            List<Item> items) 
     throws ObjectStoreException {
-        if (!ids.isEmpty()) {
-            ReferenceList refList = new ReferenceList(name, ids);
+        if (!items.isEmpty()) {
+            ReferenceList refList = new ReferenceList(name, getIdentifiersFromItems(items));
             getChadoDBConverter().store(refList, storedSubmissionId);
         }
     }
     
-    private List<String> createItemsForSubmissionProperties(String clsName, 
+    private List<String> getIdentifiersFromItems(Collection<Item> items) {
+        List<String> ids = new ArrayList<String>();
+        for (Item item : items) {
+            ids.add(item.getIdentifier());
+        }
+        return ids;
+    }
+    
+    private List<Item> createItemsForSubmissionProperties(String clsName, 
             List<SubmissionProperty> subProps)
     throws ObjectStoreException {
-        List<String> itemIds = new ArrayList<String>();
+        List<Item> items = new ArrayList<Item>();
         for (SubmissionProperty subProp : subProps) {
-            String itemId = getItemForSubmissionProperty(clsName, subProp);
-            if (itemId != null) {
-                itemIds.add(itemId);
+            Item item = getItemForSubmissionProperty(clsName, subProp);
+            if (item != null) {
+                items.add(item);
             }
         }
-        return itemIds;
+        return items;
     }
         
     
 
-    private String getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
+    private Item getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
     throws ObjectStoreException {
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
         if (propItem == null) {
@@ -2173,7 +2176,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             subItemsMap.put(prop.wikiPageUrl, propItem);
         }
-        return propItem.getIdentifier();
+        return propItem;
     }
     
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
@@ -2184,11 +2187,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }       
       
-    private List<String> lookForAttributesInOtherWikiPages(String clsName,
+    private List<Item> lookForAttributesInOtherWikiPages(String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
             throws ObjectStoreException {
 
-        List<String> itemIds = new ArrayList<String>();
+        List<Item> items = new ArrayList<Item>();
         for (String typeProp : lookFor) {
             if (typeProp.indexOf(".") > 0) {
                 String[] bits = StringUtils.split(typeProp, '.');
@@ -2200,28 +2203,28 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     for (SubmissionProperty subProp : typeToProp.get(type)) { 
                         if (subProp.details.containsKey(propName)) {
                             for (String value : subProp.details.get(propName)) {
-                                itemIds.add(createNonWikiSubmissionPropertyItem(clsName, value));
+                                items.add(createNonWikiSubmissionPropertyItem(clsName, value));
                             }
                         }
                     }
-                    if (!itemIds.isEmpty()) {
+                    if (!items.isEmpty()) {
                         break;
                     }
                 }
             }
         }
-        return itemIds;
+        return items;
     }
     
-    private String createNonWikiSubmissionPropertyItem(String clsName, String name) 
+    private Item createNonWikiSubmissionPropertyItem(String clsName, String name) 
     throws ObjectStoreException {
         if (clsName.equals("DevelopmentalStage")) {
             name = correctDevStageTerm(name);
         }
         
-        String itemId = nonWikiSubmissionProperties.get(name);
-        if (itemId == null) {    
-            Item item = createSubmissionProperty(clsName, name);
+        Item item = nonWikiSubmissionProperties.get(name);
+        if (item == null) {    
+            item = createSubmissionProperty(clsName, name);
             
             if (clsName.equals("DevelopmentalStage")) {
                 String ontologyTermId = getDevStageTerm(name);
@@ -2229,10 +2232,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             getChadoDBConverter().store(item);
 
-            itemId = item.getIdentifier();
-            nonWikiSubmissionProperties.put(name, itemId);
+            nonWikiSubmissionProperties.put(name, item);
         }
-        return itemId;
+        return item;
     }
     
     private Item createSubmissionProperty(String clsName, String name) {
@@ -2302,16 +2304,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
     
 
-    private String getSubmissionItemIdentifier(String dccId) {
-        for (Map.Entry<Integer, String> entry : dccIdMap.entrySet()) {
-            if (dccId.equals(entry.getValue())) {
-                Integer subChadoId = entry.getKey();
-                return submissionMap.get(subChadoId).itemIdentifier;
-            }
-        }
-        return null;
-    }
-
 
     private String getDevStageTerm(String value) throws ObjectStoreException {
         value = correctDevStageTerm(value);
@@ -2375,11 +2367,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query = "select d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id as att_dbxref"
-            + " FROM data d, data_attribute da, attribute a, dbxref ax"
+            + " a.dbxref_id as att_dbxref, ax.accession as db_accession, db.name as db_name"
+            + " FROM data d, data_attribute da, attribute a, dbxref ax, db"
              + " WHERE d.data_id = da.data_id"
             + " AND da.attribute_id = a.attribute_id"
             + " AND a.dbxref_id = ax.dbxref_id"
+            + " AND ax.db_id = db.db_id"
             + " ORDER BY d.data_id, a.dbxref_id";
 
         LOG.info("executing: " + query);
