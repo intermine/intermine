@@ -190,7 +190,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     {
         private String itemIdentifier;     // e.g. "0_12"
         private Integer intermineObjectId;
-        private List<String> efTypes = new ArrayList<String>();
+        private Map<String, String> efTypes = new HashMap<String, String>();
         private List<String> efNames = new ArrayList<String>();
         // the submissionId associated with a specific ef
         private Integer submissionId;
@@ -1131,12 +1131,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         int prevRank = -1;
         int prevSub = -1;
         ExperimentalFactor ef = null;
-
+        String name = null;
+        
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             Integer rank = new Integer(res.getInt("rank"));
             String  value    = res.getString("value");
-
+            
             // the data is alternating between EF types and names, in order.
             if (submissionId != prevSub) {
                 // except for the first record, this is a new EF object
@@ -1149,12 +1150,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             if (rank != prevRank || submissionId != prevSub) {
                 // this is a name                
-                ef.efNames.add(value);                
+                ef.efNames.add(value);
+                name = value;
                 count++;
             } else {
                 // this is a type
-                ef.efTypes.add(value);
-                
+                ef.efTypes.put(name, value);
+                name = null;
                 if (res.isLast()) {
                     submissionEFMap.put(submissionId, ef);
                 }
@@ -1871,8 +1873,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 exFactorNames.remove("tissue");
             }
             
-            LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
-            
             // this is the old logic used here to clean up remaining factors
             for (String exFactor : exFactorNames) {
                 if (exFactor.startsWith(PCRPRIMER)) {
@@ -1888,10 +1888,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         exFactorNames.remove(COMPOUND);
                     }
                 }
-                // TODO still need to handle any leftover factors
+               
             }
             
+            // deal with remaining factor names
             LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
+            for (String exFactor : exFactorNames) {
+                String type = ef.efTypes.get(exFactor);
+                createEFItem(submissionId, type, exFactor);
+            }        
         }
     }
 
