@@ -8,6 +8,7 @@
 -->
 
 <class name="LocatedSequenceFeature" is-interface="true">
+  <attribute name="featureType" type="java.lang.String" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
