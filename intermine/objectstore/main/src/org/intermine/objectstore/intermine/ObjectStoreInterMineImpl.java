@@ -1919,11 +1919,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                     String sql = SqlGenerator.generate(q, schema, db, null,
                             SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                    PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query
-                            .Query(sql), sql, "temporary_precomp_" + getUniqueInteger(c),
-                            "goFaster", c);
-                    ptm.addTableToDatabase(pt, new HashSet(), false);
-                    tablesToDrop.add(pt.getName());
+                    PrecomputedTable pt = ptm.lookupSql(sql);
+                    if (pt == null) {
+                        pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
+                                "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                        ptm.addTableToDatabase(pt, new HashSet(), false);
+                        tablesToDrop.add(pt.getName());
+                    }
                     Set<PrecomputedTable> pts = new HashSet<PrecomputedTable>();
                     pts.add(pt);
                     for (QuerySelectable qs : q.getSelect()) {
@@ -1931,22 +1933,28 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
                             sql = SqlGenerator.generate(subQ, schema, db, null,
                                     SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                            PrecomputedTable subPt = new PrecomputedTable(
-                                    new org.intermine.sql.query.Query(sql), sql,
-                                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                            ptm.addTableToDatabase(subPt, new HashSet(), false);
-                            tablesToDrop.add(pt.getName());
+                            PrecomputedTable subPt = ptm.lookupSql(sql);
+                            if (pt == null) {
+                                subPt = new PrecomputedTable(
+                                        new org.intermine.sql.query.Query(sql), sql,
+                                        "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                                ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                tablesToDrop.add(pt.getName());
+                            }
                             pts.add(subPt);
                         } else if (qs instanceof QueryObjectPathExpression) {
                             Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                                     getSchema().isMissingNotXml());
                             sql = SqlGenerator.generate(subQ, schema, db, null,
                                     SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                            PrecomputedTable subPt = new PrecomputedTable(
-                                    new org.intermine.sql.query.Query(sql), sql,
-                                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                            ptm.addTableToDatabase(subPt, new HashSet(), false);
-                            tablesToDrop.add(pt.getName());
+                            PrecomputedTable subPt = ptm.lookupSql(sql);
+                            if (pt == null) {
+                                subPt = new PrecomputedTable(
+                                        new org.intermine.sql.query.Query(sql), sql,
+                                        "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                                ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                tablesToDrop.add(pt.getName());
+                            }
                             pts.add(subPt);
                         }
                     }
