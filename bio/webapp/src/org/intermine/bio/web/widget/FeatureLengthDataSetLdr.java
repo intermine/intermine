@@ -123,10 +123,9 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
 
         Double mean = stats.getMean();
         Double max = stats.getMax();
-
         Function2D actual = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
 
-        Double start = mean - max;
+        Double ninetyNine = stats.getPercentile(99.9);
         int total = (int) stats.getN();
         
         String seriesName = "Expected";
@@ -134,7 +133,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             seriesName = "Actual";
             widgetTotal = total;
         }
-        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, max, 
+        
+        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, ninetyNine, 
                                                                     total, seriesName);
         return series;
     }
