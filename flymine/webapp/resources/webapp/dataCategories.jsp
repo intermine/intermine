@@ -410,7 +410,7 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="1" class="leftcol">
+  <tr><td rowspan="2" class="leftcol">
        <html:link action="/aspect?name=Pathways">
         <p> <img src="model/images/pathways.png" /></p>
         <p> Pathways</p></html:link></td>
@@ -420,6 +420,15 @@
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
+
+  <tr>
+    <td> <i>D. melanogaster</i> </td>
+    <td> Pathway information and the genes involved in them</td>
+    <td> <a href="http://fly.reactome.org/" target="_new">FlyReactome</a> - Version 1.0</td>
+    <td> &nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+
 
   <tr><td rowspan="1" class="leftcol">
        <html:link action="/aspect?name=Disease">
