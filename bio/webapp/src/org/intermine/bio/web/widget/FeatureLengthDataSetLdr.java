@@ -78,11 +78,11 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             return;
         }
         
-        XYDataset actual = getSeries(bag, os, organismName);
-//  we can't do this until we upgrade to 1.0.13        
-//  XYDataset expected = getSeries(null, os, organismName);
-        dataSet = actual;
-        
+        XYSeries actual = getSeries(bag, os, organismName);
+        XYSeries expected = getSeries(null, os, organismName);
+        dataSet = new XYSeriesCollection();
+        ((XYSeriesCollection) dataSet).addSeries(actual);
+        ((XYSeriesCollection) dataSet).addSeries(expected);
     }
 
     /**
@@ -106,7 +106,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         return widgetTotal;
     }
 
-    private XYDataset getSeries(InterMineBag bag, ObjectStore os,  String organismName) 
+    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName) 
     throws ClassNotFoundException {
 
         Query q = getQuery(organismName, bag);
@@ -134,7 +134,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             seriesName = "Actual";
             widgetTotal = total;
         }
-        XYDataset series = DatasetUtilities.sampleFunction2D(actual, start, max, total, seriesName);
+        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, max, 
+                                                                    total, seriesName);
         return series;
     }
     
