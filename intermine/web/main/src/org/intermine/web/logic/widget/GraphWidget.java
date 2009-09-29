@@ -160,8 +160,7 @@ public class GraphWidget extends Widget
 
                     
                     plot = chart.getXYPlot();
-                    plot.setBackgroundPaint(Color.white);
-                    
+                   
             } else if (StringUtils.isNotEmpty(graphType) 
                             && graphType.equals("StackedBarChart")) {
                 chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
