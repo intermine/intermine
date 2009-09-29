@@ -230,7 +230,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME organism" + ":   " + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-        processExperimentTable(connection);
+        processSubmission(connection);
         LOG.info("TIME experimentTable" + ":   " + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
@@ -266,7 +266,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME DAG" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
-     //   processFeatures(connection, submissionMap);
+        processFeatures(connection, submissionMap);
         LOG.info("TIME features" + ":   "  + (System.currentTimeMillis() - bT));
 
         // set references
@@ -354,7 +354,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             // removed to check role in memory error
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable2(connection, subFeatureMap, chadoExperimentId,queryList);
+            processDataFeatureTable(connection, subFeatureMap, chadoExperimentId,queryList);
         }
     }
 
@@ -364,98 +364,34 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processDataFeatureTable2(Connection connection, Map<Integer,
+    private void processDataFeatureTable(Connection connection, Map<Integer,
             FeatureData> featureMap, Integer chadoExperimentId, String queryList)
     throws SQLException, ObjectStoreException {
         ResultSet res = getDataFeatureResultSet(connection, queryList);
 
-        Integer prevId = 0;              // previous id in the loop
-        Integer collectionSize = 0;
         ReferenceList collection = null;
-
         String submissionItemId = submissionMap.get(chadoExperimentId).itemIdentifier;
 
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
+            
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
-                LOG.debug("Check feature type: no data for feature_id: " + featureId
+                LOG.info("Check feature type: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
 
-            // get feature data
-            String featureItemId = featureData.getItemIdentifier();
-            LOG.debug("dataId " + dataId + " FD "
-                    + featureData.getInterMineType() + ": "
-                    + featureData.getChadoFeatureName());
+            // add submission collection
+            // using the old setting when the reference was added to the data_ids.
+            // TODO: it needs correction: here stores only the last submission reference.
             Integer featureObjectId = featureData.getIntermineObjectId();
-
+            
             collection = new ReferenceList();
             collection.setName("submissions");
             collection.addRefId(submissionItemId);
             getChadoDBConverter().store(collection, featureObjectId);
-        }
-    }
-
-    private void processDataFeatureTable(Connection connection, Map<Integer,
-            FeatureData> featureMap, String queryList)
-    throws SQLException, ObjectStoreException {
-        ResultSet res = getDataFeatureResultSet(connection, queryList);
-
-        Integer prevId = 0;              // previous id in the loop
-        Integer collectionSize = 0;
-        ReferenceList collection = null;
-
-        while (res.next()) {
-            Integer dataId = new Integer(res.getInt("data_id"));
-            Integer featureId = new Integer(res.getInt("feature_id"));
-            FeatureData featureData = featureMap.get(featureId);
-            if (featureData == null) {
-                LOG.debug("Check feature type: no data for feature_id: " + featureId
-                        + " in processDataFeatureTable(), data_id =" + dataId);
-                continue;
-            }
-
-            // get feature data
-            String featureItemId = featureData.getItemIdentifier();
-            LOG.debug("dataId " + prevId + " -> " + dataId + " FD "
-                    + featureData.getInterMineType() + ": "
-                    + featureData.getChadoFeatureName());
-
-            if (!dataId.equals(prevId)) {
-                if (prevId != 0) {
-                    // store previous collection
-                    LOG.info("STORING collection for dataId " + prevId + ": "
-                            + " size:" + collectionSize);
-
-                    long bT = System.currentTimeMillis();
-                    getChadoDBConverter().store(collection,
-                            appliedDataMap.get(prevId).intermineObjectId);
-                    LOG.info("TIME STORING FEAT " + ":" + (System.currentTimeMillis() - bT));
-                }
-                collection = new ReferenceList();
-                collection.setName("features");
-                collection.addRefId(featureItemId);
-                collectionSize = 1;
-            }
-
-            if (dataId.equals(prevId)) {
-                collection.addRefId(featureItemId);
-                collectionSize++;
-                LOG.debug("dataId ADDREF " + dataId + "|" + featureItemId + "|" + collectionSize);
-            }
-
-            if (res.isLast()) {
-                LOG.info("STORING collection for dataId " + dataId + ": "
-                        + " size:" + collectionSize);
-                long bT = System.currentTimeMillis();
-                getChadoDBConverter().store(collection,
-                        appliedDataMap.get(dataId).intermineObjectId);
-                LOG.info("TIME STORING FEAT " + ":" + (System.currentTimeMillis() - bT));
-            }
-            prevId = dataId;
         }
     }
 
@@ -1045,7 +981,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    private void processExperimentTable(Connection connection)
+    private void processSubmission(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getExperimentResultSet(connection);
         int count = 0;
@@ -1841,9 +1777,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         "cell id.developmental stage"
                         }));
                 if (!devStageItems.isEmpty()) {
-                    LOG.info("Attribute found in other wiki pages: " 
-                            + dccId + " DEV STAGE");                    
-                }                
+                 }                
             }
             storeSubmissionCollection(storedSubmissionId, "developmentalStages", devStageItems);
             if (!devStageItems.isEmpty() && exFactorNames.contains("developmental stage")) {
@@ -2777,6 +2711,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("url protocol", "url");
         FIELD_NAME_MAP.put("species", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
+        FIELD_NAME_MAP.put("Comment", NOT_TO_BE_LOADED);
     }
     
 
