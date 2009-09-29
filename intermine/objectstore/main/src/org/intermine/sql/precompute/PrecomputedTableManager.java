@@ -317,13 +317,15 @@ public class PrecomputedTableManager
             LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
 
-            // Create the entry in the index table
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
-                                                           + TABLE_INDEX + " VALUES(?,?,?)");
-            pstmt.setString(1, pt.getName());
-            pstmt.setString(2, pt.getOriginalSql());
-            pstmt.setString(3, pt.getCategory());
-            pstmt.execute();
+            if (record) {
+                // Create the entry in the index table
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
+                                                               + TABLE_INDEX + " VALUES(?,?,?)");
+                pstmt.setString(1, pt.getName());
+                pstmt.setString(2, pt.getOriginalSql());
+                pstmt.setString(3, pt.getCategory());
+                pstmt.execute();
+            }
             LOG.info("Finished creating precomputed table " + pt.getName());
         } finally {
             if ((con != null) && (conn == null)) {
