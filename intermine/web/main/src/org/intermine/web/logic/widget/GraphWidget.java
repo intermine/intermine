@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Stroke;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -39,10 +40,8 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.CategoryURLGenerator;
@@ -158,12 +157,10 @@ public class GraphWidget extends Widget
                                     PlotOrientation.VERTICAL, true, true, 
                                     false 
                                     );
-                    chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-                    ((GraphWidgetConfig) config).setHeight(400);
-                    chart.setBackgroundPaint(Color.white); 
+
+                    
                     plot = chart.getXYPlot();
-                 
-    
+                    plot.setBackgroundPaint(Color.white);
                     
             } else if (StringUtils.isNotEmpty(graphType) 
                             && graphType.equals("StackedBarChart")) {
