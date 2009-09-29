@@ -657,6 +657,16 @@
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
+      <graphdisplayer id="feature_length" title="Feature Length"
+        domainLabel="Length"
+        rangeLabel="Y"
+        dataSetLoader="org.intermine.bio.web.widget.FeatureLengthDataSetLdr"
+        description="Normal distribution of feature lenghts"
+        graphType="XYLineChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+       />
+
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
