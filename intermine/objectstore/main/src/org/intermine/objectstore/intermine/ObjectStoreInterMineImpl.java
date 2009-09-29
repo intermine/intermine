@@ -1904,48 +1904,71 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 goFasterCount++;
                 goFasterCountMap.put(q, new Integer(goFasterCount));
             }
+            PrecomputedTableManager ptm = null;
             try {
-                if (getMinBagTableSize() != -1) {
-                    createTempBagTables(c, q);
-                    flushOldTempBagTables(c);
-                }
-                String sql = SqlGenerator.generate(q, schema, db, null,
-                        SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
-                        sql, "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
-                ptm.addTableToDatabase(pt, new HashSet(), false);
-                Set<PrecomputedTable> pts = new HashSet<PrecomputedTable>();
-                pts.add(pt);
-                for (QuerySelectable qs : q.getSelect()) {
-                    if (qs instanceof QueryCollectionPathExpression) {
-                        Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
-                        sql = SqlGenerator.generate(subQ, schema, db, null,
-                                SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                        PrecomputedTable subPt = new PrecomputedTable(
-                                new org.intermine.sql.query.Query(sql), sql, "temporary_precomp_"
-                                + getUniqueInteger(c), "goFaster", c);
-                        ptm.addTableToDatabase(subPt, new HashSet(), false);
-                        pts.add(subPt);
-                    } else if (qs instanceof QueryObjectPathExpression) {
-                        Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
-                                getSchema().isMissingNotXml());
-                        sql = SqlGenerator.generate(subQ, schema, db, null,
-                                SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
-                        PrecomputedTable subPt = new PrecomputedTable(
-                                new org.intermine.sql.query.Query(sql), sql, "temporary_precomp_"
-                                + getUniqueInteger(c), "goFaster", c);
-                        ptm.addTableToDatabase(subPt, new HashSet(), false);
-                        pts.add(subPt);
-                    }
-                }
-                goFasterMap.put(q, pts);
-                goFasterCacheMap.put(q, new OptimiserCache());
-                goFasterCountMap.put(q, new Integer(1));
+                ptm = PrecomputedTableManager.getInstance(db);
             } catch (SQLException e) {
                 throw new ObjectStoreException(e);
-            } catch (IllegalArgumentException e) {
-                throw new ObjectStoreException(e);
+            }
+            List<String> tablesToDrop = new ArrayList<String>();
+            try {
+                try {
+                    if (getMinBagTableSize() != -1) {
+                        createTempBagTables(c, q);
+                        flushOldTempBagTables(c);
+                    }
+                    String sql = SqlGenerator.generate(q, schema, db, null,
+                            SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                    PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query
+                            .Query(sql), sql, "temporary_precomp_" + getUniqueInteger(c),
+                            "goFaster", c);
+                    ptm.addTableToDatabase(pt, new HashSet(), false);
+                    tablesToDrop.add(pt.getName());
+                    Set<PrecomputedTable> pts = new HashSet<PrecomputedTable>();
+                    pts.add(pt);
+                    for (QuerySelectable qs : q.getSelect()) {
+                        if (qs instanceof QueryCollectionPathExpression) {
+                            Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
+                            sql = SqlGenerator.generate(subQ, schema, db, null,
+                                    SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                            PrecomputedTable subPt = new PrecomputedTable(
+                                    new org.intermine.sql.query.Query(sql), sql,
+                                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                            ptm.addTableToDatabase(subPt, new HashSet(), false);
+                            tablesToDrop.add(pt.getName());
+                            pts.add(subPt);
+                        } else if (qs instanceof QueryObjectPathExpression) {
+                            Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
+                                    getSchema().isMissingNotXml());
+                            sql = SqlGenerator.generate(subQ, schema, db, null,
+                                    SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                            PrecomputedTable subPt = new PrecomputedTable(
+                                    new org.intermine.sql.query.Query(sql), sql,
+                                    "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
+                            ptm.addTableToDatabase(subPt, new HashSet(), false);
+                            tablesToDrop.add(pt.getName());
+                            pts.add(subPt);
+                        }
+                    }
+                    goFasterMap.put(q, pts);
+                    goFasterCacheMap.put(q, new OptimiserCache());
+                    goFasterCountMap.put(q, new Integer(1));
+                } catch (SQLException e) {
+                    throw new ObjectStoreException(e);
+                } catch (IllegalArgumentException e) {
+                    throw new ObjectStoreException(e);
+                }
+            } catch (ObjectStoreException e) {
+                LOG.error("Error creating goFaster tables - dropping tables " + tablesToDrop, e);
+                for (String tableToDrop : tablesToDrop) {
+                    try {
+                        ptm.deleteTableFromDatabase(tableToDrop);
+                    } catch (SQLException e2) {
+                        LOG.error("Error deleting partially-created goFaster table " + tableToDrop,
+                                e2);
+                    }
+                }
+                throw e;
             }
         }
     }
@@ -1969,7 +1992,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         if (pts != null) {
                             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
                             for (PrecomputedTable pt : pts) {
-                                ptm.deleteTableFromDatabase(pt.getName());
+                                if ("goFaster".equals(pt.getCategory())) {
+                                    ptm.deleteTableFromDatabase(pt.getName());
+                                }
                             }
                         }
                     } else {

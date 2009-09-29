@@ -204,7 +204,7 @@ public class PrecomputeTemplatesTask extends Task
             toSummarise.add(template);
 
             jobs.add(new ParallelPrecomputer.Job(template.getName(), q, indexes, false,
-                        "PrecomputeTemplatesTask"));
+                        PRECOMPUTE_CATEGORY_TEMPLATE));
         }
         ParallelPrecomputer pp = new ParallelPrecomputer((ObjectStoreInterMineImpl) os, 4);
         try {
