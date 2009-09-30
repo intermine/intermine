@@ -659,9 +659,9 @@
 
       <graphdisplayer id="feature_length" title="Feature Length"
         domainLabel="Length"
-        rangeLabel="Y"
+        rangeLabel=" "
         dataSetLoader="org.intermine.bio.web.widget.FeatureLengthDataSetLdr"
-        description="Normal distribution of feature lenghts"
+        description="The distribution of feature lengths in this list compared to lengths of all features of this type."
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
