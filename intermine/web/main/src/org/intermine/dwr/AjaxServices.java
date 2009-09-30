@@ -13,8 +13,12 @@ package org.intermine.dwr;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1138,12 +1142,38 @@ public class AjaxServices
                 // the following is used to display the date without timestamp.
                 // this should always work since the retrieved date has a fixed format,
                 // independent of the one used in the xml.
+                // longDate = Wed Aug 19 14:44:19 BST 2009                
                 String longDate = syndEntry.getPublishedDate().toString();
                 String dayMonth = longDate.substring(0, 10);
                 String year = longDate.substring(24);
-
+                
+                DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
+                Date date = df.parse(longDate);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                
+                // month starts at zero
+                int month = calendar.get(calendar.MONTH) + 1;
+                String monthString = String.valueOf(month);
+                if (monthString.length() == 1) {
+                    monthString = "0" + monthString;
+                }
+                
+                //http://blog.flymine.org/2009/08/
+                WebContext ctx = WebContextFactory.get();
+                ServletContext servletContext = ctx.getServletContext();
+                Properties properties = (Properties)
+                servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                
+                String url = properties.getProperty("project.news") + "/" + year + "/" 
+                + monthString;
+                
                 html.append("<li>");
-                html.append("<strong>" + syndEntry.getTitle() + "</strong>");
+                html.append("<strong>");
+                html.append("<a href=\"" + url + "\">");
+                html.append(syndEntry.getTitle());
+                html.append("</a>");
+                html.append("</strong>");
                 html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
 //                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
                 html.append(syndEntry.getDescription().getValue());
@@ -1157,6 +1187,8 @@ public class AjaxServices
         } catch (IllegalArgumentException e) {
             return "<i>No news at specified URL</i>";
         } catch (FeedException e) {
+            return "<i>No news at specified URL</i>";
+        } catch (java.text.ParseException e) {
             return "<i>No news at specified URL</i>";
         }
     }
