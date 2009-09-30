@@ -13,9 +13,9 @@ package org.intermine.web.logic.widget;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Stroke;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,6 +40,7 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
@@ -95,215 +96,217 @@ public class GraphWidget extends Widget
     @SuppressWarnings("null")
     public void process() {
 
-            String dataSetLoader = config.getDataSetLoader();
-            Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
-            try {
-                Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                                       {
-                    InterMineBag.class, ObjectStore.class, String.class
-                                                                       });
-                dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-                                                                        {
-                    bag, os, selectedExtraAttribute
-                                                                        });
-                notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
-            } catch (Exception err) {
-                err.printStackTrace();
-            }
+        String dataSetLoader = config.getDataSetLoader();
+        Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
+        try {
+            Constructor<?> constr = clazz.getConstructor(new Class[]
+                                                                   {
+                InterMineBag.class, ObjectStore.class, String.class
+                                                                   });
+            dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
+                                                                    {
+                bag, os, selectedExtraAttribute
+                                                                    });
+            notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
 
-            // TODO use caching here
-            JFreeChart chart = null;
-            CategoryItemRenderer renderer = null;
-            Plot plot = null;  
+        // TODO use caching here
+        JFreeChart chart = null;
+        CategoryItemRenderer renderer = null;
+        Plot plot = null;  
+
+        if (dataSetLdr == null || dataSetLdr.getDataSet() == null) {
+            LOG.error("no data found for graph widget");
+            return;
+        }
+
+        Dataset graphDataSet = dataSetLdr.getDataSet();
+
+        String graphType = ((GraphWidgetConfig) config).getGraphType();
+
+
+        if (StringUtils.isNotEmpty(graphType) && graphType.equals("LineChart")) {
+
+            chart = ChartFactory.createLineChart(config.getTitle(), // chart title
+                                                 ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
+                                                 ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
+                                                 (CategoryDataset) graphDataSet, // data
+                                                 PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
+                                                 false // URLs?
+            );
+            chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+            //                plot = chart.getXYPlot();
+            //                renderer = ((CategoryPlot) plot).getRenderer();
+            //                
+            //                ((LineAndShapeRenderer) renderer).setShapesVisible(true);
+            //                ((LineAndShapeRenderer) renderer).setDrawOutlines(true);
+            //                ((LineAndShapeRenderer) renderer).setUseFillPaint(true);
+            //                ((LineAndShapeRenderer) renderer).setFillPaint(Color.white);
+
+            ((GraphWidgetConfig) config).setHeight(400);
+
+            chart.setBackgroundPaint(Color.white);
+
+        } else if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
+
+            chart = ChartFactory.createXYLineChart(config.getTitle(),
+                                                   ((GraphWidgetConfig) config).getDomainLabel(),
+                                                   ((GraphWidgetConfig) config).getRangeLabel(), 
+                                                   (XYDataset) graphDataSet, 
+                                                   PlotOrientation.VERTICAL, true, true, 
+                                                   false 
+            );
+
+
+            plot = chart.getXYPlot();
+     
+            NumberAxis numberaxis = (NumberAxis) ((XYPlot) plot).getRangeAxis();
+            numberaxis.setLowerMargin(0.40000000000000002D);
+            DecimalFormat decimalformat = new DecimalFormat("00.00");
+            numberaxis.setNumberFormatOverride(decimalformat); 
             
-            if (dataSetLdr == null || dataSetLdr.getDataSet() == null) {
-                LOG.error("no data found for graph widget");
-                return;
-            }
+        } else if (StringUtils.isNotEmpty(graphType) 
+                        && graphType.equals("StackedBarChart")) {
+            chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
+                    ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
+                    ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
+                    (CategoryDataset) graphDataSet, // data
+                    PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
+                    false // URLs?
+            );
+            plot = chart.getCategoryPlot();
+            chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
-            Dataset graphDataSet = dataSetLdr.getDataSet();
+            renderer = ((CategoryPlot) plot).getRenderer();
+            renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+            ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
+            renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+            ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
+            // integers only
+            NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
+            rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-            String graphType = ((GraphWidgetConfig) config).getGraphType();
-            
-
-            if (StringUtils.isNotEmpty(graphType) && graphType.equals("LineChart")) {
-                
-                chart = ChartFactory.createLineChart(config.getTitle(), // chart title
-                                ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
-                                ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
-                                (CategoryDataset) graphDataSet, // data
-                                PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
-                                false // URLs?
-                                );
-                chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-//                plot = chart.getXYPlot();
-//                renderer = ((CategoryPlot) plot).getRenderer();
-//                
-//                ((LineAndShapeRenderer) renderer).setShapesVisible(true);
-//                ((LineAndShapeRenderer) renderer).setDrawOutlines(true);
-//                ((LineAndShapeRenderer) renderer).setUseFillPaint(true);
-//                ((LineAndShapeRenderer) renderer).setFillPaint(Color.white);
-
-                ((GraphWidgetConfig) config).setHeight(400);
-          
-                chart.setBackgroundPaint(Color.white);
-
-            } else if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
-                    
-                    chart = ChartFactory.createXYLineChart(config.getTitle(),
-                                    ((GraphWidgetConfig) config).getDomainLabel(),
-                                    ((GraphWidgetConfig) config).getRangeLabel(), 
-                                    (XYDataset) graphDataSet, 
-                                    PlotOrientation.VERTICAL, true, true, 
-                                    false 
-                                    );
-
-                    
-                    plot = chart.getXYPlot();
-                   
-            } else if (StringUtils.isNotEmpty(graphType) 
-                            && graphType.equals("StackedBarChart")) {
-                chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
-                                ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
-                                ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
-                                (CategoryDataset) graphDataSet, // data
-                                PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
-                                false // URLs?
-                                );
-                plot = chart.getCategoryPlot();
-                chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-
-                renderer = ((CategoryPlot) plot).getRenderer();
-                renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-                         ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
-                renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-                         ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
-                // integers only
-                NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
-                rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-                ((GraphWidgetConfig) config).setHeight(400);
+            ((GraphWidgetConfig) config).setHeight(400);
 
             /* regular bar chart */
-            } else {
-                    chart = ChartFactory.createBarChart(config.getTitle(), // chart title
-                                    ((GraphWidgetConfig) config).getDomainLabel(),
-                                    ((GraphWidgetConfig) config).getRangeLabel(),
-                                    (CategoryDataset) graphDataSet, // data
-                                    PlotOrientation.VERTICAL, true, true, // tooltips?
-                                    false // URLs?
-                                    );
-                    chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+        } else {
+            chart = ChartFactory.createBarChart(config.getTitle(), // chart title
+                                                ((GraphWidgetConfig) config).getDomainLabel(),
+                                                ((GraphWidgetConfig) config).getRangeLabel(),
+                                                (CategoryDataset) graphDataSet, // data
+                                                PlotOrientation.VERTICAL, true, true, // tooltips?
+                                                false // URLs?
+            );
+            chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 
-                    if (selectedExtraAttribute != null
-                    && !selectedExtraAttribute.startsWith("any")) {
-                        TextTitle subtitleText = new TextTitle(selectedExtraAttribute);
-                        subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
-                        chart.addSubtitle(subtitleText);
-                    }
-                    plot = chart.getCategoryPlot();
-                    renderer = new BarRenderer();
-                    ((BarRenderer) renderer).setItemMargin(0);
-                    renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-                             ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
-                    renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-                             ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
-                    ((CategoryPlot) plot).setRenderer(renderer);
-                    CategoryURLGenerator categoryUrlGen = null;
-                    if (config.getLink() != null) {
-                        // set series 0 to have URLgenerator specified in config file
-                        // set series 1 to have no URL generator.
-                        try {
-                            Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
-                            Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
-                                                                                               {
-                                String.class, String.class
-                                                                                               });
-                            categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
-                            .newInstance(new Object[]
-                                                    {
-                                bag.getName(), selectedExtraAttribute
-                                                    });
-                        } catch (Exception err) {
-                            err.printStackTrace();
-                        }
-
-                        // renderer.setItemURLGenerator(null);
-                        renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
-                        renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
-                    }
-
-                    // integers only
-                    NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
-                    rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-                    ((BarRenderer) renderer).setNegativeItemLabelPositionFallback(
-                                            new ItemLabelPosition(
-                    ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
-
-                    // rotate the category labels
-                    ((CategoryPlot) plot).getDomainAxis().setCategoryLabelPositions(
-                    CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
-
+            if (selectedExtraAttribute != null
+                            && !selectedExtraAttribute.startsWith("any")) {
+                TextTitle subtitleText = new TextTitle(selectedExtraAttribute);
+                subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
+                chart.addSubtitle(subtitleText);
+            }
+            plot = chart.getCategoryPlot();
+            renderer = new BarRenderer();
+            ((BarRenderer) renderer).setItemMargin(0);
+            renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+            ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+            renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+            ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
+            ((CategoryPlot) plot).setRenderer(renderer);
+            CategoryURLGenerator categoryUrlGen = null;
+            if (config.getLink() != null) {
+                // set series 0 to have URLgenerator specified in config file
+                // set series 1 to have no URL generator.
+                try {
+                    Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
+                    Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
+                                                                                       {
+                        String.class, String.class
+                                                                                       });
+                    categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
+                    .newInstance(new Object[]
+                                            {
+                        bag.getName(), selectedExtraAttribute
+                                            });
+                } catch (Exception err) {
+                    err.printStackTrace();
                 }
 
-            if (chart.getTitle() != null) {
-                chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+                // renderer.setItemURLGenerator(null);
+                renderer.setSeriesItemURLGenerator(0, categoryUrlGen);
+                renderer.setSeriesItemURLGenerator(1, categoryUrlGen);
             }
 
-            if (StringUtils.isNotEmpty(graphType) 
-                            && (graphType.equals("StackedBarChart") ||
-                                            graphType.equals("BarChart"))
-                            && plot != null) {
-                // display values for each column
-                CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
-                ((CategoryPlot) plot).getRenderer().setBaseItemLabelsVisible(true);
-                ((CategoryPlot) plot).getRenderer().setBaseItemLabelGenerator(generator);
-                ((CategoryPlot) plot).getRenderer().setBaseToolTipGenerator(new ToolTipGenerator());
-                
-                NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
-                rangeAxis.setUpperMargin(0.15);
-                rangeAxis.setLowerMargin(0.15);
+            // integers only
+            NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
+            rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-                Font labelFont = new Font("SansSerif", Font.BOLD, 12);
-                ((CategoryPlot) plot).getDomainAxis().setLabelFont(labelFont);
-                rangeAxis.setLabelFont(labelFont);
-                ((CategoryPlot) plot).getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
-            
+            ((BarRenderer) renderer).setNegativeItemLabelPositionFallback(
+            new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
 
-                ChartColor blue = new ChartColor(47, 114, 255);
-                renderer.setSeriesPaint(0, blue);
+            // rotate the category labels
+            ((CategoryPlot) plot).getDomainAxis().setCategoryLabelPositions(
+            CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
 
-                ChartColor lightBlue = new ChartColor(159, 192, 255);
-                renderer.setSeriesPaint(1, lightBlue);
+        }
 
-                ChartColor darkBlue = new ChartColor(39, 77, 216);
-                renderer.setSeriesPaint(2, darkBlue);
+        if (chart.getTitle() != null) {
+            chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+        }
 
-                renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
-            }
-            
-            
-            ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
+        if (StringUtils.isNotEmpty(graphType) && (graphType.equals("StackedBarChart")
+                                        || graphType.equals("BarChart")) && plot != null) {
+            // display values for each column
+            CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
+            ((CategoryPlot) plot).getRenderer().setBaseItemLabelsVisible(true);
+            ((CategoryPlot) plot).getRenderer().setBaseItemLabelGenerator(generator);
+            ((CategoryPlot) plot).getRenderer().setBaseToolTipGenerator(new ToolTipGenerator());
 
-            // generate the image and imagemap
-            try {
-                fileName = ServletUtilities.saveChartAsPNG(chart,
-                           ((GraphWidgetConfig) config).getWidth(),
-                           ((GraphWidgetConfig) config).getHeight(), info,
-                           ((GraphWidgetConfig) config).getSession());
-            } catch (IOException e) {
-                throw new RuntimeException("error rendering html", e);
-            }
+            NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) plot).getRangeAxis();
+            rangeAxis.setUpperMargin(0.15);
+            rangeAxis.setLowerMargin(0.15);
 
-            imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
+            Font labelFont = new Font("SansSerif", Font.BOLD, 12);
+            ((CategoryPlot) plot).getDomainAxis().setLabelFont(labelFont);
+            rangeAxis.setLabelFont(labelFont);
+            ((CategoryPlot) plot).getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
+
+
+            ChartColor blue = new ChartColor(47, 114, 255);
+            renderer.setSeriesPaint(0, blue);
+
+            ChartColor lightBlue = new ChartColor(159, 192, 255);
+            renderer.setSeriesPaint(1, lightBlue);
+
+            ChartColor darkBlue = new ChartColor(39, 77, 216);
+            renderer.setSeriesPaint(2, darkBlue);
+
+            renderer.setSeriesOutlineStroke(1, new BasicStroke(0.0F));
+        }
+
+
+        ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
+
+        // generate the image and imagemap
+        try {
+            fileName = ServletUtilities.saveChartAsPNG(chart,
+                       ((GraphWidgetConfig) config).getWidth(),
+                       ((GraphWidgetConfig) config).getHeight(), info,
+                       ((GraphWidgetConfig) config).getSession());
+        } catch (IOException e) {
+            throw new RuntimeException("error rendering html", e);
+        }
+
+        imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
     }
 
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(@SuppressWarnings("unused") String[] selected)
-        throws Exception {
+    throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
