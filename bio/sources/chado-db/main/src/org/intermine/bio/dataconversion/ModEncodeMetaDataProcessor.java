@@ -1746,7 +1746,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // properties here
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
         
-        
+
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -1754,7 +1754,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Map<String, List<SubmissionProperty>> typeToProp = subToTypes.get(submissionId);
 
             String dccId = dccIdMap.get(submissionId);
-            
             
             ExperimentalFactor ef = submissionEFMap.get(submissionId);
             if (ef == null) {
@@ -1790,6 +1789,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // STRAIN
             List<Item> strainItems = new ArrayList<Item>();
             strainItems.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
+            
             storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
             if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
                 createExperimentalFactors(submissionId, "strain", strainItems);
@@ -1989,6 +1989,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, SubmissionProperty> createdProps = new HashMap<Integer, SubmissionProperty>();
         SubmissionProperty buildSubProperty = null;
         boolean isValidCharacteristic = false;
+        Integer submissionId = null;
         
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -1999,7 +2000,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String dbAccession = res.getString("db_accession");
             String dbName = res.getString("db_name");
             
-            Integer submissionId = dataSubmissionMap.get(dataId);
+            submissionId = dataSubmissionMap.get(dataId);
             if (attDbxref.intValue() != lastAttDbXref.intValue()) {
                 
                 // store the last build property if created, type is set only if we found an
@@ -2030,7 +2031,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (attHeading.startsWith("Characteristic")) {
                     buildSubProperty.type = attName;
                     buildSubProperty.wikiPageUrl = attValue;
+                    
                     // add detail here as some Characteristics that don't reference a wiki page
+                    
                     // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
                 } else {
@@ -2038,6 +2041,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             }
             lastAttDbXref = attDbxref;
+        }
+
+        if (buildSubProperty != null && buildSubProperty.type != null) {
+            createdProps.put(lastAttDbXref, buildSubProperty);    
+            addToSubToTypes(subToTypes, submissionId, buildSubProperty);
         }
     }
     
