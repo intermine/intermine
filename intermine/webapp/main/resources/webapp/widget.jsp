@@ -52,26 +52,14 @@
 
        function callAJAX(widgetid, bagname, ajax){
          $('pValue'+widgetid).value;
-         if(ajax == 'grid') {
-           getProcessGridWidgetConfig(widgetid, bagname);
-         } else if(ajax == 'graph') {
-           getProcessGraphWidgetConfig(widgetid, bagname);
-         }
+         getProcessGraphWidgetConfig(widgetid, bagname);
        }
 </script>
- <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
-<c:if test="${type != 'GridWidgetConfig'}" >
+
+<c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
+
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
-</c:if>
-<c:if test="${type == 'GridWidgetConfig'}" >
-  <c:forEach items="${extraAttrMap}" var="entry">
-  <c:if test="${entry.key == 'Width'}">
-  <c:forEach items="${entry.value}" var="tWidth">
-  <div id="widgetcontainer${widget.id}" class="widgetcontainer" style="width:${tWidth}">
-  </c:forEach>
-  </c:if>
-  </c:forEach>
-</c:if>
+
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}<br/>
@@ -91,7 +79,7 @@
   </span>
  </p>
 
- <c:if test="${type == 'EnrichmentWidgetConfig' || (fn:length(extraAttrMap)>0 && type != 'GridWidgetConfig')}" >
+ <c:if test="${type == 'EnrichmentWidgetConfig' || (fn:length(extraAttrMap)>0)}" >
   <fieldset>
   <legend>Options</legend>
   <ol>
@@ -169,56 +157,9 @@
   <a href="javascript:hideMenu('tool_bar_item_export_widget_${widget.id}')" >Cancel</a>
   </div>
  </c:if>
-  <c:if test="${type == 'GridWidgetConfig'}" >
-  <fieldset>
-  <legend>Options</legend>
-     <div>
-     <c:forEach items="${extraAttrMap}" var="entry">
-     <c:if test="${! empty entry.key && entry.key == 'Editable'}">
-     <li>
-     <label>Maximum p-value to display</label>
-     <form action="false">
-     <input id="pValue${widget.id}" name="pValue(${widget.id})" size = "5" value="0.01" onKeyUp="onlyDouble(this);" onKeyDown="isEnter(event, '${widget.id}', '${bag.name}', 'grid');" />
-     <input type="button" name="GO" value="GO" onclick="callAJAX('${widget.id}', '${bag.name}', 'grid')">
-     </form>
-     </li>
-     </c:if>
-         </c:forEach>
-     <c:forEach items="${extraAttrMap}" var="entry">
-     <c:if test="${entry.key != 'Editable' && entry.key != 'Width'}">
-      <li>
-      <label>Show numbers as</label>
-        <html:select property="numberOpt" styleId="numberOpt${widget.id}" onchange="getProcessGridWidgetConfig('${widget.id}','${bag.name}');">
-          <html:option value="number">number</html:option>
-          <html:option value="percentage">percentage</html:option>
-         </html:select>
-        <label>Using highlighting for</label>
-        <html:select property="highlight" styleId="highlight${widget.id}" onchange="getProcessGridWidgetConfig('${widget.id}','${bag.name}');">
-        <c:forEach items="${entry.value}" var="extraParams">
-              <html:option value="${extraParams}">${extraParams}</html:option>
-        </c:forEach>
-         </html:select>
-         </li>
-         </c:if>
-         </c:forEach>
-     </div>
-  </fieldset>
-  <fieldset style="text-align:center">
-  <legend>Color legend</legend>
-   <div id="gridimage${widget.id}" class="gridwidget"><img src="model/images/intersec.jpg" title="colorbar"/></div>
-   </fieldset>
- </c:if>
- <c:if test="${type == 'GridWidgetConfig'}" >
-   <c:forEach items="${extraAttrMap}" var="entry">
- <c:if test="${! empty entry.key && entry.key == 'Width'}">
-  <c:forEach items="${entry.value}" var="tWidth">
-  <div id="widgetdata${widget.id}" class="widgetdata" style="width:${tWidth}">
-  </c:forEach>
-  </c:if>
-  </c:forEach>
-  </c:if>
+          
+<%-- output different widget containers if it's a graph widget because flyatlas widget is too tall --%>
 
-<!-- output different widget containers if it's a graph widget because flyatlas widget is too tall-->
 <c:choose>
   <c:when test="${type == 'GraphWidgetConfig'}" >
     <div id="widgetdata${widget.id}" class="widgetdata">
@@ -228,13 +169,8 @@
   </c:otherwise>
 </c:choose>
 
-    <c:if test="${type == 'TableWidgetConfig' || type == 'EnrichmentWidgetConfig' || type == 'GridWidgetConfig' }" >
-      <c:if test="${type == 'GridWidgetConfig'}" >
-        <table id="tablewidget${widget.id}" border="1">
-      </c:if>
-      <c:if test="${type == 'TableWidgetConfig' || type == 'EnrichmentWidgetConfig'}" >
-        <table id="tablewidget${widget.id}" border="0" >
-      </c:if>
+    <c:if test="${type == 'TableWidgetConfig' || type == 'EnrichmentWidgetConfig'}" >
+      <table id="tablewidget${widget.id}" border="0" >
         <thead id="tablewidget${widget.id}head"></thead>
         <tbody id="tablewidget${widget.id}body"></tbody>
       </table>
@@ -257,11 +193,6 @@
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
     <!--//<![CDATA[
            getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
-    //]]>-->
-    </c:when>
-    <c:when test="${type == 'GridWidgetConfig'}" >
-    <!--//<![CDATA[
-           getProcessGridWidgetConfig('${widget.id}','${bag.name}');
     //]]>-->
     </c:when>
   </c:choose>

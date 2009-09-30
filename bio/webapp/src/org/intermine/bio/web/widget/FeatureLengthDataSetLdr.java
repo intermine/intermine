@@ -106,6 +106,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         return widgetTotal;
     }
 
+    @SuppressWarnings("boxing")
     private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName) 
     throws ClassNotFoundException {
 
@@ -122,15 +123,14 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         }
 
         Double mean = stats.getMean();
-        Double max = stats.getMax();
         Function2D actual = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
 
         Double ninetyNine = stats.getPercentile(99.9);
         int total = (int) stats.getN();
         
-        String seriesName = "Expected";
+        String seriesName = "All features";
         if (bag != null) {
-            seriesName = "Actual";
+            seriesName = "All features in this list";
             widgetTotal = total;
         }
         
