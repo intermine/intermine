@@ -20,6 +20,6 @@ jQuery(document).ready(function(){
       <tiles:insert name="tipWrapper.tile"/>
       <h1 style="display:inline">News</h1>
       <div id="newsbox"><div align="center"><br/><br/><br/><img src="images/wait18.gif" title="Getting news..."/></div></div>
-      <a href="${WEB_PROPERTIES['project.rss']}">more...</a>
+      <a href="${WEB_PROPERTIES['project.news']}">more...</a>
    </div>
  <!-- /news.jsp -->
