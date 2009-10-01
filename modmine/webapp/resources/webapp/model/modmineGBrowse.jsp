@@ -48,15 +48,38 @@
     </c:otherwise>
   </c:choose>
 
-  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}?source=${gbrowseSource};label=${label};name=${name};width=750">
+<!-- new link to gb2 using only the feature name -->
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?name=${name};width=750">
     <div>
       modENCODE genome browser view (GBrowse):
     </div>
     <c:if test="${cld.unqualifiedName != 'Chromosome'}">
-      <div>
-        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}?source=${gbrowseSource};type=${type};name=${name};width=400;b=1" title="GBrowse"/>
-      </div>
-    </c:if>
-  </html:link>
+        <html:img style="border: 1px solid black" 
+        src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/?name=${name};width=400;b=1" title="GBrowse"/>
 </c:if>
+  </html:link>
+<br>
+
+<!-- USE THIS if the submissionId is actually needed 
+
+        <c:forEach items="${object.submissions}" var="sub" varStatus="status">
+
+  <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${gbrowseSource}/?ds=${sub.dCCid};name=${name};width=750">
+    <div>
+      modENCODE genome browser view (GBrowse):
+    </div>
+    <c:if test="${cld.unqualifiedName != 'Chromosome'}">
+        <html:img style="border: 1px solid black" 
+        src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/?ds=${sub.dCCid};name=${name};width=400;b=1" title="GBrowse"/>
+</c:if>
+  </html:link>
+<br>
+      </c:forEach>
+-->
+
+</c:if>
+
 <!-- /modmineGBrowse.jsp -->
+<!--
+        <html:img style="border: 1px solid black" src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}?ds=${submission};name=${name};width=400;b=1" title="GBrowse"/>
+-->
