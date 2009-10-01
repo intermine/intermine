@@ -129,7 +129,6 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         String prettyMean = twoDigits.format(mean);
         Function2D actual = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
 
-        Double ninetyNine = stats.getPercentile(99.9);
         int total = (int) stats.getN();
         String legend = "[mean: " + prettyMean + " count:  " + String.valueOf(total) + "]";
         String seriesName = "All features " + legend;
@@ -137,7 +136,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             seriesName = "Features in this list " + legend;
             widgetTotal = total;
         }        
-        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, ninetyNine, 
+        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), 
                                                                     total, seriesName);
         return series;
     }
