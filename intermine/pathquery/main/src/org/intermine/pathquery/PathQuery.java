@@ -54,6 +54,7 @@ public class PathQuery
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
+    protected String description;
     private static final String MSG = "Invalid path - path cannot be a null or empty string";
 
     /**
@@ -1255,6 +1256,7 @@ public class PathQuery
         if (problems != null) {
             query.problems = new ArrayList<Throwable>(problems);
         }
+        query.description = description;
         query.pathDescriptions = new HashMap<Path, String>(pathDescriptions);
         query.setConstraintLogic(getConstraintLogic());
         query.info = info;
@@ -1321,6 +1323,14 @@ public class PathQuery
         return pathDescriptions;
     }
 
+    /**
+     * Set a description for this query.
+     * @param description a description of the query
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     /**
      * Returns the  path description for given path. Path description is computed according to the
      * known paths and corresponding path descriptions.
@@ -1533,5 +1543,14 @@ public class PathQuery
     private void logPathError(Throwable e) {
         LOG.error("Path error", e);
         addProblem(e);
+    }
+
+    /**
+     * Get the template description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
     }
 }
