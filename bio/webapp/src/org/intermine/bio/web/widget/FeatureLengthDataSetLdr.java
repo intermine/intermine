@@ -10,6 +10,8 @@ package org.intermine.bio.web.widget;
  *
  */
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
 import java.util.Iterator;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -123,14 +125,16 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         }
 
         Double mean = stats.getMean();
+        DecimalFormat twoDigits = new DecimalFormat("0.00");
+        String prettyMean = twoDigits.format(mean);
         Function2D actual = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
 
         Double ninetyNine = stats.getPercentile(99.9);
         int total = (int) stats.getN();
         
-        String seriesName = "All features";
+        String seriesName = "All features [mean: " + prettyMean + "]";
         if (bag != null) {
-            seriesName = "All features in this list";
+            seriesName = "Features in this list [mean: " + prettyMean + "]";
             widgetTotal = total;
         }
         
@@ -172,4 +176,5 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         q.addToSelect(lengthQF);
         return q;
     }
+
 }
