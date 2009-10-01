@@ -37,6 +37,7 @@ public class PathQueryHandler extends DefaultHandler
 {
     private Map<String, PathQuery> queries;
     private String queryName;
+    private String queryDescription = null;
     private char gencode;
     private PathNode node;
     protected PathQuery query;
@@ -73,6 +74,10 @@ public class PathQueryHandler extends DefaultHandler
                 throw new SAXException(e);
             }
             query = new PathQuery(model);
+
+            if (attrs.getValue("longDescription") != null) {
+                queryDescription = attrs.getValue("longDescription");
+            }
             if (attrs.getValue("view") != null) {
                 viewStrings = StringUtil.tokenize(attrs.getValue("view"));
             }
@@ -186,7 +191,9 @@ public class PathQueryHandler extends DefaultHandler
                 query.addProblem(e);
                 return;
             }
-            
+            if (queryDescription != null) {
+                query.setDescription(queryDescription);
+            }
             setSortOrder();
         
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
@@ -196,6 +203,7 @@ public class PathQueryHandler extends DefaultHandler
             viewStrings = new ArrayList<String>();
             sortOrder = new LinkedHashMap();
             pathStringDescriptions = new HashMap<String, String>();
+            queryDescription = null;
         }
     }
 

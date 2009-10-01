@@ -34,48 +34,51 @@
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
 
-    <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
+    <div class="body">
+      <div class="resultsTableTemplateHeader">
+      
+
+      <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
 
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
-      <c:if test="${param.bagName == null}">
-        <div class="body">
-          <div class="resultsTableTemplateHeader">
-            <div>
-              <fmt:message key="results.templateTitle"/>:
-              <span class="templateTitleBold">
-              <c:choose>
-                <c:when test="${!empty param.templateQueryTitle}">
-                 ${param.templateQueryTitle}
-                 </c:when>
-                 <c:otherwise>
-                  ${templateQuery.title}
-                 </c:otherwise>
-                 </c:choose>
-              </span>
-            </div>
-            <div class="templateDescription">
-             <c:choose>
-                <c:when test="${!empty param.templateQueryTitle}">
-                 ${param.templateQueryDescription}
-                 </c:when>
-                 <c:otherwise>
-                ${templateQuery.description}
-                 </c:otherwise>
-                 </c:choose>
-            </div>
+        <c:if test="${param.bagName == null}">
+          <div>
+            <fmt:message key="results.templateTitle"/>:
+            <span class="templateTitleBold">
+            <c:choose>
+              <c:when test="${!empty param.templateQueryTitle}">
+                ${param.templateQueryTitle}
+              </c:when>
+              <c:otherwise>
+                ${templateQuery.title}
+              </c:otherwise>
+            </c:choose>
+            </span>
           </div>
-        </div>
-      </c:if>
-    </c:if>
-
-<c:if test="${!empty param.bagName}">
-    <div class="body">
-        <div class="resultsTableTemplateHeader">
-            <div>Results for list:  ${param.bagName}</div>
-        </div>
-    </div>
-</c:if>
+       </c:if>      
+     </c:if>
+              
+     <c:if test="${!empty pathQuery.description || !empty param.templateQueryDescription}">  
+       <div class="templateDescription">
+         <c:choose>
+           <c:when test="${!empty param.templateQueryDescription}">
+             ${param.templateQueryDescription}
+           </c:when>
+           <c:otherwise>
+             ${pathQuery.description}
+           </c:otherwise>
+         </c:choose>
+         </div>
+     </c:if>
+      
+     <c:if test="${!empty param.bagName}">
+       <div>Results for list:  ${param.bagName}</div>
+     </c:if>
+      
+       </div>
+     </div>
+ 
 
 <c:choose>
   <c:when test="${resultsTable.estimatedSize == 0}">

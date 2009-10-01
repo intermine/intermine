@@ -56,8 +56,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected String name;
     /** Template query title. */
     protected String title;
-    /** Template query description. */
-    protected String description;
     /** The private comment for this query. */
     protected String comment;
     /** Map from node to editable constraint list. */
@@ -187,15 +185,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public String getTitle() {
         return title;
-    }
-
-    /**
-     * Get the template description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
     }
 
     /**
@@ -418,7 +407,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         return (o instanceof TemplateQuery)
             && super.equals(o)
             && ((TemplateQuery) o).getName().equals(getName())
-            && ((TemplateQuery) o).getDescription().equals(getDescription())
+            && ((PathQuery) o).getDescription().equals(getDescription())
             && ((TemplateQuery) o).getTitle().equals(getTitle())
             && ((TemplateQuery) o).getComment().equals(getComment());
     }
