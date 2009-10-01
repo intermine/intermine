@@ -131,13 +131,12 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
 
         Double ninetyNine = stats.getPercentile(99.9);
         int total = (int) stats.getN();
-        
-        String seriesName = "All features [mean: " + prettyMean + "]";
+        String legend = "[mean: " + prettyMean + " count:  " + String.valueOf(total) + "]";
+        String seriesName = "All features " + legend;
         if (bag != null) {
-            seriesName = "Features in this list [mean: " + prettyMean + "]";
+            seriesName = "Features in this list " + legend;
             widgetTotal = total;
-        }
-        
+        }        
         XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, ninetyNine, 
                                                                     total, seriesName);
         return series;
