@@ -185,8 +185,8 @@
 
   <class className="org.intermine.model.bio.BindingSite">
     <fields>
-<!--     <fieldconfig fieldExpr="primaryIdentifier"/> -->
-<!--   NB MODMINE   <fieldconfig fieldExpr="factor.primaryIdentifier"/> -->
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
