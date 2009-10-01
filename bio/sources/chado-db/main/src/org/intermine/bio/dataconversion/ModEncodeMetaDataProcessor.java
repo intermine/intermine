@@ -1640,7 +1640,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             new String[] {"developmental stage", "stage", 
                     "developmental_stage", "dev stage", "devstage"},
                     new String[] {"strain", "strain_or_line"},
-                    new String[] {"cell line", "cell_line", "Cell line", "cell id"}
+                    new String[] {"cell line", "cell_line", "Cell line", "cell id"},
+                    new String[] {"array", "adf"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1763,9 +1764,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);
             LOG.info("EX unified factor names: " + exFactorNames);
             
+            List<Item> allPropertyItems = new ArrayList();
+            
             // DEVELOPMENTAL STAGE
             List<Item> devStageItems = new ArrayList<Item>();
-            
             devStageItems.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
                     new String[] {"stage", "dev stage"}));
             if (devStageItems.isEmpty()) {
@@ -1785,7 +1787,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "developmental stage", devStageItems);
                 exFactorNames.remove("developmental stage");
             }
-                        
+            allPropertyItems.addAll(devStageItems);            
+            
             // STRAIN
             List<Item> strainItems = new ArrayList<Item>();
             strainItems.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
@@ -1795,6 +1798,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "strain", strainItems);
                 exFactorNames.remove("strain");
             }
+            allPropertyItems.addAll(strainItems);            
             
             
             // ARRAY
@@ -1816,6 +1820,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "array", arrayItems);
                 exFactorNames.remove("array");
             }
+            allPropertyItems.addAll(arrayItems);            
             
             // CELL LINE
             List<Item> lineItems = new ArrayList<Item>();
@@ -1826,6 +1831,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "cell line", lineItems);
                 exFactorNames.remove("cell line");
             }
+            allPropertyItems.addAll(lineItems);            
             
             // ANTIBODY
             List<Item> antibodyItems = new ArrayList<Item>();
@@ -1847,6 +1853,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "antibody", antibodyItems);
                 exFactorNames.remove("antibody");
             }
+            allPropertyItems.addAll(antibodyItems);            
+
             
             // TISSUE
             List<Item> tissueItems = new ArrayList<Item>();
@@ -1872,11 +1880,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 createExperimentalFactors(submissionId, "tissue", tissueItems);
                 exFactorNames.remove("tissue");
             }
+            allPropertyItems.addAll(tissueItems);            
+
+            // Store Submission.properties/ SubmissionProperty.submissions
+            storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
+            
             
             // this is the old logic used here to clean up remaining factors
             for (String exFactor : exFactorNames) {
                 if (exFactor.startsWith(PCRPRIMER)) {
-                    createEFItem(submissionId, PCRPRIMER, exFactor);
+                    createEFItem(submissionId, PCRPRIMER, exFactor, null);
                     exFactorNames.remove(exFactor);
                     continue;
                 } else if (exFactor.equalsIgnoreCase(COMPOUND)) {
@@ -1884,7 +1897,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             new String[]{COMPOUND_KEYS});
                     String factorValue = factor[1];
                     if (factorValue != null) {
-                        createEFItem(submissionId, COMPOUND, factorValue);
+                        createEFItem(submissionId, COMPOUND, factorValue, null);
                         exFactorNames.remove(COMPOUND);
                     }
                 }
@@ -1895,7 +1908,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
             for (String exFactor : exFactorNames) {
                 String type = ef.efTypes.get(exFactor);
-                createEFItem(submissionId, type, exFactor);
+                createEFItem(submissionId, type, exFactor, null);
             }        
         }
     }
@@ -1904,19 +1917,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void createExperimentalFactors(Integer submissionId, String type, 
             Collection<Item> items) throws ObjectStoreException {
         for (Item item : items) {
-            createEFItem(submissionId, type, item.getAttribute("name").getValue());
+            createEFItem(submissionId, type, item.getAttribute("name").getValue(), 
+                    item.getIdentifier());
         }
     }
     
     
     private void createEFItem(Integer current, String type,
-            String efName) throws ObjectStoreException {
+            String efName, String propertyIdentifier) throws ObjectStoreException {
         // create the EF, if not there already
         if (!eFactorIdMap.containsKey(efName)) {
             Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
             ef.setAttribute ("name", efName);
             String preferredType = getPreferredSynonym(type);
             ef.setAttribute ("type", preferredType);
+            if (propertyIdentifier != null) {
+                ef.setReference("property", propertyIdentifier);
+            }
             LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
@@ -2117,7 +2134,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 String officialName = getCorrectedOfficialName(prop);
                 propItem = createSubmissionProperty(clsName, officialName);
-
+                propItem.setAttribute("type", getPreferredSynonym(prop.type));
+                
                 if (clsName.equals("DevelopmentalStage")) {                    
                     setAttributeOnProp(prop, propItem, "sex", "sex");
                     
@@ -2186,7 +2204,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     for (SubmissionProperty subProp : typeToProp.get(type)) { 
                         if (subProp.details.containsKey(propName)) {
                             for (String value : subProp.details.get(propName)) {
-                                items.add(createNonWikiSubmissionPropertyItem(clsName, value));
+                                items.add(createNonWikiSubmissionPropertyItem(clsName, subProp.type, 
+                                        value));
                             }
                         }
                     }
@@ -2199,7 +2218,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return items;
     }
     
-    private Item createNonWikiSubmissionPropertyItem(String clsName, String name) 
+    private Item createNonWikiSubmissionPropertyItem(String clsName, String type, String name) 
     throws ObjectStoreException {
         if (clsName.equals("DevelopmentalStage")) {
             name = correctDevStageTerm(name);
@@ -2208,6 +2227,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Item item = nonWikiSubmissionProperties.get(name);
         if (item == null) {    
             item = createSubmissionProperty(clsName, name);
+            item.setAttribute("type", getPreferredSynonym(type));
             
             if (clsName.equals("DevelopmentalStage")) {
                 String ontologyTermId = getDevStageTerm(name);
@@ -2225,6 +2245,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (name != null) {           
             subProp.setAttribute("name", name);
         }
+        
         return subProp;
     }
     
