@@ -69,11 +69,14 @@ public class BioPAXConverter extends FileConverter implements Visitor
      * @param intermineModel the Model
      */
     public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) {
-        super(writer, intermineModel);
+        super(writer, intermineModel);        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory("gene");        
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
+    
 
     /**
      * {@inheritDoc}
@@ -254,16 +257,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
             return;
         }
 
-        if (resolverFactory != null) {
-            IdResolver resolver = resolverFactory.getIdResolver(false);
-            if (resolver != null) {
-                identifier = resolveGene(resolver, "7227", identifier);
-                if (identifier == null) {
-                    return;
-                }
-            }
-            fieldName = "primaryIdentifier";
-        }
+        identifier = resolveGene("7227", identifier);
 
         if (identifier == null || identifier.length() < 2) {
             LOG.warn("Gene not stored:" + xref);
@@ -372,12 +366,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
             return null;
         }
         
-        if (taxonId == 7227) {
-            resolverFactory = new FlyBaseIdResolverFactory("gene");
-        } else {
-            resolverFactory = null;
-        }
-        
         return taxonIdString;
     }
     
@@ -387,7 +375,8 @@ public class BioPAXConverter extends FileConverter implements Visitor
      * @param ih interactor holder
      * @throws ObjectStoreException
      */
-    private String resolveGene(IdResolver resolver, String taxonId, String identifier) {
+    private String resolveGene(String taxonId, String identifier) {
+        IdResolver resolver = resolverFactory.getIdResolver(false);
         String id = identifier;
         if (taxonId.equals("7227") && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, identifier);
