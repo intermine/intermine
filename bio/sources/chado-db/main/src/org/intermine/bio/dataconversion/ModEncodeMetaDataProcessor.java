@@ -1143,13 +1143,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // except for the first record, this is a new EF object
                 if (!res.isFirst()) {
                     submissionEFMap.put(prevSub, ef);
-                    LOG.debug("EF MAP: " + submissionId + "|" + rank + "|" + ef.efNames );                    
                 }
                 ef = new ExperimentalFactor();
                 ef.submissionId = submissionId;                
             }
             if (rank != prevRank || submissionId != prevSub) {
-                // this is a name                
+                // this is a name
+                if (getPreferredSynonym(value) != null)
+                {
+                    value = getPreferredSynonym(value);
+                }
                 ef.efNames.add(value);
                 name = value;
                 count++;
@@ -1159,13 +1162,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 name = null;
                 if (res.isLast()) {
                     submissionEFMap.put(submissionId, ef);
+                    LOG.debug("EF MAP last: " + submissionId + "|" + rank + "|" + ef.efNames );                    
                 }
             }
             prevRank = rank;
             prevSub = submissionId;
         }
         res.close();
-        LOG.info("created " + count + " experimental factors");
+        LOG.info("created " + count + " experimental factors");        
     }
 
     /**
@@ -1761,7 +1765,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.warn("No experimental factors found for submission: " + dccId);
                 continue;
             }
-            Set<String> exFactorNames = unifyFactorNames(ef.efNames);
+            Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
             LOG.info("EX unified factor names: " + exFactorNames);
             
             List<Item> allPropertyItems = new ArrayList();
@@ -1904,10 +1908,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                
             }
             
-            // deal with remaining factor names
+            // deal with remaining factor names (e.g. the ones for which we did
+            // not find a corresponding attribute
             LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
             for (String exFactor : exFactorNames) {
+//            for (String exFactor : ef.efNames) {
                 String type = ef.efTypes.get(exFactor);
+                LOG.info("EXX type: " + type + " - names: " + exFactorNames);
                 createEFItem(submissionId, type, exFactor, null);
             }        
         }
