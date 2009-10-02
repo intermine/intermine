@@ -256,8 +256,10 @@ public class BioPAXConverter extends FileConverter implements Visitor
             LOG.warn("Gene not stored:" + xref);
             return;
         }
-
-        identifier = resolveGene("7227", identifier);
+        
+        if (organism.getAttribute("taxonId").getValue().equals("7227")) {
+            identifier = resolveGene("7227", identifier);
+        }
 
         if (identifier == null || identifier.length() < 2) {
             LOG.warn("Gene not stored:" + xref);
