@@ -1,121 +1,44 @@
 <items>
-<item id="4_14" class="Gene">
-<attribute name="symbol" value="TBCB"/>
-<reference name="organism" ref_id="2_1"/>
+<item id="3_3" class="Pathway">
+<attribute name="identifier" value="541181"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts via 27-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
 </item>
-<item id="4_4" class="Gene">
-<attribute name="symbol" value="PFDN4"/>
-<reference name="organism" ref_id="2_1"/>
+<item id="3_2" class="Pathway">
+<attribute name="identifier" value="541065"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
 </item>
-<item id="4_8" class="Gene">
-<attribute name="symbol" value="Chaperonin"/>
+<item id="4_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000001"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
+<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/><reference ref_id="3_4"/></collection>
 </item>
-<item id="4_1" class="Gene">
-<attribute name="symbol" value="PFDN2"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
+<item id="0_1" class="DataSource">
+<attribute name="name" value="Reactome"/>
 </item>
-<item id="4_9" class="Gene">
-<attribute name="symbol" value="CCT6"/>
-<reference name="organism" ref_id="2_1"/>
+<item id="3_1" class="Pathway">
+<attribute name="identifier" value="541066"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
-</item>
-<item id="4_3" class="Gene">
-<attribute name="symbol" value="PFDN6"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
 </item>
 <item id="1_1" class="DataSet">
 <attribute name="title" value="Reactome data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
-<item id="4_7" class="Gene">
-<attribute name="symbol" value="ACTB"/>
+<item id="4_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
 <reference name="organism" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
-</item>
-<item id="4_10" class="Gene">
-<attribute name="symbol" value="TBCC"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
-</item>
-<item id="4_13" class="Gene">
-<attribute name="symbol" value="TBCA"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
-</item>
-<item id="3_3" class="Pathway">
-<attribute name="identifier" value="391548"/>
-<attribute name="name" value="Post-chaperonin tubulin folding pathway"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="0_1" class="DataSource">
-<attribute name="name" value="Reactome"/>
+<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/><reference ref_id="3_4"/></collection>
 </item>
 <item id="2_1" class="Organism">
-<attribute name="taxonId" value="9913"/>
-</item>
-<item id="3_5" class="Pathway">
-<attribute name="identifier" value="392030"/>
-<attribute name="name" value="Folding of actin by CCT/TriC"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="3_1" class="Pathway">
-<attribute name="identifier" value="392029"/>
-<attribute name="name" value="Prefoldin mediated transfer of substrate to CCT/TriC"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_5" class="Gene">
-<attribute name="symbol" value="PFDN5"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
-</item>
-<item id="4_11" class="Gene">
-<attribute name="symbol" value="TBCD"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
-</item>
-<item id="3_2" class="Pathway">
-<attribute name="identifier" value="389967"/>
-<attribute name="name" value="Formation of tubulin folding intermediates by CCT/TriC"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_12" class="Gene">
-<attribute name="symbol" value="TBCE"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
+<attribute name="taxonId" value="7227"/>
 </item>
 <item id="3_4" class="Pathway">
-<attribute name="identifier" value="392033"/>
-<attribute name="name" value="Cooperation of Prefoldin and TriC/CCT  in actin and tubulin folding"/>
+<attribute name="identifier" value="541169"/>
+<attribute name="name" value="Synthesis of bile acids and bile salts via 24-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_6" class="Gene">
-<attribute name="symbol" value="PFDN1"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
-</item>
-<item id="4_2" class="Gene">
-<attribute name="symbol" value="VBP1"/>
-<reference name="organism" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_4"/><reference ref_id="3_5"/></collection>
 </item>
 </items>
