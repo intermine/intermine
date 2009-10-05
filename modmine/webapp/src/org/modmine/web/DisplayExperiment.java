@@ -30,7 +30,8 @@ import org.intermine.objectstore.ObjectStore;
  * @author Richard Smith
  *
  */
-public class DisplayExperiment {
+public class DisplayExperiment
+{
 
     private String name;
     private List<Submission> submissions = new ArrayList<Submission>();
@@ -43,9 +44,11 @@ public class DisplayExperiment {
     private ObjectStore os;
     
     /**
-     * Construct with objects from database. 
+     * Construct with objects from database and feature counts summary map. 
      * @param exp the experiment
      * @param project the experiment's project
+     * @param featureCounts a map of feature type to count
+     * @param os the objectstore
      */
     public DisplayExperiment(Experiment exp, Project project, Map<String, Long> featureCounts,
             ObjectStore os) {
