@@ -58,10 +58,10 @@
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr><td>
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
-      <c:if test="${organism eq 7227}"> 
+      <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
       </c:if>
-      <c:if test="${organism eq 6239}"> 
+      <c:if test="${organism eq 'C. elegans'}"> 
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
       </c:if>
     </c:forEach> 
