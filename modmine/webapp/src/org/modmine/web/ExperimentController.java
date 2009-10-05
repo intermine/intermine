@@ -10,8 +10,6 @@ package org.modmine.web;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,30 +21,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.Project;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Read experiment and submission details into DisplayExperiments, cache results.
+ * Set up modENCODE experiments for display.
  * @author Richard Smith
  *
  */
 
 public class ExperimentController extends TilesAction 
-{
-    
-    private static List<DisplayExperiment> experimentCache = null;
-    
+{    
     /**
      * {@inheritDoc}
      */
@@ -56,54 +41,10 @@ public class ExperimentController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        
-        if (experimentCache == null) {
-            readExperiments(request);
-        }
-        request.setAttribute("experiments", experimentCache);
+        HttpSession session = request.getSession();
+        ObjectStore os = SessionMethods.getObjectStore(session.getServletContext());
+        List<DisplayExperiment> experiments = MetadataCache.getExperiments(os);
+        request.setAttribute("experiments", experiments);
         return null;
-    }
-    
-    private void readExperiments(HttpServletRequest request) {
-        
-        try {
-            HttpSession session = request.getSession();
-            ObjectStore os =
-                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-            
-            Query q = new Query();  
-            QueryClass qcProject = new QueryClass(Project.class);
-            QueryField qcName = new QueryField(qcProject, "name");
-            q.addFrom(qcProject);
-            q.addToSelect(qcProject);
-            
-            QueryClass qcExperiment = new QueryClass(Experiment.class);
-            q.addFrom(qcExperiment);
-            q.addToSelect(qcExperiment);
-
-            QueryCollectionReference projExperiments = new QueryCollectionReference(qcProject, "experiments");
-            ContainsConstraint cc = new ContainsConstraint(projExperiments, ConstraintOp.CONTAINS, qcExperiment);
-            
-            q.setConstraint(cc);
-            q.addToOrderBy(qcName);
-            
-            
-            Results results = os.execute(q);
-            
-            experimentCache = new ArrayList<DisplayExperiment>();
-            
-            Iterator i = results.iterator();
-            while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
-
-                Project project = (Project) row.get(0);
-                Experiment experiment = (Experiment) row.get(1);
-
-                DisplayExperiment displayExp = new DisplayExperiment(experiment, project);
-                experimentCache.add(displayExp);
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
     }
 }
