@@ -11,8 +11,10 @@ package org.modmine.web;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.intermine.model.bio.Experiment;
@@ -20,6 +22,7 @@ import org.intermine.model.bio.ExperimentalFactor;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
+import org.intermine.objectstore.ObjectStore;
 
 
 /**
@@ -36,15 +39,19 @@ public class DisplayExperiment {
     private String description = null;
     private Set<String> factorTypes = new HashSet<String>();
     private Set<String> organisms = new HashSet<String>();
-    
+    private Map<String, Long> featureCounts;
+    private ObjectStore os;
     
     /**
      * Construct with objects from database. 
      * @param exp the experiment
      * @param project the experiment's project
      */
-    public DisplayExperiment(Experiment exp, Project project) {
+    public DisplayExperiment(Experiment exp, Project project, Map<String, Long> featureCounts,
+            ObjectStore os) {
         initialise(exp, project);
+        this.featureCounts = featureCounts;
+        this.os = os;
     }
     
     
@@ -68,10 +75,11 @@ public class DisplayExperiment {
         }
         
         for (Organism organism : proj.getOrganisms()) {
-            organisms.add(organism.getTaxonId().toString());
+            organisms.add(organism.getShortName());
         }
     }
 
+        
     /**
      * @return the name
      */
@@ -110,7 +118,17 @@ public class DisplayExperiment {
         return submissions;
     }
 
-
+    /**
+     * @return submissions and a map of feature type to count
+     */
+    public Map<Submission, Map<String, Long>> getSubmissionsAndFeatureCounts() {
+        Map<Submission, Map<String, Long>> subMap = new HashMap<Submission, Map<String, Long>>();
+        for (Submission sub : submissions) {
+            subMap.put(sub, MetadataCache.getSubmissionFeatureCounts(os, sub.getdCCid()));
+        }
+        return subMap;
+    }
+    
     /**
      * @return the factorTypes
      */
@@ -132,5 +150,22 @@ public class DisplayExperiment {
     public int getSubmissionCount() {
         return submissions.size();
     }
+
+
+    /**
+     * @return the featureCounts
+     */
+    public Map<String, Long> getFeatureCounts() {
+        return featureCounts;
+    }
+
+    
+    /**
+     * @return the number of experimental factors
+     */
+    public int getFactorCount() {
+        return factorTypes.size();
+    }
+    
     
 }
