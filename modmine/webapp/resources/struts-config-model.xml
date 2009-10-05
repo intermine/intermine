@@ -53,6 +53,12 @@
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
 </action>
 
+<action path="/features"
+        type="org.modmine.web.FeaturesAction">
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+</action>
+
+
 <!-- 
 <action path="/initLatestSubs"
   type="org.modmine.web.LatestSubsController" />
