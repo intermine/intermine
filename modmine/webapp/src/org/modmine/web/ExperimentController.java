@@ -10,6 +10,7 @@ package org.modmine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +44,16 @@ public class ExperimentController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         ObjectStore os = SessionMethods.getObjectStore(session.getServletContext());
-        List<DisplayExperiment> experiments = MetadataCache.getExperiments(os);
+        
+        List<DisplayExperiment> experiments;
+        
+        String experimentName = request.getParameter("experiment");
+        if (experimentName != null) {
+            experiments = new ArrayList<DisplayExperiment>();
+            experiments.add(MetadataCache.getExperimentByName(os, experimentName));
+        } else {
+            experiments = MetadataCache.getExperiments(os);
+        }
         request.setAttribute("experiments", experiments);
         return null;
     }
