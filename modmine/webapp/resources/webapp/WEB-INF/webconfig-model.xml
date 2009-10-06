@@ -640,13 +640,13 @@
     </fields>
   </class>
 
-<!-- 
+
   <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
                      
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
- -->
+
    <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
         domainLabel="Chromosome"
