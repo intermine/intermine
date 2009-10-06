@@ -164,7 +164,8 @@
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
           </td>
           <td class="${class}" align="right">
-            create list
+            <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">LIST</html:link>
           </td>
       </tr>
     </c:forEach>
