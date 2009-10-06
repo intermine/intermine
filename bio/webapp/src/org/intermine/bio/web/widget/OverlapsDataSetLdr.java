@@ -84,10 +84,10 @@ public class OverlapsDataSetLdr implements DataSetLdr
             return;
         }
         
-//        XYSeries upstream = getSeries(bag, os, organismName, "upstream");
+        XYSeries upstream = getSeries(bag, os, organismName, "upstream");
         XYSeries downstream = getSeries(bag, os, organismName, "downstream");
         dataSet = new XYSeriesCollection();
-//        ((XYSeriesCollection) dataSet).addSeries(upstream);
+        ((XYSeriesCollection) dataSet).addSeries(upstream);
         ((XYSeriesCollection) dataSet).addSeries(downstream);
     }
 
@@ -135,14 +135,14 @@ public class OverlapsDataSetLdr implements DataSetLdr
             Integer distance = null;
             
             if (seriesName.equals("downstream")) {
-                distance = geneEnd - featureStart;
+                distance = featureStart - geneEnd;
             } else if (seriesName.equals("upstream")) {
                 distance = geneStart - featureEnd;
             }
             
-//            if (distance.compareTo(new Integer(0)) < 0) {
-//                distance = 0;
-//            }
+            if (distance.compareTo(new Integer(0)) < 0) {
+                distance = 0;
+            }
             
             Integer currentDistance = distanceToNearestGene.get(featureIdentifier);
             if (currentDistance == null) {

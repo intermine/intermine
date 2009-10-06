@@ -640,7 +640,6 @@
     </fields>
   </class>
 
-
   <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
                      
@@ -676,7 +675,7 @@
         description="The distance to the nearest gene for the features in this list."
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.BindingSite,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.BindingSite"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
