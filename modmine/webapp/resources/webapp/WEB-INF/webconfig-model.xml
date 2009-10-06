@@ -640,11 +640,13 @@
     </fields>
   </class>
 
+<!-- 
   <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+                     
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
-
+ -->
    <widgets>
       <graphdisplayer id="chromosome_distribution" title="Chromosome Distribution"
         domainLabel="Chromosome"
@@ -665,6 +667,16 @@
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+       />
+
+      <graphdisplayer id="overlaps" title="Overlapping Features"
+        domainLabel="Distance"
+        rangeLabel=" "
+        dataSetLoader="org.intermine.bio.web.widget.OverlapsDataSetLdr"
+        description="The distance to the nearest gene for the features in this list."
+        graphType="XYLineChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.BindingSite,org.intermine.model.bio.TransposableElementInsertionSite"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
