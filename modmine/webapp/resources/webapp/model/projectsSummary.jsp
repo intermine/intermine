@@ -16,162 +16,37 @@
 
 <div class="body">
 
-<c:set var="LIMIT" value="1"/>
-<em>${LIMIT+1} most recent submissions for each project:</em>
+<c:forEach items="${experiments}" var="proj">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${subs}" var="item" varStatus="status">
-		<c:if test="${status.count%2 eq 1}"><tr></c:if>
-		<td>
-    <c:forEach items="${item.key.organisms}" var="organism" varStatus="orgStatus">
-    <c:if test="${organism.taxonId eq 7227}"> 
+  <h3>${proj.key}</h3>
+
+ <c:forEach items="${proj.value}" var="exp"  varStatus="status">
+  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <tr><td>
+    <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
+      <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
-    </c:if>
-    <c:if test="${organism.taxonId eq 6239}"> 
+      </c:if>
+      <c:if test="${organism eq 'C. elegans'}"> 
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
-    </c:if>
+      </c:if>
+    </c:forEach> 
+  </td>
+  
+  <td>experiment: <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
+  <td>project: <b><c:out value="${exp.projectName}"></c:out></b></td>
+  <td>PI: <b><c:out value="${exp.pi}"></c:out></b></td>
+  </tr>
+  
+  
+  <tr>
+  <%--<td colspan="4"><c:out value="${exp.description}"></c:out></td>--%>
+  </tr>
+  </table>
 
-<%--
-<c:choose>
-		<c:when test="${organism.taxonId eq 7227}">
-		${organism.taxonId}<img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
-		</c:when>
-		<c:when  test="${organism.taxonId eq 6239}">
-    ${organism.taxonId}<img border="0" class="arrow" src="images/w_vs.png" title="worm"/><br>		
-		</c:when>
-</c:choose>			
---%>
-
-		</c:forEach> <%--organism --%>
-		</td>
-			<td><html:link
-				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
- ${item.key.name}
-    </html:link>
-
-<%--
-
-<br>
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-      <c:choose>
-        <c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-        <c:when test="${nrSubs gt 0}">
-        <hr>
-        <im:querylink text="${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-        </c:when>
-      </c:choose>
-
---%>
-
-</td>
-
-
-
-<td>
-<c:choose>
-<c:when test="${empty item.value}">
- -
-</c:when>
-<c:otherwise>
-<table cellpadding="0" cellspacing="0" border="0" class="internal">
-<c:forEach items="${item.value}" var="sub" varStatus="subStatus" end="${LIMIT}">
-<tr>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}">
- ${fn:replace(sub.title,"_", " ")}
-<%-- ${sub.dCCid} --%>
-    </html:link>
-    </td>
-<%--    <td> ${sub.experimentType }</td> --%>   
-    <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
-    </td>
-      </tr>
 </c:forEach>
-</table>
-
-
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-        <hr>
-        <im:querylink text="All ${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.submissions.DCCid Project.submissions.title Project.submissions.design"
-              sortOrder="Project.submissions.DCCid">
-<%--
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
---%>
-
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-
-
-
-</c:otherwise>
-</c:choose>
- </td>
- 
 </c:forEach>
-
-<%--
-     <td>
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-      <c:choose>
-        <c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-        <c:when test="${nrSubs gt 0}">
-				<im:querylink text="${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-        </c:when>
-      </c:choose>
-  </c:forEach>
-
---%>
-</table>
 </div>
 
 <!-- links to all subs -->

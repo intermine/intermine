@@ -107,6 +107,21 @@ public class MetadataCache
         return experimentCache.get(name);
     }
     
+    public static synchronized Map<String, List<DisplayExperiment>> getProjectExperiments(ObjectStore os) {
+        Map<String, List<DisplayExperiment>> projectExperiments = new HashMap();
+        for (DisplayExperiment exp : getExperiments(os)) {
+            List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
+            if (exps == null) {
+                exps = new ArrayList();
+                projectExperiments.put(exp.getProjectName(), exps);
+            }
+            exps.add(exp);
+        }
+        LOG.info("Made project map: " + projectExperiments.size());
+        return projectExperiments;
+        
+    }
+    
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);

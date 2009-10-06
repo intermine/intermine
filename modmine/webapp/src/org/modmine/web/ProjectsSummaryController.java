@@ -13,6 +13,7 @@ package org.modmine.web;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -131,6 +132,9 @@ public class ProjectsSummaryController extends TilesAction
                 ps.put(project, subs);
                 nr.put(project, subs.size());
             }
+            
+            Map<String, List<DisplayExperiment>> experiments = MetadataCache.getProjectExperiments(os);
+            request.setAttribute("experiments", experiments);
             request.setAttribute("subs", ps);            
             request.setAttribute("counts", nr);
         } catch (Exception err) {
