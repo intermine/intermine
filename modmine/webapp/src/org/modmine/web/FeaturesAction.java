@@ -10,6 +10,9 @@ package org.modmine.web;
  *
  */
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +23,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -27,9 +31,15 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConversionHelper;
+import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.bag.BagQueryConfig;
+import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.profile.Profile;
+import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
@@ -46,6 +56,8 @@ import org.intermine.web.struts.InterMineAction;
 public class FeaturesAction extends InterMineAction
 {
 
+    private static int bagCounter = 0;
+    
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
@@ -70,11 +82,13 @@ public class FeaturesAction extends InterMineAction
         String type = (String) request.getParameter("type");
         String featureType = (String) request.getParameter("feature");
         String action = (String) request.getParameter("action");
+        String dccId = null;
+        String experimentName = null;
         
         PathQuery q = new PathQuery(model);
         
         if (type.equals("experiment")) {
-            String experimentName = (String) request.getParameter("experiment");
+            experimentName = (String) request.getParameter("experiment");
             DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
             
             q.addView(featureType + ".primaryIdentifier");
@@ -95,7 +109,7 @@ public class FeaturesAction extends InterMineAction
             q.setDescription(description);
             
         } else if (type.equals("submission")) {
-            String dccId = (String) request.getParameter("submission");
+            dccId = (String) request.getParameter("submission");
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
 
             q.addView(featureType + ".primaryIdentifier");
@@ -159,6 +173,29 @@ public class FeaturesAction extends InterMineAction
             // will get only required export data
             return null;
             
+        } else if (action.equals("list")) {
+            // need to select just id of featureType to create list
+            q.setView(featureType + ".id");
+
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            ProfileManager pm = profile.getProfileManager();
+
+            Map<String, List<FieldDescriptor>> classKeys = 
+                (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+            BagQueryConfig bagQueryConfig =
+                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            BagQueryRunner bagQueryRunner =
+                new BagQueryRunner(os, classKeys, bagQueryConfig,
+                        BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()));
+
+            String bagName = (dccId != null ? "submission_" + dccId : experimentName)
+                + "_" + featureType + "_features";            
+            bagName = BagHelper.findNewBagName(profile.getSavedBags(), bagName);
+            BagHelper.createBagFromPathQuery(q, bagName, q.getDescription(), featureType, profile,
+                    os, bagQueryRunner);
+            ForwardParameters forwardParameters =
+                new ForwardParameters(mapping.findForward("bagDetails"));
+            return forwardParameters.addParameter("bagName", bagName).forward();
         }
         return null;
     }

@@ -56,6 +56,7 @@
 <action path="/features"
         type="org.modmine.web.FeaturesAction">
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
 </action>
 
 
