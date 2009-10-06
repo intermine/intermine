@@ -18,7 +18,8 @@ def search_lines(input, projects):
 
     for line in input:
         if '</experiment_prop' in line:
-            props[name] = value
+            if value != "":
+                props[name] = value
             in_prop = False
             value = ""
             name = ""
