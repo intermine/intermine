@@ -107,7 +107,13 @@ public class MetadataCache
         return experimentCache.get(name);
     }
     
-    public static synchronized Map<String, List<DisplayExperiment>> getProjectExperiments(ObjectStore os) {
+    /**
+     * Fetch a map from project name to experiment.
+     * @param os the production ObjectStore
+     * @return a map from project name to experiment
+     */
+    public static synchronized Map<String, List<DisplayExperiment>> 
+    getProjectExperiments(ObjectStore os) {
         Map<String, List<DisplayExperiment>> projectExperiments = new HashMap();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
