@@ -35,6 +35,22 @@ function handleGraphWidget(widget) {
   }
 }
 
+function getProcessHTMLWidgetConfig(widgetId, bagName) {
+	AjaxServices.getProcessHTMLWidget(widgetId, bagName, handleHTMLWidget);
+}
+
+function handleHTMLWidget(widget) {
+	var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+	var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
+	var widgetdatacontent = document.getElementById('widgetdatacontent' + widget.configId);
+	
+	
+	Element.hide($(widgetdatawait));
+	Element.hide($(widgetdataname));
+	Element.show($(widgetdatacontent));
+}
+
+
 function getProcessTableWidgetConfig(widgetId, bagName) {
   AjaxServices.getProcessTableWidget(widgetId,bagName,handleTableWidget);
 }

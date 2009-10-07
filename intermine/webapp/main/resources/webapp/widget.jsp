@@ -63,20 +63,10 @@
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}<br/>
-  <span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:
-<%-- hide until table and graph widgets can handle this link
-  <c:choose>
-  <c:when test="${type == 'EnrichmentWidgetConfig'}">
-      <a href="javascript:displayNotAnalysed(${widget.id})"><span id="widgetnotanalysed${widget.id}">${widget.notAnalysed}</span></a>
-  </c:when>
-  <c:otherwise>
- --%>
-      <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span>
-<%--
-    </c:otherwise>
-  </c:choose>
-  --%>
-  </span>
+  
+  <c:if test="${type ne 'HTMLWidgetConfig'}" >
+  	<span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
+  </c:if>
  </p>
 
  <c:if test="${type == 'EnrichmentWidgetConfig' || (fn:length(extraAttrMap)>0)}" >
@@ -169,7 +159,7 @@
   </c:otherwise>
 </c:choose>
 
-    <c:if test="${type == 'TableWidgetConfig' || type == 'EnrichmentWidgetConfig'}" >
+    <c:if test="${type ne 'GraphWidgetConfig'}" >
       <table id="tablewidget${widget.id}" border="0" >
         <thead id="tablewidget${widget.id}head"></thead>
         <tbody id="tablewidget${widget.id}body"></tbody>
@@ -178,6 +168,9 @@
   </div>
   <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
   <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
+  <c:if test="${type == 'HTMLWidgetConfig'}" >
+  	<div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
+  </c:if>
   <script language="javascript">
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
@@ -193,6 +186,11 @@
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
     <!--//<![CDATA[
            getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
+    //]]>-->
+    </c:when>
+    <c:when test="${type == 'HTMLWidgetConfig'}" >
+    <!--//<![CDATA[
+           getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
     //]]>-->
     </c:when>
   </c:choose>

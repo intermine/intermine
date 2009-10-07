@@ -90,10 +90,12 @@ import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.GridWidget;
+import org.intermine.web.logic.widget.HTMLWidget;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.GridWidgetConfig;
+import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -863,6 +865,41 @@ public class AjaxServices
         return null;
     }
 
+    /**
+     * @param widgetId unique id for this widget
+     * @param bagName name of list
+     * @return graph widget
+     */
+    public static HTMLWidget getProcessHTMLWidget(String widgetId, String bagName) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model =  os.getModel();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            SearchRepository searchRepository =
+                SessionMethods.getGlobalSearchRepository(servletContext);
+            InterMineBag imBag = BagHelper.getBag(profile, searchRepository, bagName);
+
+            Type type = webConfig.getTypes().get(model.getPackageName()
+                            + "." + imBag.getType());
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widget: widgets) {
+                if (widget.getId().equals(widgetId)) {
+                    HTMLWidgetConfig htmlWidgetConf = (HTMLWidgetConfig) widget;
+                    HTMLWidget htmlWidget = new HTMLWidget(htmlWidgetConf);
+                    return htmlWidget;
+                }
+            }
+        } catch (RuntimeException e) {
+            processException(e);
+        } catch (InterMineException e) {
+            processException(e);
+        }
+        return null;
+    }
+    
     /**
      *
      * @param widgetId unique ID for this widget
