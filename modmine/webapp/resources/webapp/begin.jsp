@@ -24,14 +24,13 @@
 	<tr valign=top>
 <%--
 		<td>
-
-    <im:boxarea title="Experiments"
+    <im:boxarea title="Latest Submissions"
       stylename="plainbox">
-      <tiles:insert name="experiments.tile" />
+      <tiles:insert name="latestSubs.tile" />
     </im:boxarea> 
-
 		</td>
 --%>
+
 		<!-- Second column -->
 		<td>
 
@@ -70,7 +69,6 @@
       </html:link>
     <br clear="right" />
     </im:boxarea>
-
 <td>
 		<im:boxarea title="Templates"
 			titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do"
@@ -106,32 +104,6 @@
 			<br clear="right" />
 		</im:boxarea> 
 
-        <im:boxarea title="Query Builder"
-      titleLink="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
-      stylename="gradientbox">
-      <p><em><fmt:message key="begin.querybuilder" /></em></p>
-      <br />
-      <div>
-      <div id="qbStartQuery">Start a query from: <!-- loop through starting classes -->
-      <c:forEach var="entry"
-        items="${WEB_PROPERTIES['begin.query.classes']}" varStatus="status">
-        <c:if test="${status.count != 1}">,</c:if>&nbsp;<a
-          href="/${WEB_PROPERTIES['webapp.path']}/queryClassSelect.do?action=Select&amp;className=${entry}"
-          rel="NOFOLLOW">${entry}</a>
-      </c:forEach></div>
-      </div>      
-      <div id="qbImport"><a
-        href="/${WEB_PROPERTIES['webapp.path']}/importQueries.do?query_builder=yes">
-      <fmt:message key="begin.importQuery" /> </a></div>
-      
-      <html:link href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"
-        styleClass="fp_button">
-        <img src="/theme/build_a_query.png" id="build_a_query"
-          title="Click here to Build A Query" height="22px" width="120px" />
-      </html:link>
-      <br clear="right" />
-    </im:boxarea>
-    </div>		
 		
     </td>
 		
@@ -141,35 +113,3 @@
 
 
 </div>
-
-<!-- /begin.jsp -->
-
-<%--
-     <im:boxarea title="Projects" titleLink="/${WEB_PROPERTIES['webapp.path']}/projects.do" stylename="plainbox" fixedWidth="300px">
-     <em><p><fmt:message key="projects.intro"/></p></em>     
-     <tiles:insert name="projectList.tile"/>
-    </im:boxarea>
-
-    <im:boxarea title="Data Categories" titleLink="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do" stylename="plainbox" floatValue="left" fixedWidth="300px">
-     <em><p><fmt:message key="begin.data"/></p></em>
-     <c:set var="numPerCol" value="${fn:length(ASPECTS)/2}"/>
-          <table cellpadding="0" cellspacing="0" border="0"><tr>
-         <c:forEach var="entry" items="${ASPECTS}" varStatus="status">
-           <c:set var="set" value="${entry.value}"/>
-           <c:if test="${status.count%2 == '1'}"></tr><tr></c:if>
-                   <td style="height:80px;padding:4px">
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       <img src="<html:rewrite page="/${set.iconImage}"/>" class="aspectIcon"
-                            title="Click here to view the ${set.name} Data Category"
-                            width="40px" height="40px" />
-                     </a>
-                   </td>
-                   <td>
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/aspect.do?name=${set.name}">
-                       ${set.name}
-                     </a>
-                   </td>
-             </c:forEach>
-          </tr></table>
-    </im:boxarea>
---%>

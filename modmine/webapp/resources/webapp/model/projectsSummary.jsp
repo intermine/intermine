@@ -14,7 +14,7 @@
 <html:xhtml />
 
 <div class="body">
-<em>modENCODE projects with related experiments, submissions and features generated:</em>
+<em>modENCODE projects and related experiments, submissions and features generated:</em>
 
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 
@@ -42,9 +42,9 @@
   
   <td><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
-</b></td>
+</b>
 
-<td>
+<br>
 
           <im:querylink text="${exp.submissionCount} submissions " showArrow="true" skipBuilder="true">
 <query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
