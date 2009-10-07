@@ -14,7 +14,7 @@
 <html:xhtml />
 
 <div class="body">
-<em>modENCODE projects with related experiments and submissions:</em>
+<em>modENCODE projects with related experiments, submissions and features generated:</em>
 
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 
@@ -62,6 +62,41 @@
 
 
 </td>
+<td>
+
+     <table cellpadding="0" cellspacing="0" border="0" class="internal" width="95%">
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
+          <tr>
+            <td>${fc.key}</td>
+            <td align="right">
+              <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value}</html:link>
+            </td>
+            <td align="right">
+              export: 
+               <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab">TAB</html:link>            
+              <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv">CSV</html:link>           
+             <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3">GFF3</html:link>
+            </td>
+          </tr>
+      </c:forEach>
+    </table>
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
 
 
   </tr>
@@ -122,14 +157,5 @@
     </td>
 
 
-
-<%--
-<td>
-<html:link
-          href="/${WEB_PROPERTIES['webapp.path']}/submissions.do"> All submissions <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
-    </html:link>
-<br>
-</td>
---%>
   </tr></table>
 
