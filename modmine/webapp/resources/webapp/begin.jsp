@@ -22,6 +22,7 @@
 </tr>
 
 	<tr valign=top>
+<%--
 		<td>
 
     <im:boxarea title="Experiments"
@@ -30,7 +31,7 @@
     </im:boxarea> 
 
 		</td>
-
+--%>
 		<!-- Second column -->
 		<td>
 
@@ -70,6 +71,7 @@
     <br clear="right" />
     </im:boxarea>
 
+<td>
 		<im:boxarea title="Templates"
 			titleLink="/${WEB_PROPERTIES['webapp.path']}/templates.do"
 			stylename="gradientbox">

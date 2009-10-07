@@ -11,18 +11,20 @@
 
 <tiles:importAttribute />
 
-
 <html:xhtml />
 
 <div class="body">
+<em>modENCODE projects with related experiments and submissions:</em>
+
+  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 
 <c:forEach items="${experiments}" var="proj">
-
-  <h3>${proj.key}</h3>
-
  <c:forEach items="${proj.value}" var="exp"  varStatus="status">
-  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-  <tr><td>
+<c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
+
+  <tr>
+<c:if test="${status.first}">
+  <td rowspan="${expCount}">
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
@@ -32,22 +34,45 @@
       </c:if>
     </c:forEach> 
   </td>
+  <td rowspan="${expCount}">
+  <b>${proj.key}</b>
+  <br></br>PI: <c:out value="${exp.pi}"></c:out>
+  </td>
+  </c:if>
   
-  <td>experiment: <html:link
+  <td><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
-  <td>project: <b><c:out value="${exp.projectName}"></c:out></b></td>
-  <td>PI: <b><c:out value="${exp.pi}"></c:out></b></td>
+</b></td>
+
+<td>
+
+          <im:querylink text="${exp.submissionCount} submissions " showArrow="true" skipBuilder="true">
+<query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
+  <node path="Experiment" type="Experiment">
+  </node>
+  <node path="Experiment.submissions" type="Submission">
+  </node>
+  <node path="Experiment.name" type="String">
+    <constraint op="=" value="${exp.name}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+          </im:querylink>
+
+
+
+</td>
+
+
   </tr>
   
-  
-  <tr>
-  <%--<td colspan="4"><c:out value="${exp.description}"></c:out></td>--%>
-  </tr>
+</c:forEach>
+</c:forEach>
   </table>
 
-</c:forEach>
-</c:forEach>
+
 </div>
+
 
 <!-- links to all subs -->
 
