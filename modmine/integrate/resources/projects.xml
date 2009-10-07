@@ -715,7 +715,7 @@
 	<item id="1096" class="" implements="Lab">
 		<attribute name="surname" value="Strome"/>
 		<attribute name="name" value="Susan Strome"/>
-		<attribute name="affiliation" value="Indiana University, Bloomington"/>
+		<attribute name="affiliation" value="University of California, Santa Cruz"/>
 		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
