@@ -1,10 +1,12 @@
 <items>
 <item id="3_3" class="Pathway">
+<attribute name="curated" value="false"/>
 <attribute name="identifier" value="541181"/>
 <attribute name="name" value="Synthesis of bile acids and bile salts via 27-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
 </item>
 <item id="3_2" class="Pathway">
+<attribute name="curated" value="false"/>
 <attribute name="identifier" value="541065"/>
 <attribute name="name" value="Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -19,6 +21,7 @@
 <attribute name="name" value="Reactome"/>
 </item>
 <item id="3_1" class="Pathway">
+<attribute name="curated" value="false"/>
 <attribute name="identifier" value="541066"/>
 <attribute name="name" value="Synthesis of bile acids and bile salts"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -37,6 +40,7 @@
 <attribute name="taxonId" value="7227"/>
 </item>
 <item id="3_4" class="Pathway">
+<attribute name="curated" value="false"/>
 <attribute name="identifier" value="541169"/>
 <attribute name="name" value="Synthesis of bile acids and bile salts via 24-hydroxycholesterol"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>

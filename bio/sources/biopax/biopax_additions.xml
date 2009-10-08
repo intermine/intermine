@@ -7,6 +7,7 @@
  	 <attribute name="identifier" type="java.lang.String"/>
  	 <attribute name="name" type="java.lang.String"/>
 	 <attribute name="shortName" type="java.lang.String"/> 	 
+	 <attribute name="curated" type="java.lang.Boolean"/>
  	 <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
   </class>
   </classes>

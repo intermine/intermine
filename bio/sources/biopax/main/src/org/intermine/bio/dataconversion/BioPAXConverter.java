@@ -62,6 +62,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private Map<String, String[]> configs = new HashMap();
     private OrganismRepository or;
     private String dataSourceName, dbName, identifierField;
+    private String curated = "false";
     
     /**
      * Constructor
@@ -117,6 +118,13 @@ public class BioPAXConverter extends FileConverter implements Visitor
     public void setBiopaxOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
+    }
+    
+    /**
+     * @param curated true or false
+     */
+    public void setBiopaxCurated(String curated) {
+        this.curated = curated;       
     }
 
     /**
@@ -276,6 +284,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     throws ObjectStoreException {
         Item item = createItem("Pathway");
         item.setAttribute("name", pathway.getNAME());
+        item.setAttribute("curated", curated);
         item.addToCollection("dataSets", dataset);
         for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
             String xrefId = xref.getRDFId();
