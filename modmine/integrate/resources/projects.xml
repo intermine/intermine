@@ -489,9 +489,9 @@
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1064" class="" implements="Lab">
-		<attribute name="surname" value="Gravely"/>
-		<attribute name="name" value="Brenton Gravely"/>
-		<attribute name="affiliation" value="University of Connecticut Health Systems"/>
+		<attribute name="surname" value="Graveley"/>
+		<attribute name="name" value="Brenton Graveley"/>
+		<attribute name="affiliation" value="University of Connecticut Health Center"/>
 		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
