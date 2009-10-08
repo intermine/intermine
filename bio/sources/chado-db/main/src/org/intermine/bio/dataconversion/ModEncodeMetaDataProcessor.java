@@ -135,6 +135,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
+    Map<Integer, SubmissionReference> submissionRefs = null;
     
     
     private static class SubmissionDetails
@@ -273,9 +274,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setSubmissionRefs(connection);
         LOG.info("TIME setsubmissionRefs" + ":   "  + (System.currentTimeMillis() - bT));
 
-        bT = System.currentTimeMillis();
-        setSubmissionProtocolsRefs(connection);
-        LOG.info("TIME setsubmissionProtocols" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
         setSubmissionExperimetRefs(connection);
@@ -294,6 +292,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         bT = System.currentTimeMillis();
         processSubmissionProperties(connection);
         LOG.info("TIME submissionProperties" + ":   "  + (System.currentTimeMillis() - bT));
+
+        bT = System.currentTimeMillis();
+        setSubmissionProtocolsRefs(connection);
+        LOG.info("TIME setsubmissionProtocols" + ":   "  + (System.currentTimeMillis() - bT));
 
         bT = System.currentTimeMillis();
         setSubmissionEFactorsRefs(connection);
@@ -1710,8 +1712,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes = 
             new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
 
-        Map<Integer, SubmissionReference> submissionRefs = 
-            new HashMap<Integer, SubmissionReference>();
+        submissionRefs = new HashMap<Integer, SubmissionReference>();
         
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -1945,22 +1946,25 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     
-    // Traverse the DAG by following links to previous applied protocols
-    private void findSubmissionPropsEarlierInDag(Integer startDataId, 
-            Map<String, SubmissionProperty> props, List<SubmissionProperty> newProps) {
+    
+    // Traverse DAG following previous applied protocol links to build a list of all AppliedData
+    private void findAppliedProtocolsAndDataFromEarlierInDag(Integer startDataId, 
+            List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
         AppliedData aData = appliedDataMap.get(startDataId);
-
-        String possibleWikiUrl = aData.actualValue;
-        if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
-            newProps.add(props.get(possibleWikiUrl));
+        if (foundAppliedData != null) {
+            foundAppliedData.add(aData);
         }
         
         for (Integer previousAppliedProtocolId : aData.previousAppliedProtocols) {
             AppliedProtocol ap = appliedProtocolMap.get(previousAppliedProtocolId);
-            for (Integer previousDataId : ap.inputs) {
-                findSubmissionPropsEarlierInDag(previousDataId, props, newProps);
+            if (foundAppliedProtocols != null) {
+                foundAppliedProtocols.add(ap);
             }
-        }        
+            for (Integer previousDataId : ap.inputs) {
+                findAppliedProtocolsAndDataFromEarlierInDag(previousDataId, foundAppliedData,
+                        foundAppliedProtocols);
+            }
+        }            
     }
     
     
@@ -2064,8 +2068,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
             Integer attDbxref = new Integer(res.getInt("att_dbxref"));
-            String dbAccession = res.getString("db_accession");
-            String dbName = res.getString("db_name");
             
             submissionId = dataSubmissionMap.get(dataId);
             if (attDbxref.intValue() != lastAttDbXref.intValue()) {
@@ -2130,33 +2132,55 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (Map.Entry<Integer, SubmissionReference> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
             SubmissionReference subRef = entry.getValue();
-
-            String refDataValue = subRef.dataValue;
-            Integer refSubId = subRef.referencedSubmissionId;
-
-            for (AppliedData aData : appliedDataMap.values()) {
-                String currentDataValue = aData.value;
-                Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
-
-                if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)) {
-                    LOG.info("REFSUBS found a matching data value: " + currentDataValue + " in sub " 
-                            + dccIdMap.get(currentDataSubId) + " ref sub = " 
-                            + dccIdMap.get(refSubId));
-                    
-                    Integer foundDataId = aData.dataId;
-
-                    List<SubmissionProperty> propsFromReferencedSub = 
-                        new ArrayList<SubmissionProperty>();
-                    findSubmissionPropsEarlierInDag(foundDataId, props, propsFromReferencedSub);
-
-                    for (SubmissionProperty prop : propsFromReferencedSub) {
-                        addToSubToTypes(subToTypes, submissionId, prop);
-                    }
+            
+            
+            List<AppliedData> refAppliedData = findAppliedDataFromReferencedSubmission(subRef);
+            for (AppliedData aData : refAppliedData) {
+                String possibleWikiUrl = aData.actualValue;
+                if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
+                    SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
+                    addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
                 }
             }
         }
     }
     
+    private List<AppliedData> findAppliedDataFromReferencedSubmission(SubmissionReference subRef) {
+        List<AppliedData> foundAppliedData = new ArrayList<AppliedData>();
+        findAppliedProtocolsAndDataFromReferencedSubmission(subRef, foundAppliedData, null);
+        return foundAppliedData;
+    }
+    
+    private List<AppliedProtocol> findAppliedProtocolsFromReferencedSubmission(
+            SubmissionReference subRef) {
+        List<AppliedProtocol> foundAppliedProtocols = new ArrayList<AppliedProtocol>();
+        findAppliedProtocolsAndDataFromReferencedSubmission(subRef, null, foundAppliedProtocols);
+        return foundAppliedProtocols;
+    }
+    
+    private void findAppliedProtocolsAndDataFromReferencedSubmission(
+            SubmissionReference subRef,
+            List<AppliedData> foundAppliedData,
+            List<AppliedProtocol> foundAppliedProtocols) {
+        String refDataValue = subRef.dataValue;
+        Integer refSubId = subRef.referencedSubmissionId;
+
+        for (AppliedData aData : appliedDataMap.values()) {
+            String currentDataValue = aData.value;
+            Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
+
+            if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)) {
+                LOG.info("REFSUBS found a matching data value: " + currentDataValue + " in sub " 
+                        + dccIdMap.get(currentDataSubId) + " ref sub = " 
+                        + dccIdMap.get(refSubId));
+                
+                Integer foundDataId = aData.dataId;
+
+                findAppliedProtocolsAndDataFromEarlierInDag(foundDataId, foundAppliedData,
+                        foundAppliedProtocols);
+            }
+        }
+    }
     
     
     private List<Item> createFromWikiPage(String clsName, 
@@ -2475,7 +2499,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query = "select d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id as att_dbxref, ax.accession as db_accession, db.name as db_name"
+            + " a.dbxref_id as att_dbxref"
             + " FROM data d, data_attribute da, attribute a, dbxref ax, db"
              + " WHERE d.data_id = da.data_id"
             + " AND da.attribute_id = a.attribute_id"
@@ -2598,6 +2622,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             Integer storedSubmissionId = submissionMap.get(thisSubmissionId).interMineObjectId;
             getChadoDBConverter().store(collection, storedSubmissionId);
+            
+            // may need protocols from referenced submissions to work out experiment type
+            protocolIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
             setSubmissionExperimentType(storedSubmissionId, protocolIds);
         }
     }
@@ -2617,6 +2644,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
     
+    // Fetch protocols used to create reagents that are inputs to this submission, these are
+    // found in referenced submissions
+    private List<Integer> findProtocolIdsFromReferencedSubmissions(Integer submissionId) {
+        List<Integer> protocolIds = new ArrayList<Integer>();
+        
+        if (submissionRefs == null) {
+            throw new RuntimeException("Attempting to access submissionRefs before it has been"
+                    + " populated, this method needs to be called after"
+                    + " processSubmissionProperties");
+        }
+        
+        SubmissionReference subRef = submissionRefs.get(submissionId);
+        if (subRef != null) {
+            for (AppliedProtocol aProtocol : findAppliedProtocolsFromReferencedSubmission(subRef)) {
+                protocolIds.add(aProtocol.protocolId);
+            }
+        }
+        
+        return protocolIds;
+    }
     
     /** 
      * Work out an experiment type give the combination of protocols used for the
