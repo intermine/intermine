@@ -1657,7 +1657,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (props.containsKey(wikiPageUrl)) {
                     buildSubProperty = null;
                 } else {
-                    buildSubProperty = new SubmissionProperty(dataName, wikiPageUrl);
+                    buildSubProperty = new SubmissionProperty(getPreferredSynonym(dataName), wikiPageUrl);
                     props.put(wikiPageUrl, buildSubProperty);
                 }
                 
@@ -1684,6 +1684,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addSubmissionPropsFromReferencedSubmissions(subToTypes, props, submissionRefs);
             
         
+
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -1700,12 +1701,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
             LOG.info("EX unified factor names: " + exFactorNames);
             
+            LOG.info("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
+            
             List<Item> allPropertyItems = new ArrayList<Item>();
             
             // DEVELOPMENTAL STAGE
             List<Item> devStageItems = new ArrayList<Item>();
             devStageItems.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
-                    new String[] {"stage", "dev stage"}));
+                    makeLookupList("developmental stage")));
             if (devStageItems.isEmpty()) {
                 devStageItems.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
                         typeToProp, new String[] {
@@ -1727,7 +1730,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // STRAIN
             List<Item> strainItems = new ArrayList<Item>();
-            strainItems.addAll(createFromWikiPage("Strain", typeToProp, new String[] {"strain"}));
+            strainItems.addAll(createFromWikiPage("Strain", typeToProp, makeLookupList("strain")));
             
             storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
             if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
@@ -1739,7 +1742,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
-            arrayItems.addAll(createFromWikiPage("Array", typeToProp, new String[] {"array"}));
+            arrayItems.addAll(createFromWikiPage("Array", typeToProp, makeLookupList("array")));
             if (arrayItems.isEmpty()) {
                 LOG.info("ARRAY: " + typeToProp.get("array"));
                 arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
@@ -1761,7 +1764,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // CELL LINE
             List<Item> lineItems = new ArrayList<Item>();
             lineItems.addAll(createFromWikiPage("CellLine", typeToProp, 
-                    new String[] {"cell line", "cell id"}));
+                    makeLookupList("cell line")));
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineItems);
             if (!lineItems.isEmpty() && exFactorNames.contains("cell line")) {
                 createExperimentalFactors(submissionId, "cell line", lineItems);
@@ -1772,7 +1775,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // ANTIBODY
             List<Item> antibodyItems = new ArrayList<Item>();
             antibodyItems.addAll(createFromWikiPage("Antibody", typeToProp, 
-                    new String[] {"antibody"}));
+                    makeLookupList("antibody")));
             if (antibodyItems.isEmpty()) {
                 LOG.info("ANTIBODY: " + typeToProp.get("antibody"));
                 antibodyItems.addAll(lookForAttributesInOtherWikiPages("Antibody",
@@ -1794,7 +1797,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // TISSUE
             List<Item> tissueItems = new ArrayList<Item>();
-            tissueItems.addAll(createFromWikiPage("Tissue", typeToProp, new String[] {"tissue"}));
+            tissueItems.addAll(createFromWikiPage("Tissue", typeToProp, makeLookupList("tissue")));
             if (tissueItems.isEmpty()) {
                 tissueItems.addAll(lookForAttributesInOtherWikiPages("Tissue",
                         typeToProp, new String[] {
@@ -2002,9 +2005,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             
             if (buildSubProperty != null) {
-                // to cater for singular and plural..
                 if (attHeading.startsWith("Characteristic")) {
-                    buildSubProperty.type = attName;
+                    buildSubProperty.type = getPreferredSynonym(attName);
                     buildSubProperty.wikiPageUrl = attValue;
                     
                     // add detail here as some Characteristics that don't reference a wiki page
@@ -2090,7 +2092,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     
     
     private List<Item> createFromWikiPage(String clsName, 
-            Map<String, List<SubmissionProperty>> typeToProp, String[] types) 
+            Map<String, List<SubmissionProperty>> typeToProp, List<String> types) 
             throws ObjectStoreException {
         List<Item> items = new ArrayList<Item>();
 
