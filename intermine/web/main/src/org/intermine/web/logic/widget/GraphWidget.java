@@ -30,6 +30,7 @@ import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.StandardEntityCollection;
@@ -123,7 +124,7 @@ public class GraphWidget extends Widget
         JFreeChart chart = null;
         Dataset graphDataSet = dataSetLdr.getDataSet();
         String graphType = ((GraphWidgetConfig) config).getGraphType();
-        
+        ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
         if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
 
             chart = ChartFactory.createXYLineChart(config.getTitle(),
@@ -204,11 +205,15 @@ public class GraphWidget extends Widget
             new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
 
             formatBarCharts(categoryPlot);
+            
+
         }
 
         if (chart.getTitle() != null) {
             chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
         }
+        
+        
         
         chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
         chart.setAntiAlias(false); // render the chart faster, but won't look as good.
@@ -286,6 +291,11 @@ public class GraphWidget extends Widget
             categoryPlot.setDomainGridlinePaint(Color.LIGHT_GRAY);
             categoryPlot.setDomainGridlinesVisible(true);
             categoryPlot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+            
+//            StandardChartTheme legacyTheme 
+//            = (StandardChartTheme) StandardChartTheme.createLegacyTheme();
+//            legacyTheme.applyToCategoryPlot((CategoryPlot) categoryPlot);
+            
             
         }
     }
