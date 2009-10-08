@@ -751,7 +751,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query =
             "SELECT distinct a.experiment_id, a.value "
             + " FROM experiment_prop a "
-            + " where a.name = 'Project'";
+            + " where a.name = 'Project' "
+            + " AND rank=0";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -821,7 +822,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query =
             "SELECT distinct a.experiment_id, a.name, a.value "
             + " FROM experiment_prop a "
-            + " where a.name = 'Lab'";
+            + " where a.name = 'Lab' "
+            + " AND a.rank=0";
         LOG.info("executing: " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
