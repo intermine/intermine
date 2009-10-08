@@ -323,7 +323,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private void setSynonym(String subjectId, String value)
     throws ObjectStoreException {
         MultiKey key = new MultiKey(subjectId, value);
-        if (synonyms.contains(key)) {
+        if (!synonyms.contains(key)) {
             Item syn = createItem("Synonym");
             syn.setReference("subject", subjectId);
             syn.setAttribute("value", value);
