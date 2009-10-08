@@ -43,9 +43,92 @@
   <td><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
 </b>
+</td>
+<td>
+This experiment is described in 
 
+          <im:querylink text="${exp.submissionCount} submissions " showArrow="false" skipBuilder="true">
+<query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
+  <node path="Experiment" type="Experiment">
+  </node>
+  <node path="Experiment.submissions" type="Submission">
+  </node>
+  <node path="Experiment.name" type="String">
+    <constraint op="=" value="${exp.name}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+</im:querylink>.
+
+     <c:if test="${fn:length(exp.featureCounts) > 0 }"> 
+It generates 
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
+     <c:if test="${status.count > 1 && !status.last }">, </c:if> 
+     <c:if test="${status.count > 1 && status.last }"> and </c:if> 
+     <html:link
+href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value} ${fc.key}s
+</html:link>
+      </c:forEach>
+.
+      </c:if>     
+
+<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">More details...</html:link>
+
+</td>
+
+
+
+
+
+  </tr>
+  
+</c:forEach>
+</c:forEach>
+  </table>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<%--
+<div class="body">
+<em>modENCODE projects and related experiments, submissions and features generated:</em>
+
+  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+
+<c:forEach items="${experiments}" var="proj">
+ <c:forEach items="${proj.value}" var="exp"  varStatus="status">
+<c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
+
+  <tr>
+<c:if test="${status.first}">
+  <td rowspan="${expCount}">
+    <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
+      <c:if test="${organism eq 'D. melanogaster'}"> 
+        <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
+      </c:if>
+      <c:if test="${organism eq 'C. elegans'}"> 
+        <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
+      </c:if>
+    </c:forEach> 
+  </td>
+  <td rowspan="${expCount}">
+  <b>${proj.key}</b>
+  <br></br>PI: <c:out value="${exp.pi}"></c:out>
+  </td>
+  </c:if>
+  <td><b><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
+</b>
 <br>
-
           <im:querylink text="${exp.submissionCount} submissions " showArrow="true" skipBuilder="true">
 <query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
   <node path="Experiment" type="Experiment">
@@ -58,12 +141,8 @@
   </node>
 </query>
           </im:querylink>
-
-
-
 </td>
 <td>
-
      <table cellpadding="0" cellspacing="0" border="0" class="internal" width="95%">
       <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
           <tr>
@@ -84,29 +163,13 @@
           </tr>
       </c:forEach>
     </table>
-
-
-
-
-
-
-
-
-
 </td>
-
-
-
-
-
   </tr>
-  
 </c:forEach>
 </c:forEach>
   </table>
-
-
 </div>
+--%>
 
 
 <!-- links to all subs -->
