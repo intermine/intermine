@@ -1551,7 +1551,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     "developmental_stage", "dev stage", "devstage"},
                     new String[] {"strain", "strain_or_line"},
                     new String[] {"cell line", "cell_line", "Cell line", "cell id"},
-                    new String[] {"array", "adf"}
+                    new String[] {"array", "adf"},
+                    new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1647,8 +1648,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     attValue = attValue.substring(0, attValue.indexOf(":"));
                 }
                 Integer referencedSubId = getSubmissionIdFromDccId(attValue);
-                SubmissionReference subRef = new SubmissionReference(referencedSubId, wikiPageUrl);
-                submissionRefs.put(submissionId, subRef);
+                if (referencedSubId != null) {
+                    SubmissionReference subRef = new SubmissionReference(referencedSubId, wikiPageUrl);
+                    submissionRefs.put(submissionId, subRef);
+                }  
             }
             
             // we are starting a new data row
@@ -1771,6 +1774,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 exFactorNames.remove("cell line");
             }
             allPropertyItems.addAll(lineItems);            
+            
+            // RNAi REAGENT
+//            List<Item> reagentItems = new ArrayList<Item>();
+//            reagentItems.addAll(createFromWikiPage("SubmissionProperty", typeToProp, 
+//                    makeLookupList("dsRNA")));
+//            //storeSubmissionCollection(storedSubmissionId, "rnaiReagents", reagentItems);
+//            if (!reagentItems.isEmpty() && exFactorNames.contains("RNAi_reagent")) {
+//                createExperimentalFactors(submissionId, "dsRNA", reagentItems);
+//                exFactorNames.remove("dsRNA");
+//            }
+//            allPropertyItems.addAll(reagentItems);      
             
             // ANTIBODY
             List<Item> antibodyItems = new ArrayList<Item>();
@@ -2165,6 +2179,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             if (clsName != null) {
                 List<String> checkOfficialName = prop.details.get("official name");
+
+                if (checkOfficialName == null) {
+                    LOG.warn("No 'official name', using 'name' instead for: " + prop.wikiPageUrl);
+                    checkOfficialName = prop.details.get("name");
+                }
                 if (checkOfficialName == null) {
                     LOG.info("Official name - missing for property: " 
                             + prop.type + ", " + prop.wikiPageUrl);
@@ -2316,6 +2335,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String name = null;
         if (prop.details.containsKey("official name")) {
             name = prop.details.get("official name").get(0);
+        } else if (prop.details.containsKey("name")) {
+            name = prop.details.get("name").get(0);
         } else {
             // no official name so maybe there is a key that matches the type - sometimes the
             // setup for Characteristics
