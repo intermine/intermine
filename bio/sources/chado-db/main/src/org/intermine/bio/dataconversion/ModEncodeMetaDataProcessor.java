@@ -1821,6 +1821,25 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             allPropertyItems.addAll(tissueItems);            
 
+            
+            
+            // There may be some other experimental factors that require SubmissionProperty objects
+            // but don't fall into the categories above.  Create them here and set experiemental
+            // factors.
+            ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
+            for (String exFactor : extraPropNames) {
+            
+                if (exFactor.equals("food") || exFactor.equals("exposure time")) {
+                    List<Item> extraPropItems = new ArrayList<Item>();
+                    extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
+                            typeToProp, new String[] {exFactor}));
+                    allPropertyItems.addAll(extraPropItems); 
+                    createExperimentalFactors(submissionId, exFactor, extraPropItems);
+                    exFactorNames.remove(exFactor);
+                }
+            }
+
+            
             // Store Submission.properties/ SubmissionProperty.submissions
             storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
             
@@ -2235,6 +2254,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     }
                     if (!items.isEmpty()) {
                         break;
+                    }
+                }
+            } else {
+                // no attribute type given so use the data.value (SubmissionProperty.wikiPageUrl)
+                // which probably won't be a wiki page
+                if (typeToProp.containsKey(typeProp)) {
+                    for (SubmissionProperty subProp : typeToProp.get(typeProp)) { 
+
+                        String value = subProp.wikiPageUrl;
+                        
+                        // This is an ugly special case to deal with 'exposure time/24 hours'
+                        if (subProp.details.containsKey("Unit")) {
+                            String unit = subProp.details.get("Unit").get(0);
+                            value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
+                        }
+                        
+                        items.add(createNonWikiSubmissionPropertyItem(clsName, subProp.type, 
+                                value));
                     }
                 }
             }
