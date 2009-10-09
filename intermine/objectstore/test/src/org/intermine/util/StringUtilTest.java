@@ -211,7 +211,7 @@ public class StringUtilTest extends TestCase
     public void testIndefiniteArticle() throws Exception {
         assertEquals("a", StringUtil.indefiniteArticle("monkey"));
         assertEquals("an", StringUtil.indefiniteArticle("emu"));
-        assertEquals("a", StringUtil.indefiniteArticle("GNU"));
+        assertEquals("a", StringUtil.indefiniteArticle("TLA"));
         assertEquals("an", StringUtil.indefiniteArticle("O"));
         assertEquals("an", StringUtil.indefiniteArticle("IMP"));
     }
