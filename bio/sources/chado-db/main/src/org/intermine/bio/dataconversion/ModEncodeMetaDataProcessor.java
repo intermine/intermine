@@ -1776,15 +1776,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             allPropertyItems.addAll(lineItems);            
             
             // RNAi REAGENT
-//            List<Item> reagentItems = new ArrayList<Item>();
-//            reagentItems.addAll(createFromWikiPage("SubmissionProperty", typeToProp, 
-//                    makeLookupList("dsRNA")));
-//            //storeSubmissionCollection(storedSubmissionId, "rnaiReagents", reagentItems);
-//            if (!reagentItems.isEmpty() && exFactorNames.contains("RNAi_reagent")) {
-//                createExperimentalFactors(submissionId, "dsRNA", reagentItems);
-//                exFactorNames.remove("dsRNA");
-//            }
-//            allPropertyItems.addAll(reagentItems);      
+            List<Item> reagentItems = new ArrayList<Item>();
+            reagentItems.addAll(createFromWikiPage("SubmissionProperty", typeToProp, 
+                    makeLookupList("dsRNA")));
+            LOG.info("RNA exFactorNames: " + exFactorNames);
+            if (!reagentItems.isEmpty() && exFactorNames.contains("RNAi reagent")) {
+                createExperimentalFactors(submissionId, "RNAi reagent", reagentItems);
+                exFactorNames.remove("RNAi reagent");
+            }
+            allPropertyItems.addAll(reagentItems);      
             
             // ANTIBODY
             List<Item> antibodyItems = new ArrayList<Item>();
