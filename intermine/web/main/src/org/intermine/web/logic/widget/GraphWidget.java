@@ -120,11 +120,12 @@ public class GraphWidget extends Widget
             LOG.error("No data found for graph widget");
             return;
         }
-        
+        BarRenderer.setDefaultShadowsVisible(false);
         JFreeChart chart = null;
         Dataset graphDataSet = dataSetLdr.getDataSet();
         String graphType = ((GraphWidgetConfig) config).getGraphType();
         ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
+        
         if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
 
             chart = ChartFactory.createXYLineChart(config.getTitle(),
