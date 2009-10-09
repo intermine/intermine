@@ -53,7 +53,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
 {
 
     private static final Logger LOG = Logger.getLogger(OverlapsDataSetLdr.class);
-    private XYDataset dataSet;
+    private XYDataset dataSet = null;
     private Model model;
     private String bagType;
     private Results results;
@@ -86,9 +86,16 @@ public class OverlapsDataSetLdr implements DataSetLdr
         
         XYSeries upstream = getSeries(bag, os, organismName, "upstream");
         XYSeries downstream = getSeries(bag, os, organismName, "downstream");
+        if (upstream == null && downstream == null) {
+            return;
+        }
         dataSet = new XYSeriesCollection();
-        ((XYSeriesCollection) dataSet).addSeries(upstream);
-        ((XYSeriesCollection) dataSet).addSeries(downstream);
+        if (upstream != null) {
+            ((XYSeriesCollection) dataSet).addSeries(upstream);
+        }
+        if (downstream != null) {
+            ((XYSeriesCollection) dataSet).addSeries(downstream);
+        }
     }
 
     /**
@@ -130,16 +137,13 @@ public class OverlapsDataSetLdr implements DataSetLdr
             Integer featureEnd = (java.lang.Integer) resRow.get(2);
             Integer geneStart = (java.lang.Integer) resRow.get(3);
             Integer geneEnd = (java.lang.Integer) resRow.get(4);
-            
-//            Integer midpoint = Math.abs(featureStart - featureEnd);
+
             Integer distance = null;
-            
             if (seriesName.equals("downstream")) {
                 distance = featureStart - geneEnd;
             } else if (seriesName.equals("upstream")) {
                 distance = geneStart - featureEnd;
-            }
-            
+            }            
             if (distance.compareTo(new Integer(0)) < 0) {
                 distance = 0;
             }
@@ -153,15 +157,16 @@ public class OverlapsDataSetLdr implements DataSetLdr
                     distanceToNearestGene.put(featureIdentifier, distance);
                 }
             }
-        }
-        
-        
+        }        
         DescriptiveStatistics stats = new DescriptiveStatistics();
         for (Map.Entry<String, Integer> entry : distanceToNearestGene.entrySet()) {
             stats.addValue(entry.getValue());
+        }        
+        Double std = stats.getStandardDeviation();
+        if (std.compareTo(0.0) <= 0) {
+            return null;
         }
-        Function2D actual = new NormalDistributionFunction2D(stats.getMean(), 
-                                                             stats.getStandardDeviation());
+        Function2D actual = new NormalDistributionFunction2D(stats.getMean(), std);
         int total = (int) stats.getN();
         widgetTotal = total;        
         return DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), total, 

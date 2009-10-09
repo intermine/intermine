@@ -55,6 +55,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     private String bagType;
     private Results results;
     private int widgetTotal = 0;
+    private static final double MINIMUM_VALUE = 0.0;
 
     /**
      * Creates a FeatureLengthDataSetLdr used to retrieve, organise
@@ -136,8 +137,13 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             seriesName = "Features in this list " + legend;
             widgetTotal = total;
         }        
-        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), 
+        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, MINIMUM_VALUE, 
+                                                                    stats.getMax(), 
                                                                     total, seriesName);
+//        
+//        LOG.error("total:" + total);
+//        LOG.error("stats.getMin():" + stats.getMin());
+//        LOG.error("stats.getMax():" + stats.getMax());
         return series;
     }
     
