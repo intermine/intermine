@@ -2266,7 +2266,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     for (SubmissionProperty subProp : typeToProp.get(type)) { 
                         if (subProp.details.containsKey(propName)) {
                             for (String value : subProp.details.get(propName)) {
-                                items.add(createNonWikiSubmissionPropertyItem(clsName, subProp.type, 
+                                items.add(createNonWikiSubmissionPropertyItem(clsName, 
+                                        getPreferredSynonym(propName), 
                                         value));
                             }
                         }
