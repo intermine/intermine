@@ -16,7 +16,7 @@
 <div class="body">
 <em>modENCODE projects and related experiments, submissions and features generated:</em>
 
-  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+  <table cellpadding="0" cellspacing="0" border="0" class="dbsources" id="dbsources">
 
 <c:forEach items="${experiments}" var="proj">
  <c:forEach items="${proj.value}" var="exp"  varStatus="status">
