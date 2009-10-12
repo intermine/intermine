@@ -29,11 +29,12 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.2.6.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-personalized-1.6rc2.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
 <script type="text/javascript">
