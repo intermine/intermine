@@ -43,9 +43,7 @@
   <td><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
 </b>
-</td>
-<td>
-This experiment is described in 
+<br>This experiment is described in 
 
           <im:querylink text="${exp.submissionCount} submissions " showArrow="false" skipBuilder="true">
 <query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
@@ -72,8 +70,22 @@ href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=resul
 .
       </c:if>     
 
+
+     <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
+It uses  
+      <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status">
+     <c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if> 
+     <c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if> 
+${ft}
+      </c:forEach>
+as factors.
+      </c:if>     
+
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">More details...</html:link>
+
+
+
 
 </td>
 
