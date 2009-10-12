@@ -164,6 +164,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
         }        
         Double std = stats.getStandardDeviation();
         if (std.compareTo(0.0) <= 0) {
+            widgetTotal = 0; 
             return null;
         }
         Function2D actual = new NormalDistributionFunction2D(stats.getMean(), std);
