@@ -9,8 +9,11 @@
 <html:xhtml />
 
 <div class="body">
+<tiles:insert name="projectsSummary.tile" />
+
 
 <table>
+<%--
 	<tr>
 		<td colspan=2>
 		<im:boxarea title="Projects"
@@ -20,16 +23,9 @@
 		</im:boxarea>
 </td>
 </tr>
+--%>
 
 	<tr valign=top>
-<%--
-		<td>
-    <im:boxarea title="Latest Submissions"
-      stylename="plainbox">
-      <tiles:insert name="latestSubs.tile" />
-    </im:boxarea> 
-		</td>
---%>
 
 		<!-- Second column -->
 		<td>

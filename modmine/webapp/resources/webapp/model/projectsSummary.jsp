@@ -40,57 +40,32 @@
   </td>
   </c:if>
   
-  <td><b><html:link
+  <td><font size=+1><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
-</b>
-<br>This experiment is described in 
-
-          <im:querylink text="${exp.submissionCount} submissions " showArrow="false" skipBuilder="true">
-<query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
-  <node path="Experiment" type="Experiment">
-  </node>
-  <node path="Experiment.submissions" type="Submission">
-  </node>
-  <node path="Experiment.name" type="String">
-    <constraint op="=" value="${exp.name}" description="" identifier="" code="A">
-    </constraint>
-  </node>
-</query>
-</im:querylink>.
-
-     <c:if test="${fn:length(exp.featureCounts) > 0 }"> 
-It generates 
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
-     <c:if test="${status.count > 1 && !status.last }">, </c:if> 
-     <c:if test="${status.count > 1 && status.last }"> and </c:if> 
-     <html:link
-href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value} ${fc.key}s
-</html:link>
-      </c:forEach>
-.
-      </c:if>     
-
-
+</b></font>
+<br>This experiment is described in ${exp.submissionCount} submissions
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
-It uses  
+, using   
       <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status">
      <c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if> 
      <c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if> 
-${ft}
-      </c:forEach>
-as factors.
-      </c:if>     
-
-<html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">More details...</html:link>
-
-
-
-
+${ft}</c:forEach>
+as factors
+      </c:if>.
 </td>
 
+<td>
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
+     <c:if test="${fc_status.count > 1 }"><br> </c:if> 
+      ${fc.value} ${fc.key}
+     <c:if test="${fc_status.last }"><br> </c:if> 
+      </c:forEach>
 
 
+<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">Get data and more details...</html:link>
+
+</td>
 
 
   </tr>
@@ -111,6 +86,40 @@ as factors.
 
 
 <%--
+
+
+          <im:querylink text="${exp.submissionCount} submissions " showArrow="false" skipBuilder="true">
+<query name="" model="genomic" view="Experiment.submissions.DCCid Experiment.submissions.title Experiment.submissions:experimentalFactors.name Experiment.submissions:experimentalFactors.type">
+  <node path="Experiment" type="Experiment">
+  </node>
+  <node path="Experiment.submissions" type="Submission">
+  </node>
+  <node path="Experiment.name" type="String">
+    <constraint op="=" value="${exp.name}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+</im:querylink>.
+
+
+
+
+
+     <c:if test="${fn:length(exp.featureCounts) > 0 }"> 
+It generates 
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
+     <c:if test="${status.count > 1 && !status.last }">, </c:if> 
+     <c:if test="${status.count > 1 && status.last }"> and </c:if> 
+     <html:link
+href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value} ${fc.key}s
+</html:link>
+      </c:forEach>
+.
+      </c:if>     
+
+
+
+
 <div class="body">
 <em>modENCODE projects and related experiments, submissions and features generated:</em>
 
