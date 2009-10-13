@@ -261,8 +261,8 @@ ul#button_bar li a {
 table.dbsources {
 	width:1000px;
 	margin:0;
-	border-top: 1px solid #61EDF5;
-	border-left: 1px solid #61EDF5;
+	border-top: 1px solid #B9E6F9;
+	border-left: 1px solid #B9E6F9;
 	font-size:1em;
 }
 
@@ -270,13 +270,13 @@ table.dbsources th  {
 	font-size:16px;
 	text-align:left;
 	padding: 5px;
-    background-color: #61EDF5;color:#004499;
+    background-color: #B9E6F9;color:#004499;
 	border-right: 1px solid #FFF;}
 
 table.dbsources td {
 	padding: 6px 6px 6px 12px;
-	border-right: 1px solid #61EDF5;
-	border-bottom: 1px solid #61EDF5;
+	border-right: 1px solid #B9E6F9;
+	border-bottom: 1px solid #B9E6F9;
 	background: #fff;}
 	
 table.dbsources td h4{
