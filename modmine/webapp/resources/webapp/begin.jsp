@@ -16,10 +16,10 @@
 <div class="frontpage_sections">
     <ol>
         <li>
-            <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#dbsources" alt="" class="section_link">
+            <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#projects" alt="" class="section_link">
             <div>
             <h3>Get Data</h3><br/>
-                Browse the experiments below to Export and view into GBrowse.<br>
+                Click an experiment below to export data, view GBrowse tracks and analyse lists.<br>
                 <img src="model/images/get_data.jpg" width="63" height="62" alt="Get Data" style="align:middle">
             </div>
             </a>
@@ -36,12 +36,14 @@
         <li class="last_section">
             <div>
             <h3>Search for Genes</h3><br/>
-                Search for a Gene or a comma separated list of Genes with the form below:<br>
+                Find modENCODE data related to a particular gene.  Search for a Gene:
                 <html:form action="/quickSearchAction">
                     <input id="quickSearchType" name="quickSearchType" type="hidden" value="ids">
                     <input style="" id="quickSearchInput" name="value" type="text" class="qs_input">
                     <html:submit><fmt:message key="header.search.button"/></html:submit>
                 </html:form>
+                <br/>
+                Or <html:link href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=upload">upload a list</html:link>.
             </div>
         </li>
     </ol>
