@@ -7,7 +7,7 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
   
-    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+    <source name="chado-db-flybase-dmel" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -26,7 +26,7 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="chado-db-flybase-others" type="chado-db" dump="true">
+    <source name="chado-db-flybase-others" type="chado-db">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="Dana Dere Dgri Dmoj Dper Dsec Dsim Dvir Dwil Dyak"/>
       <property name="dataSourceName" value="FlyBase"/>
@@ -36,7 +36,7 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
     <!-- uniprot must be processed immediately after chado -->
-    <source name="uniprot" type="uniprot" >
+    <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="7227 7237 6239 7165 7460 4932 9606 10090"/>
       <property name="src.data.dir" location="/shared/data/uniprot/current/split"/>
       <property name="createinterpro" value="true"/>
@@ -111,7 +111,7 @@
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
     </source>
-    <source name="anoph-expr" type="anoph-expr" dump="true">
+    <source name="anoph-expr" type="anoph-expr">
       <property name="src.data.dir" location="/shared/data/anoph_expr"/>
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/shared/data/anoph_expr/reporter_gene_mappingFile.txt"/>
@@ -149,7 +149,7 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
     </source>
-    <source name="go" type="go" dump="true">
+    <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
@@ -444,7 +444,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+    <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/shared/data/pubmed/current"/>
       <property name="pubmed.organisms" value="7227 7165 4932 6239"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
@@ -471,15 +471,12 @@
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.curated" value="false"/>
     </source>
-
     <source name="reactome-yeast-curated" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
       <property name="biopax.organisms" value="4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.curated" value="true"/>
     </source>
-
-
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/shared/data/bdgp_insitu/current"/>
       <property name="src.data.dir.includes" value="*annot.csv"/>
@@ -543,7 +540,7 @@
   </sources>
 
   <post-processing>
-    <post-process name="create-utr-references" dump="true"/>
+    <post-process name="create-utr-references"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
     <post-process name="create-chromosome-locations-and-lengths"/>
