@@ -38,7 +38,7 @@
             <div>
                 Search for a Gene or a comma separated list of Genes with the form below:<br>
                 <html:form action="/quickSearchAction">
-                    <input name="quickSearchType" type="hidden" value="ids">
+                    <input id="quickSearchType" name="quickSearchType" type="hidden" value="ids">
                     <input style="" id="quickSearchInput" name="value" type="text" class="qs_input">
                     <html:submit><fmt:message key="header.search.button"/></html:submit>
                 </html:form>
