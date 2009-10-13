@@ -1718,7 +1718,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     public List<String> precomputeWithConnection(Connection c, Query q, Collection indexes,
             boolean allFields, String category) throws ObjectStoreException {
-        QueryNode qn = null;
+        QueryOrderable qn = null;
         String sql = null;
         try {
             int tableNumber = getUniqueInteger(c);
@@ -1735,17 +1735,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             }
             PrecomputedTable pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql),
                     sql, "precomp_" + tableNumber, category, c);
-            Set stringIndexes = new HashSet();
+            Set<String> stringIndexes = new HashSet<String>();
+            Map<Object, String> aliases = q.getAliases();
             if (indexes != null && !indexes.isEmpty()) {
-                Map aliases = q.getAliases();
-                stringIndexes = new HashSet();
                 String all = null;
                 Iterator indexIter = indexes.iterator();
                 try {
                     while (indexIter.hasNext()) {
                         qn = (QueryNode) indexIter.next();
-                        String alias = DatabaseUtil.generateSqlCompatibleName((String) aliases
-                                .get(qn));
+                        String alias = DatabaseUtil.generateSqlCompatibleName(aliases.get(qn));
                         if (qn instanceof QueryClass) {
                             alias += "id";
                         } else if (qn instanceof QueryField) {
@@ -1762,7 +1760,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                 } catch (NullPointerException e) {
                     throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not"
-                            + " present in the SELECT list of query " + q, e);
+                            + " present in the SELECT list of query " + q
+                            + " - note that the exact same object needs to be present, not just an "
+                            + "equivalent object, as the Aliases Map of Query is an "
+                            + "IdentityHashMap", e);
                 }
                 stringIndexes.add(all);
             } else if (allFields && (indexes == null)) {
@@ -1796,6 +1797,35 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                     }
                 }
+            }
+            StringBuilder orderIndex = new StringBuilder();
+            boolean needComma = false;
+            for (QueryOrderable orderElement : q.getOrderBy()) {
+                qn = orderElement;
+                String alias = aliases.get(orderElement);
+                if (alias == null) {
+                    throw new ObjectStoreException("QueryNode " + qn + " (to be indexed) is not"
+                            + " present in the SELECT list of query " + q
+                            + " - note that the exact same object needs to be present, not just an "
+                            + "equivalent object, as the Aliases Map of Query is an "
+                            + "IdentityHashMap");
+                }
+                alias = DatabaseUtil.generateSqlCompatibleName(alias);
+                if (orderElement instanceof QueryClass) {
+                    alias += "id";
+                } else if (orderElement instanceof QueryField) {
+                    if (String.class.equals(((QueryField) orderElement).getType())) {
+                        alias = "lower(" + alias + ")";
+                    }
+                }
+                if (needComma) {
+                    orderIndex.append(", ");
+                }
+                needComma = true;
+                orderIndex.append(alias);
+            }
+            if (needComma) {
+                stringIndexes.add(orderIndex.toString());
             }
             LOG.info("Creating precomputed table for query " + q + " with indexes "
                     + stringIndexes);

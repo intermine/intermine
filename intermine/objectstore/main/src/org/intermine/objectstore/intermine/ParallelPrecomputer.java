@@ -292,7 +292,7 @@ public class ParallelPrecomputer
         try {
             ((ObjectStoreInterMineImpl) os).precompute(query, indexes, allFields, category);
         } catch (ObjectStoreException e) {
-            LOG.error("Precompute failed for " + key);
+            LOG.error("Precompute failed for " + key, e);
             throw e;
         }
 
