@@ -14,10 +14,10 @@
 <html:xhtml />
 
 <div class="body">
-<em>modENCODE projects and related experiments, submissions and features generated:</em>
+<!--<em>modENCODE projects and related experiments, submissions and features generated:</em>-->
 
-  <table cellpadding="0" cellspacing="0" border="0" class="dbsources" id="dbsources">
-
+<table cellpadding="0" cellspacing="0" border="0" class="dbsources" id="dbsources">
+<tr><th>&nbsp;</th><th>Project</th><th>Experiments</th><th>&nbsp;</th></tr>
 <c:forEach items="${experiments}" var="proj">
  <c:forEach items="${proj.value}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
@@ -40,9 +40,8 @@
   </td>
   </c:if>
   
-  <td><font size=+1><b><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
-</b></font>
+  <td><h4><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
 <br>
   <c:choose>
     <c:when test="${exp.submissionCount == 0}">
