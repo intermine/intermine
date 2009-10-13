@@ -259,16 +259,29 @@ ul#button_bar li a {
 }
 
 table.dbsources {
-	margin:10px 20px 10px 20px;}
+	width:1000px;
+	margin:0;
+	border-top: 1px solid #61EDF5;
+	border-left: 1px solid #61EDF5;
+	font-size:1em;
+}
 
 table.dbsources th  {
-	padding: 6px 6px 6px 12px;
-    background-color: #192F39;font-size: 12px;color:#FFF;
-	border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;border-top: 1px solid #C1DAD7;}
+	font-size:16px;
+	text-align:left;
+	padding: 5px;
+    background-color: #61EDF5;color:#004499;
+	border-right: 1px solid #FFF;}
 
 table.dbsources td {
 	padding: 6px 6px 6px 12px;
-	border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;background: #fff;}
+	border-right: 1px solid #61EDF5;
+	border-bottom: 1px solid #61EDF5;
+	background: #fff;}
+	
+table.dbsources td h4{
+	margin:0; padding:0;
+	font-size: 16px;}
 
 table.dbsources td.leftcol {
 	border-left: 1px solid #C1DAD7;}
