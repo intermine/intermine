@@ -57,7 +57,7 @@ FOUND=n          # y if new files downloaded
 INFILE=undefined # not using a given list of submissions
 INTERACT=n       # y: step by step interaction
 WGET=y           # use wget to get files from ftp
-PREP4FULL=n      # run get_all_modmine (only in F mode)
+PREP4FULL=n      # don't run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
 STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
 SUB=n            # if we are using a single submission, SUB=dccid
@@ -248,7 +248,8 @@ echo
 
 function dcczip {
 # in a directory, look for all the .chadoxml files that are compressed
-# i.e. newly downloaded. Depending on their location, they will be moved in the
+# i.e. newly downloaded. Depending on their location, they will be
+# decompressed and moved in the
 # proper directory (new|update), which is the argument of the function
 for sub in *.chadoxml
 do
@@ -290,7 +291,6 @@ echo
 echo "$1  stag-storenode FAILED. SKIPPING SUBMISSION."
 echo
 STAGFAIL=y
-#mv $sub $FAILDIR
 fi
 
 }
@@ -320,7 +320,6 @@ then
 chadorebuild
 fi
 
-#cd $DATADIR/$1
 chadofill $sub
 
 # if stag failed, we set aside the sub
@@ -331,7 +330,6 @@ mv $sub $DATADIR/$1/failed
 continue
 fi
 
-#TODO!!
 # if building the release, we move the file
 if [ "$FULL" = "y" ]
 then
@@ -350,8 +348,8 @@ echo
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 
-# to name the acceptance tests file
-NAMESTAMP=`echo $sub | awk -F "." '{print $1}'`
+# run acceptance tests
+NAMESTAMP=`echo $sub | cut -d. -f1`
 runtest $NAMESTAMP
 
 # go back to the chado directory and mv chado file in 'done'
@@ -459,7 +457,7 @@ fi
 
 for sub in $LOOPVAR
 do
- wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee $DATADIR/wget.log
+ wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a  $DATADIR/wget.log
 done
 
 
@@ -557,7 +555,7 @@ done
 
 elif [ "$VALIDATING" = "y" -a $INFILE="undefined" ]
 then
-# validating all: is the configurtation used by cronmine.
+# validating all: is the configuration used by cronmine.
 # run dochadosubs both in new and update directories
 
 cd $DATADIR/new
