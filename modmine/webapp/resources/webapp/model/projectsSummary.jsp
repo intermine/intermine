@@ -43,15 +43,29 @@
   <td><font size=+1><b><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link>
 </b></font>
-<br>This experiment is described in ${exp.submissionCount} submissions
+<br>
+  <c:choose>
+    <c:when test="${exp.submissionCount == 0}">
+      This experiment has <b>no data submissions yet</b>.
+    </c:when>
+    <c:when test="${exp.submissionCount == 1}">
+      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submission</b>.
+    </c:when>
+    <c:otherwise>
+      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
+    </c:otherwise>
+  </c:choose>
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
-, using   
-      <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status">
-     <c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if> 
-     <c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if> 
-${ft}</c:forEach>
-as factors
-      </c:if>.
+       <c:choose>
+         <c:when test="${ fn:length(exp.factorTypes) == 1}">
+           <c:out value="The experimental factor is the"/>
+         </c:when>
+         <c:otherwise>
+           <c:out value="The experimental factors are the"/>
+         </c:otherwise>
+       </c:choose>  
+       <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
+     </c:if>
 </td>
 
 <td>
@@ -63,7 +77,9 @@ as factors
 
 
 <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">Get data and more details...</html:link>
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
+        <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">
+        </html:link>
 
 </td>
 
