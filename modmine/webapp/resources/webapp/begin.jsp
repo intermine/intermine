@@ -17,8 +17,8 @@
     <ol>
         <li>
             <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#dbsources" alt="" class="section_link">
-            <h3>Get Data</h3>
             <div>
+            <h3>Get Data</h3><br/>
                 Browse the experiments below to Export and view into GBrowse.<br>
                 <img src="model/images/get_data.jpg" width="63" height="62" alt="Get Data" style="align:middle">
             </div>
@@ -26,16 +26,16 @@
         </li>
         <li>
             <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" alt="" class="section_link">
-            <h3>Query Data</h3>
             <div>
+            <h3>Query Data</h3><br/>
                 Use templates to query for particular subsets and combinations of data.<br>
                 <img src="model/images/query_data.jpg" width="191" height="72" alt="Query Data">
             </div>
             </a>
         </li>
         <li class="last_section">
-            <h3>Search for Genes</h3>
             <div>
+            <h3>Search for Genes</h3><br/>
                 Search for a Gene or a comma separated list of Genes with the form below:<br>
                 <html:form action="/quickSearchAction">
                     <input id="quickSearchType" name="quickSearchType" type="hidden" value="ids">
@@ -47,15 +47,13 @@
     </ol>
     <br clear="both"/>
 </div>
-</div>
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function(){
-        jQuery(".frontpage_sections").bg(['10px', '10px', '10px', '10px']);
         jQuery(".frontpage_sections div").bg(['10px', '10px', '10px', '10px']);
     });
 </script>
 
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
-
+</div>
 </div>
