@@ -23,6 +23,7 @@ import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
 
 
 /**
@@ -42,6 +43,7 @@ public class DisplayExperiment
     private Set<String> organisms = new HashSet<String>();
     private Map<String, Long> featureCounts;
     private ObjectStore os;
+    private String experimentType;
     
     /**
      * Construct with objects from database and feature counts summary map. 
@@ -67,6 +69,8 @@ public class DisplayExperiment
         this.pi = proj.getNamePI() + " " + proj.getSurnamePI();
         this.projectName = proj.getName();
 
+        Set<String> expTypes = new HashSet<String>();
+        
         for (Submission submission : exp.getSubmissions()) {
             if (this.description == null) {
                 this.description = submission.getDescription();
@@ -75,7 +79,11 @@ public class DisplayExperiment
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
                 factorTypes.add(factor.getType());
             }
+            
+            expTypes.add(submission.getExperimentType());
         }
+        
+        this.experimentType = StringUtil.prettyList(expTypes);
         
         for (Organism organism : proj.getOrganisms()) {
             organisms.add(organism.getShortName());
@@ -168,6 +176,14 @@ public class DisplayExperiment
      */
     public int getFactorCount() {
         return factorTypes.size();
+    }
+
+
+    /**
+     * @return the experimentType
+     */
+    public String getExperimentType() {
+        return experimentType;
     }
     
     
