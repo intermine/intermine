@@ -69,3 +69,43 @@
 li.last_section {
     border:none;
 }
+
+table.projects {
+    width:1000px;
+    margin:0;
+    border-top: 1px solid #B9E6F9;
+    border-left: 1px solid #B9E6F9;
+    font-size:1em;
+}
+
+table.projects th  {
+    font-size:16px;
+    text-align:left;
+    padding: 5px;
+    background-color: #B9E6F9;
+    color:#004499;
+    border-right: 1px solid #FFF;
+}
+
+table.projects td {
+    padding: 6px 6px 6px 12px;
+    border-right: 1px solid #B9E6F9;
+    border-bottom: 1px solid #B9E6F9;
+    background: #fff;
+}
+    
+table.projects td h4{
+    margin:0; padding:0;
+    font-size: 16px;
+}
+
+table.projects td.leftcol {
+    border-left: 1px solid #C1DAD7;
+}
+
+table.projects td.internal {
+  border-bottom: 1px solid #C1DAD7;
+  background: #fff;
+}
+
+
