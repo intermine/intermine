@@ -21,7 +21,7 @@
     text-align: center;
 }
 
-.section_link, a.section_link:visited, a.section_link:hover {
+.section_link, a, a.section_link:visited, a.section_link:hover {
     color:#192F39;
     text-decoration: none;
 }
