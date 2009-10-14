@@ -29,6 +29,7 @@ import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 
 import org.apache.log4j.Logger;
@@ -68,13 +69,23 @@ public class QueryBuilderAction extends InterMineAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         QueryBuilderForm mf = (QueryBuilderForm) form;
 
-        PathNode node = query.getNodes().get(mf.getPath());
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = os.getModel();
+        Path path = PathQuery.makePath(model, query, mf.getPath());
+        String rootPath = null;
+        if (path.endIsAttribute()) {
+            rootPath = path.getPrefix().toStringNoConstraints();
+        } else {
+            rootPath = path.toStringNoConstraints();
+        }
+
+        PathNode node = query.getNodes().get(rootPath);
 
         if (node == null) {
             // We are adding a constraint to a node not already in the query. Need to add those
             // nodes, like in QueryBuilderChange.addPath, but not on a clone.
-            String path = query.getCorrectJoinStyle(mf.getPath());
-            node = query.addNode(path);
+            String stringPath = query.getCorrectJoinStyle(rootPath);
+            node = query.addNode(stringPath);
         }
 
         Integer cindex = (request.getParameter("cindex") != null) ? new Integer(request
@@ -91,15 +102,6 @@ public class QueryBuilderAction extends InterMineAction
         // this should remove any invalid order by elements
         if ((mf.getUseJoin() != null) && mf.getUseJoin().equals("true") && (joinType != null)
             && (joinType.length() != 0) && (request.getParameter("loop") == null)) {
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            Model model = os.getModel();
-            Path path = PathQuery.makePath(model, query, mf.getPath());
-            String rootPath = null;
-            if (path.endIsAttribute()) {
-                rootPath = path.getPrefix().toStringNoConstraints();
-            } else {
-                rootPath = path.toStringNoConstraints();
-            }
             query.updateJoinStyle(rootPath, joinType.equals("outer"));
         }
 
@@ -197,7 +199,7 @@ public class QueryBuilderAction extends InterMineAction
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
-            session.setAttribute("prefix", mf.getPath());
+            session.setAttribute("prefix", rootPath);
         } else if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
                 node.getConstraints().add(
