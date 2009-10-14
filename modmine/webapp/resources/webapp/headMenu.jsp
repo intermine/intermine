@@ -81,7 +81,7 @@
 
   <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do">
-      <fmt:message key="menu.experiments"/>
+      <fmt:message key="menu.experiment"/>
     </a>
   </li>
 
