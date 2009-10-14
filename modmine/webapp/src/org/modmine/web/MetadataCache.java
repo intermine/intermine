@@ -10,6 +10,9 @@ package org.modmine.web;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,10 +47,25 @@ import org.intermine.util.TypeUtil;
  */
 public class MetadataCache 
 {
+    // GBrowse URLs
+    private static final String GBROWSE_BASE_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+    private static final String GBROWSE_URL_END = "/?show_tracks=1";
+    
+    public static class GBrowseTrack
+    {
+        public GBrowseTrack(String organism2, String trackName) {
+            this.organism  = organism2;
+            this.track = trackName;
+        }
+        private String organism;              // {fly,worm} 
+        private String track = new String();  // e.g. LIEB_WIG_CHIPCHIP_POL2
+    }
 
+    
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
+    private static Map<Integer, List<GBrowseTrack>> submissionTrackCache = null;
     
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
     
@@ -63,6 +81,17 @@ public class MetadataCache
         return new ArrayList<DisplayExperiment>(experimentCache.values());
     }
     
+    /**
+     * Fetch GBrowse trakcs for display.
+     * @return map
+     */
+    public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
+        if (submissionTrackCache == null) {
+            readGBrowseTracks();
+        }
+        return submissionTrackCache;
+    }
+
     /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectstore
@@ -301,4 +330,106 @@ public class MetadataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submission cache, took: " + timeTaken + "ms");
     }
+
+    
+    
+    
+    
+    
+    
+    /**
+     * Method to fill the cached map of submissions (ddcId) to list of
+     * GBrowse tracks
+     * 
+     */
+    private static void readGBrowseTracks() {
+        long startTime = System.currentTimeMillis();
+        try {
+            readTracks("fly");
+            readTracks("worm");
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms");
+    }
+
+    
+    /**
+     * Method to read the list of GBrowse tracks for a given organism
+     * 
+     * @param organism (i.e. fly or worm)
+     * @return submissionTrackCache
+     */
+    private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
+        try {
+            URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] result = line.split("\\s");
+                String trackName = result[0];
+                GBrowseTrack questa = new GBrowseTrack(organism,trackName);
+
+                for (int x=1; x<result.length; x++) {
+
+                    if (containsOnlyNumbers(result[x])) {
+                        // this is a submission number                        
+                        Integer dccId = Integer.parseInt(result[x]);
+                        // add to map sub trackname
+                        addToGBMap(submissionTrackCache,dccId, questa);
+                    }
+                }
+                reader.close();
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return submissionTrackCache;
+    }
+    
+    
+    /**
+     * This method adds a GBrowse track to a map with
+     * key = dccId
+     * value = list of associated GBrowse tracks
+     */
+    private static void addToGBMap(
+            Map<Integer, List<GBrowseTrack>> m,
+            Integer key, GBrowseTrack value) {
+        // 
+        List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
+
+        if (m.containsKey(key)) {
+            gbs = m.get(key);
+        }
+        if (!gbs.contains(value)) {
+            gbs.add(value);
+            m.put(key, gbs);
+        }
+    }
+
+/**
+ * This method checks if a String contains only numbers
+ */
+static boolean containsOnlyNumbers(String str) {
+    
+    //It can't contain only numbers if it's null or empty...
+    if (str == null || str.length() == 0)
+        return false;
+    
+    for (int i = 0; i < str.length(); i++) {
+
+        //If we find a non-digit character we return false.
+        if (!Character.isDigit(str.charAt(i)))
+            return false;
+    }
+    
+    return true;
+}
+
+
+
+    
 }
