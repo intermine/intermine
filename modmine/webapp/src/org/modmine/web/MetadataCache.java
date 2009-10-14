@@ -161,8 +161,9 @@ public class MetadataCache
      * @param os the production ObjectStore
      * @return a map from project name to experiment
      */
-    public static synchronized Map<String, List<DisplayExperiment>> 
+    public static Map<String, List<DisplayExperiment>> 
     getProjectExperiments(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
         Map<String, List<DisplayExperiment>> projectExperiments = new HashMap();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
@@ -172,7 +173,9 @@ public class MetadataCache
             }
             exps.add(exp);
         }
-        LOG.info("Made project map: " + projectExperiments.size());
+        long totalTime = System.currentTimeMillis() - startTime;
+        LOG.info("Made project map: " + projectExperiments.size() 
+                + " took: " + totalTime + " ms.");
         return projectExperiments;
         
     }
