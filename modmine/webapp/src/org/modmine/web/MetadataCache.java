@@ -57,8 +57,24 @@ public class MetadataCache
             this.organism  = organism2;
             this.track = trackName;
         }
-        private String organism;              // {fly,worm} 
-        private String track;  // e.g. LIEB_WIG_CHIPCHIP_POL2
+        private String organism; // {fly,worm} 
+        private String track;    // e.g. LIEB_WIG_CHIPCHIP_POL2
+        
+        /**
+         * @return the organism
+         */
+        public String getOrganism() {
+            return organism;
+        }
+
+        /**
+         * @return the track name
+         */
+        public String getTrack() {
+            return track;
+        }
+
+        
     }
 
     
@@ -367,9 +383,11 @@ public class MetadataCache
      */
     private static void readGBrowseTracks() {
         long startTime = System.currentTimeMillis();
+
+        submissionTrackCache = new HashMap<Integer, List<GBrowseTrack>>();
         try {
-            readTracks("fly");
-            readTracks("worm");
+            readTracks(submissionTrackCache,"fly");
+            readTracks(submissionTrackCache,"worm");
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -385,13 +403,11 @@ public class MetadataCache
      * @param organism (i.e. fly or worm)
      * @return submissionTrackCache
      */
-    private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
+    private static Map<Integer, List<GBrowseTrack>> readTracks(Map<Integer, List<GBrowseTrack>> submissionTrackCache, String organism) {
         try {
             URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
             String line;
-
-            submissionTrackCache = new HashMap<Integer, List<GBrowseTrack>>();
             
             while ((line = reader.readLine()) != null) {
                 String[] result = line.split("\\s");
@@ -399,7 +415,6 @@ public class MetadataCache
                 GBrowseTrack questa = new GBrowseTrack(organism,trackName);
 
                 for (int x=1; x<result.length; x++) {
-
                     if (containsOnlyNumbers(result[x])) {
                         // this is a submission number                        
                         Integer dccId = Integer.parseInt(result[x]);
