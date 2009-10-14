@@ -159,6 +159,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = Collections.emptySet();
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -174,6 +175,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = trackerMissingClasses;
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -390,9 +392,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             Set typeUtilFieldNames = TypeUtil.getFieldInfos(newObj.getClass()).keySet();
             if (!modelFieldNames.equals(typeUtilFieldNames)) {
                 throw new ObjectStoreException("Failed to store data not in the model");
-            }
-            if (priorityConfig == null) {
-                priorityConfig = new PriorityConfig(osw.getModel());
             }
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
             while (fieldIter.hasNext()) {

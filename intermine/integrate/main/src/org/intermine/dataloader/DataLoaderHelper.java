@@ -81,6 +81,10 @@ public class DataLoaderHelper
                     String[] tokens = sourceNames.split(",");
                     for (int o = 0; o < tokens.length; o++) {
                         String token = tokens[o].trim();
+                        if (token.contains(" ")) {
+                            throw new IllegalArgumentException("Data source " + token + " for key "
+                                    + descriptorName + " must not contain any spaces");
+                        }
                         sources.add(token);
                     }
                     descriptorSources.put(descriptorName, sources);
