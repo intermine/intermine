@@ -16,7 +16,7 @@
 <div class="body">
 <!--<em>modENCODE projects and related experiments, submissions and features generated:</em>-->
 
-<table cellpadding="0" cellspacing="0" border="0" class="dbsources" id="dbsources">
+<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <tr><th>&nbsp;</th><th>Project</th><th>Experiments</th><th>&nbsp;</th></tr>
 <c:forEach items="${experiments}" var="proj">
  <c:forEach items="${proj.value}" var="exp"  varStatus="status">
@@ -57,10 +57,10 @@
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
-           <c:out value="The experimental factor is the"/>
+           <c:out value="The experimental factor is"/>
          </c:when>
          <c:otherwise>
-           <c:out value="The experimental factors are the"/>
+           <c:out value="The experimental factors are"/>
          </c:otherwise>
        </c:choose>  
        <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
@@ -70,10 +70,10 @@
 <td>
       <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count > 1 }"><br> </c:if> 
-      ${fc.value} ${fc.key}
+      ${fc.key}:&nbsp;${fc.value}
      <c:if test="${fc_status.last }"><br> </c:if> 
       </c:forEach>
-
+<p/>
 
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
