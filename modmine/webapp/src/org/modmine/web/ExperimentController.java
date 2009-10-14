@@ -12,6 +12,7 @@ package org.modmine.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
+import org.modmine.web.MetadataCache.GBrowseTrack;
 
 /**
  * Set up modENCODE experiments for display.
@@ -55,6 +57,10 @@ public class ExperimentController extends TilesAction
             experiments = MetadataCache.getExperiments(os);
         }
         request.setAttribute("experiments", experiments);
+        
+        Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
+        request.setAttribute("tracks", tracks);
+        
         return null;
     }
 }
