@@ -108,7 +108,7 @@ public class MetadataCache
                 }
             }            
         }
-        LOG.info("GB tracks.entrySet(): " + tracks.entrySet());
+
         return tracks;
     }
     
