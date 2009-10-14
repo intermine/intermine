@@ -75,6 +75,17 @@
       </c:forEach>
 <p/>
 
+     <c:if test="${!empty tracks[exp.name]}">
+       <c:choose>
+         <c:when test="${fn:length(tracks[exp.name]) == 1}">
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track
+         </c:when>
+         <c:otherwise>
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
+         </c:otherwise>
+       </c:choose>
+     </c:if>
+
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
         <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">

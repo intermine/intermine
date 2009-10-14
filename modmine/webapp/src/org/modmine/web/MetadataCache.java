@@ -95,14 +95,17 @@ public class MetadataCache
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
         
-        Map<Integer, List<GBrowseTrack>> subTracks = getGBrowseTracks();
-        LOG.info("GB subTracks.size(): " + subTracks.size());
+        Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
+        LOG.info("GB subTracks.size(): " + subTracksMap.size());
         
         for (DisplayExperiment exp : getExperiments(os)) {
             List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
-            tracks.put(exp.getName(), expTracks);
+            tracks.put(exp.getName(), expTracks);            
             for (Submission sub : exp.getSubmissions()) {
-                expTracks.addAll(subTracks.get(sub.getdCCid()));
+                List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
+                if (subTracks != null) {
+                    expTracks.addAll(subTracks);
+                }
             }            
         }
         LOG.info("GB tracks.entrySet(): " + tracks.entrySet());
