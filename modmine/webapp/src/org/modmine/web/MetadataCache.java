@@ -58,7 +58,7 @@ public class MetadataCache
             this.track = trackName;
         }
         private String organism;              // {fly,worm} 
-        private String track = new String();  // e.g. LIEB_WIG_CHIPCHIP_POL2
+        private String track;  // e.g. LIEB_WIG_CHIPCHIP_POL2
     }
 
     
@@ -92,6 +92,23 @@ public class MetadataCache
         return submissionTrackCache;
     }
 
+    public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
+        Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
+        
+        Map<Integer, List<GBrowseTrack>> subTracks = getGBrowseTracks();
+        LOG.info("GB subTracks.size(): " + subTracks.size());
+        
+        for (DisplayExperiment exp : getExperiments(os)) {
+            List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
+            tracks.put(exp.getName(), expTracks);
+            for (Submission sub : exp.getSubmissions()) {
+                expTracks.addAll(subTracks.get(sub.getdCCid()));
+            }            
+        }
+        LOG.info("GB tracks.entrySet(): " + tracks.entrySet());
+        return tracks;
+    }
+    
     /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectstore
@@ -351,7 +368,8 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms");
+        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = " 
+                + submissionTrackCache.size());
     }
 
     
@@ -367,6 +385,8 @@ public class MetadataCache
             BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
             String line;
 
+            submissionTrackCache = new HashMap<Integer, List<GBrowseTrack>>();
+            
             while ((line = reader.readLine()) != null) {
                 String[] result = line.split("\\s");
                 String trackName = result[0];
@@ -381,8 +401,8 @@ public class MetadataCache
                         addToGBMap(submissionTrackCache,dccId, questa);
                     }
                 }
-                reader.close();
             }
+            reader.close();
         } catch (Exception err) {
             err.printStackTrace();
         }

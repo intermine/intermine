@@ -24,6 +24,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
+import org.modmine.web.MetadataCache.GBrowseTrack;
 
 
 public class ProjectsSummaryController extends TilesAction 
@@ -44,6 +45,9 @@ public class ProjectsSummaryController extends TilesAction
                         
             Map<String, List<DisplayExperiment>> experiments = MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);
+      
+            Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
+            request.setAttribute("tracks", tracks);
         } catch (Exception err) {
             err.printStackTrace();
         }
