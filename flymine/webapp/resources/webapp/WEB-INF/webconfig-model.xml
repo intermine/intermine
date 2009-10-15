@@ -768,6 +768,16 @@
                       typeClass="org.intermine.model.bio.Gene"
                       graphType="BarChart" />
 
+      <graphdisplayer id="feature_length" title="Feature Length"
+        domainLabel="Length"
+        rangeLabel=" "
+        dataSetLoader="org.intermine.bio.web.widget.FeatureLengthDataSetLdr"
+        description="The distribution of feature lengths in this list compared to lengths of all features of this type."
+        graphType="XYLineChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+       />
+
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
@@ -813,7 +823,7 @@
                                  link="org.flymine.web.widget.BDGPURLQuery"
                                  dataSetLoader="org.flymine.web.widget.BDGPLdr"
                                  label="Terms"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
                                  typeClass="org.intermine.model.bio.Gene" />
 
       <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
