@@ -31,6 +31,7 @@ import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
 /**
@@ -182,6 +183,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         ResultSet matchRSTLocRes = getRSTMatchLocResultSet(connection);
         processLocationTable(connection, matchRSTLocRes);
 
+       
+        processFeatureScores(connection);
     }
 
     /**
@@ -607,5 +610,41 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
-
+    private void processFeatureScores(Connection connection) throws SQLException,
+    ObjectStoreException {
+        ResultSet res = getFeatureScores(connection);
+        while (res.next()) {
+            
+            Integer featureId = res.getInt("feature_id");
+            Double score = res.getDouble("score");
+            String program = res.getString("program");
+            
+            FeatureData fData = featureMap.get(featureId);
+            Integer storedFeatureId = fData.getIntermineObjectId();
+            
+            Attribute scoreAttribute = new Attribute("score", score.toString());                    
+            getChadoDBConverter().store(scoreAttribute, storedFeatureId);
+            
+            Attribute scoreTypeAttribute = new Attribute("scoreType", program);                    
+            getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
+        }
+        res.close();
+    }
+    
+    
+    private ResultSet getFeatureScores(Connection connection) throws SQLException {
+        String query =       
+            "SELECT f.feature_id as feature_id, af.rawscore as score, a.program as program"
+            + " FROM feature f, analysisfeature af, analysis a "
+            + " WHERE f.feature_id = af.feature_id "
+            + " AND af.analysis_id = a.analysis_id "
+            + " AND f.feature_id IN " 
+            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING FEATURE SCORES " + ":" + (System.currentTimeMillis() - bT));
+        return res;
+    }
 }
