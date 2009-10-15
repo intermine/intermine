@@ -80,7 +80,11 @@ div#experimentFeatures {
 
 <div class="body">
 
+
 <c:forEach items="${experiments}" var="exp"  varStatus="status">
+<%-- for gbrowse: to modify and take the organism from the submission --%>
+<c:set var="fly" value=""/>
+<c:set var="worm" value=""/>
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -89,10 +93,12 @@ div#experimentFeatures {
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
-      </c:if>
+						<c:set var="fly" value="1" />
+					</c:if>
       <c:if test="${organism eq 'C. elegans'}"> 
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
-      </c:if>
+						<c:set var="worm" value="1" />
+					</c:if>
     </c:forEach> 
   </td>
   
@@ -183,6 +189,9 @@ div#experimentFeatures {
    <td style="width: 40%; align: top;">
      <c:choose>
      <c:when test="${!empty tracks[exp.name]}">
+      <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
+      <tr>
+        <th>
        <c:choose>
          <c:when test="${fn:length(tracks[exp.name]) == 1}">
            <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track:
@@ -191,15 +200,18 @@ div#experimentFeatures {
            <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks:
          </c:otherwise>
        </c:choose>
-     
-     <br/>
+     </th>
+     <th>Chromosomes</th>
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
+     <tr><td>
 <html:link
      href="http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/${etrack.organism}/?label=${etrack.track}" target="_blank">${etrack.track}
 </html:link>
-        <c:if test="${fn:length(tracks[exp.name]) > 1}"> | </c:if>
+</td>
+<td></td>
+</tr>
     </c:forEach>
-    
+</table>    
      </c:when>
      <c:otherwise>
         NO GBROWSE TRACKS FOR THIS SUBMISSION
@@ -235,8 +247,9 @@ div#experimentFeatures {
       <c:forEach items="${exp.factorTypes}" var="factor">
         <th class="sortable"><c:out value="${factor}"></c:out></td>
       </c:forEach>
-    <th>features</td>
-</tr>
+    <th>features</th>
+    <th>view in GBrowse</th>
+  </tr>
 
   
 <c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
@@ -287,6 +300,26 @@ div#experimentFeatures {
     		</div>
     	</c:if>
 	</td>
+
+        <td>
+        <c:if test="${!empty fly}">
+						<html:link
+							href="http://modencode2.oicr.on.ca/gb2/gbrowse/fly/?ds=${sub.dCCid}"
+							target="_blank">
+							<html:img src="model/images/dgb_vs.png" title="GBrowse" />
+						</html:link></c:if>
+          
+        <c:if test="${!empty worm}">
+						<html:link
+							href="http://modencode2.oicr.on.ca/gb2/gbrowse/worm/?ds=${sub.dCCid}"
+							target="_blank">
+							<html:img src="model/images/wgb_vs.png" title="GBrowse" />
+						</html:link>
+					</c:if>          
+    
+          </td>
+          
+
 
   </tr>
   </c:forEach>
