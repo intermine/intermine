@@ -98,7 +98,7 @@ public class MetadataCache
     }
     
     /**
-     * Fetch GBrowse trakcs for display.
+     * Fetch GBrowse tracks for display.
      * @return map
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
@@ -120,13 +120,35 @@ public class MetadataCache
             for (Submission sub : exp.getSubmissions()) {
                 List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
                 if (subTracks != null) {
-                    expTracks.addAll(subTracks);
+                    // check so it is unique
+                    // expTracks.addAll(subTracks);
+                    addToList(expTracks, subTracks);
                 }
-            }            
+            }
         }
 
         return tracks;
     }
+    
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
+    private static void addToList(List<GBrowseTrack> l, List<GBrowseTrack> i) {
+        Iterator <GBrowseTrack> it  = i.iterator();
+        while (it.hasNext()) {
+            GBrowseTrack thisId = it.next();
+            if (!l.contains(thisId)) {
+                l.add(thisId);
+            }
+        }
+    }
+
+    
+    
+    
     
     /**
      * Fetch a map from feature type to count for a given submission.
