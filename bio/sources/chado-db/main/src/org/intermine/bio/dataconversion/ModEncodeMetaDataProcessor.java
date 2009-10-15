@@ -1843,7 +1843,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
             
-                if (exFactor.equals("food") || exFactor.equals("exposure time")) {
+                if (exFactor.equals("food") || exFactor.equals("exposure time")
+                    || exFactor.equals("threshold")) {
                     List<Item> extraPropItems = new ArrayList<Item>();
                     extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
                             typeToProp, new String[] {exFactor}));
