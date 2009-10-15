@@ -182,15 +182,21 @@ div#experimentFeatures {
      <c:when test="${!empty tracks[exp.name]}">
        <c:choose>
          <c:when test="${fn:length(tracks[exp.name]) == 1}">
-           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track:
          </c:when>
          <c:otherwise>
-           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks:
          </c:otherwise>
        </c:choose>
      
      <br/>
-     TRACK LINKS...  
+     <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
+<html:link
+     href="http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/${etrack.organism}/?label=${etrack.track}" target="_blank">${etrack.track}
+</html:link>
+        <c:if test="${fn:length(tracks[exp.name]) > 1}"> | </c:if>
+    </c:forEach>
+    
      </c:when>
      <c:otherwise>
         NO GBROWSE TRACKS FOR THIS SUBMISSION
