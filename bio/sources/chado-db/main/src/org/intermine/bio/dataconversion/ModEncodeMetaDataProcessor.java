@@ -2383,6 +2383,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (name.matches("L\\d")) {
                 name = name + " stage larvae";
             }
+            if (name.matches(".*L\\d")) {
+                name = name + " stage larvae";
+            }            
             if (name.matches("WPP.*")) {
                 name = name.replaceFirst("WPP", "White prepupae (WPP)");
             }
