@@ -8,8 +8,12 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
     prefix="str"%>
 
+<!-- experiment.jsp -->
 
-            
+<html:xhtml />
+
+<script type="text/javascript" src="js/tablesort.js"></script>
+<link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>     
             
 <style type="text/css">
 
@@ -72,7 +76,6 @@ div#experimentFeatures {
 <tiles:importAttribute />
 
 
-<html:xhtml />
 
 
 <div class="body">
@@ -223,98 +226,74 @@ div#experimentFeatures {
     
   </c:choose>
   </em>
-  <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-  <tr>
-    <td>DCC id</td>
-    <td>name</td>
-    <%--<td>type</td>--%>
-    <td>date</td>
+
+<table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow">
+<tr>
+    <th class="sortable">DCC id</td>
+    <th class="sortable">name</td>
+    <th>date</td>
       <c:forEach items="${exp.factorTypes}" var="factor">
-        <td><c:out value="${factor}"></c:out></td>
+        <th class="sortable"><c:out value="${factor}"></c:out></td>
       </c:forEach>
-    <td>features</td>
-  </tr>
+    <th>features</td>
+</tr>
 
   
-  <c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
-    
-    <c:set var="sub" value="${subCounts.key}"></c:set>
+<c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
+	<c:set var="sub" value="${subCounts.key}"></c:set>
     <tr>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
-      <%-- <td><c:out value="${sub.experimentType}"></c:out></td> --%>
-      <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
-      <c:forEach items="${exp.factorTypes}" var="factorType">
-        <td>
-          <c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
-            <c:if test="${factor.type == factorType}">
-              <c:choose>
-                <c:when test="${factor.property != null}">
-                  <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}">
-                  <c:out value="${factor.name}"/>
-                  </html:link>
-                </c:when>
-                <c:otherwise>
-                  <c:out value="${factor.name}"/>          
-                </c:otherwise>
-              </c:choose>
-            </c:if>      
-          </c:forEach>
-        </td>
+      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
+      <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
+	
+	  <c:forEach items="${exp.factorTypes}" var="factorType">
+       <td class="sorting">
+      		<c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
+        		<c:if test="${factor.type == factorType}">
+            		<c:choose>
+               		<c:when test="${factor.property != null}">
+               			<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}"><c:out value="${factor.name}"/></html:link>
+               		</c:when>
+               		<c:otherwise>
+                 		<c:out value="${factor.name}"/>          
+               		</c:otherwise>
+           			</c:choose>
+           		</c:if>      
+       		</c:forEach>
+      </td>
+	  </c:forEach>
+      <td class="sorting">
+      	<c:if test="${!empty subCounts.value}">
+      		<div class="submissionFeatures">
+      		<table cellpadding="0" cellspacing="0" border="0" class="features">
+      		<c:forEach items="${subCounts.value}" var="fc" varStatus="rowNumber">
+            	<c:set var="class" value=""/>
+        		<c:if test="${rowNumber.first}">
+          			<c:set var="class" value="firstrow"/>
+        		</c:if>
+				<tr>                 
+          			<td class="firstcolumn ${class}">${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value}</html:link></td>
+			        <td class="${class}" align="right">export: 
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+          			</td>
+          			<td class="${class}" align="right">
+				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}"> CREATE LIST</html:link>
+          			</td>
+      			</tr>
+    		</c:forEach>
+    		</table>
+    		</div>
+    	</c:if>
+	</td>
 
-
-      </c:forEach>
-    <%--</tr>
-   
-    <tr>    
-      <td colspan="${exp.factorCount + 5}">--%>
-      <td>
-      <c:if test="${!empty subCounts.value}">
-      <div class="submissionFeatures">
-      <table cellpadding="0" cellspacing="0" border="0" class="features">
-      <c:forEach items="${subCounts.value}" var="fc" varStatus="rowNumber">
-        
-        <c:set var="class" value=""/>
-        <c:if test="${rowNumber.first}">
-          <c:set var="class" value="firstrow"/>
-        </c:if>
-        <tr>                 
-          <td class="firstcolumn ${class}">${fc.key}:
-              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value}</html:link>
-          </td>
-          <td class="${class}" align="right">
-              export: 
-               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
-               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
-               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
-          </td>
-          <td class="${class}" align="right">
-            <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}"> CREATE LIST</html:link>
-          </td>
-      </tr>
-    </c:forEach>
-    </table>
-    </div>
-    </c:if>
-        </td>
-
-    <%--</tr>--%>
-
+  </tr>
   </c:forEach>
-
-
   </table>
 </div>
-  </im:boxarea>
-
+</im:boxarea>
 </c:forEach>
 </div>
 
+<!-- /experiment.jsp -->
