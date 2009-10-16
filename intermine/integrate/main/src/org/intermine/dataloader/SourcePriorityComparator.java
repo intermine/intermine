@@ -111,15 +111,15 @@ public class SourcePriorityComparator implements Comparator
                 }
                 if (source1 == null && value1 != null) {
                     throw new IllegalArgumentException("Object o1 is not in the data"
-                            + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + fieldName + "\" with value \""
-                            + value1 + "\"");
+                            + " tracking system; o1 = \"" + DynamicUtil.getFriendlyDesc(o1)
+                            + "\", o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" for field \""
+                            + fieldName + "\" with value \"" + value1 + "\"");
                 }
                 if (source2 == null && value2 != null) {
                     throw new IllegalArgumentException("Object o2 is not in the data"
-                            + " tracking system; o1 = \"" + o1 + "\", o2 = \"" + o2
-                            + "\" for field \"" + fieldName + "\" with value \""
-                            + value2 + "\"");
+                            + " tracking system; o1 = \"" + DynamicUtil.getFriendlyDesc(o1)
+                            + "\", o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" for field \""
+                            + fieldName + "\" with value \"" + value2 + "\"");
                 }
                 if (source1 != null && source2 != null) {
                     if (source1.getName().equals(source2.getName())) {
@@ -130,14 +130,17 @@ public class SourcePriorityComparator implements Comparator
                         } else {
                             if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
                                 String errMessage = "Duplicate objects from the same data source; "
-                                    + "o1 = \"" + DynamicUtil.getFriendlyDesc(o1) + "\" ("
-                                    + (o1 == defObj ? "from source, being stored"
-                                            : (dbIdsStored.contains(f1.getId())
-                                                ? "stored earlier in this run" : "in database"))
-                                    + "), o2 = \"" + DynamicUtil.getFriendlyDesc(o2) + "\" ("
-                                    + (o2 == defObj ? "from source, being stored"
-                                            : (dbIdsStored.contains(f2.getId())
-                                                ? "stored earlier in this run" : "in database"))
+                                    + "o1 = \"" + (o1 == defObj ? DynamicUtil.getFriendlyName(
+                                                o1.getClass()) + "\" (from source, being stored"
+                                            : DynamicUtil.getFriendlyDesc(o1) + "\" ("
+                                            + ((dbIdsStored.contains(f1.getId())
+                                                    ? "stored earlier in this run"
+                                                    : "in database")))
+                                    + "), o2 = \"" + (o2 == defObj ? DynamicUtil.getFriendlyName(
+                                            o2.getClass()) + "\" (from source, being stored"
+                                        : DynamicUtil.getFriendlyDesc(o2) + "\" ("
+                                        + ((dbIdsStored.contains(f2.getId())
+                                                ? "stored earlier in this run" : "in database")))
                                     + "), source1 = \"" + source1 + "\", source2 = \"" + source2
                                     + "\"";
                                 LOG.error(errMessage);
@@ -156,17 +159,20 @@ public class SourcePriorityComparator implements Comparator
                     }
                     String errorMessage = null;
                     if (source1Priority == -1) {
-                        errorMessage = "Priority configured for " + clazz.getName() + "."
-                            + fieldName + " does not include source " + source1.getName();
+                        errorMessage = "Priority configured for "
+                            + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                            + " does not include source " + source1.getName();
                     }
                     if (source2Priority == -1) {
                         if (errorMessage != null) {
-                            errorMessage = "Priority configured for " + clazz.getName() + "."
-                                + fieldName + " does not include sources " + source1.getName()
-                                + " or " + source2.getName();
+                            errorMessage = "Priority configured for "
+                                + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                                + " does not include sources " + source1.getName() + " or "
+                                + source2.getName();
                         } else {
-                            errorMessage = "Priority configured for " + clazz.getName() + "."
-                                + fieldName + " does not include source " + source2.getName();
+                            errorMessage = "Priority configured for "
+                                + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                                + " does not include source " + source2.getName();
                         }
                     }
                     if (errorMessage != null) {
@@ -240,19 +246,25 @@ public class SourcePriorityComparator implements Comparator
             }
             if (source1.equals(source2)) {
                 throw new IllegalArgumentException("Merging two distinct objects from the same"
-                       + " data source (" + source1.getName() + "): " + o1 + " and " + o2);
+                       + " data source (" + source1.getName() + "): "
+                       + (o1 == defObj ? DynamicUtil.getFriendlyName(o1.getClass())
+                           + " (being stored)" : DynamicUtil.getFriendlyDesc(o1) + " (in database)")
+                       + " and " + (o2 == defObj ? DynamicUtil.getFriendlyName(o2.getClass())
+                           + " (being stored)" : DynamicUtil.getFriendlyDesc(o2)
+                           + " (in database)"));
             }
             throw new IllegalArgumentException("Conflicting values for field "
-                    + clazz.getName() + "." + fieldName
-                    + " between " + source1.getName() + " (value "
-                    + (value1.toString().length() <= 1000 ? value1
-                       : value1.toString().subSequence(0, 999)) + ") and "
-                    + source2.getName() + " (value "
-                    + (value2.toString().length() <= 1000 ? value2
-                       : value2.toString().subSequence(0, 999))
-                    + ") while comparing: " + o1 + " and " + o2
-                    + ". This field needs configuring in "
-                    + "the *_priorities.properties file");
+                    + DynamicUtil.getFriendlyName(clazz) + "." + fieldName + " between "
+                    + source1.getName() + " (value \""
+                    + (value1.toString().length() <= 100 ? value1
+                       : value1.toString().subSequence(0, 99) + "...") + "\", "
+                    + (o1 != defObj ? "in database with ID " + ((InterMineObject) o1).getId()
+                        : "being stored") + ") and " + source2.getName() + " (value \""
+                    + (value2.toString().length() <= 100 ? value2
+                       : value2.toString().subSequence(0, 99) + "...") + "\", "
+                    + (o2 != defObj ? "in database with ID " + ((InterMineObject) o2).getId()
+                        : "being stored") + "). This field needs configuring in the "
+                    + iw.getModel().getName() + "_priorities.properties file");
         }
         throw new ClassCastException("Trying to compare priorities for objects that are not"
                 + " InterMineObjects");

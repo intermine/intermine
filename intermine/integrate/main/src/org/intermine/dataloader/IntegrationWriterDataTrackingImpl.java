@@ -572,7 +572,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (pureObjects.size() <= 100000) {
                 LOG.error("pureObjects: " + pureObjects.toString());
             }
-            throw new RuntimeException("Exception while loading object " + nimo, e);
+            throw e;
         } catch (ObjectStoreException e) {
             if (idMap.size() <= 100000) {
                 LOG.error("IDMAP contents: " + idMap.toString());
@@ -583,7 +583,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (pureObjects.size() <= 100000) {
                 LOG.error("pureObjects: " + pureObjects.toString());
             }
-            throw new ObjectStoreException("Exception while loading object " + nimo, e);
+            throw e;
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }
