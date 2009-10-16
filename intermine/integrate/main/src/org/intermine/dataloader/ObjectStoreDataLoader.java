@@ -13,6 +13,7 @@ package org.intermine.dataloader;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -145,7 +146,15 @@ public class ObjectStoreDataLoader extends DataLoader
                 try {
                     getIntegrationWriter().store(obj, source, skelSource);
                 } catch (RuntimeException e) {
-                    LOG.error("Exception while dataloading", e);
+                    String identifier = null;
+                    if ((origOs instanceof ObjectStoreFastCollectionsForTranslatorImpl)
+                           && (obj instanceof InterMineObject)) {
+                        ItemToObjectTranslator trans = (ItemToObjectTranslator)
+                            ((ObjectStoreFastCollectionsForTranslatorImpl) origOs).getTranslator();
+                        identifier = trans.idToIdentifier(((InterMineObject) obj).getId());
+                    }
+                    LOG.error("Exception while dataloading" + (identifier == null ? ""
+                                : " item with identifier " + identifier), e);
                     errorCount++;
                     if (errorCount >= 100) {
                         throw new RuntimeException("Too many data loading exceptions - to stop on"
@@ -155,7 +164,9 @@ public class ObjectStoreDataLoader extends DataLoader
                     if (!allowMultipleErrors) {
                         throw new RuntimeException("Exception while dataloading - to allow multiple"
                                 + " errors, set the property \"dataLoader.allowMultipleErrors\" to"
-                                + " true", e);
+                                + " true\n" + (identifier == null ? ""
+                                    : "Problem while loading item identifier " + identifier
+                                    + " because\n") + e.getMessage(), e);
                     }
                 }
                 time3 = System.currentTimeMillis();
