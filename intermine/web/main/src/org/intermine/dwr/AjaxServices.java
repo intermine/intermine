@@ -397,22 +397,15 @@ public class AjaxServices
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
-
-            SearchRepository globalRepository =
-                (SearchRepository) servletContext.getAttribute(Constants.
-                                                               GLOBAL_SEARCH_REPOSITORY);
+            SearchRepository globalRepository = (SearchRepository) 
+                servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
             Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
             SearchRepository userSearchRepository = currentProfile.getSearchRepository();
-            Map<String, InterMineBag> userWsMap =
+            Map<String, InterMineBag> userBags =
                 (Map<String, InterMineBag>) userSearchRepository.getWebSearchableMap(TagTypes.BAG);
-            Map<String, InterMineBag> globalWsMap =
-                (Map<String, InterMineBag>) globalRepository.getWebSearchableMap(TagTypes.BAG);
-            Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>(userWsMap);
-            allBags.putAll(globalWsMap);
-
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(userBags, globalRepository);
             Query distinctQuery = MainHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
-
             Results results = os.execute(distinctQuery);
 
             // Start the count of results
