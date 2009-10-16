@@ -189,28 +189,214 @@ div#experimentFeatures {
    <td style="width: 40%; align: top;">
      <c:choose>
      <c:when test="${!empty tracks[exp.name]}">
+     <c:set var="urlabels" value=""/>
+     <c:set var="baseUrl" value="http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/"/>
+
       <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
       <tr>
         <th>
        <c:choose>
          <c:when test="${fn:length(tracks[exp.name]) == 1}">
-           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track:
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track
          </c:when>
          <c:otherwise>
-           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks:
+           <c:out value=" "/> GBrowse tracks:
          </c:otherwise>
        </c:choose>
      </th>
-     <th>Chromosomes</th>
+     <th>by chromosome</th>
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
+     
+<%-- build the url for getting all the labels in this experiment --%> 
+<c:choose>
+<c:when test="${status.first}">
+     <c:set var="urlabels" value="${etrack.track}" /> 
+</c:when>
+<c:otherwise>
+     <c:set var="urlabels" value="${urlabels}-${etrack.track}" /> 
+</c:otherwise>
+</c:choose>
+
      <tr><td>
 <html:link
-     href="http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/${etrack.organism}/?label=${etrack.track}" target="_blank">${etrack.track}
+     href="${baseUrl}${etrack.organism}/?label=${etrack.track}" target="_blank">${etrack.track}
 </html:link>
 </td>
-<td></td>
+<td>
+ <c:if test="${etrack.organism eq 'fly'}">
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=X;label=${etrack.track}" 
+     target="_blank">X
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=2L;label=${etrack.track}" 
+     target="_blank">2L
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=2R;label=${etrack.track}" 
+     target="_blank">2R
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=3L;label=${etrack.track}" 
+     target="_blank">3L
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=3R;label=${etrack.track}" 
+     target="_blank">3R
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=4;label=${etrack.track}" 
+     target="_blank">4
+</html:link>
+ | 
+  <html:link
+     href="${baseUrl}${etrack.organism}/?ref=U;label=${etrack.track}" 
+     target="_blank">U
+</html:link>
+</c:if>
+ <c:if test="${etrack.organism eq 'worm'}">
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=I;label=${etrack.track}" 
+     target="_blank">I
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=II;label=${etrack.track}" 
+     target="_blank">II
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=III;label=${etrack.track}" 
+     target="_blank">III
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=IV;label=${etrack.track}" 
+     target="_blank">IV
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=V;label=${etrack.track}" 
+     target="_blank">V
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}${etrack.organism}/?ref=X;label=${etrack.track}" 
+     target="_blank">X
+</html:link>
+</c:if>
+
+
+</td>
 </tr>
     </c:forEach>
+    
+    
+    <c:if test="${fn:length(tracks[exp.name]) > 1 }">
+ <c:if test="${!empty fly}">
+    <tr>
+    <td><b>
+<html:link
+     href="${baseUrl}fly/?label=${urlabels}"
+      target="_blank">All ${fn:length(tracks[exp.name])} tracks
+</html:link>
+</b>
+    </td>
+    <td>
+
+<html:link
+     href="${baseUrl}fly/?ref=X;label=${urlabels}" 
+     target="_blank">X
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}fly/?ref=2L;label=${urlabels}" 
+     target="_blank">2L
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}fly/?ref=2R;label=${urlabels}" 
+     target="_blank">2R
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}fly/?ref=3L;label=${urlabels}" 
+     target="_blank">3L
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}fly/?ref=3R;label=${urlabels}" 
+     target="_blank">3R
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}fly/?ref=4;label=${urlabels}" 
+     target="_blank">4
+</html:link>
+ | 
+  <html:link
+     href="${baseUrl}fly/?ref=U;label=${urlabels}" 
+     target="_blank">U
+</html:link>
+    </td>
+    </tr>
+</c:if>
+ <c:if test="${!empty worm}">
+    <tr>
+    <td><b>
+<html:link
+     href="${baseUrl}worm/?label=${urlabels}"
+      target="_blank">All ${fn:length(tracks[exp.name])} tracks
+</html:link>
+</b>
+    </td>
+    <td>
+
+
+
+<html:link
+     href="${baseUrl}worm/?ref=I;label=${urlabels}" 
+     target="_blank">I
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}worm/?ref=II;label=${urlabels}" 
+     target="_blank">II
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}worm/?ref=III;label=${urlabels}" 
+     target="_blank">III
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}worm/?ref=IV;label=${urlabels}" 
+     target="_blank">IV
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}worm/?ref=V;label=${urlabels}" 
+     target="_blank">V
+</html:link>
+ | 
+<html:link
+     href="${baseUrl}worm/?ref=X;label=${urlabels}" 
+     target="_blank">X
+</html:link>
+
+    </td>
+    </tr>
+</c:if>
+
+    
+    </c:if>
+    
+    
 </table>    
      </c:when>
      <c:otherwise>
