@@ -16,13 +16,13 @@ th.sortable-sortScientificNotation,
 th.sortable-sortImage,
 th.sortable-sortFileSize { 
   padding: 8px 12px 4px 16px;        
-  cursor:pointer; background: #CAE8EA url(../images/bg_header_sortable_white.jpg) no-repeat;}
+  cursor:pointer; background: url(../images/bg_header_sortable_white.jpg) no-repeat;}
 
 th.forwardSort {
-        background:#CAE8EA url(../images/bg_header_down_white.jpg) no-repeat 0 0; }
+        background:url(../images/bg_header_down_white.jpg) no-repeat 0 0; }
 
 th.reverseSort {
-        background:#CAE8EA url(../images/bg_header_up_white.jpg) no-repeat 0 0; }
+        background:url(../images/bg_header_up_white.jpg) no-repeat 0 0; }
 
 th.forwardSort a,
 th.reverseSort a {
@@ -31,7 +31,7 @@ th.reverseSort a {
         
 .sorting{
     padding: 6px 12px 6px 12px;
-    font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;color: #fff;}
+    font: normal 12px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;color: #fff;}
         
 
 
