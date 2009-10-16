@@ -42,16 +42,21 @@ public class HomologueURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String paths = "Gene.primaryIdentifier,Gene.symbol,Gene.organism.name,"
                 + "Gene.homologues.homologue.primaryIdentifier,Gene.homologues.homologue.symbol,"
                 + "Gene.homologues.homologue.organism.name,Gene.homologues.type";
         q.setView(paths);
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(key));
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
-        q.setConstraintLogic("A and B and C");
+        if (!showAll) {
+            q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(key));
+            q.setConstraintLogic("A and B and C");
+        } else {
+            q.setConstraintLogic("A and B");
+        }
+        
         q.syncLogicExpression("and");
         String orderby = "Gene.organism.name,Gene.primaryIdentifier,"
             + "Gene.homologues.homologue.organism.name,Gene.homologues.homologue.primaryIdentifier";

@@ -48,20 +48,21 @@ public class TiffinURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
-
         PathNode node = q.addNode("Gene.upstreamIntergenicRegion.overlappingFeatures");
-        node.setType("TFBindingSite");
-        
+        node.setType("TFBindingSite");        
         String path = "Gene.upstreamIntergenicRegion.overlappingFeatures.motif.primaryIdentifier";
-        q.setView("Gene.secondaryIdentifier," + path);
-        q.addConstraint(path, Constraints.eq (key));
+        q.setView("Gene.secondaryIdentifier," + path);        
         q.addConstraint("TFBindingSite.dataSets.title", Constraints.eq(DATASET));
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
-        q.setConstraintLogic("A and B and C");
-        q.syncLogicExpression("and");
-        
+        if (!showAll) {
+            q.addConstraint(path, Constraints.eq (key));
+            q.setConstraintLogic("A and B and C");
+        } else {
+            q.setConstraintLogic("A and B");
+        }        
+        q.syncLogicExpression("and");        
         return q;
     }
 }

@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,16 +69,17 @@ public class WidgetAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
     throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         String key = request.getParameter("key");
-        if ((key != null && key.length() != 0) || (widgetForm.getAction().equals("display"))) {
+        if ((key != null && key.length() != 0  && !widgetForm.getAction().equals("displayAll")) 
+                        || (widgetForm.getAction().equals("display"))) {
             return display(mapping, form, request, response);
-        } else if (widgetForm.getAction().equals("notAnalysed")) {
-            return notAnalysed(mapping, form, request, response);
+        } else if (widgetForm.getAction().equals("displayAll")) {
+            return displayAll(mapping, form, request, response);
         } else {
             return export(mapping, form, request, response);
         }
@@ -94,11 +96,11 @@ public class WidgetAction extends InterMineAction
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws
      *  an exception
+     * @deprecated the 'not analysed' number will eventually be a link when I get time
      */
     public ActionForward notAnalysed(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                @SuppressWarnings("unused")
                                 HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
@@ -162,7 +164,7 @@ public class WidgetAction extends InterMineAction
 
         // See #1719
         //PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
-        PathQuery pathQuery = widgetURLQuery.generatePathQuery();
+        PathQuery pathQuery = widgetURLQuery.generatePathQuery(false);
 
         QueryMonitorTimeout clientState
         = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
@@ -176,6 +178,37 @@ public class WidgetAction extends InterMineAction
                         "|bag." + bagName).addParameter("qid", qid).forward();
     }
 
+    private PathQuery generatePathQuery(HttpSession session,
+                                             ActionForm form,
+                                             HttpServletRequest request,
+                                             String bagName, boolean showAll) 
+    throws SecurityException, NoSuchMethodException, IllegalArgumentException, 
+    InstantiationException, IllegalAccessException, InvocationTargetException {
+        ServletContext servletContext = session.getServletContext();
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        String key = request.getParameter("key");
+        String link = request.getParameter("link");
+        if (StringUtils.isEmpty(key)) {
+            WidgetForm wf = (WidgetForm) form;
+            key = wf.getSelectedAsString();
+        }
+        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
+                SessionMethods.getGlobalSearchRepository(servletContext));
+        InterMineBag bag = allBags.get(bagName);
+
+        Class<?> clazz = TypeUtil.instantiate(link);
+        Constructor<?> constr = clazz.getConstructor(new Class[]
+                                                               {
+            ObjectStore.class, InterMineBag.class, String.class
+                                                               });
+        WidgetURLQuery urlQuery = (WidgetURLQuery) constr.newInstance(new Object[]
+                                                         {
+            os, bag, key
+                                                         });
+        return urlQuery.generatePathQuery(showAll);
+    }
+    
     /**
      * Display selected entries in the results page
      * @param mapping The ActionMapping used to select this instance
@@ -189,41 +222,13 @@ public class WidgetAction extends InterMineAction
     public ActionForward display(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                @SuppressWarnings("unused")
                                 HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String bagName = request.getParameter("bagName");
-        String key = request.getParameter("key");
-        String link = request.getParameter("link");
-        if (StringUtils.isEmpty(key)) {
-            WidgetForm wf = (WidgetForm) form;
-            bagName = wf.getBagName();
-            key = wf.getSelectedAsString();
-        }
-
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
-        InterMineBag bag = allBags.get(bagName);
-
-        Class<?> clazz = TypeUtil.instantiate(link);
-        Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                               {
-            ObjectStore.class, InterMineBag.class, String.class
-                                                               });
-
-        WidgetURLQuery urlQuery = (WidgetURLQuery) constr.newInstance(new Object[]
-                                                         {
-            os, bag, key
-                                                         });
-
-        QueryMonitorTimeout clientState
-        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages
-        = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        PathQuery pathQuery = urlQuery.generatePathQuery();
+        PathQuery pathQuery = generatePathQuery(session, form, request, bagName, false);
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS 
+                                                                  * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         SessionMethods.loadQuery(pathQuery, session, response);
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
@@ -231,6 +236,33 @@ public class WidgetAction extends InterMineAction
                         "|bag." + bagName).addParameter("qid", qid).forward();
     }
 
+    /**
+     * Display all entries in the results page
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward displayAll(ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        String bagName = request.getParameter("bagName");
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS 
+                                                                  * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        PathQuery pathQuery = generatePathQuery(session, form, request, bagName, true);
+        SessionMethods.loadQuery(pathQuery, session, response);
+        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+        Thread.sleep(200); // slight pause in the hope of avoiding holding page
+        return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
+                        "|bag." + bagName).addParameter("qid", qid).forward();
+    }
+        
     /**
      * Export selected entries
      * @param mapping The ActionMapping used to select this instance

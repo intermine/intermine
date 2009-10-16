@@ -41,7 +41,7 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Protein.primaryIdentifier, Protein.primaryAccession,"
                   + "Protein.proteinInteractions.interactingProteins.primaryIdentifier,"
@@ -51,9 +51,12 @@ public class ProteinInteractionURLQuery implements WidgetURLQuery
                   + "Protein.proteinInteractions.proteinRole,"
                   + "Protein.proteinInteractions.experiment.publication.pubMedId");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.proteinInteractions.interactingProteins", Constraints.lookup(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+        if (!showAll) {
+            q.addConstraint("Protein.proteinInteractions.interactingProteins", 
+                            Constraints.lookup(key));
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }
         q.setOrderBy("Protein.primaryIdentifier, Protein.primaryAccession,"
                      + "Protein.proteinInteractions.interactingProteins.name");
         return q;

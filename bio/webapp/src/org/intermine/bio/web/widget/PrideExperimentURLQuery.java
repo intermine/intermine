@@ -41,15 +41,17 @@ public class PrideExperimentURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Protein.proteinIdentifications.prideExperiment.title,Protein.primaryIdentifier,"
                   + "Protein.primaryAccession,Protein.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.proteinIdentifications.prideExperiment.title",
+        if (!showAll) {
+            q.addConstraint("Protein.proteinIdentifications.prideExperiment.title",
                         Constraints.eq(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }
         q.setOrderBy("Protein.proteinIdentifications.prideExperiment.title");
         return q;
     }
