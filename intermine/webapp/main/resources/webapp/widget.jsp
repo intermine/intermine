@@ -130,12 +130,13 @@
  <c:if test="${(type == 'EnrichmentWidgetConfig' || type == 'TableWidgetConfig') && !empty widget.link}">
   <div id="widget_tool_bar_div_${widget.id}" class="widget_tool_bar_div" >
     <ul id="widget_button_bar_${widget.id}" class="widget_button_bar" >
-        <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">Display</span></li>
-        <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Export</span></li>
+        <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button">View in results table</span></li>
+        <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button"><span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button">Download</span></li>
     </ul>
   </div>
   <div id="tool_bar_item_display_widget_${widget.id}" style="display:none;width:200px;text-align:left" class="tool_bar_item">
-    <a href="javascript:submitWidgetForm('${widget.id}','display',null)">Display checked items in results table</a>
+    <a href="javascript:submitWidgetForm('${widget.id}','display',null)">Display checked items in results table</a><br/>
+    <a href="javascript:submitWidgetForm('${widget.id}','displayAll',null)">Display all items in results table</a>
     <hr/>
     <a href="javascript:hideMenu('tool_bar_item_display_widget_${widget.id}')" >Cancel</a>
   </div>

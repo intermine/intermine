@@ -341,7 +341,7 @@ function checkSelected(formName) {
 }
 
 function submitWidgetForm(widgetId,type,extra) {
-  if(checkSelected('widgetaction'+widgetId)){
+  if(type == 'displayAll' || checkSelected('widgetaction'+widgetId)) {
     $('action'+widgetId).value=type;
     $('export' + widgetId).value=extra;
     $('widgetaction' + widgetId).submit();

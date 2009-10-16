@@ -42,7 +42,7 @@ public class GoStatURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
 
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
@@ -71,11 +71,14 @@ public class GoStatURLQuery implements WidgetURLQuery
         String pathString = prefix + ".goAnnotation.qualifier";
         q.addConstraint(pathString, Constraints.isNull());
 
-        // go term
-        pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm";
-        q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
-
-        q.setConstraintLogic("A and B and C");
+        if (!showAll) {
+            //  go term
+            pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm";
+            q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
+            q.setConstraintLogic("A and B and C");
+        } else {
+            q.setConstraintLogic("A and B");
+        }
         q.syncLogicExpression("and");
         return q;
     }
