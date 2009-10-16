@@ -614,19 +614,21 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     ObjectStoreException {
         ResultSet res = getFeatureScores(connection);
         while (res.next()) {
-            
+
             Integer featureId = res.getInt("feature_id");
             Double score = res.getDouble("score");
             String program = res.getString("program");
-            
-            FeatureData fData = featureMap.get(featureId);
-            Integer storedFeatureId = fData.getIntermineObjectId();
-            
-            Attribute scoreAttribute = new Attribute("score", score.toString());                    
-            getChadoDBConverter().store(scoreAttribute, storedFeatureId);
-            
-            Attribute scoreTypeAttribute = new Attribute("scoreType", program);                    
-            getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
+
+            if (featureMap.containsKey(featureId)) {
+                FeatureData fData = featureMap.get(featureId);
+                Integer storedFeatureId = fData.getIntermineObjectId();
+
+                Attribute scoreAttribute = new Attribute("score", score.toString());                    
+                getChadoDBConverter().store(scoreAttribute, storedFeatureId);
+
+                Attribute scoreTypeAttribute = new Attribute("scoreType", program);                    
+                getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
+            }
         }
         res.close();
     }
