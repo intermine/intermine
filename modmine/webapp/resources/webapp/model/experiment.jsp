@@ -11,7 +11,7 @@
 <!-- experiment.jsp -->
 
 <html:xhtml />
-
+<script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 <script type="text/javascript" src="js/tablesort.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting_experiments.css"/>     
             

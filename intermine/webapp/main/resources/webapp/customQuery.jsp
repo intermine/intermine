@@ -60,7 +60,4 @@
   </div>
 </div>
 
-<script type="text/javascript">
-  Nifty("div#pageDesc","big");
-</script>
 <!-- /customQuery.jsp -->

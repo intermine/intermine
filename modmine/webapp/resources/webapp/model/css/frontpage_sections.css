@@ -3,7 +3,7 @@
      color:#192F39;
      width:1084px;
      /*background-color:#61EDF5;*/
-     padding:10px 0;margin:20px 0;
+     padding:0px 0;margin:20px 0;
  }
  
 .frontpage_sections ol {
@@ -64,6 +64,7 @@
 .qs_input {
    border:2px solid #192F39;
    font-size:1.2em;
+   width:180px;
 }
 
 li.last_section {
