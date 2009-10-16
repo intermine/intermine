@@ -93,7 +93,11 @@ public abstract class GFF3Util
             start = chrLocation.getStart().intValue();
             end = chrLocation.getEnd().intValue();
             if (chrLocation.getStrand() != null) { 
-                strand = chrLocation.getStrand().equals("1") ? "+" : "-";
+                if (chrLocation.getStrand().equals("1")) {
+                    strand = "+";
+                } else if (chrLocation.getStrand().equals("-1")) {
+                    strand = "-";
+                }
             }
         }
 
