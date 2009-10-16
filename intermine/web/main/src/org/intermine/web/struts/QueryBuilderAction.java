@@ -29,7 +29,6 @@ import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 
 import org.apache.log4j.Logger;
@@ -79,12 +78,12 @@ public class QueryBuilderAction extends InterMineAction
             rootPath = path.toStringNoConstraints();
         }
 
-        PathNode node = query.getNodes().get(rootPath);
+        PathNode node = query.getNodes().get(path.toStringNoConstraints());
 
         if (node == null) {
             // We are adding a constraint to a node not already in the query. Need to add those
             // nodes, like in QueryBuilderChange.addPath, but not on a clone.
-            String stringPath = query.getCorrectJoinStyle(rootPath);
+            String stringPath = query.getCorrectJoinStyle(path.toStringNoConstraints());
             node = query.addNode(stringPath);
         }
 
@@ -199,7 +198,7 @@ public class QueryBuilderAction extends InterMineAction
         } else if (request.getParameter("subclass") != null) {
             node.setType(mf.getSubclassValue());
             session.setAttribute("path", mf.getSubclassValue());
-            session.setAttribute("prefix", rootPath);
+            session.setAttribute("prefix", path.toStringNoConstraints());
         } else if (request.getParameter("nullnotnull") != null) {
             if (mf.getNullConstraint().equals("NotNULL")) {
                 node.getConstraints().add(
