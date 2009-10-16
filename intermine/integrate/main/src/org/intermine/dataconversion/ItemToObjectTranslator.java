@@ -305,10 +305,9 @@ public class ItemToObjectTranslator extends Translator
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
                     String message = "Attribute not found in class: "
-                                                + DynamicUtil.decomposeClass(obj.getClass())
-                                                + "." + attr.getName() + " - Attribute id = "
-                                                + attr.getId() + ", attributes = "
-                                                + item.getAttributes();
+                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + attr.getName()
+                          + "\nProblem found while loading Item with identifier "
+                          + item.getIdentifier() + " and attribute with id " + attr.getId();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
