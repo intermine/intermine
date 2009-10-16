@@ -1746,8 +1746,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
             arrayItems.addAll(createFromWikiPage("Array", typeToProp, makeLookupList("array")));
+            LOG.info("ARRAY: " + typeToProp.get("array"));
             if (arrayItems.isEmpty()) {
-                LOG.info("ARRAY: " + typeToProp.get("array"));
                 arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
                         typeToProp, new String[] {
                         "adf.official name"
@@ -2133,7 +2133,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         List<SubmissionProperty> props = new ArrayList<SubmissionProperty>();
         for (String type : types) {
             if (typeToProp.containsKey(type)) {
-                props.add(typeToProp.get(type).get(0));
+                props.addAll(typeToProp.get(type));
             }
         }
         items.addAll(createItemsForSubmissionProperties(clsName, props));
@@ -2507,6 +2507,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 details.put(type, values);               
             }
             values.add(value);
+        }
+        
+        public String toString() {
+            return this.type + ": " + this.wikiPageUrl + this.details.entrySet();
         }
     }
 
