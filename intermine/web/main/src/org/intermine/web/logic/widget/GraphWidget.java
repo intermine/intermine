@@ -167,7 +167,7 @@ public class GraphWidget extends Widget
             ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
             categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
             ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
-
+            
             ((GraphWidgetConfig) config).setHeight(400);
             formatBarCharts(categoryPlot);
             
@@ -206,18 +206,15 @@ public class GraphWidget extends Widget
             new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
 
             formatBarCharts(categoryPlot);
-            
-
         }
 
         if (chart.getTitle() != null) {
             chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
         }
-        
-        
-        
+   
         chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-        chart.setAntiAlias(false); // render the chart faster, but won't look as good.
+// this would speed up chart rendering, but it wouldn't look as nice.
+//        chart.setAntiAlias(false); 
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
         // generate the image and imagemap
@@ -279,6 +276,7 @@ public class GraphWidget extends Widget
 
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
             categoryPlot.getDomainAxis().setLabelFont(labelFont);
+            rangeAxis.setLabelPaint(Color.darkGray);
             rangeAxis.setLabelFont(labelFont);
             categoryPlot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
 
