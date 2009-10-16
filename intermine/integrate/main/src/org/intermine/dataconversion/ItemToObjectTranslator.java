@@ -288,8 +288,9 @@ public class ItemToObjectTranslator extends Translator
                     ItemHelper.generateClassNames(item.getClassName(), model),
                     ItemHelper.generateClassNames(item.getImplementations(), model));
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("class \"" + item.getClassName() + "\" not found in model",
-                                       e);
+            throw new RuntimeException("class \"" + item.getClassName() + "\" does not exist\n"
+                    + "Problem found while loading Item with identifier " + item.getIdentifier(),
+                    e);
         }
 
         try {
@@ -328,15 +329,18 @@ public class ItemToObjectTranslator extends Translator
                 try {
                     identifier = identifierToId(ref.getRefId());
                 } catch (RuntimeException e) {
-                    throw new RuntimeException("failed to find referenced item in object store: "
-                                               + ref.getRefId(), e);
+                    throw new RuntimeException("Failed to find referenced Item with identifier "
+                            + ref.getRefId() + " in object store from Item with identifier "
+                            + item.getIdentifier() + " and reference name " + ref.getName(), e);
                 }
                 String refName = ref.getName();
                 if (refName == null) {
-                    throw new RuntimeException("reference name is null while translating: " + o);
+                    throw new RuntimeException("Item with identifier " + item.getIdentifier()
+                            + " has a reference with ID " + ref.getId() + " with a null name");
                 }
                 if (refName.equals("")) {
-                    throw new RuntimeException("reference name is empty while translating: " + o);
+                    throw new RuntimeException("Item with identifier " + item.getIdentifier()
+                            + " has a reference with ID " + ref.getId() + " with an empty name");
                 }
                 if (Character.isLowerCase(refName.charAt(1))) {
                     refName = StringUtil.decapitalise(refName);
@@ -346,8 +350,8 @@ public class ItemToObjectTranslator extends Translator
                                 InterMineObject.class));
                 } else {
                     String message = "Reference not found in class: "
-                        + DynamicUtil.decomposeClass(obj.getClass())
-                        + "." + ref.getName();
+                        + DynamicUtil.decomposeClass(obj.getClass()) + "." + ref.getName()
+                          + " while translating Item with identifier " + item.getIdentifier();;
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
@@ -362,8 +366,10 @@ public class ItemToObjectTranslator extends Translator
                     bc = new BagConstraint(qf, ConstraintOp.IN,
                         toIntegers(new HashSet(StringUtil.tokenize(refs.getRefIds()))));
                 } catch (Exception e) {
-                    throw new RuntimeException("failed to find referenced item in object store: "
-                                               + refs.getRefIds(), e);
+                    throw new RuntimeException("failed to find some referenced Items from "
+                            + "identifiers " + refs.getRefIds() + " in object store from Item "
+                            + "with identifier " + item.getIdentifier() + " and collection name "
+                            + refs.getName(), e);
                 }
 
                 Query q = new Query();
@@ -379,8 +385,8 @@ public class ItemToObjectTranslator extends Translator
                     obj.setFieldValue(refsName, os.executeSingleton(q));
                 } else {
                     String message = "Collection not found in class: "
-                        + DynamicUtil.decomposeClass(obj.getClass())
-                        + "." + refsName + " fileInfos: " + TypeUtil.getFieldInfos(obj.getClass());
+                        + DynamicUtil.decomposeClass(obj.getClass()) + "." + refsName
+                          + " while translating Item with identifier " + item.getIdentifier();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
