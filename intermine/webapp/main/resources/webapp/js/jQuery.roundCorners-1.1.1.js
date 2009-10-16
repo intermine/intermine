@@ -122,21 +122,21 @@ $.fn.getCSSRules = function(type){
 	var el = this;
 	var elRules = new Array();
 	if(type==null) type = '';
-	for(var ss = 0; ss<document.styleSheets.length; ss++){
-		if($.browser.msie) var rules = document.styleSheets[ss].rules;
-		else var rules = document.styleSheets[ss].cssRules;
-		for(var r=0; r<rules.length; r++){
-			if(!rules[r].selectorText || rules[r].selectorText.search(type)==-1) continue;
-			var sel = rules[r].selectorText.replace(':hover', '').replace(':active', '').replace(':focus', '');
-			if ($(sel)) {
-				$(sel).each(function(){
-					if ($(this)[0] == $(el)[0]) {
-						elRules[elRules.length] = rules[r];
-					};
-				});
-			};
-		};
-	};
+    // for(var ss = 0; ss<document.styleSheets.length; ss++){
+    //  if($.browser.msie) var rules = document.styleSheets[ss].rules;
+    //  else var rules = document.styleSheets[ss].cssRules;
+    //  for(var r=0; r<rules.length; r++){
+    //      if(!rules[r].selectorText || rules[r].selectorText.search(type)==-1) continue;
+    //      var sel = rules[r].selectorText.replace(':hover', '').replace(':active', '').replace(':focus', '');
+    //      if ($(sel)) {
+    //          $(sel).each(function(){
+    //              if ($(this)[0] == $(el)[0]) {
+    //                  elRules[elRules.length] = rules[r];
+    //              };
+    //          });
+    //      };
+    //  };
+    // };
 	return elRules;
 };
 $.fn.canvas = function(){
