@@ -620,7 +620,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (idMap.size() <= 100000) {
                 LOG.info("IDMAP CONTENTS:" + idMap.toString());
             }
-            throw new ObjectStoreException("Some skeletons where not replaced by real "
+            throw new ObjectStoreException("Some skeletons were not replaced by real "
                                        + "objects: " + skeletons.size());
         }
         LOG.info("Time spent: Equivalent object queries: " + timeSpentEquiv + ", Create object: "
