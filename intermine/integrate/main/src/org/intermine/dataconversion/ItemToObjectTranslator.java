@@ -139,6 +139,13 @@ public class ItemToObjectTranslator extends Translator
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public Object translateIdToIdentifier(Integer id) {
+        return idToIdentifier(id);
+    }
+
+    /**
      * Turn an item identifier into an object id.
      * @param identifier an item identifier
      * @return the corresponding InterMineObject id
@@ -350,7 +357,7 @@ public class ItemToObjectTranslator extends Translator
                                 InterMineObject.class));
                 } else {
                     String message = "Reference not found in class: "
-                        + DynamicUtil.decomposeClass(obj.getClass()) + "." + ref.getName()
+                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + ref.getName()
                           + " while translating Item with identifier " + item.getIdentifier();;
                     LOG.error(message);
                     throw new MetaDataException(message);

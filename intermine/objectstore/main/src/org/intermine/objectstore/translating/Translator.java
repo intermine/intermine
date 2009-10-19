@@ -17,7 +17,8 @@ import org.intermine.objectstore.query.Query;
 
 /**
  * Interface specifying operations required for inline translation of queries and data objects
- * by a translating ObjectStore
+ * by a translating ObjectStore.
+ *
  * @author Andrew Varley
  * @author Mark Woodbridge
  */
@@ -26,7 +27,8 @@ public abstract class Translator
     protected ObjectStore os;
 
     /**
-     * Set this Translator's ObjectStore
+     * Set this Translator's ObjectStore.
+     *
      * @param os the ObjectStore
      */
      public void setObjectStore(ObjectStore os) {
@@ -34,7 +36,8 @@ public abstract class Translator
      }
 
     /**
-     * Translate a query
+     * Translate a query.
+     *
      * @param query the Query to translate
      * @return the translated query
      * @throws ObjectStoreException if the query cannot be translated
@@ -42,18 +45,28 @@ public abstract class Translator
     public abstract Query translateQuery(Query query) throws ObjectStoreException;
 
     /**
-    * Translate an object entering the ObjectStore
-    * @param o the Object to translate
-    * @return the translated object
-    */
+     * Translate an object entering the ObjectStore.
+     *
+     * @param o the Object to translate
+     * @return the translated object
+     */
     public abstract Object translateToDbObject(Object o);
 
     /**
-     * Translate an object exiting the ObjectStore
+     * Translate an object exiting the ObjectStore.
+     *
      * @param o the object to translate
      * @return the translated object
      * @throws MetaDataException if item has a field that isn't in InterMine model
      */
     public abstract Object translateFromDbObject(Object o)
         throws MetaDataException;
+
+    /**
+     * Translate an object id into a native identifier.
+     *
+     * @param id the object id
+     * @return an object that represents the underlying object's identifier
+     */
+    public abstract Object translateIdToIdentifier(Integer id);
 }
