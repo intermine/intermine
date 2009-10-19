@@ -70,6 +70,15 @@ div#experimentFeatures {
   clear: both;
 }
 
+.tinylink {
+  line-height:1em;
+  font-size: 8px;
+}
+
+.tinylink a {
+  color:black;
+}
+
 </style>
 
 
@@ -143,27 +152,7 @@ div#experimentFeatures {
             <td align="center">
                <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab">TAB
-        <script type="text/javascript" charset="utf-8">
-                jQuery(document).ready(function(){
-                    jQuery('#header_${status.count}').qtip({
-                       content: 'export as tab delimited file',
-                       show: 'mouseover',
-                       hide: 'mouseout',
-                       position: {
-                           corner: {
-                              target: 'topLeft',
-                              tooltip: 'bottomLeft'
-                           }
-                       },
-                       style: {
-                          tip: 'bottomLeft',
-                          fontSize: '12px',
-                          name: 'cream',
-                          whiteSpace: 'nowrap'
-                       }
-                    });
-                });
-</script></html:link>
+               </html:link>
             
             </td>
             <td align="center">
@@ -174,6 +163,8 @@ div#experimentFeatures {
             <td align="center">
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3">GFF3</html:link>
+             <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence">SEQ</html:link>
            
             </td>
           </tr>
@@ -360,9 +351,32 @@ div#experimentFeatures {
             		<c:choose>
                		<c:when test="${factor.property != null}">
                			<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}"><c:out value="${factor.name}"/></html:link>
+                        <span class="tinylink">
+                        <im:querylink text="ALL" skipBuilder="true">
+                         <query name="" model="genomic"
+                           view="Submission.DCCid Submission.project.surnamePI Submission.title Submission.experimentType Submission.properties.type Submission.properties.name"
+                           sortOrder="Submission.experimentType asc">
+                      <node path="Submission.properties.type" type="String">
+                        <constraint op="=" value="${factor.type}" description=""
+                                    identifier="" code="A">
+                        </constraint>
+                      </node>  
+                      <node path="Submission.properties.name" type="String">
+                        <constraint op="=" value="${factor.name}" description=""
+                                    identifier="" code="B">
+                        </constraint>
+                      </node>
+                      <node path="Submission.organism.taxonId" type="Integer">
+                        <constraint op="=" value="${sub.organism.taxonId}" description=""
+                                    identifier="" code="C">
+                        </constraint>
+                      </node>
+                    </query>
+                  </im:querylink>
+                  </span>
                		</c:when>
                		<c:otherwise>
-                 		<c:out value="${factor.name}"/>          
+                 		<c:out value="${factor.name}"/><c:if test="${!status.last}">,</c:if>          
                		</c:otherwise>
            			</c:choose>
            		</c:if>      
