@@ -25,6 +25,7 @@ import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
+import org.intermine.model.bio.SubmissionData;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -35,8 +36,11 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.TypeUtil;
 
 
@@ -50,7 +54,10 @@ public class MetadataCache
     // GBrowse URLs
     private static final String GBROWSE_BASE_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
-    
+
+    // SubmissionData name for files
+    private static final String FILETYPE = "Result File";
+
     public static class GBrowseTrack
     {
         public GBrowseTrack(String organism2, String trackName) {
@@ -81,7 +88,8 @@ public class MetadataCache
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
-    private static Map<Integer, List<GBrowseTrack>> submissionTrackCache = null;
+    private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
+    private static Map<Integer, List<String>> submissionFilesCache = null;
     
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
     
@@ -102,17 +110,99 @@ public class MetadataCache
      * @return map
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
-        if (submissionTrackCache == null) {
+        if (submissionTracksCache == null) {
             readGBrowseTracks();
         }
-        return submissionTrackCache;
+        return submissionTracksCache;
+    }
+
+    /**
+     * Fetch input/output file names per submission.
+     * @param os the production objectstore
+     * @return map
+     */
+    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
+        if (submissionFilesCache == null) {
+            readSubmissionFiles(os);
+        }
+        return submissionFilesCache;
+    }
+
+    private static void readSubmissionFiles(ObjectStore os) {
+        // 
+        long startTime = System.currentTimeMillis();
+        try {
+            Query q = new Query();  
+            QueryClass qcSubmission = new QueryClass(Submission.class);
+            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+            q.addFrom(qcSubmission);
+//            q.addToSelect(qcSubmission);
+            q.addToSelect(qfDCCid);
+            
+            QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
+            QueryField qfFileName = new QueryField(qcSubmissionData, "value");
+            QueryField qfDataType = new QueryField(qcSubmissionData, "type");
+            q.addFrom(qcSubmissionData);
+            //q.addToSelect(qcSubmissionData);
+            q.addToSelect(qfFileName);
+            QueryValue fileType = new QueryValue(FILETYPE);
+            
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint sc = new SimpleConstraint(qfDataType, ConstraintOp.EQUALS, fileType);
+            cs.addConstraint(sc);
+
+            // join the tables
+            QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
+            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcSubmission);
+            cs.addConstraint(cc1);
+           
+            q.setConstraint(cs);
+            q.addToOrderBy(qfDCCid);
+            
+            Results results = os.execute(q);
+            
+            submissionFilesCache = new HashMap<Integer, List<String>>();
+            
+            Integer counter=0;
+            
+            Integer prevSub=-1;
+            List<String> subFiles = new ArrayList<String>();
+            Iterator i = results.iterator();
+            while (i.hasNext()) {
+                ResultsRow row = (ResultsRow) i.next();
+
+                counter++;
+                Integer dccId = (Integer) row.get(0);
+                String fileName = (String) row.get(1);
+
+                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
+                    if (prevSub > 0){
+                        if (counter.equals(results.size())){
+                            prevSub=dccId;
+                            subFiles.add(fileName);
+                        }                        
+                        List<String> subFilesIn = new ArrayList<String>();
+                        subFilesIn.addAll(subFiles);
+                        submissionFilesCache.put(prevSub, subFilesIn);
+                        LOG.info("ZZZ: " + prevSub + "|"+ subFilesIn);
+                        subFiles.clear();
+                    }
+                    prevSub=dccId;
+                }
+                subFiles.add(fileName);
+            }
+        }catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+        LOG.info("File names cache: " + submissionFilesCache);
     }
 
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
         
         Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
-        LOG.info("GB subTracks.size(): " + subTracksMap.size());
         
         for (DisplayExperiment exp : getExperiments(os)) {
             List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
@@ -147,6 +237,20 @@ public class MetadataCache
     }
 
     
+    /**
+     * Fetch a list of file names for a given submission.
+     * @param os the objectstore
+     * @param dccId the modENCODE submission id
+     * @return a list of file names
+     */
+    public static synchronized List<String> getFilesByDccId(ObjectStore os, 
+            Integer dccId) {
+        if (submissionFilesCache == null) {
+            readSubmissionFiles(os);
+        }
+        return new ArrayList<String>(submissionFilesCache.get(dccId));
+    }
+
     
     
     
@@ -406,16 +510,16 @@ public class MetadataCache
     private static void readGBrowseTracks() {
         long startTime = System.currentTimeMillis();
 
-        submissionTrackCache = new HashMap<Integer, List<GBrowseTrack>>();
+        submissionTracksCache = new HashMap<Integer, List<GBrowseTrack>>();
         try {
-            readTracks(submissionTrackCache,"fly");
-            readTracks(submissionTrackCache,"worm");
+            readTracks(submissionTracksCache,"fly");
+            readTracks(submissionTracksCache,"worm");
         } catch (Exception err) {
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = " 
-                + submissionTrackCache.size());
+                + submissionTracksCache.size());
     }
 
     

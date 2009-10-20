@@ -89,6 +89,8 @@ div#experimentFeatures {
 
 <div class="body">
 
+<c:set var="urlPrefix" value="http://submit.modencode.org/submit/public/get_file/"/>
+
 
 <c:forEach items="${experiments}" var="exp"  varStatus="status">
 <%-- for gbrowse: to modify and take the organism from the submission --%>
@@ -333,10 +335,11 @@ div#experimentFeatures {
         <th class="sortable"><c:out value="${factor}"></c:out></th>
       </c:forEach>
     <th>features</th>
-    <th></th>
+    <th>GBrowse and Data Files</th>
+<%--    <th>Data Files</th>
+--%>
   </tr>
 
-  
 <c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
 	<c:set var="sub" value="${subCounts.key}"></c:set>
     <tr>
@@ -409,7 +412,7 @@ div#experimentFeatures {
     	</c:if>
 	</td>
 
-        <td>
+        <td class="sorting">
         <c:if test="${!empty fly}">
 						<html:link
 							href="http://modencode2.oicr.on.ca/gb2/gbrowse/fly/?ds=${sub.dCCid}"
@@ -424,10 +427,23 @@ div#experimentFeatures {
 							<html:img src="model/images/wgb_vs.png" title="View in GBrowse" />
 						</html:link>
 					</c:if>          
-    
-          </td>
-          
 
+<%--
+          </td>         
+          <td class="sorting">
+--%>
+          <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
+						<c:if test="${subFiles.key == sub.dCCid}">
+
+							<c:forEach items="${subFiles.value}" var="fileName"
+								varStatus="file_status">
+								<br>
+								<a href="${urlPrefix}${sub.dCCid}/extracted/${fileName}"
+									 title="Download ${fileName}" class="value extlink"> <c:out value="${fileName}"/> </a>
+							</c:forEach>
+						</c:if>
+					</c:forEach>          
+          </td>
 
   </tr>
   </c:forEach>
@@ -436,5 +452,4 @@ div#experimentFeatures {
 </im:boxarea>
 </c:forEach>
 </div>
-
 <!-- /experiment.jsp -->
