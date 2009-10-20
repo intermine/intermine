@@ -94,12 +94,8 @@ public class QueryForGraphAction extends InterMineAction
         if (bag == null) {
             return null;
         }
-
         Class clazz = TypeUtil.instantiate(urlGen);
-
-
         GraphCategoryURLGenerator urlGenerator = null;
-
         if (extraKey != null) {
             Constructor constr = clazz.getConstructor(new Class[]
                                                                 {
