@@ -163,7 +163,6 @@ public class PathwayLdr extends EnrichmentWidgetLdr
                 q.addToGroupBy(qfPathwayName);
             }
         }
-        LOG.error("widget query:" + q);
         return q;
     }
 
