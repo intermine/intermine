@@ -830,6 +830,8 @@
                                  link="org.intermine.bio.web.widget.PathwayURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.PathwayLdr"
                                  label="Pathways"
+                                 filters="All datasets,KEGG,Reactome"
+                                 filterLabel="DataSet"
                                  description="Pathways enriched for genes in this list - data from KEGG and Reactome"
                                  typeClass="org.intermine.model.bio.Gene" />
                                  
