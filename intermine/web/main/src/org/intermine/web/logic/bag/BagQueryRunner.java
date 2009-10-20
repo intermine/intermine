@@ -129,7 +129,7 @@ public class BagQueryRunner
         for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
-                Map<String, Set<Integer>> resMap = new HashMap();
+                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
@@ -153,7 +153,7 @@ public class BagQueryRunner
                                     String originalInput = lowerCaseInput.get(lowerField);
                                     Set<Integer> ids = resMap.get(originalInput);
                                     if (ids == null) {
-                                        ids = new HashSet<Integer>();
+                                        ids = new LinkedHashSet<Integer>();
                                         resMap.put(originalInput, ids);
                                     }
                                     // obj is an Integer
@@ -184,7 +184,7 @@ public class BagQueryRunner
                                 if (pattern.matcher(lowerField).matches()) {
                                     Set<Integer> ids = resMap.get(wildcard);
                                     if (ids == null) {
-                                        ids = new HashSet<Integer>();
+                                        ids = new LinkedHashSet<Integer>();
                                         resMap.put(wildcard, ids);
                                     }
                                     ids.add(id);
