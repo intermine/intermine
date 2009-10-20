@@ -40,7 +40,7 @@ public class WidgetForm extends ActionForm
     private String highlight;
     private String pValue;
     private String numberOpt;
-
+    private String widgetTitle;
 
     /**
      * returns the value of the checkboxes checked by the user on the form.
@@ -256,6 +256,14 @@ public class WidgetForm extends ActionForm
      */
     public void setMax(String max) {
         this.max = max;
+    }
+
+    public void setWidgetTitle(String widgetTitle) {
+        this.widgetTitle = widgetTitle;
+    }
+
+    public String getWidgetTitle() {
+        return widgetTitle;
     }
 
     /**
