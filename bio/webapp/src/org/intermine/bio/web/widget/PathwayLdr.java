@@ -17,9 +17,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Protein;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -48,7 +48,10 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     private InterMineBag bag;
     private String namespace;
     private Model model;
-
+    private String dataset;
+    private static final String KEGG = "KEGG PATHWAY";
+    private static final String REACTOME = "Reactome data set";
+    
     /**
      * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
      * or cellular_component)
@@ -59,6 +62,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         taxonIds = BioUtil.getOrganisms(os, bag, false, true);
         model = os.getModel();
+        dataset = extraAttribute;
     }
 
     /**
@@ -108,8 +112,28 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
-
+        
         Query q = new Query();
+        
+        if (dataset.equals("KEGG") || dataset.equals("Reactome")) {
+            
+            String datasetTitle = (dataset.equals("KEGG") ? KEGG : REACTOME);
+            
+            QueryClass qcDataset = new QueryClass(DataSet.class);
+            QueryField qfDataset = new QueryField(qcDataset, "title");
+            
+            QueryCollectionReference c2 = new QueryCollectionReference(qcPathway, "dataSets");
+            cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcDataset));
+            
+            // dataset (if user selects)
+            QueryExpression c10 = new QueryExpression(QueryExpression.LOWER, qfDataset);
+            cs.addConstraint(new SimpleConstraint(c10, ConstraintOp.EQUALS,
+                                                  new QueryValue(datasetTitle.toLowerCase())));
+            
+            q.addFrom(qcDataset);
+        }
+
+        
         q.setDistinct(true);
         q.addFrom(qcGene);
         q.addFrom(qcPathway);
@@ -139,6 +163,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
                 q.addToGroupBy(qfPathwayName);
             }
         }
+        LOG.error("widget query:" + q);
         return q;
     }
 
