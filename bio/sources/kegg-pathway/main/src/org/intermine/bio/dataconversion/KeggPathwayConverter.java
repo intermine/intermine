@@ -58,7 +58,7 @@ public class KeggPathwayConverter extends BioFileConverter
      * @param model the Model
      */
     public KeggPathwayConverter(ItemWriter writer, Model model) {
-        super(writer, model, "GenomeNet", "KEGG PATHWAY");
+        super(writer, model, "GenomeNet", "KEGG pathways data set");
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
