@@ -188,9 +188,13 @@ public class WidgetAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String key = request.getParameter("key");
         String link = request.getParameter("link");
+        String allOrSelected = "All";
+        WidgetForm wf = (WidgetForm) form;
+        String widgetTitle = wf.getWidgetTitle();
         if (StringUtils.isEmpty(key)) {
-            WidgetForm wf = (WidgetForm) form;
             key = wf.getSelectedAsString();
+            allOrSelected = "Selected";
+            
         }
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
@@ -206,7 +210,15 @@ public class WidgetAction extends InterMineAction
                                                          {
             os, bag, key
                                                          });
-        return urlQuery.generatePathQuery(showAll);
+        
+        String bagType = bag.getType();
+        
+        
+        PathQuery q = urlQuery.generatePathQuery(showAll);
+        String description = allOrSelected + " " + bagType + "s from the list '" + bagName 
+            + "' for the widget '" + widgetTitle + "'";
+        q.setDescription(description);
+        return q;
     }
     
     /**

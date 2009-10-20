@@ -22,6 +22,7 @@
 <html:hidden property="bagType" value="${bag.type}"/>
 <html:hidden property="bagName" value="${bag.name}" />
 <html:hidden property="widgetid" value="${widget.id}" />
+<html:hidden property="widgetTitle" value="${widget.title}" />
 <html:hidden property="action" value="" styleId="action${widget.id}"/>
 <html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
 
