@@ -90,7 +90,7 @@ div#experimentFeatures {
 <div class="body">
 
 <c:set var="urlPrefix" value="http://submit.modencode.org/submit/public/get_file/"/>
-
+<c:set var="gbrowseBaseUrl" value="http://modencode2.oicr.on.ca/gb2/gbrowse/"/>
 
 <c:forEach items="${experiments}" var="exp"  varStatus="status">
 <%-- for gbrowse: to modify and take the organism from the submission --%>
@@ -329,14 +329,14 @@ div#experimentFeatures {
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow">
 <tr>
     <th class="sortable">DCC id</th>
-    <th class="sortable">name</th>
-    <th>date</th>
+    <th class="sortable">Name</th>
+    <th>Date</th>
       <c:forEach items="${exp.factorTypes}" var="factor">
         <th class="sortable"><c:out value="${factor}"></c:out></th>
       </c:forEach>
-    <th>features</th>
-    <th>GBrowse and Data Files</th>
-<%--    <th>Data Files</th>
+    <th>Features, GBrowse and Data Files</th>
+<%--    <th>GBrowse and Data Files</th>
+    <th>Data Files</th>
 --%>
   </tr>
 
@@ -386,65 +386,58 @@ div#experimentFeatures {
        		</c:forEach>
       </td>
 	  </c:forEach>
+
+
+<%-- FEATURES --%>
       <td class="sorting">
       	<c:if test="${!empty subCounts.value}">
       		<div class="submissionFeatures">
-      		<table cellpadding="0" cellspacing="0" border="0" class="features">
+      		<table cellpadding="0" cellspacing="0" border="0" class="features" width="100%">
       		<c:forEach items="${subCounts.value}" var="fc" varStatus="rowNumber">
             	<c:set var="class" value=""/>
         		<c:if test="${rowNumber.first}">
           			<c:set var="class" value="firstrow"/>
         		</c:if>
 				<tr>                 
-          			<td class="firstcolumn ${class}">${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value}</html:link></td>
-			        <td class="${class}" align="right">export: 
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+        			<td class="firstcolumn ${class}">${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value}</html:link></td>
+			        <td class="${class}" align="right"> export: 
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB </html:link>
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV </html:link>
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3  </html:link>
           			</td>
           			<td class="${class}" align="right">
-				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}"> CREATE LIST</html:link>
+				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">CREATE LIST</html:link>
           			</td>
       			</tr>
     		</c:forEach>
     		</table>
     		</div>
     	</c:if>
-	</td>
 
-        <td class="sorting">
+<%-- GBROWSE --%>
         <c:if test="${!empty fly}">
 						<html:link
-							href="http://modencode2.oicr.on.ca/gb2/gbrowse/fly/?ds=${sub.dCCid}"
-							target="_blank">
+							href="${gbrowseBaseUrl}fly/?ds=${sub.dCCid}" target="_blank">
 							<html:img src="model/images/dgb_vs.png" title="View in GBrowse" />
 						</html:link></c:if>
           
         <c:if test="${!empty worm}">
 						<html:link
-							href="http://modencode2.oicr.on.ca/gb2/gbrowse/worm/?ds=${sub.dCCid}"
-							target="_blank">
+							href="${gbrowseBaseUrl}worm/?ds=${sub.dCCid}" target="_blank">
 							<html:img src="model/images/wgb_vs.png" title="View in GBrowse" />
 						</html:link>
-					</c:if>          
+					</c:if>
 
-<%--
-          </td>         
-          <td class="sorting">
---%>
           <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
 						<c:if test="${subFiles.key == sub.dCCid}">
-
-							<c:forEach items="${subFiles.value}" var="fileName"
-								varStatus="file_status">
+							<c:forEach items="${subFiles.value}" var="fileName" varStatus="file_status">
 								<br>
 								<a href="${urlPrefix}${sub.dCCid}/extracted/${fileName}"
 									 title="Download ${fileName}" class="value extlink"> <c:out value="${fileName}"/> </a>
 							</c:forEach>
 						</c:if>
-					</c:forEach>          
+					</c:forEach>
           </td>
-
   </tr>
   </c:forEach>
   </table>
