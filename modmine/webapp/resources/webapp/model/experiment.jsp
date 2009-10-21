@@ -165,6 +165,8 @@ div#experimentFeatures {
             <td align="center">
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3">GFF3</html:link>
+            </td>
+            <td align="center">
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence">SEQ</html:link>
            
@@ -210,45 +212,7 @@ div#experimentFeatures {
 </c:otherwise>
 </c:choose>
 
-     <tr><td>
-<html:link
-     href="${baseUrl}${etrack.organism}/?label=${etrack.track}" target="_blank">${etrack.track}
-</html:link>
-</td>
-<td>
-<c:if test="${etrack.organism eq 'fly'}">
-<html:link href="${baseUrl}${etrack.organism}/?ref=X;label=${etrack.track}" target="_blank">X</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=2L;label=${etrack.track}" target="_blank">2L</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=2R;label=${etrack.track}" target="_blank">2R</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=3L;label=${etrack.track}" target="_blank">3L</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=3R;label=${etrack.track}" target="_blank">3R</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=4;label=${etrack.track}" target="_blank">4</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=U;label=${etrack.track}" target="_blank">U</html:link>
-</c:if>
-<c:if test="${etrack.organism eq 'worm'}">
-<html:link href="${baseUrl}${etrack.organism}/?ref=I;label=${etrack.track}" target="_blank">I</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=II;label=${etrack.track}" target="_blank">II</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=III;label=${etrack.track}" target="_blank">III</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=IV;label=${etrack.track}" target="_blank">IV</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=V;label=${etrack.track}" target="_blank">V</html:link>
- | 
-<html:link href="${baseUrl}${etrack.organism}/?ref=X;label=${etrack.track}" target="_blank">X</html:link>
-</c:if>
-
-</td>
-</tr>
 </c:forEach>
-    
     
 <c:if test="${fn:length(tracks[exp.name]) > 1 }">
  <c:if test="${!empty fly}">
