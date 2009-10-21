@@ -1552,6 +1552,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     new String[] {"strain", "strain_or_line"},
                     new String[] {"cell line", "cell_line", "Cell line", "cell id"},
                     new String[] {"array", "adf"},
+                    new String[] {"compound", "Compound"},
+                    new String[] {"incubation time", "Incubation Time"},
                     new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"}
     };
 
@@ -1569,7 +1571,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static String getPreferredSynonym(String initialLookup) {
         return makeLookupList(initialLookup).get(0);
     }
-    
+
     private static Set<String> unifyFactorNames(Collection<String> original) {
         Set<String> unified = new HashSet<String>();
         for (String name : original) {
@@ -1705,6 +1707,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("EX unified factor names: " + exFactorNames);
             
             LOG.info("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
+            LOG.info("PROP " + dccId + " typeToProp entries: " + typeToProp.entrySet());                        
             
             List<Item> allPropertyItems = new ArrayList<Item>();
             
@@ -1838,13 +1841,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             
             // There may be some other experimental factors that require SubmissionProperty objects
-            // but don't fall into the categories above.  Create them here and set experiemental
+            // but don't fall into the categories above.  Create them here and set experimental
             // factors.
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
             
                 if (exFactor.equals("food") || exFactor.equals("exposure time")
-                    || exFactor.equals("threshold")) {
+                    || exFactor.equals("threshold") || exFactor.equals("compound")) {
                     List<Item> extraPropItems = new ArrayList<Item>();
                     extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
                             typeToProp, new String[] {exFactor}));
