@@ -136,14 +136,12 @@ public class MetadataCache
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
-//            q.addToSelect(qcSubmission);
             q.addToSelect(qfDCCid);
             
             QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
             QueryField qfFileName = new QueryField(qcSubmissionData, "value");
             QueryField qfDataType = new QueryField(qcSubmissionData, "type");
             q.addFrom(qcSubmissionData);
-            //q.addToSelect(qcSubmissionData);
             q.addToSelect(qfFileName);
             QueryValue fileType = new QueryValue(FILETYPE);
             
@@ -184,7 +182,6 @@ public class MetadataCache
                         List<String> subFilesIn = new ArrayList<String>();
                         subFilesIn.addAll(subFiles);
                         submissionFilesCache.put(prevSub, subFilesIn);
-                        LOG.info("ZZZ: " + prevSub + "|"+ subFilesIn);
                         subFiles.clear();
                     }
                     prevSub=dccId;
@@ -196,7 +193,6 @@ public class MetadataCache
         }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed file names cache, took: " + timeTaken + "ms");
-        LOG.info("File names cache: " + submissionFilesCache);
     }
 
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
@@ -216,7 +212,6 @@ public class MetadataCache
                 }
             }
         }
-
         return tracks;
     }
     
@@ -251,8 +246,19 @@ public class MetadataCache
         return new ArrayList<String>(submissionFilesCache.get(dccId));
     }
 
-    
-    
+    /**
+     * Fetch a list of file names for a given submission.
+     * @param os the objectstore
+     * @param dccId the modENCODE submission id
+     * @return a list of file names
+     */
+    public static synchronized List<GBrowseTrack> getTracksByDccId(Integer dccId) {
+        if (submissionTracksCache == null) {
+            readGBrowseTracks();
+        }
+        return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
+    }
+
     
     /**
      * Fetch a map from feature type to count for a given submission.
@@ -326,12 +332,10 @@ public class MetadataCache
         long startTime = System.currentTimeMillis();
         Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
         
-        
         try {
             Query q = new Query();  
             QueryClass qcProject = new QueryClass(Project.class);
             QueryField qcName = new QueryField(qcProject, "name");
-
             
             q.addFrom(qcProject);
             q.addToSelect(qcProject);
@@ -440,7 +444,6 @@ public class MetadataCache
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         
-        
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
         submissionIdCache = new HashMap<Integer, Integer>();
         
@@ -496,12 +499,7 @@ public class MetadataCache
         LOG.info("Primed submission cache, took: " + timeTaken + "ms");
     }
 
-    
-    
-    
-    
-    
-    
+
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
@@ -534,18 +532,18 @@ public class MetadataCache
             URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
             String line;
-            
+            // TODO parse also name
             while ((line = reader.readLine()) != null) {
                 String[] result = line.split("\\s");
                 String trackName = result[0];
-                GBrowseTrack questa = new GBrowseTrack(organism,trackName);
+                GBrowseTrack newTrack = new GBrowseTrack(organism,trackName);
 
                 for (int x=1; x<result.length; x++) {
                     if (containsOnlyNumbers(result[x])) {
                         // this is a submission number                        
                         Integer dccId = Integer.parseInt(result[x]);
                         // add to map sub trackname
-                        addToGBMap(submissionTrackCache,dccId, questa);
+                        addToGBMap(submissionTrackCache,dccId, newTrack);
                     }
                 }
             }

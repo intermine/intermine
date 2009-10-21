@@ -415,18 +415,39 @@ div#experimentFeatures {
     	</c:if>
 
 <%-- GBROWSE --%>
-        <c:if test="${!empty fly}">
-						<html:link
-							href="${gbrowseBaseUrl}fly/?ds=${sub.dCCid}" target="_blank">
-							<html:img src="model/images/dgb_vs.png" title="View in GBrowse" />
-						</html:link></c:if>
-          
-        <c:if test="${!empty worm}">
-						<html:link
-							href="${gbrowseBaseUrl}worm/?ds=${sub.dCCid}" target="_blank">
-							<html:img src="model/images/wgb_vs.png" title="View in GBrowse" />
-						</html:link>
-					</c:if>
+
+          <c:forEach items="${subTracks}" var="subTracks" varStatus="subt_status">
+            <c:if test="${subTracks.key == sub.dCCid}">
+          <table cellpadding="0" cellspacing="0" border="0" class="internal" >
+<tr><td>
+         <c:forEach items="${subTracks.value}" var="track" varStatus="track_status">
+<c:choose>
+<c:when test="${track_status.first}">
+     <c:set var="urlabels" value="${track.track}" /> 
+</c:when>
+<c:otherwise>
+     <c:set var="urlabels" value="${urlabels}-${track.track}" /> 
+</c:otherwise>
+</c:choose>
+
+     <c:set var="organism" value="${track.organism}" /> 
+
+            <html:link
+              href="${gbrowseBaseUrl}${organism}/?label=${track.track}" title="View ${track.track} in GBrowse" target="_blank"><c:out value="${track.track}"/>
+            </html:link>
+            <br>
+              </c:forEach>
+</td><td>
+            <html:link
+              href="${gbrowseBaseUrl}${organism}/?label=${urlabels}" target="_blank">
+              <html:img src="model/images/${organism}_gb.png" title="View all relevant tracks in GBrowse" />
+            </html:link>
+            </td></tr>
+            </table>
+            </c:if>
+          </c:forEach>
+
+<%-- FILES --%>
 
           <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
 						<c:if test="${subFiles.key == sub.dCCid}">
