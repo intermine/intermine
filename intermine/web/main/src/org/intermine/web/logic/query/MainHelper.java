@@ -79,6 +79,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
@@ -1525,10 +1527,15 @@ public class MainHelper
         subQ.addToSelect(qf);
         qf = new QueryField(subQ, qf);
         Class summaryType = qf.getType();
-        if ((summaryType == Long.class) || (summaryType == Integer.class)
-                || (summaryType == Short.class) || (summaryType == Byte.class)
-                || (summaryType == Float.class) || (summaryType == Double.class)
-                || (summaryType == BigDecimal.class)) {
+        QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath);
+        String fieldName = origQf.getFieldName();
+        String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement())
+                .getType());
+        if (((summaryType == Long.class) || (summaryType == Integer.class)
+                    || (summaryType == Short.class) || (summaryType == Byte.class)
+                    || (summaryType == Float.class) || (summaryType == Double.class)
+                    || (summaryType == BigDecimal.class)) && (!SummaryConfig
+                    .summariseAsOccurrences(className + "." + fieldName))) {
             QueryNode min = new QueryFunction(qf, QueryFunction.MIN);
             QueryNode max = new QueryFunction(qf, QueryFunction.MAX);
             QueryNode avg = new QueryFunction(qf, QueryFunction.AVERAGE);
@@ -1541,7 +1548,11 @@ public class MainHelper
             pathToQueryNode.put("Maximum", max);
             pathToQueryNode.put("Average", avg);
             pathToQueryNode.put("Standard Deviation", stddev);
-        } else if ((summaryType == String.class) || (summaryType == Boolean.class)) {
+        } else if ((summaryType == String.class) || (summaryType == Boolean.class)
+                || (summaryType == Long.class) || (summaryType == Integer.class)
+                || (summaryType == Short.class) || (summaryType == Byte.class)
+                || (summaryType == Float.class) || (summaryType == Double.class)
+                || (summaryType == BigDecimal.class)) {
             q.addToSelect(qf);
             q.addToGroupBy(qf);
             QueryNode count = new QueryFunction();
@@ -1593,6 +1604,47 @@ public class MainHelper
          */
         public ConstraintSet getChild() {
             return child;
+        }
+    }
+
+    /**
+     * Controls access to configuration information on which fields should be summarised as a count
+     * of occurrences.
+     *
+     * @author Matthew Wakeling
+     */
+    protected static class SummaryConfig
+    {
+        private static Set<String> config;
+
+        static {
+            config = new HashSet<String>();
+            String stringConfig = PropertiesUtil.getProperties()
+                .getProperty("querySummary.summariseAsOccurrences");
+            if (stringConfig != null) {
+                String stringConfigs[] = stringConfig.split(",");
+                for (String configEntry : stringConfigs) {
+                    configEntry = configEntry.trim();
+                    if (configEntry.contains(" ")) {
+                        throw new IllegalArgumentException("querySummary.summariseAsOccurrences "
+                                + "property contains an entry with a space: \"" + configEntry
+                                + "\". Entries should be comma-separated.");
+                    }
+                    config.add(configEntry);
+                }
+            }
+        }
+
+        /**
+         * Returns whether the given field name is configured to be summarised as a count of
+         * occurrences.
+         *
+         * @param fieldName a class name, a dot, and a field name
+         * @return true if the field should be summarised as a count of occurrences, false for
+         * a mean and standard deviation.
+         */
+        public static boolean summariseAsOccurrences(String fieldName) {
+            return config.contains(fieldName);
         }
     }
 }
