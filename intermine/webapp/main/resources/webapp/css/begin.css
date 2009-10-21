@@ -36,15 +36,14 @@ ol#news li {
   height:100px;
   width:50%;
   overflow-y: auto;
-  #border-top:1px solid #000;
-  #border-right:1px solid #CCC;
   border-bottom:1px solid #CCC;
-  #border-left:1px solid #000;
 }
 
 #tipbox {
     width:40%;
-	float:right; border-left:1px solid #CCC; padding-left:15px;}
+	float:right; 
+	border-left:1px solid #CCC; 
+	padding-left:15px;}
 
 #tipbox h3 {
 	margin:0px 0px 5px 0px;

@@ -10,7 +10,6 @@
 
 <div class="body">
 
-<link rel="stylesheet" href="model/css/frontpage_sections.css" type="text/css" media="screen" title="no title" charset="utf-8">
 <!-- Entry point section -->
 <div align="center">
 <div class="frontpage_sections">
