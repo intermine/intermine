@@ -136,6 +136,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
     Map<Integer, SubmissionReference> submissionRefs = null;
+    private IdResolverFactory resolverFactory= null;
+    private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
     
     
     private static class SubmissionDetails
@@ -289,6 +291,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processEFactor(connection);
         LOG.info("TIME experimentalFactors" + ":   " + (System.currentTimeMillis() - bT));
 
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
+        
         bT = System.currentTimeMillis();
         processSubmissionProperties(connection);
         LOG.info("TIME submissionProperties" + ":   "  + (System.currentTimeMillis() - bT));
@@ -1679,7 +1683,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         writer.flush();
         writer.close();
-        
+
         // Characteristics are modeled differently to protocol inputs/outputs, read in extra
         // properties here
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
@@ -2219,6 +2223,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "antigen", "antigen");
                     setAttributeOnProp(prop, propItem, "host", "hostOrganism");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
+                    
+                    if (prop.details.containsKey("target id")) {
+                        if (prop.details.get("target id").size() != 1) {
+                            throw new RuntimeException("Antibody should only have one target id: "
+                                    + prop.details.get("target id"));
+                        }
+                        String geneItemId = getTargetGeneItemIdentfier(prop.details.get("target id").get(0));
+                        if (geneItemId != null) {
+                            propItem.setReference("target", geneItemId);
+                        }
+                    }
                 } else if (clsName.equals("Array")) {
                     setAttributeOnProp(prop, propItem, "platform", "platform");
                     setAttributeOnProp(prop, propItem, "resolution", "resolution");
@@ -2254,6 +2269,44 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }       
       
+    private String getTargetGeneItemIdentfier(String geneTargetIdText) throws ObjectStoreException {
+        String geneItemId = null;
+        if (geneTargetIdText.startsWith("fly_genes:")) {
+            String flyStart = "fly_genes:";
+            if (geneTargetIdText.startsWith(flyStart)) {
+                String id = geneTargetIdText.substring(flyStart.length());
+
+                IdResolver resolver = resolverFactory.getIdResolver();
+                int resCount = resolver.countResolutions("7227", id);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring "
+                            + "gene: " + id + " count: " + resCount + " FBgn: "
+                            + resolver.resolveId("7227", id) + " for string: "
+                            + geneTargetIdText);
+                } else {
+                    String primaryIdentifier = 
+                        resolver.resolveId("7227", id).iterator().next();
+                    geneItemId = geneToItemIdentifier.get(primaryIdentifier);
+                    LOG.info("RESOLVER found gene " + primaryIdentifier 
+                            + " for string: " + geneTargetIdText);
+                    if (geneItemId == null) {
+                        Item gene = getChadoDBConverter().createItem("Gene");
+                        geneItemId = gene.getIdentifier();
+                        gene.setAttribute("primaryIdentifier", primaryIdentifier);
+                        getChadoDBConverter().store(gene);
+                        geneToItemIdentifier.put(primaryIdentifier, geneItemId);
+                    } else {
+                        LOG.info("RESOLVER fetched gene from cache: " + primaryIdentifier);
+                    }
+                }
+            } else if (geneTargetIdText.startsWith("worm_genes:")) {
+                // TODO add worm gene resolver, we don't have any worm 
+                // antibodies yet
+            }
+        }
+        return geneItemId;
+    }
+
     private List<Item> lookForAttributesInOtherWikiPages(String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
             throws ObjectStoreException {
