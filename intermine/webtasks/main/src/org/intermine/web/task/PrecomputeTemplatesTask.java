@@ -120,6 +120,7 @@ public class PrecomputeTemplatesTask extends Task
         } else {
             doSummarise = false;
         }
+        LOG.info("Set summarise to " + doSummarise + " (with string " + summarise + ")");
     }
 
     /**

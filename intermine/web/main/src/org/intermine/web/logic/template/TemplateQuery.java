@@ -298,7 +298,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
             Query q = TemplateHelper.getPrecomputeQuery(this, null, node);
-            LOG.error("Running query: " + q);
+            LOG.info("Summarising template " + getName() + " by running query: " + q);
             List results = os.execute(q, 0, 20, true, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.size() < 20) {
                 List values = new ArrayList();
