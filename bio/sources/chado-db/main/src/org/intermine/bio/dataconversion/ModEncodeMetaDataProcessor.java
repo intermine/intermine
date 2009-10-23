@@ -383,7 +383,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             FeatureData featureData = featureMap.get(featureId);
             if (featureData == null) {
-                LOG.info("Check feature type: no data for feature_id: " + featureId
+                LOG.debug("Check feature type: no data for feature_id: " + featureId
                         + " in processDataFeatureTable(), data_id =" + dataId);
                 continue;
             }
