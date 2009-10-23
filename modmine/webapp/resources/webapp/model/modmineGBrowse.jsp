@@ -64,7 +64,7 @@
      <c:set var="ds" value="${sub.dCCid}" /> 
 </c:when>
 <c:otherwise>
-     <c:set var="ds" value="${ds}+${sub.dCCid}" /> 
+     <c:set var="ds" value="${ds}-${sub.dCCid}" /> 
 </c:otherwise>
 </c:choose>
       </c:forEach>
@@ -75,7 +75,7 @@
     </div>
     <c:if test="${cld.unqualifiedName != 'Chromosome'}">
         <html:img style="border: 1px solid black" 
-        src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};type=${type};ds=${ds};width=400;b=1" title="GBrowse"/>
+        src="${WEB_PROPERTIES['gbrowse_image.prefix']}/${gbrowseSource}/?start=${start};end=${end};ref=${ref};ds=${ds};width=400;b=1" title="GBrowse"/>
 </c:if>
   </html:link>
 <br>
