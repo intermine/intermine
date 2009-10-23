@@ -301,12 +301,19 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             LOG.info("Summarising template " + getName() + " by running query: " + q);
             List results = os.execute(q, 0, 20, true, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.size() < 20) {
-                List values = new ArrayList();
-                Iterator resIter = results.iterator();
-                while (resIter.hasNext()) {
-                    values.add(((List) resIter.next()).get(0));
+                if (node.isAttribute() || results.isEmpty()) {
+                    List values = new ArrayList();
+                    Iterator resIter = results.iterator();
+                    while (resIter.hasNext()) {
+                        values.add(((List) resIter.next()).get(0));
+                    }
+                    possibleValues.put(node.getPathString(), values);
+                } else {
+                    LOG.error("Editable node " + node.getPathString() + " in template "
+                            + getName() + " cannot be summarised as it is a LOOKUP constraint, "
+                            + "although it has only " + results.size() + " possible values. "
+                            + "Consider changing the node that the constraint is attached to");
                 }
-                possibleValues.put(node.getPathString(), values);
             }
         }
         // Now write the summary to the user profile database.
@@ -326,12 +333,23 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             }
             TemplateSummary templateSummary = new TemplateSummary();
             templateSummary.setTemplate(savedTemplateQuery);
+            String summaryText = Base64.encodeObject(possibleValues);
+            if (summaryText == null) {
+                throw new RuntimeException("Serialised summary is null");
+            }
             templateSummary.setSummary(Base64.encodeObject(possibleValues));
             osw.store(templateSummary);
         } catch (ObjectStoreException e) {
             if (osw.isInTransaction()) {
                 osw.abortTransaction();
             }
+            LOG.error("ObjectStoreException while storing summary for " + getName());
+            throw e;
+        } catch (RuntimeException e) {
+            if (osw.isInTransaction()) {
+                osw.abortTransaction();
+            }
+            LOG.error("ObjectStoreException while storing summary for " + getName());
             throw e;
         } finally {
             if (osw.isInTransaction()) {
