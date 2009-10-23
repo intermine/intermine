@@ -510,8 +510,10 @@ public class MetadataCache
 
         submissionTracksCache = new HashMap<Integer, List<GBrowseTrack>>();
         try {
-            readTracks(submissionTracksCache,"fly");
-            readTracks(submissionTracksCache,"worm");
+//            readTracks(submissionTracksCache,"fly");
+//            readTracks(submissionTracksCache,"worm");
+            readTracks("fly");
+            readTracks("worm");
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -525,10 +527,11 @@ public class MetadataCache
      * Method to read the list of GBrowse tracks for a given organism
      * 
      * @param organism (i.e. fly or worm)
-     * @return submissionTrackCache
+     * @return submissionTracksCache
      */
-    private static Map<Integer, List<GBrowseTrack>> readTracks(Map<Integer, List<GBrowseTrack>> submissionTrackCache, String organism) {
-        try {
+//    private static Map<Integer, List<GBrowseTrack>> readTracks(Map<Integer, List<GBrowseTrack>> submissionTracksCache, String organism) {
+    private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
+                try {
             URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
             String line;
@@ -537,24 +540,42 @@ public class MetadataCache
                 String[] result = line.split("\\s");
                 String trackName = result[0];
                 GBrowseTrack newTrack = new GBrowseTrack(organism,trackName);
-
-                for (int x=1; x<result.length; x++) {
-                    if (containsOnlyNumbers(result[x])) {
-                        // this is a submission number                        
-                        Integer dccId = Integer.parseInt(result[x]);
-                        // add to map sub trackname
-                        addToGBMap(submissionTrackCache,dccId, newTrack);
-                    }
-                }
+                // look for dccId in the line
+                parseTokens(result, newTrack, 1);
+                // look for dccId in the track name
+                String[] nameSplit = trackName.split("_");
+                parseTokens(nameSplit, newTrack, 0);
             }
             reader.close();
         } catch (Exception err) {
             err.printStackTrace();
         }
-        return submissionTrackCache;
+        return submissionTracksCache;
     }
-    
-    
+
+    /**
+     * This method looks for dccId in the tokenised line 
+     * or the tokenised track name
+     * In the first case it uses an offset: the last token is always part of
+     * the description even if it is a number (e.g. Green Lab ESTs 2008-12-02 set 1)
+     * 
+     * @param tokes the array of tokens
+     * @param track the GBrowse track
+     * @param offset: needed to exclude last token in line parsing (see above) 
+     */
+    private static void parseTokens(String[] tokens,
+            GBrowseTrack track, Integer offset) {
+        // 
+        for (int x=1; x<(tokens.length -offset); x++) {
+            if (containsOnlyNumbers(tokens[x])) {
+                // this is a submission Id                        
+                Integer dccId = Integer.parseInt(tokens[x]);
+                // add to map sub trackname
+                addToGBMap(submissionTracksCache,dccId, track);
+            }
+        }
+    }
+
     /**
      * This method adds a GBrowse track to a map with
      * key = dccId
