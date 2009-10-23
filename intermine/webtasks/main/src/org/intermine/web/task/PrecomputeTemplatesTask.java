@@ -61,7 +61,7 @@ public class PrecomputeTemplatesTask extends Task
     protected String username;
     protected String ignore = "";
     protected Set ignoreNames = new HashSet();
-    protected boolean doSummarise = false;
+    protected boolean doSummarise = true;
 
     /**
      * Set the ObjectStore alias
@@ -109,10 +109,10 @@ public class PrecomputeTemplatesTask extends Task
      * @param summarise if true, summarise while precomputing
      */
     public void setSummarise(String summarise) {
-        if (summarise.equals("true")) {
-            doSummarise = true;
-        } else {
+        if (summarise.equals("false")) {
             doSummarise = false;
+        } else {
+            doSummarise = true;
         }
         LOG.info("Set summarise to " + doSummarise + " (with string " + summarise + ")");
     }
