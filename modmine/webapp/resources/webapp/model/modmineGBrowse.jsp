@@ -3,10 +3,14 @@
 
 <!-- modmineGBrowse.jsp -->
 <%--TODO check all this cases, with list of possible types from toronto --%>
+<%--
 <c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || cld.unqualifiedName == 'Chromosome')
                 && cld.unqualifiedName != 'Exon'
                 && cld.unqualifiedName != 'CDS'}">
+--%>
+<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
+                || cld.unqualifiedName == 'Chromosome')}">
 
   <c:set var="type" value="${cld.unqualifiedName}s"/>
 
