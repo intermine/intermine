@@ -176,12 +176,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         
         // for piano (sub 515) 
         // Note: UST gives no results (?)
-        // TODO: check
-        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
-        processLocationTable(connection, matchUSTLocRes);
-
-        ResultSet matchRSTLocRes = getRSTMatchLocResultSet(connection);
-        processLocationTable(connection, matchRSTLocRes);
+        // TODO: check, and run only if necessary
+        // removed for build (none present)
+//        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
+//        processLocationTable(connection, matchUSTLocRes);
+//
+//        ResultSet matchRSTLocRes = getRSTMatchLocResultSet(connection);
+//        processLocationTable(connection, matchRSTLocRes);
 
        
         processFeatureScores(connection);
