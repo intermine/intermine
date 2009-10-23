@@ -1801,6 +1801,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             StringBuilder orderIndex = new StringBuilder();
             boolean needComma = false;
             for (QueryOrderable orderElement : q.getOrderBy()) {
+                if (orderElement instanceof OrderDescending) {
+                    orderElement = ((OrderDescending) orderElement).getQueryOrderable();
+                }
                 qn = orderElement;
                 String alias = aliases.get(orderElement);
                 if (alias == null) {

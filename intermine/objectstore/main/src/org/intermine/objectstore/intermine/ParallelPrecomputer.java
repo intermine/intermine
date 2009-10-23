@@ -243,13 +243,15 @@ public class ParallelPrecomputer
                         threads.put(new Integer(threadNo), job.getKey());
                         LOG.info("Threads doing: " + threads);
                     }
-                    executeJob(job, threadNo);
+                    try {
+                        executeJob(job, threadNo);
+                    } catch (Exception e) {
+                        // Something has gone wrong.
+                        exceptions.add(e);
+                    }
                 }
             } catch (NoSuchElementException e) {
                 // Empty
-            } catch (Exception e) {
-                // Something has gone wrong.
-                exceptions.add(e);
             } finally {
                 LOG.info("Thread " + threadNo + " finished");
                 synchronized (threads) {
