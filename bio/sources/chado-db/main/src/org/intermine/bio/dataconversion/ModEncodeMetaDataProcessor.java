@@ -1637,7 +1637,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
             String attDbxref = res.getString("att_dbxref");
-            String dbUrl = res.getString("db_url");
             
             Integer submissionId = dataSubmissionMap.get(dataId);
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
@@ -2494,18 +2493,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     protected ResultSet getAppliedDataResultSetAll(Connection connection)
     throws SQLException {
+
+        String SRA_ACC = "SRA acc";
+        
         String query = "SELECT d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " c.name as cv_term,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id as att_dbxref,"
-            + " db.name as db_name, db.url as db_url"
+            + " a.dbxref_id as att_dbxref"
             + " FROM data d"
             + " LEFT JOIN data_attribute da ON (d.data_id = da.data_id)"
             + " LEFT JOIN attribute a ON (da.attribute_id = a.attribute_id)"
             + " LEFT JOIN cvterm c ON (d.type_id = c.cvterm_id)"
             + " LEFT JOIN dbxref as x ON (a.dbxref_id = x.dbxref_id)"
-            + " LEFT JOIN db on (x.db_id = db.db_id)"
+            + " WHERE d.name != '" + SRA_ACC + "'"
             + " ORDER BY d.data_id";
         
         LOG.info("executing: " + query);
