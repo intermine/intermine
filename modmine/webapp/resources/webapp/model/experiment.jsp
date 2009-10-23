@@ -79,6 +79,11 @@ div#experimentFeatures {
   color:black;
 }
 
+.filelink a {
+  font-size: 11px;
+}
+
+
 </style>
 
 
@@ -395,7 +400,9 @@ All GBrowse tracks generated for this experiment:
           <c:forEach items="${subTracks}" var="subTracks" varStatus="subt_status">
             <c:if test="${subTracks.key == sub.dCCid}">
           <table cellpadding="0" cellspacing="0" border="0" class="internal" >
-<tr><td>
+<tr>
+<td>GBrowse tracks: </td>
+<td>
          <c:forEach items="${subTracks.value}" var="track" varStatus="track_status">
 <c:choose>
 <c:when test="${track_status.first}">
@@ -425,16 +432,22 @@ All GBrowse tracks generated for this experiment:
 
 <%-- FILES --%>
 
-          <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
+          <span class="filelink">
+                     <c:forEach
+						items="${files}" var="subFiles" varStatus="sub_status">
 						<c:if test="${subFiles.key == sub.dCCid}">
-							<c:forEach items="${subFiles.value}" var="fileName" varStatus="file_status">
+							<c:forEach items="${subFiles.value}" var="fileName"
+								varStatus="file_status">
 								<br>
 								<a href="${urlPrefix}${sub.dCCid}/extracted/${fileName}"
-									 title="Download ${fileName}" class="value extlink"> <c:out value="${fileName}"/> </a>
+									title="Download ${fileName}" class="value extlink"> <c:out
+									value="${fileName}" /> </a>
 							</c:forEach>
 						</c:if>
 					</c:forEach>
-          </td>
+					</span>
+					
+					</td>
   </tr>
   </c:forEach>
   </table>
