@@ -55,9 +55,6 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class FeaturesAction extends InterMineAction
 {
-
-    private static int bagCounter = 0;
-    
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers in text field.
      *
