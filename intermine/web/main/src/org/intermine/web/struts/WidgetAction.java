@@ -75,8 +75,10 @@ public class WidgetAction extends InterMineAction
     throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         String key = request.getParameter("key");
-        if ((key != null && key.length() != 0  && !widgetForm.getAction().equals("displayAll")) 
-                        || (widgetForm.getAction().equals("display"))) {
+        String action = widgetForm.getAction();
+        // user clicked on a count on a widget OR checked some boxes and clicked 'display'
+        if ((!StringUtils.isEmpty(key) && (action == null || !action.equals("displayAll"))) 
+                        || (action.equals("display"))) {
             return display(mapping, form, request, response);
         } else if (widgetForm.getAction().equals("displayAll")) {
             return displayAll(mapping, form, request, response);
