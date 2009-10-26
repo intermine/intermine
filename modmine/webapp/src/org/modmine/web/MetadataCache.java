@@ -34,6 +34,7 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -56,16 +57,16 @@ public class MetadataCache
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
 
     // SubmissionData name for files
-    private static final String FILETYPE = "Result File";
+    private static final String FILETYPE = "%file";
 
     public static class GBrowseTrack
     {
+        private String organism; // {fly,worm} 
+        private String track;    // e.g. LIEB_WIG_CHIPCHIP_POL2
         public GBrowseTrack(String organism2, String trackName) {
             this.organism  = organism2;
             this.track = trackName;
         }
-        private String organism; // {fly,worm} 
-        private String track;    // e.g. LIEB_WIG_CHIPCHIP_POL2
         
         /**
          * @return the organism
@@ -79,9 +80,7 @@ public class MetadataCache
          */
         public String getTrack() {
             return track;
-        }
-
-        
+        } 
     }
 
     
@@ -90,6 +89,8 @@ public class MetadataCache
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
     private static Map<Integer, List<String>> submissionFilesCache = null;
+    private static long lastTrackCacheRefresh = 0;
+    private static final long ONE_HOUR = 3600000;
     
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
     
@@ -110,8 +111,10 @@ public class MetadataCache
      * @return map
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
-        if (submissionTracksCache == null) {
+        long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
+        if (timeSinceLastRefresh > ONE_HOUR) {
             readGBrowseTracks();
+            lastTrackCacheRefresh = System.currentTimeMillis();
         }
         return submissionTracksCache;
     }
@@ -146,12 +149,14 @@ public class MetadataCache
             QueryValue fileType = new QueryValue(FILETYPE);
             
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            SimpleConstraint sc = new SimpleConstraint(qfDataType, ConstraintOp.EQUALS, fileType);
+            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER, 
+                    qfDataType), ConstraintOp.MATCHES, fileType);
             cs.addConstraint(sc);
 
             // join the tables
             QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
-            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcSubmission);
+            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
+                    qcSubmission);
             cs.addConstraint(cc1);
            
             q.setConstraint(cs);
