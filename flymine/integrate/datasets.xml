@@ -365,15 +365,27 @@
     <item id="540" class="" implements="DataSource">
         <attribute name="name" value="GeneDB"/>
         <attribute name="description" value="Database of the Sanger Institute Pathogen Sequencing Unit's (PSU) activities "/>
-        <attribute name="url" value="http://www.genedb.org/"/>
+        <attribute name="url" value="http://www.genedb.org"/>
     </item>
 
     <item id="550" class="" implements="DataSource">
         <attribute name="name" value="Reactome"/>
         <attribute name="description" value="Curated knowledgebase of biological pathways"/>
-        <attribute name="url" value="http://www.reactome.org/"/>
+        <attribute name="url" value="http://www.reactome.org"/>
     </item>
-
+    <item id="551" class="" implements="DataSet">
+        <attribute name="title" value="Reactome data set"/>
+        <attribute name="description" value="Reactome data"/>
+        <attribute name="url" value="http://www.reactome.org/download/index.html"/>
+        <reference name="dataSource" ref_id="550"/>
+    </item>
+    <item id="552" class="" implements="DataSet">
+        <attribute name="title" value="FlyReactome data set"/>
+        <attribute name="description" value="Curated Reactome data"/>
+        <attribute name="url" value="http://fly.reactome.org"/>
+        <reference name="dataSource" ref_id="550"/>
+    </item>
+    
     <item id="560" class="" implements="DataSource">
         <attribute name="name" value="HGNC"/>
         <attribute name="description" value="HUGO Gene Nomenclature Committee"/>
