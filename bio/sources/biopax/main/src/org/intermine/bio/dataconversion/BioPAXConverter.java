@@ -61,15 +61,18 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private Set<String> taxonIds = new HashSet();
     private Map<String, String[]> configs = new HashMap();
     private OrganismRepository or;
-    private String dataSourceName, dbName, identifierField;
+    private String dbName, identifierField;
+    private String dataSourceRefId = null, dataSourceName = null;
     private String curated = "false";
     
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param intermineModel the Model
+     * @throws ObjectStoreException if something goes horribly wrong
      */
-    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) {
+    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) 
+    throws ObjectStoreException {
         super(writer, intermineModel);        
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");        
@@ -85,12 +88,11 @@ public class BioPAXConverter extends FileConverter implements Visitor
     @Override
     public void process(@SuppressWarnings("unused") Reader reader) throws Exception {
         String taxonId = getTaxonId();
-        
         if (taxonId == null) {
             // this file isn't from an organism specified in the project file
             return;
         }
-        
+        setDataset();
         setOrganism(taxonId);        
         setConfig(taxonId);
         
@@ -136,17 +138,23 @@ public class BioPAXConverter extends FileConverter implements Visitor
         this.dataSourceName = name;
         Item datasource = createItem("DataSource");
         datasource.setAttribute("name", name);
-
-        dataset = createItem("DataSet");
-        dataset.setAttribute("title", name + " data set");
-        dataset.setReference("dataSource", datasource);
-
         try {
             store(datasource);
-            store(dataset);
         } catch (ObjectStoreException e) {
             throw new ObjectStoreException(e);
         }
+        dataSourceRefId = datasource.getIdentifier();
+    }
+    
+    /**
+     * @param title name of dataset
+     * @throws ObjectStoreException if storing datasource fails
+     */
+    public void setBiopaxDatasetname(String title) 
+    throws ObjectStoreException {
+        dataset = createItem("DataSet");
+        dataset.setAttribute("title", title);
+
     }
     
     private void readConfig() {
@@ -347,7 +355,20 @@ public class BioPAXConverter extends FileConverter implements Visitor
             throw new ObjectStoreException(e);
         }
     }
-
+    
+    private void setDataset() 
+    throws ObjectStoreException {
+        if (dataset.getReference("dataSource") == null) {
+            dataset.setReference("dataSource", dataSourceRefId);
+            try {
+                store(dataset);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+        }
+    }
+    
+    
     /**
      * Use the file name currently being processed to divine the name of the organism.  Return null
      * if this taxonId is not in our list of taxonIds to be processed.
