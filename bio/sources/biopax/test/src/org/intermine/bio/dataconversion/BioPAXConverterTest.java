@@ -46,6 +46,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
 
         File currentFile = new File(getClass().getClassLoader().getResource(TEST_FILE).toURI());
         converter.setBiopaxDatasourcename("Reactome");
+        converter.setBiopaxDatasetname("Reactome data set");
         converter.setCurrentFile(currentFile);
         //converter.setBiopaxOrganisms("9913");
         converter.setBiopaxOrganisms("7227");
