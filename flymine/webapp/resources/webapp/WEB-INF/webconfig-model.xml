@@ -424,7 +424,7 @@
       <fieldconfig fieldExpr="name" />
     </fields>
     <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="pathwayLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
