@@ -456,7 +456,4 @@ public class TemplateHelper
         }
         return false;
     }
-
-
-
 }

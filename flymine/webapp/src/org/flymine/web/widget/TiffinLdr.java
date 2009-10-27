@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.intermine.api.profile.InterMineBag;
+import org.apache.log4j.Logger;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
@@ -36,13 +36,14 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 /**
  * @author Julie Sullivan
  */
 public class TiffinLdr extends EnrichmentWidgetLdr
 {
-
+    private static final Logger LOG = Logger.getLogger(TiffinLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
@@ -104,7 +105,7 @@ public class TiffinLdr extends EnrichmentWidgetLdr
          cs.addConstraint(new ContainsConstraint(qr3, ConstraintOp.CONTAINS, qcTFBindingSite));
 
          QueryCollectionReference qr4 =
-             new QueryCollectionReference(qcTFBindingSite, "evidence");
+             new QueryCollectionReference(qcTFBindingSite, "dataSets");
          cs.addConstraint(new ContainsConstraint(qr4, ConstraintOp.CONTAINS, qcDataSet));
 
          QueryObjectReference  qr5 = new QueryObjectReference(qcTFBindingSite, "motif");
@@ -112,50 +113,46 @@ public class TiffinLdr extends EnrichmentWidgetLdr
 
          cs.addConstraint(new SimpleConstraint(qfDataSet,
                                                ConstraintOp.EQUALS, new QueryValue("Tiffin")));
-         Query subQ = new Query();
-         subQ.setDistinct(true);
-
-         subQ.addFrom(qcGene);
-         subQ.addFrom(qcIntergenicRegion);
-         subQ.addFrom(qcTFBindingSite);
-         subQ.addFrom(qcDataSet);
-         subQ.addFrom(qcMotif);
-         subQ.addFrom(qcOrganism);
-
-         subQ.addToSelect(qfGeneId);
-
-         subQ.setConstraint(cs);
-
-         if (keys != null) {
-             return subQ;
-         }
-
-         QueryField outerQfId = new QueryField(subQ, qfId);
-         QueryFunction geneCount = new QueryFunction();
-
          Query q = new Query();
-         q.setDistinct(false);
+         
+         q.setDistinct(true);
 
-         q.addFrom(subQ);
+         q.addFrom(qcGene);
+         q.addFrom(qcIntergenicRegion);
+         q.addFrom(qcTFBindingSite);
+         q.addFrom(qcMotif);
+         q.addFrom(qcDataSet);
+         q.addFrom(qcOrganism);
 
+         q.setConstraint(cs);
 
-         if (action.equals("analysed") || action.equals("export")) {
-
-                 q.addToSelect(qfId);
-                 q.addToSelect(qfPrimaryIdentifier);
-                 q.addToOrderBy(qfId);
-
-         } else if (!action.endsWith("Total")) {
-             q.addToSelect(outerQfId);
-             q.addToSelect(geneCount);
-             if (!action.startsWith("population")) {
-                 q.addToSelect(outerQfId);
-             }
-             q.addToGroupBy(outerQfId);
-
+//         if (keys != null) {
+//             subQ.addToSelect(qfGeneId);
+//             return subQ;
+//         }
+         
+         
+         if (action.equals("analysed")) {
+             q.addToSelect(qfGeneId);
+         } else if (action.equals("export")) {
+             q.addToSelect(qfId);
+             q.addToSelect(qfPrimaryIdentifier);
+             q.addToOrderBy(qfId);
+         } else if (action.endsWith("Total")) {
+             q.addToSelect(qfGeneId);
+             Query subQ = q;
+             q = new Query();
+             q.addFrom(subQ);
+             q.addToSelect(new QueryFunction()); // gene count
          } else {
-             q.addToSelect(geneCount);
+             q.addToSelect(qfId);
+             q.addToSelect(new QueryFunction()); // gene count
+             if (action.equals("sample")) {
+                 q.addToSelect(qfId);
+             }
+             q.addToGroupBy(qfId);
          }
+         LOG.error("tiffin widget:" + q);
          return q;
      }
 }

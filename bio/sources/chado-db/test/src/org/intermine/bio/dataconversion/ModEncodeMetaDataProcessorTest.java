@@ -41,6 +41,7 @@ public class ModEncodeMetaDataProcessorTest extends TestCase {
         assertEquals("Embryo 2-4 h", processor.correctOfficialName("Embryo 2-4 hr", "developmental stage"));
         assertEquals("L1 stage larvae", processor.correctOfficialName("DevStage: L1 stage larvae", "developmental stage"));
         assertEquals("L1 stage larvae", processor.correctOfficialName("L1", "developmental stage"));
+        assertEquals("mid-L1 stage larvae", processor.correctOfficialName("mid-L1", "developmental stage"));
         assertEquals("White prepupae (WPP) + 12 h", processor.correctOfficialName("WPP + 12 h", "developmental stage"));
     }
     

@@ -73,21 +73,9 @@
         </a>
       </li>
 
-  <li id="project"  <c:if test="${tab == 'projects'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
-      <fmt:message key="menu.projects"/>
-    </a>
-  </li>
-
   <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do">
-      <fmt:message key="menu.experiments"/>
-    </a>
-  </li>
-
-  <li id="submissions"  <c:if test="${tab == 'submissions'}">class="activelink"</c:if>>
-    <a href="/${WEB_PROPERTIES['webapp.path']}/submissions.do">
-      <fmt:message key="menu.submissions"/>
+      <fmt:message key="menu.experiment"/>
     </a>
   </li>
 

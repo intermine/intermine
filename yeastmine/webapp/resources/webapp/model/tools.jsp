@@ -1,8 +1,9 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <tiles:importAttribute/>
 
@@ -13,11 +14,10 @@
 
 <!-- tools -->
 
-
-<h2>Advanced Search</h2>
-
-<p>Below are tools to help you find your data quickly.  You can export your results for any query by 
-clicking on the export button in the results toolbar.</p>
+<im:boxarea title="Advanced Search" stylename="gradientbox"><p>
+Below are tools to help you find your data quickly.  You can export your results for any query by 
+clicking on the export button in the results toolbar.
+</p></im:boxarea>
 
 <h3>Chromosome</h3>
 

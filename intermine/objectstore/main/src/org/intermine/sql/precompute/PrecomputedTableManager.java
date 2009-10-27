@@ -43,7 +43,8 @@ public class PrecomputedTableManager
     private static final Logger LOG = Logger.getLogger(PrecomputedTableManager.class);
 
     protected TreeSet precomputedTables = new TreeSet();
-    protected Map types = new HashMap();
+    protected Map<String, Map<String, PrecomputedTable>> types
+        = new HashMap<String, Map<String, PrecomputedTable>>();
     protected Database database = null;
     protected Connection conn = null;
     protected static final String TABLE_INDEX = "precompute_index";
@@ -154,9 +155,9 @@ public class PrecomputedTableManager
             throw new NullPointerException("PrecomputedTable cannot be null");
         }
         String queryString = pt.getOriginalSql();
-        Map queryStrings = (Map) types.get(pt.getCategory());
+        Map<String, PrecomputedTable> queryStrings = types.get(pt.getCategory());
         if (queryStrings == null) {
-            queryStrings = new HashMap();
+            queryStrings = new HashMap<String, PrecomputedTable>();
             types.put(pt.getCategory(), queryStrings);
         }
         if (queryStrings.containsKey(queryString)) {
@@ -209,7 +210,7 @@ public class PrecomputedTableManager
                 deleteTableFromDatabase(pt.getName());
                 iter.remove();
                 String queryString = pt.getOriginalSql();
-                Map queryStrings = (Map) types.get(pt.getCategory());
+                Map<String, PrecomputedTable> queryStrings = types.get(pt.getCategory());
                 queryStrings.remove(queryString);
             }
         }
@@ -234,7 +235,7 @@ public class PrecomputedTableManager
         deleteTableFromDatabase(pt.getName());
         precomputedTables.remove(pt);
         String queryString = pt.getOriginalSql();
-        Map queryStrings = (Map) types.get(pt.getCategory());
+        Map<String, PrecomputedTable> queryStrings = types.get(pt.getCategory());
         queryStrings.remove(queryString);
     }
 
@@ -317,13 +318,15 @@ public class PrecomputedTableManager
             LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
 
-            // Create the entry in the index table
-            PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
-                                                           + TABLE_INDEX + " VALUES(?,?,?)");
-            pstmt.setString(1, pt.getName());
-            pstmt.setString(2, pt.getOriginalSql());
-            pstmt.setString(3, pt.getCategory());
-            pstmt.execute();
+            if (record) {
+                // Create the entry in the index table
+                PreparedStatement pstmt = con.prepareStatement("INSERT INTO "
+                                                               + TABLE_INDEX + " VALUES(?,?,?)");
+                pstmt.setString(1, pt.getName());
+                pstmt.setString(2, pt.getOriginalSql());
+                pstmt.setString(3, pt.getCategory());
+                pstmt.execute();
+            }
             LOG.info("Finished creating precomputed table " + pt.getName());
         } finally {
             if ((con != null) && (conn == null)) {
@@ -475,9 +478,9 @@ public class PrecomputedTableManager
                 PrecomputedTable pt = new PrecomputedTable(new Query(queryString, true),
                             queryString, tableName, category, con);
                 precomputedTables.add(pt);
-                Map queryStrings = (Map) types.get(category);
+                Map<String, PrecomputedTable> queryStrings = types.get(category);
                 if (queryStrings == null) {
-                    queryStrings = new HashMap();
+                    queryStrings = new HashMap<String, PrecomputedTable>();
                     types.put(pt.getCategory(), queryStrings);
                 }
                 queryStrings.put(queryString, pt);
@@ -514,9 +517,26 @@ public class PrecomputedTableManager
      * @return a PrecomputedTable or null
      */
     public PrecomputedTable lookupSql(String category, String sql) {
-        Map queryStrings = (Map) types.get(category);
+        Map<String, PrecomputedTable> queryStrings = types.get(category);
         if (queryStrings != null) {
             return (PrecomputedTable) queryStrings.get(sql);
+        }
+        return null;
+    }
+
+    /**
+     * Returns a PrecomputedTable object if one exists in the manager with the given original SQL
+     * string.
+     *
+     * @param sql the original SQL string used to create the PrecomputedTable
+     * @return a PrecomputedTable or null
+     */
+    public PrecomputedTable lookupSql(String sql) {
+        for (Map<String, PrecomputedTable> queryStrings : types.values()) {
+            PrecomputedTable pt = queryStrings.get(sql);
+            if (pt != null) {
+                return pt;
+            }
         }
         return null;
     }
@@ -527,10 +547,10 @@ public class PrecomputedTableManager
      * @param category a String
      * @return a Map
      */
-    public Map lookupCategory(String category) {
-        Map queryStrings = (Map) types.get(category);
+    public Map<String, PrecomputedTable> lookupCategory(String category) {
+        Map<String, PrecomputedTable> queryStrings = types.get(category);
         if (queryStrings == null) {
-            queryStrings = new HashMap();
+            queryStrings = new HashMap<String, PrecomputedTable>();
             types.put(category, queryStrings);
         }
         return queryStrings;

@@ -26,6 +26,7 @@ import org.intermine.pathquery.PathError;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.GridWidgetConfig;
+import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.xml.sax.SAXException;
@@ -99,26 +100,27 @@ public class WebConfig
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 0, "name");
         digester.addCallParam("webconfig/class/bagdisplayers/displayer/param", 1, "value");
 
-        digester.addObjectCreate("webconfig/widgets/graphdisplayer",
-                                 GraphWidgetConfig.class);
+        digester.addObjectCreate("webconfig/widgets/graphdisplayer", GraphWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/graphdisplayer");
         digester.addSetNext("webconfig/widgets/graphdisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer",
+        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer", 
                                  EnrichmentWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/bagtabledisplayer",
-                                 TableWidgetConfig.class);
+        digester.addObjectCreate("webconfig/widgets/bagtabledisplayer", TableWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/bagtabledisplayer");
         digester.addSetNext("webconfig/widgets/bagtabledisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/griddisplayer",
-                GridWidgetConfig.class);
+        digester.addObjectCreate("webconfig/widgets/griddisplayer", GridWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/griddisplayer");
         digester.addSetNext("webconfig/widgets/griddisplayer", "addWidget");
 
+        digester.addObjectCreate("webconfig/widgets/htmldisplayer", HTMLWidgetConfig.class);
+        digester.addSetProperties("webconfig/widgets/htmldisplayer");
+        digester.addSetNext("webconfig/widgets/htmldisplayer", "addWidget");
+        
         digester.addSetNext("webconfig/class", "addType");
 
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);

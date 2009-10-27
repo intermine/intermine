@@ -11,6 +11,7 @@ package org.intermine.util;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -437,6 +438,34 @@ public class StringUtil
         return sb.toString();
     }
 
+    
+    /**
+     * Return 'a' or 'an' according to first letter of the given article.  If article starts with
+     * a vowel or appears to be an acronym return 'an'.
+     * @param noun the subject of the article
+     * @return the appropriate indefinite article
+     */
+    public static String indefiniteArticle(String noun) {
+        List<Character> vowels = 
+            new ArrayList<Character>(Arrays.asList(new Character[] {'a', 'e', 'i', 'o', 'u'})); 
+        
+        noun = noun.trim();
+        if (vowels.contains(noun.charAt(0))) {
+           return "an"; 
+        }
+    
+        List<Character> vowelPronounced = new ArrayList<Character>(Arrays.asList(
+                    new Character[] {'A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X'})); 
+        if (Character.isUpperCase(noun.charAt(0))) {
+            if ((noun.length() == 1 || Character.isUpperCase(noun.charAt(1)))
+                    && vowelPronounced.contains(noun.charAt(0))) {
+                return "an";
+            }
+        }
+        return "a";
+    }
+    
+    
     /**
      * @param str checked string
      * @return true if string is empty

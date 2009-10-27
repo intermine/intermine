@@ -114,6 +114,10 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
         public Object translateFromDbObject(Object o) {
             return o;
         }
+
+        public Object translateIdToIdentifier(Integer id) {
+            return id;
+        }
     }
 
     static class CompanyTranslator extends Translator
@@ -142,6 +146,10 @@ public class ObjectStoreTranslatingImplTest extends ObjectStoreAbstractImplTestC
             } else {
                 return o;
             }
+        }
+
+        public Object translateIdToIdentifier(Integer id) {
+            return id;
         }
     }
 }

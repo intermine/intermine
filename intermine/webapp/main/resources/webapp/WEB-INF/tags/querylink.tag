@@ -3,6 +3,7 @@
 <%@ attribute name="skipBuilder" required="true" type="java.lang.Boolean" %>
 <%@ attribute name="exportFormat" required="false" type="java.lang.String" %>
 <%@ attribute name="showArrow" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="title" required="false" type="java.lang.String" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -17,9 +18,11 @@
   <c:set target="${linkParams}" property="skipBuilder" value="${skipBuilder}" />
   <c:set target="${linkParams}" property="exportFormat" value="${exportFormat}" />
   <c:set target="${linkParams}" property="trail" value="|query" />
+  <c:set target="${linkParams}" property="title" value="${title}" />
+
 </jsp:useBean>
 
-<html:link action="/loadQuery" name="linkParams">
+<html:link action="/loadQuery" name="linkParams" title="${title}">
   <span>
     ${text}
     <c:if test="${showArrow}">

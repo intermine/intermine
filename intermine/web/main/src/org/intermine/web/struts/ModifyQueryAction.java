@@ -55,14 +55,12 @@ public class ModifyQueryAction extends InterMineAction
         throws Exception {
         if (request.getParameter("delete") != null) {
             return delete(mapping, form, request, response);
-        } else {
-            if (request.getParameter("export") != null) {
-                return export(mapping, form, request, response);
-            } else {
-                LOG.error("Don't know what to do");
-                return null;
-            }
         }
+        if (request.getParameter("export") != null) {
+            return export(mapping, form, request, response);
+        } 
+        LOG.error("Don't know what to do");
+        return null;
     }
 
     /**
@@ -78,7 +76,7 @@ public class ModifyQueryAction extends InterMineAction
     public ActionForward delete(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
+                                HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -103,10 +101,10 @@ public class ModifyQueryAction extends InterMineAction
         if ("history".equals(type)) {
             return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "history").forward();
-        } else {
-            return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "saved").forward();
         }
+        return new ForwardParameters(mapping.findForward("mymine"))
+            .addParameter("subtab", "saved").forward();
+        
     }
 
     /**
@@ -119,7 +117,7 @@ public class ModifyQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(@SuppressWarnings("unused") ActionMapping mapping,
+    public ActionForward export(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
                                 HttpServletResponse response)

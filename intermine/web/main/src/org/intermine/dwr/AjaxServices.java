@@ -13,8 +13,12 @@ package org.intermine.dwr;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -85,10 +89,12 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.GridWidget;
+import org.intermine.web.logic.widget.HTMLWidget;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.GridWidgetConfig;
+import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -369,7 +375,6 @@ public class AjaxServices
 
             Query distinctQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
                     new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
-
             Results results = os.execute(distinctQuery);
 
             // Start the count of results
@@ -817,6 +822,38 @@ public class AjaxServices
     }
 
     /**
+     * @param widgetId unique id for this widget
+     * @param bagName name of list
+     * @return graph widget
+     */
+    public static HTMLWidget getProcessHTMLWidget(String widgetId, String bagName) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+
+            Type type = webConfig.getTypes().get(model.getPackageName()
+                            + "." + imBag.getType());
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widget: widgets) {
+                if (widget.getId().equals(widgetId)) {
+                    HTMLWidgetConfig htmlWidgetConf = (HTMLWidgetConfig) widget;
+                    HTMLWidget htmlWidget = new HTMLWidget(htmlWidgetConf);
+                    return htmlWidget;
+                }
+            }
+        } catch (RuntimeException e) {
+            processException(e);
+        }
+        return null;
+    }
+    
+    /**
      *
      * @param widgetId unique ID for this widget
      * @param bagName name of list
@@ -1088,12 +1125,38 @@ public class AjaxServices
                 // the following is used to display the date without timestamp.
                 // this should always work since the retrieved date has a fixed format,
                 // independent of the one used in the xml.
+                // longDate = Wed Aug 19 14:44:19 BST 2009                
                 String longDate = syndEntry.getPublishedDate().toString();
                 String dayMonth = longDate.substring(0, 10);
                 String year = longDate.substring(24);
-
+                
+                DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
+                Date date = df.parse(longDate);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                
+                // month starts at zero
+                int month = calendar.get(calendar.MONTH) + 1;
+                String monthString = String.valueOf(month);
+                if (monthString.length() == 1) {
+                    monthString = "0" + monthString;
+                }
+                
+                //http://blog.flymine.org/2009/08/
+                WebContext ctx = WebContextFactory.get();
+                ServletContext servletContext = ctx.getServletContext();
+                Properties properties = (Properties)
+                servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                
+                String url = properties.getProperty("project.news") + "/" + year + "/" 
+                + monthString;
+                
                 html.append("<li>");
-                html.append("<strong>" + syndEntry.getTitle() + "</strong>");
+                html.append("<strong>");
+                html.append("<a href=\"" + url + "\">");
+                html.append(syndEntry.getTitle());
+                html.append("</a>");
+                html.append("</strong>");
                 html.append(" - <em>" + dayMonth + " " + year + "</em><br/>");
 //                html.append("- <em>" + syndEntry.getPublishedDate().toString() + "</em><br/>");
                 html.append(syndEntry.getDescription().getValue());
@@ -1107,6 +1170,8 @@ public class AjaxServices
         } catch (IllegalArgumentException e) {
             return "<i>No news at specified URL</i>";
         } catch (FeedException e) {
+            return "<i>No news at specified URL</i>";
+        } catch (java.text.ParseException e) {
             return "<i>No news at specified URL</i>";
         }
     }

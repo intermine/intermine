@@ -69,7 +69,10 @@ public class SubmissionOverlapsAction extends InterMineAction
         if (request.getParameter("overlaps") != null) {
             String featureType = submissionOverlapsForm.getOverlapFeatureType();
             String findFeatureType = submissionOverlapsForm.getOverlapFindType();
-
+            String description = "Results of searching for " + featureType + "s generated from DCC"
+            		+ " submission " + submissionTitle + " that overlap " + findFeatureType + "s.";
+            q.setDescription(description);
+            		
             q.addView(findFeatureType + ".primaryIdentifier");
             q.addView(findFeatureType + ".overlappingFeatures.secondaryIdentifier");
             q.addView(findFeatureType + ".chromosomeLocation.start");
@@ -82,9 +85,8 @@ public class SubmissionOverlapsAction extends InterMineAction
 
             PathNode featureNode = q.addNode(findFeatureType + ".overlappingFeatures");
             featureNode.setType(featureType);
-            q.addConstraint(findFeatureType + ".overlappingFeatures.dataSets.title",
+            q.addConstraint(findFeatureType + ".overlappingFeatures.submissions.title",
                     Constraints.eq(submissionTitle));
-
 
         } else if (request.getParameter("flanking") != null) {
             String direction = submissionOverlapsForm.getDirection();
@@ -99,7 +101,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
             q.addConstraint("GeneFlankingRegion.distance", Constraints.eq(distance));
             q.addConstraint("GeneFlankingRegion.direction", Constraints.eq(direction));
-            q.addConstraint("GeneFlankingRegion.overlappingFeatures.dataSets.title",
+            q.addConstraint("GeneFlankingRegion.overlappingFeatures.submissions.title",
                     Constraints.eq(submissionTitle));
             q.setConstraintLogic("A and B and C");
             q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");

@@ -33,6 +33,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.intermine.objectstore.translating.Translator;
 
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -378,5 +379,13 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
             throw new ObjectStoreException(e);
         }
     }
-}
 
+    /**
+     * Returns the Translator associated with the underlying ObjectStoreTranslatingImpl.
+     *
+     * @return a Translator
+     */
+    public Translator getTranslator() {
+        return ((ObjectStoreTranslatingImpl) os).getTranslator();
+    }
+}

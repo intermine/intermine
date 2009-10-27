@@ -72,7 +72,7 @@ public class SaveBagAction extends InterMineAction
     public ActionForward saveBag(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();

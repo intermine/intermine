@@ -44,6 +44,7 @@ import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -427,11 +428,15 @@ public class SequenceProcessor extends ChadoProcessor
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
         OrganismData organismData =
             getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
+        
+
+        
         Item feature = makeFeature(new Integer(featureId), chadoType, interMineType, name,
                                    uniqueName, seqlen, organismData.getTaxonId());
         if (feature == null) {
             return null;
         }
+                
         int taxonId = organismData.getTaxonId();
         FeatureData fdat;
         fdat = new FeatureData();
@@ -439,6 +444,9 @@ public class SequenceProcessor extends ChadoProcessor
         feature.setReference("organism", organismItem);
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
+        }
+        if (feature.checkAttribute("featureType")) {
+            feature.setAttribute("featureType", chadoType);
         }
 
         fdat.setFieldExistenceFlags(feature);

@@ -17,14 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
@@ -38,9 +35,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.Constants;
-
-import servletunit.ServletContextSimulator;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -67,7 +61,7 @@ public class PrecomputeTemplatesTask extends Task
     protected String username;
     protected String ignore = "";
     protected Set ignoreNames = new HashSet();
-    protected boolean doSummarise = false;
+    protected boolean doSummarise = true;
 
     /**
      * Set the ObjectStore alias
@@ -115,11 +109,12 @@ public class PrecomputeTemplatesTask extends Task
      * @param summarise if true, summarise while precomputing
      */
     public void setSummarise(String summarise) {
-        if (summarise.equals("true")) {
-            doSummarise = true;
-        } else {
+        if (summarise.equals("false")) {
             doSummarise = false;
+        } else {
+            doSummarise = true;
         }
+        LOG.info("Set summarise to " + doSummarise + " (with string " + summarise + ")");
     }
 
     /**
@@ -140,18 +135,26 @@ public class PrecomputeTemplatesTask extends Task
                 ignoreNames.add(bits[i].trim());
             }
         }
-        ObjectStore objectStore;
 
         try {
-            objectStore = ObjectStoreFactory.getObjectStore(alias);
-        } catch (Exception e) {
-            throw new BuildException("Exception while creating ObjectStore", e);
+            os = ObjectStoreFactory.getObjectStore(alias);
+            if (!(os instanceof ObjectStoreInterMineImpl)) {
+                throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
+            }
+            userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            precomputeTemplates(os, oss);
+        } catch (Exception err) {
+            throw new BuildException("Exception creating objectstore/profile manager", err);
+        } finally {
+            if (userProfileOS != null) {
+                try {
+                    userProfileOS.close();
+                } catch (ObjectStoreException e) {
+                    // At this stage, we really don't care
+                }
+            }
         }
 
-        if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
-            throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
-        }
-        precomputeTemplates(objectStore, oss);
     }
 
     /**
@@ -204,7 +207,7 @@ public class PrecomputeTemplatesTask extends Task
             toSummarise.add(template);
 
             jobs.add(new ParallelPrecomputer.Job(template.getName(), q, indexes, false,
-                        "PrecomputeTemplatesTask"));
+                        PRECOMPUTE_CATEGORY_TEMPLATE));
         }
         ParallelPrecomputer pp = new ParallelPrecomputer((ObjectStoreInterMineImpl) os, 4);
         try {
@@ -261,23 +264,11 @@ public class PrecomputeTemplatesTask extends Task
      * @throws BuildException if an IO error occurs loading the template queries
      */
     protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() throws BuildException {
-        ProfileManager pm;
-        ServletContext servletContext = new ServletContextSimulator();
-        try {
-            os = ObjectStoreFactory.getObjectStore(alias);
-            userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            pm = new ProfileManager(os, userProfileOS);
-        } catch (Exception err) {
-            throw new BuildException("Exception creating objectstore/profile manager", err);
-        }
+        ProfileManager pm = new ProfileManager(os, userProfileOS);
         if (!pm.hasProfile(username)) {
             throw new BuildException("user profile doesn't exist for " + username);
         }
-        LOG.warn("Profile for " + username + ", clearing template queries");
-        // Adding global search repository to servletContext, unmarshal needs it
         Profile profile = pm.getProfile(username, pm.getPassword(username));
-        SearchRepository sr = new SearchRepository(profile, SearchRepository.GLOBAL);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, sr);
         return profile.getSavedTemplates(TagNames.IM_PUBLIC);
     }
 }

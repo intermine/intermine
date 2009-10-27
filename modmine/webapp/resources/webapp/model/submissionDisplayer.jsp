@@ -70,6 +70,10 @@ div#submissionDescription {
   <div id="submissionOrganism">
       <b>Organism:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${object.organism.id}">${object.organism.shortName}</html:link>
   </div>
+   <div id="submissionExperiment">
+      <b>Experiment:</b> <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${object.experiment.name}">${object.experiment.name}</html:link>
+  </div>
+  
   
   <div id="submissionDescription">
     <p><b>Submission description</b></p>

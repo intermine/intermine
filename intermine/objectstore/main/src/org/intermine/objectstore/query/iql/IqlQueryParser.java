@@ -143,35 +143,40 @@ public class IqlQueryParser
      */
     private static void processAST(AST ast, Query q, String modelPackage, Iterator iterator) {
         boolean processSelect = false;
-        switch (ast.getType()) {
-            case IqlTokenTypes.LITERAL_distinct:
-                q.setDistinct(true);
-                break;
-            case IqlTokenTypes.SELECT_LIST:
-                // Always do the select list last.
-                processSelect = true;
-                break;
-            case IqlTokenTypes.FROM_LIST:
-                processFromList(ast.getFirstChild(), q, modelPackage, iterator);
-                break;
-            case IqlTokenTypes.WHERE_CLAUSE:
-                q.setConstraint(processConstraint(ast.getFirstChild(), q, modelPackage, iterator));
-                break;
-            case IqlTokenTypes.GROUP_CLAUSE:
-                processGroupClause(ast.getFirstChild(), q, modelPackage, iterator);
-                break;
-            case IqlTokenTypes.ORDER_CLAUSE:
-                processOrderClause(ast.getFirstChild(), q, modelPackage, iterator);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
-                        + ast.getType() + "]");
+        AST selectAST = null;
+        AST orderAST = null;
+        do {
+            switch (ast.getType()) {
+                case IqlTokenTypes.LITERAL_distinct:
+                    q.setDistinct(true);
+                    break;
+                case IqlTokenTypes.SELECT_LIST:
+                    selectAST = ast;
+                    break;
+                case IqlTokenTypes.FROM_LIST:
+                    processFromList(ast.getFirstChild(), q, modelPackage, iterator);
+                    break;
+                case IqlTokenTypes.WHERE_CLAUSE:
+                    q.setConstraint(processConstraint(ast.getFirstChild(), q, modelPackage,
+                                iterator));
+                    break;
+                case IqlTokenTypes.GROUP_CLAUSE:
+                    processGroupClause(ast.getFirstChild(), q, modelPackage, iterator);
+                    break;
+                case IqlTokenTypes.ORDER_CLAUSE:
+                    orderAST = ast;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                            + ast.getType() + "]");
+            }
+            ast = ast.getNextSibling();
+        } while (ast != null);
+        if (selectAST != null) {
+            processSelectList(selectAST.getFirstChild(), q, modelPackage, iterator);
         }
-        if (ast.getNextSibling() != null) {
-            processAST(ast.getNextSibling(), q, modelPackage, iterator);
-        }
-        if (processSelect) {
-            processSelectList(ast.getFirstChild(), q, modelPackage, iterator);
+        if (orderAST != null) {
+            processOrderClause(orderAST.getFirstChild(), q, modelPackage, iterator);
         }
     }
 
@@ -1029,8 +1034,15 @@ public class IqlQueryParser
     private static void processOrderClause(AST ast, Query q, String modelPackage,
             Iterator iterator) {
         do {
-            q.addToOrderBy((QueryOrderable) processNewQueryNodeOrReference(ast, q, false,
-                        modelPackage, iterator));
+            QueryOrderable qo = (QueryOrderable) processNewQueryNodeOrReference(ast, q, false,
+                    modelPackage, iterator);
+            for (QuerySelectable qs : q.getSelect()) {
+                if (qo.equals(qs)) {
+                    qo = (QueryOrderable) qs;
+                    break;
+                }
+            }
+            q.addToOrderBy(qo);
             ast = ast.getNextSibling();
         } while (ast != null);
     }

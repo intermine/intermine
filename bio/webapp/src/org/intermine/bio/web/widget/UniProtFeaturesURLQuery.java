@@ -41,7 +41,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name,"
                       + "Protein.features.feature.name,Protein.features.type,"
@@ -49,9 +49,11 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
                       + "Protein.features.begin,Protein.features.end");
         q.setOrderBy("Protein.features.feature.name, Protein.primaryAccession");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.features.feature", Constraints.lookup(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+        if (!showAll) {
+            q.addConstraint("Protein.features.feature", Constraints.lookup(key));
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }        
         return q;
     }
 }

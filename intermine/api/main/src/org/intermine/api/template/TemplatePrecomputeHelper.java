@@ -46,7 +46,7 @@ public class TemplatePrecomputeHelper {
      * @return the query to precompute
      */
     public static Query getPrecomputeQuery(TemplateQuery template, List indexes,
-                                           PathNode groupByNode) {
+            PathNode groupByNode) {
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
@@ -96,7 +96,9 @@ public class TemplatePrecomputeHelper {
             query.clearSelect();
             QueryNode qn = (QueryNode) pathToQueryNode.get(groupByNode.getPathString());
             query.addToSelect(qn);
-            query.addToGroupBy(qn);
+            // We don't actually need GROUP BY - just use DISTINCT instead.
+            //query.addToGroupBy(qn);
+            query.setDistinct(true);
         } else {
             // Queries only select objects, need to add editable constraints to select so they can
             // be indexed in precomputed table.  Create additional indexes for fields.

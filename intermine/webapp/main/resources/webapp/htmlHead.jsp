@@ -8,13 +8,10 @@
 <tiles:importAttribute name="htmlPageTitle" ignore="true"/>
 <tiles:importAttribute name="pageName" ignore="true"/>
 
+<link href="${WEB_PROPERTIES['project.rss']}" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/ui.datepicker.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
-
-<link href="${WEB_PROPERTIES['project.rss']}" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
 
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
@@ -26,28 +23,43 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <c:if test="${pageCSS == 'true'}">
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
+
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.2.6.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-personalized-1.6rc2.min.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
+<c:if test="${pageName == 'results' || pageName == 'bagDetails'}">
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
+</c:if>
+<c:if test="${pageName == 'begin'}">
+  <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
+  <script type="text/javascript" src="<html:rewrite page='/js/excancas.js'/>"></script>
+  <link rel="stylesheet" href="model/css/frontpage_sections.css" type="text/css" media="screen" title="no title" charset="utf-8">
+</c:if>
+<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates'|| pageName == 'bag'}">
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
+  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
+</c:if>
+
+<c:if test="${pageName == 'query'}">
+  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
+  <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
+</c:if>  
+
 <script type="text/javascript">
   jQuery.noConflict();
 </script>
 
+<!-- Get rid of this as soon as moved completely to dwr - inline templates -->
 <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
-<!-- <script type="text/javascript" src="<html:rewrite page='/js/scriptaculous.js'/>"></script> -->
 
 <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/niftycube.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>

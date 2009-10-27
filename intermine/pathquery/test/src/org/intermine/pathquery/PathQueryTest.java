@@ -1179,4 +1179,18 @@ public class PathQueryTest extends TestCase
 //    public void testMakePath() {
 //        fail("Not yet implemented");
 //    }
+
+    public void testFlipJoinWithSubclass() {
+        PathQuery pq = new PathQuery(model);
+        pq.addNode("Department.employees").setType("CEO");
+        pq.addNode("Department.employees.company");
+        pq.addView("Department.employees.name");
+        pq.addView("Department.employees.company.name");
+
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.employees.name Department.employees.company.name\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.employees\" type=\"CEO\"></node><node path=\"Department.employees.company\" type=\"Company\"></node></query>", PathQueryBinding.marshal(pq, "test", "testmodel", 1));
+        assertEquals("Department.employees:company", pq.flipJoinStyle("Department.employees.company"));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.employees.name Department.employees:company.name\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.employees\" type=\"CEO\"></node><node path=\"Department.employees:company\" type=\"Company\"></node></query>", PathQueryBinding.marshal(pq, "test", "testmodel", 1));
+        assertEquals("Department.employees.company", pq.flipJoinStyle("Department.employees:company"));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.employees.name Department.employees.company.name\"><node path=\"Department\" type=\"Department\"></node><node path=\"Department.employees\" type=\"CEO\"></node><node path=\"Department.employees.company\" type=\"Company\"></node></query>", PathQueryBinding.marshal(pq, "test", "testmodel", 1));
+    }
 }

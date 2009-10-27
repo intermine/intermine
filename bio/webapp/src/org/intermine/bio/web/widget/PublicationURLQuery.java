@@ -41,7 +41,7 @@ public class PublicationURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Gene.secondaryIdentifier,Gene.primaryIdentifier,Gene.name,Gene.organism.name,"
                       + "Gene.publications.title,Gene.publications.firstAuthor,"
@@ -49,9 +49,11 @@ public class PublicationURLQuery implements WidgetURLQuery
                       + "Gene.publications.pubMedId");
         q.setOrderBy("Gene.publications.pubMedId, Gene.primaryIdentifier");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.publications", Constraints.lookup(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+        if (!showAll) {
+            q.addConstraint("Gene.publications", Constraints.lookup(key));
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }        
         return q;
     }
 }

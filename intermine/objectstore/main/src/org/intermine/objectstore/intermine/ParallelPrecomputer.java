@@ -243,13 +243,15 @@ public class ParallelPrecomputer
                         threads.put(new Integer(threadNo), job.getKey());
                         LOG.info("Threads doing: " + threads);
                     }
-                    executeJob(job, threadNo);
+                    try {
+                        executeJob(job, threadNo);
+                    } catch (Exception e) {
+                        // Something has gone wrong.
+                        exceptions.add(e);
+                    }
                 }
             } catch (NoSuchElementException e) {
                 // Empty
-            } catch (Exception e) {
-                // Something has gone wrong.
-                exceptions.add(e);
             } finally {
                 LOG.info("Thread " + threadNo + " finished");
                 synchronized (threads) {
@@ -292,7 +294,7 @@ public class ParallelPrecomputer
         try {
             ((ObjectStoreInterMineImpl) os).precompute(query, indexes, allFields, category);
         } catch (ObjectStoreException e) {
-            LOG.error("Precompute failed for " + key);
+            LOG.error("Precompute failed for " + key, e);
             throw e;
         }
 
