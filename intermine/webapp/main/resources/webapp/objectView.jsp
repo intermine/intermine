@@ -19,7 +19,7 @@
   <c:choose>
     <c:when test="${empty leafClds}">
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
-      <c:set var="maxLength" value="60"/>
+      <c:set var="maxLength" value="70"/>
       <c:choose>
         <c:when test="${!empty object && fn:startsWith(fn:trim(object), 'http://')}">
           <a href="${object}" class="value extlink">
@@ -28,11 +28,11 @@
         </c:when>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && resultElement.keyField}">
            <html:link action="${detailsLink}">
-             <im:abbreviate value="${object}" length="${maxLength}"/>...
+             <im:abbreviate value="${object}" length="${maxLength}"/>
            </html:link>
         </c:when>
         <c:when test="${object != null && object.class.name == 'java.lang.String' && fn:length(object) > maxLength && !resultElement.keyField}">
-          <im:abbreviate value="${object}" length="${maxLength}"/>...
+          <im:abbreviate value="${object}" length="${maxLength}"/>
         </c:when>
         <c:when test="${resultElement.keyField}">
           <html:link action="${detailsLink}">

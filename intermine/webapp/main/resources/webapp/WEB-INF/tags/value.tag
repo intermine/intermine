@@ -12,7 +12,7 @@
     <span class="value">
   </c:otherwise>
 </c:choose>
-${body}
+<c:out value="${body}"/>
 <c:choose>
   <c:when test="${fn:startsWith(fn:trim(body), 'http://')}">
     </a>
