@@ -50,7 +50,7 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
@@ -80,15 +80,16 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
         Constraint c = new Constraint(constraintOp, constraintValue, false, label, code, id, null);
         q.addNode(bagType).getConstraints().add(c);
 
-        constraintOp = ConstraintOp.LOOKUP;
-        code = q.getUnusedConstraintCode();
-        PathNode node = q.addNode("Gene.omimDiseases");
-        c = new Constraint(constraintOp, key, false, label, code, id, null);
-        node.getConstraints().add(c);
+        if (!showAll) {
+            constraintOp = ConstraintOp.LOOKUP;
+            code = q.getUnusedConstraintCode();
+            PathNode node = q.addNode("Gene.omimDiseases");
+            c = new Constraint(constraintOp, key, false, label, code, id, null);
+            node.getConstraints().add(c);
 
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
-
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }
         Map<Path, String>  sortOrder = new LinkedHashMap<Path, String>();
         sortOrder.put(geneSymbol, PathQuery.ASCENDING);
 

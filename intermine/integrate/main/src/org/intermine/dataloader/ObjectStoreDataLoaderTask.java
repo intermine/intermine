@@ -16,7 +16,7 @@ import org.apache.tools.ant.Task;
 import org.intermine.objectstore.ObjectStoreFactory;
 
 /**
- * Uses an IntegrationWriter to load data from another ObjectStore
+ * Uses an IntegrationWriter to load data from another ObjectStore.
  *
  * @author Andrew Varley
  * @author Matthew Wakeling
@@ -29,6 +29,7 @@ public class ObjectStoreDataLoaderTask extends Task
     protected String sourceType;
     protected boolean ignoreDuplicates;
     protected String queryClass = null;
+    protected String allSources;
 
     /**
      * Set the IntegrationWriter.
@@ -67,7 +68,8 @@ public class ObjectStoreDataLoaderTask extends Task
     }
 
     /**
-     * Set the value of ignoreDuplicates for the IntegrationWriter
+     * Set the value of ignoreDuplicates for the IntegrationWriter.
+     *
      * @param ignoreDuplicates the value of ignoreDuplicates
      */
     public void setIgnoreDuplicates(boolean ignoreDuplicates) {
@@ -75,11 +77,22 @@ public class ObjectStoreDataLoaderTask extends Task
     }
 
     /**
-     * If the name of a class is set will only load objects of that type
+     * If the name of a class is set will only load objects of that type.
+     *
      * @param queryClass the name of a class to load
      */
     public void setQueryClass(String queryClass) {
         this.queryClass = queryClass;
+    }
+
+    /**
+     * Set the list of data sources present in the project.xml, for the purposes of verifying the
+     * priorities properties file.
+     *
+     * @param allSources a space-separated list of source names
+     */
+    public void setAllSources(String allSources) {
+        this.allSources = allSources;
     }
 
     /**
@@ -96,6 +109,7 @@ public class ObjectStoreDataLoaderTask extends Task
 
         try {
             IntegrationWriter iw = IntegrationWriterFactory.getIntegrationWriter(integrationWriter);
+            PriorityConfig.verify(iw.getModel(), allSources);
             iw.setIgnoreDuplicates(ignoreDuplicates);
             if (queryClass != null) {
                 new ObjectStoreDataLoader(iw).process(ObjectStoreFactory.getObjectStore(source),

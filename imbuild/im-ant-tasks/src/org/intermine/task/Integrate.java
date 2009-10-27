@@ -29,7 +29,8 @@ import org.intermine.task.project.Source;
 import org.intermine.task.project.UserProperty;
 
 /**
- * A task that can read a project.xml file and run an data integration build.
+ * A task that can read a project.xml file and run a data integration build.
+ *
  * @author tom
  */
 public class Integrate extends Task
@@ -205,6 +206,19 @@ public class Integrate extends Task
         Property typeProp = ant.createProperty();
         typeProp.setName("source.type");
         typeProp.setValue(sourceType);
+
+        Property allSourcesProp = ant.createProperty();
+        allSourcesProp.setName("allsources.list");
+        StringBuilder sb = new StringBuilder();
+        boolean needComma = false;
+        for (String sn : intermineProject.getSources().keySet()) {
+            if (needComma) {
+                sb.append(" ");
+            }
+            needComma = true;
+            sb.append(sn);
+        }
+        allSourcesProp.setValue(sb.toString());
 
         ant.execute();
     }

@@ -40,7 +40,7 @@ public class BDGPURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String viewStrings = "Gene.secondaryIdentifier,Gene.name,Gene.organism.name,"
             + "Gene.primaryIdentifier";
@@ -51,10 +51,16 @@ public class BDGPURLQuery implements WidgetURLQuery
         q.setView(viewStrings);
         q.addView(expressionStrings);
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
-        q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms", Constraints.lookup(key));
+        
         q.addConstraint("Gene.mRNAExpressionResults.expressed", Constraints.eq(Boolean.TRUE));
         q.addConstraint("Gene.mRNAExpressionResults.dataSet.title", Constraints.eq(DATASET));
-        q.setConstraintLogic("A and B and C and D");
+        if (!showAll) {
+            q.addConstraint("Gene.mRNAExpressionResults.mRNAExpressionTerms", 
+                            Constraints.lookup(key));
+            q.setConstraintLogic("A and B and C and D");
+        } else {
+            q.setConstraintLogic("A and B and C");
+        }
         q.syncLogicExpression("and");
         q.setOrderBy(expressionStrings);
         return q;

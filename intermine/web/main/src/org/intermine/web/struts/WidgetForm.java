@@ -26,7 +26,6 @@ import org.intermine.util.StringUtil;
  */
 public class WidgetForm extends ActionForm
 {
-
     private String link;
     private String bagName;
     private String[] selected;
@@ -40,7 +39,7 @@ public class WidgetForm extends ActionForm
     private String highlight;
     private String pValue;
     private String numberOpt;
-
+    private String widgetTitle;
 
     /**
      * returns the value of the checkboxes checked by the user on the form.
@@ -118,13 +117,11 @@ public class WidgetForm extends ActionForm
      * Initialiser
      */
     public void initialise() {
-
         link = "";
         bagName = "";
         selected = new String[0];
         selectedExtraAttribute = "";
     }
-
 
     /**
      * @return the bagName
@@ -132,7 +129,6 @@ public class WidgetForm extends ActionForm
     public String getBagName() {
         return bagName;
     }
-
 
     /**
      * name of bag that this widget is using.  we need both the bag and the bagname because
@@ -143,9 +139,7 @@ public class WidgetForm extends ActionForm
         this.bagName = bagName;
     }
 
-
     /**
-     *
      * @return the selected go terms
      */
     public String[] getSelected() {
@@ -157,7 +151,6 @@ public class WidgetForm extends ActionForm
      */
     public void setSelected(String[] selected) {
         this.selected = selected;
-
     }
 
     /**
@@ -216,7 +209,6 @@ public class WidgetForm extends ActionForm
         this.selectedExtraAttribute = selectedExtraAttribute;
     }
 
-
     /**
      * @return the errorCorrection
      */
@@ -251,11 +243,28 @@ public class WidgetForm extends ActionForm
     public void setHighlight(String highlight) {
         this.highlight = highlight;
     }
+    
     /**
      * @param max the max to set
      */
     public void setMax(String max) {
         this.max = max;
+    }
+
+    /**
+     * used on results page for description: "results for widget XYZ"
+     * @param widgetTitle title of the widget
+     */
+    public void setWidgetTitle(String widgetTitle) {
+        this.widgetTitle = widgetTitle;
+    }
+
+    /**
+    * used on results page for description: "results for widget XYZ"
+    * @return title of widget
+    */
+    public String getWidgetTitle() {
+        return widgetTitle;
     }
 
     /**

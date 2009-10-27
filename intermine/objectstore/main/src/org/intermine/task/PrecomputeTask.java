@@ -112,7 +112,7 @@ public class PrecomputeTask extends Task
     throws BuildException {
         Properties properties = readProperties(os.getModel().getName());
 
-        Map pq = getPrecomputeQueries(createAllOrders, os.getModel(), properties);
+        Map pq = getPrecomputeQueries(createAllOrders, os, properties);
         LOG.info("pq.size(): " + pq.size());
         List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
         Iterator iter = pq.entrySet().iterator();
@@ -120,6 +120,7 @@ public class PrecomputeTask extends Task
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String key = (String) entry.getKey();
+            String value = properties.getProperty(key);
 
             List queries = (List) entry.getValue();
             LOG.debug("queries: " + queries.size());
@@ -129,7 +130,8 @@ public class PrecomputeTask extends Task
 
                 LOG.info("key: " + key);
 
-                jobs.add(new ParallelPrecomputer.Job(key, query, null, true, "PrecomputeTask"));
+                jobs.add(new ParallelPrecomputer.Job(key, query, null,
+                            !(value.contains(" ORDER BY ")), "PrecomputeTask"));
             }
         }
 
@@ -157,14 +159,14 @@ public class PrecomputeTask extends Task
      *
      * @param createAllOrders if true construct all permutations of order by for the QueryClass
      *   objects on the from list
-     * @param model the Model
+     * @param os the ObjectStore
      * @param precomputeProperties the properties specifying which queries to precompute
      * @return a Map of keys to Query objects
      * @throws BuildException if the query cannot be constructed (for example when a class or the
      * collection doesn't exist
      */
     private static Map<String, List<Query>> getPrecomputeQueries(boolean createAllOrders,
-            Model model, Properties precomputeProperties) throws BuildException {
+            ObjectStore os, Properties precomputeProperties) throws BuildException {
         Map<String, List<Query>> returnMap = new TreeMap<String, List<Query>>();
 
         // TODO - read selectAllFields and createAllOrders from properties
@@ -180,7 +182,7 @@ public class PrecomputeTask extends Task
 
             if (precomputeKey.startsWith("precompute.query")) {
                 String iqlQueryString = value;
-                Query query = parseQuery(model, iqlQueryString, precomputeKey);
+                Query query = parseQuery(os.getModel(), iqlQueryString, precomputeKey);
                 List<Query> list = new ArrayList<Query>();
                 list.add(query);
                 returnMap.put(precomputeKey, list);
@@ -188,14 +190,15 @@ public class PrecomputeTask extends Task
                 if (precomputeKey.startsWith("precompute.constructquery")) {
                     try {
                         List<Query> constructedQueries =
-                            constructQueries(createAllOrders, model, value);
+                            constructQueries(createAllOrders, os, value, precomputeKey);
                         returnMap.put(precomputeKey, constructedQueries);
                     } catch (Exception e) {
                         throw new BuildException(e);
                     }
                 } else {
                     throw new BuildException("unknown key: '" + precomputeKey
-                            + "' in properties file " + getPropertiesFileName(model.getName()));
+                            + "' in properties file "
+                            + getPropertiesFileName(os.getModel().getName()));
                 }
             }
         }
@@ -208,23 +211,25 @@ public class PrecomputeTask extends Task
      *
      * @param createAllOrders if true construct all permutations of order by for the QueryClass
      *   objects on the from list
-     * @param model the Model
+     * @param os the ObjectStore
      * @param path the path to construct a query for
+     * @param precomputeKey the key of the path in the config file, for logging
      * @return a list of queries
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
+     * @throws ObjectStoreException if there is a problem running a query to process the path
      */
-    protected static List<Query> constructQueries(boolean createAllOrders, Model model, String path)
-        throws ClassNotFoundException, IllegalArgumentException {
+    protected static List<Query> constructQueries(boolean createAllOrders, ObjectStore os,
+            String path, String precomputeKey) throws ClassNotFoundException,
+              IllegalArgumentException, ObjectStoreException {
 
         List<Query> queries = new ArrayList<Query>();
 
         // expand '+' to all subclasses in path
-        Set paths = QueryGenUtil.expandPath(model, path);
-        Iterator pathIter = paths.iterator();
-        while (pathIter.hasNext()) {
-            String nextPath = (String) pathIter.next();
-            Query q = QueryGenUtil.constructQuery(model, nextPath);
+        Set<String> paths = QueryGenUtil.expandPath(os, path);
+        for (String nextPath : paths) {
+            LOG.info("Expanded path for id " + precomputeKey + " to \"" + nextPath + "\"");
+            Query q = QueryGenUtil.constructQuery(os.getModel(), nextPath);
             if (createAllOrders) {
                 queries.addAll(getOrderedQueries(q));
             } else {
@@ -245,11 +250,11 @@ public class PrecomputeTask extends Task
     private static List<Query> getOrderedQueries(Query q) {
         List<Query> queryList = new ArrayList<Query>();
 
-        Set permutations = permutations(q.getOrderBy().size());
+        Set permutations = permutations(q.getEffectiveOrderBy().size());
         Iterator iter = permutations.iterator();
         while (iter.hasNext()) {
             Query newQuery = QueryCloner.cloneQuery(q);
-            List orderBy = new ArrayList(newQuery.getOrderBy());
+            List orderBy = new ArrayList(newQuery.getEffectiveOrderBy());
             newQuery.clearOrderBy();
 
             int[] order = (int[]) iter.next();

@@ -44,7 +44,7 @@ public class InteractionURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         q.setView("Gene.primaryIdentifier,Gene.symbol,Gene.organism.shortName,"
                   + "Gene.interactions.shortName,Gene.interactions.type.name,"
@@ -52,9 +52,11 @@ public class InteractionURLQuery implements WidgetURLQuery
                   + "Gene.interactions.interactingGenes.primaryIdentifier,"
                   + "Gene.interactions.experiment.name");
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+        if (!showAll) {
+            q.addConstraint("Gene.interactions.interactingGenes", Constraints.lookup(key));
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }
         q.setOrderBy("Gene.organism.shortName,Gene.primaryIdentifier,"
                   + "Gene.interactions.shortName,Gene.interactions.type");
         return q;

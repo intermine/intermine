@@ -185,8 +185,8 @@
 
   <class className="org.intermine.model.bio.BindingSite">
     <fields>
-<!--     <fieldconfig fieldExpr="primaryIdentifier"/> -->
-<!--   NB MODMINE   <fieldconfig fieldExpr="factor.primaryIdentifier"/> -->
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
@@ -642,6 +642,7 @@
 
   <tableExportConfig id="sequence"
                      className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+                     
   <tableExportConfig id="gff3"
                      className="org.intermine.bio.web.export.GFF3HttpExporter"/>
 
@@ -655,6 +656,26 @@
         graphType="BarChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+       />
+
+      <graphdisplayer id="feature_length" title="Feature Length"
+        domainLabel="Length"
+        rangeLabel=" "
+        dataSetLoader="org.intermine.bio.web.widget.FeatureLengthDataSetLdr"
+        description="The distribution of feature lengths in this list compared to lengths of all features of this type."
+        graphType="XYLineChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+       />
+
+      <graphdisplayer id="overlaps" title="Overlapping Features"
+        domainLabel="Distance"
+        rangeLabel=" "
+        dataSetLoader="org.intermine.bio.web.widget.OverlapsDataSetLdr"
+        description="The distance to the nearest gene for the features in this list."
+        graphType="XYLineChart"
+        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        typeClass="org.intermine.model.bio.BindingSite"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
@@ -705,6 +726,13 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
+                         
+                         
+      <htmldisplayer id="dummy" title="Your Widget Idea Here"
+                      description=""
+                      content="Have an idea for a widget?  Contact us at help [at] modencode.org!"    
+                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.BindingSite"
+                      />       
 
     </widgets>
 </webconfig>

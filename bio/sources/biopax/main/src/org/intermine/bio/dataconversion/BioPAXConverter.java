@@ -62,6 +62,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private Map<String, String[]> configs = new HashMap();
     private OrganismRepository or;
     private String dataSourceName, dbName, identifierField;
+    private String curated = "false";
     
     /**
      * Constructor
@@ -69,11 +70,14 @@ public class BioPAXConverter extends FileConverter implements Visitor
      * @param intermineModel the Model
      */
     public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) {
-        super(writer, intermineModel);
+        super(writer, intermineModel);        
+        // only construct factory here so can be replaced by mock factory in tests
+        resolverFactory = new FlyBaseIdResolverFactory("gene");        
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
+    
 
     /**
      * {@inheritDoc}
@@ -114,6 +118,13 @@ public class BioPAXConverter extends FileConverter implements Visitor
     public void setBiopaxOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
+    }
+    
+    /**
+     * @param curated true or false
+     */
+    public void setBiopaxCurated(String curated) {
+        this.curated = curated;       
     }
 
     /**
@@ -253,16 +264,9 @@ public class BioPAXConverter extends FileConverter implements Visitor
             LOG.warn("Gene not stored:" + xref);
             return;
         }
-
-        if (resolverFactory != null) {
-            IdResolver resolver = resolverFactory.getIdResolver(false);
-            if (resolver != null) {
-                identifier = resolveGene(resolver, "7227", identifier);
-                if (identifier == null) {
-                    return;
-                }
-            }
-            fieldName = "primaryIdentifier";
+        
+        if (organism.getAttribute("taxonId").getValue().equals("7227")) {
+            identifier = resolveGene("7227", identifier);
         }
 
         if (identifier == null || identifier.length() < 2) {
@@ -280,6 +284,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     throws ObjectStoreException {
         Item item = createItem("Pathway");
         item.setAttribute("name", pathway.getNAME());
+        item.setAttribute("curated", curated);
         item.addToCollection("dataSets", dataset);
         for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
             String xrefId = xref.getRDFId();
@@ -318,7 +323,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private void setSynonym(String subjectId, String value)
     throws ObjectStoreException {
         MultiKey key = new MultiKey(subjectId, value);
-        if (synonyms.contains(key)) {
+        if (!synonyms.contains(key)) {
             Item syn = createItem("Synonym");
             syn.setReference("subject", subjectId);
             syn.setAttribute("value", value);
@@ -372,12 +377,6 @@ public class BioPAXConverter extends FileConverter implements Visitor
             return null;
         }
         
-        if (taxonId == 7227) {
-            resolverFactory = new FlyBaseIdResolverFactory("gene");
-        } else {
-            resolverFactory = null;
-        }
-        
         return taxonIdString;
     }
     
@@ -387,7 +386,8 @@ public class BioPAXConverter extends FileConverter implements Visitor
      * @param ih interactor holder
      * @throws ObjectStoreException
      */
-    private String resolveGene(IdResolver resolver, String taxonId, String identifier) {
+    private String resolveGene(String taxonId, String identifier) {
+        IdResolver resolver = resolverFactory.getIdResolver(false);
         String id = identifier;
         if (taxonId.equals("7227") && resolver != null) {
             int resCount = resolver.countResolutions(taxonId, identifier);

@@ -10,6 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,47 @@ public class PriorityConfig
         = new HashMap<ClassAndFieldName, List<String>>();
 
     /**
+     * Verifies the priorities config given the list of data sources.
+     *
+     * @param model the Model of the production database
+     * @param sources the space-separated list of data sources
+     * @throws IllegalArgumentException if a source is mentioned in the priorities file but not the
+     * project.xml file
+     */
+    public static void verify(Model model, String sources) {
+        Set<String> allSources = new HashSet(Arrays.asList(sources.split(" ")));
+        Set<String> seenSources = new HashSet<String>();
+        Map<String, List<String>> descriptors = DataLoaderHelper.getDescriptors(model);
+        for (List<String> descSources : descriptors.values()) {
+            for (String source : descSources) {
+                seenSources.add(source);
+            }
+        }
+        seenSources.remove("*");
+        Set<String> extraSources = new HashSet<String>();
+        for (String seenSource : seenSources) {
+            if (!allSources.contains(seenSource)) {
+                extraSources.add(seenSource);
+            }
+        }
+        Set<String> unseenSources = new HashSet<String>();
+        for (String allSource : allSources) {
+            if (!seenSources.contains(allSource)) {
+                unseenSources.add(allSource);
+            }
+        }
+
+        //if (!unseenSources.isEmpty()) {
+        //    System.err .println("Sources only present in project.xml: " + unseenSources);
+        //}
+        if (!extraSources.isEmpty()) {
+            //System.err .println("Sources only present in priorites: " + extraSources);
+            throw new IllegalArgumentException("Some sources mentioned in the priorities config "
+                    + "file do not exist in project.xml - maybe they are typos: " + extraSources);
+        }
+    }
+
+    /**
      * Constructor.
      *
      * @param model the Model of the production database
@@ -45,8 +87,8 @@ public class PriorityConfig
             if (key.indexOf(".") == -1) {
                 ClassDescriptor cld = model.getClassDescriptorByName(key);
                 if (cld == null) {
-                    throw new IllegalArgumentException("Class '" + key + "' not found in model, check "
-                                                       + " priorities configuration file.");
+                    throw new IllegalArgumentException("Class '" + key + "' not found in model, "
+                            + "check priorities configuration file.");
                 }
                 Class clazz = cld.getType();
                 for (FieldDescriptor field : cld.getFieldDescriptors()) {
@@ -60,15 +102,15 @@ public class PriorityConfig
                 ClassDescriptor cld = model.getClassDescriptorByName(className);
                 Class clazz = cld.getType();
                 if (cld == null) {
-                    throw new IllegalArgumentException("Class '" + key + "' not found in model, check "
-                                                       + "priorities configuration file.");
+                    throw new IllegalArgumentException("Class '" + key + "' not found in model, "
+                            + "check priorities configuration file.");
                 }                
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if ((field != null) && (!field.isCollection())) {
                     getPriorities(clazz, fieldName);
                 } else {
-                    throw new IllegalArgumentException("Bad entry in priorities file: " + key + " - " + className 
-                                                       + " does not have a field " + fieldName);
+                    throw new IllegalArgumentException("Bad entry in priorities file: " + key
+                            + " - " + className + " does not have a field " + fieldName);
                 }
             }
         }

@@ -56,8 +56,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected String name;
     /** Template query title. */
     protected String title;
-    /** Template query description. */
-    protected String description;
     /** The private comment for this query. */
     protected String comment;
     /** Map from node to editable constraint list. */
@@ -190,15 +188,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     }
 
     /**
-     * Get the template description.
-     *
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * Get the private comment for this template.
      * @return the description
      */
@@ -309,15 +298,22 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         while (iter.hasNext()) {
             PathNode node = (PathNode) iter.next();
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(this, null, node);
-            LOG.error("Running query: " + q);
+            LOG.info("Summarising template " + getName() + " by running query: " + q);
             List results = os.execute(q, 0, 20, true, false, ObjectStore.SEQUENCE_IGNORE);
             if (results.size() < 20) {
-                List values = new ArrayList();
-                Iterator resIter = results.iterator();
-                while (resIter.hasNext()) {
-                    values.add(((List) resIter.next()).get(0));
+                if (node.isAttribute() || results.isEmpty()) {
+                    List values = new ArrayList();
+                    Iterator resIter = results.iterator();
+                    while (resIter.hasNext()) {
+                        values.add(((List) resIter.next()).get(0));
+                    }
+                    possibleValues.put(node.getPathString(), values);
+                } else {
+                    LOG.error("Editable node " + node.getPathString() + " in template "
+                            + getName() + " cannot be summarised as it is a LOOKUP constraint, "
+                            + "although it has only " + results.size() + " possible values. "
+                            + "Consider changing the node that the constraint is attached to");
                 }
-                possibleValues.put(node.getPathString(), values);
             }
         }
         // Now write the summary to the user profile database.
@@ -337,12 +333,23 @@ public class TemplateQuery extends PathQuery implements WebSearchable
             }
             TemplateSummary templateSummary = new TemplateSummary();
             templateSummary.setTemplate(savedTemplateQuery);
+            String summaryText = Base64.encodeObject(possibleValues);
+            if (summaryText == null) {
+                throw new RuntimeException("Serialised summary is null");
+            }
             templateSummary.setSummary(Base64.encodeObject(possibleValues));
             osw.store(templateSummary);
         } catch (ObjectStoreException e) {
             if (osw.isInTransaction()) {
                 osw.abortTransaction();
             }
+            LOG.error("ObjectStoreException while storing summary for " + getName());
+            throw e;
+        } catch (RuntimeException e) {
+            if (osw.isInTransaction()) {
+                osw.abortTransaction();
+            }
+            LOG.error("ObjectStoreException while storing summary for " + getName());
             throw e;
         } finally {
             if (osw.isInTransaction()) {
@@ -418,7 +425,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
         return (o instanceof TemplateQuery)
             && super.equals(o)
             && ((TemplateQuery) o).getName().equals(getName())
-            && ((TemplateQuery) o).getDescription().equals(getDescription())
+            && ((PathQuery) o).getDescription().equals(getDescription())
             && ((TemplateQuery) o).getTitle().equals(getTitle())
             && ((TemplateQuery) o).getComment().equals(getComment());
     }

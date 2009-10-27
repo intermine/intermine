@@ -159,6 +159,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = Collections.emptySet();
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -174,6 +175,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         super(osw);
         this.dataTracker = dataTracker;
         this.trackerMissingClasses = trackerMissingClasses;
+        priorityConfig = new PriorityConfig(osw.getModel());
     }
 
     /**
@@ -391,9 +393,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (!modelFieldNames.equals(typeUtilFieldNames)) {
                 throw new ObjectStoreException("Failed to store data not in the model");
             }
-            if (priorityConfig == null) {
-                priorityConfig = new PriorityConfig(osw.getModel());
-            }
             Iterator fieldIter = fieldDescriptors.entrySet().iterator();
             while (fieldIter.hasNext()) {
                 FieldDescriptor field = (FieldDescriptor) ((Map.Entry) fieldIter.next()).getValue();
@@ -573,7 +572,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (pureObjects.size() <= 100000) {
                 LOG.error("pureObjects: " + pureObjects.toString());
             }
-            throw new RuntimeException("Exception while loading object " + nimo, e);
+            throw e;
         } catch (ObjectStoreException e) {
             if (idMap.size() <= 100000) {
                 LOG.error("IDMAP contents: " + idMap.toString());
@@ -584,7 +583,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (pureObjects.size() <= 100000) {
                 LOG.error("pureObjects: " + pureObjects.toString());
             }
-            throw new ObjectStoreException("Exception while loading object " + nimo, e);
+            throw e;
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }
@@ -621,7 +620,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             if (idMap.size() <= 100000) {
                 LOG.info("IDMAP CONTENTS:" + idMap.toString());
             }
-            throw new ObjectStoreException("Some skeletons where not replaced by real "
+            throw new ObjectStoreException("Some skeletons were not replaced by real "
                                        + "objects: " + skeletons.size());
         }
         LOG.info("Time spent: Equivalent object queries: " + timeSpentEquiv + ", Create object: "

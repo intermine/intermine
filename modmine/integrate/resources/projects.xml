@@ -489,9 +489,9 @@
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1064" class="" implements="Lab">
-		<attribute name="surname" value="Gravely"/>
-		<attribute name="name" value="Brenton Gravely"/>
-		<attribute name="affiliation" value="University of Connecticut Health Systems"/>
+		<attribute name="surname" value="Graveley"/>
+		<attribute name="name" value="Brenton Graveley"/>
+		<attribute name="affiliation" value="University of Connecticut Health Center"/>
 		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
@@ -715,7 +715,7 @@
 	<item id="1096" class="" implements="Lab">
 		<attribute name="surname" value="Strome"/>
 		<attribute name="name" value="Susan Strome"/>
-		<attribute name="affiliation" value="Indiana University, Bloomington"/>
+		<attribute name="affiliation" value="University of California, Santa Cruz"/>
 		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
 		<reference name="project" ref_id="1011"/>
 	</item>

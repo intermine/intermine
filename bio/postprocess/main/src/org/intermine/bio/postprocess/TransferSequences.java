@@ -310,6 +310,7 @@ public class TransferSequences
         QueryClass qcExon = new QueryClass(Exon.class);
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
+        
 
         QueryClass qcExonSequence = new QueryClass(Sequence.class);
         q.addFrom(qcExonSequence);
@@ -320,6 +321,7 @@ public class TransferSequences
         q.addToSelect(qcExonLocation);
 
         QueryField qfExonStart = new QueryField(qcExonLocation, "start");
+        q.addToSelect(qfExonStart);        
         q.addToOrderBy(qfExonStart);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

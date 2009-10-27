@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.intermine.InterMineException;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -32,7 +33,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.api.template.TemplateQuery;
 
 /**
  * For a given list of input strings search for objects using default and configured queries for a
@@ -129,7 +129,7 @@ public class BagQueryRunner
         for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved
             if (!unresolved.isEmpty()) {
-                Map<String, Set<Integer>> resMap = new HashMap();
+                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 Query q = null;
                 try {
                     q = bq.getQuery(unresolved, extraFieldValue);
@@ -153,7 +153,7 @@ public class BagQueryRunner
                                     String originalInput = lowerCaseInput.get(lowerField);
                                     Set<Integer> ids = resMap.get(originalInput);
                                     if (ids == null) {
-                                        ids = new HashSet<Integer>();
+                                        ids = new LinkedHashSet<Integer>();
                                         resMap.put(originalInput, ids);
                                     }
                                     // obj is an Integer
@@ -184,7 +184,7 @@ public class BagQueryRunner
                                 if (pattern.matcher(lowerField).matches()) {
                                     Set<Integer> ids = resMap.get(wildcard);
                                     if (ids == null) {
-                                        ids = new HashSet<Integer>();
+                                        ids = new LinkedHashSet<Integer>();
                                         resMap.put(wildcard, ids);
                                     }
                                     ids.add(id);
@@ -226,9 +226,26 @@ public class BagQueryRunner
     throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
 
-        for (Map.Entry entry : resMap.entrySet()) {
-            String input = (String) entry.getKey();
-            Set<Integer> ids = (Set<Integer>) entry.getValue();
+        // Gather together all the id lookups and perform them in one.
+        Map<Integer, InterMineObject> fetchedObjects = new HashMap<Integer, InterMineObject>();
+        Set<Integer> idsToFetch = new HashSet<Integer>();
+        try {
+            for (Map.Entry<String, Set<Integer>> resEntry : resMap.entrySet()) {
+                if (bq.matchesAreIssues() || (resEntry.getValue().size() > 1)) {
+                    idsToFetch.addAll(resEntry.getValue());
+                }
+            }
+            List<InterMineObject> idsFetched = os.getObjectsByIds(idsToFetch);
+            for (InterMineObject fetchedObject : idsFetched) {
+                fetchedObjects.put(fetchedObject.getId(), fetchedObject);
+            }
+        } catch (ObjectStoreException e) {
+            throw new InterMineException("can't fetch: " + idsToFetch, e);
+        }
+
+        for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
+            String input = entry.getKey();
+            Set<Integer> ids = entry.getValue();
             boolean resolved = true;
 
             if (!bq.matchesAreIssues()) {
@@ -238,14 +255,13 @@ public class BagQueryRunner
                     bqr.addMatch(input, (Integer) ids.iterator().next());
                 } else if (!areWildcards) {
                     List<Object> objs = new ArrayList<Object>();
-                    Iterator objIter;
-                    try {
-                        objIter = os.getObjectsByIds(ids).iterator();
-                    } catch (ObjectStoreException e) {
-                        throw new InterMineException("can't fetch: " + ids, e);
-                    }
-                    while (objIter.hasNext()) {
-                        objs.add(objIter.next());
+                    for (Integer objectId : ids) {
+                        Object obj = fetchedObjects.get(objectId);
+                        if (obj == null) {
+                            throw new NullPointerException("Could not find object with ID "
+                                    + objectId);
+                        }
+                        objs.add(obj);
                     }
                     bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(),
                                  (String) entry.getKey(), objs);
@@ -253,17 +269,14 @@ public class BagQueryRunner
             } else {
                 List<Object> objs = new ArrayList<Object>();
                 Set<Object> localObjsOfWrongType = new HashSet<Object>();
-                Iterator objIter;
-                try {
-                    objIter = os.getObjectsByIds(ids).iterator();
-                } catch (ObjectStoreException e) {
-                    throw new InterMineException("can't fetch: " + ids, e);
-                }
 
                 // we have a list of objects that result from some query, divide into any that
                 // match the type of the bag to be created and candidates for conversion
-                while (objIter.hasNext()) {
-                    Object obj = objIter.next();
+                for (Integer objectId : ids) {
+                    Object obj = fetchedObjects.get(objectId);
+                    if (obj == null) {
+                        throw new NullPointerException("Could not find object with ID " + objectId);
+                    }
 
                     // TODO this won't cope with dynamic classes
                     Class c = DynamicUtil.decomposeClass(obj.getClass()).iterator().next();

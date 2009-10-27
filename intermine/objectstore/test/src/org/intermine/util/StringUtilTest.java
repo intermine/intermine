@@ -207,4 +207,12 @@ public class StringUtilTest extends TestCase
         assertEquals("a, b and c", StringUtil.prettyList(col, true));
     }
 
+    
+    public void testIndefiniteArticle() throws Exception {
+        assertEquals("a", StringUtil.indefiniteArticle("monkey"));
+        assertEquals("an", StringUtil.indefiniteArticle("emu"));
+        assertEquals("a", StringUtil.indefiniteArticle("TLA"));
+        assertEquals("an", StringUtil.indefiniteArticle("O"));
+        assertEquals("an", StringUtil.indefiniteArticle("IMP"));
+    }
 }

@@ -11,168 +11,110 @@
 
 <tiles:importAttribute />
 
-
 <html:xhtml />
 
 <div class="body">
 
-<c:set var="LIMIT" value="1"/>
-<em>${LIMIT+1} most recent submissions for each project:</em>
+<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
+<tr><th>&nbsp;</th><th>Project</th><th>Experiments</th><th>&nbsp;</th></tr>
+<c:forEach items="${experiments}" var="proj">
+ <c:forEach items="${proj.value}" var="exp"  varStatus="status">
+<c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
 
-<table cellpadding="0" cellspacing="0" border="0" class="dbsources">
-	<c:forEach items="${subs}" var="item" varStatus="status">
-		<c:if test="${status.count%2 eq 1}"><tr></c:if>
-		<td>
-    <c:forEach items="${item.key.organisms}" var="organism" varStatus="orgStatus">
-    <c:if test="${organism.taxonId eq 7227}"> 
+  <tr>
+<c:if test="${status.first}">
+  <td rowspan="${expCount}">
+    <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
+      <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
-    </c:if>
-    <c:if test="${organism.taxonId eq 6239}"> 
+      </c:if>
+      <c:if test="${organism eq 'C. elegans'}"> 
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
-    </c:if>
-
-<%--
-<c:choose>
-		<c:when test="${organism.taxonId eq 7227}">
-		${organism.taxonId}<img border="0" class="arrow" src="images/f_vs.png" title="fly"/><br>
-		</c:when>
-		<c:when  test="${organism.taxonId eq 6239}">
-    ${organism.taxonId}<img border="0" class="arrow" src="images/w_vs.png" title="worm"/><br>		
-		</c:when>
-</c:choose>			
---%>
-
-		</c:forEach> <%--organism --%>
-		</td>
-			<td><html:link
-				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${item.key.id}">
- ${item.key.name}
-    </html:link>
-
-<%--
-
+      </c:if>
+    </c:forEach> 
+  </td>
+  <td rowspan="${expCount}">
+  <b>${proj.key}</b>
+  <br></br>PI: <c:out value="${exp.pi}"></c:out>
+  </td>
+  </c:if>
+  
+  <td><h4><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
 <br>
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-      <c:choose>
-        <c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-        <c:when test="${nrSubs gt 0}">
-        <hr>
-        <im:querylink text="${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-        </c:when>
-      </c:choose>
+  <c:choose>
+    <c:when test="${exp.submissionCount == 0}">
+      This experiment has <b>no data submissions yet</b>.
+    </c:when>
+    <c:when test="${exp.submissionCount == 1}">
+      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submission</b>.
+    </c:when>
+    <c:otherwise>
+      This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
+    </c:otherwise>
+  </c:choose>
+     <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
+       <c:choose>
+         <c:when test="${ fn:length(exp.factorTypes) == 1}">
+           <c:out value="The experimental factor is"/>
+         </c:when>
+         <c:otherwise>
+           <c:out value="The experimental factors are"/>
+         </c:otherwise>
+       </c:choose>  
+       <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
+     </c:if>
+</td>
 
---%>
+<td>
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
+     <c:if test="${fc_status.count > 1 }"><br> </c:if> 
+      ${fc.key}:&nbsp;${fc.value}
+     <c:if test="${fc_status.last }"><br> </c:if> 
+      </c:forEach>
+<p/>
+
+     <c:if test="${!empty tracks[exp.name]}">
+       <c:choose>
+         <c:when test="${fn:length(tracks[exp.name]) == 1}">
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse track
+         </c:when>
+         <c:otherwise>
+           <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
+         </c:otherwise>
+       </c:choose>
+     </c:if>
+
+<html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
+        <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">
+        </html:link>
 
 </td>
 
 
-
-<td>
-<c:choose>
-<c:when test="${empty item.value}">
- -
-</c:when>
-<c:otherwise>
-<table cellpadding="0" cellspacing="0" border="0" class="internal">
-<c:forEach items="${item.value}" var="sub" varStatus="subStatus" end="${LIMIT}">
-<tr>
-      <td><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}">
- ${fn:replace(sub.title,"_", " ")}
-<%-- ${sub.dCCid} --%>
-    </html:link>
-    </td>
-<%--    <td> ${sub.experimentType }</td> --%>   
-    <td><fmt:formatDate value="${sub.publicReleaseDate}" type="date" pattern="yyyy-MM-dd"/>
-    </td>
-      </tr>
+  </tr>
+  
 </c:forEach>
-</table>
-
-
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-        <hr>
-        <im:querylink text="All ${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.submissions.DCCid Project.submissions.title Project.submissions.design"
-              sortOrder="Project.submissions.DCCid">
-<%--
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
---%>
-
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-
-
-
-</c:otherwise>
-</c:choose>
- </td>
- 
 </c:forEach>
+  </table>
 
-<%--
-     <td>
-      <c:forEach items="${counts}" var="nr">
-        <c:if test="${nr.key.surnamePI eq item.key.surnamePI}">
-          <c:set var="nrSubs" value="${nr.value}" />
-        </c:if>
-      </c:forEach> 
-      <c:choose>
-        <c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-        <c:when test="${nrSubs gt 0}">
-				<im:querylink text="${nrSubs} submissions" showArrow="true" skipBuilder="true">
-            <query name="" model="genomic"
-              view="Project.labs.submissions.title Project.labs.submissions.design Project.labs.submissions.factorName Project.labs.submissions.factorType Project.labs.submissions.description"
-              sortOrder="Project.labs.submissions.title">
-            <node path="Project" type="Project">
-            </node>
-            <node path="Project.surnamePI" type="String">
-            <constraint op="=" value="${item.key.surnamePI}" description=""
-              identifier="" code="A">
-            </constraint>
-            </node>
-            </query>
-          </im:querylink>
-        </c:when>
-      </c:choose>
-  </c:forEach>
 
---%>
-</table>
 </div>
+
+
+<%--
+     <c:if test="${fn:length(exp.featureCounts) > 0 }"> 
+It generates 
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="status">
+     <c:if test="${status.count > 1 && !status.last }">, </c:if> 
+     <c:if test="${status.count > 1 && status.last }"> and </c:if> 
+     <html:link
+href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}">${fc.value} ${fc.key}s
+</html:link>
+      </c:forEach>.
+--%>
+
 
 <!-- links to all subs -->
 
@@ -222,14 +164,5 @@
     </td>
 
 
-
-<%--
-<td>
-<html:link
-          href="/${WEB_PROPERTIES['webapp.path']}/submissions.do"> All submissions <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
-    </html:link>
-<br>
-</td>
---%>
   </tr></table>
 

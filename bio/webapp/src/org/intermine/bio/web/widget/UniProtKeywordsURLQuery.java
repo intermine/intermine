@@ -41,16 +41,18 @@ public class UniProtKeywordsURLQuery implements WidgetURLQuery
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery() {
+    public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String viewStrings = "Protein.primaryIdentifier,Protein.primaryAccession,"
             + "Protein.organism.name, Protein.keywords.name,Protein.keywords.description";
         q.setView(viewStrings);
         q.setOrderBy(viewStrings);
         q.addConstraint(bag.getType(), Constraints.in(bag.getName()));
-        q.addConstraint("Protein.keywords", Constraints.lookup(key));
-        q.setConstraintLogic("A and B");
-        q.syncLogicExpression("and");
+        if (!showAll) {
+            q.addConstraint("Protein.keywords", Constraints.lookup(key));
+            q.setConstraintLogic("A and B");
+            q.syncLogicExpression("and");
+        }        
         return q;
     }
 }

@@ -50,46 +50,74 @@
         </c:otherwise>
       </c:choose>
 
-      <c:choose>
-        <c:when test="${column.visible}">
-          <th align="center" class="columnHeader">
+      <th align="center" class="columnHeader">
+        <%-- summary --%>
+        <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
+          <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
+          <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
+               title="${summaryTitle}" class="summary_link"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
+        </c:if>
+        <!-- <div class="column-header-content"> -->
+            <table border="0" cellspacing="0" cellpadding="0" class="column-header-content">
+                <tr>
             <c:if test="${column.selectable && empty inlineTable}">
               <c:set var="disabled" value="false"/>
               <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
               </c:if>
-              <html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
+              <td><html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
                              styleClass="selectable"
                              onclick="selectAll(${status.index}, '${column.typeClsString}','${pagedResults.tableid}')"
                              disabled="${disabled}">
                 <c:out value="${column.columnId}"/>
-              </html:multibox>
+              </html:multibox></td>
             </c:if>
-            ${columnDisplayName}
+            <td>
+            <!-- Display actual column name -->
+            <c:set var="columnDisplayNameList" value="${fn:split(column.name,'>')}"/>
+            <c:set var="begin" value="0"/>
+            <c:if test="${fn:length(columnDisplayNameList) > 3}">...
+                <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
+            </c:if>
+            <span id="header_${status.count}" style="cursor:default;">
+            <script type="text/javascript" charset="utf-8">
+                jQuery(document).ready(function(){
+                    jQuery('#header_${status.count}').qtip({
+                       content: '${displayPath}',
+                       show: 'mouseover',
+                       hide: 'mouseout',
+                       position: {
+                           corner: {
+                              target: 'topLeft',
+                              tooltip: 'bottomLeft'
+                           }
+                       },
+                       style: {
+                          tip: 'bottomLeft',
+                          fontSize: '12px',
+                          name: 'cream',
+                          whiteSpace: 'nowrap'
+                       }
+                    });
+                });
+            </script>
+            <em style="font-size:9px;">
+            <c:forEach items="${columnDisplayNameList}" var="columnNameItem" varStatus="status2" begin="${begin}">
+              <c:choose>
+                <c:when test="${status2.last}"></em><br/>${columnNameItem}</c:when>
+                <c:otherwise>${columnNameItem} &gt; </c:otherwise>
+              </c:choose>
+            </c:forEach>
+            <!-- ${fn:length(columnDisplayNameList)}:${columnDisplayName} -->
             <im:typehelp type="${column.path}" fullPath="true"/>
-            <%-- summary --%>
-            <c:if test="${!empty column.path.noConstraintsString && empty inlineTable}">
-              <fmt:message key="columnsummary.getsummary" var="summaryTitle" />
-              <a href="javascript:getColumnSummary('${pagedResults.tableid}','${column.path.noConstraintsString}', &quot;${columnDisplayName}&quot;)"
-                 title="${summaryTitle}"><img src="images/summary_maths.png" title="${summaryTitle}"/></a>
-            </c:if>
-          </th>
-        </c:when>
-        <c:otherwise>
-          <th>
-            <%-- <fmt:message key="results.showColumnHelp" var="showColumnTitle">
-                 <fmt:param value="${column.name}"/>
-                 </fmt:message> --%>
-            <html:link action="/changeTable?currentPage=${currentPage}&amp;bagName=${bagName}&amp;table=${param.table}&amp;method=showColumn&amp;index=${status.index}&amp;trail=${param.trail}"
-                       title="${showColumnTitle}">
-              <img src="images/show-column.gif" title="${fn:replace(column.name, '.', '&nbsp;> ')}"/>
-            </html:link>
-          </th>
-        </c:otherwise>
-      </c:choose>
+            </span>
+            </td></tr></table>
+        <!-- </div> -->
+      </th>
     </c:forEach>
   </tr>
   </thead>
+
   <%-- The data --%>
 
   <%-- Row --%>

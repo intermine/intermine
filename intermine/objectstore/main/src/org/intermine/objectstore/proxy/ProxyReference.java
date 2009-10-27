@@ -13,6 +13,8 @@ package org.intermine.objectstore.proxy;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
+import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.StringConstructor;
 
 /**
@@ -48,6 +50,12 @@ public class ProxyReference implements InterMineObject, Lazy
         try {
             InterMineObject retval = os.getObjectById(id, clazz);
             if (retval == null) {
+                if (os instanceof ObjectStoreTranslatingImpl) {
+                    Translator trans = ((ObjectStoreTranslatingImpl) os).getTranslator();
+                    Object identifier = trans.translateIdToIdentifier(id);
+                    throw new NullPointerException("Error retrieving object from Items database"
+                            + " with identifier " + identifier);
+                }
                 throw new NullPointerException("Error retrieving object from proxy with ID " + id
                         + " for class " + clazz.getName() + " from ObjectStore " + os);
             }

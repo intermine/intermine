@@ -81,6 +81,10 @@ public class InterMineModelParser implements ModelParser
             if (qName.equals("model")) {
                 modelName = attrs.getValue("name");
                 packageName = attrs.getValue("package");
+                if (packageName == null) {
+                    throw new IllegalArgumentException("Error - package name of model is not "
+                            + "defined");
+                }
             } else if (qName.equals("class")) {
                 String name = attrs.getValue("name");
                 String supers = attrs.getValue("extends");
