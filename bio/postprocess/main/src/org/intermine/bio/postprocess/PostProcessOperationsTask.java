@@ -109,7 +109,11 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOGGER.info("Starting CalculateLocations.setChromosomeLocationsAndLengths()");
                 cl.setChromosomeLocationsAndLengths();
-            } else if ("create-references".equals(operation)) {
+            } else if ("set-missing-chromosome-locations".equals(operation)) {
+                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
+                LOGGER.info("Starting CalculateLocations.setMissingChromosomeLocations()");
+                cl.setMissingChromosomeLocations();
+            }else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOGGER.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
