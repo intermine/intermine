@@ -52,7 +52,7 @@ public abstract class BioQueries
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocationAndObjects(ObjectStore os, Class objectCls, Class subjectCls,
-            boolean orderBySubject, boolean hasLength, int batchSize)
+            boolean orderBySubject, boolean hasLength, boolean hasChromosomeLocation, int batchSize)
     throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -87,6 +87,13 @@ public abstract class BioQueries
             SimpleConstraint lengthNotNull =
                 new SimpleConstraint(qfObjLength, ConstraintOp.IS_NOT_NULL);
             cs.addConstraint(lengthNotNull);
+        }
+        
+        if (hasChromosomeLocation) {
+            QueryObjectReference chrLocationRef = new QueryObjectReference(qcSub, "chromosomeLocation");
+            ContainsConstraint chrLocRefNotNull = 
+                new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NULL);
+            cs.addConstraint(chrLocRefNotNull);
         }
         q.setConstraint(cs);
         Set indexesToCreate = new HashSet();
