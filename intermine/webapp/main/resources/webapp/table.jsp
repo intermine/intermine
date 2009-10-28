@@ -154,8 +154,8 @@
       <input type="hidden" name="table" value="${param.table}"/>
       <input type="button" name="saveNewBag" value="Save selected" id="saveNewBag" onclick="javascript:validateBagName('saveBagForm');"/>
       <script type="text/javascript" charset="utf-8">
-        $('newBagName').disabled = true;
-        $('saveNewBag').disabled = true;
+        jQuery('#newBagName').attr('disabled','disabled');
+        jQuery('#saveNewBag').attr('disabled','disabled');
       </script>
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_createlist')" ><fmt:message key="confirm.cancel"/></a>
@@ -174,7 +174,7 @@
           </html:select>
      <input type="submit" name="addToBag" id="addToBag" value="Add selected" />
      <script type="text/javascript" charset="utf-8">
-          $('addToBag').disabled = true;
+          jQuery('#addToBag').attr('disabled','disabled');
         </script>
     </c:when>
     <c:otherwise>
