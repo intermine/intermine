@@ -240,7 +240,13 @@ public interface Constants
     public static final int BATCH_SIZE = 500;
 
     /**
-     * Current version of InterMine. This constant must changed by every new InteMine release.
+     * Current version of InterMine. This constant must changed by every new InterMine release.
      */
     public static final int INTERMINE_VERSION = 1;
+
+    /**
+     * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
+     * any class keys.
+     */
+    public static final String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
 }
