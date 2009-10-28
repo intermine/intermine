@@ -39,7 +39,7 @@
 
       <script language="JavaScript">
       <!--
-     $('monkey').innerHTML='<input type=\"text\" name=\"monkey\" size=\"40\"/>';
+     jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
       //-->
       </script>
 
