@@ -100,14 +100,14 @@
           </fmt:message>
         </c:otherwise>
       </c:choose>
-      <c:set var="summary" value="${node.reference || node.collection || (!node.reference && !node.collection && !node.attribute)}" />
+      <c:set var="summary" value="${!node.attribute}" />
       <c:choose>
-        <c:when test="${!node.selected && !isNull && summary}">
+        <c:when test="${!node.selected && !isNull && summary && KEYLESS_CLASSES_MAP[node.type] == null}">
           <html:link action="/mainChange?method=addToView&amp;path=${node.pathString}" title="${selectNodeTitle}">
             <img class="arrow" src="images/show-ref.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
           </html:link>
         </c:when>
-        <c:when test="${node.selected  && summary}">
+        <c:when test="${summary}">
             <img class="arrow" src="images/show-ref-disabled.gif" width="60" height="13" title="show" style="margin-right:-0.5ex"/>
         </c:when>
         <c:when test="${!node.selected && !isNull}">

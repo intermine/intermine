@@ -65,11 +65,9 @@ public class QueryBuilderController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         populateRequest(request, response);
         return null;
     }
@@ -99,9 +97,9 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("loopPaths", listToMap(findLoopConstraints(query)));
         List<Path> pathView = SessionMethods.getEditingView(session);
 
-        
+
         Integer sortByIndex = new Integer(0); // sort-by-field's index in the select list
-        
+
         // sort order
         Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
         // create a map of fields to direction
@@ -142,11 +140,10 @@ public class QueryBuilderController extends TilesAction
         boolean isSuperUser = SessionMethods.isSuperUser(session);
 
         String prefix = (String) session.getAttribute("prefix");
-        Collection nodes =
-            MainHelper.makeNodes((String) session.getAttribute("path"), model, isSuperUser);
+        Collection<MetadataNode> nodes = MainHelper.makeNodes((String) session
+                .getAttribute("path"), model, isSuperUser);
         List<String> dottedViewStrings = query.getDottedViewStrings();
-        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-            MetadataNode node = (MetadataNode) iter.next();
+        for (MetadataNode node : nodes) {
             // Update view nodes
             String pathName = node.getPathString();
             int firstDot = pathName.indexOf('.');
@@ -163,10 +160,10 @@ public class QueryBuilderController extends TilesAction
                 Path path = new Path(model, pathName);
                 // If an object has been selected, select its fields instead
                 if (path.getEndFieldDescriptor() == null || path.endIsReference()
-                    || path.endIsCollection()) {
+                        || path.endIsCollection()) {
                     if (viewStrings.keySet().contains(path)) {
                         ClassDescriptor cld = path.getEndClassDescriptor();
-                        for (FieldConfig fc 
+                        for (FieldConfig fc
                                 : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                             String pathFromField = pathName + "." + fc.getFieldExpr();
                             if (viewStrings.keySet().contains(pathFromField)) {
@@ -200,8 +197,7 @@ public class QueryBuilderController extends TilesAction
         }
         request.setAttribute("navigation", navigation);
         request.setAttribute("navigationPaths", navigationPaths);
-     }
-
+    }
 
     private static void assureCorrectSortOrder(PathQuery pathQuery) {
         Map<Path, String> newSortOrder = new LinkedHashMap<Path, String>();
