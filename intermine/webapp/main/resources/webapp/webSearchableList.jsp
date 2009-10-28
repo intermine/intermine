@@ -233,12 +233,12 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 <script type="text/javascript">
 <!--//<![CDATA[
     function showWSList(wsListId, type) {
-        $(wsListId + '_' + type + '_spinner').style.display = 'none';
-        $(wsListId + '_' + type + '_container').style.display = 'block';
+        jQuery('#'+wsListId + '_' + type + '_spinner').hide();
+        jQuery('#'+wsListId + '_' + type + '_container').show();
     }
     function hideWSList(wsListId, type) {
-        $(wsListId + '_' + type + '_spinner').style.display = 'block';
-        $(wsListId + '_' + type + '_container').style.display = 'none';
+    	jQuery('#'+wsListId + '_' + type + '_spinner').show();
+    	jQuery('#'+wsListId + '_' + type + '_container').hide();
     }
     setWsNamesMap(${wsNames}, '${wsListId}', '${type}');
 //]]>-->
