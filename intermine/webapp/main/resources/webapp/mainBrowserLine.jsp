@@ -52,7 +52,7 @@
           <img src="images/blank.gif" width="11" height="11" title=" "/>
         </c:otherwise>
       </c:choose>
-      <im:viewableSpan path="${fullpath}"node="${node}" idPrefix="browser">
+      <im:viewableSpan path="${fullpath}" node="${node}" idPrefix="browser">
         <c:if test="${node.indentation > 0}">
           <c:choose>
             <c:when test="${node.collection}">
@@ -74,7 +74,7 @@
           <im:typehelp type="${node.parentType}.${node.fieldName}"/>
         </c:if>
         <span class="collectionDescription ${isNull ? 'nullReferenceField' : ''}">
-        <c:if test="${node.type != 'String' && node.type != 'Integer'}">
+        <c:if test="${node.type != 'String'}">
           <span class="type">${node.type}</span><c:if test="${!isNull}"><im:typehelp type="${node.type}"/></c:if>
         </c:if>
         <c:if test="${node.collection}">
