@@ -255,17 +255,17 @@
   </tfoot>
     <c:if test="${! pagedResults.emptySelection}">
     <script type="text/javascript" charset="utf-8">
-    if ($('newBagName')) {
-        $('newBagName').disabled = false;
+    if (jQuery('#newBagName')) {
+        jQuery('#newBagName').attr('disabled','');
   }
-  if ($('saveNewBag')) {
-    $('saveNewBag').disabled = false;
+  if (jQuery('#saveNewBag')) {
+    jQuery('#saveNewBag').attr('disabled','');
   }
-    if ($('addToBag')) {
-        $('addToBag').disabled = false;
+    if (jQuery('#addToBag')) {
+        jQuery('#addToBag').attr('disabled','');
     }
-    if ($('removeFromBag')) {
-        $('removeFromBag').disabled = false;
+    if (jQuery('#removeFromBag')) {
+    	jQuery('#removeFromBag').attr('disabled','');
     }
     </script>
     </c:if>
