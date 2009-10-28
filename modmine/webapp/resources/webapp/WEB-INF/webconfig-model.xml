@@ -45,6 +45,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.SubmissionProperty">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Antibody">
     <fields>
       <fieldconfig fieldExpr="name"/>
