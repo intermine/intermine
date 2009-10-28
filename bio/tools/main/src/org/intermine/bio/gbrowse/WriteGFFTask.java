@@ -139,7 +139,7 @@ public class WriteGFFTask extends Task
 
         Results results =
             BioQueries.findLocationAndObjects(os, Chromosome.class,
-                    LOCATED_SEQUENCE_FEATURE_CLASS, false, true, 2000);
+                    LOCATED_SEQUENCE_FEATURE_CLASS, false, true, true, 2000);
 
         Iterator<ResultsRow> resIter = results.iterator();
 
