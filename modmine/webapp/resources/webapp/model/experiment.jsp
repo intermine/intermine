@@ -363,8 +363,8 @@ All GBrowse tracks generated for this experiment:
             		<c:choose>
                		<c:when test="${factor.property != null}">
                			<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
-										[<span class="tinylink">
-                       <im:querylink text="ALL" skipBuilder="true" title="View all submissions using this factor">
+										<span class="tinylink">
+                       <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
                          <query name="" model="genomic"
                            view="Submission.DCCid Submission.project.surnamePI Submission.title Submission.experimentType Submission.properties.type Submission.properties.name"
                            sortOrder="Submission.experimentType asc">
@@ -385,7 +385,7 @@ All GBrowse tracks generated for this experiment:
                       </node>
                     </query>
                   </im:querylink>
-                  </span>]
+                  </span>
                		</c:when>
                		<c:otherwise>
                  		<c:out value="${factor.name}"/><c:if test="${!status.last}">,</c:if>          
