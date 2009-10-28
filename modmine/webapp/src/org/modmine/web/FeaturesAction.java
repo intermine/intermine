@@ -89,10 +89,12 @@ public class FeaturesAction extends InterMineAction
             DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
             
             q.addView(featureType + ".primaryIdentifier");
+            q.addView(featureType + ".score");
             q.addView(featureType + ".chromosome.primaryIdentifier");
             q.addView(featureType + ".chromosomeLocation.start");
             q.addView(featureType + ".chromosomeLocation.end");
             q.addView(featureType + ".chromosomeLocation.strand");
+            q.addView(featureType + ".submissions:experimentalFactors.type");
             q.addView(featureType + ".submissions:experimentalFactors.name");
             q.addConstraint(featureType + ".submissions.experiment.name", 
                     Constraints.eq(experimentName));
@@ -110,10 +112,13 @@ public class FeaturesAction extends InterMineAction
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
 
             q.addView(featureType + ".primaryIdentifier");
+            q.addView(featureType + ".score");
             q.addView(featureType + ".chromosome.primaryIdentifier");
             q.addView(featureType + ".chromosomeLocation.start");
             q.addView(featureType + ".chromosomeLocation.end");
             q.addView(featureType + ".chromosomeLocation.strand");
+            q.addView(featureType + ".submissions:experimentalFactors.type");
+            q.addView(featureType + ".submissions:experimentalFactors.name");
             q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
             q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
             q.addOrderBy(featureType + ".chromosomeLocation.start"); 
