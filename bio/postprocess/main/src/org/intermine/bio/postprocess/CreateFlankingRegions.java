@@ -88,7 +88,7 @@ public class CreateFlankingRegions
      */
     public void createFlankingFeatures() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os,
-                Chromosome.class, Gene.class, false, false, 500);
+                Chromosome.class, Gene.class, false, false, false, 1000);
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections
                 .singleton(DataSet.class));
