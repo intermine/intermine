@@ -372,7 +372,7 @@ public class MetadataCache
                 Map<String, Long> expFeatureCounts = featureCounts.get(experiment.getName());
                 DisplayExperiment displayExp = new DisplayExperiment(experiment, project, 
                         expFeatureCounts, os);
-                experimentCache.put(experiment.getName(), displayExp);
+                experimentCache.put(displayExp.getName(), displayExp);
             }
         } catch (Exception err) {
             err.printStackTrace();
