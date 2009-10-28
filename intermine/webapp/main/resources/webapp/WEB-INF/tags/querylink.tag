@@ -29,22 +29,5 @@
       <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
     </c:if>
 
-<%--
-<%@ attribute name="showImage" required="false" type="java.lang.String" %>
-    ${showImage}
-
-this is not working, not sure why.
-
-<c:choose>
-    <c:when test="${showImage == 'fly'}"/>
-      <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
-      </c:when>
-</c:choose>
-
-nor this does..
-    <c:if test="${showImage == 'fly'}"/>
-      <img border="0" class="arrow" src="images/right-arrow.gif" title="-&gt;"/>
-      </c:if>
-    --%>
   </span>
 </html:link>
