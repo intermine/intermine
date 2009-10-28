@@ -37,12 +37,11 @@
     <div class="body">
       <div class="resultsTableTemplateHeader">
       
-
       <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
 
       <%-- show the description only if we ve run a query (rather than viewing
            a bag) - see #1031 --%>
-        <c:if test="${param.bagName == null}">
+        <c:if test="${empty param.bagName}">
           <div>
             <fmt:message key="results.templateTitle"/>:
             <span class="templateTitleBold">
