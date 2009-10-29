@@ -38,8 +38,12 @@ public class CSVHttpExporter extends StandardHttpExporter
      * {@inheritDoc}
      */
     @Override
-    protected void setResponseHeader(HttpServletResponse response) {
-        ResponseUtil.setCSVHeader(response, "results-table.csv");
+    protected void setResponseHeader(HttpServletResponse response, boolean doGzip) {
+        if (doGzip) {
+            ResponseUtil.setGzippedHeader(response, "results-table.csv.gz");
+        } else {
+            ResponseUtil.setCSVHeader(response, "results-table.csv");
+        }
     }
 
     /**

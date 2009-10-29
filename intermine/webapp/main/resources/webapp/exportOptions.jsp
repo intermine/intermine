@@ -87,6 +87,10 @@
     <label>Include column headers in output</label>
   </li>
   </c:if>
+  <li class="columnHeaderOption">
+    <html:checkbox property="doGzip"/>
+    <label>Compress data using gzip</label>
+  <li>
 
   <html:hidden property="pathsString" styleId="pathsString" value="${pathsString}"/>
   <html:hidden property="table" value="${table}"/>
