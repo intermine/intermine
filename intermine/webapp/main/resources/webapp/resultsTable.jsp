@@ -79,10 +79,10 @@
             <c:if test="${fn:length(columnDisplayNameList) > 3}">...
                 <c:set var="begin" value="${fn:length(columnDisplayNameList)-3}"/>
             </c:if>
-            <span id="header_${status.count}" style="cursor:default;">
+            <span id="header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}" style="cursor:default;">
             <script type="text/javascript" charset="utf-8">
                 jQuery(document).ready(function(){
-                    jQuery('#header_${status.count}').qtip({
+                    jQuery('#header_${fn:replace(pagedResults.tableid,'.','_')}_${status.count}').qtip({
                        content: '${displayPath}',
                        show: 'mouseover',
                        hide: 'mouseout',
