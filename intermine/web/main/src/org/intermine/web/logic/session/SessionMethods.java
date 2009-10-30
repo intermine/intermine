@@ -41,6 +41,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -1018,5 +1019,14 @@ public class SessionMethods
      */
     public static final BagManager getBagManager(ServletContext servletContext) {
         return (BagManager) servletContext.getAttribute(Constants.BAG_MANAGER);
+    }
+    
+    /**
+     * Fetch the TemplateManager for finding global and user templates
+     * @param servletContext servlet context to fetch attribute from
+     * @return the TemplateManager
+     */
+    public static final TemplateManager getTemplateManager(ServletContext servletContext) {
+        return (TemplateManager) servletContext.getAttribute(Constants.TEMPLATE_MANAGER);
     }
 }

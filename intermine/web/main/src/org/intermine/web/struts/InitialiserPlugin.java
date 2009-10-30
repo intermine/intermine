@@ -43,6 +43,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -136,6 +137,9 @@ public class InitialiserPlugin implements PlugIn
         
         final BagManager bagManager = new BagManager(superProfile, os.getModel());
         servletContext.setAttribute(Constants.BAG_MANAGER, bagManager);
+
+        final TemplateManager templateManager = new TemplateManager(superProfile, os.getModel());
+        servletContext.setAttribute(Constants.TEMPLATE_MANAGER, templateManager);
         
         // index global webSearchables
         SearchRepository searchRepository =

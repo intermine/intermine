@@ -1,4 +1,4 @@
-package org.intermine.web.logic.template;
+package org.intermine.api.template;
 
 /*
  * Copyright (C) 2002-2009 FlyMine
@@ -25,7 +25,6 @@ public class TemplateComparator implements Comparator
      * {@inheritDoc}
      */
     public int compare(Object arg0, Object arg1) {
-
 
         TemplateQuery template0 = (TemplateQuery) arg0;
         TemplateQuery template1 = (TemplateQuery) arg1;

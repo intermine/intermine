@@ -212,6 +212,11 @@ public interface Constants
     public static final String BAG_MANAGER = "BAG_MANAGER";
 
     /**
+     * Servlet attribute.  The TemplateManager for fetching global and user templates.
+     */
+    public static final String TEMPLATE_MANAGER = "TEMPLATE_MANAGER";
+
+    /**
      * Default size of table implemented by PagedTable.
      */
     public static final int DEFAULT_TABLE_SIZE = 25;

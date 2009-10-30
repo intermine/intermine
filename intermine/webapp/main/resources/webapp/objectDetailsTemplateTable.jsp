@@ -32,7 +32,7 @@
 <c:set var="extra" value=""/>
   <c:choose>
   <c:when test="${! empty interMineIdBag}">
-    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}&amp;useBagNode=${fieldExprMap[templateQuery]}"/>
+    <c:set var="extra" value="&amp;bagName=${interMineIdBag.name}"/>
   </c:when>
   <c:otherwise>
      <c:set var="extra" value="${extra}&amp;idForLookup=${displayObject.object.id}" />

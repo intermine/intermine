@@ -25,7 +25,7 @@ import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.core.TemplateManager;
+import org.intermine.webservice.server.core.WebServiceTemplateManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.query.result.QueryResultService;
@@ -47,9 +47,9 @@ public class TemplateResultService extends QueryResultService
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {
-            template = new TemplateManager(request).getTemplate(input.getName());
+            template = new WebServiceTemplateManager(request).getTemplate(input.getName());
         } else {
-            template = new TemplateManager(request).getGlobalTemplate(input.getName());    
+            template = new WebServiceTemplateManager(request).getGlobalTemplate(input.getName());    
         }
         if (template == null) {
             throw new ResourceNotFoundException("public template with name '" + input.getName()
