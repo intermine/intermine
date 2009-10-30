@@ -42,7 +42,6 @@ import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateListHelper;
 
 /**
  * Action to handle events from the object details page
@@ -270,10 +269,7 @@ public class ModifyDetails extends DispatchAction
             cc.putAttribute("displayObject", obj);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
-            Map fieldExprs = new HashMap();
-            TemplateListHelper.getAspectTemplateForClass(request.getParameter("placement"), sc, o,
-                                                         fieldExprs);
-            cc.putAttribute("fieldExprMap", fieldExprs);
+
             new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("objectDetailsTemplateTable");
@@ -285,10 +281,7 @@ public class ModifyDetails extends DispatchAction
         cc.putAttribute("interMineIdBag", interMineBag);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));
-        Map fieldExprs = new HashMap();
-        TemplateListHelper.getAspectTemplatesForType(request.getParameter("placement"), sc,
-                                                     interMineBag, fieldExprs);
-        cc.putAttribute("fieldExprMap", fieldExprs);
+
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
         return mapping.findForward("objectDetailsTemplateTable");

@@ -12,11 +12,9 @@ package org.intermine.api.profile;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -159,23 +157,6 @@ public class Profile
      */
     public Map<String, TemplateQuery> getSavedTemplates() {
         return Collections.unmodifiableMap(savedTemplates);
-    }
-
-    /**
-     * Get the users saved templates with specified tag
-     * @param tag filter the templates returned by this tag
-     * @return saved templates
-     */
-    public Map<String, TemplateQuery> getSavedTemplates(String tag) {
-        Map<String, TemplateQuery> filteredTemplates = new HashMap();
-        TagManager tagManager = getTagManager();
-        for (String template : savedTemplates.keySet()) {
-            Set<String> tags = tagManager.getObjectTagNames(template, TagTypes.TEMPLATE, username);
-            if (tags.contains(tag)) {
-                filteredTemplates.put(template, savedTemplates.get(template));
-            }
-        }
-        return Collections.unmodifiableMap(filteredTemplates);
     }
 
 

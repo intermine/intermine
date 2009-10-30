@@ -114,14 +114,12 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * @param path a String of a path with editable constraints
      * @return List of Constraints for the path
      */
-    public List getEditableConstraints(String path) {
+    public List<Constraint> getEditableConstraints(String path) {
         if (nodes.get(path) == null) {
             return Collections.EMPTY_LIST;
         }
-        List ecs = new ArrayList();
-        Iterator cIter = nodes.get(path).getConstraints().iterator();
-        while (cIter.hasNext()) {
-            Constraint c = (Constraint) cIter.next();
+        List<Constraint> ecs = new ArrayList<Constraint>();
+        for (Constraint c : nodes.get(path).getConstraints()) {
             if (c.isEditable()) {
                 ecs.add(c);
             }
@@ -169,11 +167,10 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return a List of all the Constraints of fields in this template query
      */
-    public List getAllEditableConstraints() {
-        List ecs = new ArrayList();
-        Iterator nodeIter = nodes.keySet().iterator();
-        while (nodeIter.hasNext()) {
-            ecs.addAll(getEditableConstraints((String) nodeIter.next()));
+    public List<Constraint> getAllEditableConstraints() {
+        List<Constraint> ecs = new ArrayList<Constraint>();
+        for (String path : nodes.keySet()) {
+            ecs.addAll(getEditableConstraints(path));
         }
         return ecs;
     }

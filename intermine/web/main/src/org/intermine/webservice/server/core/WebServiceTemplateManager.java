@@ -22,7 +22,7 @@ import org.intermine.web.logic.template.TemplateHelper;
  * Public templates manager used by web service.
  * @author Jakub Kulaviak
  **/
-public class TemplateManager
+public class WebServiceTemplateManager
 {
     
     private HttpServletRequest request;
@@ -31,7 +31,7 @@ public class TemplateManager
      * TemplateManager constructor.
      * @param request request 
      */
-    public TemplateManager(HttpServletRequest request) {
+    public WebServiceTemplateManager(HttpServletRequest request) {
         this.request = request;
     }
     

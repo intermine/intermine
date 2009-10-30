@@ -22,7 +22,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
@@ -269,6 +269,7 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException("user profile doesn't exist for " + username);
         }
         Profile profile = pm.getProfile(username, pm.getPassword(username));
-        return profile.getSavedTemplates(TagNames.IM_PUBLIC);
+        TemplateManager templateManager = new TemplateManager(profile, os.getModel());
+        return templateManager.getGlobalTemplates();
     }
 }

@@ -28,7 +28,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.3.2.min.js'/>"></script>
-<c:if test="${pageName == 'results' || pageName == 'bagDetails'}">
+<c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'objectDetails'}">
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
 </c:if>
 <c:if test="${pageName == 'begin'}">
