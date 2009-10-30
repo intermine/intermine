@@ -47,8 +47,8 @@
   border-left: none;
 }
 
-.dbsources table.features .td {
-  margin-right: 3px;
+.dbsources table.features td {
+  margin-rigth: 3px;
 }
 
 div#experimentFeatures {
@@ -71,9 +71,6 @@ div#experimentFeatures {
   padding: 5px;
  }
  
-.submissionFeatures .td {
- margin-right: 3px;
-}
 .submissions div {
   clear: both;
 }
@@ -460,10 +457,22 @@ All GBrowse tracks generated for this experiment:
 
 <%-- FILES --%>
 
+
+
           <span class="filelink">
-                     <c:forEach
-						items="${files}" var="subFiles" varStatus="sub_status">
+                     <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
 						<c:if test="${subFiles.key == sub.dCCid}">
+            <c:forEach items="${filesPerSub}" var="filesNr" varStatus="nr_status">
+            <c:if test="${filesNr.key == sub.dCCid}">
+     <c:set var="nr" value="${filesNr.value}" /> 
+<c:choose>
+            <c:when test="${nr > 20}">
+                <a href="${urlPrefix}${sub.dCCid}/extracted"
+                  title="Access the submission ${nr} files" class="value extlink"> 
+                  <c:out value="${nr} files" /> </a>            
+            </c:when>
+<c:otherwise>
+            
 							<c:forEach items="${subFiles.value}" var="fileName"
 								varStatus="file_status">
 								<br>
@@ -471,6 +480,10 @@ All GBrowse tracks generated for this experiment:
 									title="Download ${fileName}" class="value extlink"> <c:out
 									value="${fileName}" /> </a>
 							</c:forEach>
+</c:otherwise>
+</c:choose>
+</c:if>
+          </c:forEach>
 						</c:if>
 					</c:forEach>
 					</span>
