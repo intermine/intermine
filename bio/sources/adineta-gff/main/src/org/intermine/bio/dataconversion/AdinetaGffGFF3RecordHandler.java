@@ -41,7 +41,7 @@ public class AdinetaGffGFF3RecordHandler extends GFF3RecordHandler
         //
         //     Item feature = getFeature();
         //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttrinte("symbol", symbol);
+        //     feature.setAttribute("symbol", symbol);
         //
         // Any new Items created can be stored by calling addItem().  For example:
         // 
@@ -52,7 +52,32 @@ public class AdinetaGffGFF3RecordHandler extends GFF3RecordHandler
         //
         // You should make sure that new Items you create are unique, i.e. by storing in a map by
         // some identifier. 
+        
+        //TODO Handle repeatmasker ID=Av-lea1-B_288L15:hsp:0;Parent=Av-lea1-B_288L15:hit:0;Name=species:(CCA)n_genus:Simple_repeat;Target=species:(CCA)n_genus:Simple_repeat 3
+        //
+        //TODO Handle blastx ID=Av-lea1-B_288L15:hit:14;Name=sp|P36609|NCS2_CAEEL;Target=sp|P36609|NCS2_CAEEL 1 172 +;
+        // ID=Av-lea1-B_288L15:hsp:18;Parent=Av-lea1-B_288L15:hit:13;Name=sp|Q28IM6|HPCL1_XENTR;Target=sp|Q28IM6|HPCL1_XENTR 115 170 +;
+        // String ID = record.getAttributes().get("ID").get(0);
+        // String[] IDsplit = ID.split(":");
+        // getFeature().setAttribute("primaryIdentifer", IDsplit[0]);
+        //        
+        // String Name = record.getAttributes().get("Name").get(0);
+        // String[] NameSplit = Name.split(":");
+        // Item protein = createItem("Protein");
+        // protein.setAttribute("primaryAccession",NameSplit[1]);
 
+        
+        //
+        //TODO Handle CDS ID=maker-Av-lea1-B_288L15-snap-gene-0.9-mRNA-1:cds:0;Parent=maker-Av-lea1-B_288L15-snap-gene-0.9-mRNA-1;
+        //
+        //TODO Handle exon ID=maker-Av-lea1-B_288L15-snap-gene-0.9-mRNA-1:exon:2;Parent=maker-Av-lea1-B_288L15-snap-gene-0.9-mRNA-1;
+        //
+        //TODO Handle gene ID=maker-Av-lea1-B_288L15-snap-gene-0.6;Name=maker-Av-lea1-B_288L15-snap-gene-0.6;
+        //
+        //TODO Handle mRNA
+        //
+        //TODO load sequence
+        //
     }
 
 }
