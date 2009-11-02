@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -47,7 +46,6 @@ public class TemplateListController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
@@ -58,7 +56,7 @@ public class TemplateListController extends TilesAction
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         List<TemplateQuery> templates = null;
-        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         
         if (StringUtils.equals("global", scope)) {
             if (interMineIdBag != null) {

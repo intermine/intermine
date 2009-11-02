@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
@@ -57,6 +58,69 @@ public class TemplateManager
         this.model = model;
         this.superProfile = superProfile;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+    }
+    
+    /**
+     * Fetch a global template by name.
+     * @param templateName name of the template to fetch
+     * @return the template or null
+     */
+    public TemplateQuery getGlobalTemplate(String templateName) {
+        return getGlobalTemplates().get(templateName);
+    }
+    
+    /**
+     * Fetch a user template by name.
+     * @param profile the user to fetch the template from
+     * @param templateName name of the template to fetch
+     * @return the template or null
+     */
+    public TemplateQuery getUserTemplate(Profile profile, String templateName) {
+        return profile.getSavedTemplates().get(templateName); 
+    }
+    
+    /**
+     * Fetch a user or global template by name.  If there are name collisions the user template
+     * take precedence.
+     * @param profile the user to fetch the template from
+     * @param templateName name of the template to fetch
+     * @return the template or null
+     */
+    public TemplateQuery getUserOrGlobalTemplate(Profile profile, String templateName) {
+        return getUserAndGlobalTemplates(profile).get(templateName);
+    }
+    
+    /**
+     * Fetch a template with the scope provided, possible values are defined in Scope class.  If
+     * the scope is ALL and there name collisions between user and global templates, the user
+     * template takes precedence.
+     * @param profile the user to fetch the template from
+     * @param templateName name of the template to fetch
+     * @param scope user, global or all templates
+     * @return the template or null
+     */
+    public TemplateQuery getTemplate(Profile profile, String templateName, String scope) {
+        if (scope.equals(Scope.GLOBAL)) {
+            return getGlobalTemplate(templateName);           
+        } else if (scope.equals(Scope.USER)) {
+            return getUserTemplate(profile, templateName);
+        } else if (scope.equals(Scope.ALL)) {
+            return getUserOrGlobalTemplate(profile, templateName);
+        } else {
+            throw new RuntimeException("Scope '" + scope + "' not recognised attempting to find "
+                    + "template: " + templateName + ".");
+        }
+    }
+    
+
+    private Map<String, TemplateQuery> getUserAndGlobalTemplates(Profile profile) {
+        // where name collisions occur user templates take precedence
+        Map<String, TemplateQuery> allTemplates = new HashMap<String, TemplateQuery>();
+        
+        allTemplates.putAll(getGlobalTemplates());
+        allTemplates.putAll(profile.getSavedTemplates());
+        
+        return allTemplates;
     }
     
     
@@ -209,7 +273,7 @@ public class TemplateManager
      * @param tag the tag to search for
      * @return a map from template name to template query
      */
-    protected Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag) {
+    private Map<String, TemplateQuery> getTemplatesWithTag(Profile profile, String tag) {
         Map<String, TemplateQuery> templatesWithTag = new HashMap<String, TemplateQuery>();
         
         for (Map.Entry<String, TemplateQuery> entry : profile.getSavedTemplates().entrySet()) {

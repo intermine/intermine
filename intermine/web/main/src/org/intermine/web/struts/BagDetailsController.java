@@ -35,6 +35,7 @@ import org.intermine.api.results.WebTable;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
+import org.intermine.api.search.Scope;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -44,7 +45,6 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
@@ -83,11 +83,11 @@ public class BagDetailsController extends TilesAction
         InterMineBag imBag = null;
         String scope = request.getParameter("scope");
         if (scope == null) {
-            scope = TemplateHelper.ALL_TEMPLATE;
+            scope = Scope.ALL;
         }
 
-        if (scope.equals(TemplateHelper.USER_TEMPLATE)
-                        || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        if (scope.equals(Scope.USER)
+                        || scope.equals(Scope.ALL)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
@@ -95,8 +95,8 @@ public class BagDetailsController extends TilesAction
             }
         }
 
-        if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
-            || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        if (scope.equals(Scope.GLOBAL)
+            || scope.equals(Scope.ALL)) {
             // scope == all or global
             if (bagManager.getGlobalBag(bagName) != null) {
                 imBag = (InterMineBag) bagManager.getGlobalBag(bagName);

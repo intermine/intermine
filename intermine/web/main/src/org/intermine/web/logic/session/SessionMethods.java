@@ -1022,11 +1022,30 @@ public class SessionMethods
     }
     
     /**
+     * Fetch the BagManager for finding global and user bags.
+     * @param session to get servletContext and hence BagManager
+     * @return the BagManager
+     */
+    public static final BagManager getBagManager(HttpSession session) {
+        return (BagManager) session.getServletContext().getAttribute(Constants.BAG_MANAGER);
+    }
+    
+    /**
      * Fetch the TemplateManager for finding global and user templates
      * @param servletContext servlet context to fetch attribute from
      * @return the TemplateManager
      */
     public static final TemplateManager getTemplateManager(ServletContext servletContext) {
         return (TemplateManager) servletContext.getAttribute(Constants.TEMPLATE_MANAGER);
+    }
+    
+    /**
+     * Fetch the TemplateManager for finding global and user templates
+     * @param session to get servletContext and hence TemplateManager
+     * @return the TemplateManager
+     */
+    public static final TemplateManager getTemplateManager(HttpSession session) {
+        return (TemplateManager) session.getServletContext().getAttribute(
+                Constants.TEMPLATE_MANAGER);
     }
 }

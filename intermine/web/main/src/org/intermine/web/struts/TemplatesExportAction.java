@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
@@ -64,10 +65,10 @@ public class TemplatesExportAction extends InterMineAction
                                                    + scope);
             }
         } else {
-            TemplateQuery t = TemplateHelper.findTemplate(servletContext, session,
-                    profile.getUsername(), name, scope);
-            if (t != null) {
-                xml = t.toXml(PathQuery.USERPROFILE_VERSION);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+            TemplateQuery template = templateManager.getTemplate(profile, name, scope);
+            if (template != null) {
+                xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
                         + scope);
