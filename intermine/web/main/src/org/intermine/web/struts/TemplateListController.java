@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
@@ -58,7 +59,7 @@ public class TemplateListController extends TilesAction
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         
-        if (StringUtils.equals("global", scope)) {
+        if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
                 templates = templateManager.getReportPageTemplatesForAspect(aspect, 
                         interMineIdBag.getType());
@@ -69,7 +70,7 @@ public class TemplateListController extends TilesAction
                 templates = templateManager.getAspectTemplates(aspect);
             }
 
-        } else if (StringUtils.equals("user", scope)) {
+        } else if (StringUtils.equals(Scope.USER, scope)) {
             // no user template functionality implemented
         }
 

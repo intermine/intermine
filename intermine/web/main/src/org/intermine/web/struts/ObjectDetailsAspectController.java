@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.search.Scope;
 import org.intermine.web.logic.results.DisplayObject;
 
 /**
@@ -40,7 +41,7 @@ public class ObjectDetailsAspectController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         ComponentContext cc = new ComponentContext();
-        cc.putAttribute("scope", "global");
+        cc.putAttribute("scope", Scope.GLOBAL);
         cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
         cc.putAttribute("interMineIdBag", interMineIdBag);

@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
@@ -53,10 +54,10 @@ public class TemplatesExportAction extends InterMineAction
         String xml = null;
 
         if (name == null) {
-            if (scope == null || scope.equals("user")) {
+            if (scope == null || scope.equals(Scope.USER)) {
                 xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);
-            } else if (scope.equals("global")) {
+            } else if (scope.equals(Scope.GLOBAL)) {
                 xml = TemplateHelper.templateMapToXml(SessionMethods
                         .getSuperUserProfile(servletContext).getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);

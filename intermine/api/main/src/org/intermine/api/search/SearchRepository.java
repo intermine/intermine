@@ -66,26 +66,17 @@ public class SearchRepository
     private final String scope;
     private Profile profile;
 
-    /**
-     * Global search repository type
-     */
-    public static final String GLOBAL = "global";
 
-    /**
-     * User search repository type
-     */
-    public static final String USER = "user";
-    
     /**
      * Construct a new instance of SearchRepository.
      * @param profile the Profile to use for getting aspect tags
      * @param scope USER or GLOBAL from SearchRepository
      */
     public SearchRepository(Profile profile, String scope) {
-        if (!scope.equals(SearchRepository.GLOBAL) && !scope.equals(SearchRepository.USER)) {
+        if (!scope.equals(Scope.GLOBAL) && !scope.equals(Scope.USER)) {
             throw new IllegalArgumentException("Unrecognised scope for SearchRepository: "
-                    + scope + ".  Expected " + SearchRepository.GLOBAL 
-                    + " or " + SearchRepository.USER);
+                    + scope + ".  Expected " + Scope.GLOBAL 
+                    + " or " + Scope.USER);
         }
         this.scope = scope;
         this.profile = profile;
@@ -109,7 +100,7 @@ public class SearchRepository
         }
         
         // if this is the global search repository only objects tagged as public
-        if (scope.equals(GLOBAL)) {
+        if (scope.equals(Scope.GLOBAL)) {
             final TagManager tagManager = 
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();
 
@@ -127,7 +118,7 @@ public class SearchRepository
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG     
      */
     public void globalChange(String type) {
-        if (scope.equals(GLOBAL)) {
+        if (scope.equals(Scope.GLOBAL)) {
             // don't know which are public so re-populate
             populateWebSearchables(type);
         } else {
@@ -145,10 +136,10 @@ public class SearchRepository
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     public void webSearchableAdded(WebSearchable webSearchable, String type) {
-        if (scope.equals(USER)) {
+        if (scope.equals(Scope.USER)) {
             reindex(type);
         }
-        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+        if (scope.equals(Scope.GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
             populateWebSearchables(type);
         }
     }
@@ -161,10 +152,10 @@ public class SearchRepository
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     public void webSearchableRemoved(WebSearchable webSearchable, String type) {
-        if (scope.equals(USER)) {
+        if (scope.equals(Scope.USER)) {
             reindex(type);
         }
-        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+        if (scope.equals(Scope.GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
             populateWebSearchables(type);
         }
     }
@@ -177,10 +168,10 @@ public class SearchRepository
      * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     public void webSearchableUpdated(WebSearchable webSearchable, String type) {
-        if (scope.equals(USER)) {
+        if (scope.equals(Scope.USER)) {
             reindex(type);
         }
-        if (scope.equals(GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
+        if (scope.equals(Scope.GLOBAL) && isWebSearchableGlobal(webSearchable, type)) {
             populateWebSearchables(type);
         }
     }
@@ -208,7 +199,7 @@ public class SearchRepository
     public void webSearchableTagChange(String type, String tagName) {
         // TODO will reindex the global search repository even if the tagged object isn't public
         
-        if (scope.equals(GLOBAL) && tagName.equals(TagNames.IM_PUBLIC)) {
+        if (scope.equals(Scope.GLOBAL) && tagName.equals(TagNames.IM_PUBLIC)) {
             populateWebSearchables(type);
         } else {
             reindex(type);
@@ -347,13 +338,6 @@ public class SearchRepository
         return webSearchablesMap.get(type);
     }
 
-    /**
-     * Return a map from type (TagTypes: "template", "bag", etc.) to Map from name to WebSearchable.
-     * @return the Map
-     */
-    public Map<String, Map<String, ? extends WebSearchable>> getWebSearchableMaps() {
-        return webSearchablesMap;
-    }
 
     /**
      * Add a Map from name to WebSearchable for the given type.  The Map can be retrieved later
@@ -440,9 +424,9 @@ public class SearchRepository
         IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
         IndexSearcher globalIndexSearcher = new IndexSearcher(globalDirectory);
         Searchable[] searchables;
-        if (scope.equals("user")) {
+        if (scope.equals(Scope.USER)) {
             searchables = new Searchable[]{userIndexSearcher};
-        } else if (scope.equals("global")) {
+        } else if (scope.equals(Scope.GLOBAL)) {
             searchables = new Searchable[]{globalIndexSearcher};
         } else {
             searchables = new Searchable[]{userIndexSearcher, globalIndexSearcher};
