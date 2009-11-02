@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -23,6 +22,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
@@ -31,7 +31,7 @@ import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -289,14 +289,13 @@ public class TemplateForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
                 
         String queryName = getName();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        TemplateQuery template =
-            TemplateHelper.findTemplate(servletContext, session, userName,
-                                        queryName, getType());
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getTemplate(profile, queryName, getType());
+
         ActionErrors errors = new ActionErrors();
 
         boolean appendWildcard = (request.getParameter("appendWildcard") != null

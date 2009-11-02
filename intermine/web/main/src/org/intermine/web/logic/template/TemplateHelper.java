@@ -16,17 +16,12 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.ClassDescriptor;
@@ -37,8 +32,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateForm;
 
 /**
@@ -49,71 +42,7 @@ import org.intermine.web.struts.TemplateForm;
 public class TemplateHelper
 {
     private static final Logger LOG = Logger.getLogger(TemplateHelper.class);
-
-    /** Type parameter indicating globally shared template. */
-    public static final String GLOBAL_TEMPLATE = "global";
-    /** Type parameter indicating private user template. */
-    public static final String USER_TEMPLATE = "user";
-    /** Type parameter indicating ALL templates */
-    public static final String ALL_TEMPLATE = "all";
-    /** Type parameter indicating temporary templates **/
-    public static final String TEMP_TEMPLATE = "temp";
-
-    /**
-     * Locate TemplateQuery by identifier. The type parameter
-     * @param servletContext the ServletContext
-     * @param session the HttpSession
-     * @param userName the user name (for finding user templates)
-     * @param templateName  template query identifier/name
-     * @param type        type of tempate, either GLOBAL_TEMPLATE, SHARED_TEMPLATE or USER_TEMPLATE,
-     *                    ALL_TEMPLATE
-     * @return            the located template query with matching identifier
-     */
-    public static TemplateQuery findTemplate(ServletContext servletContext,
-                                             HttpSession session,
-                                             String userName,
-                                             String templateName,
-                                             String type) {
-
-        ProfileManager pm =
-            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        Profile profile = null;
-        if (userName != null) {
-            profile = pm.getProfile(userName);
-        }
-        if (profile == null && session != null) {
-            profile = (Profile) session.getAttribute(Constants.PROFILE);
-        }
-        if (profile == null || GLOBAL_TEMPLATE.equals(type)) {
-            Map templates =
-                SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
-            return (TemplateQuery) templates.get(templateName);
-        } else if (USER_TEMPLATE.equals(type)) {
-            return profile.getSavedTemplates().get(templateName);
-        } else if (ALL_TEMPLATE.equals(type)) {
-            TemplateQuery tq =
-                findTemplate(servletContext, session, userName, templateName, USER_TEMPLATE);
-            if (tq == null) {
-                return findTemplate(servletContext, session, userName,
-                                    templateName, GLOBAL_TEMPLATE);
-            }
-            return tq;
-        } else if (TEMP_TEMPLATE.equals(type)) {
-            SavedQuery savedQuery = profile.getHistory().get(templateName);
-            TemplateQuery t = null;
-            if (savedQuery.getPathQuery() instanceof TemplateQuery) {
-                t = (TemplateQuery) savedQuery.getPathQuery();
-            } else if (session.getAttribute(Constants.QUERY)
-                            instanceof TemplateQuery) {
-                // see #1435
-                t = (TemplateQuery) session.getAttribute(Constants.QUERY);
-            }
-            return t;
-        } else {
-            throw new IllegalArgumentException("findTemplate found bad type: " + type);
-        }
-    }
-
+    
     /**
      * Create a new TemplateQuery with input submitted by user contained within
      * a TemplateForm bean.

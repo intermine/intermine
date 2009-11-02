@@ -22,7 +22,12 @@ public interface Scope
     public static final String GLOBAL = "global";
 
     /**
-     * User scope for private bag, templates, etc.
+     * User scope for private bags, templates, etc.
      */
     public static final String USER = "user";
+    
+    /**
+     * User or global scope for bags, templates, etc.
+     */
+    public static final String ALL = "all";
 }

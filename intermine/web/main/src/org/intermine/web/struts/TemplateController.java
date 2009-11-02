@@ -30,7 +30,10 @@ import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -99,18 +102,20 @@ public class TemplateController extends TilesAction
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
-        String queryName = request.getParameter("name");
+        String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String bagName = request.getParameter("bagName");
 
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        
         String idForLookup = request.getParameter("idForLookup");
         InterMineObject imObj = null;
         if (idForLookup != null && idForLookup.length() != 0) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-        if (queryName == null) {
-            queryName = request.getParameter("templateName");
+        if (templateName == null) {
+            templateName = request.getParameter("templateName");
         }
 
         // look for request attribute "previewTemplate" which is set while building a template
@@ -123,10 +128,8 @@ public class TemplateController extends TilesAction
         // replaced by constraining the id to be in the bag.
         TemplateQuery modifiedTemplate = null;
         if (loadModifiedTemplate != null) {
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-            modifiedTemplate = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                           queryName, TemplateHelper.TEMP_TEMPLATE);
-            queryName = modifiedTemplate.getName();
+            modifiedTemplate = getTemporaryTemplate(session, templateName);
+            templateName = modifiedTemplate.getName();
         }
 
         if (context.getAttribute("builder") != null) {
@@ -137,15 +140,14 @@ public class TemplateController extends TilesAction
             request.setAttribute("previewTemplate", template);
         }
 
-        if (queryName == null && template != null) {
-            queryName = template.getName();
+        if (templateName == null && template != null) {
+            templateName = template.getName();
         } else {
             if (scope == null) {
-                scope = TemplateHelper.ALL_TEMPLATE;
+                scope = Scope.ALL;
             }
             String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-            template = TemplateHelper.findTemplate(servletContext, session, userName, queryName,
-                                                   scope);
+            template = templateManager.getTemplate(profile, templateName, scope);
         }
         if (template == null) {
             return null;
@@ -302,7 +304,7 @@ public class TemplateController extends TilesAction
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));
         }
         populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
-        tf.setName(queryName);
+        tf.setName(templateName);
         tf.setType(scope);
         // A Map which have as key the pathstring and as value the name of the last class
         request.setAttribute("classDesc", classDesc);
@@ -338,6 +340,21 @@ public class TemplateController extends TilesAction
         return null;
     }
 
+    
+    private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SavedQuery savedQuery = profile.getHistory().get(templateName);
+        TemplateQuery template = null;
+        if (savedQuery.getPathQuery() instanceof TemplateQuery) {
+            template = (TemplateQuery) savedQuery.getPathQuery();
+        } else if (session.getAttribute(Constants.QUERY)
+                        instanceof TemplateQuery) {
+            // see #1435
+            template = (TemplateQuery) session.getAttribute(Constants.QUERY);
+        }
+        return template;
+    }
+    
     private void constructAutocompleteIndex(PathQuery query, ServletContext servletContext,
                                             Model model, PathNode node, Map classDesc,
                                             Map fieldDesc) {

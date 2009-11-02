@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -33,7 +33,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Controller for the html head tile.  Determines what is shown on the title of the webpage
@@ -92,16 +91,17 @@ public class HtmlHeadController extends TilesAction
         } else if (pageName.equals("template")) {
 
             String templateTitle = "";
-            String username = "";
+            TemplateQuery template = null;
+            Profile profile = null;
+
+            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
             if (scope != null && scope.equals("user")) {
-                username = ((Profile) session
-                                .getAttribute(Constants.PROFILE)).getUsername();
+                profile = (Profile) session.getAttribute(Constants.PROFILE);
+                template = templateManager.getUserOrGlobalTemplate(profile, name);
             } else {
-                ProfileManager pm = SessionMethods.getProfileManager(servletContext);
-                username = pm.getSuperuser();
+                template = templateManager.getGlobalTemplate(name);
             }
-            TemplateQuery template = TemplateHelper.findTemplate(servletContext, session,
-                                      username, name, TemplateHelper.ALL_TEMPLATE);
+            
             if (template != null) {
                 templateTitle = ":  " + template.getTitle();
             }

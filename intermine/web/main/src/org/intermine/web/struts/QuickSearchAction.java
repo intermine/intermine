@@ -25,7 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathNode;
@@ -64,7 +64,6 @@ public class QuickSearchAction extends InterMineAction
         QuickSearchForm qsf = (QuickSearchForm) form;
         String qsType = qsf.getQuickSearchType();
         session.setAttribute("quickSearchType", qsType);
-        Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
 
@@ -72,7 +71,6 @@ public class QuickSearchAction extends InterMineAction
             session.removeAttribute(Constants.QUERY);
 
             String templateName = (String) webPropertiesMap.get("begin.browse.template");
-            String templateType = "global";
 
             if (templateName == null) {
                 LOG.error("'begin.browse.template' not configured correctly in properties file.");
@@ -80,11 +78,10 @@ public class QuickSearchAction extends InterMineAction
                 return mapping.findForward("error");
             }
 
-            SessionMethods.logTemplateQueryUse(session, templateType, templateName);
+            SessionMethods.logTemplateQueryUse(session, "global", templateName);
 
-            String userName = profile.getUsername();
-            TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
-                                                                 templateName, templateType);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+            TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
             if (template == null) {
                 LOG.error("'begin.browse.template' not configured correctly in properties file.");

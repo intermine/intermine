@@ -41,14 +41,12 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
@@ -303,8 +301,8 @@ public class PortalQueryAction extends InterMineAction
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             templateName, "global");
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
         if (template == null) {
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");

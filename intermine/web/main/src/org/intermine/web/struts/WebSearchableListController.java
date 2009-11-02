@@ -42,7 +42,6 @@ import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -77,13 +76,13 @@ public class WebSearchableListController extends TilesAction
         if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
             filteredWebSearchables = getFilterWebSearchables(request, type,
-                                                          TemplateHelper.USER_TEMPLATE, tags);
+                                                          Scope.USER, tags);
 
-        } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        } else if (scope.equals(Scope.ALL)) {
             Map globalWebSearchables =
-                getFilterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, Scope.GLOBAL, tags);
             Map userWebSearchables =
-                getFilterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, Scope.USER, tags);
             filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
             filteredWebSearchables.putAll(globalWebSearchables);
 

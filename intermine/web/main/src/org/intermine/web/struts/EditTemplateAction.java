@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,13 +20,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Action to edit a user template query. The action expect a <code>name</code>
@@ -59,11 +58,11 @@ public class EditTemplateAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String queryName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session,
-                profile.getUsername(), queryName, TemplateHelper.ALL_TEMPLATE);
+        
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
 
         PathQuery queryClone = template.clone();
         SessionMethods.loadQuery(queryClone, session, response);

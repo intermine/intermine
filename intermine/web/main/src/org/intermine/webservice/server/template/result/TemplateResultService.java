@@ -17,15 +17,18 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.core.WebServiceTemplateManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.query.result.QueryResultService;
@@ -44,12 +47,14 @@ public class TemplateResultService extends QueryResultService
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
 
+        TemplateManager templateManager = SessionMethods.getTemplateManager(request.getSession());
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {
-            template = new WebServiceTemplateManager(request).getTemplate(input.getName());
+            Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+            template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         } else {
-            template = new WebServiceTemplateManager(request).getGlobalTemplate(input.getName());    
+            template = templateManager.getGlobalTemplate(input.getName());   
         }
         if (template == null) {
             throw new ResourceNotFoundException("public template with name '" + input.getName()
@@ -79,7 +84,7 @@ public class TemplateResultService extends QueryResultService
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
         ret += "?" + getQueryString(request, template, input);
         ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateForm.TYPE_PARAMETER
-            + "=" + TemplateHelper.ALL_TEMPLATE;
+            + "=" + Scope.ALL;
         return ret;
     }
 

@@ -27,6 +27,8 @@ import org.apache.struts.util.MessageResources;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
@@ -93,9 +95,11 @@ public class TemplateAction extends InterMineAction
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        String userName = profile.getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             templateName, templateType);
+        
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+
+        TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
+
         BagManager bagManager = SessionMethods.getBagManager(servletContext);
         Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
 
@@ -137,9 +141,10 @@ public class TemplateAction extends InterMineAction
             // We want to edit the template: Load the query as a TemplateQuery
             // Don't care about the form
             // Reload the initial template
-            template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                   template.getName(), TemplateHelper.ALL_TEMPLATE);
-            if (template == null) {
+            
+           template = templateManager.getTemplate(profile, templateName, Scope.ALL);
+
+           if (template == null) {
                 recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
                 return mapping.findForward("template");
             }

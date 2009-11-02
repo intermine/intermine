@@ -32,6 +32,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -79,9 +80,9 @@ public class ModifyDetails extends DispatchAction
         String idForLookup = request.getParameter("idForLookup");
         Profile profile = (Profile) session
                         .getAttribute(Constants.PROFILE);
-        String userName = (profile).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             name, scope);
+        
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getTemplate(profile, name, scope);
         
         TemplateForm templateForm = new TemplateForm();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
@@ -93,9 +94,8 @@ public class ModifyDetails extends DispatchAction
             TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
             BagManager bagManager = SessionMethods.getBagManager(servletContext);
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            InterMineBag interMineBag = allBags.get(bagName);
-            TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
+            InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+            TemplateHelper.fillTemplateForm(template, null, bag, templateForm, model);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
               
@@ -252,14 +252,16 @@ public class ModifyDetails extends DispatchAction
                     throws Exception {
         HttpSession session = request.getSession();
         ServletContext sc = session.getServletContext();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String type = request.getParameter("type");
         String id = request.getParameter("id");
         String templateName = request.getParameter("template");
         String detailsType = request.getParameter("detailsType");
         ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
 
-        TemplateQuery tq = TemplateHelper.findTemplate(sc, session, userName, templateName, type);
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery tq = templateManager.getTemplate(profile, templateName, type);
+        
         ComponentContext cc = new ComponentContext();
 
         if (detailsType.equals("object")) {
@@ -274,7 +276,6 @@ public class ModifyDetails extends DispatchAction
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("objectDetailsTemplateTable");
         }
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BagManager bagManager = SessionMethods.getBagManager(sc);
 
         InterMineBag interMineBag = bagManager.getUserOrGlobalBag(profile, id);
@@ -285,7 +286,6 @@ public class ModifyDetails extends DispatchAction
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
         return mapping.findForward("objectDetailsTemplateTable");
-
     }
 
     /**
