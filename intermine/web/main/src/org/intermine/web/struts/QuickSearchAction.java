@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -78,7 +79,7 @@ public class QuickSearchAction extends InterMineAction
                 return mapping.findForward("error");
             }
 
-            SessionMethods.logTemplateQueryUse(session, "global", templateName);
+            SessionMethods.logTemplateQueryUse(session, Scope.GLOBAL, templateName);
 
             TemplateManager templateManager = SessionMethods.getTemplateManager(session);
             TemplateQuery template = templateManager.getGlobalTemplate(templateName);

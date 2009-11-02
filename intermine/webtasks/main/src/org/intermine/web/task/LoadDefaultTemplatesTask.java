@@ -28,6 +28,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
@@ -152,7 +153,7 @@ public class LoadDefaultTemplatesTask extends Task
             // Settting global search repository to servletContext because unmarshall
             // method requires it
             servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY,
-                    new SearchRepository(pm.getProfile(username), SearchRepository.GLOBAL));
+                    new SearchRepository(pm.getProfile(username), Scope.GLOBAL));
 
             // Unmarshal
             Set<Tag> tags = new HashSet();

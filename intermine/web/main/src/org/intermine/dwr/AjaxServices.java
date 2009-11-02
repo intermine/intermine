@@ -54,6 +54,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.results.WebTable;
+import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
@@ -510,14 +511,14 @@ public class AjaxServices
                 }
             } else {
 
-                if (scope.equals("user")) {
+                if (scope.equals(Scope.USER)) {
                     SearchRepository searchRepository = profile.getSearchRepository();
                     wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
                 } else {
                     SearchRepository globalRepository =
                         (SearchRepository) servletContext.getAttribute(Constants.
                                                                        GLOBAL_SEARCH_REPOSITORY);
-                    if (scope.equals("global")) {
+                    if (scope.equals(Scope.GLOBAL)) {
                         wsMap = (Map<String, WebSearchable>) globalRepository.
                             getWebSearchableMap(type);
                     } else {

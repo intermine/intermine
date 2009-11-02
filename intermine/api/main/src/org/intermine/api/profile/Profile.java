@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
@@ -74,7 +75,7 @@ public class Profile
         if (savedTemplates != null) {
             this.savedTemplates.putAll(savedTemplates);
         }
-        searchRepository = new SearchRepository(this, SearchRepository.USER);
+        searchRepository = new SearchRepository(this, Scope.USER);
     }
 
     /**

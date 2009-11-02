@@ -41,6 +41,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
@@ -143,7 +144,7 @@ public class InitialiserPlugin implements PlugIn
         
         // index global webSearchables
         SearchRepository searchRepository =
-            new SearchRepository(superProfile, SearchRepository.GLOBAL);
+            new SearchRepository(superProfile, Scope.GLOBAL);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
         
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());

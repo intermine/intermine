@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
@@ -95,7 +96,7 @@ public class HtmlHeadController extends TilesAction
             Profile profile = null;
 
             TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
-            if (scope != null && scope.equals("user")) {
+            if (scope != null && scope.equals(Scope.USER)) {
                 profile = (Profile) session.getAttribute(Constants.PROFILE);
                 template = templateManager.getUserOrGlobalTemplate(profile, name);
             } else {
