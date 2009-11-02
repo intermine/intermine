@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -22,8 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.search.WebSearchable;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -54,25 +52,23 @@ public class BeginAction extends InterMineAction
 
        HttpSession session = request.getSession();
        ServletContext servletContext = session.getServletContext();
-       SearchRepository searchRepository = SessionMethods.getGlobalSearchRepository(servletContext);
-       BagManager bagManager = SessionMethods.getBagManager(servletContext);
        
        if (request.getParameter("GALAXY_URL") != null) {
            request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
            SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
        }
 
+       BagManager bagManager = SessionMethods.getBagManager(servletContext);
        Integer bagCount = bagManager.getGlobalBags().size();
-       Map<String, ? extends WebSearchable> webSearchables =
-           searchRepository.getWebSearchableMap("template");
-       Integer templateCount = webSearchables.size();
+       
+       TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+       Integer templateCount = templateManager.getValidGlobalTemplates().size();
 
        /* count number of templates and bags */
        request.setAttribute("bagCount", bagCount);
        request.setAttribute("templateCount", templateCount);
 
-       Properties properties = (Properties) request.getSession()
-                               .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+       Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
        String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
                                    .split("[ ,]+");
        request.setAttribute("beginQueryClasses", beginQueryClasses);
