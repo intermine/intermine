@@ -14,12 +14,9 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -28,8 +25,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.search.Scope;
-import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
@@ -40,9 +35,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.ProfileBinding;
-import org.intermine.web.logic.Constants;
-
-import servletunit.ServletContextSimulator;
 
 /**
  * Load template queries form an XML file into a given user profile.
@@ -123,8 +115,6 @@ public class LoadDefaultTemplatesTask extends Task
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             
-            ServletContext servletContext = new ServletContextSimulator();
-
             ProfileManager pm = new ProfileManager(os, userProfileOS);
             Reader reader = new FileReader(xmlFile);
 
@@ -143,17 +133,11 @@ public class LoadDefaultTemplatesTask extends Task
             } else {
                 LOG.info("Profile for " + username + ", clearing template queries");
                 profileDest = pm.getProfile(username, pm.getPassword(username));
-                Map tmpls = new HashMap(profileDest.getSavedTemplates());
-                Iterator iter = tmpls.keySet().iterator();
-                while (iter.hasNext()) {
-                    profileDest.deleteTemplate((String) iter.next());
+                Map<String, TemplateQuery> tmpls = new HashMap(profileDest.getSavedTemplates());
+                for (String templateName : tmpls.keySet()) {
+                    profileDest.deleteTemplate(templateName);
                 }
             }
-
-            // Settting global search repository to servletContext because unmarshall
-            // method requires it
-            servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY,
-                    new SearchRepository(pm.getProfile(username), Scope.GLOBAL));
 
             // Unmarshal
             Set<Tag> tags = new HashSet();
@@ -162,9 +146,7 @@ public class LoadDefaultTemplatesTask extends Task
                     profileDest.getPassword(), tags, osw, PathQuery.USERPROFILE_VERSION);
 
             if (profileDest.getSavedTemplates().size() == 0) {
-                Iterator iter = profileSrc.getSavedTemplates().values().iterator();
-                while (iter.hasNext()) {
-                    TemplateQuery template = (TemplateQuery) iter.next();
+                for (TemplateQuery template : profileSrc.getSavedTemplates().values()) {
                     String append = "";
                     if (!template.isValid()) {
                         append = " [invalid]";
@@ -189,7 +171,6 @@ public class LoadDefaultTemplatesTask extends Task
                      }
                  }
              }
-
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new BuildException(e);
