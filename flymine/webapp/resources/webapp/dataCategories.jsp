@@ -410,24 +410,33 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="2" class="leftcol">
+  <tr><td rowspan="3" class="leftcol">
        <html:link action="/aspect?name=Pathways">
         <p> <img src="model/images/pathways.png" /></p>
         <p> Pathways</p></html:link></td>
-    <td> <i>D. melanogaster</i></td>
-    <td> Pathway information and the genes involved in them</td>
+    <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i></td>
+    <td> Curated pathway information and the genes involved in them</td>
     <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 52.0, 16th October, 2009</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
 
   <tr>
-    <td> <i>D. melanogaster</i> </td>
-    <td> Pathway information and the genes involved in them</td>
+    <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i> </td>
+    <td> Pathway information and the genes involved in them, inferred through orthologues from Human curated pathways</td>
+    <td> <a href="http://www.reactome.org/" target="_new">Reactome</a> - Version 1.0</td>
+    <td> &nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+
+<tr>
+    <td> <i>D. melanogaster</i></td>
+    <td> Curated pathway information and the genes involved in them</td>
     <td> <a href="http://fly.reactome.org/" target="_new">FlyReactome</a> - Version 1.0</td>
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
+
 
 
   <tr><td rowspan="1" class="leftcol">
