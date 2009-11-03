@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,10 +50,15 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     /**
      * Set response proper header.
      * @param response response
+     * @param doGzip true if the output should be gzipped
      */
-    public static void setSequenceExportHeader(HttpServletResponse response) {
+    public static void setSequenceExportHeader(HttpServletResponse response, boolean doGzip) {
         String fileName = "sequence" + StringUtil.uniqueString() + ".fasta";
-        ResponseUtil.setPlainTextHeader(response, fileName);
+        if (doGzip) {
+            ResponseUtil.setGzippedHeader(response, fileName + ".gz");
+        } else {
+            ResponseUtil.setPlainTextHeader(response, fileName);
+        }
     }
 
     /**
@@ -61,17 +67,20 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
                        TableExportForm form) {
-
+        boolean doGzip = (form != null) && form.getDoGzip();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        setSequenceExportHeader(response);
+        setSequenceExportHeader(response, doGzip);
 
         SequenceExportForm sef = (SequenceExportForm) form;
 
         OutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
+            if (doGzip) {
+                outputStream = new GZIPOutputStream(outputStream);
+            }
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
         }
@@ -109,6 +118,13 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
             iter = getResultRows(pt, request);
             iter.goFaster();
             exporter.export(iter);
+            if (outputStream instanceof GZIPOutputStream) {
+                try {
+                    ((GZIPOutputStream) outputStream).finish();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         } finally {
             if (iter != null) {
                 iter.releaseGoFaster();    

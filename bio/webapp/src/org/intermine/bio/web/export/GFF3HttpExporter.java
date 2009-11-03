@@ -10,7 +10,9 @@ package org.intermine.bio.web.export;
  *
  */
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -64,10 +67,16 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
                        TableExportForm form) {
+        boolean doGzip = (form != null) && form.getDoGzip();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        setGFF3Header(response);
+        if (doGzip) {
+            ResponseUtil.setGzippedHeader(response, "table" + StringUtil.uniqueString()
+                    + ".gff3.gz");
+        } else {
+            setGFF3Header(response);
+        }
 
         List<Integer> indexes = ExportHelper.getClassIndexes(ExportHelper.getColumnClasses(pt),
                 LocatedSequenceFeature.class);
@@ -78,8 +87,11 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         
         Exporter exporter;
         try {
-            PrintWriter writer = HttpExportUtil.
-                getPrintWriterForClient(request, response.getOutputStream());
+            OutputStream out = response.getOutputStream();
+            if (doGzip) {
+                out = new GZIPOutputStream(out);
+            }
+            PrintWriter writer = HttpExportUtil.getPrintWriterForClient(request, out);
             List<String> paths = new LinkedList<String>();
             if (form != null) {
                 paths.addAll(StringUtil.
@@ -98,6 +110,13 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 iter = getResultRows(pt, request);
                 iter.goFaster();
                 exporter.export(iter);
+                if (out instanceof GZIPOutputStream) {
+                    try {
+                        ((GZIPOutputStream) out).finish();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();    
