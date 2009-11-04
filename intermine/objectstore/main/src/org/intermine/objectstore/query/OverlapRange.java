@@ -28,8 +28,7 @@ public class OverlapRange
      * @param parent the object that the range is associated with
      * @throws IllegalArgumentException if one of the parameters is invalid
      */
-    public OverlapRange(QueryEvaluable start, QueryEvaluable end, QueryObjectReference parent)
-    throws IllegalArgumentException {
+    public OverlapRange(QueryEvaluable start, QueryEvaluable end, QueryObjectReference parent) {
         if (start == null) {
             throw new NullPointerException("Start parameter cannot be null");
         }

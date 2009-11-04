@@ -70,8 +70,8 @@ public class NotXmlParser
      * @return an InterMineObject
      * @throws ClassNotFoundException if a class cannot be found
      */
-    public static InterMineObject parse(String xml, ObjectStoreInterMineImpl os)
-    throws ClassNotFoundException {
+    public static InterMineObject parse(String xml,
+            ObjectStoreInterMineImpl os) throws ClassNotFoundException {
         if ((xml == null) || "null".equals(xml)) {
             Exception e = new Exception();
             e.fillInStackTrace();

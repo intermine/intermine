@@ -76,7 +76,7 @@ public class ModelMergerTask extends Task
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         Model mergedModel = null;
         try {
             InterMineModelParser parser = new InterMineModelParser();
@@ -102,7 +102,7 @@ public class ModelMergerTask extends Task
         }
     }
 
-    private Model processFile(Model mergedModel, File newAdditionsFile) throws BuildException {
+    private Model processFile(Model mergedModel, File newAdditionsFile) {
         try {
             InterMineModelParser parser = new InterMineModelParser();
             Set<ClassDescriptor> additionClds =

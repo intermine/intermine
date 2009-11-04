@@ -628,7 +628,7 @@ public class DatabaseUtil
      * @return a valid SQL String
      * @throws IllegalArgumentException if the object is not representable
      */
-    public static String objectToString(Object o) throws IllegalArgumentException {
+    public static String objectToString(Object o) {
         if (o instanceof Float) {
             return o.toString() + "::REAL";
         } else if (o instanceof Number) {

@@ -62,7 +62,7 @@ public abstract class QueryHelper
                 && constraint.getOp().equals(ConstraintOp.AND)) {
                 Iterator iter = ((ConstraintSet) constraint).getConstraints().iterator();
                 while (iter.hasNext()) {
-                   constraints.addConstraint((Constraint) iter.next());
+                    constraints.addConstraint((Constraint) iter.next());
                 }
             } else {
                 constraints.addConstraint(constraint);

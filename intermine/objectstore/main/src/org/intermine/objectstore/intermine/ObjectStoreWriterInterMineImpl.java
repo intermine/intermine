@@ -516,8 +516,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param o the object to store
      * @throws ObjectStoreException sometimes
      */
-    protected void storeWithConnection(Connection c, Object o)
-    throws ObjectStoreException {
+    protected void storeWithConnection(Connection c, Object o) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
@@ -850,8 +849,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 colNo++;
             }
             if (isTruncated) {
-                    retval.colNames[colNo] = "class";
-                    colNo++;
+                retval.colNames[colNo] = "class";
+                colNo++;
                 retval.colNames[colNo] = "tableclass";
                 colNo++;
             } else {
@@ -1084,8 +1083,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param query a Query with only one column
      * @throws ObjectStoreException if there is an error in the underlying database
      */
-    protected void addToBagFromQueryWithConnection(Connection c, ObjectStoreBag osb, Query query)
-    throws ObjectStoreException {
+    protected void addToBagFromQueryWithConnection(Connection c, ObjectStoreBag osb,
+            Query query) throws ObjectStoreException {
         boolean wasInTransaction = isInTransactionWithConnection(c);
         if (!wasInTransaction) {
             beginTransactionWithConnection(c);
@@ -1450,8 +1449,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      * Delegate to the parent ObjectStore.
      */
-    public void checkSequence(Map<Object, Integer> sequence, Query q, String message)
-    throws DataChangedException {
+    public void checkSequence(Map<Object, Integer> sequence, Query q,
+            String message) throws DataChangedException {
         //if ((!tablesAltered.isEmpty()) && (!sequence.isEmpty())) {
         //    throw new DataChangedException("Cannot query a writer with uncommitted changes");
         //}

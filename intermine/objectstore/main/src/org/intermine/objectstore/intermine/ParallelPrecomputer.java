@@ -151,7 +151,7 @@ public class ParallelPrecomputer
 
         /**
          * Constructor - takes the same arguments as ObjectStoreInterMineImpl.precompute().
-         * 
+         *
          * @param key a String that describes this job
          * @param query the Query for which to create the precomputed tables
          * @param indexes a Collection of QueryOrderables for which to create indexes

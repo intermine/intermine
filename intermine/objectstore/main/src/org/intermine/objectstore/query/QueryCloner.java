@@ -88,8 +88,7 @@ public class QueryCloner
         return newQuery;
     }
 
-    private static Object cloneThing(Object orig, Map fromElementMap)
-            throws NoSuchFieldException {
+    private static Object cloneThing(Object orig, Map fromElementMap) throws NoSuchFieldException {
         if (orig == null) {
             return null;
         } else if (orig instanceof FromElement) {

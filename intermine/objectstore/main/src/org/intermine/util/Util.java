@@ -239,7 +239,7 @@ public class Util
      * @return a Class
      * @throws IllegalArgumentException if the String is an invalid name
      */
-    public static Class getClassFromString(String type) throws IllegalArgumentException {
+    public static Class getClassFromString(String type) {
         if (type.equals("short") || type.equals("java.lang.Short")) {
             return Short.class;
         } else if (type.equals("int") || type.equals("java.lang.Integer")) {

@@ -109,7 +109,7 @@ public class TorqueModelOutputTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (this.destFile == null) {
             throw new BuildException("destFile attribute is not set");
         }

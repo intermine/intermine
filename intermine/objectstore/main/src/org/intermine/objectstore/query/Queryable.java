@@ -25,7 +25,7 @@ public interface Queryable
      * @param selectable a QuerySelectable
      */
     public void addToSelect(QuerySelectable selectable);
-    
+
     /**
      * Returns the SELECT list.
      *

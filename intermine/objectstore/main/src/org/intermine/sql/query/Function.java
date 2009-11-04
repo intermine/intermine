@@ -189,51 +189,51 @@ public class Function extends AbstractValue
             case POWER:
             case MODULO:
             case TYPECAST:
-                {
-                    if (operands.size() < 2) {
-                        throw (new IllegalStateException("This function needs two operands"));
-                    }
-                    Iterator iter = operands.iterator();
-                    String retval = "";
-                    if (operation != TYPECAST) {
-                        retval += "(";
-                    }
-                    boolean needComma = false;
-                    while (iter.hasNext()) {
-                        AbstractValue v = (AbstractValue) iter.next();
-                        if (needComma) {
-                            retval += REPRESENTATIONS[operation];
-                        }
-                        needComma = true;
-                        retval += v.getSQLString();
-                    }
-                    if (operation != TYPECAST) {
-                        retval += ")";
-                    }
-                    return retval;
+            {
+                if (operands.size() < 2) {
+                    throw (new IllegalStateException("This function needs two operands"));
                 }
+                Iterator iter = operands.iterator();
+                String retval = "";
+                if (operation != TYPECAST) {
+                    retval += "(";
+                }
+                boolean needComma = false;
+                while (iter.hasNext()) {
+                    AbstractValue v = (AbstractValue) iter.next();
+                    if (needComma) {
+                        retval += REPRESENTATIONS[operation];
+                    }
+                    needComma = true;
+                    retval += v.getSQLString();
+                }
+                if (operation != TYPECAST) {
+                    retval += ")";
+                }
+                return retval;
+            }
             case STRPOS:
             case SUBSTR:
             case COALESCE:
-                {
-                    if (operands.size() < 2) {
-                        throw (new IllegalStateException("This function needs two operands"));
-                    }
-                    Iterator iter = operands.iterator();
-                    String retval = REPRESENTATIONS[operation];
-                    boolean needComma = false;
-                    while (iter.hasNext()) {
-                        AbstractValue v = (AbstractValue) iter.next();
-                        if (needComma) {
-                            retval += ", ";
-                        }
-                        needComma = true;
-                        retval += v.getSQLString();
-                    }
-                    retval += ")";
-                    return retval;
+            {
+                if (operands.size() < 2) {
+                    throw (new IllegalStateException("This function needs two operands"));
                 }
+                Iterator iter = operands.iterator();
+                String retval = REPRESENTATIONS[operation];
+                boolean needComma = false;
+                while (iter.hasNext()) {
+                    AbstractValue v = (AbstractValue) iter.next();
+                    if (needComma) {
+                        retval += ", ";
+                    }
+                    needComma = true;
+                    retval += v.getSQLString();
+                }
+                retval += ")";
+                return retval;
             }
+        }
         throw (new Error("Unknown operation"));
     }
 
