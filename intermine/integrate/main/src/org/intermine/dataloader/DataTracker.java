@@ -171,7 +171,7 @@ public class DataTracker
                         sql.append(", ");
                     } else {
                         sql.append("SELECT objectid, fieldname, sourcename, version"
-                        + " FROM tracker WHERE objectid IN (");
+                                + " FROM tracker WHERE objectid IN (");
                     }
                     needComma = true;
                     sql.append("" + id);

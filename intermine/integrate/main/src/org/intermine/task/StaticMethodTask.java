@@ -56,7 +56,7 @@ public class StaticMethodTask extends Task
      * @throws BuildException if a problem occurs
      * @see Task#execute
      */
-    public void execute() throws BuildException {
+    public void execute() {
         try {
             Class clazz = getClass().getClassLoader().loadClass(className);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);

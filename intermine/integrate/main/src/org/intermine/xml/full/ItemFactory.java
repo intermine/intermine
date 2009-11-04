@@ -134,7 +134,7 @@ public class ItemFactory
         return makeItemImpl(obj, TypeUtil.getFieldInfos(obj.getClass()).keySet());
     }
 
-    
+
     /**
      * Convert an Object to Item format, writing the fields provided in includeFields.
      * @param obj object to convert

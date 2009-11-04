@@ -126,8 +126,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set getEquivalentObjects(InterMineObject obj, Source source)
-            throws ObjectStoreException {
+    public Set getEquivalentObjects(InterMineObject obj,
+            Source source) throws ObjectStoreException {
         lastSource = source;
         if (obj == null) {
             throw new NullPointerException("obj should not be null");
@@ -158,8 +158,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public void store(FastPathObject o, Source source, Source skelSource)
-            throws ObjectStoreException {
+    public void store(FastPathObject o, Source source,
+            Source skelSource) throws ObjectStoreException {
         if (o == null) {
             throw new NullPointerException("Object o should not be null");
         }
@@ -205,8 +205,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      * @throws ObjectStoreException if an error ocurs in the underlying objectstore
      */
     protected void copyField(FastPathObject srcObj, FastPathObject dest,
-            Source source, Source skelSource, FieldDescriptor field, int type)
-            throws IllegalAccessException, ObjectStoreException {
+            Source source, Source skelSource, FieldDescriptor field,
+            int type) throws IllegalAccessException, ObjectStoreException {
         String fieldName = field.getName();
         if (!"id".equals(fieldName)) {
             switch (field.relationType()) {
@@ -661,8 +661,8 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
-            throws ObjectStoreException {
+    public InterMineObject getObjectByExample(InterMineObject o,
+            Set fieldNames) throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
     }
 

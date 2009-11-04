@@ -215,7 +215,8 @@ public class ObjectStoreDataLoader extends DataLoader
                     LOG.error("Exception while dataloading", e);
                 } else {
                     LOG.error("Exception while dataloading - doneAlreadyMap = "
-                      + ((ObjectStoreFastCollectionsForTranslatorImpl) origOs).getDoneAlready(), e);
+                            + ((ObjectStoreFastCollectionsForTranslatorImpl) origOs)
+                            .getDoneAlready(), e);
                 }
             }
             throw e;

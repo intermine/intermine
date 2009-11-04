@@ -79,8 +79,7 @@ public class Reference
     public boolean equals(Object o) {
         if (o instanceof Reference) {
             Reference r = (Reference) o;
-            return name.equals(r.name)
-            && refId.equals(r.refId);
+            return name.equals(r.name) && refId.equals(r.refId);
         }
         return false;
     }
@@ -89,7 +88,6 @@ public class Reference
      * {@inheritDoc}
      */
     public int hashCode() {
-        return name.hashCode()
-        + 3 * refId.hashCode();
+        return name.hashCode() + 3 * refId.hashCode();
     }
 }

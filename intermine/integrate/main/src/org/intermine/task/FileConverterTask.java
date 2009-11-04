@@ -64,7 +64,7 @@ public class FileConverterTask extends ConverterTask
      * Run the task
      * @throws BuildException if a problem occurs
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileSet == null) {
             throw new BuildException("fileSet must be specified");
         }

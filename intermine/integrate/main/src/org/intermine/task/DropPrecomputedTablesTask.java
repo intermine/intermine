@@ -43,7 +43,7 @@ public class DropPrecomputedTablesTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
         }
