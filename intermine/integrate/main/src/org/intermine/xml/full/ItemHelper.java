@@ -31,7 +31,7 @@ public class ItemHelper
         newItem.setIdentifier(item.getIdentifier());
         newItem.setClassName(item.getClassName());
         newItem.setImplementations(item.getImplementations());
-        
+
         for (Attribute attr : item.getAttributes()) {
             org.intermine.model.fulldata.Attribute newAttr = convert(attr);
             newItem.getAttributes().add(newAttr);
@@ -109,7 +109,7 @@ public class ItemHelper
      * @return an equivalent XML Item
      */
     public static Item convert(org.intermine.model.fulldata.Item item) {
-        Item newItem = new Item(item.getIdentifier(), item.getClassName(), 
+        Item newItem = new Item(item.getIdentifier(), item.getClassName(),
                 item.getImplementations());
 
         for (org.intermine.model.fulldata.Attribute attr : item.getAttributes()) {
@@ -142,7 +142,7 @@ public class ItemHelper
         }
         StringBuffer sb = new StringBuffer();
         for (String s : StringUtil.tokenize(classNames)) {
-            sb.append(model.getPackageName() + "." + XmlUtil.getFragmentFromURI(s + " ")); 
+            sb.append(model.getPackageName() + "." + XmlUtil.getFragmentFromURI(s + " "));
         }
         return sb.toString().trim();
     }

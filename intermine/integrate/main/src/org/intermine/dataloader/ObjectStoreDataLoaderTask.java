@@ -99,7 +99,7 @@ public class ObjectStoreDataLoaderTask extends Task
      * {@inheritDoc}
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (integrationWriter == null) {
             throw new BuildException("integrationWriter attribute is not set");
         }

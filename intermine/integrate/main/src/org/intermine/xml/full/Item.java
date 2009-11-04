@@ -628,12 +628,9 @@ public class Item implements Comparable
     public boolean equals(Object o) {
         if (o instanceof Item) {
             Item i = (Item) o;
-            return identifier.equals(i.identifier)
-            && className.equals(i.className)
-            && implementations.equals(i.implementations)
-            && attributes.equals(i.attributes)
-            && references.equals(i.references)
-            && collections.equals(i.collections);
+            return identifier.equals(i.identifier) && className.equals(i.className)
+                && implementations.equals(i.implementations) && attributes.equals(i.attributes)
+                && references.equals(i.references) && collections.equals(i.collections);
         }
         return false;
     }
@@ -662,12 +659,8 @@ public class Item implements Comparable
      * {@inheritDoc}
      */
     public int hashCode() {
-        return identifier.hashCode()
-        + 3 * className.hashCode()
-        + 5 * implementations.hashCode()
-        + 7 * attributes.hashCode()
-        + 11 * references.hashCode()
-        + 13 * collections.hashCode();
+        return identifier.hashCode() + 3 * className.hashCode() + 5 * implementations.hashCode()
+            + 7 * attributes.hashCode() + 11 * references.hashCode() + 13 * collections.hashCode();
     }
 
     /**

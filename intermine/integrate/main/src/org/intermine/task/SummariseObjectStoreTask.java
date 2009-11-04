@@ -69,7 +69,7 @@ public class SummariseObjectStoreTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(alias);
             if (os instanceof ObjectStoreInterMineImpl) {

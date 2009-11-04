@@ -146,7 +146,7 @@ public class FullParser
      * @param obj the object
      * @return a populated object
      */
-    protected static Object populateObject(Item item, Map<String, FastPathObject> objMap, 
+    protected static Object populateObject(Item item, Map<String, FastPathObject> objMap,
             boolean useIdentifier, boolean abortOnError, FastPathObject obj) {
         try {
             // Set the data for every given attribute except id
@@ -179,8 +179,8 @@ public class FullParser
                 Object refObj = objMap.get(ref.getRefId());
                 TypeUtil.FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), ref.getName());
                 if (info == null) {
-                    String message = "Field " + ref.getName()
-                    + " not found in " + DynamicUtil.decomposeClass(obj.getClass());
+                    String message = "Field " + ref.getName() + " not found in "
+                        + DynamicUtil.decomposeClass(obj.getClass());
                     if (abortOnError) {
                         throw new IllegalArgumentException(message);
                     } else {

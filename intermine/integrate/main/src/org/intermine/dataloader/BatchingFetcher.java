@@ -107,8 +107,8 @@ public class BatchingFetcher extends HintingFetcher
     /**
      * {@inheritDoc}
      */
-    public Set queryEquivalentObjects(InterMineObject obj, Source source)
-    throws ObjectStoreException {
+    public Set queryEquivalentObjects(InterMineObject obj,
+            Source source) throws ObjectStoreException {
         if (source == this.source) {
             Set retval = equivalents.get(obj);
             if (retval != null) {
@@ -249,8 +249,8 @@ public class BatchingFetcher extends HintingFetcher
      */
     protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
             Map<InterMineObject, Set<InterMineObject>> results,
-            Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)
-    throws ObjectStoreException {
+            Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld,
+            long time1) throws ObjectStoreException {
         Set<Integer> fetchedObjectIds = Collections.synchronizedSet(new HashSet());
         Map<PrimaryKey, ClassDescriptor> pksNotDone
             = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);

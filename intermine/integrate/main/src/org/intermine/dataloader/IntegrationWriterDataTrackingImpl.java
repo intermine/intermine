@@ -131,15 +131,15 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     trackerMissingClasses.add(c);
                 }
             }
-            Constructor con = trackerClass.getConstructor(new Class[]
-                {Database.class, Integer.TYPE, Integer.TYPE});
-            DataTracker newDataTracker = (DataTracker) con.newInstance(new Object[]
-                {db, new Integer(maxSize), new Integer(commitSize)});
+            Constructor con = trackerClass.getConstructor(new Class[] {Database.class,
+                Integer.TYPE, Integer.TYPE});
+            DataTracker newDataTracker = (DataTracker) con.newInstance(new Object[] {db,
+                new Integer(maxSize), new Integer(commitSize)});
 
             con = iwClass.getConstructor(new Class[] {ObjectStoreWriter.class, DataTracker.class,
-                    Set.class});
-            return (IntegrationWriterDataTrackingImpl) con.newInstance(new Object[]
-                {writer, newDataTracker, trackerMissingClasses});
+                Set.class});
+            return (IntegrationWriterDataTrackingImpl) con.newInstance(new Object[] {writer,
+                newDataTracker, trackerMissingClasses});
         } catch (Exception e) {
             IllegalArgumentException e2 = new IllegalArgumentException("Problem instantiating"
                     + " IntegrationWriterDataTrackingImpl " + props.getProperty("alias"));

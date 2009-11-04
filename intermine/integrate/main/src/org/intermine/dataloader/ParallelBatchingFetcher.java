@@ -70,8 +70,8 @@ public class ParallelBatchingFetcher extends BatchingFetcher
      */
     protected void doPks(Map<PrimaryKey, ClassDescriptor> pksToDo,
             Map<InterMineObject, Set<InterMineObject>> results,
-            Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld, long time1)
-    throws ObjectStoreException {
+            Map<ClassDescriptor, List<InterMineObject>> cldToObjectsForCld,
+            long time1) throws ObjectStoreException {
         Map<PrimaryKey, ClassDescriptor> pksNotDone
             = new IdentityHashMap<PrimaryKey, ClassDescriptor>(pksToDo);
         List<Exception> exceptions = Collections.synchronizedList(new ArrayList<Exception>());

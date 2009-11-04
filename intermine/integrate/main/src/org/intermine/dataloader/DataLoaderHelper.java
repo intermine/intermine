@@ -215,10 +215,10 @@ public class DataLoaderHelper
      * @throws MetaDataException if anything goes wrong
      */
     public static boolean objectPrimaryKeyNotNull(Model model, InterMineObject obj,
-            ClassDescriptor cld, PrimaryKey pk, Source source, IntToIntMap idMap)
-    throws MetaDataException {
+            ClassDescriptor cld, PrimaryKey pk, Source source,
+            IntToIntMap idMap) throws MetaDataException {
         Iterator pkFieldIter = pk.getFieldNames().iterator();
-      PK:
+    PK:
         while (pkFieldIter.hasNext()) {
             String fieldName = (String) pkFieldIter.next();
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
@@ -265,7 +265,7 @@ public class DataLoaderHelper
                 Set classDescriptors = model.getClassDescriptorsForClass(refObj.getClass());
                 Iterator cldIter = classDescriptors.iterator();
 
-              CLDS:
+            CLDS:
                 while (cldIter.hasNext()) {
                     ClassDescriptor refCld = (ClassDescriptor) cldIter.next();
 
@@ -286,8 +286,8 @@ public class DataLoaderHelper
                         foundKey = true;
 
                         if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source, idMap)) {
-                           foundNonNullKey = true;
-                           break CLDS;
+                            foundNonNullKey = true;
+                            break CLDS;
                         }
                     }
                 }

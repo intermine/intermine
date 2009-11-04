@@ -175,8 +175,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Set queryEquivalentObjects(InterMineObject obj, Source source)
-    throws ObjectStoreException {
+    public Set queryEquivalentObjects(InterMineObject obj,
+            Source source) throws ObjectStoreException {
         Class summaryName = obj.getClass();
         Long soFar = summaryTimes.get(summaryName);
         Integer soFarCount = summaryCounts.get(summaryName);
@@ -217,8 +217,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
     /**
      * {@inheritDoc}
      */
-    public Query createPKQuery(InterMineObject obj, Source source, boolean queryNulls)
-    throws MetaDataException {
+    public Query createPKQuery(InterMineObject obj, Source source,
+            boolean queryNulls) throws MetaDataException {
         int subCount = 0;
         Query q = new Query();
         q.setDistinct(false);

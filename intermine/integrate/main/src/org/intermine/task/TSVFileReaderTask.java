@@ -51,7 +51,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * @param file the File to process
      * @throws BuildException if an ObjectStore method fails
      */
-    public void processFile(File file) throws BuildException {
+    public void processFile(File file) {
         if (configurationFile == null) {
             throw new BuildException("configurationFile not set");
         }
@@ -80,8 +80,7 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
      * @param file The file to read from
      * @throws BuildException if an ObjectStore method fails
      */
-    void executeInternal(DelimitedFileConfiguration dfc, File file)
-        throws BuildException {
+    void executeInternal(DelimitedFileConfiguration dfc, File file) {
         String className = dfc.getConfigClassDescriptor().getName();
 
         System.err .println("Processing file: " + file.getName());

@@ -111,7 +111,7 @@ public abstract class DirectDataLoaderTask extends Task
     /**
      * @throws BuildException if an ObjectStore method fails
      */
-    public void execute() throws BuildException {
+    public void execute() {
 
         if (integrationWriterAlias == null) {
             throw new BuildException("DirectLoaderTask - integrationWriterAlias property not set");
