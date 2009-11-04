@@ -151,11 +151,11 @@ public class SqlGenerator
             return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " AND a1_.tableclass = '" + clazz.getName() + "' LIMIT 2";
-        } else {
-            return "SELECT a1_.OBJECT AS a1_ FROM "
+        }
+        return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " LIMIT 2";
-        }
+        
     }
 
     /**
@@ -233,7 +233,7 @@ public class SqlGenerator
                         .headMap(new Integer(start + 1));
                     Integer lastKey = null;
                     try {
-                        lastKey = (Integer) headMap.lastKey();
+                        lastKey = headMap.lastKey();
                     } catch (NoSuchElementException e) {
                         // ignore
                     }
@@ -308,26 +308,26 @@ public class SqlGenerator
         }
         if (reverse) {
             return new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                    ConstraintOp.LESS_THAN, new QueryValue(value));
-        } else {
-            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                    ConstraintOp.GREATER_THAN, new QueryValue(value));
-            if (hasNulls) {
-                // if the query aready constrains the first order by field to be
-                // not null it doesn't make sense to add a costraint to null
-                CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
-                        firstOrderBy);
-                ConstraintHelper.traverseConstraints(q.getConstraint(), check);
-                if (!check.exists()) {
-                    ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-                    cs.addConstraint(sc);
-                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                ConstraintOp.IS_NULL));
-                    return cs;
-                }
-            }
-            return sc;
+                                        ConstraintOp.LESS_THAN, new QueryValue(value));
         }
+        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                                   ConstraintOp.GREATER_THAN, new QueryValue(value));
+        if (hasNulls) {
+            // if the query aready constrains the first order by field to be
+            // not null it doesn't make sense to add a costraint to null
+            CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
+                                                                                firstOrderBy);
+            ConstraintHelper.traverseConstraints(q.getConstraint(), check);
+            if (!check.exists()) {
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                cs.addConstraint(sc);
+                cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                                      ConstraintOp.IS_NULL));
+                return cs;
+            }
+        }
+        return sc;
+        
     }
 
     /**
@@ -354,7 +354,7 @@ public class SqlGenerator
                     .headMap(new Integer(start + 1));
                 Integer lastKey = null;
                 try {
-                    lastKey = (Integer) headMap.lastKey();
+                    lastKey = headMap.lastKey();
                 } catch (NoSuchElementException e) {
                     // ignore
                 }
@@ -365,12 +365,12 @@ public class SqlGenerator
                         return cacheEntry.getCached().get(lastKey)
                             + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                                 + (start == offset ? "" : " OFFSET " + (start - offset)));
-                    } else {
+                    }
                         return cacheEntry.getLastSQL()
                             + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
                                 + (start == cacheEntry.getLastOffset() ? "" : " OFFSET "
                                     + (start - cacheEntry.getLastOffset())));
-                    }
+                    
                 }
             }
             String sql = generate(q, schema, db, null, QUERY_NORMAL, bagTableNames);
@@ -514,6 +514,9 @@ public class SqlGenerator
                 orderBy = buildOrderBy(state, q, schema, kind);
             }
         }
+        
+        // TODO check here
+        
         StringBuffer retval = new StringBuffer("SELECT ")
             .append(needsDistinct(q) ? "DISTINCT " : "")
             .append(buildSelectComponent(state, q, schema, kind))
@@ -755,8 +758,7 @@ public class SqlGenerator
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
-                String baseAlias = DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
-                        .get(qc));
+                String baseAlias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(qc));
                 Set<Class> classes = DynamicUtil.decomposeClass(qc.getType());
                 List<ClassDescriptorAndAlias> aliases = new ArrayList<ClassDescriptorAndAlias>();
                 int sequence = 0;
@@ -801,7 +803,7 @@ public class SqlGenerator
                 if (schema.isFlatMode(qc.getType())) {
                     List<Iterator<? extends FieldDescriptor>> iterators
                         = new ArrayList<Iterator<? extends FieldDescriptor>>();
-                    ClassDescriptor cld = schema.getTableMaster((ClassDescriptor) schema.getModel()
+                    ClassDescriptor cld = schema.getTableMaster(schema.getModel()
                         .getClassDescriptorsForClass(qc.getType()).iterator().next());
                     DatabaseSchema.Fields dbsFields = schema.getTableFields(schema
                             .getTableMaster(cld));
@@ -842,11 +844,9 @@ public class SqlGenerator
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema, state.getDb(), null,
                                 QUERY_SUBQUERY_FROM, bagTableNames) + ") AS "
-                        + DatabaseUtil.generateSqlCompatibleName((String) q.getAliases()
-                            .get(fromElement)));
+                        + DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(fromElement)));
                 state.setFieldToAlias(fromElement, new AlwaysMap(DatabaseUtil
-                            .generateSqlCompatibleName((String) (q.getAliases()
-                                    .get(fromElement)))));
+                            .generateSqlCompatibleName((q.getAliases().get(fromElement)))));
             } else if (fromElement instanceof QueryClassBag) {
                 // The problem here is:
                 // We do not know the column name for the "id" field, because this will use a
@@ -962,20 +962,19 @@ public class SqlGenerator
             QueryClass qc = ((QueryReference) o).getQueryClass();
             if (qc == null) {
                 return new boolean[] {true, true};
-            } else {
-                return whereHavingSafe(qc, q);
             }
+            return whereHavingSafe(qc, q);            
         } else if (o instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) o;
             QueryEvaluable arg1 = c.getArg1();
             QueryEvaluable arg2 = c.getArg2();
             if (arg2 == null) {
                 return whereHavingSafe(arg1, q);
-            } else {
-                boolean s1[] = whereHavingSafe(arg1, q);
-                boolean s2[] = whereHavingSafe(arg2, q);
-                return new boolean[] {s1[0] && s2[0], s1[1] && s2[1]};
-            }
+            } 
+            boolean s1[] = whereHavingSafe(arg1, q);
+            boolean s2[] = whereHavingSafe(arg2, q);
+            return new boolean[] {s1[0] && s2[0], s1[1] && s2[1]};
+            
         } else if (o instanceof ConstraintSet) {
             boolean whereSafe = true;
             boolean havingSafe = true;
@@ -1018,9 +1017,8 @@ public class SqlGenerator
             QueryEvaluable qe = ((SubqueryConstraint) o).getQueryEvaluable();
             if (qc != null) {
                 return whereHavingSafe(qc, q);
-            } else {
-                return whereHavingSafe(qe, q);
             }
+            return whereHavingSafe(qe, q);            
         } else if (o instanceof SubqueryExistsConstraint) {
             return new boolean[] {true, true};
         } else if (o instanceof OverlapConstraint) {
@@ -1697,7 +1695,7 @@ public class SqlGenerator
             if (filteredBag.isEmpty()) {
                 buffer.append(c.getOp() == ConstraintOp.IN ? "false" : "true");
             } else {
-                String bagTableName = (String) state.getBagTableNames().get(c);
+                String bagTableName = state.getBagTableNames().get(c);
                 if (filteredBag.size() < MAX_BAG_INLINE_SIZE || bagTableName == null) {
                     int needComma = 0;
                     buffer.append(c.getOp() == ConstraintOp.IN ? "" : "(NOT (");
@@ -1719,7 +1717,7 @@ public class SqlGenerator
                             buffer.append(", ");
                         }
                         needComma++;
-                        StringBuffer constraint = new StringBuffer();
+                        
                         objectToString(buffer, orNext);
                     }
                     buffer.append(")");
@@ -1901,7 +1899,7 @@ public class SqlGenerator
             throw new ObjectStoreException("QueryClass for non-InterMineObject class does not"
                     + " have an ID");
         }
-        String alias = (String) q.getAliases().get(qc);
+        String alias = q.getAliases().get(qc);
         Map<String, String> fieldToAlias = state.getFieldToAlias(qc);
         if (alias == null) {
             throw new NullPointerException("A QueryClass is referenced by elements of a query,"
@@ -1952,7 +1950,7 @@ public class SqlGenerator
                 }
                 Map<String, FieldDescriptor> fieldMap = new TreeMap<String, FieldDescriptor>();
                 while (fieldIter.hasNext()) {
-                    FieldDescriptor field = (FieldDescriptor) fieldIter.next();
+                    FieldDescriptor field = fieldIter.next();
                     String columnName = DatabaseUtil.getColumnName(field);
                     if (columnName != null) {
                         fieldMap.put(columnName, field);
@@ -2171,7 +2169,7 @@ public class SqlGenerator
         }
         while (iter.hasNext()) {
             QuerySelectable node = iter.next();
-            String alias = (String) q.getAliases().get(node);
+            String alias = q.getAliases().get(node);
             if (node instanceof QueryClass) {
                 if (needComma) {
                     retval.append(", ");

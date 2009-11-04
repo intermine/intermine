@@ -47,7 +47,6 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -897,7 +896,7 @@ public class PagedTable
         Results results = webResults.getInterMineResults();
         Query oldQuery = results.getQuery();
         Query newQuery = QueryCloner.cloneQuery(oldQuery);
-        PathQuery pathQuery = webTable.getPathQuery();
+        
         newQuery.clearOrderBy();
         Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>(oldQuery.getSelect());
         newQuery.clearSelect();

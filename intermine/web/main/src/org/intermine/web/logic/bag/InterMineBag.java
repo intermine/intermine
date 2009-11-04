@@ -299,7 +299,6 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * @see org.intermine.web.logic.search.WebSearchable#getTitle()
-     * {@inheritDoc}
      */
     public String getTitle() {
        return getName();
