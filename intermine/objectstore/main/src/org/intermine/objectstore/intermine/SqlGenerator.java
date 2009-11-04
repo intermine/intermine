@@ -151,11 +151,11 @@ public class SqlGenerator
             return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " AND a1_.tableclass = '" + clazz.getName() + "' LIMIT 2";
-        }
-        return "SELECT a1_.OBJECT AS a1_ FROM "
+        } else {
+            return "SELECT a1_.OBJECT AS a1_ FROM "
                 + DatabaseUtil.getTableName(tableMaster) + " AS a1_ WHERE a1_.id = " + id.toString()
                 + " LIMIT 2";
-        
+        }
     }
 
     /**
@@ -308,26 +308,26 @@ public class SqlGenerator
         }
         if (reverse) {
             return new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                        ConstraintOp.LESS_THAN, new QueryValue(value));
-        }
-        SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                                   ConstraintOp.GREATER_THAN, new QueryValue(value));
-        if (hasNulls) {
-            // if the query aready constrains the first order by field to be
-            // not null it doesn't make sense to add a costraint to null
-            CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
-                                                                                firstOrderBy);
-            ConstraintHelper.traverseConstraints(q.getConstraint(), check);
-            if (!check.exists()) {
-                ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
-                cs.addConstraint(sc);
-                cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
-                                                      ConstraintOp.IS_NULL));
-                return cs;
+                    ConstraintOp.LESS_THAN, new QueryValue(value));
+        } else {
+            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                    ConstraintOp.GREATER_THAN, new QueryValue(value));
+            if (hasNulls) {
+                // if the query aready constrains the first order by field to be
+                // not null it doesn't make sense to add a costraint to null
+                CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
+                        firstOrderBy);
+                ConstraintHelper.traverseConstraints(q.getConstraint(), check);
+                if (!check.exists()) {
+                    ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+                    cs.addConstraint(sc);
+                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                                ConstraintOp.IS_NULL));
+                    return cs;
+                }
             }
+            return sc;
         }
-        return sc;
-        
     }
 
     /**
@@ -363,14 +363,14 @@ public class SqlGenerator
                     if ((offset > cacheEntry.getLastOffset())
                             || (cacheEntry.getLastOffset() > start)) {
                         return cacheEntry.getCached().get(lastKey)
-                            + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
-                                + (start == offset ? "" : " OFFSET " + (start - offset)));
-                    }
+                            + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                            + (start == offset ? "" : " OFFSET " + (start - offset));
+                    } else {
                         return cacheEntry.getLastSQL()
-                            + ((limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
-                                + (start == cacheEntry.getLastOffset() ? "" : " OFFSET "
-                                    + (start - cacheEntry.getLastOffset())));
-                    
+                            + (limit == Integer.MAX_VALUE ? "" : " LIMIT " + limit)
+                            + (start == cacheEntry.getLastOffset() ? ""
+                                    : " OFFSET " + (start - cacheEntry.getLastOffset()));
+                    }
                 }
             }
             String sql = generate(q, schema, db, null, QUERY_NORMAL, bagTableNames);
@@ -514,9 +514,9 @@ public class SqlGenerator
                 orderBy = buildOrderBy(state, q, schema, kind);
             }
         }
-        
-        // TODO check here
-        
+
+        // TODO check here - What on earth does this comment mean, Julie?
+
         StringBuffer retval = new StringBuffer("SELECT ")
             .append(needsDistinct(q) ? "DISTINCT " : "")
             .append(buildSelectComponent(state, q, schema, kind))
@@ -962,19 +962,20 @@ public class SqlGenerator
             QueryClass qc = ((QueryReference) o).getQueryClass();
             if (qc == null) {
                 return new boolean[] {true, true};
+            } else {
+                return whereHavingSafe(qc, q);
             }
-            return whereHavingSafe(qc, q);            
         } else if (o instanceof SimpleConstraint) {
             SimpleConstraint c = (SimpleConstraint) o;
             QueryEvaluable arg1 = c.getArg1();
             QueryEvaluable arg2 = c.getArg2();
             if (arg2 == null) {
                 return whereHavingSafe(arg1, q);
-            } 
-            boolean s1[] = whereHavingSafe(arg1, q);
-            boolean s2[] = whereHavingSafe(arg2, q);
-            return new boolean[] {s1[0] && s2[0], s1[1] && s2[1]};
-            
+            } else {
+                boolean s1[] = whereHavingSafe(arg1, q);
+                boolean s2[] = whereHavingSafe(arg2, q);
+                return new boolean[] {s1[0] && s2[0], s1[1] && s2[1]};
+            }
         } else if (o instanceof ConstraintSet) {
             boolean whereSafe = true;
             boolean havingSafe = true;
@@ -1017,8 +1018,9 @@ public class SqlGenerator
             QueryEvaluable qe = ((SubqueryConstraint) o).getQueryEvaluable();
             if (qc != null) {
                 return whereHavingSafe(qc, q);
+            } else {
+                return whereHavingSafe(qe, q);
             }
-            return whereHavingSafe(qe, q);            
         } else if (o instanceof SubqueryExistsConstraint) {
             return new boolean[] {true, true};
         } else if (o instanceof OverlapConstraint) {
@@ -1717,7 +1719,7 @@ public class SqlGenerator
                             buffer.append(", ");
                         }
                         needComma++;
-                        
+
                         objectToString(buffer, orNext);
                     }
                     buffer.append(")");
