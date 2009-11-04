@@ -60,7 +60,7 @@ public class ObjectStoreSummary
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
     private Set<String> ignoreFields = new HashSet<String>();
-    
+
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
     static final String FIELDS_SUFFIX = ".fieldValues";
@@ -131,7 +131,7 @@ public class ObjectStoreSummary
                 ignoreFields.add(field);
             }
         }
-        return ignoreFields;        
+        return ignoreFields;
     }
 
     /**
@@ -316,10 +316,10 @@ public class ObjectStoreSummary
                 skipped++;
             } else if (ignoreFields.contains(desc.getName())) {
                 skipped++;
-                LOG.warn("Ignoring configured field: " + cld.getUnqualifiedName() + "." 
+                LOG.warn("Ignoring configured field: " + cld.getUnqualifiedName() + "."
                         + desc.getName());
             } else {
-           
+
                 Query q = new Query();
                 q.setDistinct(false);
 

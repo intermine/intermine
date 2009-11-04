@@ -128,8 +128,8 @@ public class ResultsConverter
                                             obj = NotXmlParser.parse(objectField, os);
                                             //if (objectField.length() < ObjectStoreInterMineImpl
                                             //        .CACHE_LARGEST_OBJECT) {
-                                                os.cacheObjectById(((InterMineObject) obj).getId(),
-                                                        (InterMineObject) obj);
+                                            os.cacheObjectById(((InterMineObject) obj).getId(),
+                                                    (InterMineObject) obj);
                                             //} else {
                                             //    LOG.debug("Not cacheing large object "
                                             //            + obj.getId() + " on read" + " (size = "
@@ -344,8 +344,8 @@ public class ResultsConverter
     protected static void fetchObjectPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryObjectPathExpression qope,
             List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra,
-            Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
-    throws ObjectStoreException {
+            Set<PrecomputedTable> goFasterTables,
+            OptimiserCache goFasterCache) throws ObjectStoreException {
         int startingPoint;
         // This is a Map from the starting point ID to the ID of the referenced object
         Map<Integer, Integer> objectIds = new HashMap();
@@ -425,8 +425,8 @@ public class ResultsConverter
     protected static void fetchCollectionPathExpression(ObjectStoreInterMineImpl os, Connection c,
             Map<Object, Integer> sequence, Query q, QueryCollectionPathExpression qcpe,
             List<ResultsRow> retval, boolean optimise, ExtraQueryTime extra,
-            Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
-    throws ObjectStoreException {
+            Set<PrecomputedTable> goFasterTables,
+            OptimiserCache goFasterCache) throws ObjectStoreException {
         int startingPoint;
         Map<Integer, List> idsToFetch = new HashMap();
         Set<InterMineObject> objectsToFetch = new HashSet();

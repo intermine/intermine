@@ -31,9 +31,9 @@ public abstract class Translator
      *
      * @param os the ObjectStore
      */
-     public void setObjectStore(ObjectStore os) {
-         this.os = os;
-     }
+    public void setObjectStore(ObjectStore os) {
+        this.os = os;
+    }
 
     /**
      * Translate a query.

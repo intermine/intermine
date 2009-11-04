@@ -99,10 +99,8 @@ public class ClassConstraint extends Constraint
         }
 
         if (!(qc.getType().isAssignableFrom(obj.getClass()))) {
-              throw new IllegalArgumentException("Invalid constraint: "
-                                               + qc.getType()
-                                               + " " + op
-                                               + " " + obj.getClass());
+            throw new IllegalArgumentException("Invalid constraint: " + qc.getType() + " " + op
+                    + " " + obj.getClass());
         }
 
         this.qc1 = qc;

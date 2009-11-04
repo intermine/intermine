@@ -33,8 +33,7 @@ public class OverlapConstraint extends Constraint
      * @param right the right range
      * @throws IllegalArgumentException if the comparison op is not valid
      */
-    public OverlapConstraint(OverlapRange left, ConstraintOp op, OverlapRange right)
-    throws IllegalArgumentException {
+    public OverlapConstraint(OverlapRange left, ConstraintOp op, OverlapRange right) {
         if (left == null) {
             throw new NullPointerException("left argument cannot be null");
         }

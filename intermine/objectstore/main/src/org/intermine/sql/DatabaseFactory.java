@@ -41,52 +41,23 @@ public class DatabaseFactory
      */
     public static Database getDatabase(String instance)
         throws SQLException, ClassNotFoundException {
-        /*ClassLoader us = DatabaseFactory.class.getClassLoader();
-        ClassLoader loader = us.getSystemClassLoader();
-        if ((loader != null) && (! loader.equals(us))) {
-            try {
-                Class databaseFactory = loader.loadClass(DatabaseFactory.class.getName());
-                Method method = databaseFactory.getDeclaredMethod("getDatabase",
-                        new Class[] {String.class});
-                return (Database) method.invoke(null, new Object[] {instance});
-            } catch (IllegalAccessException e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            } catch (IllegalArgumentException e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            } catch (InvocationTargetException e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            } catch (NullPointerException e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            } catch (ExceptionInInitializerError e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            } catch (NoSuchMethodException e) {
-                throw new ClassNotFoundException("Could not use parent classloader to create"
-                        + " Database", e);
-            }
-        } else {*/
-            Database database;
+        Database database;
 
-            // Only one thread to configure or test for a DataSource
-            synchronized (databases) {
-                // If we have this DataSource already configured
-                if (databases.containsKey(instance)) {
-                    database = (Database) databases.get(instance);
-                } else {
-                    Properties props = PropertiesUtil.getPropertiesStartingWith(instance);
-                    try {
-                        database = new Database(PropertiesUtil.stripStart(instance, props));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to initialise " + instance, e);
-                    }
+        // Only one thread to configure or test for a DataSource
+        synchronized (databases) {
+            // If we have this DataSource already configured
+            if (databases.containsKey(instance)) {
+                database = (Database) databases.get(instance);
+            } else {
+                Properties props = PropertiesUtil.getPropertiesStartingWith(instance);
+                try {
+                    database = new Database(PropertiesUtil.stripStart(instance, props));
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to initialise " + instance, e);
                 }
             }
-            databases.put(instance, database);
-            return database;
-        /*}*/
+        }
+        databases.put(instance, database);
+        return database;
     }
 }

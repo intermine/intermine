@@ -67,8 +67,7 @@ public class QueryExpression implements QueryEvaluable
      * @throws IllegalArgumentException if there is a mismatch between any of the argument
      * types and the specified operation
      */
-    public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2)
-            throws IllegalArgumentException {
+    public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) {
         if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE) {
             if (Number.class.isAssignableFrom(arg1.getType())
                     && Number.class.isAssignableFrom(arg2.getType())
@@ -144,8 +143,7 @@ public class QueryExpression implements QueryEvaluable
      * @throws IllegalArgumentException if there is a mismatch between the argument type
      * and the specified operation
      */
-    public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len)
-        throws IllegalArgumentException {
+    public QueryExpression(QueryEvaluable arg, QueryEvaluable pos, QueryEvaluable len) {
         if (arg.getType().equals(UnknownTypeValue.class)) {
             arg.youAreType(String.class);
         } else if (!arg.getType().equals(String.class)) {
@@ -188,7 +186,7 @@ public class QueryExpression implements QueryEvaluable
      * @param arg the String argument
      * @throws IllegalArgumentException if there is a mismatch between the argument and operation
      */
-    public QueryExpression(int op, QueryEvaluable arg) throws IllegalArgumentException {
+    public QueryExpression(int op, QueryEvaluable arg) {
         if (!(op == UPPER || op == LOWER)) {
             throw new IllegalArgumentException("Invalid operation for specified arguments");
         }

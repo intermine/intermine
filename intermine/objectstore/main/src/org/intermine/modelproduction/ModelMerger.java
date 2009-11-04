@@ -64,8 +64,8 @@ public class ModelMerger
      * @return the resulting merged model
      * @throws ModelMergerException if an error occurs during model mergining
      */
-    public static Model mergeModel(Model original, Set<ClassDescriptor> classes)
-    throws ModelMergerException {
+    public static Model mergeModel(Model original,
+            Set<ClassDescriptor> classes) throws ModelMergerException {
         Map<String, ClassDescriptor> newClasses = new HashMap<String, ClassDescriptor>();
         for (ClassDescriptor mergeClass : classes) {
             ClassDescriptor oldClass = original.getClassDescriptorByName(mergeClass.getName());
@@ -175,8 +175,8 @@ public class ModelMerger
                             citer.remove();
                         } else {
                             String message = "replacing the \"" + sup + "." + cold.getName()
-                            + "\" collection with " + cd.getName() + "."
-                            + cold.getName() + " failed because the reverse references differ";
+                                + "\" collection with " + cd.getName() + "."
+                                + cold.getName() + " failed because the reverse references differ";
                             throw new ModelMergerException(message);
                         }
                     }

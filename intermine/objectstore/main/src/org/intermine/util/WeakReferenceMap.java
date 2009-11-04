@@ -46,7 +46,7 @@ public abstract class WeakReferenceMap<K, V> extends ReferenceMap<K, V>
     }
 
     private static class WeakReferenceWithKey<K> extends WeakReference<Object>
-    implements ReferenceWithKey<K>
+        implements ReferenceWithKey<K>
     {
         private K key;
 

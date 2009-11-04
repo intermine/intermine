@@ -317,20 +317,21 @@ public class JavaModelOutput
                     && (!(field instanceof CollectionDescriptor))) {
                 // This is an object reference.
                 sb.append("if (")
-                  .append(name)
-                  .append(" instanceof org.intermine.objectstore.proxy.ProxyReference) { return ((")
-                  .append(type)
-                  .append(") ((org.intermine.objectstore.proxy.ProxyReference) ")
-                  .append(name)
-                  .append(").getObject()); }; return (")
-                  .append(type)
-                  .append(") ")
-                  .append(name)
-                  .append("; }" + ENDL);
+                    .append(name)
+                    .append(" instanceof org.intermine.objectstore.proxy.ProxyReference) { return ")
+                    .append("((")
+                    .append(type)
+                    .append(") ((org.intermine.objectstore.proxy.ProxyReference) ")
+                    .append(name)
+                    .append(").getObject()); }; return (")
+                    .append(type)
+                    .append(") ")
+                    .append(name)
+                    .append("; }" + ENDL);
             } else {
                 sb.append("return ")
-                  .append(name)
-                  .append("; }" + ENDL);
+                    .append(name)
+                    .append("; }" + ENDL);
             }
         }
 

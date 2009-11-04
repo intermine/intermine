@@ -575,8 +575,8 @@ public class SqlGenerator
      * @return a Set of table names
      * @throws ObjectStoreException if something goes wrong
      */
-    public static Set<Object> findTableNames(Query q, DatabaseSchema schema, boolean individualOsbs)
-    throws ObjectStoreException {
+    public static Set<Object> findTableNames(Query q, DatabaseSchema schema,
+            boolean individualOsbs) throws ObjectStoreException {
         Map<Query, Set<Object>> schemaCache = getTablenamesCacheForSchema(schema);
         synchronized (q) {
             Set<Object> tablenames = schemaCache.get(q);
@@ -619,8 +619,8 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     private static void findTableNames(Set<Object> tablenames, Query q,
-            DatabaseSchema schema, boolean addInterMineObject, boolean individualOsbs)
-    throws ObjectStoreException {
+            DatabaseSchema schema, boolean addInterMineObject,
+            boolean individualOsbs) throws ObjectStoreException {
         if (completelyFalse(q.getConstraint())) {
             return;
         }
@@ -1774,8 +1774,8 @@ public class SqlGenerator
      * @throws ObjectStoreException if something goes wrong
      */
     protected static void overlapConstraintToString(State state, StringBuffer buffer,
-            OverlapConstraint c, Query q, DatabaseSchema schema, int safeness)
-    throws ObjectStoreException {
+            OverlapConstraint c, Query q, DatabaseSchema schema,
+            int safeness) throws ObjectStoreException {
         if ((safeness != SAFENESS_SAFE) && (safeness != SAFENESS_ANTISAFE)
                 && (safeness != SAFENESS_UNSAFE)) {
             throw new ObjectStoreException("Unknown constraint safeness: " + safeness);
@@ -1866,8 +1866,8 @@ public class SqlGenerator
      * @param value the Object to convert
      * @throws ObjectStoreException if something goes wrong
      */
-    public static void objectToString(StringBuffer buffer, Object value)
-            throws ObjectStoreException {
+    public static void objectToString(StringBuffer buffer,
+            Object value) throws ObjectStoreException {
         if (value instanceof UnknownTypeValue) {
             buffer.append(value.toString());
         } else if (value instanceof InterMineObject) {
@@ -2095,37 +2095,37 @@ public class SqlGenerator
         } else if (node instanceof QueryFunction) {
             QueryFunction nodeF = (QueryFunction) node;
             switch (nodeF.getOperation()) {
-            case QueryFunction.COUNT:
-                buffer.append("COUNT(*)");
-                break;
-            case QueryFunction.SUM:
-                buffer.append("SUM(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            case QueryFunction.AVERAGE:
-                buffer.append("AVG(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            case QueryFunction.MIN:
-                buffer.append("MIN(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            case QueryFunction.MAX:
-                buffer.append("MAX(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            case QueryFunction.STDDEV:
-                buffer.append("STDDEV(");
-                queryEvaluableToString(buffer, nodeF.getParam(), q, state);
-                buffer.append(")");
-                break;
-            default:
-                throw (new ObjectStoreException("Invalid QueryFunction operation: "
-                            + nodeF.getOperation()));
+                case QueryFunction.COUNT:
+                    buffer.append("COUNT(*)");
+                    break;
+                case QueryFunction.SUM:
+                    buffer.append("SUM(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.AVERAGE:
+                    buffer.append("AVG(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.MIN:
+                    buffer.append("MIN(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.MAX:
+                    buffer.append("MAX(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.STDDEV:
+                    buffer.append("STDDEV(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                default:
+                    throw (new ObjectStoreException("Invalid QueryFunction operation: "
+                                + nodeF.getOperation()));
             }
         } else if (node instanceof QueryValue) {
             QueryValue nodeV = (QueryValue) node;
@@ -2204,8 +2204,8 @@ public class SqlGenerator
             }
             needComma = true;
             retval.append(entry.getKey())
-               .append(" AS ")
-               .append(entry.getValue());
+                .append(" AS ")
+                .append(entry.getValue());
         }
         return retval.toString();
     }
@@ -2246,8 +2246,8 @@ public class SqlGenerator
      * @return a String
      * @throws ObjectStoreException if something goes wrong
      */
-    protected static String buildOrderBy(State state, Query q, DatabaseSchema schema, int kind)
-            throws ObjectStoreException {
+    protected static String buildOrderBy(State state, Query q, DatabaseSchema schema,
+            int kind) throws ObjectStoreException {
         StringBuffer retval = new StringBuffer();
         HashSet<String> seen = new HashSet<String>();
         boolean needComma = false;

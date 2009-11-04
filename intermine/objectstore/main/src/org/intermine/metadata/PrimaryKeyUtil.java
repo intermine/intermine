@@ -35,7 +35,7 @@ public abstract class PrimaryKeyUtil
     protected static Map<String, Properties> modelKeys = new HashMap<String, Properties>();
     protected static Map<ClassDescriptor, Map<String, PrimaryKey>> primaryKeyCache =
         new IdentityHashMap<ClassDescriptor, Map<String, PrimaryKey>>();
-    
+
     /**
      * Retrieve a map from key name to PrimaryKey object. The Map contains all the primary keys
      * that exist on a particular class, without performing any recursion.

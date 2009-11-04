@@ -53,7 +53,7 @@ public class QueryFunction implements QueryEvaluable
      * @throws IllegalArgumentException if there is a mismatch between the argument type
      * and the specified operation
      */
-    public QueryFunction(QueryEvaluable qe, int op) throws IllegalArgumentException {
+    public QueryFunction(QueryEvaluable qe, int op) {
         if ((qe instanceof QueryField) || (qe instanceof QueryExpression)
                 || (qe instanceof QueryCast) || (qe instanceof QueryForeignKey)) {
             constructNonCount(qe, op);
@@ -98,7 +98,7 @@ public class QueryFunction implements QueryEvaluable
         return obj;
     }
 
-    private void constructNonCount(QueryEvaluable qe, int op) throws IllegalArgumentException {
+    private void constructNonCount(QueryEvaluable qe, int op) {
         if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == STDDEV)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }

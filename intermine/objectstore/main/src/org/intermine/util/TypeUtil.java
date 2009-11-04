@@ -593,12 +593,12 @@ public class TypeUtil
      */
     public static String javaiseClassName(String s) {
         String filtered = s;
-         StringBuffer sb = new StringBuffer();
-         for (StringTokenizer st = new StringTokenizer(filtered, " _-"); st.hasMoreTokens();) {
-             sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
-         }
-         filtered = sb.toString();
-         return filtered;
+        StringBuffer sb = new StringBuffer();
+        for (StringTokenizer st = new StringTokenizer(filtered, " _-"); st.hasMoreTokens();) {
+            sb.append(StringUtil.capitalise(st.nextToken().replaceAll("\\W", "")));
+        }
+        filtered = sb.toString();
+        return filtered;
     }
 
     /**

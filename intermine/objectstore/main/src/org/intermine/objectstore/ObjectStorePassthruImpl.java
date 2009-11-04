@@ -160,8 +160,8 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
-            throws ObjectStoreException {
+    public InterMineObject getObjectByExample(InterMineObject o,
+            Set fieldNames) throws ObjectStoreException {
         return os.getObjectByExample(o, fieldNames);
     }
 

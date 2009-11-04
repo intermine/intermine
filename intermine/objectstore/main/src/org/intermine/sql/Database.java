@@ -157,7 +157,8 @@ public class Database implements Shutdownable
     /**
      * {@inheritDoc}
      */
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
         if (datasource instanceof org.postgresql.jdbc3.Jdbc3PoolingDataSource) {
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
@@ -223,7 +224,7 @@ public class Database implements Shutdownable
 //            //jdbc:oracle:thin:@oracle.flymine.org:1521:XE
 //            url = "jdbc:" + platform.toLowerCase() + ":"                    // oracle
 //                  + (String) settings.get("datasource.driverType") + ":@"   // thin
-//                  + (String) settings.get("datasource.serverName") + ":"    // oracle.flymine.org 
+//                  + (String) settings.get("datasource.serverName") + ":"    // oracle.flymine.org
 //                  + (String) settings.get("datasource.portNumber") + ":"    // 1521
 //                  + (String) settings.get("datasource.databaseName");       // XE
 //        }
@@ -237,7 +238,7 @@ public class Database implements Shutdownable
     public String getName() {
         return (String) settings.get("datasource.databaseName");
     }
-    
+
     /**
      * Configures a datasource from a Properties object
      *

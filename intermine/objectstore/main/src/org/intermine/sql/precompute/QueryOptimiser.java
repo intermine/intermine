@@ -385,7 +385,7 @@ public class QueryOptimiser
         Arrays.sort(sorted, new Comparator() {
             public int compare(Object a, Object b) {
                 return ((PrecomputedTable) b).getQuery().getFrom().size()
-            - ((PrecomputedTable) a).getQuery().getFrom().size();
+                        - ((PrecomputedTable) a).getQuery().getFrom().size();
             }
         });
         for (int i = 0; i < sorted.length; i++) {
