@@ -354,7 +354,9 @@ function displayNotAnalysed(widgetId,type,extra) {
 }
 
 function calcNotAnalysed(widget) {
-    $('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
+	document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
+	// this was broken in 21.0 when we upgraded jQuery
+    //$('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
 }
 
 function toggleAllChecks(formName, widgetId) {
