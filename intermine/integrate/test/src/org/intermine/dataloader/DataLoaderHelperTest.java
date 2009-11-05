@@ -72,6 +72,12 @@ public class DataLoaderHelperTest extends QueryTestCase
         assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld, source));
     }
 
+    public void testGetPrimaryKeysCldSource3() throws Exception {
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
+        Source source = new Source("testsource2");
+        assertEquals(new HashSet(Arrays.asList(new PrimaryKey("key1", "name, address", cld), new PrimaryKey("local_key", "name, vatNumber", cld))), DataLoaderHelper.getPrimaryKeys(cld, source));
+    }
+
     public void testObjectPrimaryKeyIsNull1() throws Exception {
         Source source = new Source("testsource");
 
