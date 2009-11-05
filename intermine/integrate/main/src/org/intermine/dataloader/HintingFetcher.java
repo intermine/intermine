@@ -140,7 +140,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
             Iterator<ClassDescriptor> cldIter = classDescriptors.iterator();
             while (cldIter.hasNext() && allPkClassesEmpty.booleanValue()) {
                 ClassDescriptor cld = cldIter.next();
-                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+                Set primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs);
                 if (!primaryKeys.isEmpty()) {
                     time = System.currentTimeMillis();
                     boolean classNotExists = hints.classNotExists(cld.getType());

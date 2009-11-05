@@ -153,7 +153,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                     }
                 } else {
                     try {
-                        if (!DataLoaderHelper.getPrimaryKeys(cld, source).isEmpty()) {
+                        if (!DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs).isEmpty()) {
                             noKeys = false;
                         }
                     } catch (IllegalArgumentException e) {
@@ -284,7 +284,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         if (source == null) {
             primaryKeys = new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(cld).values());
         } else {
-            primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source);
+            primaryKeys = DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs);
         }
 
         LOG.debug("primary keys for class " + cld.getName() + " = " + primaryKeys);

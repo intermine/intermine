@@ -53,11 +53,11 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testGetPrimaryKeysCldSource() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Source source = new Source("testsource");
-        assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address", cld)), DataLoaderHelper.getPrimaryKeys(cld, source));
+        assertEquals(Collections.singleton(new PrimaryKey("key1", "name, address", cld)), DataLoaderHelper.getPrimaryKeys(cld, source, null));
 
         source = new Source("testsource5");
         try {
-            DataLoaderHelper.getPrimaryKeys(cld, source);
+            DataLoaderHelper.getPrimaryKeys(cld, source, null);
             fail("Was expecting an exception");
         } catch (IllegalArgumentException e) {
         }
@@ -69,13 +69,13 @@ public class DataLoaderHelperTest extends QueryTestCase
         Set expected = new HashSet();
         expected.add(new PrimaryKey("key1", "name,address", cld));
         expected.add(new PrimaryKey("key2", "vatNumber", cld));
-        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld, source));
+        assertEquals(expected, DataLoaderHelper.getPrimaryKeys(cld, source, null));
     }
 
     public void testGetPrimaryKeysCldSource3() throws Exception {
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Source source = new Source("testsource2");
-        assertEquals(new HashSet(Arrays.asList(new PrimaryKey("key1", "name, address", cld), new PrimaryKey("local_key", "name, vatNumber", cld))), DataLoaderHelper.getPrimaryKeys(cld, source));
+        assertEquals(new HashSet(Arrays.asList(new PrimaryKey("key1", "name, address", cld), new PrimaryKey("local_key", "name, vatNumber", cld))), DataLoaderHelper.getPrimaryKeys(cld, source, null));
     }
 
     public void testObjectPrimaryKeyIsNull1() throws Exception {

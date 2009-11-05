@@ -10,6 +10,8 @@ package org.intermine.dataloader;
  *
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,9 +33,14 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.DatabaseSchema;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -111,9 +118,11 @@ public class DataLoaderHelper
      *
      * @param cld the ClassDescriptor
      * @param source the Source
+     * @param os the ObjectStore that these PrimaryKeys are used in, for creating indexes
      * @return a Set of PrimaryKeys
      */
-    public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source) {
+    public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source,
+            ObjectStore os) {
         Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> cache = getPrimaryKeyCache.get();
         GetPrimaryKeyCacheKey key = new GetPrimaryKeyCacheKey(cld, source);
         synchronized (cache) {
@@ -186,6 +195,30 @@ public class DataLoaderHelper
                                 String keyName = propKey.substring(posOfDot + 1);
                                 PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
                                 keySet.add(pk);
+                                if (os instanceof ObjectStoreInterMineImpl) {
+                                    ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+                                    DatabaseSchema schema = osimi.getSchema();
+                                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                                    String tableName = DatabaseUtil.getTableName(tableMaster);
+                                    List<String> fields = new ArrayList<String>();
+                                    for (String field : pk.getFieldNames()) {
+                                        fields.add(DatabaseUtil.generateSqlCompatibleName(field));
+                                    }
+                                    String sql = "CREATE INDEX " + tableName + "__" + keyName
+                                        + " ON " + tableName + " (" + StringUtil.join(fields, ", ")
+                                        + ")";
+                                    Connection conn = null;
+                                    try {
+                                        conn = osimi.getConnection();
+                                        conn.createStatement().execute(sql);
+                                    } catch (SQLException e) {
+                                        LOG.error("Index creation failed", e);
+                                    } finally {
+                                        if (conn != null) {
+                                            osimi.releaseConnection(conn);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -307,7 +340,7 @@ public class DataLoaderHelper
                         primaryKeys =
                             new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
-                        primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
+                        primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source, null);
                     }
 
                     Iterator pkSetIter = primaryKeys.iterator();
@@ -358,7 +391,7 @@ public class DataLoaderHelper
         if (fields == null) {
             fields = new HashSet<String>();
             for (ClassDescriptor cld : model.getClassDescriptorsForClass(clazz)) {
-                for (PrimaryKey pk : getPrimaryKeys(cld, source)) {
+                for (PrimaryKey pk : getPrimaryKeys(cld, source, null)) {
                     fields.addAll(pk.getFieldNames());
                 }
             }
