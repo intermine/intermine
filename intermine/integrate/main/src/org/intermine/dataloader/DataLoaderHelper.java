@@ -95,6 +95,13 @@ public class DataLoaderHelper
         return descriptorSources;
     }
 
+    private static ThreadLocal<Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>>> getPrimaryKeyCache
+        = new ThreadLocal<Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>>>() {
+            @Override protected Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> initialValue() {
+                return new HashMap<GetPrimaryKeyCacheKey, Set<PrimaryKey>>();
+            }
+        };
+
     /**
      * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
      * contains all the primary keys that exist on a particular class that are used by the
@@ -107,65 +114,90 @@ public class DataLoaderHelper
      * @return a Set of PrimaryKeys
      */
     public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source) {
-        Set<PrimaryKey> keySet = new LinkedHashSet();
-        Properties keys = getKeyProperties(source);
-        if (keys != null) {
-            if (!verifiedSources.contains(source)) {
-                String packageNameWithDot = cld.getName().substring(0, cld.getName()
-                        .lastIndexOf('.') + 1);
-                LOG.info("Verifying primary key config for source " + source + ", packageName = "
-                        + packageNameWithDot);
-                Iterator iter = keys.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    String cldName = (String) entry.getKey();
-                    String keyList = (String) entry.getValue();
-                    ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
-                            packageNameWithDot + cldName);
-                    if  (iCld != null) {
-                        Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
+        Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> cache = getPrimaryKeyCache.get();
+        GetPrimaryKeyCacheKey key = new GetPrimaryKeyCacheKey(cld, source);
+        synchronized (cache) {
+            Set<PrimaryKey> keySet = cache.get(key);
+            if (keySet == null) {
+                keySet = new LinkedHashSet<PrimaryKey>();
+                Properties keys = getKeyProperties(source);
+                if (keys != null) {
+                    if (!verifiedSources.contains(source)) {
+                        String packageNameWithDot = cld.getName().substring(0, cld.getName()
+                                .lastIndexOf('.') + 1);
+                        LOG.info("Verifying primary key config for source " + source
+                                + ", packageName = " + packageNameWithDot);
+                        for (Map.Entry entry : keys.entrySet()) {
+                            String cldName = (String) entry.getKey();
+                            String keyList = (String) entry.getValue();
+                            if (!cldName.contains(".")) {
+                                ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
+                                        packageNameWithDot + cldName);
+                                if  (iCld != null) {
+                                    Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
 
+                                    String[] tokens = keyList.split(",");
+                                    for (int i = 0; i < tokens.length; i++) {
+                                        String token = tokens[i].trim();
+                                        if (map.get(token) == null) {
+                                            throw new IllegalArgumentException("Primary key "
+                                                    + token + " for class " + cldName
+                                                    + " required by datasource " + source.getName()
+                                                    + " in " + source.getName()
+                                                    + "_keys.properties is not defined in "
+                                                    + cld.getModel().getName()
+                                                    + "_keyDefs.properties");
+                                        }
+                                    }
+                                } else {
+                                    LOG.warn("Ignoring entry for " + cldName + " in file "
+                                            + cld.getModel().getName()
+                                            + "_keyDefs.properties - not in model!");
+                                }
+                            }
+                        }
+                        verifiedSources.add(source);
+                    }
+                    Map<String, PrimaryKey> map = PrimaryKeyUtil.getPrimaryKeys(cld);
+                    String cldName = TypeUtil.unqualifiedName(cld.getName());
+                    String keyList = (String) keys.get(cldName);
+                    if (keyList != null) {
                         String[] tokens = keyList.split(",");
                         for (int i = 0; i < tokens.length; i++) {
                             String token = tokens[i].trim();
                             if (map.get(token) == null) {
                                 throw new IllegalArgumentException("Primary key " + token
-                                        + " for class " + cldName + " required by datasource "
-                                        + source.getName() + " in " + source.getName()
-                                        + "_keys.properties is not defined in "
+                                        + " for class " + cld.getName()
+                                        + " required by data source " + source.getName() + " in "
+                                        + source.getName() + "_keys.properties is not defined in "
                                         + cld.getModel().getName() + "_keyDefs.properties");
+                            } else {
+                                keySet.add(map.get(token));
                             }
                         }
-                    } else {
-                        LOG.warn("Ignoring entry for " + cldName + " in file "
-                                + cld.getModel().getName() + "_keyDefs.properties - not in model!");
                     }
-                }
-                verifiedSources.add(source);
-            }
-            Map<String, PrimaryKey> map = PrimaryKeyUtil.getPrimaryKeys(cld);
-            String cldName = TypeUtil.unqualifiedName(cld.getName());
-            String keyList = (String) keys.get(cldName);
-            if (keyList != null) {
-                String[] tokens = keyList.split(",");
-                for (int i = 0; i < tokens.length; i++) {
-                    String token = tokens[i].trim();
-                    if (map.get(token) == null) {
-                        throw new IllegalArgumentException("Primary key " + token
-                                + " for class " + cld.getName() + " required by data source "
-                                + source.getName() + " in " + source.getName() + "_keys.properties"
-                                + " is not defined in " + cld.getModel().getName()
-                                + "_keyDefs.properties");
-                    } else {
-                        keySet.add(map.get(token));
+                    for (Map.Entry entry : keys.entrySet()) {
+                        String propKey = (String) entry.getKey();
+                        String fieldList = (String) entry.getValue();
+                        int posOfDot = propKey.indexOf('.');
+                        if (posOfDot > 0) {
+                            String propCldName = propKey.substring(0, posOfDot);
+                            if (cldName.equals(propCldName)) {
+                                String keyName = propKey.substring(posOfDot + 1);
+                                PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
+                                keySet.add(pk);
+                            }
+                        }
                     }
+                } else {
+                    throw new IllegalArgumentException("Unable to find keys for source "
+                            + source.getName() + " in file " + source.getName()
+                            + "_keys.properties");
                 }
+                cache.put(key, keySet);
             }
-        } else {
-            throw new IllegalArgumentException("Unable to find keys for source "
-                    + source.getName() + " in file " + source.getName() + "_keys.properties");
+            return keySet;
         }
-        return keySet;
     }
 
     /**
@@ -356,6 +388,29 @@ public class DataLoaderHelper
                 PrimaryKeyCacheKey pkck = (PrimaryKeyCacheKey) o;
                 return (model == pkck.model) && clazz.equals(pkck.clazz)
                     && source.equals(pkck.source);
+            }
+            return false;
+        }
+    }
+
+    private static class GetPrimaryKeyCacheKey
+    {
+        private ClassDescriptor cld;
+        private Source source;
+
+        public GetPrimaryKeyCacheKey(ClassDescriptor cld, Source source) {
+            this.cld = cld;
+            this.source = source;
+        }
+
+        public int hashCode() {
+            return cld.getName().hashCode();
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof GetPrimaryKeyCacheKey) {
+                GetPrimaryKeyCacheKey key = (GetPrimaryKeyCacheKey) o;
+                return (cld == key.cld) && source.equals(key.source);
             }
             return false;
         }
