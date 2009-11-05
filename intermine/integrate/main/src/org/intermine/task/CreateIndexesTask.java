@@ -545,8 +545,7 @@ public class CreateIndexesTask extends Task
      * @param tableMaster the master table class for cld
      */
     private void addStatement(Map statements, String indexName, String tableName,
-                              String columnNames,
-                              ClassDescriptor cld, ClassDescriptor tableMaster) {
+            String columnNames, ClassDescriptor cld, ClassDescriptor tableMaster) {
         if (statements.containsKey(indexName)) {
             IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
 

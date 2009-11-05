@@ -202,7 +202,7 @@ public class BatchingFetcher extends HintingFetcher
                         keysForClass = new HashSet<PrimaryKey>(PrimaryKeyUtil.getPrimaryKeys(cld)
                                 .values());
                     } else {
-                        keysForClass = DataLoaderHelper.getPrimaryKeys(cld, source);
+                        keysForClass = DataLoaderHelper.getPrimaryKeys(cld, source, lookupOs);
                     }
                     if (!keysForClass.isEmpty()) {
                         time = System.currentTimeMillis();
