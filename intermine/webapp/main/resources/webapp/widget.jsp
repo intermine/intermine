@@ -176,24 +176,16 @@
   <script language="javascript">
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-        <!--//<![CDATA[
-           getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
-        //]]>-->
+    	getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
-    <!--//<![CDATA[
-           getProcessTableWidgetConfig('${widget.id}','${bag.name}');
-    //]]>-->
+    	getProcessTableWidgetConfig('${widget.id}','${bag.name}');
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-    <!--//<![CDATA[
-           getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
-    //]]>-->
+    	getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
     </c:when>
     <c:when test="${type == 'HTMLWidgetConfig'}" >
-    <!--//<![CDATA[
-           getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
-    //]]>-->
+    	getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
     </c:when>
   </c:choose>
   </script>
