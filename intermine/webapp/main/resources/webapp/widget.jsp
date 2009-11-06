@@ -26,37 +26,6 @@
 <html:hidden property="action" value="" styleId="action${widget.id}"/>
 <html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
 
-<script type="text/javascript">
-         //if key is Enter
-
-       function isEnter(e, widgetid, bagname, ajax) {
-          var curKey;
-        if (e.which) {   			// FF
-            curKey = e.which;
-          } else if (e.keyCode) {     // IE
-            curKey = e.keyCode;
-          }
-        //enter
-        if (curKey == 13) {
-          Event.stop(e);
-              callAJAX(widgetid, bagname, ajax);
-          }
-         }
-         //only doubles are allowed
-
-         function onlyDouble(d)
-         {
-        var val = d.value.replace(/[^\.^,\d]/g, '');
-        d.value = val;
-       }
-         //called the ajax service
-
-       function callAJAX(widgetid, bagname, ajax){
-         jQuery('#pValue'+widgetid).val();
-         getProcessGraphWidgetConfig(widgetid, bagname);
-       }
-</script>
-
 <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
 
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
@@ -64,8 +33,8 @@
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
   <p>${widget.description}<br/>
-  
-  <c:if test="${type ne 'HTMLWidgetConfig'}" >
+  <c:set var="isMSIE" value='<%= new Boolean(request.getHeader("user-agent").indexOf("MSIE") != -1) %>'/>
+  <c:if test="${type ne 'HTMLWidgetConfig' && !isMSIE}" >
   	<span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
   </c:if>
  </p>
@@ -113,15 +82,6 @@
           </c:choose>--%>
         </c:forEach>
         </html:select>
-      </li>
-    </c:if>
-     <c:if test="${! empty entry.key && entry.key == 'Editable'}">
-      <li>
-      <label>Maximum p-value to display</label>
-      <form action="false">
-      <input id="pValue${widget.id}" name="pValue(${widget.id})" size = "5" value="0.01" onKeyUp="onlyDouble(this);" onKeyDown="isEnter(event, '${widget.id}', '${bag.name}', 'graph');" />
-      <input type="button" name="GO" value="GO" onclick="callAJAX('${widget.id}', '${bag.name}', 'graph')">
-      </form>
       </li>
     </c:if>
   </c:forEach>
@@ -173,21 +133,30 @@
   <c:if test="${type == 'HTMLWidgetConfig'}" >
   	<div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
   </c:if>
-  <script language="javascript">
+  <script language="javascript">  
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
+    
     	getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
+    
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
+     
     	getProcessTableWidgetConfig('${widget.id}','${bag.name}');
+    
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
+     
     	getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
+    
     </c:when>
     <c:when test="${type == 'HTMLWidgetConfig'}" >
+         
     	getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
+    
     </c:when>
   </c:choose>
+  
   </script>
 </div>
 </html:form>
