@@ -16,9 +16,6 @@ function getProcessGraphWidgetConfig(widgetId, bagName) {
 }
 
 function handleGraphWidget(widget) {
-
-  calcNotAnalysed(widget);
-
   Element.hide($('widgetdatanoresults' + widget.configId));
   if(widget.hasResults) {
     var widgetdataname = document.getElementById('widgetdata' + widget.configId);
@@ -33,6 +30,7 @@ function handleGraphWidget(widget) {
     Element.show($('widgetdatanoresults' + widget.configId));
     //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
   }
+  calcNotAnalysed(widget);
 }
 
 function getProcessHTMLWidgetConfig(widgetId, bagName) {
@@ -56,9 +54,6 @@ function getProcessTableWidgetConfig(widgetId, bagName) {
 }
 
 function handleTableWidget(widget) {
-
-  calcNotAnalysed(widget);
-
   Element.hide($('widgetdatanoresults' + widget.configId));
 
   if(widget.hasResults) {
@@ -118,6 +113,7 @@ function handleTableWidget(widget) {
     Element.show($('widgetdatanoresults' + widget.configId));
     //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
   }
+  calcNotAnalysed(widget);
 }
 
 function getProcessGridWidgetConfig(widgetId, bagName) {
@@ -155,11 +151,7 @@ function getProcessGridWidgetConfig(widgetId, bagName) {
 }
 
 function handleGridWidget(widget) {
-
-  calcNotAnalysed(widget);
-
-    Element.hide($('widgetdatanoresults' + widget.configId));
-
+  Element.hide($('widgetdatanoresults' + widget.configId));
   if(widget.hasResults) {
     removeChildren($("tablewidget"+widget.configId+"head"));
     removeChildren($("tablewidget"+widget.configId+"body"));
@@ -281,16 +273,14 @@ function handleGridWidget(widget) {
       display++;
       $("tablewidget"+widget.configId+"head").appendChild(row);
     }
-
-
     Element.hide($(widgetdatawait));
-      Element.show($(widgetdataname));
-
+    Element.show($(widgetdataname));
   } else {
     Element.hide($('widgetdatawait' + widget.configId));
     Element.hide($('widgetdata' + widget.configId));
     Element.show($('widgetdatanoresults' + widget.configId));
   }
+  calcNotAnalysed(widget);
 }
 
 function getProcessEnrichmentWidgetConfig(widgetId, bagName) {
@@ -354,7 +344,10 @@ function displayNotAnalysed(widgetId,type,extra) {
 }
 
 function calcNotAnalysed(widget) {
-	document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
+	var isMSIE = /*@cc_on!@*/false;
+	if (!isMSIE) {
+		document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
+	}
 	// this was broken in 21.0 when we upgraded jQuery
     //$('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
 }
