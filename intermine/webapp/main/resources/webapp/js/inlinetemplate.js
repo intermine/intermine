@@ -26,9 +26,7 @@ function loadInlineTemplate(i) {
   $('table_'+uid+'_int').innerHTML = placement + templateName + id;
   new Ajax.Updater('table_'+uid+'_int', modifyDetailsURL, {
     parameters:'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType+'&trail='+trail, asynchronous:true,
-    // this doesn't work in stupid internet explorer
-    //onComplete: function() {
-    onSuccess: function() {
+    onComplete: function() {    
       var count = $('count_'+uid).innerHTML;
       if (count == '0')
         $('img_'+uid).src='images/blank.gif';
