@@ -350,7 +350,7 @@ echo
 
 # save factor file and run acceptance tests
 NAMESTAMP=`echo $sub | cut -d. -f1`
-cp integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
+cp $MINEDIR/integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
 
 runtest $NAMESTAMP
 
@@ -475,7 +475,17 @@ dcczip new
 cd $DATADIR
 dcczip update
 
-#------------------------------------------------------------------------
+##-------------------------------------------------
+# check 'validated' directories in new and update:
+# 
+#-------------------------------------------------
+cd $DATADIR/new/validated
+dcczip new
+
+cd $DATADIR/update/validated
+dcczip update
+
+------------------------------------------------------------------------
 # check if any update in the ERR directory, decompress, mv and rename it
 #------------------------------------------------------------------------
 cd $DATADIR/new/err
