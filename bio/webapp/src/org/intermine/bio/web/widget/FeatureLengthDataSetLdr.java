@@ -11,7 +11,6 @@ package org.intermine.bio.web.widget;
  */
 
 import java.text.DecimalFormat;
-import java.text.FieldPosition;
 import java.util.Iterator;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -32,6 +31,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.CacheMap;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.jfree.data.function.Function2D;
@@ -48,7 +48,6 @@ import org.jfree.data.xy.XYSeriesCollection;
   */
 public class FeatureLengthDataSetLdr implements DataSetLdr
 {
-
     private static final Logger LOG = Logger.getLogger(FeatureLengthDataSetLdr.class);
     private XYDataset dataSet;
     private Model model;
@@ -56,7 +55,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     private Results results;
     private int widgetTotal = 0;
     private static final double MINIMUM_VALUE = 0.0;
-
+    private static CacheMap<String, XYSeries> FEATURE_LENGTH_CACHE = new CacheMap();
+    
     /**
      * Creates a FeatureLengthDataSetLdr used to retrieve, organise
      * and structure the data to create a graph
@@ -114,32 +114,44 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     throws ClassNotFoundException {
 
         Query q = getQuery(organismName, bag);
-        results = os.execute(q, 50000, true, true, true);
+        XYSeries series = FEATURE_LENGTH_CACHE.get(q.toString());
 
-        DescriptiveStatistics stats = new DescriptiveStatistics();
+        /** 
+         * actual   = series will always be null for bag queries, we probably don't want to cache 
+         *            those, the bag could change
+         * expected = series will only be null if this is the first time the query is run
+         */
+        if (series == null) {
+            results = os.execute(q, 50000, true, true, true);
+            DescriptiveStatistics stats = new DescriptiveStatistics();
 
-        Iterator iter = results.iterator();
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            Integer length = (java.lang.Integer) resRow.get(0);
-            stats.addValue(length);
+            Iterator iter = results.iterator();
+            while (iter.hasNext()) {
+                ResultsRow resRow = (ResultsRow) iter.next();
+                Integer length = (java.lang.Integer) resRow.get(0);
+                stats.addValue(length);
+            }
+
+            Double mean = stats.getMean();
+            DecimalFormat twoDigits = new DecimalFormat("0.00");
+            String prettyMean = twoDigits.format(mean);
+            Function2D actual 
+            = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
+
+            int total = (int) stats.getN();
+            String legend = "[mean: " + prettyMean + " count:  " + String.valueOf(total) + "]";
+            String seriesName = "All features " + legend;
+            if (bag != null) {
+                seriesName = "Features in this list " + legend;
+                widgetTotal = total;
+            }        
+            series = DatasetUtilities.sampleFunction2DToSeries(actual, MINIMUM_VALUE, 
+                                                                        stats.getMax(), 
+                                                                        total, seriesName);
+            if (bag == null) {
+                FEATURE_LENGTH_CACHE.put(q.toString(), series);
+            }
         }
-
-        Double mean = stats.getMean();
-        DecimalFormat twoDigits = new DecimalFormat("0.00");
-        String prettyMean = twoDigits.format(mean);
-        Function2D actual = new NormalDistributionFunction2D(mean, stats.getStandardDeviation());
-
-        int total = (int) stats.getN();
-        String legend = "[mean: " + prettyMean + " count:  " + String.valueOf(total) + "]";
-        String seriesName = "All features " + legend;
-        if (bag != null) {
-            seriesName = "Features in this list " + legend;
-            widgetTotal = total;
-        }        
-        XYSeries series = DatasetUtilities.sampleFunction2DToSeries(actual, MINIMUM_VALUE, 
-                                                                    stats.getMax(), 
-                                                                    total, seriesName);
         return series;
     }
     
