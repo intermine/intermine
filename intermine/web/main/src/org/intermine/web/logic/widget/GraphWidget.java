@@ -355,15 +355,28 @@ public class GraphWidget extends Widget
         return sb.toString();
     }
     
+    /**
+     * class used to format the p-values on the graph 
+     * @author julie
+     */
     public class DivNumberFormat extends DecimalFormat {
 
         private int magnitude;
 
+        /**
+         * @param magnitude what to multiply the p-value by
+         */
         public DivNumberFormat(int magnitude) {
            this.magnitude = magnitude;
         }
 
-        public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
+        /**
+         * @param number number to format
+         * @result result result
+         * @return the format
+         */
+        public StringBuffer format(double number, StringBuffer result, 
+                                   FieldPosition fieldPosition) {
            return super.format(number * magnitude, result, fieldPosition);
         }
 
