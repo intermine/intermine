@@ -109,7 +109,6 @@ div#experimentFeatures {
 <%-- for gbrowse: to modify and take the organism from the submission --%>
 <c:set var="fly" value=""/>
 <c:set var="worm" value=""/>
-<c:set var="organism" value=""/>
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -127,12 +126,10 @@ NBB: for fly freeze, Hanikoff has only fly submissions -> the choice
       <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
 						<c:set var="fly" value="1" />
-            <c:set var="organism" value="fly"/>
 					</c:if>
       <c:if test="${organism eq 'C. elegans' && empty fly}"> <%-- ****** --%> 
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
 						<c:set var="worm" value="1" />
-            <c:set var="organism" value="worm"/>
 					</c:if>
     </c:forEach> 
   </td>
@@ -239,6 +236,7 @@ All GBrowse tracks generated for this experiment:
 <%-- build the url for getting all the labels in this experiment --%> 
 <c:choose>
 <c:when test="${status.first}">
+     <c:set var="organism" value="${etrack.organism}"/>
      <c:set var="urlabels" value="${etrack.track}" /> 
 </c:when>
 <c:otherwise>
@@ -247,7 +245,6 @@ All GBrowse tracks generated for this experiment:
 </c:choose>
 
 </c:forEach>
-
 
 <tr>
 <td >
