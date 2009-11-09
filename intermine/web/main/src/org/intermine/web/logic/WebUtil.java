@@ -39,6 +39,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.CacheMap;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.tagging.TagTypes;
@@ -280,7 +281,6 @@ public abstract class WebUtil
     public static String getStaticPage(String prefixURLString, String path)
         throws IOException {
         StringBuffer buf = new StringBuffer();
-
         URL url = new URL(prefixURLString + '/' + path);
         URLConnection connection = url.openConnection();
         InputStream is = connection.getInputStream();
@@ -289,14 +289,13 @@ public abstract class WebUtil
         String line;
         while ((line = br.readLine()) != null) {
             // replace relative urls ie. href="manualExportfasta.shtml"
-            line = line.replaceAll("href=\"([^\"]+)\"",
-                                   "href=\"showStatic.do?path=$1\"");
+            line = line.replaceAll("href=\"([^\"]+)\"", "href=\"showStatic.do?path=$1\"");
             buf.append(line + "\n");
         }
         return buf.toString();
     }
 
-    private static Map<String, List> statsCalcCache = new HashMap<String, List>();
+    private static CacheMap<String, List> STATS_CACHE = new CacheMap();
 
     /**
      * Runs both queries and compares the results.
@@ -356,11 +355,11 @@ public abstract class WebUtil
             }
 
             // run population query
-            List rAll = statsCalcCache.get(ldr.getPopulationQuery(false).toString());
+            List rAll = STATS_CACHE.get(ldr.getPopulationQuery(false).toString());
             if (rAll == null) {
                 rAll = os.execute(ldr.getPopulationQuery(false), 20000, true, true, true);
                 rAll = new ArrayList(rAll);
-                statsCalcCache.put(ldr.getPopulationQuery(false).toString(), rAll);
+                STATS_CACHE.put(ldr.getPopulationQuery(false).toString(), rAll);
             }
 
             Iterator itAll = rAll.iterator();
