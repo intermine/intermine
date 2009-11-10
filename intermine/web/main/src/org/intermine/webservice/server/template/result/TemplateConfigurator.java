@@ -55,21 +55,21 @@ public class TemplateConfigurator
             List<ConstraintLoad> loads = newConstraints.get(node.getPathString());
             if (loads == null) {
                 throw new BadRequestException("There isn't specified constraint value "
-                        + "and operation for path " + node.getPathString() 
-                        + " in the request.");                
+                        + "and operation for path " + node.getPathString()
+                        + " in the request.");
             }
             if (cons.size() > loads.size()) {
-                throw new BadRequestException("Template has more editable constraints for path " 
+                throw new BadRequestException("Template has more editable constraints for path "
                         + node.getPathString() + " than was specified. All must be specified in "
                         + "the request.");
             }
             if (cons.size() < loads.size()) {
                 throw new BadRequestException("There were more constraints specified "
-                        + " in the request than there are editable constraints for path " 
-                        + node.getPathString() + ".");            
+                        + " in the request than there are editable constraints for path "
+                        + node.getPathString() + ".");
             }
             if (loads.size() == 1) {
-                setConstraint(node, cons.get(0), loads.get(0));                                    
+                setConstraint(node, cons.get(0), loads.get(0));
             } else {
                 for (Constraint con : cons) {
                     boolean found = false;
@@ -84,7 +84,7 @@ public class TemplateConfigurator
                     if (!found) {
                         throw new BadRequestException("There are multiple editable constraints for "
                                 + "path " + node.getPathString() + " but value and operation for "
-                                + "constraint with code " + con.getCode() + " wasn't specified in " 
+                                + "constraint with code " + con.getCode() + " wasn't specified in "
                                 + "the request or there is an error. Check the codes.");
                     }
                 }
@@ -97,11 +97,11 @@ public class TemplateConfigurator
         for (List<ConstraintLoad> col : collection) {
             for (ConstraintLoad load : col) {
                 try {
-                    new Path(model, load.getPathId());    
+                    new Path(model, load.getPathId());
                 } catch (PathError ex) {
-                    throw new BadRequestException("Invalid path specified in " 
+                    throw new BadRequestException("Invalid path specified in "
                             + load.getParameterName() + " parameter.");
-                }                
+                }
             }
         }
     }

@@ -18,13 +18,13 @@ import java.util.Map;
  * staff that must be hold in session and is related to web application GUI.
  * @author Jakub Kulaviak
  */
-public class WebState 
+public class WebState
 {
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
 
     private Map<String, Object> statesMap = new HashMap<String, Object>();
-    
+
     /**
      * Gets map of ids of elements that were in the past (during session) toggled
      * - if they are opened or closed.
@@ -41,16 +41,16 @@ public class WebState
     public void setToggledElements(Map<String, Boolean> toggledElements) {
         this.toggledElements = toggledElements;
     }
-    
+
     /**
-     * Set attribute. 
+     * Set attribute.
      * @param name name of attribute
      * @param value value of attribute
      */
     public void setState(String name, Object  value) {
         statesMap.put(name, value);
     }
-    
+
     /**
      * @param name name of state
      * @return value of state or null if state wasn't set
@@ -58,7 +58,7 @@ public class WebState
     public Object getState(String name) {
         return statesMap.get(name);
     }
-    
+
     /**
      * @return map of states
      */

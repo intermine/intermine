@@ -68,10 +68,8 @@ public class ModifyDetails extends DispatchAction
      *                if the application business logic throws an exception
      */
     public ActionForward runTemplate(ActionMapping mapping,
-                                     @SuppressWarnings("unused") ActionForm form,
-                                     HttpServletRequest request,
-                                     @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String name = request.getParameter("name");
@@ -83,49 +81,49 @@ public class ModifyDetails extends DispatchAction
         String userName = (profile).getUsername();
         TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
                                                              name, scope);
-        
+
         TemplateForm templateForm = new TemplateForm();
         Model model = SessionMethods.getObjectStore(servletContext).getModel();
-        
+
         if (idForLookup != null && idForLookup.length() != 0) {
             Integer objectId = new Integer(idForLookup);
             ObjectStore os = SessionMethods.getObjectStore(servletContext);
             InterMineObject object = os.getObjectById(objectId);
             TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
         } else if (bagName != null && bagName.length() != 0) {
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                     SessionMethods.getGlobalSearchRepository(servletContext));
             InterMineBag interMineBag = allBags.get(bagName);
             TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
-              
+
         templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
 
         // note that savedBags parameter is an empty set, we are on a report page for an object,
         // the object/bag we are using is already set in the TemplateForm, we can't use other bags
-        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm, 
+        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm,
                 template, new HashMap());
-                
+
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
         PagedTable pagedResults = new PagedTable(webResults, 10);
-        
+
         SessionMethods.setResultsTable(session, identifier, pagedResults);
-        
+
         // add results table to trail
         String trail = request.getParameter("trail");
         if (trail != null) {
             trail += "|results." + identifier;
         } else {
             trail = "|results." + identifier;
-        }               
+        }
 
         return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("templateQueryTitle", template.getTitle())
-                        .addParameter("templateQueryDescription", template.getDescription())
-                        .addParameter("table", identifier)
-                        .addParameter("trail", trail).forward();
+            .addParameter("templateQueryTitle", template.getTitle())
+            .addParameter("templateQueryDescription", template.getDescription())
+            .addParameter("table", identifier)
+            .addParameter("trail", trail).forward();
     }
 
     /**
@@ -142,10 +140,8 @@ public class ModifyDetails extends DispatchAction
      *                if the application business logic throws an exception
      */
     public ActionForward verbosify(ActionMapping mapping,
-                                   @SuppressWarnings("unused") ActionForm form,
-                                   HttpServletRequest request,
-                                   @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         if (session == null) {
             return null;
@@ -178,10 +174,8 @@ public class ModifyDetails extends DispatchAction
      *                if the application business logic throws an exception
      */
     public ActionForward unverbosify(ActionMapping mapping,
-                                     @SuppressWarnings("unused") ActionForm form,
-                                     HttpServletRequest request,
-                                     @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
@@ -207,10 +201,8 @@ public class ModifyDetails extends DispatchAction
      *                if the application business logic throws an exception
      */
     public ActionForward ajaxVerbosify(ActionMapping mapping,
-                                       @SuppressWarnings("unused") ActionForm form,
-                                       HttpServletRequest request,
-                                       @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String fieldName = request.getParameter("field");
         String trail = request.getParameter("trail");
@@ -249,8 +241,7 @@ public class ModifyDetails extends DispatchAction
      *                if the application business logic throws an exception
      */
     public ActionForward ajaxTemplateCount(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext sc = session.getServletContext();
         String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
@@ -279,7 +270,7 @@ public class ModifyDetails extends DispatchAction
             return mapping.findForward("objectDetailsTemplateTable");
         }
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(sc));
         InterMineBag interMineIdBag = allBags.get(id);
         cc.putAttribute("interMineIdBag", interMineIdBag);

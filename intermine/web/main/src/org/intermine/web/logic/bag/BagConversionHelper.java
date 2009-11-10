@@ -44,7 +44,7 @@ import org.intermine.web.logic.template.TemplateQuery;
  * @author Richard Smith
  *
  */
-public class BagConversionHelper 
+public class BagConversionHelper
 {
 
     /**
@@ -55,10 +55,10 @@ public class BagConversionHelper
     public static List<TemplateQuery> getConversionTemplates(Profile superProfile) {
 
         List<TemplateQuery> conversionTemplates = new ArrayList<TemplateQuery>();
-        TagManager tagManager = 
+        TagManager tagManager =
             new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
-            
-        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, 
+
+        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE,
                 superProfile.getUsername());
 
         for (Tag tag : tags) {
@@ -70,7 +70,7 @@ public class BagConversionHelper
         }
         return conversionTemplates;
     }
-    
+
     /**
      * Converts a List of objects from one type to another type using a TemplateQuery,
      * returns the converted objects.
@@ -85,11 +85,10 @@ public class BagConversionHelper
      * @throws ObjectStoreException if an error occurs
      */
     public static WebResults getConvertedObjects(HttpSession session,
-                                                 List<TemplateQuery> conversionTemplates,
-                                                 Class typeA, Class typeB, InterMineBag imBag)
-    throws InterMineException, ObjectStoreException {
+            List<TemplateQuery> conversionTemplates, Class typeA, Class typeB,
+            InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
-        
+
         PathQuery pq = TypeConverter.getConversionQuery(conversionTemplates, typeA, typeB, imBag);
         if (pq == null) {
             return null;
@@ -97,10 +96,9 @@ public class BagConversionHelper
         Path configuredPath = pq.getView().get(0);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        pq.setViewPaths(PathQueryResultHelper
-                        .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
-                                        webConfig, configuredPath.getPrefix()
-                                                        .toStringNoConstraints(), false));
+        pq.setViewPaths(PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(typeB
+                        .getName()), model, webConfig, configuredPath.getPrefix()
+                    .toStringNoConstraints(), false));
         String label = null, id = null, code = pq.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.IN, imBag.getName(), false,
             label, code, id, null);

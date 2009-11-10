@@ -32,31 +32,29 @@ import org.intermine.web.logic.template.TemplateQuery;
  */
 public class CurrentQueryAction extends InterMineAction
 {
-   /**
-    * Either display the query builder or redirect to project.sitePrefix.
-    *
-    * @param mapping The ActionMapping used to select this instance
-    * @param form The optional ActionForm bean for this request (if any)
-    * @param request The HTTP request we are processing
-    * @param response The HTTP response we are creating
-    * @return an ActionForward object defining where control goes next
-    *
-    * @exception Exception if the application business logic throws
-    *  an exception
-    */
-   public ActionForward execute(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-       throws Exception {
-       HttpSession session = request.getSession();
-       PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-       boolean showTemplate = (request.getParameter("showTemplate") != null);
+    /**
+     * Either display the query builder or redirect to project.sitePrefix.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
+        HttpSession session = request.getSession();
+        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        boolean showTemplate = (request.getParameter("showTemplate") != null);
 
-       if (query == null) {
-           return new ForwardParameters(getWebProperties(request)
-                   .getProperty("project.sitePrefix"), true).forward();
-       }
+        if (query == null) {
+            return new ForwardParameters(getWebProperties(request)
+                    .getProperty("project.sitePrefix"), true).forward();
+        }
 
         if (query instanceof TemplateQuery && showTemplate) {
             TemplateQuery template = (TemplateQuery) query;
@@ -71,19 +69,18 @@ public class CurrentQueryAction extends InterMineAction
                 }
                 if (sq != null) {
                     return new ForwardParameters(mapping.findForward("template"))
-                    .addParameter("loadModifiedTemplate", "true")
-                    .addParameter("name", sq.getName()).forward();
+                        .addParameter("loadModifiedTemplate", "true")
+                        .addParameter("name", sq.getName()).forward();
                 } else { // The template is quick search
                     return new ForwardParameters(mapping.findForward("template"))
-                    .addParameter("name", template.getName()).forward();
+                        .addParameter("name", template.getName()).forward();
                 }
             } else {
                 return new ForwardParameters(mapping.findForward("template"))
-                .addParameter("name", template.getName()).forward();
+                    .addParameter("name", template.getName()).forward();
             }
         } else {
             return mapping.findForward("query");
         }
     }
-
 }

@@ -61,11 +61,9 @@ public class WebSearchableListController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         String type = (String) context.getAttribute("type");
         String scope = (String) context.getAttribute("scope");
         String tags = (String) context.getAttribute("tags");
@@ -89,7 +87,7 @@ public class WebSearchableListController extends TilesAction
 
         } else {
             filteredWebSearchables = getFilterWebSearchables(request, type, scope, tags);
-       }
+        }
 
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
@@ -202,8 +200,8 @@ public class WebSearchableListController extends TilesAction
         }
         SearchRepository searchRepository;
         if (scope.equals(Scope.GLOBAL)) {
-            searchRepository
-               = (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+            searchRepository = (SearchRepository) servletContext.getAttribute(Constants
+                    .GLOBAL_SEARCH_REPOSITORY);
         } else {
             searchRepository = profile.getSearchRepository();
         }
@@ -234,8 +232,8 @@ public class WebSearchableListController extends TilesAction
      * @param list list
      * @return map with items that were on the list and on the map as well
      */
-    public static Map<String, ? extends WebSearchable>
-        filterByList(Map<String, ? extends WebSearchable> filteredWebSearchables, String list) {
+    public static Map<String, ? extends WebSearchable> filterByList(
+            Map<String, ? extends WebSearchable> filteredWebSearchables, String list) {
 
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
@@ -250,10 +248,10 @@ public class WebSearchableListController extends TilesAction
             InterMineBag bag = (InterMineBag) o;
             ObjectStoreBag osb = bag.getOsb();
             Integer i = new Integer(osb.getBagId());
-           // check that this is in our list
-           if (!set.contains(i.toString())) {
-              clone.remove(bag.getName());
-           }
+            // check that this is in our list
+            if (!set.contains(i.toString())) {
+                clone.remove(bag.getName());
+            }
         }
 
         return clone;

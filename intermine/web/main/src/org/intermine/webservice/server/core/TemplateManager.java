@@ -24,21 +24,21 @@ import org.intermine.web.logic.template.TemplateQuery;
  **/
 public class TemplateManager
 {
-    
+
     private HttpServletRequest request;
-    
+
     /**
      * TemplateManager constructor.
-     * @param request request 
+     * @param request request
      */
     public TemplateManager(HttpServletRequest request) {
         this.request = request;
     }
-    
+
     /**
-     * Returns public template of specified name.  
+     * Returns public template of specified name.
      * @param name template name
-     * @return TemplateQuery or null if template wasn't found 
+     * @return TemplateQuery or null if template wasn't found
      */
     public TemplateQuery getGlobalTemplate(String name) {
         String userName = ((Profile) request.getSession().

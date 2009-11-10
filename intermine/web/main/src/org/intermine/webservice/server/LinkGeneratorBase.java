@@ -14,11 +14,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * Base class for link generators. 
+ * Base class for link generators.
  * @author Jakub Kulaviak
  *
  */
-public class LinkGeneratorBase 
+public class LinkGeneratorBase
 {
 
     /**
@@ -34,8 +34,8 @@ public class LinkGeneratorBase
                 return URLEncoder.encode(o.toString(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Encoding string failed", e);
-            }            
+            }
         }
     }
-    
+
 }

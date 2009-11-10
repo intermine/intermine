@@ -29,7 +29,7 @@ public class GridWidgetConfig extends WidgetConfig
     private String gridLabel;
     private String externalLink, externalLinkLabel;
     private String filters, editable, width;
-    
+
     /**
      * @return the filters
      */
@@ -78,7 +78,7 @@ public class GridWidgetConfig extends WidgetConfig
     public void seteditable(String editable) {
         this.editable = editable;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -92,14 +92,12 @@ public class GridWidgetConfig extends WidgetConfig
     public void setwidth(String width) {
         this.width = width;
     }
-  
+
     /**
      * {@inheritDoc}
      */
     public Map<String, Collection<String>> getExtraAttributes(@SuppressWarnings("unused")
-                                                              InterMineBag imBag,
-                                                              @SuppressWarnings("unused")
-                                                              ObjectStore os) {
+            InterMineBag imBag, @SuppressWarnings("unused") ObjectStore os) {
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         returnMap.put("pValue", Arrays.asList(getFilters().split(",")));
         if (editable != null && editable.equals("true")) {

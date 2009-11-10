@@ -28,18 +28,18 @@ public class HttpExportUtil
     /**
      * @param request request
      * @param out output stream
-     * @return implementation of print writer, that separates 
-     * lines according to the client operation system. 
+     * @return implementation of print writer, that separates
+     * lines according to the client operation system.
      */
-    public static PrintWriter getPrintWriterForClient(HttpServletRequest request, 
+    public static PrintWriter getPrintWriterForClient(HttpServletRequest request,
             OutputStream out) {
         PrintWriter ret;
         if (RequestUtil.isWindowsClient(request)) {
-            ret = new CustomPrintWriter(out, Exporter.WINDOWS_SEPARATOR);    
+            ret = new CustomPrintWriter(out, Exporter.WINDOWS_SEPARATOR);
         } else {
             ret = new PrintWriter(out);
         }
         return ret;
     }
-    
+
 }

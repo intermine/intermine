@@ -75,7 +75,7 @@ public class SearchRepository
      * User search repository type
      */
     public static final String USER = "user";
-    
+
     /**
      * Construct a new instance of SearchRepository.
      * @param profile the Profile to use for getting aspect tags
@@ -84,21 +84,21 @@ public class SearchRepository
     public SearchRepository(Profile profile, String scope) {
         if (!scope.equals(SearchRepository.GLOBAL) && !scope.equals(SearchRepository.USER)) {
             throw new IllegalArgumentException("Unrecognised scope for SearchRepository: "
-                    + scope + ".  Expected " + SearchRepository.GLOBAL 
+                    + scope + ".  Expected " + SearchRepository.GLOBAL
                     + " or " + SearchRepository.USER);
         }
         this.scope = scope;
         this.profile = profile;
-        
+
         populateWebSearchables(TagTypes.TEMPLATE);
         populateWebSearchables(TagTypes.BAG);
     }
 
-    
+
     /**
      * Initialise and index web searchables of the given type from the profile.  If scope is
      * GLOBAL will restrict to those tagged public.
-     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG  
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     private void populateWebSearchables(String type) {
         Map <String, ? extends WebSearchable> wsMap = null;
@@ -107,15 +107,15 @@ public class SearchRepository
         } else if (type.equals(TagTypes.BAG)) {
             wsMap = profile.getSavedBags();
         }
-        
+
         // if this is the global search repository only objects tagged as public
         if (scope.equals(GLOBAL)) {
-            final TagManager tagManager = 
+            final TagManager tagManager =
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();
 
             wsMap = new SearchFilterEngine().filterByTags(wsMap,
                     new ArrayList<String>(Collections.singleton(TagNames.IM_PUBLIC)), type,
-                    profile.getUsername(), tagManager);            
+                    profile.getUsername(), tagManager);
         }
         webSearchablesMap.put(type, wsMap);
         reindex(type);
@@ -124,7 +124,7 @@ public class SearchRepository
     /**
      * The web searchables of given type have changed, but we don't know specifically which so
      * re-initialise whole type.
-     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG     
+     * @param type the type of webSearchable TagTypes.TEMPLATE or TagTypes.BAG
      */
     public void globalChange(String type) {
         if (scope.equals(GLOBAL)) {
@@ -133,10 +133,10 @@ public class SearchRepository
         } else {
             reindex(type);
         }
-        
+
     }
-    
-    
+
+
     /**
      * Called to tell the repository that a global webSearchable has been added to
      * the superuser user profile.
@@ -207,14 +207,14 @@ public class SearchRepository
      */
     public void webSearchableTagChange(String type, String tagName) {
         // TODO will reindex the global search repository even if the tagged object isn't public
-        
+
         if (scope.equals(GLOBAL) && tagName.equals(TagNames.IM_PUBLIC)) {
             populateWebSearchables(type);
         } else {
             reindex(type);
-        }      
+        }
     }
-    
+
     /**
      * Called when the description of a WebSearchable changes.
      * @param webSearchable the item that has changed
@@ -231,18 +231,18 @@ public class SearchRepository
      * @return true if the web searchable is tagged as public
      */
     private boolean isWebSearchableGlobal(WebSearchable webSearchable, String type) {
-        final TagManager tagManager = 
+        final TagManager tagManager =
             new TagManagerFactory(profile.getProfileManager()).getTagManager();
-        Set<String> tagNames = tagManager.getObjectTagNames(webSearchable.getName(), 
+        Set<String> tagNames = tagManager.getObjectTagNames(webSearchable.getName(),
                 type, profile.getUsername());
         for (String tagName : tagNames) {
             if (tagName.equals(TagNames.IM_PUBLIC)) {
                 return true;
-            }            
-        }                
+            }
+        }
         return false;
     }
-    
+
     /**
      * Create the lucene search index of all global webSearchable queries.
      *

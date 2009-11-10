@@ -32,37 +32,37 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 {
 
     /**
-     * Default value of size parameter 
+     * Default value of size parameter
      */
     public static final int DEFAULT_RESULT_SIZE = 10;
-    
+
     private String error;
 
     /**
      * Generates TemplateResultService web service link.
-     * @param baseUrl base url that doesn't terminate with '/' , 
+     * @param baseUrl base url that doesn't terminate with '/' ,
      * e.g. http://www.flymine.org/release-12.0
      * @param template template for which the link generate
-     * @param highlighted 
+     * @param highlighted
      * @return generated link
      */
     public String getHtmlLink(String baseUrl, TemplateQuery template) {
         return getHtmlLinkInternal(baseUrl, template, false);
     }
-    
-    private String getHtmlLinkInternal(String baseUrl, TemplateQuery template, 
+
+    private String getHtmlLinkInternal(String baseUrl, TemplateQuery template,
             boolean highlighted) {
         String ret = getLink(baseUrl, template, highlighted);
         ret += "&size=";
         ret += format("" + DEFAULT_RESULT_SIZE, highlighted);
         ret += "&" + QueryResultRequestParser.LAYOUT_PARAMETER + "=minelink|paging";
-        return ret;        
+        return ret;
     }
 
     /**
      * Returns link which gives results as lines, where values are tab separated.
-      @see #getLink(String, TemplateQuery) 
-     * @param baseUrl base url 
+      @see #getLink(String, TemplateQuery)
+     * @param baseUrl base url
      * @param template template
      * @return highlighted link
      */
@@ -72,19 +72,19 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
         ret += format("" + DEFAULT_RESULT_SIZE, false);
         return ret;
     }
-    
+
     /**
-     * Returns html formatted link in which are highlighted parameters that 
-     * are to be replaced. * @see #getLink(String, TemplateQuery) 
-     * @param baseUrl base url 
+     * Returns html formatted link in which are highlighted parameters that
+     * are to be replaced. * @see #getLink(String, TemplateQuery)
+     * @param baseUrl base url
      * @param template template
      * @return highlighted link
      */
     public String getHighlightedLink(String baseUrl, TemplateQuery template) {
         return getHtmlLinkInternal(baseUrl, template, true);
     }
-    
-    private String getLink(String baseUrl, TemplateQuery template, 
+
+    private String getLink(String baseUrl, TemplateQuery template,
             boolean highlighted) {
         if (template.getBagNames().size() > 0) {
             error = "This template contains list constraints. The service for this "
@@ -92,9 +92,9 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
             return null;
         }
         String ret = baseUrl;
-        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name=" 
+        ret += "/" + WebServiceConstants.MODULE_NAME + "/template/results?name="
             + template.getName() + "&";
-        // Splits the long result url to 2 parts -> so it is less probable, 
+        // Splits the long result url to 2 parts -> so it is less probable,
         // that the url will overflow the div
         if (highlighted) {
             ret += "<br />";
@@ -117,7 +117,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
                 ret += "&" + valueToString(cons.getValue(), index, highlighted);
                 if (cons.getOp().equals(ConstraintOp.LOOKUP)) {
                     ret += "&" + extraToString(cons.getExtraValue(), index, highlighted);
-                } 
+                }
                 if (highlighted) {
                     ret += "<br />";
                 }
@@ -128,7 +128,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     }
 
     private String codeToString(String code, int index) {
-        return "code" + index + "=" + code; 
+        return "code" + index + "=" + code;
     }
 
     private String pathToString(String path, int index) {
@@ -146,7 +146,7 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
     private String valueToString(Object valueObject, int index, boolean highlighted) {
         String ret = "";
         ret += "value" + index + "=";
-        // value could be  treated to be sql valid before, 
+        // value could be  treated to be sql valid before,
         // so we have to find original untreated string
         String value = encode(objectToString(valueObject));
         ret += format(value, highlighted);
@@ -163,17 +163,17 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 
     private String extraToString(Object extraValue, int index, boolean highlighted) {
         String ret = "";
-        ret += "extra" + index + "=";  
-        ret += format(encode(objectToString(extraValue)), 
+        ret += "extra" + index + "=";
+        ret += format(encode(objectToString(extraValue)),
                 highlighted);
         return ret;
     }
-    
+
     /**
      * This method is made to be consistent with the way in which TemplateConfigurator
      * parses constraints. So the order of constraints is correct.
      * @param template
-     * @return editable constraints 
+     * @return editable constraints
      */
     private Map<String, List<Constraint>> getConstraints(TemplateQuery template) {
         Map<String, List<Constraint>> ret = new HashMap<String, List<Constraint>>();
@@ -185,18 +185,18 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 
     private String format(String text, boolean highlight) {
         if (highlight) {
-            return "<span class=\"highlighted\">" + text + "</span>"; 
+            return "<span class=\"highlighted\">" + text + "</span>";
         } else {
             return text;
         }
     }
-    
+
     /**
-     * 
+     *
      * @return error if some happened
      */
     public String getError() {
         return error;
     }
-    
+
 }

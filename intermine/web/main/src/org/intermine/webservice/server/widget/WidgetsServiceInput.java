@@ -15,8 +15,8 @@ import java.util.List;
 import org.intermine.webservice.server.WebServiceInput;
 
 /**
- * WidgetsServiceInput is parameter object representing parameters 
- * for the WidgetsService web service.   
+ * WidgetsServiceInput is parameter object representing parameters
+ * for the WidgetsService web service.
  * @author "Xavier Watkins"
  *
  */
@@ -26,7 +26,7 @@ public class WidgetsServiceInput extends WebServiceInput
     private String className;
     private List<String> extraAttributes;
     private List<String> ids;
-    
+
     /**
      * Get the name or id of the widget
      * @return the widgetName
@@ -83,5 +83,5 @@ public class WidgetsServiceInput extends WebServiceInput
     public void setIds(List<String> ids) {
         this.ids = ids;
     }
-    
+
 }

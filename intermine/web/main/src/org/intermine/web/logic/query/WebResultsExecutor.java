@@ -36,12 +36,12 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
- * style results are required.  
+ * style results are required.
  *
  * @author Richard Smith
  * @author Jakub Kulaviak
  */
-public class WebResultsExecutor 
+public class WebResultsExecutor
 {
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
@@ -63,11 +63,9 @@ public class WebResultsExecutor
      * @param conversionTemplates templates used for converting bag query results between types
      * @param searchRepository global search repository to fetch saved bags from
      */
-    public WebResultsExecutor(ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig,
-            Profile profile, List<TemplateQuery> conversionTemplates, 
-            SearchRepository searchRepository) {
+    public WebResultsExecutor(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig, Profile profile,
+            List<TemplateQuery> conversionTemplates, SearchRepository searchRepository) {
         this.os = os;
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
@@ -87,7 +85,7 @@ public class WebResultsExecutor
     public WebResults execute(PathQuery pathQuery) throws ObjectStoreException {
         return execute(pathQuery, new HashMap<String, BagQueryResult>());
     }
-    
+
     /**
      * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
      * appropriate for displaying a web table.
@@ -105,9 +103,9 @@ public class WebResultsExecutor
         BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
 
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                 searchRepository);
-        
+
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
                 pathToBagQueryResult, false);
 

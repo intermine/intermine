@@ -29,7 +29,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that creates a table of collection elements for display.
- * 
+ *
  * @author Kim Rutherford
  * @author Thomas Riley
  */
@@ -38,7 +38,7 @@ public class CollectionDetailsAction extends Action
     /**
      * Create PagedTable for this collection, register it with an identifier and redirect to
      * results.do?table=identifier
-     * 
+     *
      * @param mapping
      *            The ActionMapping used to select this instance
      * @param form
@@ -66,10 +66,10 @@ public class CollectionDetailsAction extends Action
 
         ReferenceDescriptor refDesc = null;
         for (ClassDescriptor cld : os.getModel().getClassDescriptorsForClass(o.getClass())) {
-           refDesc = (ReferenceDescriptor) cld.getFieldDescriptorByName(field);
-           if (refDesc != null) {
-               break;
-           }
+            refDesc = (ReferenceDescriptor) cld.getFieldDescriptorByName(field);
+            if (refDesc != null) {
+                break;
+            }
         }
         String referencedClassName = refDesc.getReferencedClassDescriptor().getUnqualifiedName();
 

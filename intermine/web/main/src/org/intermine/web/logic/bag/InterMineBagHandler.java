@@ -60,8 +60,8 @@ public class InterMineBagHandler extends DefaultHandler
      * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
      * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
      */
-    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw, 
-            Map<String, InterMineBag> bags, Integer userId, 
+    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
+            Map<String, InterMineBag> bags, Integer userId,
             Map<Integer, InterMineObject> idToObjectMap, IdUpgrader idUpgrader) {
         this.uosw = uosw;
         this.osw = osw;
@@ -108,7 +108,7 @@ public class InterMineBagHandler extends DefaultHandler
 
                 if (idUpgrader.doUpgrade() && idToObjectMap.containsKey(id)) {
                     // try to find an equivalent object in the new database
-                    
+
                     InterMineObject oldObject = (InterMineObject) idToObjectMap.get(id);
 
                     Set<Integer> newIds = idUpgrader.getNewIds(oldObject, osw);

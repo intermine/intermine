@@ -31,13 +31,11 @@ import org.intermine.webservice.server.query.result.WebServiceRequestParser;
  **/
 public class TabLinkPreviewAction extends InterMineAction
 {
-    
     /**
      * {@inheritDoc}
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         PrintWriter writer = response.getWriter();
         String link = request.getParameter("link");
         String url = prepareURL(link);
@@ -58,8 +56,8 @@ public class TabLinkPreviewAction extends InterMineAction
 
     private String prepareURL(String link) throws UnsupportedEncodingException {
         String url = link.replaceAll("qwertyui", "&");
-        url = URLUtil.encodeURL(url); 
-        url = url + "&" + WebServiceRequestParser.OUTPUT_PARAMETER + "=" 
+        url = URLUtil.encodeURL(url);
+        url = url + "&" + WebServiceRequestParser.OUTPUT_PARAMETER + "="
             + WebServiceRequestParser.FORMAT_PARAMETER_TAB;
         return url;
     }

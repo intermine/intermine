@@ -20,25 +20,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 
-
-
 /**
- * Returns version of the deployed InterMine application. 
- * 
+ * Returns version of the deployed InterMine application.
+ *
  * @author Jakub Kulaviak
  */
 public class VersionServlet extends HttpServlet
 {
-    
+
     private static final Logger LOGGER = Logger.getLogger(VersionServlet.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(request, response);
     }
 
@@ -46,10 +44,10 @@ public class VersionServlet extends HttpServlet
      * {@inheritDoc}}
      */
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(req, resp);
     }
-    
+
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
         try {

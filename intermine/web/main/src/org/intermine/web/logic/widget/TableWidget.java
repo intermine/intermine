@@ -99,16 +99,16 @@ public class TableWidget extends Widget
      * {@inheritDoc}
      */
     public void process() {
-            try {
-                bagWidgLdr = new TableWidgetLdr(config, bag, os);
-                notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (ObjectStoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        try {
+            bagWidgLdr = new TableWidgetLdr(config, bag, os);
+            notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ObjectStoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -119,14 +119,12 @@ public class TableWidget extends Widget
         return bagWidgLdr.getFlattenedResults();
     }
 
-
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[] selected) throws Exception {
         return bagWidgLdr.getExportResults(selected);
     }
-
 
     /**
      * {@inheritDoc}
@@ -135,7 +133,6 @@ public class TableWidget extends Widget
         return (bagWidgLdr.getFlattenedResults().size() > 0);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -143,21 +140,18 @@ public class TableWidget extends Widget
         return notAnalysed;
     }
 
-
     /**
      * {@inheritDoc}
-      */
-     public void setNotAnalysed(int notAnalysed) {
-         this.notAnalysed = notAnalysed;
-     }
+     */
+    public void setNotAnalysed(int notAnalysed) {
+        this.notAnalysed = notAnalysed;
+    }
 
-
-     /**
-      * Get the columns
-      * @return the columns
-      */
-     public List getColumns() {
-         return bagWidgLdr.getColumns();
-     }
-
+    /**
+     * Get the columns
+     * @return the columns
+     */
+    public List getColumns() {
+        return bagWidgLdr.getColumns();
+    }
 }

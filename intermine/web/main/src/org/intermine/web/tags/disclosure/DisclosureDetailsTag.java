@@ -37,19 +37,19 @@ public class DisclosureDetailsTag extends BaseDisclosureTag
      * @throws JspException if element is not inside &lt;disclosure&gt; element
      * @throws IOException if error occurs during writing to stream output
      */
-   public void doTag() throws JspException, IOException {
-       DisclosureHeadTag parent =  (DisclosureHeadTag) getParent();
-       if (parent == null) {
-           throw new JspException("<disclosureDetails> element can be only inside " 
-                   + "<disclosureHead> element");
-       }
-       JspWriter out = getJspContext().getOut();
-       out.write("<span");
-       printStyleAndClass(out);
-       out.write(">");
-       getJspBody().invoke(null);
-       out.write("</span>");
-   }
+    public void doTag() throws JspException, IOException {
+        DisclosureHeadTag parent =  (DisclosureHeadTag) getParent();
+        if (parent == null) {
+            throw new JspException("<disclosureDetails> element can be only inside " 
+                    + "<disclosureHead> element");
+        }
+        JspWriter out = getJspContext().getOut();
+        out.write("<span");
+        printStyleAndClass(out);
+        out.write(">");
+        getJspBody().invoke(null);
+        out.write("</span>");
+    }
 }
 
 

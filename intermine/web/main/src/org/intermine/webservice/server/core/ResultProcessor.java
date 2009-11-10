@@ -21,26 +21,25 @@ import org.intermine.webservice.server.output.Output;
 
 /**
  * Processor of Results object for easy accessing and parsing of results to list of strings.
- * Actually wrapped Results object is something like proxy that can access the database.  
- * Write method is the point where the data are fetched from database and that's why is slow. 
+ * Actually wrapped Results object is something like proxy that can access the database.
+ * Write method is the point where the data are fetched from database and that's why is slow.
  * Code example:
  * <pre>
  *   MemoryOutput output = new MemoryOutput();
  *   ResultProcessor processor = new ResultProcessor(results, firstResult, maxResults);
- *   processor.write(output);        
+ *   processor.write(output);
  * </pre>
- *   
+ *
  * @author Jakub Kulaviak
  **/
 public class ResultProcessor
 {
-    
     /**
      * Constructor.
      */
     public ResultProcessor() {
     }
-    
+
     /**
      * Writes results to output.
      * @param resultIt iterator over results row
@@ -61,9 +60,9 @@ public class ResultProcessor
         for (ResultElement el : row) {
             if (el != null && el.getField() != null) {
                 if (el.getField() instanceof Date) {
-                    value = Constraint.ISO_DATE_FORMAT.format(el.getField());    
+                    value = Constraint.ISO_DATE_FORMAT.format(el.getField());
                 } else {
-                    value = el.getField().toString();    
+                    value = el.getField().toString();
                 }
             } else {
                 value = "";

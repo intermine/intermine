@@ -54,7 +54,7 @@ import org.intermine.web.logic.results.flatouterjoins.ResultsFlatOuterJoinsImpl;
  * @author Kim Rutherford
  */
 public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
-implements WebTable
+    implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List<Path> columnPaths;
@@ -211,14 +211,14 @@ implements WebTable
      * {@inheritDoc}
      */
     public int getEstimatedSize() {
-       try {
-           return getInfo().getRows();
-       } catch (ObjectStoreException e) {
-           // whoops.  return zero so we can post a nice error message
-           LOG.error("failed to get a ResultsInfo object", e);
-           return 0;
-           //throw new RuntimeException("failed to get a ResultsInfo object", e);
-       }
+        try {
+            return getInfo().getRows();
+        } catch (ObjectStoreException e) {
+            // whoops.  return zero so we can post a nice error message
+            LOG.error("failed to get a ResultsInfo object", e);
+            return 0;
+            //throw new RuntimeException("failed to get a ResultsInfo object", e);
+        }
     }
 
     /**

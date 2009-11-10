@@ -17,13 +17,13 @@ import java.util.Vector;
  * LuceneObjectClass contains data for the autocompletion
  * @author Dominik Grimm
  */
-public class LuceneObjectClass 
+public class LuceneObjectClass
 {
 
     private String className = null;
     private List<String> fieldNames = null;
     private HashMap<String, List<String>> values = null;
-    
+
     /**
      * Constructor
      * @param className name of the class
@@ -33,7 +33,7 @@ public class LuceneObjectClass
         fieldNames = new Vector<String>();
         values = new HashMap<String, List<String>>();
     }
-    
+
     /**
      * addField added field to the class
      * @param fieldName name of the field
@@ -46,7 +46,7 @@ public class LuceneObjectClass
         }
         return false;
     }
-    
+
     /**
      * addValueToField added a new value to one existing field
      * @param fieldName name of the field
@@ -69,7 +69,7 @@ public class LuceneObjectClass
         }
         return false;
     }
-    
+
     /**
      * getFieldNames
      * @return returns a list of all fieldNames
@@ -77,7 +77,7 @@ public class LuceneObjectClass
     public List<String> getFieldNames() {
         return fieldNames;
     }
-    
+
     /**
      * return the fieldName at position index
      * @param index position of the field
@@ -86,7 +86,7 @@ public class LuceneObjectClass
     public String getFieldName(int index) {
         return fieldNames.get(index);
     }
-    
+
     /**
      * getClassName
      * @return className name of the class
@@ -94,7 +94,7 @@ public class LuceneObjectClass
     public String getClassName() {
         return className;
     }
-    
+
     /**
      * getSizeFields
      * @return size number of fields in the class
@@ -102,7 +102,7 @@ public class LuceneObjectClass
     public int getSizeFields() {
         return fieldNames.size();
     }
-    
+
     /**
      * getSizeValuesForField
      * @param fieldName name of the field
@@ -111,7 +111,7 @@ public class LuceneObjectClass
     public int getSizeValuesForField(String fieldName) {
         return values.get(fieldName).size();
     }
-    
+
     /**
      * getValuesForField
      * @param fieldName name of the field
@@ -120,7 +120,7 @@ public class LuceneObjectClass
     public List<String> getValuesForField(String fieldName) {
         return values.get(fieldName);
     }
-    
+
     /**
      * getValuesForField
      * @param fieldName name of the field
@@ -130,10 +130,10 @@ public class LuceneObjectClass
     public String getValuesForField(String fieldName, int index) {
         return values.get(fieldName).get(index);
     }
-    
+
     /**
      * getSizeValues
-     * @return maximal number of values 
+     * @return maximal number of values
      */
     public int getSizeValues() {
         int size = 0;

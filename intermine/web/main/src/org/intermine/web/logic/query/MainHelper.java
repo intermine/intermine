@@ -219,14 +219,14 @@ public class MainHelper
     public static Query makeQuery(PathQuery query, Map<String, InterMineBag> savedBags,
             ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return makeQuery(query, savedBags, null, 
+        return makeQuery(query, savedBags, null,
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
                 returnBagQueryResults, false,
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
                 (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
     }
-    
+
     /**
      * Make an InterMine query from a path query
      * @param pathQueryOrig the PathQuery
@@ -247,7 +247,7 @@ public class MainHelper
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig) throws ObjectStoreException {
-        List<TemplateQuery> conversionTemplates = 
+        List<TemplateQuery> conversionTemplates =
             BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
@@ -319,8 +319,8 @@ public class MainHelper
 
     private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
             Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly)
-    throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner, Map returnBagQueryResults,
+            boolean checkOnly) throws ObjectStoreException {
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
         List<CsTreeStructure> csTreeStructure = new ArrayList<CsTreeStructure>();
@@ -450,18 +450,18 @@ public class MainHelper
                         continue;
                     }
                     // TODO: Why? if (finalPath.indexOf(".") != -1) {
-                        String fieldName = node.getFieldName();
-                        QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-                        if (!node.isAttribute()) {
-                            if (node.isReference()) {
-                                qr = new QueryObjectReference(parentQc, fieldName);
-                            } else {
-                                qr = new QueryCollectionReference(parentQc, fieldName);
-                            }
-                            QueryClass qc = (QueryClass) queryBits.get(finalPath);
-                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
-                                        qc));
+                    String fieldName = node.getFieldName();
+                    QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+                    if (!node.isAttribute()) {
+                        if (node.isReference()) {
+                            qr = new QueryObjectReference(parentQc, fieldName);
+                        } else {
+                            qr = new QueryCollectionReference(parentQc, fieldName);
                         }
+                        QueryClass qc = (QueryClass) queryBits.get(finalPath);
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
+                                    qc));
+                    }
                     //}
                     queryBits.put(path, queryBits.get(finalPath));
                 }
@@ -738,8 +738,8 @@ public class MainHelper
         }
     }
 
-    private static org.intermine.objectstore.query.Constraint
-        makeAttributeConstraint(QueryNode qn, Constraint c) {
+    private static org.intermine.objectstore.query.Constraint makeAttributeConstraint(QueryNode qn,
+            Constraint c) {
         if (c.getOp() == ConstraintOp.IS_NOT_NULL
             || c.getOp() == ConstraintOp.IS_NULL) {
             return new SimpleConstraint((QueryEvaluable) qn, c.getOp());
@@ -818,8 +818,8 @@ public class MainHelper
         if (c.getOp().equals(ConstraintOp.EQUALS)) {
             return new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
         } else if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
-                return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
-                        new QueryValue(lowerCaseValue));
+            return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
+                    new QueryValue(lowerCaseValue));
         } else if (c.getOp().equals(ConstraintOp.CONTAINS)) {
             return new SimpleConstraint(qf, ConstraintOp.MATCHES,
                     new QueryValue("%" + lowerCaseValue + "%"));
@@ -840,8 +840,8 @@ public class MainHelper
      * @param c the webapp constraint
      * @return a new object store constraint
      */
-    protected static org.intermine.objectstore.query.Constraint
-        makeQueryDateConstraint(QueryNode qn, Constraint c) {
+    protected static org.intermine.objectstore.query.Constraint makeQueryDateConstraint(
+            QueryNode qn, Constraint c) {
         Date dateValue = (Date) c.getValue();
 
         Calendar startOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -1270,7 +1270,7 @@ public class MainHelper
     public static int getLastJoinIndex(String path) {
         return (Math.max(path.indexOf("."), path.indexOf(":")));
     }
-    
+
     /**
      * Return the indexOf the first join in a path denoted by '.' or ':', return -1 if neither
      * join type exists in the path
@@ -1286,8 +1286,7 @@ public class MainHelper
             return Math.min(path.indexOf('.'), path.indexOf(':'));
         }
     }
-    
-    
+
     /**
      * Return true if the given path string contains a join - denoted by '.' or ':' for normal
      * or outer join respectively.
@@ -1297,7 +1296,7 @@ public class MainHelper
     public static boolean containsJoin(String path) {
         return (path.indexOf(".") >= 0) || (path.indexOf(":") >= 0);
     }
-    
+
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
@@ -1341,8 +1340,8 @@ public class MainHelper
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
             ProfileManager pm) {
-        List<TemplateQuery> conversionTemplates = 
-            BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile());
+        List<TemplateQuery> conversionTemplates = BagConversionHelper.getConversionTemplates(pm
+                .getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
             bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);

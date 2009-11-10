@@ -29,10 +29,8 @@ public class ToolTipGenerator implements CategoryToolTipGenerator
     /**
      * {@inheritDoc}
      */
-    public String generateToolTip(@SuppressWarnings("unused") CategoryDataset dataset, 
-                                  @SuppressWarnings("unused") int series,
-                                  @SuppressWarnings("unused") int category) {
-        
-                return "Click here to view all objects";
+    public String generateToolTip(@SuppressWarnings("unused") CategoryDataset dataset,
+            @SuppressWarnings("unused") int series, @SuppressWarnings("unused") int category) {
+        return "Click here to view all objects";
     }
 }

@@ -73,15 +73,12 @@ public class ObjectDetailsController extends InterMineAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused")
-                                 ActionForm form, HttpServletRequest request,
-                                 @SuppressWarnings("unused")
-    HttpServletResponse response) throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TagManager tagManager = SessionMethods.getTagManager(session);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
@@ -183,10 +180,9 @@ public class ObjectDetailsController extends InterMineAction
             // get all summary tags for all refs and collections of
             // this class
             List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
-                                                                    cd.getUnqualifiedName() + ".%",
-                                                                    "reference", superuser));
-            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY, 
-                    cd.getUnqualifiedName() + ".%", "collection", superuser));
+                        cd.getUnqualifiedName() + ".%", "reference", superuser));
+            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY,
+                        cd.getUnqualifiedName() + ".%", "collection", superuser));
 
             for (Tag tag : placementTags) {
                 String name = getFieldName(tag);
@@ -271,8 +267,8 @@ public class ObjectDetailsController extends InterMineAction
      * @throws Exception
      *             if an error occurs
      */
-    public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
-    throws Exception {
+    public static DisplayObject makeDisplayObject(HttpSession session,
+            InterMineObject object) throws Exception {
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
@@ -327,10 +323,10 @@ public class ObjectDetailsController extends InterMineAction
             InterMineBag bag = (InterMineBag) webSearchable;
             ObjectStoreBag osb = bag.getOsb();
             Integer i = new Integer(osb.getBagId());
-           // check that this is in our list
-           if (list.contains(i.toString())) {
-              ret.add(bag);
-           }
+            // check that this is in our list
+            if (list.contains(i.toString())) {
+               ret.add(bag);
+            }
         }
         return ret;
     }

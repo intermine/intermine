@@ -54,8 +54,8 @@ public class ImportQueriesForm extends ValidatorForm
      * @return the Map
      * @throws Exception if a problem parsing query XML
      */
-    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags) 
-    throws Exception {
+    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags)
+        throws Exception {
         if (map == null) {
             // multiple queries must be wrapped by <queries> element, add it if not already there
             String xml = getXml().trim();
@@ -139,12 +139,12 @@ public class ImportQueriesForm extends ValidatorForm
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods.getGlobalSearchRepository(
                         servletContext));
             if (getQueryMap(allBags).size() == 0) {
-               if (errors == null) {
-                   errors = new ActionErrors();
-               }
-               errors.add(ActionErrors.GLOBAL_MESSAGE,
-                           new ActionMessage("errors.importQuery.noqueries"));
-           }
+                if (errors == null) {
+                    errors = new ActionErrors();
+                }
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                        new ActionMessage("errors.importQuery.noqueries"));
+            }
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

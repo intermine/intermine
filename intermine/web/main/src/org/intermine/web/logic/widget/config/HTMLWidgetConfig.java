@@ -26,7 +26,7 @@ public class HTMLWidgetConfig extends WidgetConfig
 {
 
     private String content;
-    
+
     @Override
     public String getExternalLink() {
         // TODO Auto-generated method stub
@@ -41,7 +41,7 @@ public class HTMLWidgetConfig extends WidgetConfig
 
     @Override
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
-                    throws Exception {
+        throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
@@ -55,13 +55,13 @@ public class HTMLWidgetConfig extends WidgetConfig
     @Override
     public void setExternalLink(String externalLink) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void setExternalLinkLabel(String externalLinkLabel) {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void setContent(String content) {
@@ -71,7 +71,7 @@ public class HTMLWidgetConfig extends WidgetConfig
     public String getContent() {
         return content;
     }
-    
+
 
 }
 

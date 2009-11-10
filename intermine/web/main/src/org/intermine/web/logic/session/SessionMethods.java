@@ -250,7 +250,7 @@ public class SessionMethods
         // TODO unclear why we need to put this path on the session
         Path path = query.getView().iterator().next();
         session.setAttribute("path", path.getStartClassDescriptor().getUnqualifiedName());
-        
+
         // it's possible to not have a sort order
         if (query.getSortOrder() != null && !query.getSortOrder().isEmpty()) {
             Path sortPath = query.getSortOrder().keySet().iterator().next();
@@ -812,18 +812,17 @@ public class SessionMethods
      * @throws ObjectStoreException thrown exception
      */
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
-                                                 ServletContext servletContext, InterMineBag imBag)
-                    throws ObjectStoreException {
+            ServletContext servletContext, InterMineBag imBag) throws ObjectStoreException {
         HttpSession session = request.getSession();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os
                         .getModel());
-        
+
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery);
-        
+
         String identifier = "bag." + imBag.getName();
         PagedTable pagedResults = new PagedTable(webResults);
         setResultsTable(session, identifier, pagedResults);
@@ -843,20 +842,18 @@ public class SessionMethods
      * @throws ObjectStoreException exception thrown
      */
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
-                                                  ServletContext servletContext,
-                                                  InterMineObject obj, String field,
-                                                  String referencedClassName)
-                    throws ObjectStoreException {
+            ServletContext servletContext, InterMineObject obj, String field,
+            String referencedClassName) throws ObjectStoreException {
         HttpSession session = request.getSession();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
                         referencedClassName, field);
         session.setAttribute(Constants.QUERY, pathQuery);
-        
+
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery);
-        
+
         String identifier = "coll" + index++;
         PagedTable pagedResults = new PagedTable(webResults);
         setResultsTable(session, identifier, pagedResults);
@@ -900,7 +897,7 @@ public class SessionMethods
         }
         return webState;
     }
-    
+
     /**
      * @param session http session
      * @return tag manager
@@ -908,7 +905,7 @@ public class SessionMethods
     public static TagManager getTagManager(HttpSession session) {
         return getTagManager(session.getServletContext());
     }
-    
+
     /**
      * @param context servlet context
      * @return tag manager
@@ -934,7 +931,7 @@ public class SessionMethods
     public static BagQueryConfig getBagQueryConfig(ServletContext servletContext) {
         return (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
     }
-    
+
     /**
      * Retrieves from session required objects and constructs path query executor returning
      * results as WebResults.
@@ -946,7 +943,7 @@ public class SessionMethods
         Profile profile = getProfile(session);
         return getWebResultsExecutor(servletContext, profile);
     }
-    
+
     /**
      * Retrieves from servletContext required objects and constructs a path query executor
      * returning results as WebResults.
@@ -960,13 +957,13 @@ public class SessionMethods
             .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
         WebResultsExecutor ret = new WebResultsExecutor(
                 getObjectStore(servletContext),
-                getClassKeys(servletContext), 
+                getClassKeys(servletContext),
                 getBagQueryConfig(servletContext),
                 profile,
                 conversionTemplates,
                 getGlobalSearchRepository(servletContext));
         return ret;
-    
+
     }
 
 
@@ -982,14 +979,14 @@ public class SessionMethods
             .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
         PathQueryExecutor ret = new PathQueryExecutor(
                 getObjectStore(servletContext),
-                getClassKeys(servletContext), 
+                getClassKeys(servletContext),
                 getBagQueryConfig(servletContext),
                 getProfile(session),
                 conversionTemplates,
                 getGlobalSearchRepository(servletContext));
         return ret;
     }
-    
+
 
     /**
      * Returns user profile saved in session.
@@ -997,7 +994,7 @@ public class SessionMethods
      * @return user profile
      */
     public static Profile getProfile(HttpSession session) {
-        return (Profile) session.getAttribute(Constants.PROFILE);  
+        return (Profile) session.getAttribute(Constants.PROFILE);
     }
 
     /**
@@ -1008,5 +1005,5 @@ public class SessionMethods
      */
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-    }    
+    }
 }

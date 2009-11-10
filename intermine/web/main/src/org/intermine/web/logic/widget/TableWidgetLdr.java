@@ -168,29 +168,23 @@ public class TableWidgetLdr
                                 key = fieldValue.toString();
                             }
                             link = "objectDetails.do?id=" + o.getId() + "&amp;trail=|bag."
-                            + bag.getName() + "|" + o.getId();
+                                + bag.getName() + "|" + o.getId();
                         } else if (externalLink != null && !externalLink.equals("")) {
                             val = val + " <a href=\"" + externalLink + key
-                            + "\" target=\"_new\" class=\"extlink\">["
-                            + config.getExternalLinkLabel() + "]</a>";
+                                + "\" target=\"_new\" class=\"extlink\">["
+                                + config.getExternalLinkLabel() + "]</a>";
                         }
 
                         if (isFirst) {
 
                             String checkbox = "<input name=\"selected\" value=\"" + key
-                            + "\" id=\"selected_" + key + "\" type=\"checkbox\">";
+                                + "\" id=\"selected_" + key + "\" type=\"checkbox\">";
 
-                            flattenedRow.add(new String[]
-                                                        {
-                                checkbox
-                                                        });
+                            flattenedRow.add(new String[] {checkbox});
                             isFirst = false;
                         }
 
-                        flattenedRow.add(new String[]
-                                                    {
-                            val, link
-                                                    });
+                        flattenedRow.add(new String[] {val, link});
 
                     }
                 } else if (element instanceof Long) {
@@ -199,11 +193,7 @@ public class TableWidgetLdr
                         + bag.getName()
                         + "&link=" + config.getLink()
                         + "&key=" + URLEncoder.encode(key, "UTF-8"));
-                    flattenedRow.add(new String[]
-                                                {
-                        String.valueOf(element),
-                        link
-                                                });
+                    flattenedRow.add(new String[] {String.valueOf(element), link});
                 }
 
             }
@@ -273,8 +263,8 @@ public class TableWidgetLdr
                 qfStartId = new QueryField(qcStart, "id");
                 qcExport = qcStart;
                 q.addFrom(qcStart);
-                QueryHelper.addAndConstraint(q,
-                new BagConstraint(qfStartId, ConstraintOp.IN, bag.getOsb()));
+                QueryHelper.addAndConstraint(q, new BagConstraint(qfStartId, ConstraintOp.IN,
+                            bag.getOsb()));
             }
 
             String refName;

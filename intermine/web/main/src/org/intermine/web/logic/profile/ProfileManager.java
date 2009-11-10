@@ -269,9 +269,9 @@ public class ProfileManager
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
                             version);
                 if (queries.size() == 0) {
-                    queries =
-                        PathQueryBinding.unmarshal(new StringReader(query.getQuery()), version);
-                        MainHelper.checkPathQueries(queries, savedBags);
+                    queries = PathQueryBinding.unmarshal(new StringReader(query.getQuery()),
+                            version);
+                    MainHelper.checkPathQueries(queries, savedBags);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -501,7 +501,6 @@ public class ProfileManager
     public void setSuperuser(String superuser) {
         this.superuser = superuser;
     }
-    
 
     /**
      * @return the superuser profile
@@ -543,7 +542,7 @@ public class ProfileManager
      * @return the username associated with the token
      * @throws IllegalArgumentException if the token is invalid
      */
-    public synchronized String getUsernameForToken(String token) throws IllegalArgumentException {
+    public synchronized String getUsernameForToken(String token) {
         PasswordChangeToken retval = passwordChangeTokens.get(token);
         if (retval != null) {
             if (retval.isValid()) {
@@ -564,8 +563,7 @@ public class ProfileManager
      * @return the username hat has the new password
      * @throws IllegalArgumentException if the token is invalid
      */
-    public synchronized String changePasswordWithToken(String token, String password)
-    throws IllegalArgumentException {
+    public synchronized String changePasswordWithToken(String token, String password) {
         PasswordChangeToken pct = passwordChangeTokens.get(token);
         if (pct != null) {
             if (pct.isValid()) {

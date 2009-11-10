@@ -76,190 +76,182 @@ public class GridWidget extends Widget
             String dataSetLoader = config.getDataSetLoader();
             Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
             Constructor<?> constr;
-            constr = clazz.getConstructor(new Class[]
-                    {
-                        InterMineBag.class, ObjectStore.class, String.class
-                    });
-            dataSetLdr = (GridDataSetLdr) constr.newInstance(new Object[]
-                {
-                    bag, os, pValue
-                });
+            constr = clazz.getConstructor(new Class[] {InterMineBag.class, ObjectStore.class,
+                String.class});
+            dataSetLdr = (GridDataSetLdr) constr.newInstance(new Object[] {bag, os, pValue});
             notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
-            
-           dataSet = dataSetLdr.getGridDataSet();
-                
-           List<String> columns = dataSet.getSampleNames();
-           List<String> columns2 = dataSet.getSampleNames();
-                
-           Map<String, Map<String, List<String>>> valueMapList = dataSet.getResults();
-           boolean useDown = false;
-           for (int i = 0; i < columns.size(); i++) {
-                    Map<String, List<String>> valuesMap = valueMapList.get(columns.get(i));
-                    intersectionList = new Vector<String[]>();
-                    intersectionListDown = new Vector<String[]>();
-                    for (int j = 0; j < columns2.size(); j++) {
-                        int intersectionCount = 0;
-                        int intersectionCountDown = 0;
-                        int interBefor = intersectionList.size();
-                        int interBeforDown = intersectionListDown.size(); 
-                        Map<String, List<String>> values2Map = valueMapList.get(columns2.get(j));
-                        List<String> tmpValues = null, tmpValues2 = null;
-                        
-                        if (valuesMap.get("UP") != null && values2Map.get("UP") != null) {
-                            List<String> values = valuesMap.get("UP");
-                            List<String> values2 = values2Map.get("UP");
-                            if (values.size() <= values2.size()) {
-                                tmpValues = values2;
-                                tmpValues2 = values;
-                            } else if (values.size() > values2.size()) {
-                                tmpValues = values;
-                                tmpValues2 = values2;
-                            } else {
-                                tmpValues = values2;
-                                tmpValues2 = values;
-                            }
-                            for (int k = 0; k < tmpValues.size(); k++) {
-                                if (tmpValues2.contains(tmpValues.get(k))) {
-                                    intersectionCount++;
-                                }
-                            }
-                            //create link, highlighting and store values
-                            String[] tmp = new String[5];
-                            
-                            double p = calcRValue(values.size(),
-                                                  values2.size(),
-                                                  intersectionCount,
-                                                  bag.size());
-                            
-                            if (numberOpt.equals("number")) {
-                                tmp[0] = String.valueOf(intersectionCount);
-                            } else {
-                                String pR = String.valueOf(p * 100);
-                                if (pR.length() > 4) {
-                                    if  (pR.equals("100.0")) {
-                                        pR = "100";
-                                    } else {
-                                        pR = pR.substring(0, 4);
-                                    }
-                                }
-                                tmp[0] = pR + "%";
-                            }
-                            tmp[1] = "widgetAction.do?bagName=" + bag.getName() 
-                            + "&link=" + config.getLink()
-                            + "&key=" + URLEncoder.encode(columns.get(i) 
-                                    + "_" + columns2.get(j), "UTF-8");
-                            tmp[2] = calcRGB(p);
-                            if (numberOpt.equals("number")) {
-                                tmp[3] = String.valueOf(p * 100) + "%";
-                            } else {
-                                tmp[3] = String.valueOf(intersectionCount) + " intersections";
-                            }
-                            tmp[4] = "UP";
-                            
-                            intersectionList.add(tmp);
-                        } 
-                        if (valuesMap.get("DOWN") != null && values2Map.get("DOWN") != null) {
-                            useDown = true;
-                            List<String> values = valuesMap.get("DOWN");
-                            List<String> values2 = values2Map.get("DOWN");
-                            if (values.size() <= values2.size()) {
-                                tmpValues = values2;
-                                tmpValues2 = values;
-                            } else if (values.size() > values2.size()) {
-                                tmpValues = values;
-                                tmpValues2 = values2;
-                            } else {
-                                tmpValues = values2;
-                                tmpValues2 = values;
-                            }
-                            for (int k = 0; k < tmpValues.size(); k++) {
-                                if (tmpValues2.contains(tmpValues.get(k))) {
-                                    intersectionCountDown++;
-                                }
-                            }
-                            //create link, highlighting and store values
-                            String[] tmp = new String[5];
-                            double p = calcRValue(values.size(),
-                                                  values2.size(),
-                                                  intersectionCountDown,
-                                                  bag.size());
-                            
-                            if (numberOpt.equals("number")) {
-                                tmp[0] = String.valueOf(intersectionCountDown);
-                            } else {
-                                String pR = String.valueOf(p * 100);
-                                if (pR.length() > 4) {
-                                    if  (pR.equals("100.0")) {
-                                        pR = "100";
-                                    } else {
-                                        pR = pR.substring(0, 4);
-                                    }
-                                }
-                                tmp[0] = pR + "%";
-                            }
-                            tmp[1] = "widgetAction.do?bagName=" + bag.getName() 
-                            + "&link=" + config.getLink()
-                            + "&key=" + URLEncoder.encode(columns.get(i) 
-                                    + "_" + columns2.get(j), "UTF-8");
-                            tmp[2] = calcRGB(p);
-                            if (numberOpt.equals("number")) {
-                                tmp[3] = String.valueOf(p * 100) + "%";
-                            } else {
-                                tmp[3] = String.valueOf(intersectionCountDown) + " intersections";
-                            }
-                            tmp[4] = "DOWN";
-                            intersectionListDown.add(tmp);
+
+            dataSet = dataSetLdr.getGridDataSet();
+
+            List<String> columns = dataSet.getSampleNames();
+            List<String> columns2 = dataSet.getSampleNames();
+
+            Map<String, Map<String, List<String>>> valueMapList = dataSet.getResults();
+            boolean useDown = false;
+            for (int i = 0; i < columns.size(); i++) {
+                Map<String, List<String>> valuesMap = valueMapList.get(columns.get(i));
+                intersectionList = new Vector<String[]>();
+                intersectionListDown = new Vector<String[]>();
+                for (int j = 0; j < columns2.size(); j++) {
+                    int intersectionCount = 0;
+                    int intersectionCountDown = 0;
+                    int interBefor = intersectionList.size();
+                    int interBeforDown = intersectionListDown.size();
+                    Map<String, List<String>> values2Map = valueMapList.get(columns2.get(j));
+                    List<String> tmpValues = null, tmpValues2 = null;
+
+                    if (valuesMap.get("UP") != null && values2Map.get("UP") != null) {
+                        List<String> values = valuesMap.get("UP");
+                        List<String> values2 = values2Map.get("UP");
+                        if (values.size() <= values2.size()) {
+                            tmpValues = values2;
+                            tmpValues2 = values;
+                        } else if (values.size() > values2.size()) {
+                            tmpValues = values;
+                            tmpValues2 = values2;
+                        } else {
+                            tmpValues = values2;
+                            tmpValues2 = values;
                         }
-                        if (interBefor == intersectionList.size()) {
-                            String[] tmp = new String[5];
-                            if (numberOpt.equals("number")) {
-                                tmp[0] = "0";
-                            } else {
-                                tmp[0] = "0%";
+                        for (int k = 0; k < tmpValues.size(); k++) {
+                            if (tmpValues2.contains(tmpValues.get(k))) {
+                                intersectionCount++;
                             }
-                            tmp[1] = "widgetAction.do?bagName=" + bag.getName() 
-                            + "&link=" + config.getLink()
-                            + "&key=" + URLEncoder.encode(columns.get(i) 
-                                    + "_" + columns2.get(j), "UTF-8");
-                            tmp[2] = "00FF50";
-                            if (numberOpt.equals("number")) {
-                                tmp[3] = "0%";
-                            } else {
-                                tmp[3] = "0 intersections";
-                            }
-                            tmp[4] = "UP";
-                            intersectionList.add(tmp);
                         }
-                        if (interBeforDown == intersectionListDown.size()) {
-                            String[] tmp = new String[5];
-                            if (numberOpt.equals("number")) {
-                                tmp[0] = "0";
-                            } else {
-                                tmp[0] = "0%";
+                        //create link, highlighting and store values
+                        String[] tmp = new String[5];
+                        double p = calcRValue(values.size(), values2.size(), intersectionCount,
+                                bag.size());
+
+                        if (numberOpt.equals("number")) {
+                            tmp[0] = String.valueOf(intersectionCount);
+                        } else {
+                            String pR = String.valueOf(p * 100);
+                            if (pR.length() > 4) {
+                                if  (pR.equals("100.0")) {
+                                    pR = "100";
+                                } else {
+                                    pR = pR.substring(0, 4);
+                                }
                             }
-                            tmp[1] = "widgetAction.do?bagName=" + bag.getName() 
-                            + "&link=" + config.getLink()
-                            + "&key=" + URLEncoder.encode(columns.get(i) 
-                                    + "_" + columns2.get(j), "UTF-8");
-                            tmp[2] = "00FF50";
-                            if (numberOpt.equals("number")) {
-                                tmp[3] = "0%";
-                            } else {
-                                tmp[3] = "0 intersections";
-                            }
-                            tmp[4] = "DOWN";
-                            intersectionListDown.add(tmp);
+                            tmp[0] = pR + "%";
                         }
+                        tmp[1] = "widgetAction.do?bagName=" + bag.getName()
+                            + "&link=" + config.getLink()
+                            + "&key=" + URLEncoder.encode(columns.get(i)
+                                    + "_" + columns2.get(j), "UTF-8");
+                        tmp[2] = calcRGB(p);
+                        if (numberOpt.equals("number")) {
+                            tmp[3] = String.valueOf(p * 100) + "%";
+                        } else {
+                            tmp[3] = String.valueOf(intersectionCount) + " intersections";
+                        }
+                        tmp[4] = "UP";
+
+                        intersectionList.add(tmp);
                     }
-                    flattenedResults.add(intersectionList);
-                    if (useDown) {
-                        flattenedResultsDown.add(intersectionListDown);
-                    } else {
-                        intersectionListDown = new Vector<String[]>();
-                        flattenedResultsDown.add(intersectionListDown);
+                    if (valuesMap.get("DOWN") != null && values2Map.get("DOWN") != null) {
+                        useDown = true;
+                        List<String> values = valuesMap.get("DOWN");
+                        List<String> values2 = values2Map.get("DOWN");
+                        if (values.size() <= values2.size()) {
+                            tmpValues = values2;
+                            tmpValues2 = values;
+                        } else if (values.size() > values2.size()) {
+                            tmpValues = values;
+                            tmpValues2 = values2;
+                        } else {
+                            tmpValues = values2;
+                            tmpValues2 = values;
+                        }
+                        for (int k = 0; k < tmpValues.size(); k++) {
+                            if (tmpValues2.contains(tmpValues.get(k))) {
+                                intersectionCountDown++;
+                            }
+                        }
+                        //create link, highlighting and store values
+                        String[] tmp = new String[5];
+                        double p = calcRValue(values.size(),
+                                              values2.size(),
+                                              intersectionCountDown,
+                                              bag.size());
+
+                        if (numberOpt.equals("number")) {
+                            tmp[0] = String.valueOf(intersectionCountDown);
+                        } else {
+                            String pR = String.valueOf(p * 100);
+                            if (pR.length() > 4) {
+                                if  (pR.equals("100.0")) {
+                                    pR = "100";
+                                } else {
+                                    pR = pR.substring(0, 4);
+                                }
+                            }
+                            tmp[0] = pR + "%";
+                        }
+                        tmp[1] = "widgetAction.do?bagName=" + bag.getName()
+                            + "&link=" + config.getLink()
+                            + "&key=" + URLEncoder.encode(columns.get(i)
+                                    + "_" + columns2.get(j), "UTF-8");
+                        tmp[2] = calcRGB(p);
+                        if (numberOpt.equals("number")) {
+                            tmp[3] = String.valueOf(p * 100) + "%";
+                        } else {
+                            tmp[3] = String.valueOf(intersectionCountDown) + " intersections";
+                        }
+                        tmp[4] = "DOWN";
+                        intersectionListDown.add(tmp);
+                    }
+                    if (interBefor == intersectionList.size()) {
+                        String[] tmp = new String[5];
+                        if (numberOpt.equals("number")) {
+                            tmp[0] = "0";
+                        } else {
+                            tmp[0] = "0%";
+                        }
+                        tmp[1] = "widgetAction.do?bagName=" + bag.getName()
+                            + "&link=" + config.getLink()
+                            + "&key=" + URLEncoder.encode(columns.get(i)
+                                    + "_" + columns2.get(j), "UTF-8");
+                        tmp[2] = "00FF50";
+                        if (numberOpt.equals("number")) {
+                            tmp[3] = "0%";
+                        } else {
+                            tmp[3] = "0 intersections";
+                        }
+                        tmp[4] = "UP";
+                        intersectionList.add(tmp);
+                    }
+                    if (interBeforDown == intersectionListDown.size()) {
+                        String[] tmp = new String[5];
+                        if (numberOpt.equals("number")) {
+                            tmp[0] = "0";
+                        } else {
+                            tmp[0] = "0%";
+                        }
+                        tmp[1] = "widgetAction.do?bagName=" + bag.getName()
+                            + "&link=" + config.getLink()
+                            + "&key=" + URLEncoder.encode(columns.get(i)
+                                    + "_" + columns2.get(j), "UTF-8");
+                        tmp[2] = "00FF50";
+                        if (numberOpt.equals("number")) {
+                            tmp[3] = "0%";
+                        } else {
+                            tmp[3] = "0 intersections";
+                        }
+                        tmp[4] = "DOWN";
+                        intersectionListDown.add(tmp);
                     }
                 }
-            
+                flattenedResults.add(intersectionList);
+                if (useDown) {
+                    flattenedResultsDown.add(intersectionListDown);
+                } else {
+                    intersectionListDown = new Vector<String[]>();
+                    flattenedResultsDown.add(intersectionListDown);
+                }
+            }
+
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -286,7 +278,7 @@ public class GridWidget extends Widget
             e.printStackTrace();
         }
     }
-    
+
     private double calcRValue(int values1Size,
                               int values2Size,
                               int intersectionCount,
@@ -296,13 +288,13 @@ public class GridWidget extends Widget
         //valuesB: y
         //intersectionCount: z
         // p = 1 - ((x + y) - 2 * z) / (x + y)
-        
+
         double termA = ((values1Size + values2Size)
                 - 2 * intersectionCount);
         double termB = values1Size + values2Size;
-        
+
         double p = 0;
-        
+
         if (highlight.equals("cell type to cell type")) {
             p = 1 - (termA / termB);
         }
@@ -311,12 +303,12 @@ public class GridWidget extends Widget
         }
         return p;
     }
-    
+
     private String calcRGB(double p) {
       //color spectrum calculation
-        
+
         int red = 0, blue = 0, green = 0;
-        
+
         if (p >= 0.7) {
             red = 255;
             blue = 0;
@@ -334,12 +326,12 @@ public class GridWidget extends Widget
             green = 255;
             red =  80 + (int) (100 * (((p) * 100) / 30.0));
         }
-        
+
         //convert to hex
         String redHex = Integer.toHexString(red);
         String greenHex = Integer.toHexString(green);
         String blueHex = Integer.toHexString(blue);
-        
+
         if (redHex.length() == 1) {
             redHex = "0" + redHex;
         }
@@ -349,11 +341,11 @@ public class GridWidget extends Widget
         if (blueHex.length() == 1) {
             blueHex = "0" + blueHex;
         }
-        
+
         //build RGB color code from hex
-        return redHex + greenHex + blueHex;   
+        return redHex + greenHex + blueHex;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -394,16 +386,15 @@ public class GridWidget extends Widget
      * {@inheritDoc}
      */
     public List getFlattenedResults() {
-        
+
         return flattenedResults;
     }
 
     /**
-    *
-    * @return List of column labels
-    */
-   public List<String> getColumns() {
-       return dataSet.getSampleNames();
-   }
-
+     *
+     * @return List of column labels
+     */
+    public List<String> getColumns() {
+        return dataSet.getSampleNames();
+    }
 }

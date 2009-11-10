@@ -88,7 +88,7 @@ public class ExportQueryAction extends InterMineAction
             LOG.error("Failed to find query " + name + " of type " + type);
             return null;
         }
-        
+
         if (query.getViewStrings().size() == 0) {
             response.getWriter().write("Invalid query. No fields selected for output.");
             return null;
@@ -109,7 +109,7 @@ public class ExportQueryAction extends InterMineAction
         } else if (format.equals("iql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+                        .getGlobalSearchRepository(servletContext));
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
             Query osQuery = MainHelper.makeQuery(query, allBags, pathToQueryNode,
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
@@ -123,7 +123,7 @@ public class ExportQueryAction extends InterMineAction
         } else if (format.equals("sql")) {
             Map<String, InterMineBag> allBags =
                 WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+                        .getGlobalSearchRepository(servletContext));
             Query osQuery = MainHelper.makeQuery(query, allBags, servletContext,
                     null);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -143,7 +143,7 @@ public class ExportQueryAction extends InterMineAction
             String xml = getQueryXML(name, query);
             String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request).
                     getPermanentBaseURL(), xml, serviceFormat);
-            response.getWriter().write(link);                
+            response.getWriter().write(link);
         } else {
             response.getWriter().println("Unknown export type: " + request.getParameter("as"));
         }

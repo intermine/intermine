@@ -31,11 +31,11 @@ import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * AddColumnAction adds new column to existing WebTable that should be displayed. There are some 
- * limitations - only columns that are already contained in web table but are not displayed can 
- * be added, because web table contains original InterMine objects and only required columns 
+ * AddColumnAction adds new column to existing WebTable that should be displayed. There are some
+ * limitations - only columns that are already contained in web table but are not displayed can
+ * be added, because web table contains original InterMine objects and only required columns
  * (columns with required fields) are displayed.
- * 
+ *
  * @author Jakub Kulaviak
  *
  */
@@ -54,7 +54,7 @@ public class AddColumnAction extends InterMineAction
             @SuppressWarnings("unused")
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
         String columnToAdd = request.getParameter("columnToAdd");
         HttpSession session = request.getSession();
         String tableId = request.getParameter("table");
@@ -65,7 +65,7 @@ public class AddColumnAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("table", tableId)
             .addParameter("page", "" + pt.getPage())
-            .addParameter("trail", request.getParameter("trail")).forward();        
+            .addParameter("trail", request.getParameter("trail")).forward();
     }
 
     private void changeView(WebTable table, String columnToAdd, HttpServletRequest request) {
@@ -77,15 +77,15 @@ public class AddColumnAction extends InterMineAction
         HttpSession session = request.getSession();
         Model model = ((ObjectStore) session.getServletContext().getAttribute
                 (Constants.OBJECTSTORE)).getModel();
-        
+
         List<Path> paths = new ArrayList<Path>();
         paths.add(new Path(model, columnToAdd));
         WebResults webResults = (WebResults) table;
         webResults.addColumns(paths);
-        
+
         // add to path query as well
         PathQuery query = table.getPathQuery();
-        query.addView(columnToAdd);        
+        query.addView(columnToAdd);
     }
 
     private boolean columnAlreadyAdded(String columnToAdd, List<Path> displayedPaths) {
