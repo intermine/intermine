@@ -14,17 +14,17 @@ import org.intermine.objectstore.ObjectStoreWriter;
 
 /**
  * Factory class for creating TagManager objects.
- * 
+ *
  * @author Jakub Kulaviak
  *
  */
-public class TagManagerFactory 
+public class TagManagerFactory
 {
 
     private static TagManager tagManager;
 
     private static ObjectStoreWriter profileOsWriter;
-    
+
     /**
      * Constructor.
      * @param profileWriter user profile object store writer
@@ -41,17 +41,17 @@ public class TagManagerFactory
             tagManager = new TagManager(profileWriter);
         }
     }
-    
+
     /**
      * Constructor.
      * @param manager profile manager
      */
     public TagManagerFactory(ProfileManager manager) {
         init(manager.getProfileObjectStoreWriter());
-    }    
-    
+    }
+
     /**
-     * 
+     *
      * @return tag manager
      */
     public TagManager getTagManager() {

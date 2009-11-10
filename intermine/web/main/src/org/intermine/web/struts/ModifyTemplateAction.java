@@ -53,13 +53,8 @@ public class ModifyTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
-
-
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         ModifyTemplateForm mtf = (ModifyTemplateForm) form;
         ActionErrors errors = mtf.validate(mapping, request);
         if (errors == null || errors.isEmpty()) {
@@ -84,10 +79,8 @@ public class ModifyTemplateAction extends InterMineAction
      *  an exception
      */
     public ActionErrors delete(@SuppressWarnings("unused") ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+            ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -102,10 +95,10 @@ public class ModifyTemplateAction extends InterMineAction
                     errors.add(ActionMessages.GLOBAL_MESSAGE,
                                new ActionMessage("errors.modifyTemplate.delete"));
                 }
-                
+
                 profile.deleteTemplate(template);
             }
-            
+
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
                 tr.globalChange(TagTypes.TEMPLATE);
@@ -113,7 +106,6 @@ public class ModifyTemplateAction extends InterMineAction
         } finally {
             profile.enableSaving();
         }
-        
         return errors;
     }
 
@@ -142,18 +134,17 @@ public class ModifyTemplateAction extends InterMineAction
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<template-queries>");
         Map myTemplates = profile.getSavedTemplates();
-        Map publicTemplates
-                = SessionMethods.getSuperUserProfile(servletContext).getSavedTemplates();
+        Map publicTemplates = SessionMethods.getSuperUserProfile(servletContext)
+            .getSavedTemplates();
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String name = mqf.getSelected()[i];
             String xml = null;
 
             if (publicTemplates.get(name) != null) {
-                xml = ((TemplateQuery) publicTemplates.get(name))
-                    .toXml(PathQuery.USERPROFILE_VERSION);
+                xml = ((TemplateQuery) publicTemplates.get(name)).toXml(PathQuery
+                        .USERPROFILE_VERSION);
             } else if (myTemplates.get(name) != null) {
-                xml = ((TemplateQuery) myTemplates.get(name))
-                    .toXml(PathQuery.USERPROFILE_VERSION);
+                xml = ((TemplateQuery) myTemplates.get(name)).toXml(PathQuery.USERPROFILE_VERSION);
             }
             if (xml != null) {
                 xml = XmlUtil.indentXmlSimple(xml);
@@ -164,11 +155,10 @@ public class ModifyTemplateAction extends InterMineAction
         out.flush();
     }
 
-
     private ActionForward getReturn(String pageName, ActionMapping mapping) {
         if (pageName != null && pageName.equals("MyMine")) {
             return mapping.findForward("mymine");
         }
-        return mapping.findForward("templates");        
+        return mapping.findForward("templates");
     }
 }

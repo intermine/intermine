@@ -68,17 +68,14 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-    throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         String key = request.getParameter("key");
         String action = widgetForm.getAction();
         // user clicked on a count on a widget OR checked some boxes and clicked 'display'
-        if ((!StringUtils.isEmpty(key) && (action == null || !action.equals("displayAll"))) 
-                        || (action.equals("display"))) {
+        if ((!StringUtils.isEmpty(key) && (action == null || !action.equals("displayAll")))
+                || (action.equals("display"))) {
             return display(mapping, form, request, response);
         } else if (widgetForm.getAction().equals("displayAll")) {
             return displayAll(mapping, form, request, response);
@@ -86,7 +83,6 @@ public class WidgetAction extends InterMineAction
             return export(mapping, form, request, response);
         }
     }
-
 
     /**
      * Currently not used.  See #1719
@@ -133,16 +129,11 @@ public class WidgetAction extends InterMineAction
 
         Class<?> clazz = TypeUtil.instantiate(ldr);
 
-        Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                               {
-            InterMineBag.class, ObjectStore.class, String.class
-                                                               });
+        Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
+            ObjectStore.class, String.class});
 
-        EnrichmentWidgetLdr enrichmentWidgetLdr = (EnrichmentWidgetLdr)
-        constr.newInstance(new Object[]
-                                                         {
-            bag, os, selectedExtraAttribute
-                                                         });
+        EnrichmentWidgetLdr enrichmentWidgetLdr = (EnrichmentWidgetLdr) constr
+            .newInstance(new Object[] {bag, os, selectedExtraAttribute});
 
         Query q = enrichmentWidgetLdr.getQuery("analysed", null);
         Object[] o = os.executeSingleton(q).toArray();
@@ -153,39 +144,31 @@ public class WidgetAction extends InterMineAction
 
         clazz = TypeUtil.instantiate(urlQuery);
 
-        constr = clazz.getConstructor(new Class[]
-                                                               {
-            ObjectStore.class, InterMineBag.class, String.class
-                                                               });
+        constr = clazz.getConstructor(new Class[] {ObjectStore.class, InterMineBag.class,
+            String.class});
 
-        WidgetURLQuery widgetURLQuery = (WidgetURLQuery)
-        constr.newInstance(new Object[]
-                                                         {
-            os, bag, null
-                                                         });
+        WidgetURLQuery widgetURLQuery = (WidgetURLQuery) constr.newInstance(new Object[] {os, bag,
+            null});
 
         // See #1719
         //PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
         PathQuery pathQuery = widgetURLQuery.generatePathQuery(false);
 
-        QueryMonitorTimeout clientState
-        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages
-        = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
+                * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 
         SessionMethods.loadQuery(pathQuery, session, response);
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
-                        "|bag." + bagName).addParameter("qid", qid).forward();
+                "|bag." + bagName).addParameter("qid", qid).forward();
     }
 
-    private PathQuery generatePathQuery(HttpSession session,
-                                             ActionForm form,
-                                             HttpServletRequest request,
-                                             String bagName, boolean showAll) 
-    throws SecurityException, NoSuchMethodException, IllegalArgumentException, 
-    InstantiationException, IllegalAccessException, InvocationTargetException {
+    private PathQuery generatePathQuery(HttpSession session, ActionForm form,
+            HttpServletRequest request, String bagName, boolean showAll)
+        throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+            InvocationTargetException {
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         String key = request.getParameter("key");
@@ -196,7 +179,6 @@ public class WidgetAction extends InterMineAction
         if (StringUtils.isEmpty(key)) {
             key = wf.getSelectedAsString();
             allOrSelected = "Selected";
-            
         }
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
         Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
@@ -204,25 +186,19 @@ public class WidgetAction extends InterMineAction
         InterMineBag bag = allBags.get(bagName);
 
         Class<?> clazz = TypeUtil.instantiate(link);
-        Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                               {
-            ObjectStore.class, InterMineBag.class, String.class
-                                                               });
-        WidgetURLQuery urlQuery = (WidgetURLQuery) constr.newInstance(new Object[]
-                                                         {
-            os, bag, key
-                                                         });
-        
+        Constructor<?> constr = clazz.getConstructor(new Class[] {ObjectStore.class,
+            InterMineBag.class, String.class});
+        WidgetURLQuery urlQuery = (WidgetURLQuery) constr.newInstance(new Object[] {os, bag, key});
+
         String bagType = bag.getType();
-        
-        
+
         PathQuery q = urlQuery.generatePathQuery(showAll);
-        String description = allOrSelected + " " + bagType + "s from the list '" + bagName 
+        String description = allOrSelected + " " + bagType + "s from the list '" + bagName
             + "' for the widget '" + widgetTitle + "'";
         q.setDescription(description);
         return q;
     }
-    
+
     /**
      * Display selected entries in the results page
      * @param mapping The ActionMapping used to select this instance
@@ -233,14 +209,12 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward display(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                HttpServletResponse response) throws Exception {
+    public ActionForward display(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String bagName = request.getParameter("bagName");
         PathQuery pathQuery = generatePathQuery(session, form, request, bagName, false);
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS 
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
                                                                   * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         SessionMethods.loadQuery(pathQuery, session, response);
@@ -266,7 +240,7 @@ public class WidgetAction extends InterMineAction
                                 HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String bagName = request.getParameter("bagName");
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS 
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
                                                                   * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = generatePathQuery(session, form, request, bagName, true);
@@ -276,7 +250,7 @@ public class WidgetAction extends InterMineAction
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                         "|bag." + bagName).addParameter("qid", qid).forward();
     }
-        
+
     /**
      * Export selected entries
      * @param mapping The ActionMapping used to select this instance

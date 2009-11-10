@@ -15,10 +15,10 @@ import org.intermine.webservice.server.WebServiceConstants;
 
 /**
  * Class that implements generating links for QueryResultService web service.
- * 
+ *
  * @author Jakub Kulaviak
  **/
-public class QueryResultLinkGenerator extends LinkGeneratorBase 
+public class QueryResultLinkGenerator extends LinkGeneratorBase
 {
 
     /**
@@ -29,13 +29,13 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
      * @return generated link
      */
     public String getLink(String baseUrl, String queryXml, String resultFormat) {
-        
+
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
-        } 
-        return baseUrl + WebServiceConstants.MODULE_NAME + "/query/results" 
-            + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&" 
+        }
+        return baseUrl + WebServiceConstants.MODULE_NAME + "/query/results"
+            + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&"
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
     }
-    
+
 }

@@ -33,48 +33,46 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class BeginAction extends InterMineAction
 {
-   /**
-    * Either display the query builder or redirect to project.sitePrefix.
-    *
-    * @param mapping The ActionMapping used to select this instance
-    * @param form The optional ActionForm bean for this request (if any)
-    * @param request The HTTP request we are processing
-    * @param response The HTTP response we are creating
-    * @return an ActionForward object defining where control goes next
-    *
-    * @exception Exception if the application business logic throws
-    *  an exception
-    */
-   public ActionForward execute(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-       throws Exception {
+    /**
+     * Either display the query builder or redirect to project.sitePrefix.
+     *
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
+     * @return an ActionForward object defining where control goes next
+     *
+     * @exception Exception if the application business logic throws
+     *  an exception
+     */
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
 
-       HttpSession session = request.getSession();
-       ServletContext servletContext = session.getServletContext();
-       SearchRepository searchRepository = (SearchRepository)
-                               servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-       if (request.getParameter("GALAXY_URL") != null) {
-           request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
-           SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
-       }
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        SearchRepository searchRepository = (SearchRepository)
+            servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+        if (request.getParameter("GALAXY_URL") != null) {
+            request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
+            SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
+        }
 
-       Map<String, ? extends WebSearchable> webSearchables =
-                                                       searchRepository.getWebSearchableMap("bag");
-       int bagCount = webSearchables.size();
-       webSearchables = searchRepository.getWebSearchableMap("template");
-       int templateCount = webSearchables.size();
+        Map<String, ? extends WebSearchable> webSearchables =
+                                                        searchRepository.getWebSearchableMap("bag");
+        int bagCount = webSearchables.size();
+        webSearchables = searchRepository.getWebSearchableMap("template");
+        int templateCount = webSearchables.size();
 
-       /* count number of templates and bags */
-       request.setAttribute("bagCount", new Integer(bagCount));
-       request.setAttribute("templateCount", new Integer(templateCount));
+        /* count number of templates and bags */
+        request.setAttribute("bagCount", new Integer(bagCount));
+        request.setAttribute("templateCount", new Integer(templateCount));
 
-       Properties properties = (Properties) request.getSession()
-                               .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-       String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
-                                   .split("[ ,]+");
-       request.setAttribute("beginQueryClasses", beginQueryClasses);
-       return mapping.findForward("begin");
-   }
+        Properties properties = (Properties) request.getSession()
+                                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
+                                    .split("[ ,]+");
+        request.setAttribute("beginQueryClasses", beginQueryClasses);
+        return mapping.findForward("begin");
+    }
 }

@@ -57,7 +57,7 @@ public class InlineResultsTable
     private Map<String, Object> fieldValues;
     private Map<Object, Map<String, Object>> rowFieldValues;
     private boolean ignoreDisplayers;
-    
+
     /**
      * Construct a new InlineResultsTable object
      * @param results the List to display object
@@ -209,7 +209,7 @@ public class InlineResultsTable
             fieldValues = new HashMap();
 
             // loop through each column
-           for (FieldConfig fc : getRowFieldConfigs(o)) {
+            for (FieldConfig fc : getRowFieldConfigs(o)) {
                 // if ignoreDisplayers we don't want any columns with a displayer defined
                 if (ignoreDisplayers && fc.getDisplayer() != null) {
                     continue;
@@ -275,7 +275,7 @@ public class InlineResultsTable
      * Return the size that was passed to the constructor.
      */
     private int getSize() {
-       return size;
+        return size;
     }
 
     /**
@@ -319,9 +319,9 @@ public class InlineResultsTable
 
     /**
      * Creates result element for the end of the path.
-     * Example: 
+     * Example:
      * For Department.name creates result element for Department object and name field
-     * For Department.company.name creates result element for Company object and name field  
+     * For Department.company.name creates result element for Company object and name field
      * @param path
      * @param o
      * @return
@@ -334,16 +334,16 @@ public class InlineResultsTable
         // object = Organism, path = Organism.shortName
         InterMineObject finalObject = null;
         if (o != null) {
-            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);    
+            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
         }
-        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "." 
+        String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "."
             + path.getLastElement();
-        ResultElement resultElement = 
-            new ResultElement(finalObject, new Path(path.getModel(), finalPath), 
+        ResultElement resultElement =
+            new ResultElement(finalObject, new Path(path.getModel(), finalPath),
                 isKeyField);
         return resultElement;
     }
-    
+
     /**
      * @return the rowFieldValues
      */

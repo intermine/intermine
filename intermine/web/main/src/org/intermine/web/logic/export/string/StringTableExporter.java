@@ -26,7 +26,7 @@ public class StringTableExporter
 
     private PrintWriter writer;
     private RowFormatter rowFormatter;
-    
+
     /**
      * Constructor.
      * @param writer used writer
@@ -37,7 +37,7 @@ public class StringTableExporter
         this.writer = writer;
         this.rowFormatter = rowFormatter;
     }
-    
+
     /**
      * Perform export.
      * @param rows rows to be exported
@@ -53,5 +53,5 @@ public class StringTableExporter
         } catch (RuntimeException e) {
             throw new ExportException("Export failed.", e);
         }
-    }    
+    }
 }

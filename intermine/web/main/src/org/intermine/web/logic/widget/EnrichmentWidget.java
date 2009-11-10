@@ -34,7 +34,6 @@ import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 
-
 /**
  * @author "Xavier Watkins"
  *
@@ -75,15 +74,11 @@ public class EnrichmentWidget extends Widget
     public void process() {
         try {
             Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
-            Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                                {
-                InterMineBag.class, ObjectStore.class, String.class
-                                                                });
+            Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
+                ObjectStore.class, String.class});
 
-            EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
-                                                                                          {
-                bag, os, filter
-                                                                                          });
+            EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
+                .newInstance(new Object[] {bag, os, filter});
 
             resultMaps = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
             int analysedTotal = 0;
@@ -159,15 +154,11 @@ public class EnrichmentWidget extends Widget
         List<String> selectedIds = Arrays.asList(selected);
 
         Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
-        Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                            {
-            InterMineBag.class, ObjectStore.class, String.class
-                                                            });
+        Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
+            ObjectStore.class, String.class});
 
-        EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[]
-                                                                                      {
-            bag, os, filter
-                                                                                      });
+        EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[] {bag, os,
+            filter});
 
         Query q = ldr.getExportQuery(selectedIds);
 
@@ -225,21 +216,18 @@ public class EnrichmentWidget extends Widget
             for (String id : pvalues.keySet()) {
                 List<String[]> row = new LinkedList();
 
-                row.add(new String[]
-                    {
-                        "<input name=\"selected\" value=\"" + id + "\" id=\"selected_" + id
-                                        + "\" type=\"checkbox\">"
-                    });
+                row.add(new String[] {"<input name=\"selected\" value=\"" + id
+                        + "\" id=\"selected_" + id + "\" type=\"checkbox\">"});
 
                 String label = labelToId.get(id);
                 if (config.getExternalLink() != null && !config.getExternalLink().equals("")) {
                     label += " <a href=\"" + config.getExternalLink() + id
                              + "\" target=\"_new\" class=\"extlink\">[";
-                     if (config.getExternalLinkLabel() != null
+                    if (config.getExternalLinkLabel() != null
                         && !config.getExternalLinkLabel().equals("")) {
                         label += config.getExternalLinkLabel();
                     }
-                     label += id + "]</a>";
+                    label += id + "]</a>";
                 }
                 row.add(new String[] {label});
 
@@ -249,16 +237,12 @@ public class EnrichmentWidget extends Widget
                     formatter = new DecimalFormat("0.####E0");
                     row.add(new String[] {formatter.format(bd)});
                 } else {
-                    row.add(new String[]
-                           {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN).toEngineeringString()});
+                    row.add(new String[] {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN)
+                            .toEngineeringString()});
                 }
 
-                row.add(new String[]
-                    {
-                        totals.get(id).toString(),
-                        "widgetAction.do?key=" + id + "&bagName=" + bag.getName() + "&link="
-                                        + config.getLink()
-                    });
+                row.add(new String[] {totals.get(id).toString(), "widgetAction.do?key=" + id
+                        + "&bagName=" + bag.getName() + "&link=" + config.getLink()});
                 flattenedResults.add(row);
             }
             return flattenedResults;
@@ -267,14 +251,11 @@ public class EnrichmentWidget extends Widget
     }
 
     /**
-    *
-    * @return List of column labels
-    */
-   public List<String> getColumns() {
-       return Arrays.asList(new String[]
-           {
-               ((EnrichmentWidgetConfig) config).getLabel(), "p-Value", ""
-           });
-   }
-
+     *
+     * @return List of column labels
+     */
+    public List<String> getColumns() {
+        return Arrays.asList(new String[] {((EnrichmentWidgetConfig) config).getLabel(), "p-Value",
+            ""});
+    }
 }

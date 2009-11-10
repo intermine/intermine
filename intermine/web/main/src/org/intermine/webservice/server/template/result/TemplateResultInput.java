@@ -15,18 +15,18 @@ import java.util.Map;
 import org.intermine.webservice.server.WebServiceInput;
 
 /**
- * TemplateResultInput is parameter object representing parameters for 
- * TemplateResultService web service.  
+ * TemplateResultInput is parameter object representing parameters for
+ * TemplateResultService web service.
  * @author Jakub Kulaviak
  **/
-public class TemplateResultInput extends WebServiceInput 
+public class TemplateResultInput extends WebServiceInput
 {
     private String name;
-    
+
     private Map<String, List<ConstraintLoad>> constraints;
-    
+
     private String layout;
-    
+
     /**
      * @return layout string specifying result table layout
      */

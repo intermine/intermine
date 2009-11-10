@@ -34,90 +34,90 @@ public class BagUploadConfirmForm extends ActionForm
     /**
      * Initialise the form.
      */
-   public void initialise() {
+    public void initialise() {
         newBagName = "";
         matchIDs = "";
         selectedObjects = new String[] {};
     }
 
-   /**
-    * Set the bag name.
-    * @param name the bag name
-    */
-   public void setNewBagName(String name) {
-       newBagName = name.trim();
-   }
+    /**
+     * Set the bag name.
+     * @param name the bag name
+     */
+    public void setNewBagName(String name) {
+        newBagName = name.trim();
+    }
 
-   /**
-    * Get the bag name.
-    * @return the bag name
-    */
-   public String getNewBagName() {
-       return newBagName;
-   }
+    /**
+     * Get the bag name.
+     * @return the bag name
+     */
+    public String getNewBagName() {
+        return newBagName;
+    }
 
 
-   /**
-    * Sets the ids of the selected objects - ie. those that should be included in the new bag
-    * @param selectedObjects the selected objects
-    */
-   public void setSelectedObjects(String[] selectedObjects) {
-       this.selectedObjects = selectedObjects;
-   }
+    /**
+     * Sets the ids of the selected objects - ie. those that should be included in the new bag
+     * @param selectedObjects the selected objects
+     */
+    public void setSelectedObjects(String[] selectedObjects) {
+        this.selectedObjects = selectedObjects;
+    }
 
-   /**
-    * Gets the ids of the selected objects
-    * @return the selected objects
-    */
-   public String[] getSelectedObjects() {
-       return selectedObjects;
-   }
+    /**
+     * Gets the ids of the selected objects
+     * @return the selected objects
+     */
+    public String[] getSelectedObjects() {
+        return selectedObjects;
+    }
 
-   /**
-    * Get the encoded match ids (hidden form field).
-    * @return the match IDs
-    */
-   public String getMatchIDs() {
-       return matchIDs;
-   }
+    /**
+     * Get the encoded match ids (hidden form field).
+     * @return the match IDs
+     */
+    public String getMatchIDs() {
+        return matchIDs;
+    }
 
-   /**
-    * Set the encoded match ids.
-    * @param matchIDs the encoded match ids
-    */
-   public void setMatchIDs(String matchIDs) {
-       this.matchIDs = matchIDs;
-   }
+    /**
+     * Set the encoded match ids.
+     * @param matchIDs the encoded match ids
+     */
+    public void setMatchIDs(String matchIDs) {
+        this.matchIDs = matchIDs;
+    }
 
-   /**
-    * Get the bag type - hidden form value.
-    * @return the bag type
-    */
-   public String getBagType() {
-       return bagType;
-   }
+    /**
+     * Get the bag type - hidden form value.
+     * @return the bag type
+     */
+    public String getBagType() {
+        return bagType;
+    }
 
-   /**
-    * Set the bag type
-    * @param bagType the new bag type
-    */
-   public void setBagType(String bagType) {
-       this.bagType = bagType;
-   }
+    /**
+     * Set the bag type
+     * @param bagType the new bag type
+     */
+    public void setBagType(String bagType) {
+        this.bagType = bagType;
+    }
 
-   /**
-    * Set the extra field value - the optional constraint on the bag upload page
-    * @return the extra field value
-    */
-   public String getExtraFieldValue() {
-       return extraFieldValue;
-   }
+    /**
+     * Set the extra field value - the optional constraint on the bag upload page
+     * @return the extra field value
+     */
+    public String getExtraFieldValue() {
+        return extraFieldValue;
+    }
 
-   /**
-    * Set the extra field value
-    * @param extraFieldValue the extra field value
-    */
-   public void setExtraFieldValue(String extraFieldValue) {
-       this.extraFieldValue = extraFieldValue;
-   }
+    /**
+     * Set the extra field value
+     * @param extraFieldValue the extra field value
+     */
+    public void setExtraFieldValue(String extraFieldValue) {
+        this.extraFieldValue = extraFieldValue;
+    }
 }

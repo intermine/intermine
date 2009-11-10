@@ -63,8 +63,8 @@ public class ObjectDetailsTemplateController extends TilesAction
 
         TemplateForm templateForm = new TemplateForm();
         Model model = SessionMethods.getObjectStore(servletContext).getModel();
-        
-        // this is either a report page for an InterMineObject or a list analysis page        
+
+        // this is either a report page for an InterMineObject or a list analysis page
         if (displayObject != null) {
             InterMineObject object = displayObject.getObject();
             if (!TemplateHelper.fillTemplateForm(templateQuery, object, null, templateForm,
@@ -77,14 +77,14 @@ public class ObjectDetailsTemplateController extends TilesAction
                 return null;
             }
         }
-            
+
         templateForm.parseAttributeValues(templateQuery, null, new ActionErrors(), false);
 
         // note that savedBags parameter is an empty set, we are on a report page for an object,
         // the object/bag we are using is already set in the TemplateForm, we can't use other bags
-        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm, 
+        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm,
                 templateQuery, new HashMap());
-                
+
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
         // if there was a problem running query ignore and don't put up results

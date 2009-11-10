@@ -113,7 +113,7 @@ public class PagedTable
     public int getAllSelected() {
         return allSelected;
     }
-    
+
     /**
      * Get the list of column configurations
      *
@@ -182,10 +182,10 @@ public class PagedTable
             getColumnsInternal().add(index + 1, getColumnsInternal().remove(index));
         }
     }
-    
+
     /**
      * Swap 2 columns
-     * 
+     *
      * @param index1 the index of column 1
      * @param index2 the index of column 2
      */
@@ -380,26 +380,26 @@ public class PagedTable
      * @param objectId the object store id
      */
     public void deSelectId(Integer objectId) {
-       if (allSelected == -1) {
-           selectionIds.remove(objectId);
-           if (selectionIds.size() <= 0) {
+        if (allSelected == -1) {
+            selectionIds.remove(objectId);
+            if (selectionIds.size() <= 0) {
                 setSelectedClass(null);
                 setSelectedColumn(-1);
             }
-       } else {
-           // add because the all checkbox is on
-           ResultElement resultElement = findIdInVisible(objectId);
-           if (resultElement != null) {
-               if (resultElement.getField() == null) {
-                   selectionIds.put(objectId, null);
-               } else {
-                   selectionIds.put(objectId, resultElement.getField().toString());
-               }
-           }
-           if (isEmptySelection()) {
-               clearSelectIds();
-           }
-       }
+        } else {
+            // add because the all checkbox is on
+            ResultElement resultElement = findIdInVisible(objectId);
+            if (resultElement != null) {
+                if (resultElement.getField() == null) {
+                    selectionIds.put(objectId, null);
+                } else {
+                    selectionIds.put(objectId, resultElement.getField().toString());
+                }
+            }
+            if (isEmptySelection()) {
+                clearSelectIds();
+            }
+        }
     }
 
     /**
@@ -422,7 +422,7 @@ public class PagedTable
         }
         return null;
     }
-    
+
     /**
      * Return the fields for the first selected objects.  Return the first
      * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "...".  If a whole
@@ -656,7 +656,7 @@ public class PagedTable
         return new Iterator<Integer>() {
             Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
             public boolean hasNext() {
-               return selectedEntryIter.hasNext();
+                return selectedEntryIter.hasNext();
             }
             public Integer next() {
                 return selectedEntryIter.next().id;
@@ -896,7 +896,7 @@ public class PagedTable
         Results results = webResults.getInterMineResults();
         Query oldQuery = results.getQuery();
         Query newQuery = QueryCloner.cloneQuery(oldQuery);
-        
+
         newQuery.clearOrderBy();
         Set<QuerySelectable> oldSelect = new HashSet<QuerySelectable>(oldQuery.getSelect());
         newQuery.clearSelect();
@@ -1057,8 +1057,8 @@ public class PagedTable
      * @param osb the bag to write to
      * @throws ObjectStoreException if an error occurs
      */
-    public void addSelectedToBag(ObjectStoreWriter osw, ObjectStoreBag osb)
-    throws ObjectStoreException {
+    public void addSelectedToBag(ObjectStoreWriter osw,
+            ObjectStoreBag osb) throws ObjectStoreException {
         if (allSelected == -1) {
             osw.addAllToBag(osb, selectionIds.keySet());
         } else {
@@ -1073,8 +1073,8 @@ public class PagedTable
      * @param bag bag to add to
      * @throws ObjectStoreException if an error occurs
      */
-    public void addSelectedToBag(ObjectStore os, InterMineBag bag)
-    throws ObjectStoreException {
+    public void addSelectedToBag(ObjectStore os,
+            InterMineBag bag) throws ObjectStoreException {
         ObjectStoreWriter osw = null;
         try {
             osw = new ObjectStoreWriterInterMineImpl(os);
@@ -1102,8 +1102,7 @@ public class PagedTable
      *  an exception
      */
     public int removeFromBag(String bagName, Profile profile, ObjectStore os, HttpSession session,
-                              int bagSize)
-    throws Exception {
+            int bagSize) throws Exception {
         int i = 0;
         if (bagSize == selectionIds.size()) {
             return i;

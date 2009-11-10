@@ -789,9 +789,8 @@ public class QueryBuilderChange extends DispatchAction
      * @throws Exception
      */
     public ActionForward ajaxEditJoinStyle(ActionMapping mapping,
-                                           @SuppressWarnings("unused") ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         editJoinStyle(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }

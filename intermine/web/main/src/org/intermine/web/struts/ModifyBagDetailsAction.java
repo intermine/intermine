@@ -86,28 +86,27 @@ public class ModifyBagDetailsAction extends InterMineAction
             }
             SessionMethods.recordMessage(msg, session);
         } else if (request.getParameter("addToBag") != null) {
-                InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
-                                                                        mbdf.getExistingBagName());
-                String msg = "";
-                if (newBag.getType().equals(imBag.getType())) {
-                    PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
-                    int oldSize = newBag.size();
-                    pc.addSelectedToBag(os, newBag);
-                    int newSize = newBag.size();
-                    int added = newSize - oldSize;
-                    msg = "You have added " + added + " items from list <strong>"
-                    + imBag.getName() + "</strong> to list <strong>"
-                    + newBag.getName() + "</strong>";
-                } else {
-                    msg = "You can only add objects to other lists of the same type";
-                }
-                SessionMethods.recordMessage(msg, session);
+            InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
+                    mbdf.getExistingBagName());
+            String msg = "";
+            if (newBag.getType().equals(imBag.getType())) {
+                PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
+                int oldSize = newBag.size();
+                pc.addSelectedToBag(os, newBag);
+                int newSize = newBag.size();
+                int added = newSize - oldSize;
+                msg = "You have added " + added + " items from list <strong>" + imBag.getName()
+                    + "</strong> to list <strong>" + newBag.getName() + "</strong>";
+            } else {
+                msg = "You can only add objects to other lists of the same type";
+            }
+            SessionMethods.recordMessage(msg, session);
         // orthologues form
         } else if (request.getParameter("convertToThing") != null) {
             BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-            Map<String, String []> additionalConverters
-            = bagQueryConfig.getAdditionalConverters(imBag.getType());
+            Map<String, String []> additionalConverters = bagQueryConfig
+                .getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
                     Class clazz = Class.forName(converterClassName);
@@ -124,8 +123,8 @@ public class ModifyBagDetailsAction extends InterMineAction
                     String trail = "|bag." + imBag.getName();
                     session.removeAttribute(Constants.QUERY);
                     return new ForwardParameters(mapping.findForward("results"))
-                    .addParameter("table", identifier)
-                    .addParameter("trail", trail).forward();
+                        .addParameter("table", identifier)
+                        .addParameter("trail", trail).forward();
                 }
             }
         // "use in bag" link
@@ -143,8 +142,8 @@ public class ModifyBagDetailsAction extends InterMineAction
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             Model model = os.getModel();
-            ProfileManager pm = 
-                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER); 
+            ProfileManager pm = (ProfileManager) servletContext
+                .getAttribute(Constants.PROFILE_MANAGER);
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,
                 BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),

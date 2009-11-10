@@ -285,24 +285,24 @@ public abstract class WebService
             throw new InternalErrorException(e);
         }
         switch (getFormat()) {
-        case XML_FORMAT:
-            output = new StreamedOutput(out, new XMLFormatter());
-            ResponseUtil.setXMLHeader(response, "result.xml");
-            break;
-        case TSV_FORMAT:
-            output = new StreamedOutput(out, new TabFormatter());
-            ResponseUtil.setTabHeader(response, "result.tsv");
-            break;
-        case CSV_FORMAT:
-            output = new StreamedOutput(out, new CSVFormatter());
-            ResponseUtil.setCSVHeader(response, "result.csv");
-            break;
-        case HTML_FORMAT:
-            output = new HTMLOutput(out);
-            ResponseUtil.setHTMLContentType(response);
-            break;
-        default:
-            throw new BadRequestException("Invalid format.");
+            case XML_FORMAT:
+                output = new StreamedOutput(out, new XMLFormatter());
+                ResponseUtil.setXMLHeader(response, "result.xml");
+                break;
+            case TSV_FORMAT:
+                output = new StreamedOutput(out, new TabFormatter());
+                ResponseUtil.setTabHeader(response, "result.tsv");
+                break;
+            case CSV_FORMAT:
+                output = new StreamedOutput(out, new CSVFormatter());
+                ResponseUtil.setCSVHeader(response, "result.csv");
+                break;
+            case HTML_FORMAT:
+                output = new HTMLOutput(out);
+                ResponseUtil.setHTMLContentType(response);
+                break;
+            default:
+                throw new BadRequestException("Invalid format.");
         }
     }
 

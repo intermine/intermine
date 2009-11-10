@@ -69,6 +69,7 @@ public class DisplayObject
 
     /**
      * Create a new DisplayObject.
+     *
      * @param object the object to display
      * @param model the metadata for the object
      * @param webConfig the WebConfig object for this webapp
@@ -77,8 +78,7 @@ public class DisplayObject
      * @throws Exception if an error occurs
      */
     public DisplayObject(InterMineObject object, Model model, WebConfig webConfig,
-                         Map webProperties, Map classKeys)
-    throws Exception {
+            Map webProperties, Map classKeys) throws Exception {
         this.object = object;
         this.model = model;
         this.webConfig = webConfig;
@@ -96,6 +96,7 @@ public class DisplayObject
 
     /**
      * Get the set of leaf ClassDescriptors for a given InterMineObject class.
+     *
      * @param clazz object type
      * @param model model
      * @return Set of ClassDescriptor objects
@@ -325,21 +326,16 @@ public class DisplayObject
                         //check whether reference is null without dereferencing
                         ProxyReference proxy =
                             (ProxyReference) TypeUtil.getFieldProxy(object, ref.getName());
-                        //if (proxy != null) {
-                            DisplayReference newReference =
-                                new DisplayReference(proxy, ref,
-                                                     webConfig, webProperties, classKeys);
-                            references.put(fd.getName(), newReference);
-                        //}
-
+                        DisplayReference newReference = new DisplayReference(proxy, ref, webConfig,
+                                webProperties, classKeys);
+                        references.put(fd.getName(), newReference);
                     } else if (fd.isCollection()) {
                         Object fieldValue = TypeUtil.getFieldValue(object, fd.getName());
                         DisplayCollection newCollection =
                             new DisplayCollection((Collection) fieldValue,
-                                    (CollectionDescriptor) fd, webConfig, webProperties,
-                                    classKeys);
+                                    (CollectionDescriptor) fd, webConfig, webProperties, classKeys);
                         //if (newCollection.getSize() > 0) {
-                            collections.put(fd.getName(), newCollection);
+                        collections.put(fd.getName(), newCollection);
                         //}
                     }
                 }
@@ -353,10 +349,10 @@ public class DisplayObject
         refsAndCollections.putAll(collections);
     }
 
-/**
- * gets the fields to display on the object details page for this display object
- * @return map of fieldnames to display for this object
- */
+    /**
+     * gets the fields to display on the object details page for this display object
+     * @return map of fieldnames to display for this object
+     */
     public Map<String, Object> getFieldValues() {
         if (fieldValues == null || fieldValues.isEmpty()) {
             fieldValues = new HashMap<String, Object>();

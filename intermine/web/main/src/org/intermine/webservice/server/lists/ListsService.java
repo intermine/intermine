@@ -108,8 +108,8 @@ public class ListsService extends WebService
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
-            throw new BadRequestException("invalid " + ListsRequestParser.TYPE_PARAMETER 
-                    + " parameter." + " The specified type of the object doesn't exist: " 
+            throw new BadRequestException("invalid " + ListsRequestParser.TYPE_PARAMETER
+                    + " parameter." + " The specified type of the object doesn't exist: "
                     + input.getType());
         }
 
@@ -124,13 +124,13 @@ public class ListsService extends WebService
         if (it.hasNext()) {
             List<ResultElement> row = (ArrayList) it.next();
             if (it.hasNext()) {
-                throw new BadRequestException("Multiple objects of type " + input.getType() 
+                throw new BadRequestException("Multiple objects of type " + input.getType()
                         + " with public id " + input.getPublicId() + " were found.");
             }
             return ((ResultElement) row.get(0)).getId();
         } else {
-            throw new ResourceNotFoundException("No objects of type " + input.getType() 
-                    + " with public id " + input.getPublicId() + " were found.");            
+            throw new ResourceNotFoundException("No objects of type " + input.getType()
+                    + " with public id " + input.getPublicId() + " were found.");
         }
     }
 
@@ -141,7 +141,7 @@ public class ListsService extends WebService
                 .getServletContext()).get(type);
         for (FieldDescriptor desc : descs) {
             ret.add(type + "." + desc.getName());
-        } 
+        }
         return ret;
     }
 

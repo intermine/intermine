@@ -69,8 +69,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-                        ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
-      throws ObjectStoreException {
+            ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
         this.name = name;
         this.type = type;
         this.description = description;
@@ -118,8 +117,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param uos the ObjectStore of the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStore uos)
-    throws ObjectStoreException {
+    public InterMineBag(ObjectStore os, Integer savedBagId,
+            ObjectStore uos) throws ObjectStoreException {
         this.os = os;
         this.savedBagId = savedBagId;
         SavedBag savedBag = (SavedBag) uos.getObjectById(savedBagId, SavedBag.class);
@@ -209,8 +208,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param uosw an ObjectStoreWriter for the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void setProfileId(Integer profileId, ObjectStoreWriter uosw)
-    throws ObjectStoreException {
+    public void setProfileId(Integer profileId,
+            ObjectStoreWriter uosw) throws ObjectStoreException {
         this.profileId = profileId;
         SavedBag savedBag = store(uosw);
         this.savedBagId = savedBag.getId();
@@ -259,8 +258,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param uosw an ObjectStoreWriter for the userprofile database
      * @throws ObjectStoreException if something goes wrong
      */
-    public void setDescription(String description, ObjectStoreWriter uosw)
-    throws ObjectStoreException {
+    public void setDescription(String description,
+            ObjectStoreWriter uosw) throws ObjectStoreException {
         this.description = description;
         store(uosw);
     }
@@ -301,7 +300,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * {@inheritDoc}
      */
     public String getTitle() {
-       return getName();
+        return getName();
     }
 
     /**

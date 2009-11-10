@@ -45,13 +45,11 @@ public class HTMLWidget extends Widget
     @Override
     public void process() throws Exception {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setNotAnalysed(int notAnalysed) {
         // TODO Auto-generated method stub
-        
     }
 
 }

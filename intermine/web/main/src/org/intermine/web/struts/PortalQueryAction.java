@@ -116,7 +116,7 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalquery"), request);
             return mapping.findForward("failure");
         }
-        
+
         session.setAttribute(Constants.PORTAL_QUERY_FLAG, Boolean.TRUE);
 
         // Set collapsed/uncollapsed state of object details UI
@@ -135,7 +135,7 @@ public class PortalQueryAction extends InterMineAction
             String qid = loadObjectDetails(servletContext, session, request, response,
                                            profile.getUsername(), extId, origin);
             return new ForwardParameters(mapping.findForward("waiting"))
-            .addParameter("qid", qid).forward();
+                .addParameter("qid", qid).forward();
         }
 
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -173,17 +173,17 @@ public class PortalQueryAction extends InterMineAction
         }
 
         PathQuery pathQuery = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null, 
+        List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null,
                                                                true);
         pathQuery.setViewPaths(view);
-        pathQuery.addConstraint(className, 
+        pathQuery.addConstraint(className,
                                 Constraints.lookup(StringUtils.replace(extId, ",", "\t")));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os, 
+        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
                                               profile.getUserId(), uosw);
         List<Integer> bagList = new ArrayList();
 
@@ -191,11 +191,11 @@ public class PortalQueryAction extends InterMineAction
         BagQueryResult bagQueryResult = returnBagQueryResults.values().iterator().next();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className, 
+        DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className,
                                                    null);
 
         ActionMessages actionMessages = new ActionMessages();
-        
+
         // Use custom converters
         Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
@@ -290,7 +290,7 @@ public class PortalQueryAction extends InterMineAction
         osw.close();
         profile.saveBag(imBag.getName(), imBag);
         return new ForwardParameters(mapping.findForward("bagDetails"))
-        .addParameter("bagName", imBag.getName()).forward();
+            .addParameter("bagName", imBag.getName()).forward();
     }
 
     private ActionForward goToResults(ActionMapping mapping,
@@ -299,13 +299,12 @@ public class PortalQueryAction extends InterMineAction
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))
-        .addParameter("table", identifier)
-        .addParameter("trail", "").forward();
+            .addParameter("table", identifier).addParameter("trail", "").forward();
     }
 
     private ActionForward goToObjectDetails(ActionMapping mapping, String id) {
         return new ForwardParameters(mapping.findForward("objectDetails"))
-        .addParameter("id", id).forward();
+            .addParameter("id", id).forward();
     }
 
     private ActionForward goToNoResults(ActionMapping mapping,
@@ -318,11 +317,9 @@ public class PortalQueryAction extends InterMineAction
      * @deprecated Use the BagQueryRunner instead
      */
     private String loadObjectDetails(ServletContext servletContext,
-                                                HttpSession session, HttpServletRequest request,
-                                                HttpServletResponse response, String userName,
-                                                String extId,
-                                                @SuppressWarnings("unused") String origin)
-                                                throws InterruptedException {
+            HttpSession session, HttpServletRequest request, HttpServletResponse response,
+            String userName, String extId,
+            @SuppressWarnings("unused") String origin) throws InterruptedException {
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
         Integer op = ConstraintOp.EQUALS.getIndex();
@@ -346,7 +343,7 @@ public class PortalQueryAction extends InterMineAction
         SessionMethods.loadQuery(queryCopy, request.getSession(), response);
 
         QueryMonitorTimeout clientState
-                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+            = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages, false, queryCopy);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
