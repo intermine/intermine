@@ -102,12 +102,8 @@ public class DataLoaderHelper
         return descriptorSources;
     }
 
-    private static ThreadLocal<Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>>> getPrimaryKeyCache
-        = new ThreadLocal<Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>>>() {
-            @Override protected Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> initialValue() {
-                return new HashMap<GetPrimaryKeyCacheKey, Set<PrimaryKey>>();
-            }
-        };
+    private static Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> getPrimaryKeyCache
+        = new HashMap<GetPrimaryKeyCacheKey, Set<PrimaryKey>>();
 
     /**
      * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
@@ -123,10 +119,9 @@ public class DataLoaderHelper
      */
     public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source,
             ObjectStore os) {
-        Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> cache = getPrimaryKeyCache.get();
         GetPrimaryKeyCacheKey key = new GetPrimaryKeyCacheKey(cld, source);
-        synchronized (cache) {
-            Set<PrimaryKey> keySet = cache.get(key);
+        synchronized (getPrimaryKeyCache) {
+            Set<PrimaryKey> keySet = getPrimaryKeyCache.get(key);
             if (keySet == null) {
                 keySet = new LinkedHashSet<PrimaryKey>();
                 Properties keys = getKeyProperties(source);
@@ -207,6 +202,8 @@ public class DataLoaderHelper
                                     String sql = "CREATE INDEX " + tableName + "__" + keyName
                                         + " ON " + tableName + " (" + StringUtil.join(fields, ", ")
                                         + ")";
+                                    System.out .println("Creating index: " + sql);
+                                    LOG.info("Creating index: " + sql);
                                     Connection conn = null;
                                     try {
                                         conn = osimi.getConnection();
@@ -227,7 +224,7 @@ public class DataLoaderHelper
                             + source.getName() + " in file " + source.getName()
                             + "_keys.properties");
                 }
-                cache.put(key, keySet);
+                getPrimaryKeyCache.put(key, keySet);
             }
             return keySet;
         }
