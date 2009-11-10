@@ -485,7 +485,7 @@ dcczip new
 cd $DATADIR/update/validated
 dcczip update
 
-------------------------------------------------------------------------
+#------------------------------------------------------------------------
 # check if any update in the ERR directory, decompress, mv and rename it
 #------------------------------------------------------------------------
 cd $DATADIR/new/err
