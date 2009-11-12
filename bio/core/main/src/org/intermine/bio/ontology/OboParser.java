@@ -89,6 +89,7 @@ public class OboParser
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.
+        long startTime = System.currentTimeMillis();
         OBOFileAdapter.OBOAdapterConfiguration readConfig =
             new OBOFileAdapter.OBOAdapterConfiguration();
 
@@ -116,6 +117,8 @@ public class OboParser
         // END OF OBO2EDIT code
         readRelations(new BufferedReader(new FileReader(temp.getCanonicalPath())));
         temp.delete();
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Processed transitive closure of OBO file, took: " + timeTaken + " ms");
     }
 
     /**
@@ -137,8 +140,8 @@ public class OboParser
     /**
      * @return a set of DagTerms
      */
-    public Set getOboTerms() {
-        return new HashSet(terms.values());
+    public Set<OboTerm> getOboTerms() {
+        return new HashSet<OboTerm>(terms.values());
     }
 
     /**
@@ -204,7 +207,6 @@ public class OboParser
 
         in.close();
 
-        //LOG.info("Found " + tagValuesList.size() + " root terms");
 
         // Build the OboTypeDefinition objects
         OboTypeDefinition oboType = new OboTypeDefinition("is_a", "is_a", true);
@@ -217,7 +219,7 @@ public class OboParser
             oboType = new OboTypeDefinition(id, name, isTransitive);
             types.put(oboType.getId() , oboType);
         }
-
+        
         // Just build all the OboTerms disconnected
         for (Iterator iter = termTagValuesList.iterator(); iter.hasNext();) {
             Map tvs = (Map) iter.next();
