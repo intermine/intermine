@@ -1967,7 +1967,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             sql = SqlGenerator.generate(subQ, schema, db, null,
                                     SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
                             PrecomputedTable subPt = ptm.lookupSql(sql);
-                            if (pt == null) {
+                            if (subPt == null) {
                                 subPt = new PrecomputedTable(
                                         new org.intermine.sql.query.Query(sql), sql,
                                         "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
@@ -1981,7 +1981,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             sql = SqlGenerator.generate(subQ, schema, db, null,
                                     SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
                             PrecomputedTable subPt = ptm.lookupSql(sql);
-                            if (pt == null) {
+                            if (subPt == null) {
                                 subPt = new PrecomputedTable(
                                         new org.intermine.sql.query.Query(sql), sql,
                                         "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
@@ -2033,8 +2033,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         if (pts != null) {
                             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
                             for (PrecomputedTable pt : pts) {
-                                if ("goFaster".equals(pt.getCategory())) {
-                                    ptm.deleteTableFromDatabase(pt.getName());
+                                if (pt == null) {
+                                    LOG.error("Null PrecomputedTable in GoFaster Map " + pts);
+                                } else {
+                                    if ("goFaster".equals(pt.getCategory())) {
+                                        ptm.deleteTableFromDatabase(pt.getName());
+                                    }
                                 }
                             }
                         }
