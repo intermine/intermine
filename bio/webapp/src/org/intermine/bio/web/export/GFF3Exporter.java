@@ -103,6 +103,7 @@ public class GFF3Exporter implements Exporter
         gffFields.add("chromosomeLocation.end");
         gffFields.add("chromosomeLocation.strand");
         gffFields.add("primaryIdentifier");
+        gffFields.add("score");
         Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement el = row.get(i);
