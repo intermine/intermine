@@ -82,11 +82,9 @@ public class TemplateController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -231,7 +229,7 @@ public class TemplateController extends TilesAction
                 String displayName = parent.getType();
                 if (displayNode.getPathString().indexOf('.') >= 0) {
                     displayName += " " + displayNode.getPathString()
-                    .substring(displayNode.getPathString().lastIndexOf(".") + 1);
+                        .substring(displayNode.getPathString().lastIndexOf(".") + 1);
                 }
                 names.put(c, displayName);
 

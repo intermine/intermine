@@ -116,7 +116,7 @@ public class TemplateSettingsForm extends ActionForm
      */
     public ActionErrors validate(@SuppressWarnings("unused")  ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
-         ActionErrors errors = null;
+        ActionErrors errors = null;
 
         if (!WebUtil.isValidName(name)) {
             errors = new ActionErrors();

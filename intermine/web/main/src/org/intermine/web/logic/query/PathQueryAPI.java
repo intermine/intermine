@@ -146,8 +146,8 @@ public class PathQueryAPI
     public static ProfileManager getProfileManager() {
         if (profileManager == null) {
             try {
-                String userProfileAlias
-                            = getProperties().getProperty("webapp.userprofile.os.alias");
+                String userProfileAlias = getProperties()
+                    .getProperty("webapp.userprofile.os.alias");
                 ObjectStoreWriter userProfileOs = ObjectStoreWriterFactory
                     .getObjectStoreWriter(userProfileAlias);
                 profileManager = new ProfileManager(getObjectStore(), userProfileOs);

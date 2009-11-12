@@ -117,7 +117,7 @@ public class BagQueryConfig
         List<BagQuery> bqs = preDefaultBagQueries.get(type);
         return ((bqs == null) ? new ArrayList<BagQuery>() : bqs);
     }
-    
+
     /**
      * Return a Map from converter Class name to field name to use in the url to get that field
      * @param type get converters for this type or a subtype of it

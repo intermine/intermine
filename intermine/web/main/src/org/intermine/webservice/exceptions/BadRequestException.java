@@ -13,7 +13,7 @@ package org.intermine.webservice.exceptions;
 import org.intermine.webservice.server.output.Output;
 
 /**
- * The BadRequestException is thrown by service when there is a problem with the request. 
+ * The BadRequestException is thrown by service when there is a problem with the request.
  *
  * @author Jakub Kulaviak
  */
@@ -49,5 +49,5 @@ public class BadRequestException extends ServiceException
 
     private void initErrorCode() {
         setHttpErrorCode(Output.SC_BAD_REQUEST);
-    }    
+    }
 }

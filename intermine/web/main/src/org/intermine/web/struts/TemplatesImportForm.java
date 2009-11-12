@@ -108,9 +108,9 @@ public class TemplatesImportForm extends ValidatorForm
             return errors;
         }
         try {
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                     SessionMethods.getGlobalSearchRepository(servletContext));
-           TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
+            TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();

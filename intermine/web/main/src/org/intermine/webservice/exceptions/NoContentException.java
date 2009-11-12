@@ -14,9 +14,9 @@ import org.intermine.webservice.server.output.Output;
 
 /**
  * The NoContentException is thrown by a service when the resource requested exists but
- * has an empty representation. 
- * 
- * @author Jakub Kulaviak 
+ * has an empty representation.
+ *
+ * @author Jakub Kulaviak
  */
 public class NoContentException extends ServiceException
 {

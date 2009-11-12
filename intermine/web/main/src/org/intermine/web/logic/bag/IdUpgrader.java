@@ -36,7 +36,7 @@ public interface IdUpgrader
      * @return true if upgrade should be performed
      */
     public boolean doUpgrade();
-    
+
     /**
      * An upgrader that always fails.  For use when upgrading shouldn't be happening.
      */

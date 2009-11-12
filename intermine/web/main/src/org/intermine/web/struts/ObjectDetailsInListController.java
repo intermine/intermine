@@ -33,13 +33,11 @@ public class ObjectDetailsInListController extends TilesAction
    /**
      * {@inheritDoc}
      */
-   @Override
-   public ActionForward execute(ComponentContext context,
-                                @SuppressWarnings("unused") ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-   throws Exception {
+    @Override
+    public ActionForward execute(ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         String list = (String) context.getAttribute("list");
         String objectid = (String) context.getAttribute("objectid");
         Map globalWebSearchables = WebSearchableListController.getFilterWebSearchables(request,

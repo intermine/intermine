@@ -14,9 +14,9 @@ package org.intermine.webservice.server.exceptions;
 import org.intermine.webservice.server.output.Output;
 
 /**
- * The ResourceNotFoundException is thrown by a service provider when an attempt is made to 
+ * The ResourceNotFoundException is thrown by a service provider when an attempt is made to
  * perform an operation upon a resource that cannot be found.
- * 
+ *
  * @author Jakub Kulaviak
  */
 public class ResourceNotFoundException extends ServiceException

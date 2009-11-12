@@ -115,7 +115,7 @@ public class ResultElement implements Serializable
         }
         return null;
     }
-    
+
     /**
      * @return the path
      */
@@ -168,5 +168,5 @@ public class ResultElement implements Serializable
         return (field == null ? 0 : field.hashCode())
             + (imObj == null ? 0 : 3 * imObj.hashCode());
     }
-    
+
 }

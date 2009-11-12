@@ -325,7 +325,7 @@ public class ObjectDetailsController extends InterMineAction
             Integer i = new Integer(osb.getBagId());
             // check that this is in our list
             if (list.contains(i.toString())) {
-               ret.add(bag);
+                ret.add(bag);
             }
         }
         return ret;

@@ -56,15 +56,11 @@ public class TableExportAction extends InterMineAction
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception if the application business logic throws
-     *  an exception
+     * @exception Exception if the application business logic throws an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping,
-            ActionForm form,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TableExportForm tef = (TableExportForm) form;
         String type = tef.getType();

@@ -125,7 +125,7 @@ public class ChangeTableAction extends InterMineDispatchAction
         pt.moveColumnRight(index);
         return makeForward(mapping, request, pt);
     }
-    
+
     /**
      * Swap two columns
      * @param mapping The ActionMapping used to select this instance
@@ -167,23 +167,24 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @return an ActionForward with parameters
      */
     protected ActionForward makeForward(ActionMapping mapping, HttpServletRequest request,
-                                        PagedTable pt) {
+            PagedTable pt) {
         String forwardName = request.getParameter("currentPage");
         if (forwardName.equals("results")) {
             ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
-                            .addParameter("table", request.getParameter("table")).addParameter(
-                                            "page", "" + pt.getPage());
+                .addParameter("table", request.getParameter("table")).addParameter(
+                        "page", "" + pt.getPage());
             if (request.getParameter("trail") != null) {
                 forward.addParameter("trail", request.getParameter("trail"));
             }
             return forward.forward();
-        } else
+        } else {
             if (forwardName.equals("bagDetails")) {
                 ForwardParameters forward = new ForwardParameters(mapping.findForward(forwardName))
-                                .addParameter("bagName", request.getParameter("bagName"))
-                                .addParameter("page", "" + pt.getPage());
+                    .addParameter("bagName", request.getParameter("bagName"))
+                    .addParameter("page", "" + pt.getPage());
                 return forward.forward();
+            }
+            return null;
         }
-        return null;
     }
 }

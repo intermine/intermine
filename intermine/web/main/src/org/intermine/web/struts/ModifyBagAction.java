@@ -180,11 +180,9 @@ public class ModifyBagAction extends InterMineAction
     }
 
     private boolean createBag(InterMineBag origBag, String newBagName,
-                              @SuppressWarnings("unused") Map<String, InterMineBag> allBags,
-                              ObjectStoreWriter userOSW,
-                              Profile profile,
-                              @SuppressWarnings("unused") HttpServletRequest request)
-            throws ObjectStoreException {
+            @SuppressWarnings("unused") Map<String, InterMineBag> allBags,
+            ObjectStoreWriter userOSW, Profile profile,
+            @SuppressWarnings("unused") HttpServletRequest request) throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone(userOSW);
         newBag.setDate(new Date());

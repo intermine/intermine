@@ -13,8 +13,8 @@ package org.intermine.web.logic.export.rowformatters;
 import org.intermine.web.logic.export.RowFormatterImpl;
 
 /**
- * 
  * Row formatter formats line as tab separated strings.
+ *
  * @author Jakub Kulaviak
  **/
 public class TabRowFormatter extends RowFormatterImpl
@@ -24,5 +24,5 @@ public class TabRowFormatter extends RowFormatterImpl
      */
     public TabRowFormatter() {
         super("\t", false);
-    }    
+    }
 }

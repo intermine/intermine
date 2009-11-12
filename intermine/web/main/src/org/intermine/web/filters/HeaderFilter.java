@@ -35,7 +35,7 @@ public class HeaderFilter implements Filter
      * {@inheritDoc}
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-    throws IOException, ServletException {
+        throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
 
         Enumeration<String> e = fc.getInitParameterNames();

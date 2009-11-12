@@ -51,7 +51,7 @@ public class LuceneIndex
                                           new StandardAnalyzer(), create);
         }
         return indexWriter;
-   }
+    }
 
     /**
      * close the current indexWriter
@@ -63,7 +63,7 @@ public class LuceneIndex
             indexWriter.close();
             indexWriter = null;
         }
-   }
+    }
 
     private void indexClass(LuceneObjectClass objClass) {
         try {
@@ -78,7 +78,6 @@ public class LuceneIndex
                 }
                 writer.addDocument(doc);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

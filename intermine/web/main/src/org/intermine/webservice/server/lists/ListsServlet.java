@@ -26,14 +26,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ListsServlet extends HttpServlet
 {
-    
     private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(request, response);
     }
 
@@ -41,12 +40,11 @@ public class ListsServlet extends HttpServlet
      * {@inheritDoc}}
      */
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(req, resp);
     }
 
-    private void runService(HttpServletRequest request,
-            HttpServletResponse response) {
+    private void runService(HttpServletRequest request, HttpServletResponse response) {
         // To avoid servlet caching always new service is created -->
         // Service has always new data and fields in executor are initialized
         // according new data

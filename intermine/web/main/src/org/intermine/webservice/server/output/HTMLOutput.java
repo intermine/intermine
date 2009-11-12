@@ -19,9 +19,8 @@ import java.io.PrintWriter;
  **/
 public class HTMLOutput extends MemoryOutput
 {
-    
     private PrintWriter writer;
-    
+
     private boolean htmlHeaderWritten = false;
 
     /**
@@ -31,7 +30,7 @@ public class HTMLOutput extends MemoryOutput
     public HTMLOutput(PrintWriter writer) {
         this.writer = writer;
     }
-    
+
     /**
      * Prints html closing tags.
      */
