@@ -12,6 +12,9 @@ package org.intermine.bio.web.export;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -36,6 +39,10 @@ import org.intermine.web.logic.results.ResultElement;
  */
 public class GFF3Exporter implements Exporter
 {
+    public static final Set<String> GFF_FIELDS = Collections
+        .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
+                        "chromosomeLocation.start", "chromosomeLocation.end",
+                        "chromosomeLocation.strand", "primaryIdentifier", "score")));
 
     PrintWriter out;
     private List<Integer> featureIndexes;
@@ -77,11 +84,19 @@ public class GFF3Exporter implements Exporter
                 List<ResultElement> row = resultIt.next();
                 exportRow(row);
             }
+            finishLastRow();
             out.flush();
         } catch (Exception ex) {
             throw new ExportException("Export failed", ex);
         }
     }
+
+    /* State for the exportRow method, to allow several rows to be merged. */
+    private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
+    private Integer lastLsfId = null;
+    private LocatedSequenceFeature lastLsf = null;
+    private Map<String, List<String>> attributes = null;
+    private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
     private void exportRow(List<ResultElement> row)
         throws ObjectStoreException,
@@ -93,41 +108,60 @@ public class GFF3Exporter implements Exporter
 
         LocatedSequenceFeature lsf = (LocatedSequenceFeature) elWithObject.getObject();
 
-        if (exportedIds.contains(lsf.getId())) {
+        if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
             return;
         }
 
-        Set<String> gffFields = new HashSet<String>();
-        gffFields.add("chromosome.primaryIdentifier");
-        gffFields.add("chromosomeLocation.start");
-        gffFields.add("chromosomeLocation.end");
-        gffFields.add("chromosomeLocation.strand");
-        gffFields.add("primaryIdentifier");
-        gffFields.add("score");
-        Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
+        if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+            GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
+                    attributes);
+
+            if (gff3Record != null) {
+                // have a chromsome ref and chromosomeLocation ref
+                if (!headerPrinted) {
+                    out.println("##gff-version 3");
+                    headerPrinted = true;
+                }
+
+                out.println(gff3Record.toGFF3());
+                exportedIds.add(lastLsf.getId());
+                writtenResultsCount++;
+            }
+            lastLsfId = null;
+            attributeVersions.clear();
+            seenAttributes.clear();
+        }
+
+        if (lastLsfId == null) {
+            attributes = new LinkedHashMap<String, List<String>>();
+        }
+
         for (int i = 0; i < row.size(); i++) {
             ResultElement el = row.get(i);
-            if (!gffFields.contains(attributesNames.get(i))) {
-                attributes.put(attributesNames.get(i), formatElementValue(el));
+            if (el != null) {
+                String attributeName = attributesNames.get(i);
+                if (!GFF_FIELDS.contains(attributeName)) {
+                    Set<Integer> seenAttributeValues = seenAttributes.get(attributeName);
+                    if (seenAttributeValues == null) {
+                        seenAttributeValues = new HashSet<Integer>();
+                        seenAttributes.put(attributeName, seenAttributeValues);
+                    }
+                    if (!seenAttributeValues.contains(el.getId())) {
+                        seenAttributeValues.add(el.getId());
+                        Integer version = attributeVersions.get(attributeName);
+                        if (version == null) {
+                            version = new Integer(1);
+                            attributes.put(attributeName, formatElementValue(el));
+                        } else {
+                            attributes.put(attributeName + version, formatElementValue(el));
+                        }
+                        attributeVersions.put(attributeName, new Integer(version.intValue() + 1));
+                    }
+                }
             }
         }
-
-        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames, sourceName,
-                attributes);
-
-        if (gff3Record == null) {
-            // no chromsome ref or no chromosomeLocation ref
-            return;
-        }
-
-        if (!headerPrinted) {
-            out.println("##gff-version 3");
-            headerPrinted = true;
-        }
-
-        out.println(gff3Record.toGFF3());
-        exportedIds.add(lsf.getId());
-        writtenResultsCount++;
+        lastLsfId = lsf.getId();
+        lastLsf = lsf;
     }
 
     private List<String> formatElementValue(ResultElement el) {
@@ -166,7 +200,7 @@ public class GFF3Exporter implements Exporter
     }
 
     /* Method must have different name than canExport because canExport() method
-     * is  inherited from Exporter interface */
+     * is inherited from Exporter interface */
     /**
      * @param clazzes classes of result row
      * @return true if this exporter can export result composed of specified classes
@@ -180,5 +214,22 @@ public class GFF3Exporter implements Exporter
      */
     public int getWrittenResultsCount() {
         return writtenResultsCount;
+    }
+
+    private void finishLastRow() {
+        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
+                attributes);
+
+        if (gff3Record != null) {
+            // have a chromsome ref and chromosomeLocation ref
+            if (!headerPrinted) {
+                out.println("##gff-version 3");
+                headerPrinted = true;
+            }
+
+            out.println(gff3Record.toGFF3());
+            writtenResultsCount++;
+        }
+        lastLsfId = null;
     }
 }

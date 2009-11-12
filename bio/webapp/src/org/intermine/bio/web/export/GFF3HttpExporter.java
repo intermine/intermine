@@ -93,8 +93,10 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             PrintWriter writer = HttpExportUtil.getPrintWriterForClient(request, out);
             List<String> paths = new LinkedList<String>();
             if (form != null) {
-                paths.addAll(StringUtil.
-                    serializedSortOrderToMap(form.getPathsString()).keySet());
+                for (String path : StringUtil.serializedSortOrderToMap(form.getPathsString())
+                        .keySet()) {
+                    paths.add(path.replace(':', '.'));
+                }
             } else {
                 // if no form provided take the paths from the PagedTable columns
                 for (Column col : pt.getColumns()) {
