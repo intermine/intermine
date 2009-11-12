@@ -295,7 +295,7 @@ public abstract class WebUtil
         return buf.toString();
     }
 
-    private static CacheMap<String, List> STATS_CACHE = new CacheMap();
+    private static final CacheMap<String, List> STATS_CACHE = new CacheMap();
 
     /**
      * Runs both queries and compares the results.

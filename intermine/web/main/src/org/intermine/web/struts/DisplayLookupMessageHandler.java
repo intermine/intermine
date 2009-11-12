@@ -135,9 +135,7 @@ public class DisplayLookupMessageHandler
                     actionMessages.add(Constants.LOOKUP_MSG, msg);
                 } else {
                     ActionMessage msg = new ActionMessage("results.lookup.wildcard.one",
-                                                              key + " (" + wildcards.get(key)
-                                                              .size()
-                                                              + ")");
+                            key + " (" + wildcards.get(key).size() + ")");
                     actionMessages.add(Constants.LOOKUP_MSG, msg);
                 }
             } else {

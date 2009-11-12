@@ -66,7 +66,7 @@ public class DisclosureHeadTag extends BaseDisclosureTag
 
     /**
      * @see DisclosureTag.getLink()
-     * @return link 
+     * @return link
      */
     public String getLink() {
         return parent.getLink();

@@ -53,9 +53,8 @@ public class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    getConvertedObjectMap(List<TemplateQuery> conversionTemplates,
-                          Class typeA, Class typeB, Object bag, ObjectStore os)
-    throws InterMineException {
+    getConvertedObjectMap(List<TemplateQuery> conversionTemplates, Class typeA, Class typeB,
+            Object bag, ObjectStore os) throws InterMineException {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bag);
         if (pq == null) {
             return null;

@@ -22,8 +22,9 @@ public class URLUtil
 {
 
     /**
-     * Encodes URL. Parses url and encodes parameter names and 
+     * Encodes URL. Parses url and encodes parameter names and
      * parameter values to be safe URL.
+     *
      * @param url url
      * @return encoded url
      */
@@ -49,15 +50,16 @@ public class URLUtil
                 ret += "=" + encodeString(parts[1]);
             }
             if (i != pars.length - 1) {
-                ret += "&";    
+                ret += "&";
             }
         }
         return ret;
     }
 
     /**
-     * Encodes string to be URL safe. For encoding URL use encodeURL 
+     * Encodes string to be URL safe. For encoding URL use encodeURL
      * method.
+     *
      * @param s string to be encoded
      * @return encoded string
      */

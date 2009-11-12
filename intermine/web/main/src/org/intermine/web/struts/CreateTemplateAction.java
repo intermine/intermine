@@ -152,8 +152,8 @@ public class CreateTemplateAction extends InterMineAction
             try {
                 if (query.getInfo() == null) {
                     Map<String, InterMineBag> allBags =
-                        WebUtil.getAllBags(profile.getSavedBags(), 
-                        SessionMethods.getGlobalSearchRepository(servletContext));
+                        WebUtil.getAllBags(profile.getSavedBags(),
+                                SessionMethods.getGlobalSearchRepository(servletContext));
                     query.setInfo(os.estimate(MainHelper.makeQuery(query, allBags,
                                     servletContext, null)));
                 }
@@ -196,7 +196,6 @@ public class CreateTemplateAction extends InterMineAction
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
 
         return new ForwardParameters(mapping.findForward("mymine"))
-        .addParameter("subtab", "templates").forward();
+            .addParameter("subtab", "templates").forward();
     }
-
 }

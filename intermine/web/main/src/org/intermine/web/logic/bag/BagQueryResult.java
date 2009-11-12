@@ -59,8 +59,10 @@ public class BagQueryResult
 
     /**
      * Get any results that require some user input before adding to the bag.
-     * [issue type -> [query -> [input string -> List of InterMineObjects]]] or for issue type of
-     * "TYPE_TRANSLATED": [issue type -> [query -> [input string -> List of ConvertedObjectPair]]
+     * [issue type -&gt; [query -&gt; [input string -&gt; List of InterMineObjects]]] or for issue
+     * type of "TYPE_TRANSLATED": [issue type -&gt; [query -&gt; [input string -&gt; List of
+     * ConvertedObjectPair]]
+     *
      * @return a map from issues type to queries to input to possible objects
      */
     public Map<String, Map<String, Map<String, List>>> getIssues() {
@@ -94,9 +96,10 @@ public class BagQueryResult
     }
 
     /**
-     * Get any exact matches found by the queries [id -> [input strings].
+     * Get any exact matches found by the queries [id -&gt; [input strings].
      * If the same input string appears twice in the initial list it will
      * appear twice in the list of inputs matching the InterMineObject id.
+     *
      * @return a map from InterMineObject id to list of input strings
      */
     public Map<Integer, List> getMatches() {
@@ -106,7 +109,8 @@ public class BagQueryResult
     /**
      * Get ids of all InterMineObjects returned that were matches or issues for this
      * bag query lookup.
-     * @return the set of all ids that were matches or issues 
+     *
+     * @return the set of all ids that were matches or issues
      */
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();
@@ -132,6 +136,7 @@ public class BagQueryResult
 
     /**
      * Add a new match from an input string to an InterMineObject id.
+     *
      * @param input the original input string entered
      * @param id the id of an InterMineObject
      */
@@ -146,6 +151,7 @@ public class BagQueryResult
 
     /**
      * Get a Map of any input Strings for which objects of the right type could not be found.
+     *
      * @return a Map of from input string to null/object - null when the input doesn't match any
      * object of any type, otherwise a reference to a Set of the objects that matched
      */
@@ -157,6 +163,7 @@ public class BagQueryResult
      * Set the Map of unresolved input strings.  It is Map from input string to null/object - null
      * when the input doesn't match any object of any type, otherwise a reference to the object
      * that matched.
+     *
      * @param unresolved the new unresolved Map
      */
     public void setUnresolved(Map<String, Object> unresolved) {

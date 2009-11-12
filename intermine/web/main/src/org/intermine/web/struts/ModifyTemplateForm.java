@@ -38,7 +38,7 @@ public class ModifyTemplateForm extends ActionForm
     /**
      * Initialiser
      */
-   public void initialise() {
+    public void initialise() {
         selected = new String[0];
     }
 
@@ -97,8 +97,8 @@ public class ModifyTemplateForm extends ActionForm
         ActionErrors errors = null;
         if (selected.length == 0) {
             errors = new ActionErrors();
-             errors.add(ActionMessages.GLOBAL_MESSAGE,
-                        new ActionMessage("errors.modifyTemplate.noselect"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.modifyTemplate.noselect"));
         }
         return errors;
     }

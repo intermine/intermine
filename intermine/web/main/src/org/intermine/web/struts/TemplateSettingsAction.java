@@ -41,19 +41,16 @@ public class TemplateSettingsAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
 
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
 
-        TemplateBuildState tbs
-        = (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants
+                .TEMPLATE_BUILD_STATE);
 
         tbs.setDescription(tsf.getDescription());
         tbs.setName(tsf.getName());

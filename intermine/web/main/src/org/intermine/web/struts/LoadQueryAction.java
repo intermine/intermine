@@ -79,7 +79,7 @@ public class LoadQueryAction extends DispatchAction
                 return mapping.findForward("query");
             } else {
                 QueryMonitorTimeout clientState
-                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+                    = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
                 MessageResources msgs =
                     (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
                 String qid = SessionMethods.startQuery(clientState, session, msgs, false, query);

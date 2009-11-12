@@ -89,7 +89,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 for (String bot : bots) {
                     if (userAgent.contains(bot)) {
                         session.setMaxInactiveInterval(60);
-                         break;
+                        break;
                     }
                 }
             }
@@ -154,10 +154,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      *
      * {@inheritDoc}
      */
-    protected void processForwardConfig(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        ForwardConfig forward)
-                                        throws java.io.IOException, javax.servlet.ServletException {
+    protected void processForwardConfig(HttpServletRequest request, HttpServletResponse response,
+            ForwardConfig forward) throws java.io.IOException, javax.servlet.ServletException {
         ActionMessages messages = (ActionMessages) request.getAttribute(Globals.MESSAGE_KEY);
         ActionMessages errors = (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
 

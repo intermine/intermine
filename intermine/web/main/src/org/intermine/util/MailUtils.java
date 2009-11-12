@@ -93,7 +93,7 @@ public abstract class MailUtils
      * @throws Exception if there is a problem creating the email
      */
     public static void emailPasswordToken(String to, String url, final Map webProperties)
-    throws Exception {
+        throws Exception {
         final String user = (String) webProperties.get("mail.smtp.user");
         String smtpPort = (String) webProperties.get("mail.smtp.port");
         String mailText = (String) webProperties.get("mail.passwordText");

@@ -36,7 +36,7 @@ public class ModifyQueryForm extends ActionForm
     /**
      * Initialiser
      */
-   public void initialise() {
+    public void initialise() {
         selectedQueries = new String[0];
     }
 

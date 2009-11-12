@@ -22,12 +22,11 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
 /**
- * Web service that returns xml representation of model. 
+ * Web service that returns xml representation of model.
  * @author Jakub Kulaviak
  */
-public class ModelService extends WebService 
+public class ModelService extends WebService
 {
-
     /**
      * {@inheritDoc}}
      */
@@ -38,7 +37,7 @@ public class ModelService extends WebService
         try {
             response.getWriter().append(model.toString());
         } catch (IOException e) {
-            throw new InternalErrorException(e); 
+            throw new InternalErrorException(e);
         }
     }
 }

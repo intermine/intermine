@@ -14,10 +14,10 @@ import org.intermine.web.logic.tagging.TagNames;
 
 /**
  * Util class for working with aspect tags.
- *  
+ *
  * @author Jakub Kulaviak
  */
-public class AspectTagUtil 
+public class AspectTagUtil
 {
 
     /**

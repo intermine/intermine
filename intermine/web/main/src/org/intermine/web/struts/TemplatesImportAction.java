@@ -45,18 +45,15 @@ public class TemplatesImportAction extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
         Map templates = null;
         int deleted = 0, imported = 0, renamed = 0;
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(), 
+        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
                 SessionMethods.getGlobalSearchRepository(servletContext));
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
                 PathQuery.USERPROFILE_VERSION);
@@ -93,14 +90,11 @@ public class TemplatesImportAction extends InterMineAction
                 tr.globalChange(TagTypes.TEMPLATE);
             }
 
-            recordMessage(new ActionMessage("importTemplates.done",
-                                            new Integer(deleted),
-                                            new Integer(imported),
-                                            new Integer(renamed)),
-                                            request);
+            recordMessage(new ActionMessage("importTemplates.done", new Integer(deleted),
+                        new Integer(imported), new Integer(renamed)), request);
 
             return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "templates").forward();
+                .addParameter("subtab", "templates").forward();
 
         } finally {
             profile.enableSaving();
@@ -109,13 +103,9 @@ public class TemplatesImportAction extends InterMineAction
 
     // rebuild the template, but with the new special-character-free name
     private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
-
         TemplateQuery newTemplate = new TemplateQuery(newName, template.getTitle(),
-                                                      template.getDescription(),
-                                                      template.getComment(),
-                                                      template.getPathQuery(),
-                                                      template.getKeywords());
-
+                template.getDescription(), template.getComment(), template.getPathQuery(),
+                template.getKeywords());
         return newTemplate;
     }
 

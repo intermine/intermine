@@ -32,7 +32,6 @@ public class ConvertedObjectPair
     public ConvertedObjectPair(InterMineObject oldObject, InterMineObject newObject) {
         this.oldObject = oldObject;
         this.newObject = newObject;
-
     }
 
     /**
@@ -49,5 +48,5 @@ public class ConvertedObjectPair
      */
     public InterMineObject getOldObject() {
         return oldObject;
-    }    
+    }
 }

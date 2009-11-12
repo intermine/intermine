@@ -26,7 +26,6 @@ import org.intermine.web.logic.results.WebResults;
  */
 public interface BagConverter
 {
-
     /**
      * Returns a List<ResultRows> of converted objects
      * @param session the session
@@ -38,8 +37,8 @@ public interface BagConverter
      * @throws ObjectStoreException objectstore
      */
     public WebResults getConvertedObjects(HttpSession session, String parameters,
-                                    List<Integer> fromList, String type)
-                                    throws ClassNotFoundException, ObjectStoreException;
+            List<Integer> fromList, String type)
+        throws ClassNotFoundException, ObjectStoreException;
 
     /**
      * Get the ActionMessage to display in the webapp
@@ -53,6 +52,5 @@ public interface BagConverter
      * @throws UnsupportedEncodingException exception
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
-                                          String type, String organism)
-                                          throws ObjectStoreException, UnsupportedEncodingException;
+            String type, String organism) throws ObjectStoreException, UnsupportedEncodingException;
 }

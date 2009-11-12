@@ -29,7 +29,7 @@ public class QuickSearchForm extends ActionForm
     private static final long serialVersionUID = 1L;
 
     private String value, parsedValue;
-    
+
     private String quickSearchType;
 
     /**
@@ -39,14 +39,12 @@ public class QuickSearchForm extends ActionForm
         reset();
     }
 
-
     /**
      * @return the quickSearchType
      */
     public String getQuickSearchType() {
         return quickSearchType;
     }
-
 
     /**
      * @param quickSearchType the quickSearchType to set
@@ -55,7 +53,6 @@ public class QuickSearchForm extends ActionForm
         this.quickSearchType = quickSearchType;
     }
 
-
     /**
      * @return the value
      */
@@ -63,14 +60,12 @@ public class QuickSearchForm extends ActionForm
         return value;
     }
 
-
     /**
      * @param value the value to set
      */
     public void setValue(String value) {
         this.value = value;
     }
-
 
     /**
      * @return the parsed value
@@ -90,14 +85,13 @@ public class QuickSearchForm extends ActionForm
         try {
             o = ConstraintValueParser.parse(value, String.class, ConstraintOp.EQUALS);
         } catch (ParseValueException ex) {
-            errors.add(ActionErrors.GLOBAL_MESSAGE, 
-                            new ActionMessage("errors.message", ex.getMessage()));
+            errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.message", ex.getMessage()));
         }
         parsedValue = o.toString();
 
         return errors;
     }
-
 
     /**
      * Reset form bean.

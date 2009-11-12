@@ -59,7 +59,7 @@ public class ModifyQueryAction extends InterMineAction
         }
         if (request.getParameter("export") != null) {
             return export(mapping, form, request, response);
-        } 
+        }
         LOG.error("Don't know what to do");
         return null;
     }
@@ -101,11 +101,10 @@ public class ModifyQueryAction extends InterMineAction
 
         if ("history".equals(type)) {
             return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "history").forward();
+                .addParameter("subtab", "history").forward();
         }
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "saved").forward();
-        
     }
 
     /**

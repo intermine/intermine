@@ -148,7 +148,7 @@ public class BagQuery
      * @throws ClassNotFoundException if class specified by type not found
      */
     public Query getQueryForWildcards(Collection<String> bag, String extraFieldValue)
-    throws ClassNotFoundException {
+        throws ClassNotFoundException {
         Query q = QueryCloner.cloneQuery(getQuery(Collections.EMPTY_SET, extraFieldValue));
         Map<QueryEvaluable, ConstraintSet> nodes = new HashMap<QueryEvaluable, ConstraintSet>();
         if (q.getConstraint() instanceof BagConstraint) {

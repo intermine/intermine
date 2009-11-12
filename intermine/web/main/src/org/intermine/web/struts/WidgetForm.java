@@ -243,7 +243,7 @@ public class WidgetForm extends ActionForm
     public void setHighlight(String highlight) {
         this.highlight = highlight;
     }
-    
+
     /**
      * @param max the max to set
      */

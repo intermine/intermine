@@ -37,7 +37,7 @@ public class ModifyBagForm extends ActionForm
     /**
      * Initialiser
      */
-   public void initialise() {
+    public void initialise() {
         selectedBags = new String[0];
         newBagName = "";
     }

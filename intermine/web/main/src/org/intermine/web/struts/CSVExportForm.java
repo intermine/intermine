@@ -17,7 +17,7 @@ package org.intermine.web.struts;
 public class CSVExportForm extends TableExportForm
 {
     private static final long serialVersionUID = 1L;
-    
+
     private static final String CSV_FORMAT = "format";
 
     /**
@@ -27,7 +27,7 @@ public class CSVExportForm extends TableExportForm
     public String getFormat() {
         return (String) getExtraParams().get(CSV_FORMAT);
     }
-    
+
     /**
      * {@inheritDoc}
      */

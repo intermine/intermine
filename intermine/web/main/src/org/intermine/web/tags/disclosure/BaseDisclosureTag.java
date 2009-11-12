@@ -19,7 +19,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  * Base tag handler from which are all disclosure tag handlers derived.
  * @author Jakub Kulaviak
  */
-public class BaseDisclosureTag extends SimpleTagSupport 
+public class BaseDisclosureTag extends SimpleTagSupport
 {
 
     private String style;
@@ -59,7 +59,7 @@ public class BaseDisclosureTag extends SimpleTagSupport
 
     /**
      * Prints 'style' and 'class' attributes of element.
-     * @param out output 
+     * @param out output
      * @throws IOException if exception occurs during writing to output stream
      */
     protected void printStyleAndClass(JspWriter out) throws IOException {
