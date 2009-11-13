@@ -253,38 +253,6 @@
 </template>
 </template-queries>
 <tags>
-  <tag name="im:public" objectIdentifier="Gene_Protein" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="GO_name_Gene" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="GOname_GOidentifier" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_GO" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_Identifiers" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_allGOTerms" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Gene_particularGoannotation" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Organism_GoTerm_Gene" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Protein_GOterms" type="template">
-  </tag>
-  <tag name="im:public" objectIdentifier="Protein_GOtermsSpecificOntology" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Protein_GOterms" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_allGOTerms" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template">
-  </tag>
-  <tag name="im:frontpage" objectIdentifier="Gene_GO" type="template">
-  </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="Gene_Protein" type="template">
   </tag>
   <tag name="im:aspect:Genomics" objectIdentifier="GO_name_Gene" type="template">
