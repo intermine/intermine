@@ -18,7 +18,6 @@ import org.intermine.web.logic.widget.WidgetURLQuery;
 
 
 /**
- * {@inheritDoc}
  * @author Julie Sullivan
  */
 public class GoStatURLQuery implements WidgetURLQuery
@@ -59,8 +58,8 @@ public class GoStatURLQuery implements WidgetURLQuery
             + prefix + ".organism.name,"
             + prefix + ".goAnnotation.ontologyTerm.identifier,"
             + prefix + ".goAnnotation.ontologyTerm.name,"
-            + prefix + ".goAnnotation.ontologyTerm.relations.parentTerm.identifier,"
-            + prefix + ".goAnnotation.ontologyTerm.relations.parentTerm.name";
+            + prefix + ".goAnnotation.ontologyTerm.parents.identifier,"
+            + prefix + ".goAnnotation.ontologyTerm.parents.name";
 
         q.setView(pathStrings);
         q.setOrderBy(pathStrings);
@@ -73,7 +72,7 @@ public class GoStatURLQuery implements WidgetURLQuery
 
         if (!showAll) {
             //  go term
-            pathString = prefix + ".goAnnotation.ontologyTerm.relations.parentTerm";
+            pathString = prefix + ".goAnnotation.ontologyTerm.parents";
             q.addConstraint(pathString, Constraints.lookup(key), "C", "GOTerm");
             q.setConstraintLogic("A and B and C");
         } else {
