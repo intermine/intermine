@@ -208,7 +208,7 @@ public class SequenceProcessor extends ChadoProcessor
             String checksum = res.getString("md5checksum");
             Integer organismId = new Integer(res.getInt("organism_id"));
             if (chromosomeFeatureTypesSet.contains(type)) {
-                addToChromosomeMaps(organismId, uniqueName, featureId);
+                addToChromosomeMaps(organismId, fixChromosomeName(uniqueName), featureId);
             }
             int seqlen = 0;
             if (res.getObject("seqlen") != null) {
@@ -223,6 +223,14 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
    
+    private String fixChromosomeName (String name){
+        if (name.startsWith("chr")){
+            String fixedName = name.substring(3);
+            return fixedName;
+        }
+        return name;
+    }
+    
     
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
