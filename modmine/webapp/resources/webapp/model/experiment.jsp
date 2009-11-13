@@ -396,18 +396,20 @@ All GBrowse tracks generated for this experiment:
             	<c:set var="class" value=""/>
 				<tr><td>                 
         			${fc.key}:<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </html:link>
-			         &nbsp;&nbsp;&nbsp;export:
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB </html:link>
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV </html:link>
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3  </html:link>
-               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ  </html:link>         		
-        &nbsp;&nbsp;&nbsp;
-				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">createLIST</html:link>
+			         &nbsp;&nbsp;export:
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
+               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
+               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=gff3">GFF3</html:link>
+               &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=sequence">SEQ</html:link>         		
+               &nbsp;&nbsp;
+				<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=list&submission=${sub.dCCid}&feature=${fc.key}">create&nbsp;LIST</html:link>
           			</td>
       			</tr>
     		</c:forEach>
             <tr><td>
+            <span class="tinylink">
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
+            </span>
             </td></tr>
     		</table>
     		</div>
@@ -486,21 +488,19 @@ All GBrowse tracks generated for this experiment:
 
 <%-- FILES --%>
           <span class="filelink">
-                     <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
+          <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
 						<c:if test="${subFiles.key == sub.dCCid}">
             <c:forEach items="${filesPerSub}" var="filesNr" varStatus="nr_status">
-            <c:if test="${filesNr.key == sub.dCCid}">
-     <c:set var="nr" value="${filesNr.value}" /> 
-<c:choose>
-            <c:when test="${nr > 20}">
+              <c:if test="${filesNr.key == sub.dCCid}">
+              <c:set var="nr" value="${filesNr.value}" /> 
+              <c:choose>
+              <c:when test="${nr > 20}">
                 <a href="${urlPrefix}${sub.dCCid}/extracted"
                   title="Access the submission ${nr} files" class="value extlink"> 
-                  <c:out value="${nr} files" /> </a>            
-            </c:when>
-<c:otherwise>
-            
-							<c:forEach items="${subFiles.value}" var="fileName"
-								varStatus="file_status">
+                <c:out value="${nr} files" /> </a>            
+              </c:when>
+              <c:otherwise>
+							<c:forEach items="${subFiles.value}" var="fileName"	varStatus="file_status">
 								<br>
 								<a href="${urlPrefix}${sub.dCCid}/extracted/${fileName}"
 									title="Download ${fileName}" class="value extlink"> <c:out
