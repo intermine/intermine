@@ -15,17 +15,17 @@
     /*if (isExplorer()) {
       return true;
     }*/
-    if (jQuery('#' + id.replace(/\./g,'\\.')).html() == '') {
+    if ($(id).innerHTML=='') {
       new Ajax.Updater(id, '<html:rewrite action="/mainChange"/>',
         {parameters:'method=ajaxExpand&path='+path, asynchronous:true});
-      jQuery('#img_'+path).attr('src','images/minus.gif');
+      $('img_'+path).src='images/minus.gif';
     } else {
       // still need to call mainChange
-      jQuery('#img_'+path).attr('src','images/plus.gif');
+      $('img_'+path).src='images/plus.gif'; 
       path = path.substring(0, path.lastIndexOf('.'));
       new Ajax.Request('<html:rewrite action="/mainChange"/>',
         {parameters:'method=ajaxCollapse&path='+path, asynchronous:true});
-      jQuery('#'+id).html('');
+      $(id).innerHTML=''; 
     }
     return false;
   }
