@@ -1711,7 +1711,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("EX unified factor names: " + exFactorNames);
             
             LOG.info("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
-            LOG.info("PROP " + dccId + " typeToProp entries: " + typeToProp.entrySet());                        
+            LOG.debug("PROP " + dccId + " typeToProp entries: " + typeToProp.entrySet());                        
             
             List<Item> allPropertyItems = new ArrayList<Item>();
             
@@ -1849,17 +1849,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // factors.
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
-            
-                if (exFactor.equals("food") || exFactor.equals("exposure time")
-                    || exFactor.equals("threshold") || exFactor.equals("compound")
-                    || exFactor.equals("temperature")) {
-                    List<Item> extraPropItems = new ArrayList<Item>();
-                    extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
-                            typeToProp, new String[] {exFactor}));
-                    allPropertyItems.addAll(extraPropItems); 
-                    createExperimentalFactors(submissionId, exFactor, extraPropItems);
-                    exFactorNames.remove(exFactor);
-                }
+                List<Item> extraPropItems = new ArrayList<Item>();
+                extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
+                        typeToProp, new String[] {exFactor}));
+                allPropertyItems.addAll(extraPropItems); 
+                createExperimentalFactors(submissionId, exFactor, extraPropItems);
+                exFactorNames.remove(exFactor);
             }
 
             
@@ -1867,23 +1862,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
             
             
-            // this is the old logic used here to clean up remaining factors
-            for (String exFactor : exFactorNames) {
-                if (exFactor.startsWith(PCRPRIMER)) {
-                    createEFItem(submissionId, PCRPRIMER, exFactor, null);
-                    exFactorNames.remove(exFactor);
-                    continue;
-                } else if (exFactor.equalsIgnoreCase(COMPOUND)) {
-                    String[] factor = lookForEFactorInOtherWikiPages(typeToProp, 
-                            new String[]{COMPOUND_KEYS});
-                    String factorValue = factor[1];
-                    if (factorValue != null) {
-                        createEFItem(submissionId, COMPOUND, factorValue, null);
-                        exFactorNames.remove(COMPOUND);
-                    }
-                }
-               
-            }
             
             // deal with remaining factor names (e.g. the ones for which we did
             // not find a corresponding attribute
