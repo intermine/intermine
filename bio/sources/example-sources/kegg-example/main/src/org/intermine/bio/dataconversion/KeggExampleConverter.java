@@ -137,8 +137,7 @@ public class KeggExampleConverter extends BioFileConverter
             String[] pathwayIds = line[1].split(" ");
 
             // add each pathway to the Gene.pathways collection
-            for (int i = 0; i < pathwayIds.length; i++) {
-                String pathwayId = pathwayIds[i];
+            for (String pathwayId : pathwayIds) {
                 // getPathway() will create a new pathway or fetch it from a map if already seen
                 Item pathway = getPathway(pathwayId);
                 gene.addToCollection("pathways", pathway);
