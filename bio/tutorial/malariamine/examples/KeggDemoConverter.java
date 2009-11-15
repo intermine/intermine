@@ -118,4 +118,19 @@ public class KeggDemoConverter extends BioFileConverter
 
         }
     }
+
+    
+    /**
+     * Fetch the organism item - create and store the item on the first time called.
+     * @return an Item representing the organism
+     */
+    private Item getOrganism() throws ObjectStoreException {
+        if (organism == null) {
+            organism = createItem("Organism");
+            organism.setAttribute("taxonId", taxonId);
+            store(organism);
+        }
+        return organism;
+    }
+
 }
