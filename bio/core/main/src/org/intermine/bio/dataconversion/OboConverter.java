@@ -75,7 +75,7 @@ public class OboConverter extends DataConverter
     /**
      * Set to false to prevent storing OntologyRelation objects that include the relationship types
      * between terms.
-     * @param createrelations
+     * @param createrelations property to parse
      */
     public void setCreaterelations(String createrelations) {
         if (createrelations.equalsIgnoreCase("true")) {
@@ -228,7 +228,9 @@ public class OboConverter extends DataConverter
     }
 
     /**
-     * @param oboRelation
+     * Process and store OboRelations
+     * @param oboRelation the relation to process
+     * @throws ObjectStoreException if problem storing
      */
     protected void processRelation(OboRelation oboRelation)
     throws ObjectStoreException {
@@ -244,7 +246,7 @@ public class OboConverter extends DataConverter
                 Item relation = createItem("OntologyRelation");
                 relation.setReference("parentTerm", (Item) nameToTerm
                         .get(oboRelation.getParentTermId()));
-                relation.setReference("childTerm", (Item) nameToTerm.get(oboRelation.getChildTermId()));
+                relation.setReference("childTerm", nameToTerm.get(oboRelation.getChildTermId()));
                 relation.setAttribute("relationship", oboRelation.getRelationship().getName());
                 relation.setAttribute("direct", Boolean.toString(oboRelation.isDirect()));
                 relation.setAttribute("redundant", Boolean.toString(oboRelation.isRedundant()));
