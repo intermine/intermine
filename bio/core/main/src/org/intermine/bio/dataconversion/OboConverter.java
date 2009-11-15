@@ -91,9 +91,6 @@ public class OboConverter extends DataConverter
      * @throws Exception if an error occurs in processing
      */
     public void process() throws Exception {
-        if (true) {
-            return;
-        }
         nameToTerm = new HashMap<String, Item>();
         synToItem = new HashMap<OboTermSynonym, Item>();
         OboParser parser = new OboParser();
