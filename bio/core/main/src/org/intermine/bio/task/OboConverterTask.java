@@ -106,6 +106,7 @@ public class OboConverterTask extends ConverterTask
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }
+            configureDynamicAttributes(converter);
             converter.process();
         } catch (Exception e) {
             throw new BuildException(e);
