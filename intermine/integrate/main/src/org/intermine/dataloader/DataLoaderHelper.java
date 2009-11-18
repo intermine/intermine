@@ -10,6 +10,8 @@ package org.intermine.dataloader;
  *
  */
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,9 +33,14 @@ import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.intermine.DatabaseSchema;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;
@@ -95,6 +102,9 @@ public class DataLoaderHelper
         return descriptorSources;
     }
 
+    private static Map<GetPrimaryKeyCacheKey, Set<PrimaryKey>> getPrimaryKeyCache
+        = new HashMap<GetPrimaryKeyCacheKey, Set<PrimaryKey>>();
+
     /**
      * Return a Set of PrimaryKeys relevant to a given Source for a ClassDescriptor. The Set
      * contains all the primary keys that exist on a particular class that are used by the
@@ -104,68 +114,120 @@ public class DataLoaderHelper
      *
      * @param cld the ClassDescriptor
      * @param source the Source
+     * @param os the ObjectStore that these PrimaryKeys are used in, for creating indexes
      * @return a Set of PrimaryKeys
      */
-    public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source) {
-        Set<PrimaryKey> keySet = new LinkedHashSet();
-        Properties keys = getKeyProperties(source);
-        if (keys != null) {
-            if (!verifiedSources.contains(source)) {
-                String packageNameWithDot = cld.getName().substring(0, cld.getName()
-                        .lastIndexOf('.') + 1);
-                LOG.info("Verifying primary key config for source " + source + ", packageName = "
-                        + packageNameWithDot);
-                Iterator iter = keys.entrySet().iterator();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    String cldName = (String) entry.getKey();
-                    String keyList = (String) entry.getValue();
-                    ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
-                            packageNameWithDot + cldName);
-                    if  (iCld != null) {
-                        Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
+    public static Set<PrimaryKey> getPrimaryKeys(ClassDescriptor cld, Source source,
+            ObjectStore os) {
+        GetPrimaryKeyCacheKey key = new GetPrimaryKeyCacheKey(cld, source);
+        synchronized (getPrimaryKeyCache) {
+            Set<PrimaryKey> keySet = getPrimaryKeyCache.get(key);
+            if (keySet == null) {
+                keySet = new LinkedHashSet<PrimaryKey>();
+                Properties keys = getKeyProperties(source);
+                if (keys != null) {
+                    if (!verifiedSources.contains(source)) {
+                        String packageNameWithDot = cld.getName().substring(0, cld.getName()
+                                .lastIndexOf('.') + 1);
+                        LOG.info("Verifying primary key config for source " + source
+                                + ", packageName = " + packageNameWithDot);
+                        for (Map.Entry entry : keys.entrySet()) {
+                            String cldName = (String) entry.getKey();
+                            String keyList = (String) entry.getValue();
+                            if (!cldName.contains(".")) {
+                                ClassDescriptor iCld = cld.getModel().getClassDescriptorByName(
+                                        packageNameWithDot + cldName);
+                                if  (iCld != null) {
+                                    Map map = PrimaryKeyUtil.getPrimaryKeys(iCld);
 
+                                    String[] tokens = keyList.split(",");
+                                    for (int i = 0; i < tokens.length; i++) {
+                                        String token = tokens[i].trim();
+                                        if (map.get(token) == null) {
+                                            throw new IllegalArgumentException("Primary key "
+                                                    + token + " for class " + cldName
+                                                    + " required by datasource " + source.getName()
+                                                    + " in " + source.getName()
+                                                    + "_keys.properties is not defined in "
+                                                    + cld.getModel().getName()
+                                                    + "_keyDefs.properties");
+                                        }
+                                    }
+                                } else {
+                                    LOG.warn("Ignoring entry for " + cldName + " in file "
+                                            + cld.getModel().getName()
+                                            + "_keyDefs.properties - not in model!");
+                                }
+                            }
+                        }
+                        verifiedSources.add(source);
+                    }
+                    Map<String, PrimaryKey> map = PrimaryKeyUtil.getPrimaryKeys(cld);
+                    String cldName = TypeUtil.unqualifiedName(cld.getName());
+                    String keyList = (String) keys.get(cldName);
+                    if (keyList != null) {
                         String[] tokens = keyList.split(",");
                         for (int i = 0; i < tokens.length; i++) {
                             String token = tokens[i].trim();
                             if (map.get(token) == null) {
                                 throw new IllegalArgumentException("Primary key " + token
-                                        + " for class " + cldName + " required by datasource "
-                                        + source.getName() + " in " + source.getName()
-                                        + "_keys.properties is not defined in "
+                                        + " for class " + cld.getName()
+                                        + " required by data source " + source.getName() + " in "
+                                        + source.getName() + "_keys.properties is not defined in "
                                         + cld.getModel().getName() + "_keyDefs.properties");
+                            } else {
+                                keySet.add(map.get(token));
                             }
                         }
-                    } else {
-                        LOG.warn("Ignoring entry for " + cldName + " in file "
-                                + cld.getModel().getName() + "_keyDefs.properties - not in model!");
                     }
-                }
-                verifiedSources.add(source);
-            }
-            Map<String, PrimaryKey> map = PrimaryKeyUtil.getPrimaryKeys(cld);
-            String cldName = TypeUtil.unqualifiedName(cld.getName());
-            String keyList = (String) keys.get(cldName);
-            if (keyList != null) {
-                String[] tokens = keyList.split(",");
-                for (int i = 0; i < tokens.length; i++) {
-                    String token = tokens[i].trim();
-                    if (map.get(token) == null) {
-                        throw new IllegalArgumentException("Primary key " + token
-                                + " for class " + cld.getName() + " required by data source "
-                                + source.getName() + " in " + source.getName() + "_keys.properties"
-                                + " is not defined in " + cld.getModel().getName()
-                                + "_keyDefs.properties");
-                    } else {
-                        keySet.add(map.get(token));
+                    for (Map.Entry entry : keys.entrySet()) {
+                        String propKey = (String) entry.getKey();
+                        String fieldList = (String) entry.getValue();
+                        int posOfDot = propKey.indexOf('.');
+                        if (posOfDot > 0) {
+                            String propCldName = propKey.substring(0, posOfDot);
+                            if (cldName.equals(propCldName)) {
+                                String keyName = propKey.substring(posOfDot + 1);
+                                PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
+                                keySet.add(pk);
+                                if (os instanceof ObjectStoreInterMineImpl) {
+                                    ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+                                    DatabaseSchema schema = osimi.getSchema();
+                                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                                    String tableName = DatabaseUtil.getTableName(tableMaster);
+                                    List<String> fields = new ArrayList<String>();
+                                    for (String field : pk.getFieldNames()) {
+                                        fields.add(DatabaseUtil.generateSqlCompatibleName(field));
+                                    }
+                                    String sql = "CREATE INDEX " + tableName + "__" + keyName
+                                        + " ON " + tableName + " (" + StringUtil.join(fields, ", ")
+                                        + ")";
+                                    System.out .println("Creating index: " + sql);
+                                    LOG.info("Creating index: " + sql);
+                                    Connection conn = null;
+                                    try {
+                                        conn = osimi.getConnection();
+                                        conn.createStatement().execute(sql);
+                                    } catch (SQLException e) {
+                                        LOG.error("Index creation failed", e);
+                                    } finally {
+                                        if (conn != null) {
+                                            osimi.releaseConnection(conn);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+                } else {
+                    throw new IllegalArgumentException("Unable to find keys for source "
+                            + source.getName() + " in file " + source.getName()
+                            + "_keys.properties");
                 }
+                getPrimaryKeyCache.put(key, keySet);
             }
-        } else {
-            throw new IllegalArgumentException("Unable to find keys for source "
-                    + source.getName() + " in file " + source.getName() + "_keys.properties");
+            return keySet;
         }
-        return keySet;
     }
 
     /**
@@ -215,10 +277,10 @@ public class DataLoaderHelper
      * @throws MetaDataException if anything goes wrong
      */
     public static boolean objectPrimaryKeyNotNull(Model model, InterMineObject obj,
-            ClassDescriptor cld, PrimaryKey pk, Source source, IntToIntMap idMap)
-    throws MetaDataException {
+            ClassDescriptor cld, PrimaryKey pk, Source source,
+            IntToIntMap idMap) throws MetaDataException {
         Iterator pkFieldIter = pk.getFieldNames().iterator();
-      PK:
+    PK:
         while (pkFieldIter.hasNext()) {
             String fieldName = (String) pkFieldIter.next();
             FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
@@ -265,7 +327,7 @@ public class DataLoaderHelper
                 Set classDescriptors = model.getClassDescriptorsForClass(refObj.getClass());
                 Iterator cldIter = classDescriptors.iterator();
 
-              CLDS:
+            CLDS:
                 while (cldIter.hasNext()) {
                     ClassDescriptor refCld = (ClassDescriptor) cldIter.next();
 
@@ -275,7 +337,7 @@ public class DataLoaderHelper
                         primaryKeys =
                             new LinkedHashSet(PrimaryKeyUtil.getPrimaryKeys(refCld).values());
                     } else {
-                        primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source);
+                        primaryKeys = DataLoaderHelper.getPrimaryKeys(refCld, source, null);
                     }
 
                     Iterator pkSetIter = primaryKeys.iterator();
@@ -286,8 +348,8 @@ public class DataLoaderHelper
                         foundKey = true;
 
                         if (objectPrimaryKeyNotNull(model, refObj, refCld, refPK, source, idMap)) {
-                           foundNonNullKey = true;
-                           break CLDS;
+                            foundNonNullKey = true;
+                            break CLDS;
                         }
                     }
                 }
@@ -326,7 +388,7 @@ public class DataLoaderHelper
         if (fields == null) {
             fields = new HashSet<String>();
             for (ClassDescriptor cld : model.getClassDescriptorsForClass(clazz)) {
-                for (PrimaryKey pk : getPrimaryKeys(cld, source)) {
+                for (PrimaryKey pk : getPrimaryKeys(cld, source, null)) {
                     fields.addAll(pk.getFieldNames());
                 }
             }
@@ -356,6 +418,29 @@ public class DataLoaderHelper
                 PrimaryKeyCacheKey pkck = (PrimaryKeyCacheKey) o;
                 return (model == pkck.model) && clazz.equals(pkck.clazz)
                     && source.equals(pkck.source);
+            }
+            return false;
+        }
+    }
+
+    private static class GetPrimaryKeyCacheKey
+    {
+        private ClassDescriptor cld;
+        private Source source;
+
+        public GetPrimaryKeyCacheKey(ClassDescriptor cld, Source source) {
+            this.cld = cld;
+            this.source = source;
+        }
+
+        public int hashCode() {
+            return cld.getName().hashCode();
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof GetPrimaryKeyCacheKey) {
+                GetPrimaryKeyCacheKey key = (GetPrimaryKeyCacheKey) o;
+                return (cld == key.cld) && source.equals(key.source);
             }
             return false;
         }

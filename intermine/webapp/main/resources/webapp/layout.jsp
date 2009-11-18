@@ -19,7 +19,7 @@
   <head>
 
 <!-- for google webmaster -->
-<meta name="verify-v1" content="${WEB_PROPERTIES['searchengines.google']}" />
+<meta name="google-site-verification" content="${WEB_PROPERTIES['searchengines.google']}" />
 
 <!-- for yahoo -->
 <META name="y_key" content="${WEB_PROPERTIES['searchengines.yahoo']}" />

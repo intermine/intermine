@@ -15,12 +15,12 @@ import org.intermine.webservice.server.output.Output;
 
 /**
  * ServiceException is a base class for all service exceptions.
- *  
+ *
  * @author Jakub Kulaviak
  */
 public class ServiceException extends RuntimeException
 {
-    
+
     private int httpErrorCode  = Output.SC_INTERNAL_SERVER_ERROR;
 
     private static final long serialVersionUID = 1L;
@@ -48,14 +48,14 @@ public class ServiceException extends RuntimeException
     }
 
      /**
-      * {@inheritDoc} 
+      * {@inheritDoc}
       */
     public String getMessage() {
         if (super.getMessage() == null || super.getMessage().length() == 0) {
             return "Error code: " + getHttpErrorCode();
         } else {
             return super.getMessage();
-        }    
+        }
     }
     /**
      * @return http error code

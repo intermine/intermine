@@ -20,32 +20,32 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Runs ModelService web service. 
- * 
+ * Runs ModelService web service.
+ *
  * @author Jakub Kulaviak
  */
 public class ModelServlet extends HttpServlet
 {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(request, response);
     }
 
     /**
      * {@inheritDoc}}
-     */    
+     */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
         runService(req, resp);
     }
 
-    
+
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
         new ModelService().service(request, response);

@@ -45,23 +45,23 @@ public class TemplateForm extends ActionForm
 
     /** Maps containing form state for each constraint. */
     private Map<String, Object> attributeOps;
-    
-    private Map<String, Object> attributeValues; 
-    
+
+    private Map<String, Object> attributeValues;
+
     private Map parsedAttributeValues, useBagConstraint;
-    
+
     private Map extraValues, selectedBags, bagOps;
-    
+
     private String type, name;
-    
+
     private String view;
-    
+
     /** Name of type parameter **/
     public static final String TYPE_PARAMETER = "type";
 
     /** Name of name parameter **/
     public static final String NAME_PARAMETER = "name";
-    
+
     /**
      * Constructor
      */
@@ -289,7 +289,7 @@ public class TemplateForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-                
+
         String queryName = getName();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
@@ -340,11 +340,11 @@ public class TemplateForm extends ActionForm
                         parseVal = ConstraintValueParser.parse((String) attributeValues
                                         .get(key), fieldClass, constraintOp);
                     } catch (ParseValueException ex) {
-                        errors.add(ActionErrors.GLOBAL_MESSAGE, 
-                                        new ActionMessage("errors.message", ex.getMessage()));
+                        errors.add(ActionErrors.GLOBAL_MESSAGE,
+                                new ActionMessage("errors.message", ex.getMessage()));
                     }
                     if (parseVal instanceof String && appendWildcard) {
-                         parseVal = ((String) parseVal) + "%";
+                        parseVal = ((String) parseVal) + "%";
                     }
                     parsedAttributeValues.put(key, parseVal);
                 }

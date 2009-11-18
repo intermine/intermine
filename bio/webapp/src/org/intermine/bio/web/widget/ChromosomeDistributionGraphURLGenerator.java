@@ -60,12 +60,8 @@ public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURL
     /**
      * {@inheritDoc}
      */
-    public PathQuery generatePathQuery(ObjectStore os,
-                                       InterMineBag imBag,
-                                       @SuppressWarnings("unused") String category,
+    public PathQuery generatePathQuery(ObjectStore os, InterMineBag imBag, String category,
                                        @SuppressWarnings("unused") String series) {
-
-
         PathQuery q = new PathQuery(os.getModel());
         String bagType = imBag.getType();
 

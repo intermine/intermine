@@ -14,11 +14,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.chado.config.ConfigAction;
-import org.intermine.bio.chado.config.SetFieldConfigAction;
-
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.log4j.Logger;
+import org.intermine.bio.chado.config.ConfigAction;
+import org.intermine.bio.chado.config.SetFieldConfigAction;
+import org.intermine.util.StringUtil;
 
 /**
  * A converter for chado that handles WormBase specific configuration.
@@ -26,6 +27,7 @@ import org.apache.commons.collections.map.MultiKeyMap;
  */
 public class WormBaseProcessor extends SequenceProcessor
 {
+    private static final Logger LOG = Logger.getLogger(WormBaseProcessor.class);
     private Map<MultiKey, List<ConfigAction>> config;
 
     /**
@@ -84,7 +86,16 @@ public class WormBaseProcessor extends SequenceProcessor
     @Override
     protected String fixIdentifier(FeatureData fdat, String identifier) {
         
+        String uniqueName = fdat.getChadoFeatureUniqueName();
         String type = fdat.getInterMineType();
+
+        // the function is used without check for null only for uniquename and name 
+        // in SequenceProcessor.
+        // so we assume that uniquename is never null and that if null it is a name.
+        if (StringUtil.isEmpty(identifier)) {
+                identifier = uniqueName;
+                LOG.debug("Found NULL name for feature: " + uniqueName);
+            } 
         
         if (identifier.startsWith(type + ":")) {
             return identifier.substring(type.length() + 1);

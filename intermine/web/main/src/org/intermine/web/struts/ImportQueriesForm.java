@@ -54,8 +54,8 @@ public class ImportQueriesForm extends ValidatorForm
      * @return the Map
      * @throws Exception if a problem parsing query XML
      */
-    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags) 
-    throws Exception {
+    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags)
+        throws Exception {
         if (map == null) {
             // multiple queries must be wrapped by <queries> element, add it if not already there
             String xml = getXml().trim();

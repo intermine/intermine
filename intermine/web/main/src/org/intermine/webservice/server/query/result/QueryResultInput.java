@@ -14,20 +14,20 @@ import org.intermine.webservice.server.WebServiceInput;
 
 
 /**
- * QueryServiceInput is parameter object representing parameters for 
- * QueryResultService web service.  
- * 
+ * QueryServiceInput is parameter object representing parameters for
+ * QueryResultService web service.
+ *
  * @author Jakub Kulaviak
  **/
-public class QueryResultInput extends WebServiceInput 
+public class QueryResultInput extends WebServiceInput
 {
-    
+
     private String xml;
-    
+
     private boolean computeTotalCount = false;
-    
+
     private String layout;
-    
+
     /**
      * @return layout string specifying result table layout
      */
@@ -43,8 +43,8 @@ public class QueryResultInput extends WebServiceInput
     }
 
     /**
-     * Returns true if should be displayed total count of all available results. 
-     * @return value 
+     * Returns true if should be displayed total count of all available results.
+     * @return value
      */
     public boolean isComputeTotalCount() {
         return computeTotalCount;
@@ -59,7 +59,7 @@ public class QueryResultInput extends WebServiceInput
     }
 
     /**
-     * Gets xml query string.  
+     * Gets xml query string.
      * @return xml
      */
     public String getXml() {

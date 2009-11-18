@@ -15,28 +15,28 @@ import java.util.Map;
 
 
 /**
- * Abstract class for formatting result data. 
+ * Abstract class for formatting result data.
  * @author Jakub Kulaviak
  **/
 public abstract class Formatter
 {
 
     /**
-     * Returns formatted header. 
+     * Returns formatted header.
      * @param attributes attributes contained in header
      * @return formatted header
      */
     public abstract String formatHeader(Map<String, String> attributes);
 
     /**
-     * Returns formatted result item. 
-     * @param resultRow result row 
+     * Returns formatted result item.
+     * @param resultRow result row
      * @return formatted result row
-     */    
+     */
     public abstract String formatResult(List<String> resultRow);
 
     /**
-     * Returns formatted footer. 
+     * Returns formatted footer.
      * @return formatted footer
      */
     public abstract String formatFooter();

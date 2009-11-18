@@ -13,7 +13,7 @@ package org.intermine.webservice.server.lists;
 import org.intermine.webservice.server.WebServiceInput;
 
 /**
- * ListsServiceInput is parameter object representing parameters for ListService web service.   
+ * ListsServiceInput is parameter object representing parameters for ListService web service.
  * @author Jakub Kulaviak
  **/
 public class ListsServiceInput extends WebServiceInput
@@ -22,7 +22,7 @@ public class ListsServiceInput extends WebServiceInput
     private String publicId;
     private Integer mineId;
     private String type;
-    
+
     /**
      * @return object type
      */
@@ -38,10 +38,10 @@ public class ListsServiceInput extends WebServiceInput
         this.type = type;
     }
 
-    /** Returns id of object. It can be for example primaryIdentifier, 
-     * secondaryIdentifier or some other identifier.  
+    /** Returns id of object. It can be for example primaryIdentifier,
+     * secondaryIdentifier or some other identifier.
      * @return id of object
-     * **/
+     */
     public String getPublicId() {
         return publicId;
     }
@@ -49,7 +49,7 @@ public class ListsServiceInput extends WebServiceInput
     /** Sets id of object.
      * @param publicId object public id
      * @see #getPublicId()
-     * **/ 
+     */
     public void setPublicId(String publicId) {
         this.publicId = publicId;
     }

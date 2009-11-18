@@ -16,14 +16,14 @@ import java.util.Map;
 
 /**
  * Abstract class representing an output of a web service.
- * It depends on the output implementation if the written data are streamed to the user via http 
- * or saved in the memory.If the data are saved in memory they can be retrieved later. 
- * 
+ * It depends on the output implementation if the written data are streamed to the user via http
+ * or saved in the memory.If the data are saved in memory they can be retrieved later.
+ *
  * @author Jakub Kulaviak
  */
-public abstract class Output  
+public abstract class Output
 {
-    
+
     private Map<String, String> headerAttributes;
 
     /**
@@ -50,12 +50,12 @@ public abstract class Output
      * No content http status code.
      */
     public static final int SC_NO_CONTENT = 204;
-    
+
     /**
      * Resource not found http status code.
      */
     public static final int SC_NOT_FOUND = 404;
-    
+
     /**
      * Adds data to output.
      * @param item data
@@ -63,10 +63,10 @@ public abstract class Output
     public abstract void addResultItem(List<String> item);
 
     /**
-     * Flushes output. What it actually does depends at implementation. 
+     * Flushes output. What it actually does depends at implementation.
      */
     public abstract void flush();
-    
+
     /**
      * Sets header attributes that are displayed for example in xml header.
      * @param attributes header attributes
@@ -74,15 +74,15 @@ public abstract class Output
     public void setHeaderAttributes(Map<String, String> attributes) {
         this.headerAttributes = attributes;
     }
-    
+
     /**
-     * @see #setHeaderAttributes(Map) 
+     * @see #setHeaderAttributes(Map)
      * @return header attributes
      */
     public Map<String, String>  getHeaderAttributes() {
         return headerAttributes;
     }
-     
+
     /**
      * @return number of written results
      */

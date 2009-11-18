@@ -15,15 +15,15 @@ import java.util.List;
 
 
 /**
- * Translates strings between codes used in ConstraintOp class and abbreviations or 
+ * Translates strings between codes used in ConstraintOp class and abbreviations or
  * full code names of operations.
  * @author Jakub Kulaviak
  **/
 public class CodeTranslator
 {
-    
+
     private static List<Operation> operations = new ArrayList<Operation>();
-    
+
     static {
         operations.add(new Operation("=", "eq", "equals"));
         operations.add(new Operation("!=", "ne", "notequals"));
@@ -34,7 +34,7 @@ public class CodeTranslator
     }
 
     /**
-     * Returns corresponding code of translated operation.  
+     * Returns corresponding code of translated operation.
      * @param translated code, abbreviation or fullName of operation
      * @return translated code or original string if no translation found
      */
@@ -48,7 +48,7 @@ public class CodeTranslator
     }
 
     /**
-     * Returns corresponding abbreviation of translated operation.  
+     * Returns corresponding abbreviation of translated operation.
      * @param translated code, abbreviation or fullName of operation
      * @return abbreviation or original string if no translation found
      */
@@ -60,9 +60,9 @@ public class CodeTranslator
             return translated;
         }
     }
-    
+
     /**
-     * Returns corresponding fullName of translated operation.  
+     * Returns corresponding fullName of translated operation.
      * @param translated code, abbreviation or fullName of operation
      * @return translated code or original string if no translation found
      */
@@ -74,7 +74,7 @@ public class CodeTranslator
             return translated;
         }
     }
-    
+
     private static Operation getOperation(String translated) {
         for (Operation op : operations) {
             if (op.isEquivalent(translated)) {
@@ -84,21 +84,21 @@ public class CodeTranslator
         return null;
     }
 
-    private static class Operation 
+    private static class Operation
     {
-        
+
         private String  code;
-        
+
         private String abbrev;
-        
+
         private String fullName;
-        
+
         public Operation(String code, String abbrev, String fullName) {
             this.code = code;
             this.abbrev = abbrev;
             this.fullName = fullName;
         }
-     
+
         /**
          * @param other code, abbreviation or full name of other operation
          * @return true if other operation equals this operation

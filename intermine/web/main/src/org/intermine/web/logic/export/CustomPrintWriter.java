@@ -15,13 +15,13 @@ import java.io.PrintWriter;
 
 
 /**
- * Customized PrintWriter that terminates end of the lines with defined line 
+ * Customized PrintWriter that terminates end of the lines with defined line
  * separator. Can be used for example for windows export with CR+LF at end of the lines.
  * @author Jakub Kulaviak
  **/
 public class CustomPrintWriter extends PrintWriter
 {
-    
+
     private String lineSeparator;
 
     /**
@@ -33,13 +33,12 @@ public class CustomPrintWriter extends PrintWriter
         super(out);
         this.lineSeparator = lineSeparator;
     }
-    
-    
+
+
     /**
-    {@inheritDoc}
-    **/
-    @Override
-    public void println() {
+     *{@inheritDoc}
+     */
+    @Override public void println() {
         write(lineSeparator);
     }
 }

@@ -1558,7 +1558,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     new String[] {"array", "adf"},
                     new String[] {"compound", "Compound"},
                     new String[] {"incubation time", "Incubation Time"},
-                    new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"}
+                    new String[] {"RNAi reagent", "RNAi_reagent", "dsRNA"},
+                    new String[] {"temperature", "temp"}
     };
 
     private static List<String> makeLookupList(String initialLookup) {
@@ -1850,7 +1851,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (String exFactor : extraPropNames) {
             
                 if (exFactor.equals("food") || exFactor.equals("exposure time")
-                    || exFactor.equals("threshold") || exFactor.equals("compound")) {
+                    || exFactor.equals("threshold") || exFactor.equals("compound")
+                    || exFactor.equals("temperature")) {
                     List<Item> extraPropItems = new ArrayList<Item>();
                     extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty", 
                             typeToProp, new String[] {exFactor}));

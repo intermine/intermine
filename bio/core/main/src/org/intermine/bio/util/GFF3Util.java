@@ -110,7 +110,18 @@ public abstract class GFF3Util
             recordAttribute.put("ID", idList);
         }
 
-        return new GFF3Record(sequenceID, sourceName, type, start, end, null, strand, null,
+        Double score = null;
+        try {
+            for (Class c : DynamicUtil.decomposeClass(lsf.getClass())) {
+                if (TypeUtil.getFieldInfo(c, "score") != null) {
+                    score = (Double) TypeUtil.getFieldValue(lsf, "score");
+                }
+            }
+        } catch (IllegalAccessException e) {
+            // do nothing, we can't set the score
+        }
+        
+        return new GFF3Record(sequenceID, sourceName, type, start, end, score, strand, null,
                               recordAttribute);
     }
 }

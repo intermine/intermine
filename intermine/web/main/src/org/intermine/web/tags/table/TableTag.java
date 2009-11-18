@@ -24,17 +24,17 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  **/
 public class TableTag extends SimpleTagSupport
 {
-    
+
     private List<String> columnNames;
-    
-    private List<List<String>> rows; 
+
+    private List<List<String>> rows;
 
     private boolean treatColNames = false;
-    
-    private String noResultsMessage; 
+
+    private String noResultsMessage;
 
     /**
-     * @return true if column names should be formatted from 
+     * @return true if column names should be formatted from
      * 'Gene.name' to 'Gene > name' else false
      */
     public boolean isTreatColNames() {
@@ -72,7 +72,7 @@ public class TableTag extends SimpleTagSupport
         for (String name : columnNames) {
             sb.append("<th align=\"center\">");
             if (isTreatColNames()) {
-                sb.append(treatColumnName(name));    
+                sb.append(treatColumnName(name));
             } else {
                 sb.append(name);
             }
@@ -89,7 +89,7 @@ public class TableTag extends SimpleTagSupport
         ret = ret.replaceAll(repl, ". ");
         return ret;
     }
-    
+
     /**
      * @return table rows
      */
@@ -118,14 +118,14 @@ public class TableTag extends SimpleTagSupport
     public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
-    
+
     private String getBodyHtml() {
         if (rows == null) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
         if (rows.size() == 0) {
-            String ret = "<tr><td colspan=\"" + getColumnsCount() + "\">" 
+            String ret = "<tr><td colspan=\"" + getColumnsCount() + "\">"
                 + getNoResultsMessage() + "</td>";
             ret += "</tr>";
             return ret;
@@ -149,7 +149,7 @@ public class TableTag extends SimpleTagSupport
         }
         return sb.toString();
     }
-    
+
     /**
      * @return error message that is displayed when there are no results
      */
@@ -157,25 +157,24 @@ public class TableTag extends SimpleTagSupport
         if (noResultsMessage != null) {
             return noResultsMessage;
         } else {
-            return "There are no results. If you browsed "
-            + "through results go to the previous page.";
+            return "There are no results. If you browsed through results go to the previous page.";
         }
     }
-    
+
     /**
      * @param noResultsMessage error message that is displayed when there are no results
      */
     public void setNoResultsMessage(String noResultsMessage) {
         this.noResultsMessage = noResultsMessage;
     }
-    
+
     private int getColumnsCount() {
         if (columnNames != null) {
             return columnNames.size();
         }
         return 0;
     }
-    
+
     private String getEmptyCellsHtml(int count) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; i++) {

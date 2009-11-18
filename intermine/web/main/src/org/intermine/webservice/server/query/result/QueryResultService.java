@@ -37,26 +37,26 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.MemoryOutput;
 
 /**
- * Executes query and returns results. Other parameters in request can specify 
+ * Executes query and returns results. Other parameters in request can specify
  * range of returned results, format ...
  * For using of web service and parameter description see InterMine wiki pages.
- * 1) Validates parameters and tries validate xml query as much as possible. Validates xml 
- * query according to XML Schema and and finds out if there were some errors during unmarshalling 
- * PathQuery from xml.  
+ * 1) Validates parameters and tries validate xml query as much as possible. Validates xml
+ * query according to XML Schema and and finds out if there were some errors during unmarshalling
+ * PathQuery from xml.
  * 2) Executes created PathQuery.
  * 3) Print results to output.
  * @author Jakub Kulaviak
  */
 
-public class QueryResultService extends WebService 
+public class QueryResultService extends WebService
 {
 
     private static final String XML_SCHEMA_LOCATION = "webservice/query.xsd";
-    
+
     private static final int BATCH_SIZE = 5000;
 
     /**
-     * Executes service specific logic. 
+     * Executes service specific logic.
      * @param request request
      * @param response response
      */
@@ -64,7 +64,7 @@ public class QueryResultService extends WebService
             HttpServletResponse response) {
 
         QueryResultInput input = getInput();
-        
+
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
@@ -79,7 +79,7 @@ public class QueryResultService extends WebService
                 .getLayout());
     }
 
-    private void forward(PathQuery pathQuery, String title, String description, 
+    private void forward(PathQuery pathQuery, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
         List<String> columnNames = pathQuery.getViewStrings();
         if (getFormat() == WebService.HTML_FORMAT) {
@@ -93,27 +93,27 @@ public class QueryResultService extends WebService
             request.setAttribute("pageSize", input.getMaxCount());
             request.setAttribute("layout", layout);
             if (mineLink != null) {
-                request.setAttribute("mineLinkText", "Results in " 
+                request.setAttribute("mineLinkText", "Results in "
                         + InterMineAction.getWebProperties(request).getProperty("project.title"));
-                request.setAttribute("mineLinkUrl", mineLink);                
+                request.setAttribute("mineLinkUrl", mineLink);
             }
-            try {   
+            try {
                 getHtmlForward().forward(request, response);
             } catch (Exception e) {
                 throw new InternalErrorException(e);
-            } 
-        }        
+            }
+        }
     }
-    
+
 
     private String createBaseLink() {
         String baseLink = request.getRequestURL().toString() + "?";
         List<String> names =  EnumerationUtils.toList(request.getParameterNames());
         while (names.contains(WebServiceRequestParser.START_PARAMETER)) {
-            names.remove(WebServiceRequestParser.START_PARAMETER);    
+            names.remove(WebServiceRequestParser.START_PARAMETER);
         }
         while (names.contains(WebServiceRequestParser.LIMIT_PARAMETER)) {
-            names.remove(WebServiceRequestParser.LIMIT_PARAMETER);    
+            names.remove(WebServiceRequestParser.LIMIT_PARAMETER);
         }
         boolean firstParameter = true;
         for (String name : names) {
@@ -130,7 +130,7 @@ public class QueryResultService extends WebService
         }
         return baseLink;
     }
-    
+
     private static String encode(Object o) {
         if (o == null) {
             return "";
@@ -139,7 +139,7 @@ public class QueryResultService extends WebService
                 return URLEncoder.encode(o.toString(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Encoding string failed: " + o.toString(), e);
-            }            
+            }
         }
     }
 
@@ -155,15 +155,15 @@ public class QueryResultService extends WebService
      * @param mineLink link pointing results of this query (template) in InterMine, can be null
      * @param layout results table layout string, can be null
      */
-    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  String title, 
+    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  String title,
             String description, WebServiceInput input, String mineLink, String layout) {
         PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
         executor.setBatchSize(BATCH_SIZE);
-        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult, 
+        ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult,
                 maxResults);
         try {
             resultIt.goFaster();
-            new ResultProcessor().write(resultIt, output);    
+            new ResultProcessor().write(resultIt, output);
         } finally {
             resultIt.releaseGoFaster();
         }
@@ -181,8 +181,8 @@ public class QueryResultService extends WebService
             throw new InternalErrorException(e);
         }
     }
-   
+
     private QueryResultInput getInput() {
         return new QueryResultRequestParser(request).getInput();
-    }    
+    }
 }

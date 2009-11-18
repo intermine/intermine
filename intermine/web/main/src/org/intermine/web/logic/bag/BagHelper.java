@@ -59,7 +59,7 @@ public class BagHelper
         }
         return false;
     }
-    
+
     /**
      * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must
      * select only the id field from the type the bag is to be created from.  The name will be
@@ -75,7 +75,7 @@ public class BagHelper
      * @throws ObjectStoreException if persistence problem
      */
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
-            String bagDescription, String bagType, Profile profile, ObjectStore os, 
+            String bagDescription, String bagType, Profile profile, ObjectStore os,
             BagQueryRunner bagQueryRunner) throws ObjectStoreException {
         if (pathQuery.getView().size() != 1) {
             throw new RuntimeException("Can only create bags from a PathQuery that selects just "
@@ -87,8 +87,8 @@ public class BagHelper
         }
         ObjectStoreWriterInterMineImpl osw = new ObjectStoreWriterInterMineImpl(os);
         Query q = MainHelper.makeQuery(pathQuery, null, null, bagQueryRunner, null, false);
-        
-        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os, 
+
+        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os,
                 profile.getUserId(), profile.getProfileManager().getProfileObjectStoreWriter());
         osw.addToBagFromQuery(bag.getOsb(), q);
         profile.saveBag(bag.getName(), bag);

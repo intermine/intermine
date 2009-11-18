@@ -22,13 +22,12 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Manager of public lists used by web service. 
+ * Manager of public lists used by web service.
  * @author Jakub Kulaviak
  **/
 public class ListManager
 {
-    
-   private HttpServletRequest request;
+    private HttpServletRequest request;
 
     /**
      * ListManager constructor.
@@ -37,7 +36,7 @@ public class ListManager
     public ListManager(HttpServletRequest request) {
         this.request = request;
     }
-    
+
     /**
      * Returns public lists that contain object with specified id.
      * @param objectId object id

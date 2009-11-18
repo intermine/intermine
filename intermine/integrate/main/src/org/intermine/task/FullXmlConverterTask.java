@@ -76,7 +76,7 @@ public class FullXmlConverterTask extends ConverterTask
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (getOsName() == null) {
             throw new BuildException("osName must be specified");
         }

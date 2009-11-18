@@ -49,7 +49,7 @@ public class PostProcessorTask extends DynamicAttributeTask
      * Run the task
      * @throws org.apache.tools.ant.BuildException if a problem occurs
      */
-    public void execute() throws BuildException {
+    public void execute() {
 
         ObjectStoreWriter osw = null;
 

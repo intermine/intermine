@@ -46,13 +46,11 @@ public class AvailableColumnsController extends InterMineAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused")
-                                 ActionForm form, HttpServletRequest request,
-                                 @SuppressWarnings("unused")
-    HttpServletResponse response) throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String table = request.getParameter("table");
-        PagedTable pt = SessionMethods.getResultsTable(session, table);     
+        PagedTable pt = SessionMethods.getResultsTable(session, table);
         request.setAttribute("availableColumns", getColumnsThatCanBeAdded(pt));
         return null;
     }
@@ -69,11 +67,11 @@ public class AvailableColumnsController extends InterMineAction
     }
 
     /**
-     * Returns paths that can be added to the given results table. 
-     * For each original path (column of result table) new paths are created adding other fields of 
+     * Returns paths that can be added to the given results table.
+     * For each original path (column of result table) new paths are created adding other fields of
      * the last type in path.
-     * For example:<br /> 
-     * For table with column Gene.name new paths like Gene.length, Gene.ncbiGeneId 
+     * For example:<br />
+     * For table with column Gene.name new paths like Gene.length, Gene.ncbiGeneId
      * and others are returned.
      * @param pt results table
      * @return columns that can be added
@@ -86,7 +84,7 @@ public class AvailableColumnsController extends InterMineAction
         return getWithoutOriginalPaths(ret, paths);
     }
 
-    private List<String> getAllLastFieldsPaths(List<Path> paths) { 
+    private List<String> getAllLastFieldsPaths(List<Path> paths) {
         Set<String> processed = new HashSet<String>();
         List<String> ret = new ArrayList<String>();
         for (Path path : paths) {
@@ -94,14 +92,14 @@ public class AvailableColumnsController extends InterMineAction
             String key = path.getPrefix().toStringNoConstraints();
             if (!processed.contains(key)) {
                 processed.add(key);
-                ret.addAll(getFieldPaths(desc, path.getPrefix().toStringNoConstraints()));    
+                ret.addAll(getFieldPaths(desc, path.getPrefix().toStringNoConstraints()));
             }
         }
         return ret;
     }
 
     private List<String> getWithoutOriginalPaths(List<String> output, List<Path> paths) {
-        List<String> ret = new ArrayList<String>();        
+        List<String> ret = new ArrayList<String>();
         Set<String> filterOut = new TreeSet<String>();
         for (Path path : paths) {
             filterOut.add(path.toStringNoConstraints());
@@ -118,8 +116,8 @@ public class AvailableColumnsController extends InterMineAction
         List<String> ret = new ArrayList<String>();
         Set<AttributeDescriptor> atts = desc.getAllAttributeDescriptors();
         for (AttributeDescriptor att : atts) {
-            if (att.getName() != "id") {
-                ret.add(prefix + "." + att.getName());    
+            if (!"id".equals(att.getName())) {
+                ret.add(prefix + "." + att.getName());
             }
         }
         return ret;

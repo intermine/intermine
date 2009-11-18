@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * Implements RowFormatter interface. 
+ * Implements RowFormatter interface.
  * @author Jakub Kulaviak
  **/
 public class RowFormatterImpl implements RowFormatter
@@ -24,7 +24,7 @@ public class RowFormatterImpl implements RowFormatter
     private String delimiter;
     private boolean quoted;
     private static final String QUOTE = "\"";
-    
+
     /**
      * Constructor.
      * @param delimiter used delimiter
@@ -34,11 +34,11 @@ public class RowFormatterImpl implements RowFormatter
         this.delimiter = delimiter;
         this.quoted = quoted;
     }
-    
+
     /**
-     * Formats objects to string. Just convert objects to strings 
+     * Formats objects to string. Just convert objects to strings
      * with toString method and quotes it if required or needed
-     * because delimiter is inside of string. Number is formatted 
+     * because delimiter is inside of string. Number is formatted
      * without quotations.
      * @param row row to be formatted
      * @return resulted string
@@ -58,7 +58,7 @@ public class RowFormatterImpl implements RowFormatter
             }
             if (i < row.size() - 1) {
                 sb.append(delimiter);
-            }            
+            }
         }
         return sb.toString();
     }

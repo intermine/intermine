@@ -55,11 +55,9 @@ public class QueryForGraphAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-                    throws Exception {
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
@@ -84,22 +82,15 @@ public class QueryForGraphAction extends InterMineAction
         Class clazz = TypeUtil.instantiate(urlGen);
         GraphCategoryURLGenerator urlGenerator = null;
         if (extraKey != null) {
-            Constructor constr = clazz.getConstructor(new Class[]
-                                                                {
-                String.class, String.class
-                                                                });
-            urlGenerator = (GraphCategoryURLGenerator)  constr.newInstance(new Object[] {
-            bagName, extraKey });
+            Constructor constr = clazz.getConstructor(new Class[] {String.class, String.class});
+            urlGenerator = (GraphCategoryURLGenerator) constr.newInstance(new Object[] {bagName,
+                extraKey});
         } else {
-            Constructor constr = clazz.getConstructor(new Class[]
-                                                                {
-                String.class
-                                                                });
-            urlGenerator = (GraphCategoryURLGenerator) constr.newInstance(new Object[] {
-            bagName });
+            Constructor constr = clazz.getConstructor(new Class[] {String.class});
+            urlGenerator = (GraphCategoryURLGenerator) constr.newInstance(new Object[] {bagName});
         }
-        QueryMonitorTimeout clientState
-        = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
+                * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = urlGenerator.generatePathQuery(os, bag, category, series);
         SessionMethods.loadQuery(pathQuery, session, response);
@@ -108,9 +99,7 @@ public class QueryForGraphAction extends InterMineAction
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
 
         return new ForwardParameters(mapping.findForward("waiting"))
-        .addParameter("trail", "|bag." + bagName)
-        .addParameter("qid", qid).forward();
-
+            .addParameter("trail", "|bag." + bagName)
+            .addParameter("qid", qid).forward();
     }
-
 }

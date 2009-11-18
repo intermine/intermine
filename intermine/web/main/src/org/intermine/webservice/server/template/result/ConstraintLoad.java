@@ -14,25 +14,25 @@ import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Simple object that carries constraint values for other processing.
- *   
+ *
  * @author Jakub Kulaviak
  **/
 public class ConstraintLoad
 {
     private ConstraintOp op;
-    
+
     private String value;
-    
+
     private String extraValue;
 
     private String pathId;
-    
+
     private String code;
 
     private String parameterName;
 
     /**
-     * 
+     *
      * @return parameter name
      */
     public String getParameterName() {
@@ -40,7 +40,7 @@ public class ConstraintLoad
     }
 
     /**
-     * 
+     *
      * @param parameterName saves to the object name of the path parameter of this constraint
      * For example: cons1, cons2 ...
      */
@@ -49,7 +49,7 @@ public class ConstraintLoad
     }
 
     /**
-     * 
+     *
      * @return code
      */
     public String getCode() {
@@ -57,7 +57,7 @@ public class ConstraintLoad
     }
 
     /**
-     * 
+     *
      * @param code code
      */
     public void setCode(String code) {
@@ -65,7 +65,7 @@ public class ConstraintLoad
     }
 
     /**
-     * 
+     *
      * @return path that is used as constraint id
      */
     public String getPathId() {
@@ -73,7 +73,7 @@ public class ConstraintLoad
     }
 
     /**
-     * 
+     *
      * @param pathId path that is used as constraint id
      */
     public void setPathId(String pathId) {
@@ -87,11 +87,11 @@ public class ConstraintLoad
      * @param code constraint code
      * @param op constraint operation
      * @param value value restricting result
-     * @param extraValue optional extra value used for lookup, automatically restricts 
-     * results according other criterion, for example for Gene there can specified organism name, 
-     * restricts resulted genes to specified organism 
+     * @param extraValue optional extra value used for lookup, automatically restricts
+     * results according other criterion, for example for Gene there can specified organism name,
+     * restricts resulted genes to specified organism
      */
-    public ConstraintLoad(String parameterName, String pathId, String code, ConstraintOp op, 
+    public ConstraintLoad(String parameterName, String pathId, String code, ConstraintOp op,
             String value, String extraValue) {
         this.code = code;
         this.parameterName = parameterName;
@@ -134,7 +134,7 @@ public class ConstraintLoad
     }
 
     /**
-     * Returns extra value. 
+     * Returns extra value.
      * @return value
      * @see ConstraintLoad
      */
@@ -149,5 +149,5 @@ public class ConstraintLoad
      */
     public void setExtraValue(String extraValue) {
         this.extraValue = extraValue;
-    }    
+    }
 }
