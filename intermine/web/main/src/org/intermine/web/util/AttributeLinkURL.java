@@ -11,12 +11,11 @@ package org.intermine.web.util;
  */
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Simple class that parses provided url. Contains methods that return 
+ * Simple class that parses provided url. Contains methods that return
  * base url (without query string) and request parameters from url.
  * @author Jakub Kulaviak
  **/
@@ -24,7 +23,7 @@ public class AttributeLinkURL
 {
 
     private String baseUrl;
-    
+
     private Map<String, String> parameters = new HashMap<String, String>();
 
     /**
@@ -40,28 +39,28 @@ public class AttributeLinkURL
             parameters = parseParameters(parts[1]);
         }
     }
-    
+
     /**
      * @return original URL without query string and without '?'
      */
     public String getBaseURL() {
         return baseUrl;
     }
-    
+
     /**
      * @return parameters of original URL
      */
     public Map<String, String> getParameters() {
         return parameters;
     }
-    
+
     private Map<String, String> parseParameters(String queryString) {
         String[] parts = queryString.split("&");
         Map<String, String> ret = new HashMap<String, String>();
         for (String part : parts) {
             part = part.trim();
             if (part.length() > 0) {
-                String[] a = part.split("=", 2);    
+                String[] a = part.split("=", 2);
                 String value;
                 if (a.length == 2) {
                     value = a[1];

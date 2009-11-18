@@ -20,21 +20,21 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Runs TemplateResultService web service. 
- * 
- * @see org.intermine.webservice.query.result.TemplateResultService 
+ * Runs TemplateResultService web service.
+ *
+ * @see org.intermine.webservice.query.result.TemplateResultService
  * @author Jakub Kulaviak
  */
 public class TemplateResultServlet extends HttpServlet
 {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(request, response);
     }
 
@@ -42,13 +42,11 @@ public class TemplateResultServlet extends HttpServlet
      * {@inheritDoc}}
      */
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(req, resp);
     }
-    
-    private void runService(HttpServletRequest request,
-            HttpServletResponse response) {
+
+    private void runService(HttpServletRequest request, HttpServletResponse response) {
         new TemplateResultService().service(request, response);
     }
-
 }

@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -167,26 +168,25 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
-                    throws ObjectStoreException, SQLException {
+    throws ObjectStoreException, SQLException {
+        // TODO: check if there is already a method to get all the match types
+        // (and merge the methods)
 
         // process indirect locations via match features and featureloc feature<->match<->feature
         ResultSet matchLocRes = getMatchLocResultSet(connection);
         processLocationTable(connection, matchLocRes);
 
-        ResultSet matchESTLocRes = getESTMatchLocResultSet(connection);
-        processLocationTable(connection, matchESTLocRes);
-
-        // for piano (sub 515)
-        // Note: UST gives no results (?)
-        // TODO: check, and run only if necessary
-        // removed for build (none present)
-//        ResultSet matchUSTLocRes = getUSTMatchLocResultSet(connection);
-//        processLocationTable(connection, matchUSTLocRes);
-//
-//        ResultSet matchRSTLocRes = getRSTMatchLocResultSet(connection);
-//        processLocationTable(connection, matchRSTLocRes);
-
-
+        List<String> types = getMatchTypes(connection);
+        Iterator<String> t = types.iterator();
+        while (t.hasNext()) {
+            String FEAT = t.next();
+            if (FEAT.equalsIgnoreCase("cDNA_match")) {
+                continue;
+            }
+            ResultSet matchTypeLocRes = getMatchLocResultSet(connection, FEAT);
+            processLocationTable(connection, matchTypeLocRes);
+        }
+                
         processFeatureScores(connection);
     }
 
@@ -205,115 +205,73 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
+    private List<String> getMatchTypes(Connection connection) throws SQLException,
+    ObjectStoreException {
+        List<String> types = new ArrayList<String>();
+        ResultSet res = getMatchTypesResultSet(connection);
+        while (res.next()) {
+            String type = res.getString("name");
+            types.add(type.substring(0, type.indexOf('_')));
+        }
+        res.close();
+        return types;
+    }
 
-    //
-    // TODO: make a function getMatchLocResultSet(connection, EST, EST_match)
-    //
 
     /**
-     * Return the interesting EST matches from the featureloc and feature tables.
+     * Return the match types, used to determine which additional query to run 
+     * This is a protected method so that it can be overriden for testing
+     * @param connection the db connection
+     * @return the SQL result set
+     * @throws SQLException if a database problem occurs
+     */
+    protected ResultSet getMatchTypesResultSet(Connection connection) throws SQLException {
+      String query =
+        "SELECT name from cvterm where name like '%_match' ";
+        LOG.info("executing: " + query);
+        long bT = System.currentTimeMillis();
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        LOG.info("TIME QUERYING MATCH TYPES" + ":" + (System.currentTimeMillis() - bT));
+        return res;
+    }
+    
+    
+    /**
+     * Return the interesting feature (EST, UST, RST, other?)  matches from the featureloc and feature tables.
      * feature<->featureloc<->match_feature<->featureloc<->feature
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getESTMatchLocResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT -1 AS featureloc_id, est.feature_id, chrloc.fmin, "
-            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
-            + " estloc.strand "
-            + " FROM feature est, featureloc estloc, cvterm estcv, feature mf, "
-            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
-            + " WHERE est.type_id = estcv.cvterm_id "
-            + " AND estcv.name = 'EST' "
-            + " AND est.feature_id = estloc.srcfeature_id "
-            + " AND estloc.feature_id = mf.feature_id "
-            + " AND mf.feature_id = chrloc.feature_id "
-            + " AND chrloc.srcfeature_id = chr.feature_id "
-            + " AND chr.type_id = chrcv.cvterm_id "
-            + " AND chrcv.name = 'chromosome' "
-            + " AND mf.type_id = mfcv.cvterm_id "
-            + " AND mfcv.name = 'EST_match' "
-            + " AND est.feature_id IN "
-            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-        LOG.info("executing: " + query);
+    protected ResultSet getMatchLocResultSet(Connection connection, String FEAT) throws SQLException {
+      String query =
+        "SELECT -1 AS featureloc_id, feat.feature_id, chrloc.fmin, "
+        + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
+        + " featloc.strand "
+        + " FROM feature feat, featureloc featloc, cvterm featcv, feature mf, "
+        + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
+        + " WHERE feat.type_id = featcv.cvterm_id "
+        + " AND featcv.name = '" + FEAT + "' "
+        + " AND feat.feature_id = featloc.srcfeature_id "
+        + " AND featloc.feature_id = mf.feature_id "
+        + " AND mf.feature_id = chrloc.feature_id "
+        + " AND chrloc.srcfeature_id = chr.feature_id "
+        + " AND chr.type_id = chrcv.cvterm_id "
+        + " AND chrcv.name = 'chromosome' "
+        + " AND mf.type_id = mfcv.cvterm_id "
+        + " AND mfcv.name = '" + FEAT + "_match' "
+        + " AND feat.feature_id IN "
+        + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
+      LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING ESTMATCH " + ":" + (System.currentTimeMillis() - bT));
+        LOG.info("TIME QUERYING "+ FEAT + "MATCH " + ":" + (System.currentTimeMillis() - bT));
         return res;
     }
-
-    /**
-     * Return the interesting UST matches from the featureloc and feature tables.
-     * feature<->featureloc<->match_feature<->featureloc<->feature
-     * This is a protected method so that it can be overriden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getUSTMatchLocResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT -1 AS featureloc_id, ust.feature_id, chrloc.fmin, "
-            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
-            + " ustloc.strand "
-            + " FROM feature ust, featureloc ustloc, cvterm ustcv, feature mf, "
-            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
-            + " WHERE ust.type_id = ustcv.cvterm_id "
-            + " AND ustcv.name = 'three_prime_UST' "
-            + " AND ust.feature_id = ustloc.srcfeature_id "
-            + " AND ustloc.feature_id = mf.feature_id "
-            + " AND mf.feature_id = chrloc.feature_id "
-            + " AND chrloc.srcfeature_id = chr.feature_id "
-            + " AND chr.type_id = chrcv.cvterm_id "
-            + " AND chrcv.name = 'chromosome' "
-            + " AND mf.type_id = mfcv.cvterm_id "
-            + " AND mfcv.name = 'UST_match' "
-            + " AND ust.feature_id IN "
-            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-        LOG.info("executing: " + query);
-        long bT = System.currentTimeMillis();
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING USTMATCH " + ":" + (System.currentTimeMillis() - bT));
-        return res;
-    }
-
-    /**
-     * Return the interesting RST matches from the featureloc and feature tables.
-     * feature<->featureloc<->match_feature<->featureloc<->feature
-     * This is a protected method so that it can be overriden for testing
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getRSTMatchLocResultSet(Connection connection) throws SQLException {
-        String query =
-            "SELECT -1 AS featureloc_id, rst.feature_id, chrloc.fmin, "
-            + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
-            + " rstloc.strand "
-            + " FROM feature rst, featureloc rstloc, cvterm rstcv, feature mf, "
-            + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
-            + " WHERE rst.type_id = rstcv.cvterm_id "
-            + " AND rstcv.name = 'three_prime_RST' "
-            + " AND rst.feature_id = rstloc.srcfeature_id "
-            + " AND rstloc.feature_id = mf.feature_id "
-            + " AND mf.feature_id = chrloc.feature_id "
-            + " AND chrloc.srcfeature_id = chr.feature_id "
-            + " AND chr.type_id = chrcv.cvterm_id "
-            + " AND chrcv.name = 'chromosome' "
-            + " AND mf.type_id = mfcv.cvterm_id "
-            + " AND mfcv.name = 'RST_match' "
-            + " AND rst.feature_id IN "
-            + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
-        LOG.info("executing: " + query);
-        long bT = System.currentTimeMillis();
-        Statement stmt = connection.createStatement();
-        ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING RSTMATCH " + ":" + (System.currentTimeMillis() - bT));
-        return res;
-    }
+    
 
     /**
      * {@inheritDoc}
@@ -381,8 +339,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
-
-
+    
     /**
      * {@inheritDoc}
      *
@@ -398,7 +355,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             // TODO: check possible conflicts with our sql matching
             // map.put(new MultiKey("relationship", "ESTMatch", "evidence_for_feature", "Intron"),
             //        Arrays.asList(new SetFieldConfigAction("intron")));
-
 
             // for sub 515
             map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"),
@@ -475,8 +431,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
 
-
-
     /**
      * copied from FlyBaseProcessor
      * {@inheritDoc}
@@ -505,7 +459,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @return String
      */
     protected String forINclause() {
-
         StringBuffer ql = new StringBuffer();
 
         Iterator<Integer> i = dataList.iterator();
@@ -581,7 +534,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
 
     /**
-     * Process the identifier and return a "cleaned" version.  Implement in sub-classes to fix
+     * Process the identifier and return a "cleaned" version.  Implemented in sub-classes to fix
      * data problem.
      * @param type the InterMine type of the feature that this identifier came from
      * @param identifier the identifier
@@ -593,11 +546,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     @Override
     protected String fixIdentifier(FeatureData fdat, String identifier) {
 
-        //do
+        //
         String uniqueName = fdat.getChadoFeatureUniqueName();
         String name = fdat.getChadoFeatureName();
-        // String type = fdat.getInterMineType();
-        // LOG.info("IDI TYPE " + type);
 
         if (StringUtil.isEmpty(identifier)) {
             if (StringUtil.isEmpty(name)) {
@@ -613,6 +564,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
+
+    
+    
+    
     private void processFeatureScores(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getFeatureScores(connection);

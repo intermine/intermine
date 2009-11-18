@@ -22,7 +22,7 @@ import org.apache.struts.upload.FormFile;
  * @author Kim Rutherford
  */
 
-public class BuildBagForm extends ActionForm 
+public class BuildBagForm extends ActionForm
 {
 
     private FormFile formFile;
@@ -113,11 +113,11 @@ public class BuildBagForm extends ActionForm
     public String getWhichInput() {
         return whichInput;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    @Override    
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         formFile = null;

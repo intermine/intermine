@@ -81,8 +81,7 @@ public class Attribute
     public boolean equals(Object o) {
         if (o instanceof Attribute) {
             Attribute a = (Attribute) o;
-            return name.equals(a.name)
-            && value.equals(a.value);
+            return name.equals(a.name) && value.equals(a.value);
         }
         return false;
     }
@@ -91,7 +90,6 @@ public class Attribute
      * {@inheritDoc}
      */
     public int hashCode() {
-        return name.hashCode()
-        + 3 * value.hashCode();
+        return name.hashCode() + 3 * value.hashCode();
     }
 }

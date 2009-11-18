@@ -15,7 +15,7 @@ import java.util.List;
 
 
 /**
- * Implementation of <tt>Output</tt> that saves data to memory. 
+ * Implementation of <tt>Output</tt> that saves data to memory.
  * So all the data can be retrieved later.
  * @author Jakub Kulaviak
  **/
@@ -37,19 +37,19 @@ public class MemoryOutput extends Output
     }
 
 
-    /** Returns results added to output 
-     * @return results 
+    /** Returns results added to output
+     * @return results
      */
     public List<List<String>> getResults() {
         return results;
     }
 
     /**
-     * Does nothing because MemoryOutput serves as a storage of results during execution. 
+     * Does nothing because MemoryOutput serves as a storage of results during execution.
      */
     @Override
     public void flush() { }
-        
+
     /**
      * {@inheritDoc}}
      */

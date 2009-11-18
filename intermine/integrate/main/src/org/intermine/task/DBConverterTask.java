@@ -53,7 +53,7 @@ public class DBConverterTask extends ConverterTask
      * @throws BuildException if a problem occurs
      */
     @Override
-    public void execute() throws BuildException {
+    public void execute() {
         if (clsName == null) {
             throw new BuildException("clsName attribute is not set");
         }

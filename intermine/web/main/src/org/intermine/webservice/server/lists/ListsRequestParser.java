@@ -24,12 +24,12 @@ public class ListsRequestParser
     private HttpServletRequest request;
 
     /**
-     * Name of parameter with intermine id of object. 
+     * Name of parameter with intermine id of object.
      */
     private static final String MINE_ID_PARAMETER = "id";
     /**
-     * Name of parameter with id of object. It can be for example primaryIdentifier, 
-     * secondaryIdentifier. Intermine id is obtained by lookup of this id.   
+     * Name of parameter with id of object. It can be for example primaryIdentifier,
+     * secondaryIdentifier. Intermine id is obtained by lookup of this id.
      */
     private static final String PUBLIC_ID_PARAMETER = "publicId";
 
@@ -52,11 +52,11 @@ public class ListsRequestParser
      */
     public ListsServiceInput getInput() {
         ListsServiceInput ret = new ListsServiceInput();
-        
+
         String publicId = request.getParameter(PUBLIC_ID_PARAMETER);
         String mineId = request.getParameter(MINE_ID_PARAMETER);
         if ((publicId == null && mineId == null) || (publicId != null && mineId != null)) {
-            throw new BadRequestException("invalid parameters: " + MINE_ID_PARAMETER + " or " 
+            throw new BadRequestException("invalid parameters: " + MINE_ID_PARAMETER + " or "
                     + PUBLIC_ID_PARAMETER + " are required.");
         }
 
@@ -73,7 +73,7 @@ public class ListsRequestParser
                 ret.setMineId(Integer.parseInt(mineId));
             } catch (Throwable t) {
                 throw new BadRequestException("invalid parameter: " + MINE_ID_PARAMETER);
-            }            
+            }
         }
         return ret;
     }

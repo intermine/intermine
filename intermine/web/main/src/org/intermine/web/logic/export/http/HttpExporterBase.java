@@ -19,15 +19,14 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Abstract class with functionality common for all classes implementing TableHttpExporter 
- * interface like getting result from paged table.   
- * 
+ * Abstract class with functionality common for all classes implementing TableHttpExporter
+ * interface like getting result from paged table.
+ *
  * @author Jakub Kulaviak
  *
  */
-public abstract class HttpExporterBase 
+public abstract class HttpExporterBase
 {
-
     private static final int BATCH_SIZE = 5000;
 
     private PathQueryExecutor executor;

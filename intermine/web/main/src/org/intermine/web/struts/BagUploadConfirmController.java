@@ -45,11 +45,9 @@ public class BagUploadConfirmController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
+            HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
@@ -61,10 +59,10 @@ public class BagUploadConfirmController extends TilesAction
 
         // get all of the "low quality" matches ie. those found by queries other than matching
         // class keys
-        Map<String, ArrayList<String>> lowQualityMatches
-                                            = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> otherMatchMap
-                                            = bagQueryResult.getIssues().get(BagQueryResult.OTHER);
+        Map<String, ArrayList<String>> lowQualityMatches = new LinkedHashMap<String,
+            ArrayList<String>>();
+        Map<String, Map<String, List>> otherMatchMap = bagQueryResult.getIssues()
+            .get(BagQueryResult.OTHER);
         if (otherMatchMap != null) {
             Iterator otherMatchesIter = otherMatchMap.values().iterator();
             while (otherMatchesIter.hasNext()) {
@@ -79,13 +77,12 @@ public class BagUploadConfirmController extends TilesAction
 
         // find all input strings that match more than one object
         Map<String, ArrayList<String>> duplicates = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> duplicateMap
-                                    = bagQueryResult.getIssues().get(BagQueryResult.DUPLICATE);
+        Map<String, Map<String, List>> duplicateMap = bagQueryResult.getIssues()
+            .get(BagQueryResult.DUPLICATE);
         if (duplicateMap != null) {
             Iterator duplicateMapIter = duplicateMap.values().iterator();
             while (duplicateMapIter.hasNext()) {
-                Map<String, ArrayList<String>> inputToObjectsMap
-                = (Map) duplicateMapIter.next();
+                Map<String, ArrayList<String>> inputToObjectsMap = (Map) duplicateMapIter.next();
                 duplicates.putAll(inputToObjectsMap);
             }
         }
@@ -96,9 +93,9 @@ public class BagUploadConfirmController extends TilesAction
 
         // make a List of [input string, ConvertedObjectPair]
         Map<String, ArrayList<String>> convertedObjects
-                                                = new LinkedHashMap<String, ArrayList<String>>();
-        Map<String, Map<String, List>> convertedMap
-        = bagQueryResult.getIssues().get(BagQueryResult.TYPE_CONVERTED);
+            = new LinkedHashMap<String, ArrayList<String>>();
+        Map<String, Map<String, List>> convertedMap = bagQueryResult.getIssues()
+            .get(BagQueryResult.TYPE_CONVERTED);
         if (convertedMap != null) {
             Iterator convertedMapIter = convertedMap.values().iterator();
             while (convertedMapIter.hasNext()) {
@@ -158,8 +155,8 @@ public class BagUploadConfirmController extends TilesAction
         // a ResultElement object for each field to display.
 
         // a map from identifiers to indexes into objectList (and hence into the InlineResultsTable)
-        Map<String, ArrayList<String>> identifierResultElementMap
-                                                   = new LinkedHashMap<String, ArrayList<String>>();
+        Map<String, ArrayList<String>> identifierResultElementMap = new LinkedHashMap<String,
+            ArrayList<String>>();
 
         int objectListIndex = 0;
         Iterator identifierIter = orderedIssuesMap.keySet().iterator();

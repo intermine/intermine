@@ -15,28 +15,27 @@ import java.util.List;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
- 
+
 /**
  * @author Jakub Kulaviak
  **/
- public class XMLValidatorErrorHandler implements ErrorHandler 
- {
-        
-     private List<String> errors = new ArrayList<String>(); 
-     private List<String> warnings = new ArrayList<String>(); 
- 
-     /**
-      * Returns errors occurred during parsing xml.
-      * @return errors
-      */
-     public List<String> getErrors() {
+public class XMLValidatorErrorHandler implements ErrorHandler
+{
+    private List<String> errors = new ArrayList<String>();
+    private List<String> warnings = new ArrayList<String>();
+
+    /**
+     * Returns errors occurred during parsing xml.
+     * @return errors
+     */
+    public List<String> getErrors() {
         return errors;
     }
 
-     /**
-      * Returns  warning occurred during  parsing xml.
-      * @return warnings
-      */
+    /**
+     * Returns  warning occurred during  parsing xml.
+     * @return warnings
+     */
     public List<String> getWarnings() {
         return warnings;
     }
@@ -45,20 +44,20 @@ import org.xml.sax.SAXParseException;
      * {@inheritDoc}}
      */
     public void error(SAXParseException exception) {
-         errors.add(exception.getMessage());
-     }
+        errors.add(exception.getMessage());
+    }
 
     /**
      * {@inheritDoc}}
      */
-     public void fatalError(SAXParseException exception) {
-         errors.add(exception.getMessage());
-     }
-       
-     /**
-      * {@inheritDoc}}
-      */
-     public void warning(SAXParseException exception) {
-         warnings.add(exception.getMessage());
-     }
- }
+    public void fatalError(SAXParseException exception) {
+        errors.add(exception.getMessage());
+    }
+
+    /**
+     * {@inheritDoc}}
+     */
+    public void warning(SAXParseException exception) {
+        warnings.add(exception.getMessage());
+    }
+}

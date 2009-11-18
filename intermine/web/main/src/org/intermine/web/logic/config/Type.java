@@ -112,12 +112,12 @@ public class Type
     }
 
     /**
-      * Add a bag displayer for this Type
-      * @param disp the Displayer to add
-      */
-     public void addBagDisplayer(Displayer disp) {
-         bagDisplayers.add(disp);
-     }
+     * Add a bag displayer for this Type
+     * @param disp the Displayer to add
+     */
+    public void addBagDisplayer(Displayer disp) {
+        bagDisplayers.add(disp);
+    }
 
     /**
      * @return the widgets
@@ -197,7 +197,7 @@ public class Type
     public int hashCode() {
         int hash = fieldConfigMap.hashCode() + 3 * longDisplayers.hashCode();
         if (tableDisplayer != null) {
-             hash += 5 * tableDisplayer.hashCode();
+            hash += 5 * tableDisplayer.hashCode();
         }
         return hash;
     }

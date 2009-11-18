@@ -53,7 +53,7 @@ public class DirectoryConverterTask extends ConverterTask
      *
      * @throws BuildException if a problem occurs
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (dataDir == null) {
             throw new BuildException("dataDir must be specified");
         }

@@ -40,7 +40,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class QueryBuilderForm extends ActionForm
 {
     private static final Logger LOG = Logger.getLogger(QueryBuilderForm.class);
-    
+
     protected String bagOp, bagValue;
     protected String attributeOp, attributeValue, attributeOptions, extraValue;
     protected String subclassValue;
@@ -392,14 +392,14 @@ public class QueryBuilderForm extends ActionForm
     public static Object parseValue(String value, Class type, ConstraintOp constraintOp,
                                     Locale locale, ActionMessages errors) {
         try {
-            return ConstraintValueParser.parse(value, type, constraintOp);    
+            return ConstraintValueParser.parse(value, type, constraintOp);
         } catch (ParseValueException ex) {
-            errors.add(ActionErrors.GLOBAL_MESSAGE, 
+            errors.add(ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("errors.message", ex.getMessage()));
             return null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

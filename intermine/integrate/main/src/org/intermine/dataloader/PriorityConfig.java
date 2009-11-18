@@ -81,7 +81,7 @@ public class PriorityConfig
      * @param model the Model of the production database
      * @throws IllegalArgumentException if the priorities are misconfigured
      */
-    public PriorityConfig(Model model) throws IllegalArgumentException {
+    public PriorityConfig(Model model) {
         descriptors = DataLoaderHelper.getDescriptors(model);
         for (String key : descriptors.keySet()) {
             if (key.indexOf(".") == -1) {
@@ -104,7 +104,7 @@ public class PriorityConfig
                 if (cld == null) {
                     throw new IllegalArgumentException("Class '" + key + "' not found in model, "
                             + "check priorities configuration file.");
-                }                
+                }
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if ((field != null) && (!field.isCollection())) {
                     getPriorities(clazz, fieldName);
@@ -126,8 +126,7 @@ public class PriorityConfig
      * @return a List of data source names
      * @throws IllegalArgumentException if more than one priority config matches
      */
-    protected synchronized List<String> getPriorities(Class clazz, String fieldName)
-    throws IllegalArgumentException {
+    protected synchronized List<String> getPriorities(Class clazz, String fieldName) {
         ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
         List<String> retval = cache.get(cafn);
         if (retval == null) {

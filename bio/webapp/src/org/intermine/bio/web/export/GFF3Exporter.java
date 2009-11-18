@@ -12,10 +12,12 @@ package org.intermine.bio.web.export;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -52,6 +54,7 @@ public class GFF3Exporter implements Exporter
      * @param attributesNames names of attributes that are printed in record,
      *  they are names of columns in results table, they are in the same order
      *  as corresponding columns in results table
+     * @param sourceName name of Mine to put in GFF source column
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames, String sourceName) {
@@ -94,10 +97,18 @@ public class GFF3Exporter implements Exporter
             return;
         }
 
+        Set<String> gffFields = new HashSet<String>();
+        gffFields.add("chromosome.primaryIdentifier");
+        gffFields.add("chromosomeLocation.start");
+        gffFields.add("chromosomeLocation.end");
+        gffFields.add("chromosomeLocation.strand");
+        gffFields.add("primaryIdentifier");
         Map<String, List<String>> attributes = new LinkedHashMap<String, List<String>>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement el = row.get(i);
-            attributes.put(attributesNames.get(i), formatElementValue(el));
+            if (!gffFields.contains(attributesNames.get(i))) {
+                attributes.put(attributesNames.get(i), formatElementValue(el));
+            }
         }
 
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lsf, soClassNames, sourceName,

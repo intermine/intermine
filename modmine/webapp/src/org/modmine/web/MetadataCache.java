@@ -574,10 +574,10 @@ public class MetadataCache
                 // look for dccId in the line
                 String list = result[1];
                 String[] dccIds = list.split("\\s");
-                parseTokens(dccIds, newTrack, 0);
+                parseTokens(dccIds, newTrack, false);
                 // look for dccId in the track name
                 String[] nameSplit = trackName.split("_");
-                parseTokens(nameSplit, newTrack, 0);
+                parseTokens(nameSplit, newTrack, true);
             }
             reader.close();
         } catch (Exception err) {
@@ -585,6 +585,7 @@ public class MetadataCache
         }
         return submissionTracksCache;
     }
+
 
     /**
      * This method looks for dccId in the tokenised line 
@@ -594,25 +595,25 @@ public class MetadataCache
      * 
      * @param tokes the array of tokens
      * @param track the GBrowse track
-     * @param offset: needed to exclude last token in line parsing (see above) 
+     * @param isName: needed to include only last token in name parsing (see above) 
      */
     private static void parseTokens(String[] tokens,
-            GBrowseTrack track, Integer offset) {
+            GBrowseTrack track, Boolean isName) {
         // starting from the end, because when checking track names only
         // the last number is ok if there are 2
-        for (int x=(tokens.length -offset -1); x>-1; x--) {
+        for (int x=(tokens.length -1); x>-1; x--) {
             if (containsOnlyNumbers(tokens[x])) {
                 // this is a submission Id                        
                 Integer dccId = Integer.parseInt(tokens[x]);
                 // add to map sub trackname
                 addToGBMap(submissionTracksCache,dccId, track);
-                if (offset.equals(0)){//track name...
+                if (isName){//track name...
                     break;
                 }
-                
             }
        }
     }
+
 
     /**
      * This method adds a GBrowse track to a map with

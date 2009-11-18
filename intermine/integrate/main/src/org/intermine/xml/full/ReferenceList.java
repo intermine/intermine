@@ -108,8 +108,7 @@ public class ReferenceList
     public boolean equals(Object o) {
         if (o instanceof ReferenceList) {
             ReferenceList r = (ReferenceList) o;
-            return name.equals(r.name)
-                && refIds.equals(r.refIds);
+            return name.equals(r.name) && refIds.equals(r.refIds);
         }
         return false;
     }
@@ -119,7 +118,6 @@ public class ReferenceList
      */
     @Override
     public int hashCode() {
-        return name.hashCode()
-        + 3 * refIds.hashCode();
+        return name.hashCode() + 3 * refIds.hashCode();
     }
 }

@@ -211,51 +211,51 @@ public class AutoCompleter
             TEMP_DIR.mkdirs();
         }
 
-    for (Map.Entry<Object, Object> entry: prob.entrySet()) {
-        String key = (String) entry.getKey();
-        String value = (String) entry.getValue();
-        if (!key.endsWith(".autocomplete")) {
-            continue;
-        }
-        String className = key.substring(0, key.lastIndexOf("."));
-        ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-        if (cld == null) {
-            throw new RuntimeException("a class mentioned in ObjectStore summary properties "
-                                       + "file (" + className + ") is not in the model");
-        }
-        List<String> fieldNames = Arrays.asList(value.split(" "));
-        for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
-
-            String fieldName = i.next();
-            String classAndField = cld.getUnqualifiedName() + "." + fieldName;
-            System.out .println("Indexing " + classAndField);
-            fieldIndexMap.put(classAndField, classAndField);
-
-
-            Query q = new Query();
-            q.setDistinct(true);
-            QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-            q.addToSelect(new QueryField(qc, fieldName));
-            q.addFrom(qc);
-            Results results = os.execute(q);
-
-            LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
-            objectClass.addField(fieldName);
-
-            for (Object resRow: results) {
-                Object fieldValue = ((ResultsRow) resRow).get(0);
-                if (fieldValue != null) {
-                    objectClass.addValueToField(objectClass.getFieldName(0), fieldValue.toString());
-                }
+        for (Map.Entry<Object, Object> entry: prob.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            if (!key.endsWith(".autocomplete")) {
+                continue;
             }
+            String className = key.substring(0, key.lastIndexOf("."));
+            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
+            if (cld == null) {
+                throw new RuntimeException("a class mentioned in ObjectStore summary properties "
+                                           + "file (" + className + ") is not in the model");
+            }
+            List<String> fieldNames = Arrays.asList(value.split(" "));
+            for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
 
-            String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
-            LuceneIndex indexer = new LuceneIndex(indexFileName);
-            indexer.addClass(objectClass);
-            indexer.rebuildClassIndexes();
+                String fieldName = i.next();
+                String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+                System.out .println("Indexing " + classAndField);
+                fieldIndexMap.put(classAndField, classAndField);
 
-            createRAMIndex(classAndField);
 
+                Query q = new Query();
+                q.setDistinct(true);
+                QueryClass qc = new QueryClass(Class.forName(cld.getName()));
+                q.addToSelect(new QueryField(qc, fieldName));
+                q.addFrom(qc);
+                Results results = os.execute(q);
+
+                LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
+                objectClass.addField(fieldName);
+
+                for (Object resRow: results) {
+                    Object fieldValue = ((ResultsRow) resRow).get(0);
+                    if (fieldValue != null) {
+                        objectClass.addValueToField(objectClass.getFieldName(0), fieldValue
+                                .toString());
+                    }
+                }
+
+                String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
+                LuceneIndex indexer = new LuceneIndex(indexFileName);
+                indexer.addClass(objectClass);
+                indexer.rebuildClassIndexes();
+
+                createRAMIndex(classAndField);
             }
         }
     }

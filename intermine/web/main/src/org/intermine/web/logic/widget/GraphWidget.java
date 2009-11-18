@@ -102,14 +102,10 @@ public class GraphWidget extends Widget
         String dataSetLoader = config.getDataSetLoader();
         Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
         try {
-            Constructor<?> constr = clazz.getConstructor(new Class[]
-                                                                   {
-                InterMineBag.class, ObjectStore.class, String.class
-                                                                   });
-            dataSetLdr = (DataSetLdr) constr.newInstance(new Object[]
-                                                                    {
-                bag, os, selectedExtraAttribute
-                                                                    });
+            Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
+                ObjectStore.class, String.class});
+            dataSetLdr = (DataSetLdr) constr.newInstance(new Object[] {bag, os,
+                selectedExtraAttribute});
             notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
         } catch (Exception err) {
             err.printStackTrace();
@@ -125,34 +121,32 @@ public class GraphWidget extends Widget
         Dataset graphDataSet = dataSetLdr.getDataSet();
         String graphType = ((GraphWidgetConfig) config).getGraphType();
         ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-        
+
         if (StringUtils.isNotEmpty(graphType) && graphType.equals("XYLineChart")) {
 
             chart = ChartFactory.createXYLineChart(config.getTitle(),
-                                                   ((GraphWidgetConfig) config).getDomainLabel(),
-                                                   ((GraphWidgetConfig) config).getRangeLabel(), 
-                                                   (XYDataset) graphDataSet, 
-                                                   PlotOrientation.VERTICAL, true, true, 
-                                                   false);
+                    ((GraphWidgetConfig) config).getDomainLabel(),
+                    ((GraphWidgetConfig) config).getRangeLabel(), (XYDataset) graphDataSet,
+                    PlotOrientation.VERTICAL, true, true, false);
 
             XYPlot plot = chart.getXYPlot();
 
             XYItemRenderer xyrenderer = plot.getRenderer();
             xyrenderer.setSeriesStroke(0, new BasicStroke(3.0f));
             xyrenderer.setSeriesStroke(1, new BasicStroke(3.0f));
-            
-            xyrenderer.setSeriesPaint(0, BLUE);    
+
+            xyrenderer.setSeriesPaint(0, BLUE);
             xyrenderer.setSeriesPaint(1, LIGHT_BLUE);
 
             plot.setBackgroundPaint(Color.white);
             plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
             plot.setDomainGridlinesVisible(true);
             plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-            
+
             DivNumberFormat formatter = new DivNumberFormat(1000);
             NumberAxis axis = (NumberAxis) plot.getRangeAxis();
             axis.setNumberFormatOverride(formatter);
-            
+
         } else if (StringUtils.isNotEmpty(graphType) && graphType.equals("StackedBarChart")) {
             chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
                     ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
@@ -164,13 +158,13 @@ public class GraphWidget extends Widget
             CategoryPlot categoryPlot = chart.getCategoryPlot();
             CategoryItemRenderer categoryRenderer = categoryPlot.getRenderer();
             categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-            ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
+                        ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
             categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-            ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
-            
+                        ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
+
             ((GraphWidgetConfig) config).setHeight(400);
             formatBarCharts(categoryPlot);
-            
+
         /* regular bar chart */
         } else {
             chart = ChartFactory.createBarChart(config.getTitle(), // chart title
@@ -191,19 +185,19 @@ public class GraphWidget extends Widget
             CategoryItemRenderer categoryRenderer = new BarRenderer();
             ((BarRenderer) categoryRenderer).setItemMargin(0);
             categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-            ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
             categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-            ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
+                        ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
             categoryPlot.setRenderer(categoryRenderer);
-            
+
             // rotate the category labels
-            categoryPlot.getDomainAxis().setCategoryLabelPositions(
-            CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
-            
+            categoryPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions
+                    .createUpRotationLabelPositions(Math.PI / 6.0));
+
             setURLGen(categoryRenderer);
-            
+
             ((BarRenderer) categoryRenderer).setNegativeItemLabelPositionFallback(
-            new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
 
             formatBarCharts(categoryPlot);
         }
@@ -211,18 +205,18 @@ public class GraphWidget extends Widget
         if (chart.getTitle() != null) {
             chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
         }
-   
+
         chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
 // this would speed up chart rendering, but it wouldn't look as nice.
-//        chart.setAntiAlias(false); 
+//        chart.setAntiAlias(false);
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
         // generate the image and imagemap
         try {
             fileName = ServletUtilities.saveChartAsPNG(chart,
-                       ((GraphWidgetConfig) config).getWidth(),
-                       ((GraphWidgetConfig) config).getHeight(), info,
-                       ((GraphWidgetConfig) config).getSession());
+                    ((GraphWidgetConfig) config).getWidth(),
+                    ((GraphWidgetConfig) config).getHeight(), info,
+                    ((GraphWidgetConfig) config).getSession());
         } catch (IOException e) {
             throw new RuntimeException("error rendering html", e);
         }
@@ -233,22 +227,17 @@ public class GraphWidget extends Widget
     private void setURLGen(CategoryItemRenderer categoryRenderer) {
         if (config.getLink() == null) {
             return;
-        }        
+        }
         CategoryURLGenerator categoryUrlGen = null;
-        
+
         // set series 0 to have URLgenerator specified in config file
         // set series 1 to have no URL generator.
         try {
             Class<?> clazz2 = TypeUtil.instantiate(config.getLink());
-            Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[]
-                                                                               {
-                String.class, String.class
-                                                                               });
+            Constructor<?> urlGenConstructor = clazz2.getConstructor(new Class[] {String.class,
+                String.class});
             categoryUrlGen = (CategoryURLGenerator) urlGenConstructor
-            .newInstance(new Object[]
-                                    {
-                bag.getName(), selectedExtraAttribute
-                                    });
+                .newInstance(new Object[] {bag.getName(), selectedExtraAttribute});
         } catch (Exception err) {
             err.printStackTrace();
             return;
@@ -258,11 +247,10 @@ public class GraphWidget extends Widget
         categoryRenderer.setSeriesItemURLGenerator(0, categoryUrlGen);
         categoryRenderer.setSeriesItemURLGenerator(1, categoryUrlGen);
     }
-    
-    
+
+
     private void formatBarCharts(CategoryPlot categoryPlot) {
         if (categoryPlot != null) {
-            
             // display values for each column
             CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator();
             categoryPlot.getRenderer().setBaseItemLabelsVisible(true);
@@ -280,30 +268,30 @@ public class GraphWidget extends Widget
             rangeAxis.setLabelFont(labelFont);
             categoryPlot.getDomainAxis().setMaximumCategoryLabelWidthRatio(10.0f);
 
-            categoryPlot.getRenderer().setSeriesPaint(0, BLUE);    
+            categoryPlot.getRenderer().setSeriesPaint(0, BLUE);
             categoryPlot.getRenderer().setSeriesPaint(1, LIGHT_BLUE);
             categoryPlot.getRenderer().setSeriesPaint(2, DARK_BLUE);
 
             categoryPlot.getRenderer().setSeriesOutlineStroke(1, new BasicStroke(0.0F));
-            
+
             categoryPlot.setBackgroundPaint(Color.white);
             categoryPlot.setDomainGridlinePaint(Color.LIGHT_GRAY);
             categoryPlot.setDomainGridlinesVisible(true);
             categoryPlot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-            
-//            StandardChartTheme legacyTheme 
+
+//            StandardChartTheme legacyTheme
 //            = (StandardChartTheme) StandardChartTheme.createLegacyTheme();
 //            legacyTheme.applyToCategoryPlot((CategoryPlot) categoryPlot);
-            
-            
+
+
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(@SuppressWarnings("unused") String[] selected)
-    throws Exception {
+        throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
@@ -321,8 +309,8 @@ public class GraphWidget extends Widget
      */
     public boolean getHasResults() {
         return (dataSetLdr != null
-                        && dataSetLdr.getResults() != null
-                        && dataSetLdr.getResults().size() > 0);
+                && dataSetLdr.getResults() != null
+                && dataSetLdr.getResults().size() > 0);
     }
 
     /**
@@ -347,30 +335,42 @@ public class GraphWidget extends Widget
         // IE doesn't support base64, so for now we are just going to pass back location of png file
         // see http://en.wikipedia.org/wiki/Data:_URI_scheme
         String img = "<img src=\"loadTmpImg.do?fileName=" + fileName
-        + "\" width=\"" + ((GraphWidgetConfig) config).getWidth()
-        + "\" height=\"" + ((GraphWidgetConfig) config).getHeight()
-        + "\" usemap=\"#chart" + fileName + "\">";
+            + "\" width=\"" + ((GraphWidgetConfig) config).getWidth()
+            + "\" height=\"" + ((GraphWidgetConfig) config).getHeight()
+            + "\" usemap=\"#chart" + fileName + "\">";
         StringBuffer sb = new StringBuffer(img);
         sb.append(imageMap);
         return sb.toString();
     }
-    
-    public class DivNumberFormat extends DecimalFormat {
 
+    /**
+     * class used to format the p-values on the graph
+     * @author julie
+     */
+    public class DivNumberFormat extends DecimalFormat
+    {
         private int magnitude;
 
+        /**
+         * @param magnitude what to multiply the p-value by
+         */
         public DivNumberFormat(int magnitude) {
-           this.magnitude = magnitude;
+            this.magnitude = magnitude;
         }
 
-        public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
-           return super.format(number * magnitude, result, fieldPosition);
+        /**
+         * @param number number to format
+         * @result result result
+         * @return the format
+         */
+        public StringBuffer format(double number, StringBuffer result,
+                FieldPosition fieldPosition) {
+            return super.format(number * magnitude, result, fieldPosition);
         }
 
         public StringBuffer format(long number, StringBuffer result, FieldPosition fieldPosition) {
-           return super.format(number * magnitude, result, fieldPosition);
+            return super.format(number * magnitude, result, fieldPosition);
         }
-     }
-    
+    }
 }
 

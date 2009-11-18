@@ -148,9 +148,9 @@ public class DisplayConstraint
                     // for Strings always allow the user to type in a pattern because EQUALS
                     // constraints are automatically converted to MATCHES constraints if the
                     // pattern contains a wildcard
-                    while (iter.hasNext()) {
-                        fixedOps.add(((ConstraintOp) iter.next()).getIndex());
-                    }
+                while (iter.hasNext()) {
+                    fixedOps.add(((ConstraintOp) iter.next()).getIndex());
+                }
                 //}
 
             }

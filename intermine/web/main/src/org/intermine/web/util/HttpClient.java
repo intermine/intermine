@@ -17,22 +17,21 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
-
 /**
  * Very simple http client that downloads data.
+ *
  * @author Jakub Kulaviak
  **/
 public class HttpClient
 {
-
     /**
      * @param url url of resource to be downloaded
      * @return downloaded data
      */
     public byte[] download(String url) {
-            
+
         byte[] responseBody;
-        
+
         // Create an instance of HttpClient.
         org.apache.commons.httpclient.HttpClient client = 
             new org.apache.commons.httpclient.HttpClient();
@@ -50,7 +49,7 @@ public class HttpClient
 
             // Read the response body.
             responseBody = method.getResponseBody();
-            
+
             // Deal with the response.
             // Use caution: ensure correct character encoding and is not binary
             // data

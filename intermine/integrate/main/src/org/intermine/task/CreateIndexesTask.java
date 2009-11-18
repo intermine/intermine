@@ -125,7 +125,7 @@ public class CreateIndexesTask extends Task
      *
      * @throws BuildException if something is wrong
      */
-    public void setUp() throws BuildException {
+    public void setUp() {
         if (alias == null && objectStore == null) {
             throw new BuildException("exactly one of alias and objectStore must be set");
         }
@@ -153,7 +153,7 @@ public class CreateIndexesTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         setUp();
         Model m = schema.getModel();
         Map statements = new TreeMap();
@@ -351,7 +351,7 @@ public class CreateIndexesTask extends Task
         }
     }
 
-    private void checkForIndexNameClashes(Map statements) throws BuildException {
+    private void checkForIndexNameClashes(Map statements) {
         // index names truncated to 63 characters
         Map truncNames = new HashMap();
 
@@ -487,7 +487,7 @@ public class CreateIndexesTask extends Task
         String tableName = DatabaseUtil.getTableName(cld);
         if (!schema.getMissingTables().contains(tableName.toLowerCase())) {
 
-            ATTRIBUTE:
+        ATTRIBUTE:
             for (Iterator attributeIter = cld.getAllAttributeDescriptors().iterator();
                     attributeIter.hasNext();) {
                 AttributeDescriptor att = (AttributeDescriptor) attributeIter.next();
@@ -545,8 +545,7 @@ public class CreateIndexesTask extends Task
      * @param tableMaster the master table class for cld
      */
     private void addStatement(Map statements, String indexName, String tableName,
-                              String columnNames,
-                              ClassDescriptor cld, ClassDescriptor tableMaster) {
+            String columnNames, ClassDescriptor cld, ClassDescriptor tableMaster) {
         if (statements.containsKey(indexName)) {
             IndexStatement indexStatement = (IndexStatement) statements.get(indexName);
 

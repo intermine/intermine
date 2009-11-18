@@ -11,9 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import org.intermine.objectstore.query.Results;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.Dataset;
-
 
 /**
  * An Interface which defines a frame
@@ -29,13 +27,13 @@ public interface DataSetLdr
      * @return the dataset
      */
     public Dataset getDataSet();
-    
+
     /**
      * Get the Results object
      * @return the results Object
      */
     public Results getResults();
-    
+
     /**
      * This method is used to calculate the 'not analysed' total displayed on each widget
      * @return the total number of objects analysed in this widget

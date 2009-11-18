@@ -35,8 +35,8 @@ public interface EquivalentObjectFetcher
      * @return a Set of InterMineObjects
      * @throws ObjectStoreException if an error occurs
      */
-    public Set queryEquivalentObjects(InterMineObject obj, Source source)
-    throws ObjectStoreException;
+    public Set queryEquivalentObjects(InterMineObject obj,
+            Source source) throws ObjectStoreException;
 
     /**
      * Generates a query that searches for all objects in the database equivalent to a given
@@ -50,8 +50,8 @@ public interface EquivalentObjectFetcher
      * @return a new Query (or null if all the primary keys from obj contain a null)
      * @throws MetaDataException if anything goes wrong
      */
-    public Query createPKQuery(InterMineObject obj, Source source, boolean queryNulls)
-    throws MetaDataException;
+    public Query createPKQuery(InterMineObject obj, Source source,
+            boolean queryNulls) throws MetaDataException;
 
     /**
      * Generates a query that searches for all objects in the database equivalent to a given
