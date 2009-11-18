@@ -348,7 +348,7 @@ public class CalculateLocations
      */
     public void setChromosomeLocationsAndLengths() throws Exception {
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
-                LocatedSequenceFeature.class, true, false, 10000);
+                LocatedSequenceFeature.class, true, false, false, 10000);
         Iterator resIter = results.iterator();
 
         osw.beginTransaction();
@@ -391,6 +391,62 @@ public class CalculateLocations
         osw.commitTransaction();
     }
 
+    
+    
+    /**
+     * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
+     * LocatedSequenceFeature.chromosomeLocation reference *if* the reference is not already set.
+     * @throws Exception if anything goes wrong
+     */
+    public void setMissingChromosomeLocations() throws Exception {
+        Results results = BioQueries.findLocationAndObjects(os, Chromosome.class,
+                LocatedSequenceFeature.class, false, false, true, 10000);
+        Iterator resIter = results.iterator();
+
+        osw.beginTransaction();
+
+        // we need to check that there is only one location before setting chromosome[Location]
+        // references.  If there are duplicates do nothing - this has happened for some affy
+        // probes in FlyMine.
+        Integer lastChrId = null;
+        LocatedSequenceFeature lastFeature = null;
+        boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
+        Location lastLoc = null;
+        int count = 0;
+        
+        while (resIter.hasNext()) {
+            ResultsRow rr = (ResultsRow) resIter.next();
+
+            Integer chrId = (Integer) rr.get(0);
+            LocatedSequenceFeature lsf = (LocatedSequenceFeature) rr.get(1);
+            Location locOnChr = (Location) rr.get(2);
+
+            if (lastFeature != null && !lsf.getId().equals(lastFeature.getId())) {
+                // not a duplicated so we can set references for last feature
+                if (storeLastFeature) {
+                    setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
+                }
+                storeLastFeature = true;
+            } else if (lastFeature != null) {
+                storeLastFeature = false;
+            }
+
+            lastFeature = lsf;
+            lastChrId = chrId;
+            lastLoc = locOnChr;
+            count++;
+        }
+
+        // make sure final feature gets stored
+        if (storeLastFeature && lastFeature != null) {
+            setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
+        }
+        LOG.info("Set missing chromosomeLocation references for " + count + " features.");
+        osw.commitTransaction();
+    }
+
+    
+    
     private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
         LocatedSequenceFeature lsfClone =

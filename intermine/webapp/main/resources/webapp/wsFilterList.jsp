@@ -188,7 +188,7 @@ function clearBagName(element) {
   <%-- turn off autocomplete because of a Gecko bug:
        http://geekswithblogs.net/shahedul/archive/2006/08/14/87910.aspx --%>
   <!--
-      $('${wsListId}_${type}_filter_text').setAttribute('autocomplete','off');
+      jQuery('#${wsListId}_${type}_filter_text').attr('autocomplete','off');
     -->
 </script>
 
@@ -216,7 +216,7 @@ function clearBagName(element) {
  <script type="text/javascript">
 <%-- enable filter only after the list is populated --%>
 <!--//<![CDATA[
-    $('${ws_input_id}').disabled = false;
+    jQuery('#${ws_input_id}').attr('disabled','');
 //]]>-->
   </script>
 
@@ -230,7 +230,7 @@ function clearBagName(element) {
 <c:if test="${!empty initialFilterText}">
   <script type="text/javascript">
 <!--//<![CDATA[
-    filterWebSearchablesHandler(null, $('${ws_input_id}'), '${type}', '${wsListId}');
+    filterWebSearchablesHandler(null, jQuery('#${ws_input_id}').get(0), '${type}', '${wsListId}');
 //]]>-->
   </script>
 </c:if>

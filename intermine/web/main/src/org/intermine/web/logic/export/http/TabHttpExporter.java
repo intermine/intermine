@@ -36,8 +36,12 @@ public class TabHttpExporter extends StandardHttpExporter
      * {@inheritDoc}
      */
     @Override
-    protected void setResponseHeader(HttpServletResponse response) {
-        ResponseUtil.setTabHeader(response, "results-table.tsv");
+    protected void setResponseHeader(HttpServletResponse response, boolean doGzip) {
+        if (doGzip) {
+            ResponseUtil.setGzippedHeader(response, "results-table.tsv.gz");
+        } else {
+            ResponseUtil.setTabHeader(response, "results-table.tsv");
+        }
     }
 
     /**

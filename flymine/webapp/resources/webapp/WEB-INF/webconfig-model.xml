@@ -424,7 +424,7 @@
       <fieldconfig fieldExpr="name" />
     </fields>
     <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
+      <displayer src="pathwayLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
@@ -775,7 +775,7 @@
         description="The distribution of feature lengths in this list compared to lengths of all features of this type."
         graphType="XYLineChart"
         extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
-        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.LocatedSequenceFeature,org.intermine.model.bio.TransposableElementInsertionSite"
+        typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein,org.intermine.model.bio.Exon,org.intermine.model.bio.Transcript"
        />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"

@@ -29,13 +29,11 @@ public class ResponseUtil
     public static void setExcelHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
         setExcelContentType(response);
-        response.setContentType("Application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", 
-                "attachment; filename=\"" + fileName + "\"");
+        setFileName(response, fileName);
     }
 
     /**
-     * Sets response header and content type for tab separated 
+     * Sets response header and content type for tab separated
      * values output.
      * @param response response
      * @param fileName file name of downloaded file
@@ -43,9 +41,9 @@ public class ResponseUtil
     public static void setTabHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
         setTabContentType(response);
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+        setFileName(response, fileName);
     }
-    
+
     /**
      * Sets response header and content type for comma separated
      * values output.
@@ -55,7 +53,7 @@ public class ResponseUtil
     public static void setCSVHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
         setCSVContentType(response);
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+        setFileName(response, fileName);
     }
 
     /**
@@ -66,7 +64,7 @@ public class ResponseUtil
     public static void setXMLHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
         setXMLContentType(response);
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+        setFileName(response, fileName);
     }
 
 
@@ -78,14 +76,25 @@ public class ResponseUtil
     public static void setPlainTextHeader(HttpServletResponse response, String fileName) {
         setNoCache(response);
         setPlainTextContentType(response);
-        response.setHeader("Content-Disposition ",
-                           "inline; filename=\"" + fileName + "\"");        
+        setFileName(response, fileName);
     }
-    
+
+    /**
+     * Sets response header and content type for gzipped output.
+     *
+     * @param response response
+     * @param fileName file name of downloaded file
+     */
+    public static void setGzippedHeader(HttpServletResponse response, String fileName) {
+        setNoCache(response);
+        setGzippedContentType(response);
+        setFileName(response, fileName);
+    }
+
     /**
      * Sets that the result must not be cached. Old implementation was set
-     * Cache-Control to no-cache,no-store,max-age=0. But this caused problems 
-     * in IE. File couldn't be opened directly.   
+     * Cache-Control to no-cache,no-store,max-age=0. But this caused problems
+     * in IE. File couldn't be opened directly.
      * @param response response
      */
     public static void setNoCache(HttpServletResponse response) {
@@ -94,10 +103,10 @@ public class ResponseUtil
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "must-revalidate, max-age=0");
     }
-    
+
     /**
-     * Sets enforced no-cache headers to completely disable cache for this response. 
-     * Page is reloaded always, for example when the user uses Go Back button.  
+     * Sets enforced no-cache headers to completely disable cache for this response.
+     * Page is reloaded always, for example when the user uses Go Back button.
      * @param response response
      */
     public static void setNoCacheEnforced(HttpServletResponse response) {
@@ -105,9 +114,9 @@ public class ResponseUtil
         // http://forums.mozillazine.org/viewtopic.php?f=25&t=673135&start=30
         response.setHeader("Cache-Control", "max-age=0, must-revalidate, no-store, no-cache");
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "Wed, 11 Jan 1984 05:00:00 GMT");            
+        response.setHeader("Expires", "Wed, 11 Jan 1984 05:00:00 GMT");
     }
-    
+
     /**
      * Sets tab separated values content type.
      * @param response response
@@ -115,15 +124,15 @@ public class ResponseUtil
     public static void setTabContentType(HttpServletResponse response) {
         response.setContentType("text/tab-separated-values");
     }
-    
+
     /**
      * Sets comma separated values content type.
      * @param response response
-     */    
+     */
     public static void setCSVContentType(HttpServletResponse response) {
         response.setContentType("text/comma-separated-values");
     }
-    
+
     /**
      * Sets plain text content type.
      * @param response response
@@ -131,15 +140,15 @@ public class ResponseUtil
     public static void setPlainTextContentType(HttpServletResponse response) {
         response.setContentType("text/plain");
     }
-    
+
     /**
      * Sets Excel content type.
      * @param response response
      */
     private static void setExcelContentType(HttpServletResponse response) {
-        response.setContentType("Application/vnd.ms-excel");
+        response.setContentType("application/vnd.ms-excel");
     }
- 
+
     /**
      * Sets XML content type.
      * @param response response
@@ -147,12 +156,30 @@ public class ResponseUtil
     public static void setXMLContentType(HttpServletResponse  response) {
         response.setContentType("text/xml");
     }
-    
+
     /**
      * Sets HTML content type.
      * @param response response
      */
     public static void setHTMLContentType(HttpServletResponse response) {
         response.setContentType("text/html");
+    }
+
+    /**
+     * Sets gzip content type.
+     * @param response response
+     */
+    public static void setGzippedContentType(HttpServletResponse response) {
+        response.setContentType("application/octet-stream");
+    }
+
+    /**
+     * Sets the content disposition filename.
+     *
+     * @param response response
+     * @param fileName the name of the downloaded file
+     */
+    public static void setFileName(HttpServletResponse response, String fileName) {
+        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
     }
 }

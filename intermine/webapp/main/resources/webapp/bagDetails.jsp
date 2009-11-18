@@ -98,7 +98,7 @@
           </html:select>
      <input type="submit" name="addToBag" id="addToBag" value="Add" />
      <script type="text/javascript" charset="utf-8">
-          $('addToBag').disabled = true;
+          jQuery('#addToBag').attr('disabled','disabled');
         </script>
     </c:when>
     <c:otherwise>
@@ -163,7 +163,7 @@
 <%-- Bag Description --%>
 <c:choose>
     <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" onclick="Element.toggle('bagDescriptionDiv');Element.toggle('bagDescriptionTextarea');$('textarea').focus()">
+      <div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
         <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
         <c:choose>
           <c:when test="${! empty bag.description}">
@@ -177,8 +177,8 @@
       <div id="bagDescriptionTextarea" style="display:none">
         <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
         <div align="right">
-          <button onclick="Element.toggle('bagDescriptionTextarea');
-              Element.toggle('bagDescriptionDiv'); return false;"><fmt:message key="confirm.cancel"/></button>
+          <button onclick="jQuery('#bagDescriptionTextarea').toggle();
+              jQuery('#bagDescriptionDiv').toggle(); return false;"><fmt:message key="confirm.cancel"/></button>
           <button onclick="saveBagDescription('${bag.name}'); return false;"><fmt:message key="button.save"/></button>
         </div>
       </div>
@@ -251,13 +251,12 @@
 </div>
 <script language="javascript">
   function toggleWidget(widgetid,linkid) {
-    Element.toggle($(widgetid));
-    var d = $(linkid);
-    if(Element.hasClassName($(linkid), 'active')) {
-      $(linkid).removeClassName('active');
+    jQuery('#'+widgetid).toggle();
+    if(jQuery('#'+linkid).hasClass('active')) {
+      jQuery('#'+linkid).removeClass('active');
       AjaxServices.saveToggleState(widgetid, false);
     } else {
-      $(linkid).addClassName('active');
+      jQuery('#'+linkid).addClass('active');
       AjaxServices.saveToggleState(widgetid, true);
     }
   }

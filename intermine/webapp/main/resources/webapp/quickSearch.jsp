@@ -12,18 +12,18 @@
 <script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
-  if (isUpdatedByUser($('quickSearchInput').value)) {
+  if (isUpdatedByUser(jQuery('#quickSearchInput').val())) {
 	 return;
   }
   if (i==0) {
-     $('quickSearchInput').value = '${ids}';
+     jQuery('#quickSearchInput').val('${ids}');
   } else if (i==1) {
-     $('quickSearchInput').value = '${tpls}';
+	 jQuery('#quickSearchInput').val('${tpls}');
   } else {
-     $('quickSearchInput').value = '${bgs}';
+     jQuery('#quickSearchInput').val('${bgs}');
   }
-  $('quickSearchInput').style.color = '#666';
-  $('quickSearchInput').style.fontStyle = 'italic';
+  jQuery('#quickSearchInput').css("color", "#666");
+  jQuery('#quickSearchInput').css("fontStyle","italic");
 }
 
 function isUpdatedByUser(value) {
@@ -38,8 +38,8 @@ function clearElement(e) {
    var value =document.getElementById('quickSearchInput').value;
    if( value == '${ids}' || value == '${tpls}' || value == '${bgs}') {
       e.value = "";
-      $('quickSearchInput').style.color = '#000';
-      $('quickSearchInput').style.fontStyle = 'normal';
+      jQuery('#quickSearchInput').css("color", "#000");
+      jQuery('#quickSearchInput').css("fontStyle","normal");
    }
 }
 

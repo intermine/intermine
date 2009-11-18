@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,10 +29,10 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
 /**
- * Abstract class implementing functionality common for exporters exporting table in simple format 
- * like comma separated format. The business logic of export is performed with exporter obtained 
+ * Abstract class implementing functionality common for exporters exporting table in simple format
+ * like comma separated format. The business logic of export is performed with exporter obtained
  * via getExport method and so each subclass can redefine it overwriting this method.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public abstract class StandardHttpExporter extends HttpExporterBase implements TableHttpExporter
@@ -59,14 +60,17 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      */
     public void export(PagedTable pt, HttpServletRequest request,
                        HttpServletResponse response, TableExportForm form) {
-
+        boolean doGzip = (form != null) && form.getDoGzip();
         OutputStream out = null;
         try {
             out = response.getOutputStream();
+            if (doGzip) {
+                out = new GZIPOutputStream(out);
+            }
         } catch (IOException e) {
             throw new ExportException("Export failed.", e);
         }
-        setResponseHeader(response);
+        setResponseHeader(response, doGzip);
         String separator;
         if (RequestUtil.isWindowsClient(request)) {
             separator = Exporter.WINDOWS_SEPARATOR;
@@ -82,17 +86,17 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter);    
+            exporter.export(iter);
         } finally {
             if (iter != null) {
-                iter.releaseGoFaster();    
+                iter.releaseGoFaster();
             }
         }
         if (exporter.getWrittenResultsCount() == 0) {
             throw new ExportException("Nothing was found for export.");
         }
     }
-    
+
     private List<String> getHeaders(PagedTable pt) {
         List<String> headers;
         headers = new ArrayList<String>();
@@ -122,8 +126,9 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
 
     /**
      * Sets header and content type of result in response.
+     *
      * @param response response
+     * @param doGzip whether to compress the stream
      */
-    protected abstract void setResponseHeader(HttpServletResponse response);
-
+    protected abstract void setResponseHeader(HttpServletResponse response, boolean doGzip);
 }

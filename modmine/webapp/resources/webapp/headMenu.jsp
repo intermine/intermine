@@ -153,7 +153,7 @@
         </c:forTokens>
         <c:if test="${pageName == 'begin'}">
           <li>
-            <a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a>
+            <a href="http://blog.modencode.org/?page_id=69">What is ${WEB_PROPERTIES['project.title']}?</a>
           </li>
         </c:if>
         </ul>

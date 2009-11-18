@@ -215,4 +215,9 @@ public class StringUtilTest extends TestCase
         assertEquals("an", StringUtil.indefiniteArticle("O"));
         assertEquals("an", StringUtil.indefiniteArticle("IMP"));
     }
+
+    public void testWrapLines() throws Exception {
+        assertEquals(new StringUtil.LineWrappedString("The quick brown fox\njumped over the...", true), StringUtil.wrapLines("The quick brown fox jumped over the lazy dog", 20, 2));
+        assertEquals(new StringUtil.LineWrappedString("abcdefghi-\njklmnop...", true), StringUtil.wrapLines("abcdefghijklmnopqrstuvwxyz", 10, 2));
+    }
 }

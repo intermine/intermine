@@ -148,6 +148,7 @@
     <post-process name="create-utr-references"/>
     <post-process name="transfer-sequences"/>
     <post-process name="create-references" dump="true"/>
+    <post-process name="set-missing-chromosome-locations"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="create-gene-flanking-features"/>
 

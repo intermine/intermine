@@ -23,24 +23,25 @@
           document.getElementById('queryClassSelect').innerHTML =
               selectedClassName + ":  " + helpText;
           document.getElementById('classSelectDiv').style.display = 'block';
-          $('submitClassSelect').disabled = false;
+          jQuery('#submitClassSelect').attr('disabled','');
       } else {
-          $('classSelectDiv').style.display='none';
-          $('submitClassSelect').disabled = true;
+          jQuery('#classSelectDiv').hide();
+          jQuery('#submitClassSelect').attr('disabled','disabled');
       }
   }
 
   function handleClassClick(e) {
     var i = document.queryClassSelectForm.className.selectedIndex;
       if (e.detail == 2 &&  document.queryClassSelectForm.className[i].value != '') {
-          $('queryClassForm').submit();
+          jQuery('#queryClassForm').submit();
       }
   }
 
   window.onload = function() {
-      var selector = $('queryClassSelector');
-      addEvent(selector, 'click', handleClassClick);
-      $('submitClassSelect').disabled = true;
+      jQuery('#queryClassSelector').click(function(e){
+		handleClassClick(e);
+      });
+      jQuery('#submitClassSelect').attr('disabled','disabled');
   }
 -->
 </script>

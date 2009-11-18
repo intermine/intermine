@@ -63,6 +63,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectBinding;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -118,13 +120,28 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.OBJECTSTORE, os);
         servletContext.setAttribute(Constants.MODEL, os.getModel());
 
-        loadWebConfig(servletContext, os);
+        WebConfig webConfig = loadWebConfig(servletContext, os);
 
         loadAspectsConfig(servletContext, os);
 
         loadClassDescriptions(servletContext, os);
 
         summarizeObjectStore(servletContext, os);
+        Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
+        for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
+            boolean keyless = true;
+            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
+                if ((fc.getDisplayer() == null) && fc.getShowInSummary()) {
+                    keyless = false;
+                    break;
+                }
+            }
+            if (keyless) {
+                keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()), Boolean.TRUE);
+            }
+        }
+        LOG.error("Keyless classes: " + keylessClasses);
+        servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
 
         // load class keys
         loadClassKeys(servletContext, os);
@@ -135,7 +152,7 @@ public class InitialiserPlugin implements PlugIn
         final ProfileManager pm = createProfileManager(servletContext, os);
 
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-        
+
         final BagManager bagManager = new BagManager(superProfile, os.getModel());
         servletContext.setAttribute(Constants.BAG_MANAGER, bagManager);
 
@@ -146,7 +163,7 @@ public class InitialiserPlugin implements PlugIn
         SearchRepository searchRepository =
             new SearchRepository(superProfile, Scope.GLOBAL);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
-        
+
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
 
         loadAutoCompleter(servletContext, os);
@@ -180,41 +197,41 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private void loadAutoCompleter(ServletContext servletContext, ObjectStore os)
-            throws ServletException {
+    private void loadAutoCompleter(ServletContext servletContext,
+            ObjectStore os) throws ServletException {
+        if (os instanceof ObjectStoreInterMineImpl) {
+            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            try {
+                InputStream is = MetadataManager.retrieveBLOBInputStream(db,
+                        MetadataManager.AUTOCOMPLETE_INDEX);
+                AutoCompleter ac;
 
-            if (os instanceof ObjectStoreInterMineImpl) {
-                Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-                try {
-                    InputStream is = MetadataManager.retrieveBLOBInputStream(db,
-                            MetadataManager.AUTOCOMPLETE_INDEX);
-                    AutoCompleter ac;
-
-                    if (is != null) {
-                        ac = new AutoCompleter(is);
-                        servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
-                    } else {
-                        ac = null;
-                    }
-                } catch (SQLException e) {
-                    LOG.error("Problem with database", e);
-                    throw new ServletException("Problem with database", e);
+                if (is != null) {
+                    ac = new AutoCompleter(is);
+                    servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
+                } else {
+                    ac = null;
                 }
+            } catch (SQLException e) {
+                LOG.error("Problem with database", e);
+                throw new ServletException("Problem with database", e);
             }
+        }
     }
 
     /**
      * Load the displayer configuration
      */
-    private void loadWebConfig(ServletContext servletContext, ObjectStore os)
+    private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (is == null) {
             throw new ServletException("Unable to find webconfig-model.xml");
         }
         try {
-            servletContext.setAttribute(Constants.WEBCONFIG,
-                                        WebConfig.parse(is, os.getModel()));
+            WebConfig retval = WebConfig.parse(is, os.getModel());
+            servletContext.setAttribute(Constants.WEBCONFIG, retval);
+            return retval;
         } catch (Exception e) {
             LOG.error("Unable to parse webconfig-model.xml", e);
             throw new ServletException("Unable to parse webconfig-model.xml", e);
