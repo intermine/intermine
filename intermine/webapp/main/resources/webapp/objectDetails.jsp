@@ -100,20 +100,15 @@
                     </c:forEach>
                   </td>
                   <td>
-                    <c:set var="maxLength" value="60"/>
                     <c:choose>
-                      <c:when test="${entry.value.class.name ==
-                                    'java.lang.String' && fn:length(entry.value) > maxLength
-                                    && ! object.fieldConfigMap[entry.key].doNotTruncate
-                                    && ! fn:startsWith(fn:trim(object), 'http://')}">
-                        <im:value>
-                          ${fn:substring(entry.value, 0, maxLength/2)}
-                        </im:value>
+                      <c:when test="${object.longAttributes[entry.key] != null}">
                         <span class="value" style="white-space:nowrap">
-                          ${fn:substring(entry.value, maxLength/2, maxLength)}
-                          <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
-                            <fmt:message key="objectDetails.viewall"/>
-                          </html:link>
+                          ${object.longAttributes[entry.key]}
+                          <c:if test="${object.longAttributesTruncated[entry.key] != null}">
+                            <html:link action="/getAttributeAsFile?object=${object.id}&amp;field=${entry.key}">
+                              <fmt:message key="objectDetails.viewall"/>
+                            </html:link>
+                          </c:if>
                         </span>
                       </c:when>
                       <c:otherwise>

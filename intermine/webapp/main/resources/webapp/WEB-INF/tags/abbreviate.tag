@@ -6,7 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-    String abbreviated = org.apache.commons.lang.StringUtils.abbreviate(value, length.intValue());
+    String abbreviated = org.intermine.util.StringUtil.wrapLines(value, length.intValue(), 1).getString();
 %>
 
 <c:if test="${!empty var}">

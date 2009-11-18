@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Exporter that exports table with results in excel format.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class ExcelHttpExporter extends StandardHttpExporter
@@ -70,7 +70,11 @@ public class ExcelHttpExporter extends StandardHttpExporter
      * {@inheritDoc}
      */
     @Override
-    protected void setResponseHeader(HttpServletResponse response) {
-        ResponseUtil.setExcelHeader(response, "results-table.xls");
+    protected void setResponseHeader(HttpServletResponse response, boolean doGzip) {
+        if (doGzip) {
+            ResponseUtil.setGzippedHeader(response, "results-table.xls.gz");
+        } else {
+            ResponseUtil.setExcelHeader(response, "results-table.xls");
+        }
     }
 }

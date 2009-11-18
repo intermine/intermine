@@ -52,7 +52,7 @@
          //called the ajax service
 
        function callAJAX(widgetid, bagname, ajax){
-         $('pValue'+widgetid).value;
+         jQuery('#pValue'+widgetid).val();
          getProcessGraphWidgetConfig(widgetid, bagname);
        }
 </script>

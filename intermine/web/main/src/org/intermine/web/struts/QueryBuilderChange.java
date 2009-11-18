@@ -81,7 +81,7 @@ public class QueryBuilderChange extends DispatchAction
                                     @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        
+
         PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
         String path = request.getParameter("path");
 
@@ -145,8 +145,8 @@ public class QueryBuilderChange extends DispatchAction
         // eg. Department.employees.salary where salary is only defined in a subclass of Employee
         // note that we first have to find out what type Department thinks the employees field is
         // and then check if any of the view nodes assume the field is constrained to a subclass
-        
-        
+
+
         String parentType = pathQuery.getNodes().get(path).getParentType();
 
         Model model = pathQuery.getModel();
@@ -159,7 +159,7 @@ public class QueryBuilderChange extends DispatchAction
                 throw new RuntimeException("unexpected exception", e);
             }
             String pathLastField = path.substring(MainHelper.getLastJoinIndex(path) + 1);
-            
+
             if (parentCld == null) {
                 // if the field doesn't exist it means we are editing a PathQuery with errors
             } else {
@@ -170,9 +170,9 @@ public class QueryBuilderChange extends DispatchAction
                     ClassDescriptor realClassDescriptor = rf.getReferencedClassDescriptor();
 
                     List<String> newView = new ArrayList<String>(pathQuery.getViewStrings());
-                    List<String> newSortOrder = 
+                    List<String> newSortOrder =
                         new ArrayList<String>(pathQuery.getSortOrderStrings());
-                    
+
                     for (String viewPath : pathQuery.getViewStrings()) {
                         if (viewPath.startsWith(path) && !viewPath.equals(path)) {
                             String fieldName = viewPath.substring(path.length() + 1);
@@ -193,7 +193,7 @@ public class QueryBuilderChange extends DispatchAction
                         pathQuery.setView(newView);
                     }
                     //pathQuery.setOrderBy(newSortOrder);
-                    
+
                     if (pathQuery.getSortOrder() != null) {
                         Path removeSortPath = null;
                         for (Path sortPath : pathQuery.getSortOrder().keySet()) {
@@ -371,7 +371,7 @@ public class QueryBuilderChange extends DispatchAction
         session.setAttribute("editingTemplateConstraint", Boolean.TRUE);
         return mapping.findForward("query");
     }
-    
+
     /**
      * Edit a constraint's join style settings for a path
      *
@@ -426,13 +426,13 @@ public class QueryBuilderChange extends DispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        
+
         PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
         String prefixWithSubs = getPrefixWithSubclasses(prefix, query, model);
-        
+
         // We want an inner join style, as we are about to add a constraint.
         if ((prefixWithSubs != null) && (prefixWithSubs.length() > 0)) {
             if (path.indexOf(".") == -1) {
@@ -586,20 +586,20 @@ public class QueryBuilderChange extends DispatchAction
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");
-        
+
         // we may be adding a long path to the query, there are several outer join considerations:
         // - part of the path may already be in the query, we need to defer to existing join types
         // - there may be several new components added, each one should get the correct default
         //   join type
-        
+
 
         // If prefix contains joins there may be subclasses that don't appear in the path, add
         // them here.
         String prefixWithSubs = getPrefixWithSubclasses(prefix, query, model);
-        
+
         // This call will work out the default join style between prefix and path
         String fullPathName = query.toPathDefaultJoinStyle(prefixWithSubs, pathName);
-        
+
         // Now correct the join style deferring to any existing information in the query
         fullPathName = query.getCorrectJoinStyle(fullPathName);
         Path path = PathQuery.makePath(model, query, fullPathName);
@@ -611,7 +611,7 @@ public class QueryBuilderChange extends DispatchAction
             for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
                 Path pathToAdd = PathQuery.makePath(model, query, query
                                 .getCorrectJoinStyle(path.toString() + "." + fc.getFieldExpr()));
-                
+
                 if (pathToAdd.getEndClassDescriptor() == null && !view.contains(pathToAdd)
                     && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addViewPaths(Collections.singletonList(pathToAdd));
@@ -620,14 +620,14 @@ public class QueryBuilderChange extends DispatchAction
         } else {
             query.addViewPaths(Collections.singletonList(path));
         }
-        
+
         // if the sort order is empty, sort by the first view element valid for sorting (if any)
         PathQueryHelper.setDefaultSortOrder(query);
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-    
-    
+
+
     /**
      * AJAX request - expand
      *
@@ -730,8 +730,8 @@ public class QueryBuilderChange extends DispatchAction
         editConstraint(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
-    
-    
+
+
     /**
      * AJAX request - edit a template constraint
      *
@@ -754,7 +754,7 @@ public class QueryBuilderChange extends DispatchAction
         editTemplateConstraint(mapping, form, request, response);
         return mapping.findForward("mainConstraint");
     }
-    
+
     /**
      * AJAX request - render query paths
      *

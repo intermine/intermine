@@ -509,4 +509,122 @@ public class StringUtil
         }
         return new String(array);
     }
+
+    /**
+     * Wraps the given String into several lines and ultimately truncates it with an ellipsis.
+     *
+     * @param input the String to shorten
+     * @param lineLength the maximum line length
+     * @param lineCount the maximum number of lines
+     * @return a formatted String
+     */
+    public static LineWrappedString wrapLines(String input, int lineLength, int lineCount) {
+        return wrapLines(input, lineLength, lineCount, 0);
+    }
+
+    /**
+     * Wraps the given String into several lines and ultimately truncates it with an ellipsis.
+     *
+     * @param input the String to shorten
+     * @param lineLength the maximum line length
+     * @param lineCount the maximum number of lines
+     * @param lastLineShorter the number of characters by which the last line is shorter
+     * @return a formatted String
+     */
+    public static LineWrappedString wrapLines(String input, int lineLength, int lineCount,
+            int lastLineShorter) {
+        input = input.trim();
+        String trimmed = "";
+        boolean truncated = false;
+        for (int i = 1; i <= lineCount; i++) {
+            if (i == lineCount) {
+                if (input.length() > lineLength - lastLineShorter) {
+                    int breakPoint = input.lastIndexOf(" ", lineLength - 3 - lastLineShorter);
+                    if (breakPoint > lineLength / 2) {
+                        trimmed += input.substring(0, breakPoint) + "...";
+                    } else {
+                        trimmed += input.substring(0, lineLength - 3 - lastLineShorter) + "...";
+                    }
+                    truncated = true;
+                } else {
+                    trimmed += input;
+                    break;
+                }
+            } else {
+                if (input.length() > lineLength) {
+                    int breakPoint = input.lastIndexOf(" ", lineLength);
+                    if (breakPoint > lineLength / 2) {
+                        trimmed += input.substring(0, breakPoint) + "\n";
+                        input = input.substring(breakPoint + 1);
+                    } else {
+                        trimmed += input.substring(0, lineLength - 1)
+                            + "-\n";
+                        input = input.substring(lineLength - 1);
+                    }
+                } else {
+                    trimmed += input;
+                    break;
+                }
+            }
+        }
+        return new LineWrappedString(trimmed, truncated);
+    }
+
+    /**
+     * Class for returning multiple values from the wrapLines method.
+     *
+     * @author Matthew Wakeling
+     */
+    public static class LineWrappedString
+    {
+        private String wrapped;
+        private boolean truncated;
+
+        /**
+         * Constructor.
+         *
+         * @param wrapped the String in converted form
+         * @param truncated true if the String had to be truncated to make it fit
+         */
+        public LineWrappedString(String wrapped, boolean truncated) {
+            this.wrapped = wrapped;
+            this.truncated = truncated;
+        }
+
+        /**
+         * Returns the wrapped String.
+         *
+         * @return a String
+         */
+        public String getString() {
+            return wrapped;
+        }
+
+        /**
+         * Returns whether the String had to be truncated.
+         *
+         * @return a boolean
+         */
+        public boolean isTruncated() {
+            return truncated;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int hashCode() {
+            return wrapped.hashCode();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean equals(Object o) {
+            if (o instanceof LineWrappedString) {
+                LineWrappedString lws = (LineWrappedString) o;
+                return wrapped.equals(lws.wrapped) && (truncated == lws.truncated);
+            }
+            return false;
+        }
+    }
 }

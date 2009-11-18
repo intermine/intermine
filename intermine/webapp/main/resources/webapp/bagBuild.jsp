@@ -12,31 +12,29 @@
 <script language="javascript">
 <!--//<![CDATA[
    function switchInputs(open, close) {
-      $(open + 'Input').disabled = false;
-      $(close + 'Input').disabled = true;
-      //$('submitBag').disabled = false;
+      jQuery('#' + open + 'Input').attr("disabled","");
+      jQuery('#' + close + 'Input').attr("disabled","disabled");
     }
 
     function clearExample() {
-      if($('pasteInput').value == "e.g.: ${bagExampleIdentifiers}") {
-         $('pasteInput').value = "";
-         $('pasteInput').style.color = "#000";
-         $('pasteInput').style.fontStyle = "normal";
+      if(jQuery('#pasteInput').val() == "e.g.: ${bagExampleIdentifiers}") {
+         jQuery('#pasteInput').val("");
+         jQuery('#pasteInput').css("color", "#000");
+         jQuery('#pasteInput').css("fontStyle", "normal");
       }
     }
 
     function resetInputs() {
-       $('fileInput').disabled = false;
-       $('pasteInput').disabled = false;
-       $('fileInput').value = '';
-       $('pasteInput').value = '';
-       //$('submitBag').disabled = true;
+       jQuery('#fileInput').attr("disabled","");
+       jQuery('#pasteInput').attr("disabled","");
+       jQuery('#fileInput').val('');
+       jQuery('#pasteInput').val('');
     }
 
     function loadExample(example) {
-        switchInputs('paste','file');
-      $('pasteInput').focus();
-      $('pasteInput').value = example;
+      switchInputs('paste','file');
+      jQuery('#pasteInput').focus();
+      jQuery('#pasteInput').val(example);
       return false;
     }
 
@@ -54,9 +52,9 @@
         el.disabled = false;
      }
      if (type.length > 0){
-        $('submitBag').disabled = false;
+        jQuery('#submitBag').attr('disabled', '');
      } else {
-        $('submitBag').disabled = true;
+        jQuery('#submitBag').attr('disabled', 'disabled');
      }
    }
 //]]>-->

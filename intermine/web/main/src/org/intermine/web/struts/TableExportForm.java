@@ -35,6 +35,7 @@ public class TableExportForm extends ActionForm
 
     // PagedTable identifier
     private String table = null;
+    private boolean doGzip = false;
 
     private static final String INCLUDE_HEADERS = "cvs_include_headers";
 
@@ -120,6 +121,24 @@ public class TableExportForm extends ActionForm
      */
     protected final Map<String, Object> getExtraParams() {
         return extraParams;
+    }
+
+    /**
+     * Set whether the output should be GZIPped.
+     *
+     * @param doGzip a boolean
+     */
+    public void setDoGzip(boolean doGzip) {
+        this.doGzip = doGzip;
+    }
+
+    /**
+     * Get whether the output should be GZIPped.
+     *
+     * @return a boolean
+     */
+    public boolean getDoGzip() {
+        return doGzip;
     }
 
     /**

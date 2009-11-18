@@ -88,7 +88,7 @@ public class CreateFlankingRegions
      */
     public void createFlankingFeatures() throws ObjectStoreException {
         Results results = BioQueries.findLocationAndObjects(os,
-                Chromosome.class, Gene.class, false, false, 500);
+                Chromosome.class, Gene.class, false, false, false, 1000);
 
         dataSet = (DataSet) DynamicUtil.createObject(Collections
                 .singleton(DataSet.class));
@@ -110,7 +110,7 @@ public class CreateFlankingRegions
             Location loc = (Location) rr.get(2);
             createAndStoreFlankingRegion(getChromosome(chrId), loc, gene);
             if ((count % 1000) == 0) {
-                LOG.info("Created flankning regions for " + count + " genes.");
+                LOG.info("Created flanking regions for " + count + " genes.");
             }
             count++;
         }
@@ -122,7 +122,12 @@ public class CreateFlankingRegions
     
     private void createAndStoreFlankingRegion(Chromosome chr, Location geneLoc, Gene gene) 
     throws ObjectStoreException {
-        
+        // This code can't cope with chromosomes that don't have a length
+        if (chr.getLength() == null) {
+            LOG.warn("Attempted to create GeneFlankingRegions on a chromosome without a length: " 
+                    + chr.getPrimaryIdentifier());
+            return;
+        }
         for (double distance : distances) {
             for (String direction : directions) {
                 String strand = geneLoc.getStrand();

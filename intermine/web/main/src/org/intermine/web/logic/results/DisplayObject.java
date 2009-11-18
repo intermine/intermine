@@ -32,6 +32,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -55,6 +56,8 @@ public class DisplayObject
     private Set<ClassDescriptor> clds;
     private Map<String, Object> fieldValues = new HashMap<String, Object>();
     private Map<String, Object> attributes = null;
+    private Map<String, String> longAttributes = null;
+    private Map<String, Object> longAttributesTruncated = null;
     private Map<String, FieldDescriptor> attributeDescriptors = null;
     private Map<String, DisplayReference> references = null;
     private Map<String, DisplayCollection> collections = null;
@@ -167,6 +170,30 @@ public class DisplayObject
     }
 
     /**
+     * Get the long attribute fields and values for this object.
+     *
+     * @return the attributes
+     */
+    public Map<String, String> getLongAttributes() {
+        if (longAttributes == null) {
+            initialise();
+        }
+        return longAttributes;
+    }
+
+    /**
+     * Get the fields for this object that have had their long values truncated.
+     *
+     * @return the attributes
+     */
+    public Map<String, Object> getLongAttributesTruncated() {
+        if (longAttributesTruncated == null) {
+            initialise();
+        }
+        return longAttributesTruncated;
+    }
+
+    /**
      * Get the reference fields and values for this object
      * @return the references
      */
@@ -269,6 +296,8 @@ public class DisplayObject
         collections = new TreeMap<String, DisplayCollection>(String.CASE_INSENSITIVE_ORDER);
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
         attributeDescriptors = new HashMap<String, FieldDescriptor>();
+        longAttributes = new HashMap<String, String>();
+        longAttributesTruncated = new HashMap<String, Object>();
 
         try {
             for (ClassDescriptor cld : clds) {
@@ -278,6 +307,18 @@ public class DisplayObject
                         if (fieldValue != null) {
                             attributes.put(fd.getName(), fieldValue);
                             attributeDescriptors.put(fd.getName(), fd);
+                            if (fieldValue instanceof String) {
+                                String fieldString = (String) fieldValue;
+                                if (fieldString.length() > 30) {
+                                    StringUtil.LineWrappedString lws = StringUtil.wrapLines(
+                                            fieldString, 50, 3, 11);
+                                    longAttributes.put(fd.getName(), lws.getString()
+                                            .replace("\n", "<BR>"));
+                                    if (lws.isTruncated()) {
+                                        longAttributesTruncated.put(fd.getName(), Boolean.TRUE);
+                                    }
+                                }
+                            }
                         }
                     } else if (fd.isReference()) {
                         ReferenceDescriptor ref = (ReferenceDescriptor) fd;

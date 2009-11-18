@@ -372,7 +372,7 @@ public class MetadataCache
                 Map<String, Long> expFeatureCounts = featureCounts.get(experiment.getName());
                 DisplayExperiment displayExp = new DisplayExperiment(experiment, project, 
                         expFeatureCounts, os);
-                experimentCache.put(experiment.getName(), displayExp);
+                experimentCache.put(displayExp.getName(), displayExp);
             }
         } catch (Exception err) {
             err.printStackTrace();
@@ -515,8 +515,6 @@ public class MetadataCache
 
         submissionTracksCache = new HashMap<Integer, List<GBrowseTrack>>();
         try {
-//            readTracks(submissionTracksCache,"fly");
-//            readTracks(submissionTracksCache,"worm");
             readTracks("fly");
             readTracks("worm");
         } catch (Exception err) {
@@ -534,19 +532,28 @@ public class MetadataCache
      * @param organism (i.e. fly or worm)
      * @return submissionTracksCache
      */
-//    private static Map<Integer, List<GBrowseTrack>> readTracks(Map<Integer, List<GBrowseTrack>> submissionTracksCache, String organism) {
     private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
                 try {
             URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
             String line;
-            // TODO parse also name
+            // apparently the rules for parsing are:
+            // fields tab separated, dccId space separated
+            // if track/dccId are in the name, the first is the track, the second is the dccId
+            // if there is only one number in the name, this is a dccId
+            // examples of lines:
+            // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
+            // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
+            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
+            
             while ((line = reader.readLine()) != null) {
-                String[] result = line.split("\\s");
+                String[] result = line.split("\\t");
                 String trackName = result[0];
                 GBrowseTrack newTrack = new GBrowseTrack(organism,trackName);
                 // look for dccId in the line
-                parseTokens(result, newTrack, 1);
+                String list = result[1];
+                String[] dccIds = list.split("\\s");
+                parseTokens(dccIds, newTrack, 0);
                 // look for dccId in the track name
                 String[] nameSplit = trackName.split("_");
                 parseTokens(nameSplit, newTrack, 0);
@@ -570,15 +577,20 @@ public class MetadataCache
      */
     private static void parseTokens(String[] tokens,
             GBrowseTrack track, Integer offset) {
-        // 
-        for (int x=1; x<(tokens.length -offset); x++) {
+        // starting from the end, because when checking track names only
+        // the last number is ok if there are 2
+        for (int x=(tokens.length -offset -1); x>-1; x--) {
             if (containsOnlyNumbers(tokens[x])) {
                 // this is a submission Id                        
                 Integer dccId = Integer.parseInt(tokens[x]);
                 // add to map sub trackname
                 addToGBMap(submissionTracksCache,dccId, track);
+                if (offset.equals(0)){//track name...
+                    break;
+                }
+                
             }
-        }
+       }
     }
 
     /**
@@ -605,18 +617,14 @@ public class MetadataCache
  * This method checks if a String contains only numbers
  */
 static boolean containsOnlyNumbers(String str) {
-    
     //It can't contain only numbers if it's null or empty...
     if (str == null || str.length() == 0)
         return false;
-    
     for (int i = 0; i < str.length(); i++) {
-
         //If we find a non-digit character we return false.
         if (!Character.isDigit(str.charAt(i)))
             return false;
-    }
-    
+    }    
     return true;
 }
 

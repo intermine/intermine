@@ -80,7 +80,9 @@ public class DisplayExperiment
                 factorTypes.add(factor.getType());
             }
             
-            expTypes.add(submission.getExperimentType());
+            if (submission.getExperimentType() != null) {
+                expTypes.add(submission.getExperimentType());
+            }
         }
         
         this.experimentType = StringUtil.prettyList(expTypes);

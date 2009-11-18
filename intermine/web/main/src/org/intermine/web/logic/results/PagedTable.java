@@ -428,6 +428,7 @@ public class PagedTable
      * Return the fields for the first selected objects.  Return the first
      * FIRST_SELECTED_FIELDS_COUNT fields.  If there are more than that, append "...".  If a whole
      * column is selected return an empty list, the jsp will display and 'All selected' message.
+     *
      * @param os the ObjectStore
      * @param classKeysMap map of key field for a given class name
      * @return the list
