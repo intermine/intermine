@@ -33,7 +33,7 @@
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.19), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R2.4), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
   </tr>
@@ -75,7 +75,7 @@
   <tr>
     <td><i>Drosophila</i></td>
     <td>Orthologues and paralogues between the 12 <i>Drosophila</i> genomes.</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td>Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233 " target="_new">PubMed: 17099233</a></td>
     <td> &nbsp; </td>
   </tr>
@@ -103,7 +103,7 @@
         <p> Proteins </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.7</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.9</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -111,7 +111,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.7</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.9</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -119,7 +119,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.7</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.9</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -127,7 +127,7 @@
   <tr>
     <td> <i>H. sapiens</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.7</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.9</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -135,7 +135,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.7</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.9</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -143,7 +143,7 @@
   <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.7)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.9)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -151,7 +151,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.7)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.9)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -159,7 +159,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.7)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.9)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -188,7 +188,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Experimentally determined 3-D structures</td>
-    <td> <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">PDB [Protein Data Bank]</a> - 10th August 2009</td>
+    <td> <a href="http://www.rcsb.org/pdb/home/home.do" target="_new">PDB [Protein Data Bank]</a> - 8th October 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -200,7 +200,7 @@
         <p> Interactions</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th September 2009</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 13th October 2009</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -208,7 +208,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th September 2009</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 13th October 2009</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -216,14 +216,14 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 8th September 2009</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new">IntAct</a> - 13th October 2009</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17145710" target="_new">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
  <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.56 </td>
+    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.57 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -231,7 +231,7 @@
  <tr>
     <td> <i>C. elegans</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.56 </td>
+    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.57 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -239,7 +239,7 @@
  <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.56 </td>
+    <td> <a href="http://www.thebiogrid.org" target="_new">BioGRID</a> - Version 2.0.57 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381927" target="_new">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -259,7 +259,7 @@
         <p> Gene Ontology </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 11th August 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 18th September 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -267,7 +267,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 10th September 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 7th October 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -275,7 +275,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 16th September 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 17th October 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -283,7 +283,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 16th September 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 18th October 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -291,7 +291,7 @@
   <tr>
     <td> <i>S. pombe</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 2nd September 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 30th September 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -299,7 +299,7 @@
   <tr>
     <td> <i>A. gambiae</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 2nd September 2009</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 6th October 2009</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -319,7 +319,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Affymetrix microarray-based atlas of gene expression in larval and adult tissues</td>
-    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 16th September 2009 </td>
+    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 19th October 2009 </td>
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17534367" target="_new">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -370,7 +370,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Enhancers</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -389,7 +389,7 @@
         <p> Phenotypes</p></html:link></td>
    <td> <i>D. melanogaster</i> </td>
     <td> Alleles and phenotypes</td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -410,24 +410,33 @@
     <td> &nbsp;</td>
   </tr>
 
-  <tr><td rowspan="2" class="leftcol">
+  <tr><td rowspan="3" class="leftcol">
        <html:link action="/aspect?name=Pathways">
         <p> <img src="model/images/pathways.png" /></p>
         <p> Pathways</p></html:link></td>
-    <td> <i>D. melanogaster</i></td>
-    <td> Pathway information and the genes involved in them</td>
-    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 51.0, 15th September, 2009</td>
+    <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i></td>
+    <td> Curated pathway information and the genes involved in them</td>
+    <td> <a href="http://www.genome.jp/kegg/" target="_new">KEGG</a> - Release 52.0, 16th October, 2009</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381885" target="_new">PubMed: 16381885</a></td>
     <td> &nbsp;</td>
   </tr>
 
   <tr>
-    <td> <i>D. melanogaster</i> </td>
-    <td> Pathway information and the genes involved in them</td>
+    <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i> </td>
+    <td> Pathway information and the genes involved in them, inferred through orthologues from Human curated pathways</td>
+    <td> <a href="http://www.reactome.org/" target="_new">Reactome</a> - Version 1.0</td>
+    <td> &nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+
+<tr>
+    <td> <i>D. melanogaster</i></td>
+    <td> Curated pathway information and the genes involved in them</td>
     <td> <a href="http://fly.reactome.org/" target="_new">FlyReactome</a> - Version 1.0</td>
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
+
 
 
   <tr><td rowspan="1" class="leftcol">
@@ -447,7 +456,7 @@
         <p> Resources</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> <a href="http://www.drosdel.org.uk" target="_new">DrosDel</a> artificial deletions</td>
-    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2009_08</td>
+    <td> <a href="http://www.flybase.org" target="_new">FlyBase </a> - Version FB2009_09</td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15238529" target="_new">PubMed: 15238529</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -455,7 +464,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions (including DrosDel and Exelixis) </td>
-    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td> <a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td>&nbsp;</td>
   </tr>
@@ -498,14 +507,14 @@
         <p> Literature</p></html:link></td>
     <td> <i>Drosophila</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_08</td>
+    <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_09</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
 
     <td> <i>D. melanogaster</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 16th September 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 19th October 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -513,7 +522,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 16th September 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 19th October 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
@@ -521,7 +530,7 @@
   <tr>
     <td> <i>S. cerevisiae</i> </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 16th September 2009</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new">NCBI</a> - 19th October 2009</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>

@@ -105,8 +105,8 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
                 throw (ObjectStoreException) thr;
             } else {
                 IllegalArgumentException e2 = new IllegalArgumentException("Cannot find "
-                  + "specified Translator class for Translating ObjectStore (check "
-                  + "properties file)");
+                        + "specified Translator class for Translating ObjectStore (check "
+                        + "properties file)");
                 e2.initCause(e);
                 throw e2;
             }
@@ -210,7 +210,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
         throws ObjectStoreException {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
-        + "ObjectStoreTranslatingImpl");
+                + "ObjectStoreTranslatingImpl");
     }
 
     /**

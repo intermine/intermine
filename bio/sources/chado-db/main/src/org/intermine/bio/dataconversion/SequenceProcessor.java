@@ -44,7 +44,6 @@ import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -1865,6 +1864,8 @@ public class SequenceProcessor extends ChadoProcessor
             + "   FROM featureloc"
             + "   WHERE feature_id IN"
             + "         (" + getFeatureIdQuery() + ")"
+            + "     AND feature_id NOT IN"
+            + "         (" + getChromosomeFeatureIdQuery() + ")"
             + "     AND srcfeature_id IN"
             + "         (" + getChromosomeFeatureIdQuery() + ")"
             + "     AND locgroup = 0";

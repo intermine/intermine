@@ -80,7 +80,7 @@ public class MetadataManager
     /**
      * The name of the key used to store profile format version.
      */
-    public static final String PROFILE_FORMAT_VERSION = "profileversion";    
+    public static final String PROFILE_FORMAT_VERSION = "profileversion";
 
     /**
      * The name of the key used to store the truncated classes string.
@@ -96,7 +96,7 @@ public class MetadataManager
      * The name of the key used to store the noNotXml string.
      */
     public static final String NO_NOTXML = "noNotXml";
-    
+
     /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
@@ -119,7 +119,7 @@ public class MetadataManager
             connection.close();
         }
     }
-    
+
     /**
      * Store a binary (key, value) pair in the metadata table of the database
      * @param database the database
@@ -127,38 +127,38 @@ public class MetadataManager
      * @param value the byte array of the value
      * @throws SQLException if an error occurs
      */
-    public static void storeBinary(Database database, String key, byte[] value)
-                throws SQLException {
+    public static void storeBinary(Database database, String key,
+            byte[] value) throws SQLException {
         Connection connection = database.getConnection();
         boolean autoCommit = connection.getAutoCommit();
-        
+
         try {
             connection.setAutoCommit(false);
-            
+
             ResultSet rs = connection.createStatement().
-                    executeQuery("SELECT * FROM " + METADATA_TABLE); 
-            ResultSetMetaData meta = rs.getMetaData(); 
-      
+                    executeQuery("SELECT * FROM " + METADATA_TABLE);
+            ResultSetMetaData meta = rs.getMetaData();
+
             if (meta.getColumnCount() != 3) {
-                connection.createStatement().execute("ALTER TABLE " 
+                connection.createStatement().execute("ALTER TABLE "
                         + METADATA_TABLE + " ADD blob_value BYTEA");
             }
-            
+
             connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
                     + key + "'");
-                        
+
             PreparedStatement pstmt = connection.prepareStatement("INSERT INTO "
                     + METADATA_TABLE + " (key, blob_value) "
                     + "VALUES('" + key + "', ?)");
-  
+
             pstmt.setBytes(1, value);
-            
+
             pstmt.executeUpdate();
-            
+
             connection.commit();
-            
+
             pstmt.close();
-            
+
         } finally {
             connection.setAutoCommit(autoCommit);
             connection.close();
@@ -188,7 +188,7 @@ public class MetadataManager
         }
         return value;
     }
-    
+
     /**
      * Retrieve the BLOB value for a given key from the metadata table of the database
      * @param database the database
@@ -196,23 +196,23 @@ public class MetadataManager
      * @return the InputStream of the value
      * @throws SQLException if an error occurs
      */
-    public static InputStream retrieveBLOBInputStream(Database database, String key)
-            throws SQLException {
+    public static InputStream retrieveBLOBInputStream(Database database,
+            String key) throws SQLException {
         InputStream value = null;
         Connection connection = database.getConnection();
         try {
             String sql = "SELECT blob_value FROM " + METADATA_TABLE + " WHERE key ='" + key + "'";
             Statement  st    = connection.createStatement();
             ResultSet  rs    = st.executeQuery(sql);
-            
+
             if (rs.next()) {
                 value = rs.getBinaryStream("blob_value");
-                
+
                 return value;
             } else {
                 return null;
             }
-            
+
         } finally {
             connection.close();
         }

@@ -146,6 +146,7 @@ public class TableExportForm extends ActionForm
      */
     public void initialise() {
         extraParams = new HashMap<String, Object>();
+        doGzip = false;
     }
 
     /**

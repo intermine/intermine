@@ -348,8 +348,10 @@ echo
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
 
-# run acceptance tests
+# save factor file and run acceptance tests
 NAMESTAMP=`echo $sub | cut -d. -f1`
+cp integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
+
 runtest $NAMESTAMP
 
 # go back to the chado directory and mv chado file in 'done'
@@ -457,7 +459,7 @@ fi
 
 for sub in $LOOPVAR
 do
- wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a  $DATADIR/wget.log
+ wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 done
 
 

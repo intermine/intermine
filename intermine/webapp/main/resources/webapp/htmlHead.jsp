@@ -46,6 +46,11 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
 </c:if>
 
+<c:if test="${pageName == 'template'}">
+  <!-- this is needed for the autocompleter to work -->
+  <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
+</c:if>
+ 
 <c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
   <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>

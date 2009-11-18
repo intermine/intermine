@@ -343,7 +343,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * {@inheritDoc}
      */
     public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
         List results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
 
@@ -367,7 +367,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      * @throws DataChangedException if the sequence numbers do not match
      */
     public synchronized void checkSequence(Map<Object, Integer> sequence, Query q, String message)
-    throws DataChangedException {
+        throws DataChangedException {
         for (Map.Entry<Object, Integer> entry : sequence.entrySet()) {
             Object key = entry.getKey();
             if (!entry.getValue().equals(sequenceNumber.get(key))) {

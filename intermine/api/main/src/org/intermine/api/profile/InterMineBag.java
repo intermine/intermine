@@ -52,7 +52,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private ObjectStoreBag osb;
     private ObjectStore os;
     private ObjectStoreWriter uosw;
-    
+
     private Set<ClassDescriptor> classDescriptors;
 
     /**
@@ -84,7 +84,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         setClassDescriptors();
     }
 
-    
     /**
      * Loads an InterMineBag from the UserProfile database.
      *
@@ -108,7 +107,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.osb = new ObjectStoreBag(savedBag.getOsbId());
         setClassDescriptors();
     }
-    
+
     private void setClassDescriptors() {
         try {
             Class<?> cls = Class.forName(getQualifiedType());
@@ -133,7 +132,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         return savedBag;
     }
 
-    
     /**
      * Delete this bag from the userprofile database, bag should not be used after this method has
      * been called.
@@ -149,7 +147,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-
     /**
      * Returns a List which contains the contents of this bag as Integer IDs.
      *
@@ -162,7 +159,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         SingletonResults res = os.executeSingleton(q, 0, false, true, true);
         return res;
     }
-
 
     /**
      * Returns the size of the bag.
@@ -256,7 +252,6 @@ public class InterMineBag implements WebSearchable, Cloneable
         store();
     }
 
-
     /**
      * Get the type of this bag (a class from InterMine model)
      * @return the type of objects in this bag
@@ -282,7 +277,6 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * @see org.intermine.web.logic.search.WebSearchable#getTitle()
      * {@inheritDoc}
      */
     public String getTitle() {
@@ -346,8 +340,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void setDate(Date date) {
         this.dateCreated = date;
     }
-    
-    
+
     /**
      * Add the given id to the bag, this updates the bag contents in the database.
      * @param id the id to add
@@ -356,7 +349,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void addIdToBag(Integer id) throws ObjectStoreException {
         addIdsToBag(Collections.singleton(id));
     }
-    
+
     /**
      * Add the given ids to the bag, this updates the bag contents in the database.
      * @param ids the ids to add
@@ -373,8 +366,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
     }
-    
-    
+
     /**
      * Add elements to the bag from a query, this is able to operate entirely in the database
      * without needing to read objects into memory.  The query should have a single column on the
@@ -394,7 +386,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
         }
     }
-    
+
     /**
      * Remove the given id from the bag, this updates the bag contents in the database
      * @param id the id to remove
@@ -403,7 +395,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void removeIdFromBag(Integer id) throws ObjectStoreException {
        removeIdsFromBag(Collections.singleton(id));
     }
-    
+
     /**
      * Remove the given ids from the bag, this updates the bag contents in the database
      * @param ids the ids to remove

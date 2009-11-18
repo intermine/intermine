@@ -49,8 +49,8 @@ public class FormattedTextParser
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator parseTabDelimitedReader(final Reader reader, boolean stripQuotes)
-    throws IOException {
+    public static Iterator parseTabDelimitedReader(final Reader reader,
+            boolean stripQuotes) throws IOException {
         return parseDelimitedReader(reader, stripQuotes, "\t");
     }
 
@@ -63,7 +63,7 @@ public class FormattedTextParser
      * @throws IOException if there is an error while reading from the Reader
      */
     public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader)
-    throws IOException {
+        throws IOException {
         return parseDelimitedReader(reader, true, ",");
     }
 
@@ -76,15 +76,13 @@ public class FormattedTextParser
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator<String[]> parseDelimitedReader(final Reader reader, char delim)
-    throws IOException {
+    public static Iterator<String[]> parseDelimitedReader(final Reader reader,
+            char delim) throws IOException {
         return parseDelimitedReader(reader, false, String.valueOf(delim));
     }
-    
-    
+
     private static Iterator parseDelimitedReader(final Reader reader, final boolean stripQuotes,
-                                                 final String delim)
-    throws IOException {
+            final String delim) throws IOException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
 
         return new Iterator() {
@@ -115,12 +113,12 @@ public class FormattedTextParser
                     StrTokenizer tokeniser = null;
                     if (delim.equals(",")) {
                         delimMatcher = StrMatcher.commaMatcher();
-                        tokeniser
-                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                        tokeniser = new StrTokenizer(lastLine, delimMatcher,
+                                StrMatcher.doubleQuoteMatcher());
                     } else if (delim.equals("\t")) {
                         delimMatcher = StrMatcher.tabMatcher();
-                        tokeniser
-                        = new StrTokenizer(lastLine, delimMatcher, StrMatcher.doubleQuoteMatcher());
+                        tokeniser = new StrTokenizer(lastLine, delimMatcher,
+                                StrMatcher.doubleQuoteMatcher());
                     } else {
                         tokeniser = new StrTokenizer(lastLine, delim);
                     }

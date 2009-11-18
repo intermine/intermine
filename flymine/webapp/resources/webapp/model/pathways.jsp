@@ -10,18 +10,33 @@
       <div class="body">
 
 
-     <dt>Pathway data in FlyMine is available for D. melanogaster and
-     comes from KEGG and from FlyReactome</dt>
+     <dt>Pathway data in FlyMine is available for
+     <i>D. melanogaster</i>, <i>C. elegans</i> and
+     <i>S. cerevisiae</i> and comes from <a
+     href="http://www.genome.jp/kegg/" target="_new">KEGG</a> and <a
+     href="http://www.reactome.org" target="_new">Reactome</a>.  In
+     addition some curated <i>D. melanogaster</i> pathways come from
+     <a href="http://www.fly.reactome.org"
+     target="_new">FlyReactome</a></dt>
 
 
-        <dt>KEGG; The pathway data in the KEGG database have been manually
-        entered from published materials. Current KEGG data in FlyMine only
-        include Drosophila KEGG pathway names with their IDs and
-        the genes involved.</dt>
+        <dt>KEGG; The pathway data in the <a
+        href="http://www.genome.jp/kegg/" target="_new">KEGG</a>
+        database have been manually entered from published
+        materials. Current KEGG data in FlyMine include only the KEGG
+        pathway names with their IDs and the genes involved.</dt>
  
-      <dt>REACTOME: Data from FlyReactome includes the Reactome
-      pathway name and identifier and the fly genes involved in each
-      pathway.</dt>
+      <dt>REACTOME: Data from <a href="http://www.reactome.org"
+        target="_new">Reactome</a> includes the Reactome pathway name
+        and identifier and the genes involved in each pathway.  The
+        Reactome data are not curated - they are orthology mapped from
+        the human curated pathways</dt>
+
+      <dt>FlyReactome: A number of pathways are now loaded from the <a
+      href="http://www.fly.reactome.org" target="_new">FlyReactome</a>
+      project. Unlike the fly data from Reactome, which are inferred
+      from orthologues, the data from FlyReactome have been manually
+      curated.
 
        </div>
     </td>

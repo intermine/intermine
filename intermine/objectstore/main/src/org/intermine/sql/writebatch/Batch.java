@@ -256,8 +256,8 @@ public class Batch
      * @param needBatchCommit true to add a FlushJobBatchCommit at the end
      * @throws SQLException if an error occurs while flushing
      */
-    public void backgroundFlush(Connection con, Set filter, boolean needBatchCommit)
-    throws SQLException {
+    public void backgroundFlush(Connection con, Set filter,
+            boolean needBatchCommit) throws SQLException {
         if (closed) {
             throw new SQLException("Batch is closed");
         }

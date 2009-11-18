@@ -46,7 +46,7 @@ public abstract class SoftReferenceMap<K, V> extends ReferenceMap<K, V>
     }
 
     private static class SoftReferenceWithKey<K> extends SoftReference<Object>
-    implements ReferenceWithKey<K>
+        implements ReferenceWithKey<K>
     {
         private K key;
 

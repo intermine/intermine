@@ -99,7 +99,7 @@ import org.intermine.util.TypeUtil;
 public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreInterMineImpl.class);
-    
+
     private static final Logger SQLLOGGER = Logger.getLogger("sqllogger");
 
     protected static final int CACHE_LARGEST_OBJECT = 5000000;
@@ -954,7 +954,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      */
     protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, Map<Object, Integer> sequence)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         return executeWithConnection(c, q, start, limit, optimise, explain, sequence, null, null);
     }
 
@@ -976,7 +976,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     protected List<ResultsRow> executeWithConnection(Connection c, Query q, int start, int limit,
             boolean optimise, boolean explain, Map<Object, Integer> sequence,
             Set<PrecomputedTable> goFasterTables, OptimiserCache goFasterCache)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         if (explain) {
             checkStartLimit(start, limit, q);
         }
@@ -1612,7 +1612,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 }
                 InterMineObject retval = NotXmlParser.parse(currentColumn, this);
                 //if (currentColumn.length() < CACHE_LARGEST_OBJECT) {
-                    cacheObjectById(retval.getId(), retval);
+                cacheObjectById(retval.getId(), retval);
                 //} else {
                 //    LOG.debug("Not cacheing large object " + retval.getId() + " on getObjectById"
                 //            + " (size = " + (currentColumn.length() / 512) + " kB)");
@@ -1894,8 +1894,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if there is a database problem
      * @throws SQLException if there is a database problem
      */
-    public boolean isPrecomputedWithConnection(Connection c, Query query, String type)
-            throws ObjectStoreException, SQLException {
+    public boolean isPrecomputedWithConnection(Connection c, Query query,
+            String type) throws ObjectStoreException, SQLException {
         PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
         String sqlQuery = generateSql(c, query, 0, Integer.MAX_VALUE);
         return (ptm.lookupSql(type, sqlQuery) != null);

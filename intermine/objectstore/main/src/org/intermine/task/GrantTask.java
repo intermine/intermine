@@ -60,7 +60,7 @@ public class GrantTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (database == null) {
             throw new BuildException("database attribute is not set");
         }

@@ -35,14 +35,14 @@ public class SingletonResults extends Results implements Set
      * back to the ObjectStore when requests are made
      * @throws IllegalArgumentException if q does not return a single column
      */
-     public SingletonResults(Query q, ObjectStore os, Map<Object, Integer> sequence) {
-         super(q, os, sequence);
+    public SingletonResults(Query q, ObjectStore os, Map<Object, Integer> sequence) {
+        super(q, os, sequence);
 
-         // Test that this Query returns a single column of type QueryClass
-         if (q.getSelect().size() != 1) {
-             throw new IllegalArgumentException("Query must return a single column");
-         }
-     }
+        // Test that this Query returns a single column of type QueryClass
+        if (q.getSelect().size() != 1) {
+            throw new IllegalArgumentException("Query must return a single column");
+        }
+    }
 
     /**
      * {@inheritDoc}

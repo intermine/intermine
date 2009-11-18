@@ -21,18 +21,18 @@ import java.util.Map;
 public class XmlUtil
 {
 
-    /** 
-     * Return the fragment portion of a URI string (i.e. everything after a #). 
-     * @param uri a uri string 
-     * @return the fragment or original uri if no # present 
-     */ 
-    public static String getFragmentFromURI(String uri) { 
-        if (uri.indexOf('#') > 0) { 
-            return uri.substring(uri.indexOf('#') + 1); 
-        } 
-        return uri; 
-    } 
-    
+    /**
+     * Return the fragment portion of a URI string (i.e. everything after a #).
+     * @param uri a uri string
+     * @return the fragment or original uri if no # present
+     */
+    public static String getFragmentFromURI(String uri) {
+        if (uri.indexOf('#') > 0) {
+            return uri.substring(uri.indexOf('#') + 1);
+        }
+        return uri;
+    }
+
     /**
      * Apply some indentiation to some XML. This method is not very sophisticated and will
      * not cope well with anything but the simplest XML (no CDATA etc). The algorithm used does

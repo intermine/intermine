@@ -13,7 +13,6 @@ package org.intermine.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 /**
  * This is a rather simple implementation of a queue designed for passing objects from one
@@ -133,7 +132,7 @@ public class ObjectPipe<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
-    public synchronized E next() throws NoSuchElementException {
+    public synchronized E next() {
         while ((!finished) && list.isEmpty()) {
             try {
                 wait();

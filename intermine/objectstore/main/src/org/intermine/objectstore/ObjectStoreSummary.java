@@ -59,6 +59,7 @@ public class ObjectStoreSummary
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
+    private Set<String> ignoreFields = new HashSet<String>();
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -114,10 +115,23 @@ public class ObjectStoreSummary
         }
         // always empty references and collections
         LOG.info("Looking for empty collections and references...");
+        this.ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
+        LOG.warn("Not counting ignored fields: " + ignoreFields);
         Model model = os.getModel();
         for (ClassDescriptor cld: model.getClassDescriptors()) {
             lookForEmptyThings(cld, os);
         }
+    }
+
+    private Set<String> getIgnoreFields(String config) {
+        Set<String> ignoreFields = new HashSet<String>();
+        if (config != null) {
+            config = config.trim();
+            for (String field :config.split(" ")) {
+                ignoreFields.add(field);
+            }
+        }
+        return ignoreFields;
     }
 
     /**
@@ -297,9 +311,15 @@ public class ObjectStoreSummary
                 cld.getAllReferenceDescriptors().iterator());
         while (iter.hasNext()) {
             ReferenceDescriptor desc = (ReferenceDescriptor) iter.next();
+
             if (nonNullFieldNames.contains(desc.getName())) {
                 skipped++;
+            } else if (ignoreFields.contains(desc.getName())) {
+                skipped++;
+                LOG.warn("Ignoring configured field: " + cld.getUnqualifiedName() + "."
+                        + desc.getName());
             } else {
+
                 Query q = new Query();
                 q.setDistinct(false);
 

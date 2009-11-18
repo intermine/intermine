@@ -89,19 +89,19 @@ public class Results extends AbstractList implements LazyCollection
      * @param sequence a number representing the state of the ObjectStore, which should be quoted
      * back to the ObjectStore when requests are made
      */
-     public Results(Query query, ObjectStore os, Map<Object, Integer> sequence) {
-         if (query == null) {
-             throw new NullPointerException("query must not be null");
-         }
+    public Results(Query query, ObjectStore os, Map<Object, Integer> sequence) {
+        if (query == null) {
+            throw new NullPointerException("query must not be null");
+        }
 
-         if (os == null) {
-             throw new NullPointerException("os must not be null");
-         }
+        if (os == null) {
+            throw new NullPointerException("os must not be null");
+        }
 
-         this.query = query;
-         this.os = os;
-         this.sequence = sequence;
-     }
+        this.query = query;
+        this.os = os;
+        this.sequence = sequence;
+    }
 
     /**
      * Sets this Results object to bypass the optimiser.

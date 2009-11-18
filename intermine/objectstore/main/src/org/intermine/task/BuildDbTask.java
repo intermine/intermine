@@ -83,7 +83,7 @@ public class BuildDbTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (tempDir == null) {
             throw new BuildException("tempDir attribute is not set");
         }
@@ -231,10 +231,10 @@ class SQL extends TorqueSQLTask
      * Default constructor
      */
     public SQL() {
-            project = new Project();
-            project.init();
-            target = new Target();
-            taskName = "torque-sql";
+        project = new Project();
+        project.init();
+        target = new Target();
+        taskName = "torque-sql";
     }
 }
 
@@ -249,9 +249,9 @@ class InsertSQL extends TorqueSQLExec
      * Default constructor
      */
     public InsertSQL() {
-            project = new Project();
-            project.init();
-            target = new Target();
-            taskName = "torque-insert-sql";
+        project = new Project();
+        project.init();
+        target = new Target();
+        taskName = "torque-insert-sql";
     }
 }
