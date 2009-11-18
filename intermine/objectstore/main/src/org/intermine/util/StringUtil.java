@@ -83,7 +83,7 @@ public class StringUtil
      * @throws NullPointerException if  str is null
      */
     public static List<String> tokenize(String str, String delimiter) {
-         if (str == null) {
+        if (str == null) {
             throw new NullPointerException("Cannot pass null arguments to tokenize");
         }
         List<String> l = new ArrayList<String>();
@@ -103,7 +103,7 @@ public class StringUtil
      * @throws NullPointerException if  str is null
      */
     public static List<String> tokenize(String str) {
-         if (str == null) {
+        if (str == null) {
             throw new NullPointerException("Cannot pass null arguments to tokenize");
         }
 
@@ -243,7 +243,7 @@ public class StringUtil
         if (str == null) {
             return null;
         }
-        if (str == "") {
+        if (str.equals("")) {
             return str;
         } else {
             char first = str.charAt(0);
@@ -438,7 +438,7 @@ public class StringUtil
         return sb.toString();
     }
 
-    
+
     /**
      * Return 'a' or 'an' according to first letter of the given article.  If article starts with
      * a vowel or appears to be an acronym return 'an'.
@@ -446,16 +446,16 @@ public class StringUtil
      * @return the appropriate indefinite article
      */
     public static String indefiniteArticle(String noun) {
-        List<Character> vowels = 
-            new ArrayList<Character>(Arrays.asList(new Character[] {'a', 'e', 'i', 'o', 'u'})); 
-        
+        List<Character> vowels =
+            new ArrayList<Character>(Arrays.asList(new Character[] {'a', 'e', 'i', 'o', 'u'}));
+
         noun = noun.trim();
         if (vowels.contains(noun.charAt(0))) {
-           return "an"; 
+            return "an";
         }
-    
+
         List<Character> vowelPronounced = new ArrayList<Character>(Arrays.asList(
-                    new Character[] {'A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X'})); 
+                    new Character[] {'A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X'}));
         if (Character.isUpperCase(noun.charAt(0))) {
             if ((noun.length() == 1 || Character.isUpperCase(noun.charAt(1)))
                     && vowelPronounced.contains(noun.charAt(0))) {
@@ -464,8 +464,8 @@ public class StringUtil
         }
         return "a";
     }
-    
-    
+
+
     /**
      * @param str checked string
      * @return true if string is empty

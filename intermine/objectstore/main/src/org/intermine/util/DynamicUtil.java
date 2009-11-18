@@ -51,8 +51,7 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if fields are not
      * compatible.
      */
-    public static synchronized FastPathObject createObject(Set classes)
-    throws IllegalArgumentException {
+    public static synchronized FastPathObject createObject(Set classes) {
         Class requiredClass = (Class) classMap.get(classes);
         if (requiredClass != null) {
             return createObject(requiredClass);
@@ -119,8 +118,7 @@ public class DynamicUtil
      * @return the object
      * @throws IllegalArgumentException if an error occurs
      */
-    public static <C extends FastPathObject> C createObject(Class<C> clazz)
-    throws IllegalArgumentException {
+    public static <C extends FastPathObject> C createObject(Class<C> clazz) {
         C retval = null;
         try {
             retval = clazz.newInstance();
@@ -146,7 +144,7 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static Class composeDescriptiveClass(Class... classes) throws IllegalArgumentException {
+    public static Class composeDescriptiveClass(Class... classes) {
         if (classes.length == 1) {
             return classes[0];
         }
@@ -161,7 +159,7 @@ public class DynamicUtil
      * @throws IllegalArgumentException is there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static Class composeClass(Class... classes) throws IllegalArgumentException {
+    public static Class composeClass(Class... classes) {
         return composeClass(new HashSet(Arrays.asList(classes)));
     }
 
@@ -175,8 +173,7 @@ public class DynamicUtil
      * @throws IllegalArgumentException if there is more than one Class, or if the fields are not
      * compatible.
      */
-    public static synchronized Class composeClass(Set<Class> classes)
-        throws IllegalArgumentException {
+    public static synchronized Class composeClass(Set<Class> classes) {
         Class retval = classMap.get(classes);
         if (retval == null) {
             retval = createObject(classes).getClass();

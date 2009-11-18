@@ -36,13 +36,11 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @param reverseRefName name of the field in remote object that refers back to this one
      * @throws IllegalArgumentException if fields are null
      */
-    public ReferenceDescriptor(String name, String referencedType,
-                               String reverseRefName)
-        throws IllegalArgumentException {
+    public ReferenceDescriptor(String name, String referencedType, String reverseRefName) {
         super(name);
         if (referencedType == null || referencedType.equals("")) {
             throw new IllegalArgumentException("A value must be provided for "
-                                               + "the referenced type");
+                    + "the referenced type");
         }
         this.reverseRefName = reverseRefName;
         this.referencedType = referencedType;
@@ -53,10 +51,10 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @return ClassDescriptor for the referenced object
      * @throws IllegalStateException if model has not been set
      */
-    public ClassDescriptor getReferencedClassDescriptor() throws IllegalStateException {
+    public ClassDescriptor getReferencedClassDescriptor() {
         if (!modelSet) {
             throw new IllegalStateException("This ReferenceDescriptor (" + getName()
-                                            + ") is not yet part of a metadata Model");
+                    + ") is not yet part of a metadata Model");
         }
         return referencedClassDesc;
     }
@@ -84,10 +82,10 @@ public class ReferenceDescriptor extends FieldDescriptor
      * @return a FieldDescriptor referring back to this class.
      * @throws IllegalStateException if model has not been set
      */
-    public ReferenceDescriptor getReverseReferenceDescriptor() throws IllegalStateException {
+    public ReferenceDescriptor getReverseReferenceDescriptor() {
         if (!modelSet) {
             throw new IllegalStateException("This ReferenceDescriptor (" + getName()
-                                            + ") is not yet part of a metadata Model");
+                    + ") is not yet part of a metadata Model");
         }
         return reverseRefDesc;
     }
@@ -103,8 +101,8 @@ public class ReferenceDescriptor extends FieldDescriptor
 
         } else {
             throw new MetaDataException("Unable to find ClassDescriptor for '"
-                                        + referencedType + "' in model while processing: "
-                                        + cld.getName() + "." + name);
+                    + referencedType + "' in model while processing: " + cld.getName() + "."
+                    + name);
         }
 
         // find ReferenceDescriptor for the reverse reference
@@ -115,11 +113,10 @@ public class ReferenceDescriptor extends FieldDescriptor
                 reverseRefDesc = referencedClassDesc
                     .getCollectionDescriptorByName(reverseRefName);
             }
-           if (reverseRefDesc == null) {
+            if (reverseRefDesc == null) {
                 throw new MetaDataException("Unable to find named reverse reference '"
-                                            + reverseRefName + "' in class "
-                                            + referencedClassDesc.getName() + " while processing: "
-                                            + getClassDescriptor().getName() + "." + getName());
+                        + reverseRefName + "' in class " + referencedClassDesc.getName()
+                        + " while processing: " + getClassDescriptor().getName() + "." + getName());
             }
         }
         modelSet = true;

@@ -74,7 +74,7 @@ public class ConstraintOp
     public static final ConstraintOp OVERLAPS = new ConstraintOp("OVERLAPS");
     /** Require that a range does not overlap another range */
     public static final ConstraintOp DOES_NOT_OVERLAP = new ConstraintOp("DOES NOT OVERLAP");
-    
+
     private ConstraintOp(String name) {
         this.name = name;
         values.add(this);

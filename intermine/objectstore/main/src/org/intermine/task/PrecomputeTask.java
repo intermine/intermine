@@ -74,7 +74,7 @@ public class PrecomputeTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
         }
@@ -108,8 +108,7 @@ public class PrecomputeTask extends Task
      * @param minRows don't create any precomputed tables with less than this many rows
      * @throws BuildException if something goes wrong
      */
-    public void precompute(boolean createAllOrders, ObjectStore os, int minRows)
-    throws BuildException {
+    public void precompute(boolean createAllOrders, ObjectStore os, int minRows) {
         Properties properties = readProperties(os.getModel().getName());
 
         Map pq = getPrecomputeQueries(createAllOrders, os, properties);
@@ -166,7 +165,7 @@ public class PrecomputeTask extends Task
      * collection doesn't exist
      */
     private static Map<String, List<Query>> getPrecomputeQueries(boolean createAllOrders,
-            ObjectStore os, Properties precomputeProperties) throws BuildException {
+            ObjectStore os, Properties precomputeProperties) {
         Map<String, List<Query>> returnMap = new TreeMap<String, List<Query>>();
 
         // TODO - read selectAllFields and createAllOrders from properties
@@ -220,9 +219,7 @@ public class PrecomputeTask extends Task
      * @throws ObjectStoreException if there is a problem running a query to process the path
      */
     protected static List<Query> constructQueries(boolean createAllOrders, ObjectStore os,
-            String path, String precomputeKey) throws ClassNotFoundException,
-              IllegalArgumentException, ObjectStoreException {
-
+            String path, String precomputeKey) throws ClassNotFoundException, ObjectStoreException {
         List<Query> queries = new ArrayList<Query>();
 
         // expand '+' to all subclasses in path
@@ -276,8 +273,7 @@ public class PrecomputeTask extends Task
      * @return a Query object
      * @throws BuildException if the IQL String cannot be parsed.
      */
-    private static Query parseQuery(Model model, String iqlQueryString, String key)
-        throws BuildException {
+    private static Query parseQuery(Model model, String iqlQueryString, String key) {
         IqlQuery iqlQuery = new IqlQuery(iqlQueryString, model.getPackageName());
 
         try {
@@ -296,7 +292,7 @@ public class PrecomputeTask extends Task
      * @return the Properties
      * @throws BuildException if the file cannot be read.
      */
-    private static Properties readProperties(String modelName) throws BuildException {
+    private static Properties readProperties(String modelName) {
         String propertiesFileName = getPropertiesFileName(modelName);
 
         try {

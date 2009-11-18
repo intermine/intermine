@@ -267,6 +267,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         
         if (organism.getAttribute("taxonId").getValue().equals("7227")) {
             identifier = resolveGene("7227", identifier);
+            fieldName = "primaryIdentifier";
         }
 
         if (identifier == null || identifier.length() < 2) {

@@ -53,7 +53,7 @@ public class StoreMetadataTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (modelName == null) {
             throw new BuildException("modelName attribute is not set");
         }
@@ -91,7 +91,7 @@ public class StoreMetadataTask extends Task
             String missingTablesString = props.getProperty("missingTables");
             String truncatedClassesString = props.getProperty("truncatedClasses");
             String noNotXmlString = props.getProperty("noNotXml");
-            
+
             boolean noNotXml = false;
             if ("true".equals(noNotXmlString) || (noNotXmlString == null)) {
                 noNotXml = true;

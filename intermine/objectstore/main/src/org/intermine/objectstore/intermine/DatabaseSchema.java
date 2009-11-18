@@ -67,8 +67,7 @@ public class DatabaseSchema
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List<ClassDescriptor> truncated, boolean noNotXml,
-            Set<String> missingTables, int version,
-            boolean hasBioSeg) throws IllegalArgumentException {
+            Set<String> missingTables, int version, boolean hasBioSeg) {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;

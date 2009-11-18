@@ -117,8 +117,7 @@ public class QueryField implements QueryEvaluable
      * @param v the entry of the SELECT list
      * @throws NullPointerException if the field name is null
      */
-    public QueryField(Query q, QueryEvaluable v)
-        throws NullPointerException {
+    public QueryField(Query q, QueryEvaluable v) {
         if (q == null) {
             throw new NullPointerException("Subquery parameter is null");
         }

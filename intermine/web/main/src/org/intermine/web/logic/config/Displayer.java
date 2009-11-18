@@ -10,6 +10,7 @@ package org.intermine.web.logic.config;
  *
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Displayer
 {
     private String src;
     private String aspects = "";
-    private Map params = new HashMap();
+    private Map<String, String> params = new HashMap<String, String>();
     private String showOnLeft = "false";
 
 
@@ -78,8 +79,8 @@ public class Displayer
      *
      * @return the stored parameters
      */
-    public Map getParams() {
-        return params;
+    public Map<String, String> getParams() {
+        return Collections.unmodifiableMap(params);
     }
 
     /**

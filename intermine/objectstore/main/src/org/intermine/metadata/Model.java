@@ -62,9 +62,9 @@ public class Model
         }
         return models.get(name);
     }
-    
+
     /**
-     * Adds model to known models. 
+     * Adds model to known models.
      *
      * @param name the model name
      * @param model the model
@@ -84,8 +84,8 @@ public class Model
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, String packageName, Set<ClassDescriptor> clds)
-    throws MetaDataException {
+    public Model(String name, String packageName,
+            Set<ClassDescriptor> clds) throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -365,11 +365,11 @@ public class Model
      */
     public String getQualifiedTypeName(String className)
         throws ClassNotFoundException {
-    
+
         if (className.indexOf(".") != -1) {
             throw new IllegalArgumentException("Expected an unqualified class name: " + className);
         }
-    
+
         if (TypeUtil.instantiate(className) != null) {
             // a primative type
             return className;
@@ -383,22 +383,22 @@ public class Model
                     // fall through and try java.lang
                 }
             }
-    
+
             if ("Date".equals(className)) {
                 return Date.class.getName();
             }
-    
+
             if ("BigDecimal".equals(className)) {
                 return BigDecimal.class.getName();
             }
-    
+
             return Class.forName("java.lang." + className).getName();
         }
     }
 
     /**
      * @return true if generated classes are available
-     * 
+     *
      */
     public boolean isGeneratedClassesAvailable() {
         return generatedClassesAvailable;
@@ -406,12 +406,12 @@ public class Model
 
     /**
      * Sets if generated classes are available.
-     * @param available if generated class is available 
-     */    
+     * @param available if generated class is available
+     */
     public void setGeneratedClassesAvailable(boolean available) {
         this.generatedClassesAvailable = available;
     }
-    
+
     /**
      * @param className class name
      * @return true if class is defined else false

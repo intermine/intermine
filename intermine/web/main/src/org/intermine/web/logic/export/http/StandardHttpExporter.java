@@ -87,6 +87,13 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
             iter = getResultRows(pt, request);
             iter.goFaster();
             exporter.export(iter);
+            if (out instanceof GZIPOutputStream) {
+                try {
+                    ((GZIPOutputStream) out).finish();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         } finally {
             if (iter != null) {
                 iter.releaseGoFaster();

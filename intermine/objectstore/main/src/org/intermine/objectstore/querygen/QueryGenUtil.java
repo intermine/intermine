@@ -255,7 +255,7 @@ public class QueryGenUtil
 
         for (String subName : subs) {
             Set<String> nextPaths = new LinkedHashSet<String>();
-            if (refName != "") {
+            if (!("".equals(refName))) {
                 nextPaths.addAll(expandPath(os, path.substring(refEnd + 1).trim()));
             } else {
                 nextPaths.addAll(subs);
@@ -276,8 +276,7 @@ public class QueryGenUtil
      * @throws ClassNotFoundException if problem processing path
      * @throws IllegalArgumentException if problem processing path
      */
-    public static Query constructQuery(Model model, String path)
-        throws ClassNotFoundException, IllegalArgumentException {
+    public static Query constructQuery(Model model, String path) throws ClassNotFoundException {
         // validate path against model
         validatePath(path, model);
 

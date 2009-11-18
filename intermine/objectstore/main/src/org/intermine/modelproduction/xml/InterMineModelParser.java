@@ -56,8 +56,8 @@ public class InterMineModelParser implements ModelParser
      * @return a set of
      * @throws Exception if Model not created successfully
      */
-    public Set<ClassDescriptor> generateClassDescriptors(Reader reader, String packageName)
-    throws Exception {
+    public Set<ClassDescriptor> generateClassDescriptors(Reader reader,
+            String packageName) throws Exception {
         ModelHandler handler = new ModelHandler();
         handler.packageName = packageName;
         SAXParser.parse(new InputSource(reader), handler);

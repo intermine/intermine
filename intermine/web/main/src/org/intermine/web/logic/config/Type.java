@@ -43,8 +43,7 @@ public class Type
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
     private Displayer tableDisplayer;
-    private Map aspectDisplayers = new HashMap();
-
+    private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
     /**
      * Set the fully-qualified class name for this Type
@@ -236,14 +235,14 @@ public class Type
     /**
      * @return return map from aspect name to list of long displayer
      */
-    public Map getAspectDisplayers() {
+    public Map<String, List<Displayer>> getAspectDisplayers() {
         return aspectDisplayers;
     }
 
     /**
      * @param aspectDisplayers The aspectDisplayers to set.
      */
-    public void setAspectDisplayers(Map aspectDisplayers) {
+    public void setAspectDisplayers(Map<String, List<Displayer>> aspectDisplayers) {
         this.aspectDisplayers = aspectDisplayers;
     }
 }

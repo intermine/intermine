@@ -84,7 +84,7 @@ public class AcceptanceTestTask extends Task
      * @throws BuildException if a problem occurs
      * @see Task#execute
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (database == null) {
             throw new BuildException("database attribute is not set");
         }
@@ -260,7 +260,7 @@ public class AcceptanceTestTask extends Task
         testResultsIter = testResults.iterator();
 
         List<Integer> allTrackerIds = new ArrayList<Integer>();
-        
+
         while (testResultsIter.hasNext()) {
             AcceptanceTestResult atr = (AcceptanceTestResult) testResultsIter.next();
 
@@ -273,9 +273,9 @@ public class AcceptanceTestTask extends Task
                 if (allTrackerIds.contains(id)) {
                     continue;
                 } else {
-                    allTrackerIds.add(id);                    
+                    allTrackerIds.add(id);
                 }
-                
+
                 List trackerRows = (List) atr.getTrackerMap().get(id);
                 pw.println("<h2><a name=\"object" + id + "\">Tracker entries for "
                            + id + "</a></h2>");
@@ -544,7 +544,7 @@ class AcceptanceTest
      * Return the note parameter that was passed to the constructor.
      * @return the note parameter that was passed to the constructor.
      */
-   public String getNote() {
+    public String getNote() {
         return note;
     }
 

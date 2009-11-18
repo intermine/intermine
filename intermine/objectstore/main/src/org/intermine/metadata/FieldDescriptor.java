@@ -52,8 +52,7 @@ public abstract class FieldDescriptor
      * @param name name of field in class
      * @throws IllegalArgumentException if name argument is null
      */
-    public FieldDescriptor(String name)
-        throws IllegalArgumentException {
+    public FieldDescriptor(String name) {
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("name cannot be null or empty");
         }
@@ -96,7 +95,7 @@ public abstract class FieldDescriptor
      * @param cld the parent ClassDescriptor
      * @throws IllegalStateException if the parent ClassDescriptor is not set
      */
-    protected void setClassDescriptor(ClassDescriptor cld) throws IllegalStateException {
+    protected void setClassDescriptor(ClassDescriptor cld) {
         if (cld == null) {
             throw new NullPointerException("cld cannot be null");
         }

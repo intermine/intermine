@@ -75,7 +75,7 @@ public class SequenceExportAction extends InterMineAction
             (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
         BioSequence bioSequence = null;
 
-        SequenceHttpExporter.setSequenceExportHeader(response);
+        //SequenceHttpExporter.setSequenceExportHeader(response);
 
         Properties webProps = (Properties) session.getServletContext().
             getAttribute(Constants.WEB_PROPERTIES);

@@ -67,6 +67,9 @@ public class ExperimentController extends TilesAction
         Map<Integer, List<String>> files = MetadataCache.getSubmissionFiles(os);
         request.setAttribute("files", files);
 
+        Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
+        request.setAttribute("filesPerSub", filesPerSub);
+
         return null;
     }
 }

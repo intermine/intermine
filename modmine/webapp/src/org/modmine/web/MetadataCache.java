@@ -89,6 +89,7 @@ public class MetadataCache
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
     private static Map<Integer, List<String>> submissionFilesCache = null;
+    private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static long lastTrackCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
     
@@ -129,6 +130,26 @@ public class MetadataCache
             readSubmissionFiles(os);
         }
         return submissionFilesCache;
+    }
+
+    /**
+     * Fetch number of input/output file per submission.
+     * @param os the production objectstore
+     * @return map
+     */
+    public static synchronized Map<Integer, Integer> getFilesPerSubmission(ObjectStore os) {
+        if (submissionFilesCache == null) {
+            readSubmissionFiles(os);
+        }
+        filesPerSubmissionCache = new HashMap<Integer, Integer>();
+        
+        Iterator<Integer> dccId = submissionFilesCache.keySet().iterator();
+        while (dccId.hasNext()) {
+            Integer thisSub = dccId.next();
+            Integer nrFiles = submissionFilesCache.get(thisSub).size();
+            filesPerSubmissionCache.put(thisSub, nrFiles);
+        }
+        return filesPerSubmissionCache;
     }
 
     private static void readSubmissionFiles(ObjectStore os) {

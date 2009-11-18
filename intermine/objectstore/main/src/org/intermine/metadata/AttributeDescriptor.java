@@ -39,8 +39,7 @@ public class AttributeDescriptor extends FieldDescriptor
      * @param type name of primitive or a fully qualified class name
      * @throws IllegalArgumentException if arguments are null
      */
-    public AttributeDescriptor(String name, String type)
-        throws IllegalArgumentException {
+    public AttributeDescriptor(String name, String type) {
         super(name);
         if (type == null || type.equals("")) {
             throw new IllegalArgumentException("Type cannot be null or empty");

@@ -66,8 +66,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      */
     public ClassDescriptor(String name, String supers,
             boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
-            Set<CollectionDescriptor> cols) throws IllegalArgumentException {
-
+            Set<CollectionDescriptor> cols) {
         if (name == null || name.equals("") || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
@@ -193,7 +192,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     }
 
     private LinkedHashMap<String, FieldDescriptor> findAllFieldDescriptors()
-    throws MetaDataException {
+        throws MetaDataException {
         LinkedHashMap<String, FieldDescriptor> map
             = new LinkedHashMap<String, FieldDescriptor>(fieldDescriptors);
         for (ClassDescriptor superDesc : superDescriptors) {
@@ -510,7 +509,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @return set of subclass ClassDescriptors
      * @throws IllegalStateException if the set of subclasses has not been set
      */
-    public Set<ClassDescriptor> getSubDescriptors() throws IllegalStateException {
+    public Set<ClassDescriptor> getSubDescriptors() {
         checkModel();
         return model.getDirectSubs(this);
     }
@@ -523,7 +522,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @throws IllegalStateException if the model is already set
      * @throws MetaDataException if references not found
      */
-    protected void setModel(Model model) throws IllegalStateException, MetaDataException  {
+    protected void setModel(Model model) throws MetaDataException  {
         if (modelSet) {
             throw new IllegalStateException("Model has already been set and may not be changed.");
         }
@@ -773,7 +772,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         for (CollectionDescriptor desc : getAllCollectionDescriptors()) {
             ClassDescriptor cld = desc.getClassDescriptor();
             table.addRow(new String[] {desc.getName(), "collection of "
-                + terseClass(desc.getReferencedClassName()),
+                    + terseClass(desc.getReferencedClassName()),
                 (cld == this ? "" : "from " + terseClass(cld.getName()))});
         }
         table.addRow(TextTable.ROW_SEPARATOR);

@@ -61,7 +61,7 @@ public class ModelOutputTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (this.destDir == null) {
             throw new BuildException("destDir attribute is not set");
         }
