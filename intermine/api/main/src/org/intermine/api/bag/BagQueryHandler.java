@@ -45,14 +45,14 @@ public class BagQueryHandler extends DefaultHandler
     private Boolean matchesAreIssues;
 
     private Boolean runBeforeDefault;
-    
+
     private Model model;
 
     private StringBuffer sb;
 
     private String pkg = null;
 
-    private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, preDefaultBagQueries, 
+    private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, preDefaultBagQueries,
                                                                additionalConverters);
 
     private String connectField;
@@ -87,9 +87,8 @@ public class BagQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void startElement(@SuppressWarnings("unused") String uri,
-                             @SuppressWarnings("unused") String localName,
-                             String qName, Attributes attrs)
-              throws SAXException {
+            @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
+        throws SAXException {
         if (qName.equals("extra-bag-query-class")) {
             connectField = attrs.getValue("connect-field");
             className = attrs.getValue("class-name");
@@ -131,13 +130,13 @@ public class BagQueryHandler extends DefaultHandler
                 throw new SAXException("Invalid target type for additional converter: "
                                        + targetType);
             }
-            Set<String> clds = new HashSet<String>(); 
-            clds.add(typeCld.getName()); 
-            for (ClassDescriptor cld : model.getAllSubs(typeCld)) { 
-                clds.add(cld.getName()); 
-            } 
-            for (String nextCld : clds) { 
-                additionalConverters.put(TypeUtil.unqualifiedName(nextCld), converterMap); 
+            Set<String> clds = new HashSet<String>();
+            clds.add(typeCld.getName());
+            for (ClassDescriptor cld : model.getAllSubs(typeCld)) {
+                clds.add(cld.getName());
+            }
+            for (String nextCld : clds) {
+                additionalConverters.put(TypeUtil.unqualifiedName(nextCld), converterMap);
             }
         }
     }
@@ -151,14 +150,14 @@ public class BagQueryHandler extends DefaultHandler
         while (length > 0) {
             boolean whitespace = false;
             switch (ch[start]) {
-            case ' ':
-            case '\r':
-            case '\n':
-            case '\t':
-                whitespace = true;
-                break;
-            default:
-                break;
+                case ' ':
+                case '\r':
+                case '\n':
+                case '\t':
+                    whitespace = true;
+                    break;
+                default:
+                    break;
             }
             if (!whitespace) {
                 break;

@@ -42,7 +42,7 @@ import org.intermine.pathquery.PathQuery;
 public class ExportResultsIterator implements Iterator<List<ResultElement>>
 {
     private static final Logger LOG = Logger.getLogger(ExportResultsIterator.class);
-    
+
     private Iterator<List> osIter;
     private Iterator<List<ResultElement>> subIter;
     // This object contains a description of the collections in the input.
@@ -80,10 +80,9 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
         init(os, pq, savedBags, bagQueryRunner, batchSize);
     }
-    
+
     private void init(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize)
-            throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner, int batchSize) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map returnBagQueryResults = new HashMap();
         Query q = MainHelper.makeQuery(pq, savedBags, pathToQueryNode, bagQueryRunner,
@@ -131,7 +130,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      */
     public void goFaster()  {
         try {
-            ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());    
+            ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
         } catch (ObjectStoreException ex) {
             LOG.error("Error happened during executing goFaster method.", ex);
         }
@@ -145,7 +144,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     public void releaseGoFaster() {
         try {
             ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
-                    .getQuery());    
+                    .getQuery());
         } catch (ObjectStoreException ex) {
             LOG.error("Error happened during executing releaseGoFaster method.", ex);
         }

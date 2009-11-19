@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import org.intermine.api.profile.InterMineBag;
 
-public class NameUtil {
-	
+public class NameUtil
+{
     /**
      * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
      * dashes.  And spaces.  And dots.
@@ -39,7 +39,7 @@ public class NameUtil {
         return wordEquivalent;
 
     }
-        
+
     /**
      * Takes a string and replaces special characters with the text value, e.g. it would change
      * "a&b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
@@ -106,8 +106,8 @@ public class NameUtil {
 
         return specCharToText;
     }
-    
-    
+
+
     public static String generateNewName(String origName, Map<String, InterMineBag> allBags) {
         int i = 1;
         while (allBags.get(origName + "_copy" + i) != null) {
@@ -115,10 +115,11 @@ public class NameUtil {
         }
         return origName + "_copy" + i;
     }
-    
+
     public static String getNewNameTextBox(String defaultName, String newBagName) {
-    	String newName = null;
-        if (newBagName != null && newBagName.trim().length() > 0 && !newBagName.equalsIgnoreCase(defaultName)) {
+        String newName = null;
+        if (newBagName != null && newBagName.trim().length() > 0
+                && !newBagName.equalsIgnoreCase(defaultName)) {
             newName = newBagName.trim();
         }
         return newName;
@@ -152,7 +153,4 @@ public class NameUtil {
             return newName;
         }
     }
-    
-
-    
 }

@@ -39,13 +39,13 @@ import org.intermine.objectstore.query.Results;
  * @author Richard Smith
  *
  */
-public class BagManager 
+public class BagManager
 {
     private Profile superProfile;
     private final TagManager tagManager;
     private final Model model;
     private ObjectStore osProduction;
-    
+
     /**
      * The BagManager references the super user profile to fetch global bags.
      * @param superProfile the super user profile
@@ -57,7 +57,7 @@ public class BagManager
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
         this.osProduction = superProfile.getProfileManager().getProductionObjectStore();
     }
-    
+
     /**
      * Fetch globally available bags - superuser public bags that are available to everyone.
      * @return a map from bag name to bag
@@ -65,7 +65,7 @@ public class BagManager
     public Map<String, InterMineBag> getGlobalBags() {
         return getBagsWithTag(superProfile, TagNames.IM_PUBLIC);
     }
-    
+
     /**
      * Fetch bags from given protocol with a particular tag assigned to them.
      * @param profile the user to fetch bags from
@@ -74,7 +74,7 @@ public class BagManager
      */
     protected Map<String, InterMineBag> getBagsWithTag(Profile profile, String tag) {
         Map<String, InterMineBag> bagsWithTag = new HashMap<String, InterMineBag>();
-        
+
         for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             InterMineBag bag = entry.getValue();
             List<Tag> tags = tagManager.getTags(tag, bag.getName(), TagTypes.BAG,
@@ -85,7 +85,7 @@ public class BagManager
         }
         return bagsWithTag;
     }
-    
+
     /**
      * Fetch bags for the given profile.
      * @param profile the user to fetch bags for
@@ -94,7 +94,7 @@ public class BagManager
     public Map<String, InterMineBag> getUserBags(Profile profile) {
         return profile.getSavedBags();
     }
-    
+
     /**
      * Fetch all global bags and user bags combined in the same map.  If user has a bag with the
      * same name as a global bag the user's bag takes precedence.
@@ -104,13 +104,13 @@ public class BagManager
     public Map<String, InterMineBag> getUserAndGlobalBags(Profile profile) {
         // add global bags first, any user bags with same name take precedence
         Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>();
-        
+
         allBags.putAll(getGlobalBags());
         allBags.putAll(profile.getSavedBags());
-        
+
         return allBags;
     }
-    
+
     /**
      * Fetch a global bag by name.
      * @param bagName the name of bag to fetch
@@ -129,7 +129,7 @@ public class BagManager
     public InterMineBag getUserBag(Profile profile, String bagName) {
         return getUserBags(profile).get(bagName);
     }
-    
+
     /**
      * Fetch a global or user bag by name.  If user has a bag with the same name as a global bag
      * the user's bag takes precedence.
@@ -140,7 +140,7 @@ public class BagManager
     public InterMineBag getUserOrGlobalBag(Profile profile, String bagName) {
         return getUserAndGlobalBags(profile).get(bagName);
     }
-    
+
     /**
      * Fetch global and user bags of the specified type or a subclass of the specified type.
      * @param profile the user to fetch bags for
@@ -150,13 +150,13 @@ public class BagManager
     public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
-        
+
         String qualifiedType = model.getPackageName() + "." + type;
         ClassDescriptor bagTypeCld = model.getClassDescriptorByName(qualifiedType);
         for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
             classAndSubs.add(cld.getUnqualifiedName());
         }
-        
+
         Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
         for (Map.Entry<String, InterMineBag> entry : getUserAndGlobalBags(profile).entrySet()) {
             InterMineBag bag = entry.getValue();
@@ -165,7 +165,7 @@ public class BagManager
             }
         }
         return bagsOfType;
-    }    
+    }
 
     /**
      * Fetch global bags that contain the given id.
@@ -175,7 +175,7 @@ public class BagManager
     public Collection<InterMineBag> getGlobalBagsContainingId(Integer id) {
         return getBagsContainingId(getGlobalBags(), id);
     }
-    
+
     /**
      * Fetch user bags that contain the given id.
      * @param id the id to search bags for
@@ -185,7 +185,7 @@ public class BagManager
     public Collection<InterMineBag> getUserBagsContainingId(Profile profile, Integer id) {
         return getBagsContainingId(getUserBags(profile), id);
     }
-    
+
     /**
      * Fetch user or global bags that contain the given id.  If user has a bag with the same name
      * as a global bag the user's bag takes precedence.
@@ -199,13 +199,13 @@ public class BagManager
         bagsContainingId.addAll(getUserBagsContainingId(profile, id));
         return bagsContainingId;
     }
-    
+
     private Collection<InterMineBag> getBagsContainingId(Map<String, InterMineBag> imBags,
             Integer id) {
         Collection<ObjectStoreBag> objectStoreBags = getObjectStoreBags(imBags.values());
-        Map<Integer, InterMineBag> osBagIdToInterMineBag = 
+        Map<Integer, InterMineBag> osBagIdToInterMineBag =
             getOsBagIdToInterMineBag(imBags.values());
-        
+
         // this searches bags for an object
         ObjectStoreBagsForObject osbo = new ObjectStoreBagsForObject(id, objectStoreBags);
 
@@ -214,7 +214,7 @@ public class BagManager
         q.addToSelect(osbo);
 
         Collection<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
-        
+
         // this should return all bags with that object
         Results res = osProduction.executeSingleton(q);
         Iterator resIter = res.iterator();
@@ -222,24 +222,24 @@ public class BagManager
             Integer osBagId = (Integer) resIter.next();
             bagsContainingId.add(osBagIdToInterMineBag.get(osBagId));
         }
-        
+
         return bagsContainingId;
     }
-    
+
     private Map<Integer, InterMineBag> getOsBagIdToInterMineBag(Collection<InterMineBag> imBags) {
         Map<Integer, InterMineBag> osBagIdToInterMineBag = new HashMap<Integer, InterMineBag>();
-        
+
         for (InterMineBag imBag : imBags) {
             osBagIdToInterMineBag.put(imBag.getOsb().getBagId(), imBag);
         }
         return osBagIdToInterMineBag;
     }
-    
+
     private Collection<ObjectStoreBag> getObjectStoreBags(Collection<InterMineBag> imBags) {
         Set<ObjectStoreBag> objectStoreBags = new HashSet<ObjectStoreBag>();
         for (InterMineBag imBag : imBags) {
             objectStoreBags.add(imBag.getOsb());
         }
         return objectStoreBags;
-    }  
+    }
 }

@@ -147,7 +147,7 @@ public class PathQueryAPI
         if (profileManager == null) {
             try {
                 String userProfileAlias
-                            = getProperties().getProperty("webapp.userprofile.os.alias");
+                    = getProperties().getProperty("webapp.userprofile.os.alias");
                 ObjectStoreWriter userProfileOs = ObjectStoreWriterFactory
                     .getObjectStoreWriter(userProfileAlias);
                 profileManager = new ProfileManager(getObjectStore(), userProfileOs);
@@ -171,7 +171,7 @@ public class PathQueryAPI
         return conversionTemplates;
     }
 
-    
+
     private static BagManager bagManager = null;
     /**
      * Returns a BagManager.

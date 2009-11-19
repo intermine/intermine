@@ -59,8 +59,9 @@ public class BagQueryResult
 
     /**
      * Get any results that require some user input before adding to the bag.
-     * [issue type -> [query -> [input string -> List of InterMineObjects]]] or for issue type of
-     * "TYPE_TRANSLATED": [issue type -> [query -> [input string -> List of ConvertedObjectPair]]
+     * [issue type -&gt; [query -&gt; [input string -&gt; List of InterMineObjects]]] or for issue
+     * type of "TYPE_TRANSLATED": [issue type -&gt; [query -&gt; [input string -&gt; List of
+     * ConvertedObjectPair]]
      * @return a map from issues type to queries to input to possible objects
      */
     public Map<String, Map<String, Map<String, List>>> getIssues() {
@@ -94,7 +95,7 @@ public class BagQueryResult
     }
 
     /**
-     * Get any exact matches found by the queries [id -> [input strings].
+     * Get any exact matches found by the queries [id -&gt; [input strings].
      * If the same input string appears twice in the initial list it will
      * appear twice in the list of inputs matching the InterMineObject id.
      * @return a map from InterMineObject id to list of input strings
@@ -106,7 +107,7 @@ public class BagQueryResult
     /**
      * Get ids of all InterMineObjects returned that were matches or issues for this
      * bag query lookup.
-     * @return the set of all ids that were matches or issues 
+     * @return the set of all ids that were matches or issues
      */
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();

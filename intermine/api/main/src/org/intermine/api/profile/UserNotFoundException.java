@@ -11,7 +11,7 @@ package org.intermine.api.profile;
  */
 
 /**
- * Exception thrown when user is not found.  
+ * Exception thrown when user is not found.
  * @author Jakub Kulaviak <jakub@flymine.org>
  */
 public class UserNotFoundException extends RuntimeException
@@ -23,7 +23,7 @@ public class UserNotFoundException extends RuntimeException
     public UserNotFoundException(String msg) {
         super(msg);
     }
-    
+
     /**
      * Constructor with message and nested exception.
      * @param msg message

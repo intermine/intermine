@@ -265,8 +265,8 @@ public class MainHelper
 
     private static void recursiveMakeQuery(Queryable q, PathQuery pathQuery, PathNode root,
             Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner, Map returnBagQueryResults, boolean checkOnly)
-    throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner, Map returnBagQueryResults,
+            boolean checkOnly) throws ObjectStoreException {
         Model model = pathQuery.getModel();
         Map<String, ConstraintSet> codeToCS = new HashMap<String, ConstraintSet>();
         List<CsTreeStructure> csTreeStructure = new ArrayList<CsTreeStructure>();
@@ -396,18 +396,18 @@ public class MainHelper
                         continue;
                     }
                     // TODO: Why? if (finalPath.indexOf(".") != -1) {
-                        String fieldName = node.getFieldName();
-                        QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
-                        if (!node.isAttribute()) {
-                            if (node.isReference()) {
-                                qr = new QueryObjectReference(parentQc, fieldName);
-                            } else {
-                                qr = new QueryCollectionReference(parentQc, fieldName);
-                            }
-                            QueryClass qc = (QueryClass) queryBits.get(finalPath);
-                            andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
-                                        qc));
+                    String fieldName = node.getFieldName();
+                    QueryClass parentQc = (QueryClass) queryBits.get(node.getPrefix());
+                    if (!node.isAttribute()) {
+                        if (node.isReference()) {
+                            qr = new QueryObjectReference(parentQc, fieldName);
+                        } else {
+                            qr = new QueryCollectionReference(parentQc, fieldName);
                         }
+                        QueryClass qc = (QueryClass) queryBits.get(finalPath);
+                        andcs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS,
+                                    qc));
+                    }
                     //}
                     queryBits.put(path, queryBits.get(finalPath));
                 }
@@ -685,7 +685,7 @@ public class MainHelper
     }
 
     private static org.intermine.objectstore.query.Constraint
-        makeAttributeConstraint(QueryNode qn, Constraint c) {
+    makeAttributeConstraint(QueryNode qn, Constraint c) {
         if (c.getOp() == ConstraintOp.IS_NOT_NULL
             || c.getOp() == ConstraintOp.IS_NULL) {
             return new SimpleConstraint((QueryEvaluable) qn, c.getOp());
@@ -764,8 +764,8 @@ public class MainHelper
         if (c.getOp().equals(ConstraintOp.EQUALS)) {
             return new SimpleConstraint(qf, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
         } else if (c.getOp().equals(ConstraintOp.NOT_EQUALS)) {
-                return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
-                        new QueryValue(lowerCaseValue));
+            return new SimpleConstraint(qf, ConstraintOp.DOES_NOT_MATCH,
+                    new QueryValue(lowerCaseValue));
         } else if (c.getOp().equals(ConstraintOp.CONTAINS)) {
             return new SimpleConstraint(qf, ConstraintOp.MATCHES,
                     new QueryValue("%" + lowerCaseValue + "%"));
@@ -787,7 +787,7 @@ public class MainHelper
      * @return a new object store constraint
      */
     protected static org.intermine.objectstore.query.Constraint
-        makeQueryDateConstraint(QueryNode qn, Constraint c) {
+    makeQueryDateConstraint(QueryNode qn, Constraint c) {
         Date dateValue = (Date) c.getValue();
 
         Calendar startOfDay = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
@@ -1216,7 +1216,7 @@ public class MainHelper
     public static int getLastJoinIndex(String path) {
         return (Math.max(path.indexOf("."), path.indexOf(":")));
     }
-    
+
     /**
      * Return the indexOf the first join in a path denoted by '.' or ':', return -1 if neither
      * join type exists in the path
@@ -1232,8 +1232,8 @@ public class MainHelper
             return Math.min(path.indexOf('.'), path.indexOf(':'));
         }
     }
-    
-    
+
+
     /**
      * Return true if the given path string contains a join - denoted by '.' or ':' for normal
      * or outer join respectively.
@@ -1243,7 +1243,7 @@ public class MainHelper
     public static boolean containsJoin(String path) {
         return (path.indexOf(".") >= 0) || (path.indexOf(":") >= 0);
     }
-    
+
 
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
@@ -1266,7 +1266,7 @@ public class MainHelper
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
             ProfileManager pm) {
-        List<TemplateQuery> conversionTemplates = 
+        List<TemplateQuery> conversionTemplates =
             TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
@@ -1452,16 +1452,16 @@ public class MainHelper
         subQ.addToSelect(qf);
         qf = new QueryField(subQ, qf);
         Class summaryType = qf.getType();
-        
-        QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath); 
-        String fieldName = origQf.getFieldName(); 
-        String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement()) 
+
+        QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath);
+        String fieldName = origQf.getFieldName();
+        String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement())
                 .getType());
-        
+
         if ((summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
                 || (summaryType == Float.class) || (summaryType == Double.class)
-                || (summaryType == BigDecimal.class) 
+                || (summaryType == BigDecimal.class)
                 && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
             QueryNode min = new QueryFunction(qf, QueryFunction.MIN);
             QueryNode max = new QueryFunction(qf, QueryFunction.MAX);
@@ -1475,11 +1475,11 @@ public class MainHelper
             pathToQueryNode.put("Maximum", max);
             pathToQueryNode.put("Average", avg);
             pathToQueryNode.put("Standard Deviation", stddev);
-        } else if ((summaryType == String.class) || (summaryType == Boolean.class) 
-                || (summaryType == Long.class) || (summaryType == Integer.class) 
-                || (summaryType == Short.class) || (summaryType == Byte.class) 
-                || (summaryType == Float.class) || (summaryType == Double.class) 
-                || (summaryType == BigDecimal.class)) { 
+        } else if ((summaryType == String.class) || (summaryType == Boolean.class)
+                || (summaryType == Long.class) || (summaryType == Integer.class)
+                || (summaryType == Short.class) || (summaryType == Byte.class)
+                || (summaryType == Float.class) || (summaryType == Double.class)
+                || (summaryType == BigDecimal.class)) {
             q.addToSelect(qf);
             q.addToGroupBy(qf);
             QueryNode count = new QueryFunction();
@@ -1533,7 +1533,7 @@ public class MainHelper
             return child;
         }
     }
-    
+
     /**
      * Controls access to configuration information on which fields should be summarised as a count
      * of occurrences.

@@ -29,10 +29,10 @@ import org.intermine.pathquery.PathQuery;
 /**
  * Executes path query and returns results in form suitable for export or web
  * services.
- * 
+ *
  * @author Jakub Kulaviak
  */
-public class PathQueryExecutor 
+public class PathQueryExecutor
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
@@ -45,7 +45,7 @@ public class PathQueryExecutor
 
     /**
      * Sets batch size.
-     * 
+     *
      * @param size batch size
      */
     public void setBatchSize(int size) {
@@ -54,7 +54,7 @@ public class PathQueryExecutor
 
     /**
      * Constructor with necessary objects.
-     * 
+     *
      * @param os the ObjectStore to run the query in
      * @param classKeys key fields for classes in the data model
      * @param bagQueryConfig bag queries to run when interpreting LOOKUP constraints
@@ -77,7 +77,7 @@ public class PathQueryExecutor
     /**
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
-     * 
+     *
      * @param pathQuery path query to be executed
      * @return results
      */
@@ -95,7 +95,7 @@ public class PathQueryExecutor
     /**
      * Executes object store query and returns results as iterator over rows.
      * Every row is a list of result elements.
-     * 
+     *
      * @param pathQuery path query to be executed
      * @param start index of first result which will be retrieved. It can be very slow, it fetches
      * results from database from index 0 and just throws away all before start index.
@@ -115,18 +115,18 @@ public class PathQueryExecutor
 }
 
 /**
- * Class adapting ExportResultsIterator to be able to get results only in specified range 
+ * Class adapting ExportResultsIterator to be able to get results only in specified range
  * but is very slow, it just throws away all results before the start index.
- * 
+ *
  * @author Jakub Kulaviak
  */
-class ResultIterator extends ExportResultsIterator 
+class ResultIterator extends ExportResultsIterator
 {
 
     private int counter = 0;
-    
+
     private int limit;
-    
+
     private int start;
 
     /**
@@ -143,8 +143,8 @@ class ResultIterator extends ExportResultsIterator
      * @throws ObjectStoreException if something goes wrong executing the query
      */
     public ResultIterator(ObjectStore os, PathQuery pq, Map savedBags,
-            BagQueryRunner bagQueryRunner, int batchSize, int start, int limit)
-            throws ObjectStoreException {
+            BagQueryRunner bagQueryRunner, int batchSize, int start,
+            int limit) throws ObjectStoreException {
         super(os, pq, savedBags, bagQueryRunner, batchSize);
         this.limit = limit;
         this.start = start;

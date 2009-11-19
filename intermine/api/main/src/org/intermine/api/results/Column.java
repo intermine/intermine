@@ -152,7 +152,7 @@ public class Column
     public Class getType() {
         return type;
     }
-    
+
     /**
      * Get the column type unqualified as a String
      * @return the column type

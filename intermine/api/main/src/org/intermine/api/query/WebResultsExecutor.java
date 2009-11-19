@@ -35,12 +35,12 @@ import org.intermine.pathquery.PathQuery;
 
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
- * style results are required.  
+ * style results are required.
  *
  * @author Richard Smith
  * @author Jakub Kulaviak
  */
-public class WebResultsExecutor 
+public class WebResultsExecutor
 {
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
@@ -51,7 +51,7 @@ public class WebResultsExecutor
     private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
         = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
 
-    
+
     /**
      * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
      * execute it.
@@ -66,7 +66,7 @@ public class WebResultsExecutor
     public WebResultsExecutor(ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
-            Profile profile, List<TemplateQuery> conversionTemplates, 
+            Profile profile, List<TemplateQuery> conversionTemplates,
             BagManager bagManager) {
         this.os = os;
         this.classKeys = classKeys;
@@ -87,7 +87,7 @@ public class WebResultsExecutor
     public WebResults execute(PathQuery pathQuery) throws ObjectStoreException {
         return execute(pathQuery, new HashMap<String, BagQueryResult>());
     }
-    
+
     /**
      * Create and ObjectStore query from a PathQuery and execute it, returning results in a format
      * appropriate for displaying a web table.
@@ -105,9 +105,9 @@ public class WebResultsExecutor
         BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
                 conversionTemplates);
 
-        
+
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-        
+
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
                 pathToBagQueryResult, false);
 

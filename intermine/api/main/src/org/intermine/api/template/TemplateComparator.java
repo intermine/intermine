@@ -12,8 +12,6 @@ package org.intermine.api.template;
 
 import java.util.Comparator;
 
-import org.intermine.api.template.TemplateQuery;
-
 /**
  * Comparator used for ordering templates by title
  * @author kmr

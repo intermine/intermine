@@ -222,8 +222,8 @@ public class BagQueryRunner
      * @throws InterMineException
      */
     private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved,
-                            BagQueryResult bqr, BagQuery bq, Class<?> type, boolean areWildcards)
-    throws InterMineException {
+            BagQueryResult bqr, BagQuery bq, Class<?> type,
+            boolean areWildcards) throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
 
         // Gather together all the id lookups and perform them in one.
