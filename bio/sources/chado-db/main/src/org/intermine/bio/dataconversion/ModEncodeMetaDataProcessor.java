@@ -849,6 +849,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // (:->&)
         String s1 = StringUtils.substringBefore(StringUtils.replace(w, url, ""), ":");
         String s = s1.replace('"', ' ').trim();
+        if (s.contains("%E2%80%99")) // prime: for the Piano experiment
+        {
+            String s2 = s.replace("%E2%80%99", "'");
+            return s2;
+        }
         return s;
     }
 
