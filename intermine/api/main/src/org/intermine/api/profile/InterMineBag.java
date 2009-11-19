@@ -68,8 +68,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
-                        ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
-      throws ObjectStoreException {
+            ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
         this.name = name;
         this.type = type;
         this.description = description;
@@ -93,7 +92,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         this.os = os;
         this.uosw = uosw;
         this.savedBagId = savedBagId;
@@ -199,7 +198,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public void setProfileId(Integer profileId)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         this.profileId = profileId;
         SavedBag savedBag = store();
         this.savedBagId = savedBag.getId();
@@ -247,7 +246,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public void setDescription(String description)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         this.description = description;
         store();
     }
@@ -280,7 +279,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * {@inheritDoc}
      */
     public String getTitle() {
-       return getName();
+        return getName();
     }
 
     /**
@@ -393,7 +392,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if problem storing
      */
     public void removeIdFromBag(Integer id) throws ObjectStoreException {
-       removeIdsFromBag(Collections.singleton(id));
+        removeIdsFromBag(Collections.singleton(id));
     }
 
     /**

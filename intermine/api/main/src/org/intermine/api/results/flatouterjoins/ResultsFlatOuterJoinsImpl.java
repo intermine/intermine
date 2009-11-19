@@ -281,7 +281,7 @@ public class ResultsFlatOuterJoinsImpl extends AbstractList<MultiRow<ResultsRow<
             maxRowNo = Math.max(maxRowNo, rowNo);
             columnNo++;
         }
-        
+
         if (retval.size() < maxRowNo) {
             retval.add(new ResultsRow<MultiRowValue>(template));
         }

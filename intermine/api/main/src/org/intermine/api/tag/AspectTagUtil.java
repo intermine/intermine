@@ -13,10 +13,10 @@ package org.intermine.api.tag;
 
 /**
  * Util class for working with aspect tags.
- *  
+ *
  * @author Jakub Kulaviak
  */
-public class AspectTagUtil 
+public class AspectTagUtil
 {
 
     /**

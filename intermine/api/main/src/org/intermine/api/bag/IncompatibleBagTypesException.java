@@ -17,10 +17,10 @@ import java.util.Collection;
  * @author Richard Smith
  *
  */
-public class IncompatibleBagTypesException extends RuntimeException 
+public class IncompatibleBagTypesException extends RuntimeException
 {
     private Collection<String> types;
-   
+
     /**
      * Constructs an IncompatibleBagTypesException with the specified detail message.
      *
@@ -49,7 +49,7 @@ public class IncompatibleBagTypesException extends RuntimeException
     public IncompatibleBagTypesException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
     /**
      * Set the bag types that were incompatible.
      * @param types the bag types
@@ -57,7 +57,7 @@ public class IncompatibleBagTypesException extends RuntimeException
     public void setTypes(Collection<String> types) {
         this.types = types;
     }
-    
+
     /**
      * Get the bag types that were incompatible.
      * @return the incompatible types

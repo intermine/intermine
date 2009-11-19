@@ -303,8 +303,8 @@ public class Profile
      * @return the new bag
      * @throws ObjectStoreException if something goes wrong
      */
-    public InterMineBag createBag(String name, String type, String description) 
-    throws ObjectStoreException {
+    public InterMineBag createBag(String name, String type,
+            String description) throws ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         InterMineBag bag = new InterMineBag(name, type, description, new Date(), os, userId, uosw);
@@ -322,16 +322,16 @@ public class Profile
     public void deleteBag(String name) throws ObjectStoreException {
         InterMineBag bagToDelete = savedBags.get(name);
         if (isLoggedIn()) {
-            bagToDelete.delete();            
+            bagToDelete.delete();
         }
         savedBags.remove(name);
-     
+
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
         reindex(TagTypes.BAG);
     }
 
-    
+
     /**
      * Rename an existing bag, throw exceptions when bag doesn't exist of if new name already
      * exists.  Moves tags from old bag to new bag.
@@ -348,15 +348,15 @@ public class Profile
             throw new ProfileAlreadyExistsException("Attempting to renamte a bag to a new name that"
                     + " already exists: " + newName);
         }
-        
+
         InterMineBag bag = savedBags.get(oldName);
         savedBags.remove(oldName);
         bag.setName(newName);
         saveBag(newName, bag);
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
     }
-    
-    
+
+
     private void moveTagsToNewObject(String oldTaggedObj, String newTaggedObj, String type) {
         TagManager tagManager = getTagManager();
         List<Tag> tags = tagManager.getTags(null, oldTaggedObj, type, username);
@@ -365,7 +365,7 @@ public class Profile
             tagManager.deleteTag(tag);
         }
     }
-    
+
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
     }

@@ -24,7 +24,7 @@ import org.intermine.util.TypeUtil;
  * @author Richard Smith
  *
  */
-public class PathUtil 
+public class PathUtil
 {
 
     /**
@@ -58,8 +58,9 @@ public class PathUtil
                 current = TypeUtil.getFieldValue(current, fieldName);
                 if (current instanceof Collection) {
                     throw new RuntimeException("Attempt to to get value of "
-                       + "field \"" + fieldName + "\" for collection: " + o
-                       + "It must be simple object. This operation is not allowed for collection.");
+                            + "field \"" + fieldName + "\" for collection: " + o
+                            + "It must be simple object. This operation is not allowed for "
+                            + "collection.");
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("IllegalAccessException while trying to get value of "

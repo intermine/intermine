@@ -16,10 +16,10 @@ import java.util.Collection;
  * @author Richard Smith
  *
  */
-public class ProfileAlreadyExistsException extends RuntimeException 
+public class ProfileAlreadyExistsException extends RuntimeException
 {
     private Collection<String> types;
-   
+
     /**
      * Constructs an ProfileNameAlreadyExistsExceptionException with the specified detail message.
      *
@@ -39,8 +39,8 @@ public class ProfileAlreadyExistsException extends RuntimeException
     }
 
     /**
-     * Constructs an ProfileAlreadyExistsExceptionException with the specified detail message and nested
-     * throwable.
+     * Constructs an ProfileAlreadyExistsExceptionException with the specified detail message and
+     * nested throwable.
      *
      * @param msg the detail message
      * @param t the nested throwable
@@ -48,7 +48,7 @@ public class ProfileAlreadyExistsException extends RuntimeException
     public ProfileAlreadyExistsException(String msg, Throwable t) {
         super(msg, t);
     }
-    
+
     /**
      * Set the bag types that were incompatible.
      * @param types the bag types
@@ -56,7 +56,7 @@ public class ProfileAlreadyExistsException extends RuntimeException
     public void setTypes(Collection<String> types) {
         this.types = types;
     }
-    
+
     /**
      * Get the bag types that were incompatible.
      * @return the incompatible types

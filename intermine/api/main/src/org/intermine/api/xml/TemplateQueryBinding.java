@@ -91,7 +91,7 @@ public class TemplateQueryBinding
      * @param version the version of the xml format, an attribute of the ProfileManager
      * @return a Map from template name to TemplateQuery
      */
-    public Map<String, TemplateQuery> unmarshal(Reader reader, 
+    public Map<String, TemplateQuery> unmarshal(Reader reader,
             Map<String, InterMineBag> savedBags, int version) {
         Map<String, TemplateQuery> templates = new LinkedHashMap();
 

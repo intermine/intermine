@@ -25,7 +25,7 @@ public interface Scope
      * User scope for private bags, templates, etc.
      */
     public static final String USER = "user";
-    
+
     /**
      * User or global scope for bags, templates, etc.
      */

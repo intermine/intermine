@@ -53,7 +53,7 @@ import org.intermine.util.TypeUtil;
  * @author Kim Rutherford
  */
 public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
-implements WebTable
+    implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
     private List<Path> columnPaths;
@@ -210,14 +210,14 @@ implements WebTable
      * {@inheritDoc}
      */
     public int getEstimatedSize() {
-       try {
-           return getInfo().getRows();
-       } catch (ObjectStoreException e) {
-           // whoops.  return zero so we can post a nice error message
-           LOG.error("failed to get a ResultsInfo object", e);
-           return 0;
-           //throw new RuntimeException("failed to get a ResultsInfo object", e);
-       }
+        try {
+            return getInfo().getRows();
+        } catch (ObjectStoreException e) {
+            // whoops.  return zero so we can post a nice error message
+            LOG.error("failed to get a ResultsInfo object", e);
+            return 0;
+            //throw new RuntimeException("failed to get a ResultsInfo object", e);
+        }
     }
 
     /**
@@ -307,7 +307,7 @@ implements WebTable
                 newBatchSize, true, true, true);
         return newResults;
     }
-    
+
     /**
      * Calls ObjectStore.releaseGoFaster() if this object wraps a Results object from an
      * ObjectStoreInterMineImpl.
@@ -405,19 +405,13 @@ implements WebTable
                     try {
                         fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
                     } catch (PathError e) {
-                            throw new IllegalArgumentException(
-                            "Path: \""
-                            + columnName
-                            + "\", pathToIndex: \""
-                            + pathToIndex
-                            + "\", prefix: \""
-                            + parentColumnName
-                            + "\", query: \""
-                            + PathQueryBinding.marshal(pathQuery, "",
-                                            pathQuery.getModel().getName(),
-                                            PathQuery.USERPROFILE_VERSION)
-                            + "\", columnIndex: \"" + columnIndex
-                            + "\", initialList: \"" + initialList + "\"", e);
+                        throw new IllegalArgumentException("Path: \"" + columnName
+                                + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
+                                + parentColumnName + "\", query: \""
+                                + PathQueryBinding.marshal(pathQuery, "", pathQuery.getModel()
+                                    .getName(), PathQuery.USERPROFILE_VERSION)
+                                + "\", columnIndex: \"" + columnIndex + "\", initialList: \""
+                                + initialList + "\"", e);
                     }
                     if (o != null) {
                         String fieldCDName = path.getLastClassDescriptor().getName();

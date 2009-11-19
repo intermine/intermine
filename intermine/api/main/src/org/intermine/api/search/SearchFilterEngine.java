@@ -36,9 +36,8 @@ public class SearchFilterEngine
      * @param tagManager tag manager used for obtaining tags
      * @return the filtered Map
      */
-    public <W extends WebSearchable> Map<String, W>
-        filterByTags(Map<String, W> webSearchables, List<String> tagNames, String tagType, String
-                userName, TagManager tagManager) {
+    public <W extends WebSearchable> Map<String, W> filterByTags(Map<String, W> webSearchables,
+            List<String> tagNames, String tagType, String userName, TagManager tagManager) {
         Map<String, W> returnMap = new LinkedHashMap<String, W>(webSearchables);
 
         // prime the cache

@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.results.Column;
-import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.ObjectStoreException;

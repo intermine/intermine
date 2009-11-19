@@ -11,7 +11,8 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
 
-public class TypeConverterHelper {
+public class TypeConverterHelper
+{
 
     /**
      * Find template queries that are tagged for use as converters.
@@ -21,10 +22,10 @@ public class TypeConverterHelper {
     public static List<TemplateQuery> getConversionTemplates(Profile superProfile) {
 
         List<TemplateQuery> conversionTemplates = new ArrayList<TemplateQuery>();
-        TagManager tagManager = 
+        TagManager tagManager =
             new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
-            
-        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE, 
+
+        List<Tag> tags = tagManager.getTags(TagNames.IM_CONVERTER, null, TagTypes.TEMPLATE,
                 superProfile.getUsername());
 
         for (Tag tag : tags) {
@@ -36,5 +37,4 @@ public class TypeConverterHelper {
         }
         return conversionTemplates;
     }
-	
 }

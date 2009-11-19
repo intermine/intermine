@@ -17,7 +17,8 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 
-public class TemplatePrecomputeHelper {
+public class TemplatePrecomputeHelper
+{
 
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
