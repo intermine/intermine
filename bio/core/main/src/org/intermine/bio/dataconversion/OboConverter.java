@@ -49,7 +49,8 @@ public class OboConverter extends DataConverter
     protected Map<String, Item> nameToTerm = new HashMap<String, Item>();
     protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
-
+    private boolean createRelations = true;
+    
     /**
      * Constructor for this class.
      *
@@ -71,6 +72,19 @@ public class OboConverter extends DataConverter
         ontology.addAttribute(new Attribute("url", url));
     }
 
+    /**
+     * Set to false to prevent storing OntologyRelation objects that include the relationship types
+     * between terms.
+     * @param createrelations property to parse
+     */
+    public void setCreaterelations(String createrelations) {
+        if (createrelations.equalsIgnoreCase("true")) {
+            this.createRelations = true;
+        } else {
+            this.createRelations = false;
+        }
+    }
+    
     /**
      * Process every DAG term and output it as a Item.
      *
@@ -100,6 +114,9 @@ public class OboConverter extends DataConverter
         }
         for (OboRelation oboRelation : oboRelations) {
             processRelation(oboRelation);
+        }
+        for (Item termItem: nameToTerm.values()) {
+            store(termItem);
         }
         for (Item synItem : synToItem.values()) {
             store(synItem);
@@ -136,7 +153,6 @@ public class OboConverter extends DataConverter
             item = createItem(termClass);
             nameToTerm.put(termId, item);
             configureItem(termId, item, term);
-            store(item);
         } else {
             if ((!term.getName().equals(item.getAttribute("name").getValue()))
                     || ((item.getAttribute("identifier") == null) && (term.getId() != null))
@@ -209,29 +225,36 @@ public class OboConverter extends DataConverter
     }
 
     /**
-     * @param oboRelation
+     * Process and store OboRelations
+     * @param oboRelation the relation to process
+     * @throws ObjectStoreException if problem storing
      */
     protected void processRelation(OboRelation oboRelation)
     throws ObjectStoreException {
         // create the relation item
         if (nameToTerm.get(oboRelation.getParentTermId()) != null
             && nameToTerm.get(oboRelation.getChildTermId()) != null) {
-            Item relation = createItem("OntologyRelation");
-            relation.setReference("parentTerm", (Item) nameToTerm
-                            .get(oboRelation.getParentTermId()));
-            relation.setReference("childTerm", (Item) nameToTerm.get(oboRelation.getChildTermId()));
-            relation.setAttribute("relationship", oboRelation.getRelationship().getName());
-            relation.setAttribute("direct", Boolean.toString(oboRelation.isDirect()));
-            relation.setAttribute("redundant", Boolean.toString(oboRelation.isRedundant()));
-            // Set the reverse reference
-            ((Item) nameToTerm.get(oboRelation.getParentTermId()))
-                            .addToCollection("relations", relation);
-            ((Item) nameToTerm.get(oboRelation.getChildTermId()))
-                            .addToCollection("relations", relation);
+
             // add parent to term for easier querying in webapp
-            ((Item) nameToTerm.get(oboRelation.getChildTermId())).addToCollection("parents",
-                            (Item) nameToTerm.get(oboRelation.getParentTermId()));
-            store(relation);
+            nameToTerm.get(oboRelation.getChildTermId()).addToCollection("parents",
+                    nameToTerm.get(oboRelation.getParentTermId()));
+
+            if (createRelations) {
+                Item relation = createItem("OntologyRelation");
+                relation.setReference("parentTerm", (Item) nameToTerm
+                        .get(oboRelation.getParentTermId()));
+                relation.setReference("childTerm", nameToTerm.get(oboRelation.getChildTermId()));
+                relation.setAttribute("relationship", oboRelation.getRelationship().getName());
+                relation.setAttribute("direct", Boolean.toString(oboRelation.isDirect()));
+                relation.setAttribute("redundant", Boolean.toString(oboRelation.isRedundant()));
+
+                // Set the reverse reference
+                nameToTerm.get(oboRelation.getParentTermId())
+                    .addToCollection("relations", relation);
+                nameToTerm.get(oboRelation.getChildTermId())
+                    .addToCollection("relations", relation);
+                store(relation);
+            }
         } else {
             LOG.info("GOTerm id not found for relation " + oboRelation.getParentTermId() + " "
                      + oboRelation.getChildTermId());

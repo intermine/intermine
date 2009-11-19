@@ -44,6 +44,7 @@
 				</element>
 			</sequence>
 			<attribute name="name" type="string" use="optional"></attribute>
+			<attribute name="longDescription" type="string" use="optional"></attribute>
 			<attribute name="model" type="string" use="required"></attribute>
 			<attribute name="view" type="string" use="required"></attribute>
 			<attribute name="sortOrder" type="string" use="optional"></attribute>

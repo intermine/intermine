@@ -391,7 +391,7 @@ public class AjaxServices
             for (ResultsRow row : (List<ResultsRow>) results) {
                 pageSizeResults.add(row);
                 rowCount++;
-                if (rowCount >= Constants.DEFAULT_TABLE_SIZE) {
+                if (rowCount >= 10) {
                     break;
                 }
             }

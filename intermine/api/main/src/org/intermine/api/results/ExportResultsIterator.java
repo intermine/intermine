@@ -252,10 +252,13 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             } else if (!multiRow) {
                 // Check the collection size, to see if we can get away with a single row.
                 List<List> collection = (List<List>) row.get(columnNo);
-                if (collection.size() > 1) {
-                    multiRow = true;
-                } else if (collection.size() == 1) {
-                    multiRow = isCollectionMultiRow(collection.iterator().next(), (List) column);
+                if (collection != null) {
+                    if (collection.size() > 1) {
+                        multiRow = true;
+                    } else if (collection.size() == 1) {
+                        multiRow = isCollectionMultiRow(collection.iterator().next(),
+                                (List) column);
+                    }
                 }
             }
             columnNo++;
