@@ -44,10 +44,10 @@ public class ListManager
      */
     public List<String> getListsNames(Integer objectId) {
         List<String> ret = new ArrayList<String>();
-        
+
         HttpSession session = request.getSession();
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
-        
+
         Collection<InterMineBag> bags = bagManager.getGlobalBags().values();
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());

@@ -61,36 +61,36 @@ public class PathQueryResultHelper
                           String prefix, boolean excludeNonAttributes) {
         List<Path> view = new ArrayList<Path>();
         ClassDescriptor classDescriptor = model.getClassDescriptorByName(type);
-            List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig,
-                classDescriptor);
-            for (FieldConfig fieldConfig : fieldConfigs) {
-                if (fieldConfig.getShowInResults()) {
-                    String expr = fieldConfig.getFieldExpr();
-                    if (prefix == null || prefix.length() <= 0) {
-                        prefix = type;
-                    }
-                    String prePath = "." + expr;
-                    StringBuffer pathStringBuffer = new StringBuffer();
-                    int lastIndex = prePath.lastIndexOf(".");
-                    int index = prePath.indexOf(".");
-                    int prevIndex = 0;
-                    while (index < lastIndex) {
-                        pathStringBuffer.append(prePath.substring(prevIndex, index))
-                            .append(":");
-                        prevIndex = index + 1;
-                        index = prePath.indexOf(".", prevIndex);
-                    }
-                    pathStringBuffer.append(prePath.substring(prevIndex));
-                    String pathString = prefix + "[" + type + "]" + pathStringBuffer.toString();
-                    Path path = new Path(model, pathString);
-                    // Path path = MainHelper.makePath(model, pathQuery, pathString);
-                    // TODO remove isOnlyAttribute when outer joins
-                    if (!view.contains(path)
-                                    && ((excludeNonAttributes && path.isOnlyAttribute())
-                                    || (!excludeNonAttributes))) {
-                        view.add(path);
-                    }
+        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig,
+            classDescriptor);
+        for (FieldConfig fieldConfig : fieldConfigs) {
+            if (fieldConfig.getShowInResults()) {
+                String expr = fieldConfig.getFieldExpr();
+                if (prefix == null || prefix.length() <= 0) {
+                    prefix = type;
                 }
+                String prePath = "." + expr;
+                StringBuffer pathStringBuffer = new StringBuffer();
+                int lastIndex = prePath.lastIndexOf(".");
+                int index = prePath.indexOf(".");
+                int prevIndex = 0;
+                while (index < lastIndex) {
+                    pathStringBuffer.append(prePath.substring(prevIndex, index))
+                        .append(":");
+                    prevIndex = index + 1;
+                    index = prePath.indexOf(".", prevIndex);
+                }
+                pathStringBuffer.append(prePath.substring(prevIndex));
+                String pathString = prefix + "[" + type + "]" + pathStringBuffer.toString();
+                Path path = new Path(model, pathString);
+                // Path path = MainHelper.makePath(model, pathQuery, pathString);
+                // TODO remove isOnlyAttribute when outer joins
+                if (!view.contains(path)
+                                && ((excludeNonAttributes && path.isOnlyAttribute())
+                                || (!excludeNonAttributes))) {
+                    view.add(path);
+                }
+            }
             if (view.size() == 0) {
                 Set<AttributeDescriptor> attrDesc = classDescriptor.getAttributeDescriptors();
                 for (AttributeDescriptor attributeDescriptor : attrDesc) {
@@ -172,9 +172,8 @@ public class PathQueryResultHelper
      * @param sr the list of classes and subclasses
      * @return a PathQuery
      */
-     static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, Model model,
-                                                        InterMineObject object,
-                                   String field, List<Class> sr) {
+    static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, Model model,
+            InterMineObject object, String field, List<Class> sr) {
         Class commonClass = CollectionUtil.findCommonSuperclass(sr);
         List<Path> view = PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(DynamicUtil
                             .getSimpleClassName(commonClass)), model,

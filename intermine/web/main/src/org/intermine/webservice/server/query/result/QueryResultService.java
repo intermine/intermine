@@ -68,7 +68,7 @@ public class QueryResultService extends WebService
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
-        
+
         Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
 
         PathQueryBuilder builder = new PathQueryBuilder(input.getXml(), getXMLSchemaUrl(),

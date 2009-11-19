@@ -114,7 +114,7 @@ public class SaveBagAction extends InterMineAction
             if (bag == null) {
                 bag = profile.createBag(bagName, pt.getSelectedClass(), "");
             }
-            
+
             pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
@@ -122,7 +122,7 @@ public class SaveBagAction extends InterMineAction
             LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");
-        } 
+        }
 
         if (operation.equals("saveNewBag")) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",

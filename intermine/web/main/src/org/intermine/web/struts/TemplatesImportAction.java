@@ -57,7 +57,7 @@ public class TemplatesImportAction extends InterMineAction
         int deleted = 0, imported = 0, renamed = 0;
         BagManager bagManager = SessionMethods.getBagManager(servletContext);
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-        
+
         templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
                 PathQuery.USERPROFILE_VERSION);
 
@@ -77,7 +77,8 @@ public class TemplatesImportAction extends InterMineAction
 
                 String templateName = template.getName();
 
-                templateName = NameUtil.validateName(profile.getSavedTemplates().keySet(), templateName);
+                templateName = NameUtil.validateName(profile.getSavedTemplates().keySet(),
+                        templateName);
                 template = renameTemplate(templateName, template);
                 profile.saveTemplate(templateName, template);
                 imported++;
@@ -88,15 +89,11 @@ public class TemplatesImportAction extends InterMineAction
                 tr.globalChange(TagTypes.TEMPLATE);
             }
 
-            recordMessage(new ActionMessage("importTemplates.done",
-                                            new Integer(deleted),
-                                            new Integer(imported),
-                                            new Integer(renamed)),
-                                            request);
+            recordMessage(new ActionMessage("importTemplates.done", new Integer(deleted),
+                        new Integer(imported), new Integer(renamed)), request);
 
             return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "templates").forward();
-
+                .addParameter("subtab", "templates").forward();
         } finally {
             profile.enableSaving();
         }

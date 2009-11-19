@@ -44,34 +44,32 @@ public class BeginAction extends InterMineAction
     * @exception Exception if the application business logic throws
     *  an exception
     */
-   public ActionForward execute(ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-       throws Exception {
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
 
-       HttpSession session = request.getSession();
-       ServletContext servletContext = session.getServletContext();
-       
-       if (request.getParameter("GALAXY_URL") != null) {
-           request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
-           SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
-       }
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
 
-       BagManager bagManager = SessionMethods.getBagManager(servletContext);
-       Integer bagCount = bagManager.getGlobalBags().size();
-       
-       TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
-       Integer templateCount = templateManager.getValidGlobalTemplates().size();
+        if (request.getParameter("GALAXY_URL") != null) {
+            request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
+            SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
+        }
 
-       /* count number of templates and bags */
-       request.setAttribute("bagCount", bagCount);
-       request.setAttribute("templateCount", templateCount);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        Integer bagCount = bagManager.getGlobalBags().size();
 
-       Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-       String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+        Integer templateCount = templateManager.getValidGlobalTemplates().size();
+
+        /* count number of templates and bags */
+        request.setAttribute("bagCount", bagCount);
+        request.setAttribute("templateCount", templateCount);
+
+        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
                                    .split("[ ,]+");
-       request.setAttribute("beginQueryClasses", beginQueryClasses);
-       return mapping.findForward("begin");
-   }
+        request.setAttribute("beginQueryClasses", beginQueryClasses);
+        return mapping.findForward("begin");
+    }
 }

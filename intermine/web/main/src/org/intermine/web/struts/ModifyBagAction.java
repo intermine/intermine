@@ -37,7 +37,6 @@ import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -109,13 +108,13 @@ public class ModifyBagAction extends InterMineAction
         String newBagName = frm.getNewBagName();
         return NameUtil.getNewNameTextBox(defaultName, newBagName);
     }
-    
+
     private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
-        
+
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
@@ -165,8 +164,8 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private boolean createBag(InterMineBag origBag, String newBagName, Profile profile)
-    throws ObjectStoreException {
+    private boolean createBag(InterMineBag origBag, String newBagName,
+            Profile profile) throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone();
         newBag.setDate(new Date());
@@ -180,14 +179,14 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
-        
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);        
+
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         String[] selectedBagNames = mbf.getSelectedBags();
 
         Collection<InterMineBag> selectedBags = getSelectedBags(allBags, selectedBagNames);
-        
+
         String newBagName = NameUtil.validateName(allBags.keySet(), mbf.getNewBagName());
 
         int newBagSize = 0;

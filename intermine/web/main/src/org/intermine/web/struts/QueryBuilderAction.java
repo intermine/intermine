@@ -31,8 +31,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.struts.InterMineAction;
-import org.intermine.web.struts.QueryBuilderForm;
 
 /**
  * Action to handle button presses on the main tile

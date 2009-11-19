@@ -113,7 +113,7 @@ public class BagUploadConfirmIssueController extends TilesAction
             List objectForIdentifierList = (List) identifierResultElementMap.get(identifier);
             for (int i = 0; i < objectForIdentifierList.size(); i++) {
                 Integer thisObjectListIndex = (Integer) objectForIdentifierList.get(i);
-                List resultElementRow = 
+                List resultElementRow =
                     new ArrayList(table.getResultElementRow(thisObjectListIndex.intValue()));
                 if (initialTypeMap == null || initialTypeMap.size() == 0) {
                     Set cds = (Set) (table.getTypes().get(thisObjectListIndex.intValue()));

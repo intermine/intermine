@@ -60,7 +60,7 @@ public class EditTemplateAction extends InterMineAction
         HttpSession session = request.getSession();
         String queryName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
 

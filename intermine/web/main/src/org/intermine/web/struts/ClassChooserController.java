@@ -58,7 +58,7 @@ public class ClassChooserController extends TilesAction
             (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
 
         Collection<String> qualifiedTypes = model.getClassNames();
-        Map<String, String> classDescrs = 
+        Map<String, String> classDescrs =
             (Map<String, String>) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
 

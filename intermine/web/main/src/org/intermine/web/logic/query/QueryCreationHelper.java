@@ -30,9 +30,8 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 
-public class QueryCreationHelper 
+public class QueryCreationHelper
 {
-
     /**
      * Make an InterMine query from a path query
      * @param query the PathQuery
@@ -46,7 +45,7 @@ public class QueryCreationHelper
     public static Query makeQuery(PathQuery query, Map<String, InterMineBag> savedBags,
             ServletContext servletContext,
             Map returnBagQueryResults) throws ObjectStoreException {
-        return QueryCreationHelper.makeQuery(query, savedBags, null, 
+        return QueryCreationHelper.makeQuery(query, savedBags, null,
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
                 returnBagQueryResults, false,
                 (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
@@ -74,7 +73,7 @@ public class QueryCreationHelper
             Map returnBagQueryResults, boolean checkOnly, ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig) throws ObjectStoreException {
-        List<TemplateQuery> conversionTemplates = 
+        List<TemplateQuery> conversionTemplates =
             TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile());
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
@@ -84,7 +83,6 @@ public class QueryCreationHelper
                 returnBagQueryResults, checkOnly);
     }
 
-    
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
@@ -106,5 +104,4 @@ public class QueryCreationHelper
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG),
                 (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER));
     }
-    
 }

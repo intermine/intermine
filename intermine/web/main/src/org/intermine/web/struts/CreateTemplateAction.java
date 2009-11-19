@@ -196,7 +196,7 @@ public class CreateTemplateAction extends InterMineAction
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
 
         return new ForwardParameters(mapping.findForward("mymine"))
-        .addParameter("subtab", "templates").forward();
+            .addParameter("subtab", "templates").forward();
     }
 
 }

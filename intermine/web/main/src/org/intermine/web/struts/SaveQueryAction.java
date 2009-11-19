@@ -74,14 +74,14 @@ public class SaveQueryAction extends InterMineAction
 
         // TODO just add default fields to select list?
         if (query.getView().isEmpty()) {
-             recordError(new ActionMessage("errors.query.badquery"), request);
+            recordError(new ActionMessage("errors.query.badquery"), request);
             return mapping.findForward("query");
         }
 
         try {
 
             if (query.getInfo() == null) {
-                BagManager bagManager = SessionMethods.getBagManager(servletContext);              
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);
                 Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
                 query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
                                 servletContext, null)));
@@ -99,8 +99,6 @@ public class SaveQueryAction extends InterMineAction
         messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
         return new ForwardParameters(mapping.findForward("mymine"))
-        .addParameter("subtab", "saved").forward();
-
-
+            .addParameter("subtab", "saved").forward();
     }
 }

@@ -64,10 +64,8 @@ public class ObjectDetailsController extends InterMineAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused")
-                                 ActionForm form, HttpServletRequest request,
-                                 @SuppressWarnings("unused")
-    HttpServletResponse response) throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TagManager tagManager = SessionMethods.getTagManager(session);
         ServletContext servletContext = session.getServletContext();
@@ -164,7 +162,7 @@ public class ObjectDetailsController extends InterMineAction
             List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
                                                                     cd.getUnqualifiedName() + ".%",
                                                                     "reference", superuser));
-            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY, 
+            placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY,
                     cd.getUnqualifiedName() + ".%", "collection", superuser));
 
             for (Tag tag : placementTags) {
@@ -242,16 +240,13 @@ public class ObjectDetailsController extends InterMineAction
     /**
      * Make a new DisplayObject from the given object.
      *
-     * @param session
-     *            used to get WEB_PROPERTIES and DISPLAYERS Maps
-     * @param object
-     *            the InterMineObject
+     * @param session used to get WEB_PROPERTIES and DISPLAYERS Maps
+     * @param object the InterMineObject
      * @return the new DisplayObject
-     * @throws Exception
-     *             if an error occurs
+     * @throws Exception if an error occurs
      */
-    public static DisplayObject makeDisplayObject(HttpSession session, InterMineObject object)
-    throws Exception {
+    public static DisplayObject makeDisplayObject(HttpSession session,
+            InterMineObject object) throws Exception {
         ServletContext servletContext = session.getServletContext();
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);

@@ -54,7 +54,7 @@ public class TemplateResultService extends QueryResultService
             Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
             template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         } else {
-            template = templateManager.getGlobalTemplate(input.getName());   
+            template = templateManager.getGlobalTemplate(input.getName());
         }
         if (template == null) {
             throw new ResourceNotFoundException("public template with name '" + input.getName()
@@ -78,7 +78,7 @@ public class TemplateResultService extends QueryResultService
         return new TemplateResultRequestParser(request).getInput();
     }
 
-    private String getMineLinkURL(HttpServletRequest request, TemplateQuery template, 
+    private String getMineLinkURL(HttpServletRequest request, TemplateQuery template,
             TemplateResultInput input) {
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
@@ -115,21 +115,21 @@ public class TemplateResultService extends QueryResultService
                 }
             }
         }
-        throw new BadRequestException("Parameters for constraint with path " + path 
+        throw new BadRequestException("Parameters for constraint with path " + path
                 + " and code '" + cons.getCode() + "' were not probably provided.");
     }
 
     private String constraintToString(ConstraintLoad load, int index) {
         String ret = "";
-        
+
         ret += en("attributeOps(" + index + ")") + "=";
         ret += en(load.getConstraintOp().getIndex().toString()) + "&";
-        
+
         ret += en("attributeValues(" + index + ")") + "=";
         ret += en(load.getValue()) + "&";
-        
+
         if (load.getExtraValue() != null) {
-            ret += en("extraValues(" + index + ")") + "=" 
+            ret += en("extraValues(" + index + ")") + "="
                 + en(load.getExtraValue()) + "&";
         }
         return ret;
