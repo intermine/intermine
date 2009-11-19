@@ -12,19 +12,20 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.ProfileManager;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to handle button presses on the main tile
@@ -56,24 +57,26 @@ public class LoginAction extends LoginHandler
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         LoginForm lf = (LoginForm) form;
-
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm,
-            lf.getUsername(), lf.getPassword());
-
+        
+        ActionErrors errors = lf.validate(mapping, request);
+        if (!errors.isEmpty()) {
+            saveErrors(request, (ActionMessages) errors);
+            return mapping.findForward("login");
+        }
+        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, 
+                                                  pm, lf.getUsername(), lf.getPassword());
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
-
         if (renamedBags.size() > 0) {
             for (String initName : renamedBags.keySet()) {
                 recordMessage(new ActionMessage("login.renamedbags", initName,
-                    renamedBags.get(initName)), request);
+                                                renamedBags.get(initName)), request);
             }
             return mapping.findForward("mymine");
-        }
-        else if (lf.returnToString != null && lf.returnToString.startsWith("/")
+        }                
+        if (lf.returnToString != null && lf.returnToString.startsWith("/")
             && lf.returnToString.indexOf("error") == -1) {
             return new ActionForward(lf.returnToString);
-        } else {
-            return mapping.findForward("mymine");
         }
+        return mapping.findForward("mymine");
     }
 }
