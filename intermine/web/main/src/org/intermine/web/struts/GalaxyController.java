@@ -56,10 +56,8 @@ public class GalaxyController extends TilesAction
                 PathQuery.USERPROFILE_VERSION);
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
         Properties webProperties = InterMineAction.getWebProperties(request);
-        StringBuffer stringUrl = new StringBuffer(new URLGenerator(request).getPermanentBaseURL() 
-                        + "/service/query/results?query=" 
-                        + encodedQueryXML 
-                        + "&size=1000000");
+        StringBuffer stringUrl = new StringBuffer(new URLGenerator(request).getPermanentBaseURL()
+                + "/service/query/results?query=" + encodedQueryXML + "&size=1000000");
         request.setAttribute("urlSendBack", stringUrl.toString());
         return null;
     }

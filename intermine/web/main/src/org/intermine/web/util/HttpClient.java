@@ -33,7 +33,7 @@ public class HttpClient
         byte[] responseBody;
 
         // Create an instance of HttpClient.
-        org.apache.commons.httpclient.HttpClient client = 
+        org.apache.commons.httpclient.HttpClient client =
             new org.apache.commons.httpclient.HttpClient();
 
         // Create a method instance.

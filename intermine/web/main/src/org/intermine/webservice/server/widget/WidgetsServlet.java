@@ -40,7 +40,7 @@ public class WidgetsServlet extends HttpServlet
      * {@inheritDoc}}
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-                    throws ServletException, IOException {
+        throws ServletException, IOException {
         runService(req, resp);
     }
 

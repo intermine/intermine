@@ -20,7 +20,7 @@ import org.intermine.web.logic.export.RowFormatterImpl;
 
 /**
  * Formats data to comma separated data format.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class CSVFormatter extends Formatter

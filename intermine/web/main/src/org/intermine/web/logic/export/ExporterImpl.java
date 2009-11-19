@@ -22,7 +22,7 @@ import org.intermine.api.results.ResultElement;
 /**
  * Simple exporter exporting data as tab separated, comma separated
  * and so. It depends at used row formatter.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class ExporterImpl implements Exporter

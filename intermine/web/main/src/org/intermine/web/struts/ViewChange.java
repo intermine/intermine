@@ -54,10 +54,10 @@ public class ViewChange extends DispatchAction
 
         // remove from view and from order by if present
         query.removeFromView(path);
-        
+
         // if sort order is now empty update with first valid view field
         PathQueryHelper.setDefaultSortOrder(query);
-        
+
         return new ForwardParameters(mapping.findForward("query"))
             .addAnchor("showing").forward();
     }

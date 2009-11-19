@@ -23,7 +23,7 @@ import org.intermine.api.results.ResultElement;
 
 /**
  * Export results in excel format.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class ExcelExporter implements Exporter
@@ -51,7 +51,7 @@ public class ExcelExporter implements Exporter
 
             int currentIndex = 0;
             while (resultIt.hasNext()) {
-                
+
                 HSSFRow excelRow = sheet.createRow((short) currentIndex);
                 List<Object> row = converter.convert(resultIt.next());
 

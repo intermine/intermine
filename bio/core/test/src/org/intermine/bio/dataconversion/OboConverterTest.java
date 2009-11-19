@@ -45,7 +45,7 @@ public class OboConverterTest extends ItemsTestCase {
         OboRelation r1 = new OboRelation("SO:43","SO:42",new OboTypeDefinition("is_a", "is_a", true));
         OboRelation r2 = new OboRelation("SO:44","SO:43",new OboTypeDefinition("part_of", "part_of", true));
 
-        converter.setOboTerms(Arrays.asList(new Object[] {a, b, c}));
+        converter.setOboTerms(Arrays.asList(new OboTerm[] {a, b, c}));
         converter.setOboRelations(Arrays.asList(new OboRelation[] {r1,r2} ));
         converter.storeItems();
         // writeItemsFile(itemWriter.getItems(), "tmp");

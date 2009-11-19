@@ -79,13 +79,13 @@ ul#nav li#mymine a{
 	color:white;background:url('corner_my_t_r.png') no-repeat top right;}
 
 ul#nav li.activelink a{
-	color:white;background:url('corner_my_t_r.png') no-repeat top right;}
+	color:white;background:url('corner_act_t_r.png') no-repeat top right;}
 
 ul#nav li#mymine {
 	background:#9B89A7 url('corner_my_t_l.png') no-repeat;}
 
 ul#nav li.activelink {
-	background:#000 url('corner_my_t_l.png') no-repeat;}
+	background:#000 url('corner_act_t_l.png') no-repeat;}
 
 ul#submenulist li#subactive_bag {
 	font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}

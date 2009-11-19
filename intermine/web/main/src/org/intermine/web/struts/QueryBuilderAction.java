@@ -42,7 +42,7 @@ import org.intermine.web.struts.QueryBuilderForm;
 public class QueryBuilderAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(QueryBuilderAction.class);
-    
+
     /**
      * Method called when user has finished updating a constraint
      *
@@ -58,11 +58,8 @@ public class QueryBuilderAction extends InterMineAction
      * @exception Exception
      *                if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
@@ -227,7 +224,7 @@ public class QueryBuilderAction extends InterMineAction
         }
 
         //if (query.getAllConstraints().size() == previousConstraintCount + 1) {
-            query.syncLogicExpression(mf.getOperator());
+        query.syncLogicExpression(mf.getOperator());
         //}
 
         mf.reset(mapping, request);

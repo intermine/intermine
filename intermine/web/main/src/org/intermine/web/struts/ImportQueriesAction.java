@@ -94,7 +94,7 @@ public class ImportQueriesAction extends InterMineAction
             }
             recordMessage(new ActionMessage("query.imported", sb.toString()), request);
             return new ForwardParameters(mapping.findForward("mymine"))
-            .addParameter("subtab", "saved").forward();
+                .addParameter("subtab", "saved").forward();
 
         } finally {
             profile.enableSaving();

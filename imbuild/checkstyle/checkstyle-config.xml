@@ -229,6 +229,9 @@
     <module name="GenericIllegalRegexp">
       <property name="format" value="(non-Javadoc)"/>
     </module>
+    <module name="GenericIllegalRegexp">
+      <property name="format" value=" $"/>
+    </module>
 
     <module name="IllegalInstantiation">
       <property name="classes" value="java.lang.Boolean" />
@@ -241,6 +244,15 @@
       <property name="format" value="FAIL"/>
     </module>
     <module name="UpperEll"/>
+    <module name="Indentation"/>
+    <module name="CovariantEquals"/>
+    <module name="DoubleCheckedLocking"/>
+    <!--<module name="EqualsAvoidNull"/>-->
+    <module name="RedundantThrows"/>
+    <module name="StringLiteralEquality"/>
+    <module name="SuperFinalize"/>
+    <module name="PackageDeclaration"/>
+    <module name="DefaultComesLast"/>
   </module>
 
   <!-- enforce package documentation -->

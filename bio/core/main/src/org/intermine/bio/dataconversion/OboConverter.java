@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,10 +44,10 @@ public class OboConverter extends DataConverter
     protected String termClass;
     protected int uniqueId = 0;
     protected int uniqueSynId = 0;
-    protected Collection oboTerms;
+    protected Collection<OboTerm> oboTerms;
     protected List<OboRelation> oboRelations;
-    protected Map nameToTerm = new HashMap();
-    protected Map synToItem = new HashMap();
+    protected Map<String, Item> nameToTerm = new HashMap<String, Item>();
+    protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
 
     /**
@@ -78,8 +77,8 @@ public class OboConverter extends DataConverter
      * @throws Exception if an error occurs in processing
      */
     public void process() throws Exception {
-        nameToTerm = new HashMap();
-        synToItem = new HashMap();
+        nameToTerm = new HashMap<String, Item>();
+        synToItem = new HashMap<OboTermSynonym, Item>();
         OboParser parser = new OboParser();
         parser.processOntology(new FileReader(new File(dagFilename)));
         parser.processRelations(dagFilename);
@@ -94,25 +93,25 @@ public class OboConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
     protected void storeItems() throws ObjectStoreException {
-        for (Iterator i = oboTerms.iterator(); i.hasNext();) {
-            process((OboTerm) i.next());
-        }
+        long startTime = System.currentTimeMillis();
         store(ontology);
+        for (OboTerm term : oboTerms) {
+            process(term);
+        }
         for (OboRelation oboRelation : oboRelations) {
             processRelation(oboRelation);
         }
-        for (Iterator i = nameToTerm.values().iterator(); i.hasNext();) {
-            store((Item) i.next());
+        for (Item synItem : synToItem.values()) {
+            store(synItem);
         }
-        for (Iterator i = synToItem.values().iterator(); i.hasNext();) {
-            store((Item) i.next());
-        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Ran storeItems, took: " + timeTaken + " ms");
     }
 
     /**
      * @param oboTerms the oboTerms to set
      */
-    public void setOboTerms(Collection oboTerms) {
+    public void setOboTerms(Collection<OboTerm> oboTerms) {
         this.oboTerms = oboTerms;
     }
 
@@ -124,7 +123,7 @@ public class OboConverter extends DataConverter
     }
 
     /**
-     * Convert a DagTerm into an Item and relation Items, and write the relations to the writer.
+     * Convert a OboTerm into an Item and relation Items, and write the relations to the writer.
      *
      * @param term a DagTerm
      * @return an Item representing the term
@@ -137,6 +136,7 @@ public class OboConverter extends DataConverter
             item = createItem(termClass);
             nameToTerm.put(termId, item);
             configureItem(termId, item, term);
+            store(item);
         } else {
             if ((!term.getName().equals(item.getAttribute("name").getValue()))
                     || ((item.getAttribute("identifier") == null) && (term.getId() != null))
@@ -209,7 +209,7 @@ public class OboConverter extends DataConverter
     }
 
     /**
-     * @param oboRelations
+     * @param oboRelation
      */
     protected void processRelation(OboRelation oboRelation)
     throws ObjectStoreException {
@@ -237,5 +237,4 @@ public class OboConverter extends DataConverter
                      + oboRelation.getChildTermId());
         }
     }
-
 }

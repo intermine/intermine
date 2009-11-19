@@ -135,11 +135,13 @@
           <c:set var="count" value="${count+1}"/>
           </c:if>
         </c:forTokens>
+        <!-- 
         <c:if test="${pageName == 'begin'}">
           <li>
             <a href="${WEB_PROPERTIES['project.sitePrefix']}/what.shtml">What is ${WEB_PROPERTIES['project.title']}?</a>
           </li>
         </c:if>
+         -->
         </ul>
     </div>
   </div>

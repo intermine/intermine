@@ -89,19 +89,18 @@ public class MyMineController extends TilesAction
         }
         return null;
     }
-    
+
     /**
      * Retrieve the information about precomputed and summarised templates for the
      * given profile, and store it into the request
-     * 
+     *
      * @param profile the user Profile
      * @param session the HttpSession
      * @param request the Servlet Request
      * @throws ObjectStoreException when something goes wrong...
      */
     public static void getPrecomputedSummarisedInfo(Profile profile, HttpSession session,
-                                                    HttpServletRequest request)
-                    throws ObjectStoreException {
+            HttpServletRequest request) throws ObjectStoreException {
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) session.getServletContext()
                         .getAttribute(Constants.OBJECTSTORE);

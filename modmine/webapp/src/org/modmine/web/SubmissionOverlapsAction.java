@@ -95,17 +95,25 @@ public class SubmissionOverlapsAction extends InterMineAction
 
             q.addView("GeneFlankingRegion.overlappingFeatures.secondaryIdentifier");
             q.addView("GeneFlankingRegion.gene.primaryIdentifier");
+            q.addView("GeneFlankingRegion.gene.length");
+            q.addView("GeneFlankingRegion.gene.chromosomeLocation.start");
+            q.addView("GeneFlankingRegion.gene.chromosomeLocation.end");
+            q.addView("GeneFlankingRegion.gene.secondaryIdentifier");
 
             PathNode featureNode = q.addNode("GeneFlankingRegion.overlappingFeatures");
             featureNode.setType(featureType);
 
             q.addConstraint("GeneFlankingRegion.distance", Constraints.eq(distance));
-            q.addConstraint("GeneFlankingRegion.direction", Constraints.eq(direction));
             q.addConstraint("GeneFlankingRegion.overlappingFeatures.submissions.title",
                     Constraints.eq(submissionTitle));
-            q.setConstraintLogic("A and B and C");
-            q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");
 
+            if (!direction.equalsIgnoreCase("bothways")){
+                q.addConstraint("GeneFlankingRegion.direction", Constraints.eq(direction));
+                q.setConstraintLogic("A and B and C");                    
+            } else {
+                q.setConstraintLogic("A and B");
+            }
+            q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");
         }
         q.syncLogicExpression("and");
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(

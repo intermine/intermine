@@ -64,7 +64,7 @@ public class ClassChooserController extends TilesAction
 
         String superUserName = SessionMethods.getProfileManager(servletContext).getSuperuser();
         TagManager tagManager = SessionMethods.getTagManager(session);
-        
+
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null,
                 "class", superUserName);
 

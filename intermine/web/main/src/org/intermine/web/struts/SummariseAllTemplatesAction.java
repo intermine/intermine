@@ -74,7 +74,6 @@ public class SummariseAllTemplatesAction extends InterMineAction
         }
 
         return new ForwardParameters(mapping.findForward("mymine"))
-        .addParameter("subtab", "templates").forward();
-
+            .addParameter("subtab", "templates").forward();
     }
 }

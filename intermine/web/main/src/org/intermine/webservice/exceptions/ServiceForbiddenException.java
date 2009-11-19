@@ -13,10 +13,10 @@ package org.intermine.webservice.exceptions;
 import org.intermine.webservice.server.output.Output;
 
 /**
- * The ServiceForbiddenException is thrown by a service when an attempt is made to service that 
+ * The ServiceForbiddenException is thrown by a service when an attempt is made to service that
  * is disabled.
- * 
- * @author Jakub Kulaviak 
+ *
+ * @author Jakub Kulaviak
  */
 public class ServiceForbiddenException extends ServiceException
 {

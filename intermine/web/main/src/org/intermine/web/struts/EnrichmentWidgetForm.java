@@ -32,7 +32,7 @@ public class EnrichmentWidgetForm extends ActionForm
     private String bagType;
     private String max;
     private String externalLink;
-    
+
     /**
      * @return the externalLink
      */

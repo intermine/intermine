@@ -23,7 +23,7 @@ public class ResultElementConverter
 {
 
     /**
-     * Converts data from ResultElement to Objects. It takes 
+     * Converts data from ResultElement to Objects. It takes
      * field value from each ResultElement.
      * @param result result row to be converted
      * @return converted result row
@@ -39,5 +39,4 @@ public class ResultElementConverter
         }
         return ret;
     }
-    
 }
