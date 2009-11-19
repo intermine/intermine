@@ -87,7 +87,7 @@ public class LoginForm extends ActionForm
      */
     @Override
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
+                                 HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -99,15 +99,12 @@ public class LoginForm extends ActionForm
         } else {
             if (pm.hasProfile(username)) {
                 if (!pm.validPassword(username, password)) {
-                    errors.add(ActionMessages.GLOBAL_MESSAGE,
-                               new ActionMessage("login.wrongpassword"));
+                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.badlogin"));
                 }
             } else {
-                errors.add(ActionMessages.GLOBAL_MESSAGE,
-                           new ActionMessage("login.invalidusername", username));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.badlogin"));
             }
         }
-
         return errors;
     }
 
