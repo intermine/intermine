@@ -60,19 +60,16 @@ public class BagDetailsController extends TilesAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-                                 throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
         BagManager bagManager = SessionMethods.getBagManager(servletContext);
-        
-        
+
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
 
@@ -113,7 +110,7 @@ public class BagDetailsController extends TilesAction
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
         Map<String, Map<String, Collection<String>>> widget2extraAttrs
-        = new HashMap<String, Map<String, Collection<String>>>();
+            = new HashMap<String, Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
             widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(
                             imBag, os));

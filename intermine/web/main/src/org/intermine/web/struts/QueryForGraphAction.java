@@ -62,7 +62,7 @@ public class QueryForGraphAction extends InterMineAction
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         BagManager bagManager = SessionMethods.getBagManager(servletContext);
-        
+
         String bagName = request.getParameter("bagName");
         String urlGen = request.getParameter("urlGen");
         String series = request.getParameter("series");

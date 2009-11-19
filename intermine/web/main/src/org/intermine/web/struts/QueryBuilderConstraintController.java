@@ -63,11 +63,10 @@ public class QueryBuilderConstraintController extends TilesAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 @SuppressWarnings("unused") HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form,
+            @SuppressWarnings("unused") HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
@@ -109,24 +108,24 @@ public class QueryBuilderConstraintController extends TilesAction
             //String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
 //            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
                 // loop query arguments
-                ArrayList paths = new ArrayList();
-                String nodeJoinGroup = node.getOuterJoinGroup();
-                Iterator iter = query.getNodes().values().iterator();
-                while (iter.hasNext()) {
-                    PathNode anode = (PathNode) iter.next();
-                    // we can create a loop constraint if:
-                    // - there is another node of the same type
-                    // - the other node has no outer joins in its path
-                    if (anode != node && anode.getType().equals(node.getType())
-                            && nodeJoinGroup.equals(anode.getOuterJoinGroup())) {
-                        paths.add(anode.getPathString());
-                    }
+            ArrayList paths = new ArrayList();
+            String nodeJoinGroup = node.getOuterJoinGroup();
+            Iterator iter = query.getNodes().values().iterator();
+            while (iter.hasNext()) {
+                PathNode anode = (PathNode) iter.next();
+                // we can create a loop constraint if:
+                // - there is another node of the same type
+                // - the other node has no outer joins in its path
+                if (anode != node && anode.getType().equals(node.getType())
+                        && nodeJoinGroup.equals(anode.getOuterJoinGroup())) {
+                    paths.add(anode.getPathString());
                 }
+            }
 
-                Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
+            Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
 //                request.setAttribute("loopQueryOJ", node.isOuterJoin());
-                request.setAttribute ("loopQueryOps", attributeOps);
-                request.setAttribute ("loopQueryPaths", paths);
+            request.setAttribute ("loopQueryOps", attributeOps);
+            request.setAttribute ("loopQueryPaths", paths);
 //            }
 
             // work out the parent class of node if it is a key field or the class
@@ -205,11 +204,11 @@ public class QueryBuilderConstraintController extends TilesAction
 
             if (useBags) {
                 BagManager bagManager = SessionMethods.getBagManager(servletContext);
-                Map<String, InterMineBag> bagsOfType = 
+                Map<String, InterMineBag> bagsOfType =
                     bagManager.getUserOrGlobalBagsOfType(profile, nodeType);
                 if (!bagsOfType.isEmpty()) {
-                        request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-                        request.setAttribute("bags", bagsOfType);
+                    request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
+                    request.setAttribute("bags", bagsOfType);
                 }
             }
             Integer index = (Integer) request.getAttribute("editingConstraintOperand");

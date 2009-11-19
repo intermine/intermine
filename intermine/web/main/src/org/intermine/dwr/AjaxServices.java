@@ -366,7 +366,7 @@ public class AjaxServices
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
             BagManager bagManager = SessionMethods.getBagManager(servletContext);
-            
+
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
@@ -395,9 +395,7 @@ public class AjaxServices
                     break;
                 }
             }
-            return Arrays.asList(new Object[] {
-                        pageSizeResults, qid, new Integer(results.size())
-                    });
+            return Arrays.asList(new Object[] {pageSizeResults, qid, new Integer(results.size())});
         } catch (RuntimeException e) {
             processException(e);
             return null;
@@ -536,7 +534,7 @@ public class AjaxServices
 
 
             Map<String, ? extends WebSearchable> filteredWsMap
-                                    = new LinkedHashMap<String, WebSearchable>();
+                = new LinkedHashMap<String, WebSearchable>();
             //Filter by aspects (defined in superuser account)
             List<String> aspectTags = new ArrayList<String>();
             List<String> userTags = new ArrayList<String>();
@@ -688,7 +686,7 @@ public class AjaxServices
             HttpSession session = WebContextFactory.get().getSession();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             BagManager bagManager = SessionMethods.getBagManager(servletContext);
-            
+
             // TODO get message text from the properties file
             if (bagName.equals("")) {
                 return "You cannot save a list with a blank name";
@@ -704,7 +702,7 @@ public class AjaxServices
 
             if (bagManager.getGlobalBag(bagName) != null) {
                 return "The list name you have chosen is already in use -"
-                + " there is a public list called " + bagName;
+                    + " there is a public list called " + bagName;
             }
 
             return "";
@@ -742,15 +740,15 @@ public class AjaxServices
                                                          selectedBags[i]));
                     if (queries.size() > 0) {
                         return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
-                        + "by other queries " + queries;
+                            + "by other queries " + queries;
                     }
                 }
             } else {
-                Properties properties = (Properties)
-                servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                Properties properties = (Properties) servletContext
+                    .getAttribute(Constants.WEB_PROPERTIES);
                 String defaultName = properties.getProperty("lists.input.example");
                 if (!operation.equals("copy") && (bagName.equals("")
-                                || (bagName.equalsIgnoreCase(defaultName)))) {
+                            || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!NameUtil.isValidName(bagName)) {
                     return INVALID_NAME_MSG;
@@ -853,7 +851,7 @@ public class AjaxServices
         }
         return null;
     }
-    
+
     /**
      *
      * @param widgetId unique ID for this widget
@@ -886,7 +884,7 @@ public class AjaxServices
             }
         } catch (RuntimeException e) {
             processException(e);
-        } 
+        }
         return null;
     }
 
@@ -938,52 +936,47 @@ public class AjaxServices
     }
 
     /**
-    *
-    * @param widgetId unique ID for each widget
-    * @param bagName name of list
-    * @param highlight for highlighting
-    * @param pValue pValue
-    * @param numberOpt numberOpt
-    * @param externalLink link to external datasource
-    * @param externalLinkLabel name of external datasource.
-    * @return enrichment widget
-    */
-   public static GridWidget getProcessGridWidget(String widgetId, String bagName,
-                                                             String highlight,
-                                                             String pValue,
-                                                             String numberOpt,
-                                                             String externalLink,
-                                                             String externalLinkLabel) {
-       try {
-           ServletContext servletContext = WebContextFactory.get().getServletContext();
-           HttpSession session = WebContextFactory.get().getSession();
-           WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-           ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-           Model model = os.getModel();
-           Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-           BagManager bagManager = SessionMethods.getBagManager(servletContext);
+     *
+     * @param widgetId unique ID for each widget
+     * @param bagName name of list
+     * @param highlight for highlighting
+     * @param pValue pValue
+     * @param numberOpt numberOpt
+     * @param externalLink link to external datasource
+     * @param externalLinkLabel name of external datasource.
+     * @return enrichment widget
+     */
+    public static GridWidget getProcessGridWidget(String widgetId, String bagName,
+            String highlight, String pValue, String numberOpt, String externalLink,
+            String externalLinkLabel) {
+        try {
+            ServletContext servletContext = WebContextFactory.get().getServletContext();
+            HttpSession session = WebContextFactory.get().getSession();
+            WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            Model model = os.getModel();
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            BagManager bagManager = SessionMethods.getBagManager(servletContext);
 
-           InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-           Type type = webConfig.getTypes().get(model.getPackageName()
-                   + "." + imBag.getType());
-           List<WidgetConfig> widgets = type.getWidgets();
-           for (WidgetConfig widgetConfig : widgets) {
-               if (widgetConfig.getId().equals(widgetId)) {
-                   GridWidgetConfig gridWidgetConfig =
-                                                       (GridWidgetConfig) widgetConfig;
-                   gridWidgetConfig.setExternalLink(externalLink);
-                   gridWidgetConfig.setExternalLinkLabel(externalLinkLabel);
-                   GridWidget gridWidget = new GridWidget(
-                           gridWidgetConfig, imBag, os, null, highlight, pValue, numberOpt);
-                   return gridWidget;
-               }
-           }
-       } catch (RuntimeException e) {
-           processException(e);
-       }
-       return null;
-   }
-
+            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            Type type = webConfig.getTypes().get(model.getPackageName()
+                    + "." + imBag.getType());
+            List<WidgetConfig> widgets = type.getWidgets();
+            for (WidgetConfig widgetConfig : widgets) {
+                if (widgetConfig.getId().equals(widgetId)) {
+                    GridWidgetConfig gridWidgetConfig = (GridWidgetConfig) widgetConfig;
+                    gridWidgetConfig.setExternalLink(externalLink);
+                    gridWidgetConfig.setExternalLinkLabel(externalLinkLabel);
+                    GridWidget gridWidget = new GridWidget(gridWidgetConfig, imBag, os, null,
+                            highlight, pValue, numberOpt);
+                    return gridWidget;
+                }
+            }
+        } catch (RuntimeException e) {
+            processException(e);
+        }
+        return null;
+    }
 
     /**
      * Add an ID to the PagedTable selection
@@ -1126,32 +1119,32 @@ public class AjaxServices
                 // the following is used to display the date without timestamp.
                 // this should always work since the retrieved date has a fixed format,
                 // independent of the one used in the xml.
-                // longDate = Wed Aug 19 14:44:19 BST 2009                
+                // longDate = Wed Aug 19 14:44:19 BST 2009
                 String longDate = syndEntry.getPublishedDate().toString();
                 String dayMonth = longDate.substring(0, 10);
                 String year = longDate.substring(24);
-                
+
                 DateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
                 Date date = df.parse(longDate);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
-                
+
                 // month starts at zero
                 int month = calendar.get(calendar.MONTH) + 1;
                 String monthString = String.valueOf(month);
                 if (monthString.length() == 1) {
                     monthString = "0" + monthString;
                 }
-                
+
                 //http://blog.flymine.org/2009/08/
                 WebContext ctx = WebContextFactory.get();
                 ServletContext servletContext = ctx.getServletContext();
-                Properties properties = (Properties)
-                servletContext.getAttribute(Constants.WEB_PROPERTIES);
-                
-                String url = properties.getProperty("project.news") + "/" + year + "/" 
-                + monthString;
-                
+                Properties properties = (Properties) servletContext
+                    .getAttribute(Constants.WEB_PROPERTIES);
+
+                String url = properties.getProperty("project.news") + "/" + year + "/"
+                    + monthString;
+
                 html.append("<li>");
                 html.append("<strong>");
                 html.append("<a href=\"" + url + "\">");

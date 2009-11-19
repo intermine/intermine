@@ -66,7 +66,7 @@ public class ConvertBagController extends TilesAction
 
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
-            TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile()), 
+            TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile()),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();
         Map fastaMap = new HashMap();

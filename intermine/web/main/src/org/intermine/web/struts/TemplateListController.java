@@ -58,13 +58,13 @@ public class TemplateListController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
-        
+
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
-                templates = templateManager.getReportPageTemplatesForAspect(aspect, 
+                templates = templateManager.getReportPageTemplatesForAspect(aspect,
                         interMineIdBag.getType());
             } else if (object != null) {
-                templates = templateManager.getReportPageTemplatesForAspect(aspect, 
+                templates = templateManager.getReportPageTemplatesForAspect(aspect,
                         DynamicUtil.getFriendlyName(object.getObject().getClass()));
             } else {
                 templates = templateManager.getAspectTemplates(aspect);

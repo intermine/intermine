@@ -60,7 +60,7 @@ public abstract class LoginHandler extends InterMineAction
         Profile profile = setUpProfile(session, pm, username, password);
 
         // Merge in anonymous query history
-        for (SavedQuery savedQuery : mergeQueries.values()) { 
+        for (SavedQuery savedQuery : mergeQueries.values()) {
             profile.saveHistory(savedQuery);
         }
         // Merge anonymous bags

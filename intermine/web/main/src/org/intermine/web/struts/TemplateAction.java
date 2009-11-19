@@ -95,7 +95,7 @@ public class TemplateAction extends InterMineAction
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
+
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
 
         TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
@@ -141,10 +141,10 @@ public class TemplateAction extends InterMineAction
             // We want to edit the template: Load the query as a TemplateQuery
             // Don't care about the form
             // Reload the initial template
-            
-           template = templateManager.getTemplate(profile, templateName, Scope.ALL);
 
-           if (template == null) {
+            template = templateManager.getTemplate(profile, templateName, Scope.ALL);
+
+            if (template == null) {
                 recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
                 return mapping.findForward("template");
             }

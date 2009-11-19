@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -42,18 +41,14 @@ public class ImportQueriesAction extends InterMineAction
     /**
      * {@inheritDoc}
      */
-	@Override
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-        
+
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
 

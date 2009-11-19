@@ -42,7 +42,7 @@ import org.intermine.web.struts.TemplateForm;
 public class TemplateHelper
 {
     private static final Logger LOG = Logger.getLogger(TemplateHelper.class);
-    
+
     /**
      * Create a new TemplateQuery with input submitted by user contained within
      * a TemplateForm bean.

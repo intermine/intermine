@@ -1008,7 +1008,7 @@ public class SessionMethods
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
-    
+
     /**
      * Fetch the BagManager for finding global and user bags.
      * @param servletContext servlet context to fetch attribute from
@@ -1017,7 +1017,7 @@ public class SessionMethods
     public static final BagManager getBagManager(ServletContext servletContext) {
         return (BagManager) servletContext.getAttribute(Constants.BAG_MANAGER);
     }
-    
+
     /**
      * Fetch the BagManager for finding global and user bags.
      * @param session to get servletContext and hence BagManager
@@ -1026,7 +1026,7 @@ public class SessionMethods
     public static final BagManager getBagManager(HttpSession session) {
         return (BagManager) session.getServletContext().getAttribute(Constants.BAG_MANAGER);
     }
-    
+
     /**
      * Fetch the TemplateManager for finding global and user templates
      * @param servletContext servlet context to fetch attribute from
@@ -1035,7 +1035,7 @@ public class SessionMethods
     public static final TemplateManager getTemplateManager(ServletContext servletContext) {
         return (TemplateManager) servletContext.getAttribute(Constants.TEMPLATE_MANAGER);
     }
-    
+
     /**
      * Fetch the TemplateManager for finding global and user templates
      * @param session to get servletContext and hence TemplateManager

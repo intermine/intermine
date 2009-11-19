@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
@@ -219,18 +217,12 @@ public abstract class WebUtil
                         resultsMap.put(id, new BigDecimal(p));
                     } catch (Exception e) {
                         String msg = p + " isn't a double.  calculated for " + id + " using "
-                        + " k: "  + countBag
-                        + ", n: " + sampleTotal
-                        + ", M: " + countAll
-                        + ", N: " + populationTotal
-                        + ".  k query: "
-                        + ldr.getSampleQuery(false).toString()
-                        + ".  n query: "
-                        + ldr.getSampleQuery(true).toString()
-                        + ".  M query: "
-                        + ldr.getPopulationQuery(false).toString()
-                        + ".  N query: "
-                        + ldr.getPopulationQuery(true).toString();
+                            + " k: "  + countBag + ", n: " + sampleTotal + ", M: " + countAll
+                            + ", N: " + populationTotal + ".  k query: "
+                            + ldr.getSampleQuery(false).toString() + ".  n query: "
+                            + ldr.getSampleQuery(true).toString() + ".  M query: "
+                            + ldr.getPopulationQuery(false).toString() + ".  N query: "
+                            + ldr.getPopulationQuery(true).toString();
 
                         throw new RuntimeException(msg, e);
                     }

@@ -68,7 +68,7 @@ public class ExportQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);             
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;
@@ -88,7 +88,7 @@ public class ExportQueryAction extends InterMineAction
             LOG.error("Failed to find query " + name + " of type " + type);
             return null;
         }
-        
+
         if (query.getViewStrings().size() == 0) {
             response.getWriter().write("Invalid query. No fields selected for output.");
             return null;
@@ -139,9 +139,9 @@ public class ExportQueryAction extends InterMineAction
                 serviceFormat = "tab";
             }
             String xml = getQueryXML(name, query);
-            String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request).
-                    getPermanentBaseURL(), xml, serviceFormat);
-            response.getWriter().write(link);                
+            String link = new QueryResultLinkGenerator().getLink(new URLGenerator(request)
+                    .getPermanentBaseURL(), xml, serviceFormat);
+            response.getWriter().write(link);
         } else {
             response.getWriter().println("Unknown export type: " + request.getParameter("as"));
         }

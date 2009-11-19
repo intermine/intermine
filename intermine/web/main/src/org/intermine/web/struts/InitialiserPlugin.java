@@ -158,7 +158,7 @@ public class InitialiserPlugin implements PlugIn
 
         final TemplateManager templateManager = new TemplateManager(superProfile, os.getModel());
         servletContext.setAttribute(Constants.TEMPLATE_MANAGER, templateManager);
-        
+
         // index global webSearchables
         SearchRepository searchRepository =
             new SearchRepository(superProfile, Scope.GLOBAL);

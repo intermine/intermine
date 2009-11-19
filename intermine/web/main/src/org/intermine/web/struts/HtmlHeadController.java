@@ -102,7 +102,7 @@ public class HtmlHeadController extends TilesAction
             } else {
                 template = templateManager.getGlobalTemplate(name);
             }
-            
+
             if (template != null) {
                 templateTitle = ":  " + template.getTitle();
             }

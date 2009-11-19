@@ -106,7 +106,7 @@ public class TemplateController extends TilesAction
         String bagName = request.getParameter("bagName");
 
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
-        
+
         String idForLookup = request.getParameter("idForLookup");
         InterMineObject imObj = null;
         if (idForLookup != null && idForLookup.length() != 0) {
@@ -238,7 +238,7 @@ public class TemplateController extends TilesAction
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
-                    Map<String, InterMineBag> constraintBags = 
+                    Map<String, InterMineBag> constraintBags =
                         bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
@@ -250,7 +250,7 @@ public class TemplateController extends TilesAction
                 }
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
-                    Map<String, InterMineBag> constraintBags = 
+                    Map<String, InterMineBag> constraintBags =
                         bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
@@ -338,7 +338,6 @@ public class TemplateController extends TilesAction
         return null;
     }
 
-    
     private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         SavedQuery savedQuery = profile.getHistory().get(templateName);
@@ -352,7 +351,7 @@ public class TemplateController extends TilesAction
         }
         return template;
     }
-    
+
     private void constructAutocompleteIndex(PathQuery query, ServletContext servletContext,
                                             Model model, PathNode node, Map classDesc,
                                             Map fieldDesc) {

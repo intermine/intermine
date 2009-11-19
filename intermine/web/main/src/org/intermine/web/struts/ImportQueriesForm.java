@@ -134,9 +134,8 @@ public class ImportQueriesForm extends ValidatorForm
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         BagManager bagManager = SessionMethods.getBagManager(servletContext);
-        
+
         try {
-            
             Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             if (getQueryMap(allBags).size() == 0) {
                 if (errors == null) {
