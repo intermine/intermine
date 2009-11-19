@@ -40,7 +40,7 @@ public class DisclosureDetailsTag extends BaseDisclosureTag
     public void doTag() throws JspException, IOException {
         DisclosureHeadTag parent =  (DisclosureHeadTag) getParent();
         if (parent == null) {
-            throw new JspException("<disclosureDetails> element can be only inside " 
+            throw new JspException("<disclosureDetails> element can be only inside "
                     + "<disclosureHead> element");
         }
         JspWriter out = getJspContext().getOut();

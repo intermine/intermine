@@ -70,7 +70,7 @@ public class WidgetsService extends WebService
      */
     @Override
     protected void execute(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
+        throws Exception {
         WidgetsServiceInput widgetsServiceInput = getInput();
         ServletContext servletContext = request.getSession().getServletContext();
         Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
@@ -99,8 +99,7 @@ public class WidgetsService extends WebService
      * @throws ObjectStoreException error when query
      */
     protected InterMineBag getBag(String className, List<String> ids,
-                                  ServletContext servletContext, Profile profile)
-    throws ObjectStoreException {
+            ServletContext servletContext, Profile profile) throws ObjectStoreException {
         Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         try {
@@ -175,8 +174,7 @@ public class WidgetsService extends WebService
      * @throws Exception an error has occured
      */
     private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix,
-                           ObjectStore os)
-    throws Exception {
+            ObjectStore os) throws Exception {
         StringBuffer sb = new StringBuffer();
         sb.append("<!-- WidgetsService.java -->\n");
         sb.append("<html><head>\n");

@@ -41,14 +41,6 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
-
-  <!-- Get rid of this as soon as moved completely to dwr - inline templates -->
-  <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
-</c:if>
-
-<c:if test="${pageName == 'template'}">
-  <!-- this is needed for the autocompleter to work -->
-  <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
 </c:if>
  
 <c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
@@ -59,6 +51,9 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript">
   jQuery.noConflict();
 </script>
+
+<%-- this has to live after jQuery.  do not move --%>
+<script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
 
 <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>

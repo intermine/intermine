@@ -31,7 +31,7 @@ public class XMLFormatter extends Formatter
         if (attributes != null) {
             for (String key : attributes.keySet()) {
                 sb.append(key + "=\"" + attributes.get(key) + "\" ");
-            }            
+            }
         }
         sb.append(">");
         return sb.toString();
@@ -54,6 +54,6 @@ public class XMLFormatter extends Formatter
     /** {@inheritDoc}} **/
     @Override
     public String formatFooter() {
-        return "</ResultSet>";    
+        return "</ResultSet>";
     }
 }

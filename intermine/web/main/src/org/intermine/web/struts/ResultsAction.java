@@ -21,9 +21,9 @@ import org.intermine.web.logic.export.ResponseUtil;
 /**
  * ResultsAction is called before results table is rendered. Can be used for setting
  * various things needed before table is rendered and that cannot be set in controller
- * as it is case of response headers. However for setting rendering related variables use 
+ * as it is case of response headers. However for setting rendering related variables use
  * TableController.
- *   
+ *
  * @author Jakub Kulaviak
  *
  */

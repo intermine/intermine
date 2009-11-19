@@ -45,8 +45,7 @@ import java.util.TreeMap;
  * @author balusc@xs4all.nl
  * @version Without Generics for < Java 5.0
  */
-public class SortableMap
-extends LinkedHashMap
+public class SortableMap extends LinkedHashMap
 {
     // Constructors -----------------------------------------------------------
 

@@ -34,18 +34,18 @@ function handleGraphWidget(widget) {
 }
 
 function getProcessHTMLWidgetConfig(widgetId, bagName) {
-	AjaxServices.getProcessHTMLWidget(widgetId, bagName, handleHTMLWidget);
+        AjaxServices.getProcessHTMLWidget(widgetId, bagName, handleHTMLWidget);
 }
 
 function handleHTMLWidget(widget) {
-	var widgetdataname = document.getElementById('widgetdata' + widget.configId);
-	var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
-	var widgetdatacontent = document.getElementById('widgetdatacontent' + widget.configId);
-	
-	
-	Element.hide($(widgetdatawait));
-	Element.hide($(widgetdataname));
-	Element.show($(widgetdatacontent));
+        var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+        var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
+        var widgetdatacontent = document.getElementById('widgetdatacontent' + widget.configId);
+
+
+        Element.hide($(widgetdatawait));
+        Element.hide($(widgetdataname));
+        Element.show($(widgetdatacontent));
 }
 
 
@@ -344,12 +344,11 @@ function displayNotAnalysed(widgetId,type,extra) {
 }
 
 function calcNotAnalysed(widget) {
-	var isMSIE = /*@cc_on!@*/false;
-	if (!isMSIE) {
-		document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
-	}
-	// this was broken in 21.0 when we upgraded jQuery
-    //$('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
+        var isMSIE = /*@cc_on!@*/false;
+        if (!isMSIE) {
+            //document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
+            $('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
+        }
 }
 
 function toggleAllChecks(formName, widgetId) {

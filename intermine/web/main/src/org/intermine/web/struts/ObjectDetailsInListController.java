@@ -35,13 +35,11 @@ public class ObjectDetailsInListController extends TilesAction
    /**
      * {@inheritDoc}
      */
-   @Override
-   public ActionForward execute(ComponentContext context,
-                                @SuppressWarnings("unused") ActionMapping mapping,
-                                @SuppressWarnings("unused") ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused") HttpServletResponse response)
-   throws Exception {
+    @Override
+    public ActionForward execute(ComponentContext context,
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
        String id = (String) context.getAttribute("objectid");
        HttpSession session = request.getSession();
        Profile profile = SessionMethods.getProfile(session);

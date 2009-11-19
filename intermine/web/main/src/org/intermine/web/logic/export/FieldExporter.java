@@ -33,6 +33,5 @@ public interface FieldExporter
      * @throws ExportException if the application business logic throws an exception
      */
     public void exportField(InterMineObject o, String fieldName, ObjectStore os,
-                            HttpServletResponse response)
-       throws ExportException;
+            HttpServletResponse response);
 }

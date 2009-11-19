@@ -20,13 +20,13 @@ function loadInlineTemplate(i) {
   var templateName = queue[i][1];
   var id = queue[i][2];
   var trail = queue[i][3];
-  var uid = placement.replace(/ /g, '_') + '_' + templateName;
+  var uid = placement.replace(/ /, '_') + '_' + templateName;
 
   Element.show('table_'+uid+'_int');
   $('table_'+uid+'_int').innerHTML = placement + templateName + id;
   new Ajax.Updater('table_'+uid+'_int', modifyDetailsURL, {
     parameters:'method=ajaxTemplateCount&template='+templateName+'&id='+id+'&type=global&placement='+placement+'&detailsType='+detailsType+'&trail='+trail, asynchronous:true,
-    onComplete: function() {    
+    onComplete: function() {
       var count = $('count_'+uid).innerHTML;
       if (count == '0')
         $('img_'+uid).src='images/blank.gif';

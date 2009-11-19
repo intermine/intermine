@@ -10,7 +10,6 @@ package org.intermine.webservice.server;
  *
  */
 
-
 /**
  * Base class for input classes used with web services.
  * @author Jakub Kulaviak
@@ -25,7 +24,7 @@ public class WebServiceInput
     private String userName;
 
     private String password;
-    
+
     /**
      * @return user name
      */
@@ -53,7 +52,7 @@ public class WebServiceInput
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     /**
      * Sets from which index should be results returned 1-based.
      * @param start start

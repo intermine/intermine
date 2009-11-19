@@ -35,9 +35,7 @@ public abstract class Widget
      *
      * @throws Exception if one of the classes in the widget isn't found
      */
-    public abstract void process()
-    throws Exception;
-
+    public abstract void process() throws Exception;
 
     /**
      * @return the number of objects not analysed in this widget
@@ -57,7 +55,6 @@ public abstract class Widget
      */
     public abstract List<List<String>> getExportResults(String[]selected) throws Exception;
 
-
     /**
      * @return results of widget
      */
@@ -73,6 +70,7 @@ public abstract class Widget
      * @return true if elem is in bag
      */
     public abstract List<String> getElementInList();
+
     /**
      * Get the ID of the corresponding WidgetConfig
      * @return the WidgetConfig ID

@@ -38,7 +38,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**
- * {@inheritDoc}
+ * 
  * @author Julie Sullivan
  */
 public class GoStatLdr extends EnrichmentWidgetLdr
@@ -82,15 +82,12 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGoAnnotation = null;
         QueryClass qcGoChild = null;
         QueryClass qcGoParent = null;
-        QueryClass qcRelations = null;
 
         try {
             qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
                                                           + ".GOAnnotation"));
             qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
-            qcRelations = new QueryClass(Class.forName(model.getPackageName()
-                                                       + ".OntologyRelation"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
             return null;
@@ -141,18 +138,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryObjectReference c3 = new QueryObjectReference(qcGoAnnotation, "ontologyTerm");
         cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcGoChild));
 
-        // goannotation contains go terms
-        QueryCollectionReference c4 = new QueryCollectionReference(qcGoChild, "relations");
-        cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcRelations));
-
-
-        QueryObjectReference c5 = new QueryObjectReference(qcRelations, "parentTerm");
-        cs.addConstraint(new ContainsConstraint(c5, ConstraintOp.CONTAINS, qcGoParent));
-
-        // goterm.relations include parent and child relationships
-        // we are only interested in when this goterm is a child
-        QueryObjectReference c6 = new QueryObjectReference(qcRelations, "childTerm");
-        cs.addConstraint(new ContainsConstraint(c6, ConstraintOp.CONTAINS, qcGoChild));
+        // goannotation contains go terms & parents
+        QueryCollectionReference c4 = new QueryCollectionReference(qcGoChild, "parents");
+        cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcGoParent));
 
         // go term is of the specified namespace
         QueryExpression c7 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
@@ -194,7 +182,6 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         q.addFrom(qcOrganism);
         q.addFrom(qcGoParent);
         q.addFrom(qcGoChild);
-        q.addFrom(qcRelations);
 
         if (bagType.equals("Protein")) {
             q.addFrom(qcProtein);

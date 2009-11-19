@@ -57,7 +57,7 @@ public class ViewAction extends InterMineAction
         }
 
         QueryMonitorTimeout clientState
-                = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+            = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);

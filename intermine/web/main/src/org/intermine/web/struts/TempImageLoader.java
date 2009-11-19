@@ -41,10 +41,8 @@ public class TempImageLoader extends InterMineAction
      *  an exception
      */
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         OutputStream out = response.getOutputStream();
         try {
             String fileName = request.getParameter("fileName");

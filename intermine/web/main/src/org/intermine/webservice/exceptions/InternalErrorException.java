@@ -15,7 +15,7 @@ import org.intermine.webservice.server.output.Output;
 
 /**
  * The InternalErrorException is thrown by service when there is an internal error.
- *   
+ *
  * @author Jakub Kulaviak
  */
 public class InternalErrorException extends ServiceException
@@ -47,8 +47,8 @@ public class InternalErrorException extends ServiceException
         super(cause);
         initErrorCode();
     }
-    
+
     private void initErrorCode() {
         setHttpErrorCode(Output.SC_INTERNAL_SERVER_ERROR);
-    }    
+    }
 }

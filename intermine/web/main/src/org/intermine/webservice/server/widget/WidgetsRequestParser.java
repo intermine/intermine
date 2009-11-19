@@ -26,7 +26,6 @@ public class WidgetsRequestParser
 {
     private HttpServletRequest request;
 
-
     /**
      * The identifier for the widget config
      */
@@ -58,13 +57,13 @@ public class WidgetsRequestParser
      */
     public WidgetsServiceInput getInput() {
         WidgetsServiceInput ret = new WidgetsServiceInput();
-        
+
         String widgetId = request.getParameter(WIDGET_ID);
         String className = request.getParameter(CLASS_NAME);
         String extraAttributes = request.getParameter(EXTRA_ATTRIBUTES);
         String ids = request.getParameter(IDS);
-        
-        if (widgetId == null || widgetId.length() <= 0 
+
+        if (widgetId == null || widgetId.length() <= 0
                         || className == null || className.length() <= 0
                         || ids == null || ids.length() <= 0) {
             throw new BadRequestException("Parameters: " + WIDGET_ID + ", " + CLASS_NAME + ", "

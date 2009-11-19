@@ -15,16 +15,14 @@ package org.intermine.webservice.server;
  **/
 public class WebServiceConstants
 {
-
     /**
      * Error message returned in case of unexpected service failure.
      */
     public static final String SERVICE_FAILED_MSG = "Service failed. Please contact support.";
-    
+
     /**
      * Name of module of web services.
-     * All web services relative urls start with following prefix.  
+     * All web services relative urls start with following prefix.
      */
     public static final String MODULE_NAME = "service";
-
 }

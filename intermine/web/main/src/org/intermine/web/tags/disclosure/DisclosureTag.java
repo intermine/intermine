@@ -106,7 +106,7 @@ public class DisclosureTag extends BaseDisclosureTag
     }
 
     /**
-     * @return true if disclosure is consistent type, i.e. saves its state (opened or closed) 
+     * @return true if disclosure is consistent type, i.e. saves its state (opened or closed)
      * during user session
      */
     public boolean isConsistentType() {
@@ -124,7 +124,7 @@ public class DisclosureTag extends BaseDisclosureTag
     /**
      * Renders tag.
      * @throws IOException if error occurs during writing to stream output
-     * @throws JspException if JspException error occurs during rendering nested tags  
+     * @throws JspException if JspException error occurs during rendering nested tags
      */
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();

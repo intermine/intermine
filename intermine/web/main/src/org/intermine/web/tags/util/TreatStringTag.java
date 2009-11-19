@@ -18,8 +18,8 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 
 /**
- * Tag escaping apostrophes, quotes and replacing \n with html tag 
- * for end of line.
+ * Tag escaping apostrophes, quotes and replacing "\n" with html tag for end of line.
+ *
  * @author Jakub Kulaviak
  **/
 public class TreatStringTag extends SimpleTagSupport

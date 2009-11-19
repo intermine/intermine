@@ -39,18 +39,16 @@ public class CountTableController extends TilesAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
 
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PagedTable pt = (PagedTable) request.getAttribute("resultsTable");
 
         PageTableQueryMonitor clientState
-                = new PageTableQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, pt);
+            = new PageTableQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, pt);
         String qid = SessionMethods.startPagedTableCount(clientState, session, messages);
         request.setAttribute("qid", qid);
         request.setAttribute("POLL_REFRESH_SECONDS", new Integer(Constants.POLL_REFRESH_SECONDS));

@@ -123,8 +123,7 @@ public abstract class WidgetConfig
      * @exception Exception if something goes wrong
      */
     public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
-                                                  ObjectStore os)
-    throws Exception;
+            ObjectStore os) throws Exception;
 
     /**
      * @return the externalLink

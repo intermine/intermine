@@ -42,10 +42,8 @@ public class QueryBuilderPathsController extends TilesAction
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
             @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         populateRequest(request, response);
         return null;
     }
@@ -58,7 +56,7 @@ public class QueryBuilderPathsController extends TilesAction
         PathQuery q = query.clone();
         for (Path p : q.getView()) {
             String path = p.toStringNoConstraints();
-            if (!q.getNodes().containsKey(path)) {    
+            if (!q.getNodes().containsKey(path)) {
                 q.addNode(path);
             }
         }

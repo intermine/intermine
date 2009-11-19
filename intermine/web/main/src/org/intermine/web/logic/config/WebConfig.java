@@ -104,8 +104,8 @@ public class WebConfig
         digester.addSetProperties("webconfig/widgets/graphdisplayer");
         digester.addSetNext("webconfig/widgets/graphdisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer", 
-                                 EnrichmentWidgetConfig.class);
+        digester.addObjectCreate("webconfig/widgets/enrichmentwidgetdisplayer",
+                EnrichmentWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/enrichmentwidgetdisplayer");
         digester.addSetNext("webconfig/widgets/enrichmentwidgetdisplayer", "addWidget");
 
@@ -120,7 +120,7 @@ public class WebConfig
         digester.addObjectCreate("webconfig/widgets/htmldisplayer", HTMLWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/htmldisplayer");
         digester.addSetNext("webconfig/widgets/htmldisplayer", "addWidget");
-        
+
         digester.addSetNext("webconfig/class", "addType");
 
         digester.addObjectCreate("webconfig/tableExportConfig", TableExportConfig.class);
