@@ -407,9 +407,7 @@ All GBrowse tracks generated for this experiment:
       			</tr>
     		</c:forEach>
             <tr><td>
-            <span class="tinylink">
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="[find nearby features]"></c:out></html:link>
-            </span>
             </td></tr>
     		</table>
     		</div>

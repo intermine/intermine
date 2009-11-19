@@ -131,11 +131,12 @@ foreach my $taxon_id(keys %organisms) {
                 make_synonym($transcript_item, "identifier", $transcript->stable_id());
                 parse_feature($transcript, $transcript_item, $chromosome_item);
           
-                if ($gene_type eq "protein_coding") {
+                if ($transcript->biotype() eq "protein_coding") {
 
                     my $translation = $transcript->translate();
                     if (!defined $translation) {
-                        die "bad translation\n";
+                        print "no translation for gene: " . $gene->stable_id() . "\n";
+                        next;
                     }
                     my $protein_seq = $translation->seq();
                     my $protein_item = make_protein(\%proteins, \%sequences, $protein_seq);

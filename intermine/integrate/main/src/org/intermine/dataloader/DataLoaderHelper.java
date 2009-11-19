@@ -189,30 +189,34 @@ public class DataLoaderHelper
                             if (cldName.equals(propCldName)) {
                                 String keyName = propKey.substring(posOfDot + 1);
                                 PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
-                                keySet.add(pk);
-                                if (os instanceof ObjectStoreInterMineImpl) {
-                                    ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
-                                    DatabaseSchema schema = osimi.getSchema();
-                                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                                    String tableName = DatabaseUtil.getTableName(tableMaster);
-                                    List<String> fields = new ArrayList<String>();
-                                    for (String field : pk.getFieldNames()) {
-                                        fields.add(DatabaseUtil.generateSqlCompatibleName(field));
-                                    }
-                                    String sql = "CREATE INDEX " + tableName + "__" + keyName
-                                        + " ON " + tableName + " (" + StringUtil.join(fields, ", ")
-                                        + ")";
-                                    System.out .println("Creating index: " + sql);
-                                    LOG.info("Creating index: " + sql);
-                                    Connection conn = null;
-                                    try {
-                                        conn = osimi.getConnection();
-                                        conn.createStatement().execute(sql);
-                                    } catch (SQLException e) {
-                                        LOG.error("Index creation failed", e);
-                                    } finally {
-                                        if (conn != null) {
-                                            osimi.releaseConnection(conn);
+                                if (!keySet.contains(pk)) {
+                                    keySet.add(pk);
+                                    if (os instanceof ObjectStoreInterMineImpl) {
+                                        ObjectStoreInterMineImpl osimi
+                                            = (ObjectStoreInterMineImpl) os;
+                                        DatabaseSchema schema = osimi.getSchema();
+                                        ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                                        String tableName = DatabaseUtil.getTableName(tableMaster);
+                                        List<String> fields = new ArrayList<String>();
+                                        for (String field : pk.getFieldNames()) {
+                                            fields.add(DatabaseUtil
+                                                    .generateSqlCompatibleName(field));
+                                        }
+                                        String sql = "CREATE INDEX " + tableName + "__" + keyName
+                                            + " ON " + tableName + " (" + StringUtil.join(fields,
+                                                        ", ") + ")";
+                                        System.out .println("Creating index: " + sql);
+                                        LOG.info("Creating index: " + sql);
+                                        Connection conn = null;
+                                        try {
+                                            conn = osimi.getConnection();
+                                            conn.createStatement().execute(sql);
+                                        } catch (SQLException e) {
+                                            LOG.error("Index creation failed", e);
+                                        } finally {
+                                            if (conn != null) {
+                                                osimi.releaseConnection(conn);
+                                            }
                                         }
                                     }
                                 }

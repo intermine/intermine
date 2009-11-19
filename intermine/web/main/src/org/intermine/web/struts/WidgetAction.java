@@ -175,7 +175,10 @@ public class WidgetAction extends InterMineAction
         WidgetForm wf = (WidgetForm) form;
         String widgetTitle = wf.getWidgetTitle();
         if (StringUtils.isEmpty(key)) {
+            // the key (the specific object we are querying on) can come from the form or the URL
             key = wf.getSelectedAsString();
+        }
+        if (!StringUtils.isEmpty(key)) {
             allOrSelected = "Selected";
         }
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -190,8 +193,12 @@ public class WidgetAction extends InterMineAction
         String bagType = bag.getType();
 
         PathQuery q = urlQuery.generatePathQuery(showAll);
-        String description = allOrSelected + " " + bagType + "s from the list '" + bagName
-            + "' for the widget '" + widgetTitle + "'";
+        String description = allOrSelected + " " + bagType + "s from the list '" + bagName + "'";
+        if (!StringUtils.isEmpty(widgetTitle)) {
+            // widget title will be null if we don't have a widget form, eg. the user clicked on 
+            // a link instead of submitting the form.  FIXME!
+            description += " for the widget '" + widgetTitle + "'";
+        }
         q.setDescription(description);
         return q;
     }
@@ -258,11 +265,9 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(ActionMapping mapping,
-                                ActionForm form,
-                                HttpServletRequest request,
-                                @SuppressWarnings("unused")
-                                HttpServletResponse response) throws Exception {
+    public ActionForward export(ActionMapping mapping, ActionForm form,
+                                HttpServletRequest request, HttpServletResponse response) 
+    throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();

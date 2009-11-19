@@ -22,6 +22,7 @@ import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathNode;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
@@ -48,8 +49,8 @@ public class TemplateConfigurator
         /* Be careful when changing this code. If you replace constraint
          * in list that was returned for example from getEditableConstraints method,
          * this change won't have effect to template */
-        checkPaths(origTemplate.getModel(), newConstraints.values());
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
+        checkPaths(origTemplate.getModel(), newConstraints.values(), template);
         for (PathNode node : template.getEditableNodes()) {
             List<Constraint> cons = template.getEditableConstraints(node);
             List<ConstraintLoad> loads = newConstraints.get(node.getPathString());
@@ -93,11 +94,12 @@ public class TemplateConfigurator
         return template;
     }
 
-    private void checkPaths(Model model, Collection<List<ConstraintLoad>> collection) {
+    private void checkPaths(Model model, Collection<List<ConstraintLoad>> collection,
+            TemplateQuery templateQuery) {
         for (List<ConstraintLoad> col : collection) {
             for (ConstraintLoad load : col) {
                 try {
-                    new Path(model, load.getPathId());
+                    PathQuery.makePath(model, templateQuery, load.getPathId());
                 } catch (PathError ex) {
                     throw new BadRequestException("Invalid path specified in "
                             + load.getParameterName() + " parameter.");

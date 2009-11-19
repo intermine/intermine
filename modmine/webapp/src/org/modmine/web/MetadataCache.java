@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.Experiment;
@@ -338,11 +339,11 @@ public class MetadataCache
     public static Map<String, List<DisplayExperiment>> 
     getProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map<String, List<DisplayExperiment>> projectExperiments = new HashMap();
+        Map<String, List<DisplayExperiment>> projectExperiments = new TreeMap<String,List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
             if (exps == null) {
-                exps = new ArrayList();
+                exps = new ArrayList<DisplayExperiment>();
                 projectExperiments.put(exp.getProjectName(), exps);
             }
             exps.add(exp);
@@ -350,8 +351,7 @@ public class MetadataCache
         long totalTime = System.currentTimeMillis() - startTime;
         LOG.info("Made project map: " + projectExperiments.size() 
                 + " took: " + totalTime + " ms.");
-        return projectExperiments;
-        
+        return projectExperiments;  
     }
     
     private static void readExperiments(ObjectStore os) {
