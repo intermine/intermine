@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -63,11 +64,13 @@ public class SummariseAllTemplatesAction extends InterMineAction
                     Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
 
+        TemplateSummariser summariser = new TemplateSummariser(os, osw);
+
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
             //String templateName = entry.getKey();
             TemplateQuery template = entry.getValue();
             try {
-                template.summarise(os, osw);
+                summariser.summarise(template);
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
             }
