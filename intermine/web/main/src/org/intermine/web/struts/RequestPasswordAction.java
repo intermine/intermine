@@ -53,7 +53,7 @@ public class RequestPasswordAction extends InterMineAction
      */
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -71,8 +71,9 @@ public class RequestPasswordAction extends InterMineAction
                 RequestPasswordAction.LOG.warn(e);
                 recordError(new ActionMessage("login.mailnotsent", e), request);
             }
+        } else {
+            recordError(new ActionMessage("login.emptyusername"), request);
         }
-
         return mapping.findForward("login");
     }
 }

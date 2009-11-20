@@ -42,7 +42,7 @@ public class TemplateSettingsAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
 
