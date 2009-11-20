@@ -25,6 +25,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -216,10 +217,11 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException(e);
         }
 
+        TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS);
         for (TemplateQuery template : toSummarise) {
             if (doSummarise) {
                 try {
-                    template.summarise(os, userProfileOS);
+                    summariser.summarise(template);
                 } catch (ObjectStoreException e) {
                     LOG.error("Exception while summarising template " + template.getName(), e);
                 }

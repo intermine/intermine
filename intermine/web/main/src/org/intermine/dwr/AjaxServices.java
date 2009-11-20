@@ -61,6 +61,7 @@ import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -207,7 +208,8 @@ public class AjaxServices
                         Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
             try {
                 session.setAttribute("summarising_" + templateName, "true");
-                template.summarise(os, osw);
+                TemplateSummariser summariser = new TemplateSummariser(os, osw);
+                summariser.summarise(template);
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise " + templateName, e);
             } catch (NullPointerException e) {

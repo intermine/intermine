@@ -56,8 +56,8 @@ public class LoginAction extends LoginHandler
             saveErrors(request, (ActionMessages) errors);
             return mapping.findForward("login");
         }
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, pm,
-                lf.getUsername(), lf.getPassword());
+        Map<String, String> renamedBags = doLogin(request, response, session, pm, lf.getUsername(),
+                lf.getPassword());
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         if (renamedBags.size() > 0) {
             for (String initName : renamedBags.keySet()) {

@@ -242,7 +242,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      *
      * @return possibleValues
      */
-    public Map getPossibleValues() {
+    public HashMap getPossibleValues() {
         return possibleValues;
     }
 
@@ -281,78 +281,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public SavedTemplateQuery getSavedTemplateQuery() {
         return savedTemplateQuery;
-    }
-
-    /**
-     * Populates the possibleValues data for this TemplateQuery from the os.
-     *
-     * @param os the production ObjectStore
-     * @param osw the user profile ObjectStoreWriter
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public void summarise(ObjectStore os, ObjectStoreWriter osw) throws ObjectStoreException {
-        Iterator iter = getEditableNodes().iterator();
-        while (iter.hasNext()) {
-            PathNode node = (PathNode) iter.next();
-            Query q = TemplatePrecomputeHelper.getPrecomputeQuery(this, null, node);
-            LOG.info("Summarising template " + getName() + " by running query: " + q);
-            List results = os.execute(q, 0, 20, true, false, ObjectStore.SEQUENCE_IGNORE);
-            if (results.size() < 20) {
-                if (node.isAttribute() || results.isEmpty()) {
-                    List values = new ArrayList();
-                    Iterator resIter = results.iterator();
-                    while (resIter.hasNext()) {
-                        values.add(((List) resIter.next()).get(0));
-                    }
-                    possibleValues.put(node.getPathString(), values);
-                } else {
-                    LOG.error("Editable node " + node.getPathString() + " in template "
-                            + getName() + " cannot be summarised as it is a LOOKUP constraint, "
-                            + "although it has only " + results.size() + " possible values. "
-                            + "Consider changing the node that the constraint is attached to");
-                }
-            }
-        }
-        // Now write the summary to the user profile database.
-        try {
-            osw.beginTransaction();
-            if (savedTemplateQuery != null) {
-                Query q = new Query();
-                QueryClass qc = new QueryClass(TemplateSummary.class);
-                q.addFrom(qc);
-                q.addToSelect(qc);
-                q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "template"),
-                            ConstraintOp.CONTAINS, savedTemplateQuery));
-                Iterator oldIter = osw.getObjectStore().executeSingleton(q).iterator();
-                while (oldIter.hasNext()) {
-                    osw.delete((TemplateSummary) oldIter.next());
-                }
-            }
-            TemplateSummary templateSummary = new TemplateSummary();
-            templateSummary.setTemplate(savedTemplateQuery);
-            String summaryText = Base64.encodeObject(possibleValues);
-            if (summaryText == null) {
-                throw new RuntimeException("Serialised summary is null");
-            }
-            templateSummary.setSummary(Base64.encodeObject(possibleValues));
-            osw.store(templateSummary);
-        } catch (ObjectStoreException e) {
-            if (osw.isInTransaction()) {
-                osw.abortTransaction();
-            }
-            LOG.error("ObjectStoreException while storing summary for " + getName());
-            throw e;
-        } catch (RuntimeException e) {
-            if (osw.isInTransaction()) {
-                osw.abortTransaction();
-            }
-            LOG.error("ObjectStoreException while storing summary for " + getName());
-            throw e;
-        } finally {
-            if (osw.isInTransaction()) {
-                osw.commitTransaction();
-            }
-        }
     }
 
     /**
