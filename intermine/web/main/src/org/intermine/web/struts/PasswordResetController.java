@@ -37,11 +37,10 @@ public class PasswordResetController extends TilesAction
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
-                                 ActionForm form,
+                                 @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        PasswordResetForm loginForm = (PasswordResetForm) form;
         String token = request.getParameter("token");
         HttpSession session = request.getSession();
         if (token == null) {

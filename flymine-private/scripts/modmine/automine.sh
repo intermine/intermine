@@ -238,7 +238,7 @@ cd $MINEDIR
 $SCRIPTDIR/add_chado_feats_to_report.pl $DBHOST $CHADODB $DBUSER $BUILDDIR/acceptance_test.html > $REPORTS/$1.html
 
 echo "sending mail!!"
-mail $RECIPIENTS -s "$1 report, also in file://$REPORTS/$1.html" < $REPORTS/$1.html
+mail -s "$1 report, also in file://$REPORTS/$1.html" $RECIPIENTS < $REPORTS/$1.html
 #elinks $REPORTS/$1.html
 echo
 echo "acceptance test results in "

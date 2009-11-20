@@ -45,7 +45,7 @@ public class ObjectDetailsInListController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
 
-        Collection<InterMineBag> bagsWithId = 
+        Collection<InterMineBag> bagsWithId =
             bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));
 
         request.setAttribute("bagsWithId", bagsWithId);
