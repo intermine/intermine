@@ -22,21 +22,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import net.sourceforge.iharder.Base64;
-
 import org.apache.log4j.Logger;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.TemplateSummary;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
