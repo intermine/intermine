@@ -48,7 +48,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
-    private Set<String> chromosomeInterMineTypes = new HashSet<String>();
+    private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
 
@@ -95,10 +95,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
         for (String chromosomeType : getChromosomeFeatureTypes()) {
-            chromosomeInterMineTypes.add(TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
+            commonFeatureInterMineTypes.add(TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
         }
-        chromosomeInterMineTypes.add("Gene");
-        chromosomeInterMineTypes.add("MRNA");
+        commonFeatureInterMineTypes.add("Gene");
+        commonFeatureInterMineTypes.add("MRNA");
     }
 
     /**
@@ -199,7 +199,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     protected void addToFeatureMap(Integer featureId, FeatureData fdat) {
         super.addToFeatureMap(featureId, fdat);
         // We know chromosomes will be common between submissions so add them here
-        if (chromosomeInterMineTypes.contains(fdat.getInterMineType())
+        if (commonFeatureInterMineTypes.contains(fdat.getInterMineType())
                 && !commonFeaturesMap.containsKey(featureId)) {
             commonFeaturesMap.put(featureId, fdat);
         }
