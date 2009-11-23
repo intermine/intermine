@@ -208,14 +208,14 @@ public class SequenceProcessor extends ChadoProcessor
             String checksum = res.getString("md5checksum");
             Integer organismId = new Integer(res.getInt("organism_id"));
             if (chromosomeFeatureTypesSet.contains(type)) {
-                if (name.startsWith("chr")){
+                if (uniqueName.startsWith("chr")){
                     // this is to fix some data problem with sub 146 in modmine
                     // where there are duplicated chromosome_arm features, with 
                     // and without a 'chr' prefix (e.g. 3R and chr3R)
                     // The chr ones are not the location for any other feature.
                     // So we skip them.
                     continue;
-                }                
+                }
                 addToChromosomeMaps(organismId, uniqueName, featureId);
             }
             int seqlen = 0;
