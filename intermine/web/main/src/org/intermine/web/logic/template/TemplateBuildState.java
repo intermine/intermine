@@ -25,7 +25,6 @@ public class TemplateBuildState
     private String description = "";
     private String comment = "";
     private String name = "";
-    private boolean important;
     private TemplateQuery updating;
 
     /**
@@ -45,20 +44,6 @@ public class TemplateBuildState
      */
     public TemplateBuildState() {
         // empty
-    }
-
-    /**
-     * @return Returns the important.
-     */
-    public boolean isImportant() {
-        return important;
-    }
-
-    /**
-     * @param important The important to set.
-     */
-    public void setImportant(boolean important) {
-        this.important = important;
     }
 
     /**

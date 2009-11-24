@@ -51,7 +51,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     
     public void setUp() throws Exception {
         super.setUp();
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" important=\"false\">\n" + 
+        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" + 
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
                 "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
                 "        <node path=\"Employee.id\" type=\"Integer\">\n" + 
