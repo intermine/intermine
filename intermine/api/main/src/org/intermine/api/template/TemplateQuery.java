@@ -49,8 +49,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected String comment;
     /** Map from node to editable constraint list. */
     protected Map constraints = new HashMap();
-    /** Keywords set for this template. */
-    protected String keywords = "";
     /** Edited version of another template. */
     protected boolean edited = false;
     /** Map from editable constraint path to Lists of possible values. */
@@ -66,19 +64,15 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      * @param description the full template description for showing on the template form
      * @param comment an optional private comment for this template
      * @param query the query itself
-     * @param keywords keywords for this template
      */
     public TemplateQuery(String name, String title, String description, String comment,
-                         PathQuery query, String keywords) {
+                         PathQuery query) {
         super(query.clone());
         if (description != null) {
             this.description = description;
         }
         if (name != null) {
             this.name = name;
-        }
-        if (keywords != null) {
-            this.keywords = keywords;
         }
         this.title = title;
         this.comment = comment;
@@ -208,15 +202,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     }
 
     /**
-     * Get the keywords.
-     *
-     * @return template keywords
-     */
-    public String getKeywords() {
-        return keywords;
-    }
-
-    /**
      * Returns a List of possible values for a node.
      *
      * @param node a PathNode
@@ -299,7 +284,7 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public PathQuery clone() {
         TemplateQuery templateQuery = new TemplateQuery(name, title, description, comment,
-                                                        super.clone(), keywords);
+                                                        super.clone());
         templateQuery.edited = edited;
         return templateQuery;
     }

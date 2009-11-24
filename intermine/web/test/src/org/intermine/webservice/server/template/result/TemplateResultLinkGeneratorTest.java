@@ -72,7 +72,7 @@ public class TemplateResultLinkGeneratorTest extends TestCase
     
     private TemplateQuery getTemplate(PathQuery pathQuery) {
         TemplateQuery tmpl = new TemplateQuery("template1", "title", 
-                "description", "comments", pathQuery, "keywords");
+                "description", "comments", pathQuery);
         tmpl.addNode("");
         return tmpl;
     }

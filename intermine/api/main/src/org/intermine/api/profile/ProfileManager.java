@@ -24,11 +24,8 @@ import java.util.Set;
 
 import net.sourceforge.iharder.Base64;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.tag.TagNames;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TemplateQueryBinding;
@@ -310,38 +307,12 @@ public class ProfileManager
                          + template.getTemplateQuery(), err);
             }
         }
-        convertTemplateKeywordsToTags(savedTemplates, username);
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
                 savedQueries, savedBags, savedTemplates);
         profileCache.put(username, profile);
         return profile;
     }
 
-    /**
-     * Create 'aspect:xxx' tags for each keyword of each template.
-     * Public so that LoadDefaultTemplates task can call in.
-     * @param savedTemplates Map from template name to TemplateQuery
-     * @param username username under which to store tags
-     */
-    public void convertTemplateKeywordsToTags(Map<String, TemplateQuery> savedTemplates,
-                                              String username) {
-        TagManager tagManager = getTagManager();
-        for (Iterator<TemplateQuery> iter = savedTemplates.values().iterator(); iter.hasNext(); ) {
-            TemplateQuery tq = iter.next();
-            String keywords = tq.getKeywords();
-            if (StringUtils.isNotEmpty(keywords)) {
-                String aspects[] = keywords.split(",");
-                for (int i = 0; i < aspects.length; i++) {
-                    String aspect = aspects[i].trim();
-                    String tag = TagNames.IM_ASPECT_PREFIX + aspect;
-                    if (tagManager.getTags(tag, tq.getName(), TagTypes.TEMPLATE, username).size()
-                            == 0) {
-                        getTagManager().addTag(tag, tq.getName(), TagTypes.TEMPLATE, username);
-                    }
-                }
-            }
-        }
-    }
 
     private TagManager getTagManager() {
         return new TagManagerFactory(this).getTagManager();
