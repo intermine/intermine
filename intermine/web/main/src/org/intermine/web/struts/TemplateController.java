@@ -12,7 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -98,12 +98,13 @@ public class TemplateController extends TilesAction
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+        
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
         String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
-        String bagName = request.getParameter("bagName");
+        String preSelectedBagName = request.getParameter("bagName");
 
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
 
@@ -144,22 +145,22 @@ public class TemplateController extends TilesAction
             if (scope == null) {
                 scope = Scope.ALL;
             }
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
             template = templateManager.getTemplate(profile, templateName, scope);
         }
         if (template == null) {
             return null;
         }
 
-        Map displayConstraints = new HashMap();
-        Map names = new HashMap();
-        Map constraints = new HashMap();
+        Map<Constraint, DisplayConstraint> displayConstraints = new HashMap();
+        Map<Constraint, String> names = new HashMap();
+        Map<PathNode, List<Constraint>> constraints = new HashMap();
         Map<Constraint, Map<String, InterMineBag>> bags = new HashMap();
-        Map constraintBagTypes = new HashMap();
-        Map selectedBagNames = new HashMap();
-        Map keyFields = new HashMap();
-        Map haveExtraConstraint = new HashMap();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<Constraint, String> constraintBagTypes = new HashMap();
+        Map<Constraint, Object> selectedBagNames = new HashMap();
+        Map<Constraint, String> keyFields = new HashMap();
+        Map<Constraint, Boolean> haveExtraConstraint = new HashMap();
+        Map<String, List<FieldDescriptor>> classKeys = 
+        	(Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
         // for the autocompleter
         Map<String, String> classDesc = new HashMap();
@@ -191,9 +192,7 @@ public class TemplateController extends TilesAction
                     classDesc, fieldDesc);
 
             int j = 1;
-            for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator();
-                ci.hasNext();) {
-                Constraint c = (Constraint) ci.next();
+            for (Constraint c : displayTemplate.getEditableConstraints(node)) {
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
                     Object value;
@@ -242,9 +241,10 @@ public class TemplateController extends TilesAction
                         bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (bagName != null && constraintBags.containsKey(bagName)) {
+                        if (preSelectedBagName != null 
+                        		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
-                            selectedBagNames.put(c, bagName);
+                            selectedBagNames.put(c, preSelectedBagName);
                         }
                     }
                 }
@@ -254,9 +254,10 @@ public class TemplateController extends TilesAction
                         bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (bagName != null && constraintBags.containsKey(bagName)) {
+                        if (preSelectedBagName != null 
+                        		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
-                            selectedBagNames.put(c, bagName);
+                            selectedBagNames.put(c, preSelectedBagName);
                         }
                     }
                     // this might be a lookup constraint, find the key fields for a help message
@@ -353,8 +354,9 @@ public class TemplateController extends TilesAction
     }
 
     private void constructAutocompleteIndex(PathQuery query, ServletContext servletContext,
-                                            Model model, PathNode node, Map classDesc,
-                                            Map fieldDesc) {
+                                            Model model, PathNode node,
+                                            Map<String, String> classDesc,
+                                            Map<String, String> fieldDesc) {
         AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
         if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
             Path path = PathQuery.makePath(model, query, node.getPathString());
@@ -367,7 +369,7 @@ public class TemplateController extends TilesAction
     }
 
     /**
-     *  Populate parts of the template form that are used in javscript methods in template.jsp
+     *  Populate parts of the template form that are used in javascript methods in template.jsp
      */
     private static void populateTemplateForm(TemplateQuery template,
             TemplateForm tf, HttpServletRequest request, ServletContext servletContext,
@@ -376,19 +378,16 @@ public class TemplateController extends TilesAction
 
         Map<String, String> autoMap = new HashMap<String, String>();
 
-        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-
-            for (Iterator ci = template.getEditableConstraints(node).iterator(); ci
-                    .hasNext();) {
-                Constraint c = (Constraint) ci.next();
+        for (PathNode node : template.getEditableNodes()) {
+        	for (Constraint c : template.getEditableConstraints(node)) {
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
                 tf.setExtraValues(attributeKey, "" + c.getExtraValue());
                 if (imObject != null) {
-                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                    Collection keyFields = (Collection) classKeys.get(DynamicUtil
+                    Map<String, List<FieldDescriptor>> classKeys = 
+                    	(Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                    Collection<FieldDescriptor> keyFields = (Collection) classKeys.get(DynamicUtil
                             .getFriendlyName(imObject.getClass()));
                     AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
                         .next();
@@ -408,8 +407,6 @@ public class TemplateController extends TilesAction
                         && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     autoMap.put(node.getParentType() + "." + node.getFieldName(),
                             "useAutoCompleter");
-                    //request.setAttribute("classDescriptor", node.getParentType());
-                    //request.setAttribute("fieldDescriptor", node.getFieldName());
                 }
                 j++;
             }
