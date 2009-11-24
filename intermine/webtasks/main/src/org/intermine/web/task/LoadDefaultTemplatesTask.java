@@ -154,7 +154,6 @@ public class LoadDefaultTemplatesTask extends Task
                     log("Adding template \"" + template.getName() + "\"" + append);
                     profileDest.saveTemplate(template.getName(), template);
                 }
-                pm.convertTemplateKeywordsToTags(profileSrc.getSavedTemplates(), username);
             }
 
             // Tags not loaded automatically when unmarshalling profile

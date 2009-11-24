@@ -123,8 +123,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                              new PathQuery(Model.getInstanceByName("testmodel")),
-                              "");
+                              new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
                                  new HashMap(), new HashMap(), new HashMap());
@@ -155,8 +154,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         objectBag.addIdToBag(ceoB1.getId());
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")),
-                                     "some_keyword");
+                                     new PathQuery(Model.getInstanceByName("testmodel")));
 
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap());

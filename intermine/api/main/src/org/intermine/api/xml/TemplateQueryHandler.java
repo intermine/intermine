@@ -13,9 +13,9 @@ package org.intermine.api.xml;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -29,8 +29,6 @@ public class TemplateQueryHandler extends PathQueryHandler
     Map<String, TemplateQuery> templates;
     String templateName;
     String templateDesc;
-    String templateCat;
-    String keywords;
     String templateTitle;
     String templateComment;
     boolean important;
@@ -43,7 +41,7 @@ public class TemplateQueryHandler extends PathQueryHandler
      */
     public TemplateQueryHandler(Map<String, TemplateQuery> templates,
             Map<String, InterMineBag> savedBags, int version) {
-        super(new HashMap(), version);
+        super(new HashMap<String, PathQuery>(), version);
         this.templates = templates;
         reset();
     }
@@ -62,11 +60,6 @@ public class TemplateQueryHandler extends PathQueryHandler
                 templateTitle = attrs.getValue("description");
             }
             templateComment = attrs.getValue("comment");
-            templateCat = attrs.getValue("category");
-            keywords = attrs.getValue("keywords");
-            if (keywords == null) {
-                keywords = "";
-            }
             important = Boolean.valueOf(attrs.getValue("important")).booleanValue();
         }
         super.startElement(uri, localName, qName, attrs);
@@ -78,29 +71,16 @@ public class TemplateQueryHandler extends PathQueryHandler
     public void endElement(String uri, String localName, String qName) {
         super.endElement(uri, localName, qName);
         if (qName.equals("template")) {
-            if (StringUtils.isNotEmpty(templateCat)) {
-                if (keywords == null) {
-                    keywords = "";
-                }
-                if (StringUtils.isNotEmpty(keywords)) {
-                    keywords += ", " + templateCat;
-                } else {
-                    keywords = templateCat;
-                }
-            }
             templates.put(templateName, new TemplateQuery(templateName,
                                                           templateTitle,
                                                           templateDesc,
                                                           templateComment,
-                                                          query,
-                                                          keywords));
+                                                          query));
             reset();
         }
     }
 
     private void reset() {
-        keywords = "";
-        templateCat = "";
         templateName = "";
         templateDesc = "";
     }
