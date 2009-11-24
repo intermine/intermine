@@ -101,7 +101,13 @@
       <property name="fasta.dataSourceName" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
-<!-- INTEREACTION: added 24/11/08 
+		<source name="pubmed-gene" type="pubmed-gene">
+			<property name="src.data.dir" location="/shared/data/pubmed/current"/>
+			<property name="pubmed.organisms" value="7227 6239"/>
+			<property name="src.data.dir.includes" value="gene2pubmed"/>
+			<property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
+		</source>
+<!-- INTEREACTION: added 24/11/08
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="organisms" value="7227 6239 4932"/>
