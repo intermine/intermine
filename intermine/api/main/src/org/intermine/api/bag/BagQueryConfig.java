@@ -25,7 +25,7 @@ public class BagQueryConfig
     private String constrainField;
     private final Map<String, List<BagQuery>> bagQueries;
     private final Map<String, List<BagQuery>> preDefaultBagQueries;
-    private Map<String, Map> additionalConverters;
+    private Map<String, Map<String, String[]>> additionalConverters;
 
     /**
      * Create a new BagQueryConfig object.
@@ -35,7 +35,7 @@ public class BagQueryConfig
      */
     public BagQueryConfig(Map<String, List<BagQuery>> bagQueries,
                           Map<String, List<BagQuery>> preDefaultBagQueries,
-                          Map additionalConverters) {
+                          Map<String, Map<String, String[]>> additionalConverters) {
         this.bagQueries = bagQueries;
         this.preDefaultBagQueries = preDefaultBagQueries;
         this.additionalConverters = additionalConverters;
