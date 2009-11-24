@@ -9,7 +9,6 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Collection;
 
 /**
  * Exception thrown when attempting to create a profile element with a name that already exists.
@@ -18,7 +17,6 @@ import java.util.Collection;
  */
 public class ProfileAlreadyExistsException extends RuntimeException
 {
-    private Collection<String> types;
 
     /**
      * Constructs an ProfileNameAlreadyExistsExceptionException with the specified detail message.
@@ -47,22 +45,6 @@ public class ProfileAlreadyExistsException extends RuntimeException
      */
     public ProfileAlreadyExistsException(String msg, Throwable t) {
         super(msg, t);
-    }
-
-    /**
-     * Set the bag types that were incompatible.
-     * @param types the bag types
-     */
-    public void setTypes(Collection<String> types) {
-        this.types = types;
-    }
-
-    /**
-     * Get the bag types that were incompatible.
-     * @return the incompatible types
-     */
-    public Collection<String> getTypes() {
-        return this.types;
     }
 }
 
