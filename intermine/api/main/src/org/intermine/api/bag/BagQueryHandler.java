@@ -38,7 +38,7 @@ public class BagQueryHandler extends DefaultHandler
 
     private Map<String, List<BagQuery>> preDefaultBagQueries = new HashMap();
 
-    private Map<String, Map> additionalConverters = new HashMap();
+    private Map<String, Map<String, String[]>> additionalConverters = new HashMap();
 
     private String type, message, queryString;
 
