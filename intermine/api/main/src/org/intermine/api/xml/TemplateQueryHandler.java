@@ -31,7 +31,6 @@ public class TemplateQueryHandler extends PathQueryHandler
     String templateDesc;
     String templateTitle;
     String templateComment;
-    boolean important;
 
     /**
      * Constructor
@@ -60,7 +59,6 @@ public class TemplateQueryHandler extends PathQueryHandler
                 templateTitle = attrs.getValue("description");
             }
             templateComment = attrs.getValue("comment");
-            important = Boolean.valueOf(attrs.getValue("important")).booleanValue();
         }
         super.startElement(uri, localName, qName, attrs);
     }

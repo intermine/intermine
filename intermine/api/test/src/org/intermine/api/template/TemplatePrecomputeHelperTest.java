@@ -54,7 +54,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     
     public void testBugWhereTrue() throws Exception {
         TemplateQueryBinding binding = new TemplateQueryBinding();
-        Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" longDescription=\"wurble\" comment=\"wibble\" important=\"false\">"
+        Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" longDescription=\"wurble\" comment=\"wibble\" >"
                 + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C and D\">"
                 + "<node path=\"Employee\" type=\"Employee\"></node>"
                 + "<node path=\"Employee.age\" type=\"Integer\">"

@@ -61,7 +61,7 @@ public class TypeConverterTest extends StoreDataTestCase
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" important=\"false\">\n" + 
+        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\"\n" + 
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
                 "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
                 "        <node path=\"Employee.id\" type=\"Integer\">\n" + 

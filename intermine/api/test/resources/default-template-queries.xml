@@ -5,7 +5,7 @@
   </queries>
 
   <template-queries>
-    <template name="employeeByName" description="View all the employees with certain name" important="false">
+    <template name="employeeByName" description="View all the employees with certain name" >
       <query name="employeeByName" model="testmodel" view="Employee.name Employee.age">
         <node path="Employee" type="Employee">
         </node>
@@ -16,7 +16,7 @@
       </query>
     </template>
 
-    <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" important="false">
+    <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" >
       <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
@@ -35,7 +35,7 @@
       </query>
     </template>
 
-    <template name="employeesOfACertainAge" description="View all the employees of a certain age" important="false">
+    <template name="employeesOfACertainAge" description="View all the employees of a certain age" >
       <query name="employeesOfACertainAge" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
@@ -47,7 +47,7 @@
         </node>
       </query>
     </template>
-    <template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" important="false">
+    <template name="employeesOverACertainAgeFromDepartmentA" title="View all the employees of a certain age from a certain department" longDescription="" comment="" >
       <query name="employeesOverACertainAgeFromDepartmentA" model="testmodel" view="Employee.name Employee.age Employee.department.name" constraintLogic="A and B">
         <node path="Employee" type="Employee">
         </node>
@@ -63,7 +63,7 @@
         </node>
       </query>
     </template>
-    <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" important="false">
+    <template name="convertEmployeesToAddresses" title="Convert employees to addresses" longDescription="" comment="" >
       <query name="convertEmployeesToAddresses" model="testmodel" view="Employee.id Employee.address.id">
         <node path="Employee" type="Employee"/>
         <node path="Employee.id" type="Integer">
@@ -72,7 +72,7 @@
         <node path="Employee.address.id" type="Integer"/>
       </query>
     </template>
-    <template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" important="false">
+    <template name="convertEmployeeToManager" title="Convert Employees to Managers" longDescription="" comment="" >
       <query name="convertEmployeeToManager" model="testmodel" view="Employee.id Employee.department.manager.id">
         <node path="Employee" type="Employee">
         </node>
@@ -85,7 +85,7 @@
     <template name="convertContractorToEmployees"
               title="convert contractors to employees" longDescription=""
               comment="This isn't a very sensible query to do, but it's useful for testing the TypeConverter class"
-              important="false">
+              >
       <query name="convertContractorToEmployees" model="testmodel" view="Contractor.id Contractor.companys.departments.employees.id">
         <node path="Contractor" type="Contractor">
         </node>
