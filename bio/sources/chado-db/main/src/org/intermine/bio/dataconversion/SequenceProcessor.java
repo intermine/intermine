@@ -201,21 +201,13 @@ public class SequenceProcessor extends ChadoProcessor
         int count = 0;
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
-            String uniqueName = res.getString("uniquename");
             String name = res.getString("name");
+            String uniqueName = res.getString("uniquename");
             String type = res.getString("type");
             String residues = res.getString("residues");
             String checksum = res.getString("md5checksum");
             Integer organismId = new Integer(res.getInt("organism_id"));
             if (chromosomeFeatureTypesSet.contains(type)) {
-                if (uniqueName.startsWith("chr")){
-                    // this is to fix some data problem with sub 146 in modmine
-                    // where there are duplicated chromosome_arm features, with 
-                    // and without a 'chr' prefix (e.g. 3R and chr3R)
-                    // The chr ones are not the location for any other feature.
-                    // So we skip them.
-                    continue;
-                }
                 addToChromosomeMaps(organismId, uniqueName, featureId);
             }
             int seqlen = 0;
@@ -223,13 +215,14 @@ public class SequenceProcessor extends ChadoProcessor
                 seqlen = res.getInt("seqlen");
             }
             if (processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
-                    checksum, type, organismId)) {
+                                       checksum, type, organismId)) {
                 count++;
             }
         }
         LOG.info("created " + count + " features");
         res.close();
     }
+   
     
     /**
      * Add the given chromosome feature_id, uniqueName and organismId to chromosomeMaps.
