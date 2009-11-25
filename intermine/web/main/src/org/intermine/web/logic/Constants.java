@@ -241,4 +241,9 @@ public interface Constants
      * any class keys.
      */
     public static final String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
+
+    /**
+     * Key for a TemplateSummariser.
+     */
+    public static final String TEMPLATE_SUMMARISER = "TEMPLATE_SUMMARISER";
 }

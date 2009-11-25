@@ -202,13 +202,10 @@ public class AjaxServices
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, TemplateQuery> templates = profile.getSavedTemplates();
             TemplateQuery template = templates.get(templateName);
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
-                    .getAttribute(Constants.OBJECTSTORE);
-            ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
-                        Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
+            TemplateSummariser summariser = (TemplateSummariser) servletContext
+                .getAttribute(Constants.TEMPLATE_SUMMARISER);
             try {
                 session.setAttribute("summarising_" + templateName, "true");
-                TemplateSummariser summariser = new TemplateSummariser(os, osw);
                 summariser.summarise(template);
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise " + templateName, e);

@@ -35,6 +35,7 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -94,9 +95,11 @@ public class TemplateController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                .getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        BagQueryConfig bagQueryConfig =
-            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        TemplateSummariser summariser = (TemplateSummariser) servletContext
+            .getAttribute(Constants.TEMPLATE_SUMMARISER);
+        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
+            .getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         
         TemplateForm tf = (TemplateForm) form;
@@ -214,15 +217,16 @@ public class TemplateController extends TilesAction
                         selectedBagNames.put(c, modC.getValue());
                     }
                 }
-                displayConstraints.put(c, new DisplayConstraint(displayNode, os
-                        .getModel(), oss, template.getPossibleValues(node), classKeys));
+                displayConstraints.put(c, new DisplayConstraint(displayNode,
+                            os.getModel(), oss, summariser.getPossibleValues(template, node),
+                            classKeys));
 
                 // create display name
                 PathNode parent;
                 if (displayNode.getPathString().indexOf('.') >= 0) {
                     parent = displayTemplate.getNodes().get(
                             displayNode.getPathString().substring(0,
-                            displayNode.getPathString().lastIndexOf(".")));
+                                displayNode.getPathString().lastIndexOf(".")));
                 } else {
                     parent = displayNode;
                 }
