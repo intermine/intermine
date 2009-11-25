@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 
 import org.intermine.web.logic.widget.Hypergeometric;
 
-public class WebUtilTest extends TestCase
+public class WidgetUtilTest extends TestCase
 {
     private Double maxValue = 1000.0;
     private HashMap<String, BigDecimal> resultsMap = new HashMap();
@@ -21,7 +21,7 @@ public class WebUtilTest extends TestCase
     HashMap<String, BigDecimal> bonferroniMap = new HashMap();
     HashMap<String, BigDecimal> benjaminiMap = new HashMap();
 
-    public  WebUtilTest(String arg) {
+    public  WidgetUtilTest(String arg) {
         super(arg);
     }
 
@@ -66,7 +66,7 @@ public class WebUtilTest extends TestCase
     }
 
     public void testBonferroni() throws Exception {
-        Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
+        Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
 
         // rounding issue
         for (String label : bonferroniMap.keySet()) {
@@ -90,7 +90,7 @@ public class WebUtilTest extends TestCase
         p = p * (bagsize / (bagsize -2) );
         benjaminiMap.put(id[2], new BigDecimal(p));
 
-       Map<String, BigDecimal> adjustedMap = WebUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
+       Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
 
         // rounding issue
         for (String label : benjaminiMap.keySet()) {
