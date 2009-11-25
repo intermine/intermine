@@ -41,6 +41,16 @@ public class PrimaryKey
         String[] tokens = fields.split(",");
         for (int i = 0; i < tokens.length; i++) {
             String token = tokens[i].trim();
+            FieldDescriptor field = cld.getFieldDescriptorByName(token);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field name " + token + " in class "
+                        + cld.getName() + " for primary key " + name);
+            }
+            if (field instanceof CollectionDescriptor) {
+                throw new IllegalArgumentException("Field " + token + " in primary key "
+                        + cld.getName() + "." + name + " is a collection - must be an attribute "
+                        + "or a reference");
+            }
             fieldNames.add(token);
         }
     }

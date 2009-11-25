@@ -25,9 +25,26 @@ public class PrimaryKeyTest extends TestCase {
     }
 
     public void testConstructor() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
         Set expected = new HashSet();
-        expected.add("field1");
-        expected.add("field2");
-        assertEquals(expected, new PrimaryKey("key1", "field1, field2", null).getFieldNames());
+        expected.add("name");
+        expected.add("vatNumber");
+        assertEquals(expected, new PrimaryKey("key1", "name, vatNumber", cld).getFieldNames());
+        try {
+            new PrimaryKey("key1", "name, vatNumber", null);
+            fail("Expected NullPointerException");
+        } catch (NullPointerException e) {
+        }
+        try {
+            new PrimaryKey("key1", "name, flibble", cld);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+        try {
+            new PrimaryKey("key1", "name, departments", cld);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }
