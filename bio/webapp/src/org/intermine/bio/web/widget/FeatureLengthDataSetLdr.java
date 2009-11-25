@@ -33,7 +33,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.CacheMap;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.jfree.data.function.Function2D;
 import org.jfree.data.function.NormalDistributionFunction2D;
