@@ -70,7 +70,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
          , "transcription_end_site", "TSS"
     );
 
-
+    // the FB name for the mitochondrial genome
+    private static final String MITOCHONDRION = "dmel_mitochondrion_genome";
+    // ...
+    private static final String CHROMOSOME = "Chromosome";
 
     // the configuration for this processor, set when getConfig() is called the first time
     private final Map<Integer, MultiKeyMap> config = new HashMap();
@@ -134,7 +137,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeaturesMap.putAll(initialMap);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -171,7 +173,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     throws ObjectStoreException, SQLException {
         // TODO: check if there is already a method to get all the match types
         // (and merge the methods)
-
+        // also: add match to query and do everything here
+        
         // process indirect locations via match features and featureloc feature<->match<->feature
         ResultSet matchLocRes = getMatchLocResultSet(connection);
         processLocationTable(connection, matchLocRes);
@@ -430,7 +433,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         return map;
     }
 
-
     /**
      * copied from FlyBaseProcessor
      * {@inheritDoc}
@@ -444,14 +446,19 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         if (chadoFeatureType.equals("chromosome_arm")
                 || chadoFeatureType.equals("ultra_scaffold")) {
                 realInterMineType = "Chromosome";
-            }
 
+                if (uniqueName.startsWith("chr")){
+                    // this is to fix some data problem with sub 146 in modmine
+                    // where there are duplicated chromosome_arm features, with 
+                    // and without a 'chr' prefix (e.g. 3R and chr3R)
+                    // The chr ones are not the location for any other feature.
+                    // So we skip them.
+                    return null;
+                }
+        }
         Item feature = getChadoDBConverter().createItem(realInterMineType);
-
         return feature;
     }
-
-
 
     /**
      * method to transform dataList (list of integers)
@@ -546,9 +553,21 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     @Override
     protected String fixIdentifier(FeatureData fdat, String identifier) {
 
-        //
         String uniqueName = fdat.getChadoFeatureUniqueName();
         String name = fdat.getChadoFeatureName();
+        String type = fdat.getInterMineType();
+        
+        if (identifier.equalsIgnoreCase(uniqueName)){        
+            if (type.equalsIgnoreCase(CHROMOSOME)){
+                if (uniqueName.equalsIgnoreCase("M")){
+                    // this is to fix some data problem in modmine
+                    // where submissions (e.g. 100) refer to M chromosome instead
+                    // of dmel_mitochondrion_genome as in FlyBase
+                    uniqueName = MITOCHONDRION;
+                    return uniqueName;
+                }
+            }
+        }
 
         if (StringUtil.isEmpty(identifier)) {
             if (StringUtil.isEmpty(name)) {
@@ -557,16 +576,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             } else {
                 return name;
             }
-        } else if (identifier == name) {
-            return identifier;
-        } else {
-            return identifier;
         }
+        return identifier;    
     }
-
-
-    
-    
     
     private void processFeatureScores(Connection connection) throws SQLException,
     ObjectStoreException {
