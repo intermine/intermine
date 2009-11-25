@@ -51,8 +51,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
     protected Map constraints = new HashMap();
     /** Edited version of another template. */
     protected boolean edited = false;
-    /** Map from editable constraint path to Lists of possible values. */
-    protected HashMap possibleValues = new HashMap();
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
 
@@ -199,43 +197,6 @@ public class TemplateQuery extends PathQuery implements WebSearchable
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns a List of possible values for a node.
-     *
-     * @param node a PathNode
-     * @return a List, or null if possible values have not been computed
-     */
-    public List getPossibleValues(PathNode node) {
-        return (List) possibleValues.get(node.getPathString());
-    }
-
-    /**
-     * Returns the entire possibleValues Map.
-     *
-     * @return possibleValues
-     */
-    public HashMap getPossibleValues() {
-        return possibleValues;
-    }
-
-    /**
-     * Sets the possibleValues Map.
-     *
-     * @param possibleValues a HashMap
-     */
-    public void setPossibleValues(HashMap possibleValues) {
-        this.possibleValues = possibleValues;
-    }
-
-    /**
-     * Returns true if there is any possibleValues data at all.
-     *
-     * @return a boolean
-     */
-    public boolean isSummarised() {
-        return !possibleValues.isEmpty();
     }
 
     /**

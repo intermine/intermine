@@ -29,6 +29,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
@@ -103,28 +104,32 @@ public class MyMineController extends TilesAction
             HttpServletRequest request) throws ObjectStoreException {
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) session.getServletContext()
-                        .getAttribute(Constants.OBJECTSTORE);
+            .getAttribute(Constants.OBJECTSTORE);
 
         Map<String, String> precomputedTemplateMap = new HashMap<String, String>();
         Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
 
+        TemplateSummariser summariser = (TemplateSummariser) session.getServletContext()
+            .getAttribute(Constants.TEMPLATE_SUMMARISER);
         for (TemplateQuery template : templates.values()) {
             if (template.isValid()) {
                 if (session.getAttribute("precomputing_" + template.getName()) != null
-                    && session.getAttribute("precomputing_" + template.getName()).equals("true")) {
+                        && session.getAttribute("precomputing_" + template.getName())
+                        .equals("true")) {
                     precomputedTemplateMap.put(template.getName(), "precomputing");
                 } else {
                     Query query = TemplatePrecomputeHelper
-                                    .getPrecomputeQuery(template, new ArrayList(), null);
+                        .getPrecomputeQuery(template, new ArrayList(), null);
                     precomputedTemplateMap.put(template.getName(), Boolean.toString(os
-                                    .isPrecomputed(query, "template")));
+                                .isPrecomputed(query, "template")));
                 }
                 if ((session.getAttribute("summarising_" + template.getName()) != null)
-                    && session.getAttribute("summarising_" + template.getName()).equals("true")) {
+                        && session.getAttribute("summarising_" + template.getName())
+                        .equals("true")) {
                     summarisedTemplateMap.put(template.getName(), "summarising");
                 } else {
-                    summarisedTemplateMap.put(template.getName(), Boolean.toString(template
-                                    .isSummarised()));
+                    summarisedTemplateMap.put(template.getName(), Boolean.toString(summariser
+                                .isSummarised(template)));
                 }
             }
         }

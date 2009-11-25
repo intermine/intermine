@@ -45,6 +45,7 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -126,7 +127,7 @@ public class InitialiserPlugin implements PlugIn
 
         loadClassDescriptions(servletContext, os);
 
-        summarizeObjectStore(servletContext, os);
+        summariseObjectStore(servletContext, os);
         Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
         for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
             boolean keyless = true;
@@ -150,6 +151,10 @@ public class InitialiserPlugin implements PlugIn
         loadBagQueries(servletContext, os);
 
         final ProfileManager pm = createProfileManager(servletContext, os);
+
+        final TemplateSummariser summariser = new TemplateSummariser(os, pm
+                .getProfileObjectStoreWriter());
+        servletContext.setAttribute(Constants.TEMPLATE_SUMMARISER, summariser);
 
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
 
@@ -320,7 +325,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private void summarizeObjectStore(ServletContext servletContext, final ObjectStore os)
+    private void summariseObjectStore(ServletContext servletContext, final ObjectStore os)
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =

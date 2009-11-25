@@ -11,7 +11,11 @@ package org.intermine.api.template;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.iharder.Base64;
 
@@ -39,6 +43,8 @@ public class TemplateSummariser
     private static final Logger LOG = Logger.getLogger(TemplateSummariser.class);
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
+    protected Map<TemplateQuery, HashMap<PathNode, List>> possibleValues
+        = new IdentityHashMap<TemplateQuery, HashMap<PathNode, List>>();
 
     /**
      * Construct a TemplateSummariser.
@@ -58,6 +64,11 @@ public class TemplateSummariser
      * @throws ObjectStoreException if something goes wrong
      */
     public void summarise(TemplateQuery templateQuery) throws ObjectStoreException {
+        HashMap templatePossibleValues = possibleValues.get(templateQuery);
+        if (templatePossibleValues == null) {
+            templatePossibleValues = new HashMap();
+            possibleValues.put(templateQuery, templatePossibleValues);
+        }
         for (PathNode node : templateQuery.getEditableNodes()) {
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(templateQuery, null, node);
             LOG.info("Summarising template " + templateQuery.getName() + " by running query: " + q);
@@ -69,7 +80,7 @@ public class TemplateSummariser
                     for (ResultsRow row : results) {
                         values.add(row.get(0));
                     }
-                    templateQuery.getPossibleValues().put(node.getPathString(), values);
+                    templatePossibleValues.put(node.getPathString(), values);
                 } else {
                     LOG.error("Editable node " + node.getPathString() + " in template "
                             + templateQuery.getName() + " cannot be summarised as it is a LOOKUP "
@@ -96,11 +107,11 @@ public class TemplateSummariser
             }
             TemplateSummary templateSummary = new TemplateSummary();
             templateSummary.setTemplate(savedTemplateQuery);
-            String summaryText = Base64.encodeObject(templateQuery.getPossibleValues());
+            String summaryText = Base64.encodeObject(templatePossibleValues);
             if (summaryText == null) {
                 throw new RuntimeException("Serialised summary is null");
             }
-            templateSummary.setSummary(Base64.encodeObject(templateQuery.getPossibleValues()));
+            templateSummary.setSummary(summaryText);
             osw.store(templateSummary);
         } catch (ObjectStoreException e) {
             if (osw.isInTransaction()) {
@@ -119,5 +130,57 @@ public class TemplateSummariser
                 osw.commitTransaction();
             }
         }
+    }
+
+    /**
+     * Returns true if the given template has been summarised.
+     *
+     * @param templateQuery a TemplateQuery
+     * @return a boolean
+     */
+    public boolean isSummarised(TemplateQuery templateQuery) {
+        return getPossibleValues(templateQuery) != null;
+    }
+
+    /**
+     * Returns the possible values that a particular editable node in a template query can take,
+     * for dropdowns on template forms.
+     *
+     * @param templateQuery a TemplateQuery
+     * @param node the editable node
+     * @return a List of possible values
+     */
+    public List getPossibleValues(TemplateQuery templateQuery, PathNode node) {
+        return getPossibleValues(templateQuery).get(node);
+    }
+
+    /**
+     * Returns a Map of the possible values for editable nodes on a template query.
+     *
+     * @param templateQuery a TemplateQuery
+     * @return a Map from PathNode to List
+     */
+    public Map<PathNode, List> getPossibleValues(TemplateQuery templateQuery) {
+        HashMap<PathNode, List> templatePossibleValues = possibleValues.get(templateQuery);
+        if (templatePossibleValues == null) {
+            SavedTemplateQuery template = templateQuery.getSavedTemplateQuery();
+            if (template != null) {
+                try {
+                    Iterator summaryIter = template.getSummaries().iterator();
+                    if (summaryIter.hasNext()) {
+                        TemplateSummary summary = (TemplateSummary) summaryIter.next();
+                        templatePossibleValues = (HashMap<PathNode, List>) Base64
+                            .decodeToObject(summary.getSummary());
+                    }
+                } catch (Exception err) {
+                    // Ignore rows that don't unmarshal (they probably reference
+                    // another model.
+                    LOG.warn("Failed to unmarshal saved template query: "
+                             + template.getTemplateQuery(), err);
+                }
+            }
+            possibleValues.put(templateQuery, templatePossibleValues);
+        }
+        return templatePossibleValues;
     }
 }

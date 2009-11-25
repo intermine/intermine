@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import net.sourceforge.iharder.Base64;
-
 import org.apache.log4j.Logger;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.template.TemplateQuery;
@@ -33,7 +31,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -294,12 +291,6 @@ public class ProfileManager
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
                 savedTemplates.put(templateName, templateQuery);
-                Iterator summaryIter = template.getSummaries().iterator();
-                if (summaryIter.hasNext()) {
-                    TemplateSummary summary = (TemplateSummary) summaryIter.next();
-                    templateQuery.setPossibleValues((HashMap) Base64.decodeToObject(summary
-                                .getSummary()));
-                }
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
