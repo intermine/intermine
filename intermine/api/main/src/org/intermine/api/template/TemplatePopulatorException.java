@@ -11,15 +11,15 @@ package org.intermine.api.template;
  */
 
 /**
- * Exception thrown when errors occuer populating a template query with values.
+ * Exception thrown when errors occur populating a template query with values.
  * @author Richard Smith
  *
  */
-public class TemplatePopulatorException extends RuntimeException 
+public class TemplatePopulatorException extends RuntimeException
 {
 
     /**
-     * Constructs an TemplatePopulationException with the specified detail message.
+     * Constructs an TemplatePopulatorException with the specified detail message.
      *
      * @param msg the detail message
      */
@@ -28,7 +28,7 @@ public class TemplatePopulatorException extends RuntimeException
     }
 
     /**
-     * Constructs an TemplatePopulationException with the specified nested throwable.
+     * Constructs an TemplatePopulatorException with the specified nested throwable.
      *
      * @param t the nested throwable
      */
@@ -37,7 +37,7 @@ public class TemplatePopulatorException extends RuntimeException
     }
 
     /**
-     * Constructs an TemplatePopulationException with the specified detail message and
+     * Constructs an TemplatePopulatorException with the specified detail message and
      * nested throwable.
      *
      * @param msg the detail message
