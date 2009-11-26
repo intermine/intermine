@@ -76,7 +76,7 @@ import org.intermine.web.logic.template.TemplateQuery;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static int INDEX = 0;
+    private static int index = 0;
 //    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -296,7 +296,7 @@ public class PortalQueryAction extends InterMineAction
     private ActionForward goToResults(ActionMapping mapping,
                                       HttpSession session, WebResults webResults) {
         PagedTable pc = new PagedTable(webResults);
-        String identifier = "col" + INDEX++;
+        String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("table", identifier).addParameter("trail", "").forward();

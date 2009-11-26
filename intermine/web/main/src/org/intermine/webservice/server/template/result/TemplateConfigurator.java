@@ -18,7 +18,6 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;

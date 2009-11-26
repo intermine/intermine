@@ -57,13 +57,13 @@ public class LoginAction extends LoginHandler
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
         LoginForm lf = (LoginForm) form;
-        
+
         ActionErrors errors = lf.validate(mapping, request);
         if (!errors.isEmpty()) {
             saveErrors(request, (ActionMessages) errors);
             return mapping.findForward("login");
         }
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session, 
+        Map<String, String> renamedBags = doLogin(servletContext, request, response, session,
                                                   pm, lf.getUsername(), lf.getPassword());
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         if (renamedBags.size() > 0) {
@@ -72,7 +72,7 @@ public class LoginAction extends LoginHandler
                                                 renamedBags.get(initName)), request);
             }
             return mapping.findForward("mymine");
-        }                
+        }
         if (lf.returnToString != null && lf.returnToString.startsWith("/")
             && lf.returnToString.indexOf("error") == -1) {
             return new ActionForward(lf.returnToString);

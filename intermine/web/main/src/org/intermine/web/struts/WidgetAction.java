@@ -198,7 +198,7 @@ public class WidgetAction extends InterMineAction
         PathQuery q = urlQuery.generatePathQuery(showAll);
         String description = allOrSelected + " " + bagType + "s from the list '" + bagName + "'";
         if (!StringUtils.isEmpty(widgetTitle)) {
-            // widget title will be null if we don't have a widget form, eg. the user clicked on 
+            // widget title will be null if we don't have a widget form, eg. the user clicked on
             // a link instead of submitting the form.  FIXME!
             description += " for the widget '" + widgetTitle + "'";
         }
@@ -268,9 +268,8 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form,
-                                HttpServletRequest request, HttpServletResponse response) 
-    throws Exception {
+    public ActionForward export(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
