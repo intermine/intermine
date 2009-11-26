@@ -52,6 +52,7 @@
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="intron"/>
 </class>
 <class name="Gene" is-interface="true">
+  <attribute name="source" type="java.lang.String" />
   <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="gene"/>
 </class>
 <!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
@@ -160,11 +161,9 @@
   <attribute name="publicReleaseDate" type="java.util.Date" />     
   <attribute name="DCCid" type="java.lang.Integer" />     
   <attribute name="experimentType" type="java.lang.String" />     
-  <reference name="organism" referenced-type="Organism" />
-  <!-- 
+  <reference name="organism" referenced-type="Organism" /> 
   <reference name="publication" referenced-type="Publication"/>
-  <attribute name="fileFormat" type="java.lang.String"/>
-    -->
+<!-- <attribute name="fileFormat" type="java.lang.String"/> -->
     <reference name="experiment"
       referenced-type="Experiment"
       reverse-reference="submissions" />
