@@ -13,7 +13,10 @@ package org.intermine.web.logic.template;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -23,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
 import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -140,6 +144,38 @@ public class TemplateHelper
         return queryCopy;
     }
 
+    public static Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
+                                                            TemplateQuery template) {
+    	Map<String, List<TemplateValue>> templateValues = 
+    		new HashMap<String, List<TemplateValue>>();
+        int j = 0;
+        for (PathNode node : template.getEditableNodes()) {
+        	List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
+        	templateValues.put(node.getPathString(), nodeValues);
+        	for (Constraint c : template.getEditableConstraints(node)) {
+                String key = "" + (j + 1);
+
+                TemplateValue value;
+                if (tf.getUseBagConstraint(key)) {
+                	ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
+                	Object constraintValue = tf.getBag(key);                	
+                	value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode());
+                	
+                
+                } else {
+                	 String op = (String) tf.getAttributeOps(key);
+                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
+                     Object constraintValue = tf.getParsedAttributeValues(key);
+                     Object extraValue = tf.getExtraValues(key);
+                     value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode(), extraValue);
+                }                    
+                nodeValues.add(value);
+        	}
+        }
+    	
+    	return templateValues;
+    }
+    
     /**
      * Create a new TemplateQuery with input submitted by user contained within
      * maps
