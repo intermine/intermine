@@ -23,9 +23,6 @@
     <module name="JavadocVariable">
       <property name="scope" value="public"/>
     </module>
-    <module name="ConstantName">
-      <property name="format" value="^[A-Z](_?[A-Z0-9]+)*$"/>
-    </module>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
     <module name="MemberName"/>
@@ -92,9 +89,7 @@
     </module>
     <module name="UpperEll"/>
     <module name="ConstantName"/>
-    <module name="StaticVariableName">
-      <property name="format" value="^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
-    </module>
+    <module name="StaticVariableName"/>
     <module name="TypeName"/>
     <module name="LeftCurly">
       <property name="option" value="nl"/>
