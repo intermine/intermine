@@ -1220,9 +1220,12 @@ public class PathQuery
                     }
                 }
 
-                PathNode parent = nodes.get(prefix);
+                String prefixWithoutConstraints = prefix.replaceAll("\\[[^]]*\\]", "");
+                PathNode parent = nodes.get(prefixWithoutConstraints);
                 String fieldName = path.substring(lastIndex + 1);
-                node = new PathNode(parent, fieldName, path.charAt(lastIndex) == ':');
+                String fieldNameWithoutConstraints = fieldName.replaceAll("\\[[^]]*\\]", "");
+                node = new PathNode(parent, fieldNameWithoutConstraints,
+                        path.charAt(lastIndex) == ':');
                 try {
                     node.setModel(model);
                 } catch (Exception err) {

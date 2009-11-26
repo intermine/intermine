@@ -33,6 +33,21 @@ echo "Getting GO annotation"
         echo "error gettingGO annotation" 2>&1
 #        exit 1
     fi
+echo
+echo "==========================================================="
+echo "Getting PubMed data"
+./get_ncbi_pubmed $logdir $tempname $shared_data $config_file
+    if [ $? -ne 0 ]
+    then
+        "error getting PubMed data" 2>&1 >> tempfile
+    fi
+
+echo "==========================================================="
+echo
+echo "==========================================================="
+echo "Getting Interpro xml file"
+./get_interproXML $logdir $tempname $shared_data || (echo "error gettin InterPro XML file" 2>&1; exit 1)
+
 echo "==========================================================="
 echo
 echo "==========================================================="
@@ -53,11 +68,6 @@ echo "Getting InParanoid data"
         echo "error getting InParanoid data" 2>&1
 #        exit 1
     fi
-echo "==========================================================="
-echo
-echo "==========================================================="
-echo "Getting Interpro xml file"
-./get_interproXML $logdir $tempname $shared_data || (echo "error gettin InterPro XML file" 2>&1; exit 1)
 echo "==========================================================="
 echo
 
