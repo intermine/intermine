@@ -29,6 +29,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
@@ -131,8 +132,9 @@ public class TemplateAction extends InterMineAction
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                                                                                 savedBags);
+            TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
+            		TemplateHelper.templateFormToTemplateValues(tf, template));
+        	
             SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
             form.reset(mapping, request);
@@ -158,8 +160,9 @@ public class TemplateAction extends InterMineAction
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                                                                             savedBags);
+        TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
+        		TemplateHelper.templateFormToTemplateValues(tf, template));
+        
         if (!queryCopy.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
                                         PathQueryUtil.getProblemsSummary(template.getProblems())),
