@@ -24,7 +24,7 @@
    
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/shared/data/biogrid/current"/>
-      <property name="src.data.dir.includes" value="BIOGRID-ORGANISM-SACCHAROMYCES-CEREVISIAE*"/>
+      <property name="src.data.dir.includes" value="BIOGRID-ORGANISM-Saccharomyces_cerevisiae*"/>
     </source>
 
    <source name="treefam" type="treefam">
