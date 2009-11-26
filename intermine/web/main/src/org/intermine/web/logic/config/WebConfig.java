@@ -218,8 +218,8 @@ public class WebConfig
             Type type = types.get(widgetType);
             if (type == null) {
                 String msg = "Invalid web config. " + widgetType + " is not a valid class.  "
-                + "Please correct the entry in the webconfig-model.xml for the " 
-                + widget.getId() + " widget.";
+                    + "Please correct the entry in the webconfig-model.xml for the "
+                    + widget.getId() + " widget.";
                 throw new RuntimeException(msg);
             }
             type.addWidget(widget);
