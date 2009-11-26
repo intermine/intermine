@@ -142,6 +142,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // the identifier assigned to lab Item for this object
         private String labItemIdentifier;
         private String organismItemIdentifier;
+
+// TODO?        private String dccId;
+        private String title;
     }
 
     /**
@@ -286,13 +289,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             SubmissionDetails submissionDetails = entry.getValue();
             String submissionItemIdentifier = submissionDetails.itemIdentifier;
             String labItemIdentifier = submissionDetails.labItemIdentifier;
+            String submissionTitle = submissionDetails.title;
 
+            
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.info("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
-                        labItemIdentifier, thisSubmissionDataIds);
+                        labItemIdentifier, thisSubmissionDataIds, submissionTitle);
             processor.initialiseCommonFeatures(commonFeaturesMap);
             processor.process(connection);
 
@@ -311,7 +316,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.info("FEATMAP: submission " + chadoExperimentId + "|"
                     + "featureMap: " + subFeatureMap.keySet().size());
 
-            // removed to check role in memory error
+            //
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subFeatureMap, chadoExperimentId,queryList);
         }
@@ -988,6 +993,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             details.itemIdentifier = submission.getIdentifier();
             details.labItemIdentifier = labItemIdentifier;
             details.organismItemIdentifier = organismItemIdentifier;
+            details.title = name;
             submissionMap.put(submissionId, details);
 
             debugMap .put(details.itemIdentifier, submission.getClassName());

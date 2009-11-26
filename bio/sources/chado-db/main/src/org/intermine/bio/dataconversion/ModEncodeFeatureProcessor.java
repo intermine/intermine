@@ -48,6 +48,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String dataSetIdentifier;
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
+    private final String title;
+    
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
@@ -92,11 +94,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            List <Integer> dataList) {
+            List <Integer> dataList, String title) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
+        this.title = title;
+        
         for (String chromosomeType : getChromosomeFeatureTypes()) {
             commonFeatureInterMineTypes.add(TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
         }
@@ -190,7 +194,42 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             processLocationTable(connection, matchTypeLocRes);
         }
                 
+        // adding scores
         processFeatureScores(connection);
+        
+        // adding gene sources
+        processGeneSource(connection, featureDataMap);
+    }
+
+
+    /**
+     * Method to add datasource for gene
+     * @param connection
+     * @param fdat feature information
+     */
+    private void processGeneSource(Connection connection,
+            Map<Integer, FeatureData> featureDataMap) throws SQLException,
+            ObjectStoreException {
+        long bT = System.currentTimeMillis();
+        
+        String source = null;
+        String dataSourceName = getChadoDBConverter().getDataSourceName();
+        // this should always be the case, could avoid the check..
+        if (dataSourceName.equalsIgnoreCase("modENCODE")){
+            source = dataSourceName + "-" + title;
+        } else {
+            source = dataSourceName;
+        }
+        
+        for (Map.Entry<Integer, FeatureData> entry: featureDataMap.entrySet()) {
+            FeatureData fdat = entry.getValue();
+            String type = fdat.getInterMineType();
+            if (type.equalsIgnoreCase("gene")){
+                Attribute scoreAttribute = new Attribute("source", source);
+                getChadoDBConverter().store(scoreAttribute, fdat.getIntermineObjectId());
+            }
+        }
+        LOG.info("TIME GENE SOURCE: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -457,6 +496,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
         }
         Item feature = getChadoDBConverter().createItem(realInterMineType);
+  
         return feature;
     }
 
