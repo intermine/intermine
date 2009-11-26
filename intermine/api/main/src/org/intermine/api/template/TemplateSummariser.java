@@ -151,7 +151,11 @@ public class TemplateSummariser
      * @return a List of possible values
      */
     public List getPossibleValues(TemplateQuery templateQuery, PathNode node) {
-        return getPossibleValues(templateQuery).get(node);
+        Map<PathNode, List> templatePossibleValues = getPossibleValues(templateQuery);
+        if (templatePossibleValues != null) {
+            return templatePossibleValues.get(node);
+        }
+        return null;
     }
 
     /**
