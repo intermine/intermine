@@ -1951,7 +1951,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         flushOldTempBagTables(c);
                     }
                     String sql = SqlGenerator.generate(q, schema, db, null,
-                            SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                            SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
                     PrecomputedTable pt = ptm.lookupSql(sql);
                     if (pt == null) {
                         pt = new PrecomputedTable(new org.intermine.sql.query.Query(sql), sql,
@@ -1965,7 +1965,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         if (qs instanceof QueryCollectionPathExpression) {
                             Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
                             sql = SqlGenerator.generate(subQ, schema, db, null,
-                                    SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                                    SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
                             PrecomputedTable subPt = ptm.lookupSql(sql);
                             if (subPt == null) {
                                 subPt = new PrecomputedTable(
@@ -1979,7 +1979,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                                     getSchema().isMissingNotXml());
                             sql = SqlGenerator.generate(subQ, schema, db, null,
-                                    SqlGenerator.QUERY_FOR_GOFASTER, Collections.EMPTY_MAP);
+                                    SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
                             PrecomputedTable subPt = ptm.lookupSql(sql);
                             if (subPt == null) {
                                 subPt = new PrecomputedTable(
