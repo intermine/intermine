@@ -176,6 +176,7 @@ foreach my $taxon_id(keys %organisms) {
     $writer->startTag('items');
     for my $item (@items) {
         $item->as_xml($writer);
+	$item->destroy;
     }
     $writer->endTag('items');
     $writer->end();
