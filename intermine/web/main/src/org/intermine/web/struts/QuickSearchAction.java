@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -27,9 +27,10 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
@@ -95,18 +96,14 @@ public class QuickSearchAction extends InterMineAction
             MessageResources messages =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 
-            Map<String, Object> valuesMap = new HashMap <String, Object> ();
-            Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
-
-            PathNode node = (template.getEditableNodes().get(0));
-
-            valuesMap.put(node.getPathString(), qsf.getParsedValue());
-            constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
-
-            TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
-                    constraintOpsMap, template, null, new HashMap<String, String>());
+            String value = qsf.getParsedValue();
+            Map<String, List<TemplateValue>> templateValues = 
+                TemplateHelper.singleConstraintTemplateValues(template, ConstraintOp.EQUALS, value);
+            TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
+                    templateValues);
+            
             String qid = SessionMethods.startQuery(clientState, session, messages, false,
-                                                   queryCopy);
+                                                   populatedTemplate);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)
@@ -124,7 +121,5 @@ public class QuickSearchAction extends InterMineAction
         } else {
             throw new RuntimeException("Quick search type not valid");
         }
-
     }
-
 }
