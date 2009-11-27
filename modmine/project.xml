@@ -135,8 +135,20 @@
 		<source name="modmine-static" type="intermine-items-xml-file">
 			<property name="src.data.file" location="resources/projects.xml"/>
 		</source>
-    <source name="modencode-metadata" type="chado-db" dump="true">
+		<!-- UNSPLITTED
+		<source name="modencode-metadata" type="chado-db" dump="true">
 			<property name="organisms" value="7227 6239"/>
+			<property name="dataSourceName" value="modENCODE"/>
+			<property name="dataSetTitle" value="modENCODE submission"/>
+			<property name="source.db.name" value="modencode-metadata"/>
+			<property name="processors"
+								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+			<property name="converter.class"
+								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+		</source>
+		-->
+    <source name="modencode-fly-metadata" type="chado-db" dump="true">
+			<property name="organisms" value="7227"/>
       <property name="dataSourceName" value="modENCODE"/>
       <property name="dataSetTitle" value="modENCODE submission"/>
       <property name="source.db.name" value="modencode-metadata"/>
@@ -145,6 +157,17 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source> 
+		<source name="modencode-piano-metadata" type="chado-db" dump="true">
+			<property name="organisms" value="6239"/>
+			<property name="dataSourceName" value="modENCODE"/>
+			<property name="dataSetTitle" value="modENCODE submission"/>
+			<property name="source.db.name" value="modencode-metadata"/>
+			<property name="processors"
+								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+			<property name="converter.class"
+								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+		</source>
+
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
     </source>
