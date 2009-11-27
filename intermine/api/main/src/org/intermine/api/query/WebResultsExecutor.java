@@ -32,6 +32,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -118,6 +119,18 @@ public class WebResultsExecutor
                 pathToQueryNode, classKeys, pathToBagQueryResult);
 
         return webResults;
+    }
+
+    /**
+     * Explain a query and return estimates of execution time and row count.
+     *
+     * @param pathQuery the query to explain
+     * @return a ResultsInfo object
+     * @throws ObjectStoreException if there is a problem explaining the query
+     */
+    public ResultsInfo explain(PathQuery pathQuery) throws ObjectStoreException {
+        Query q = makeQuery(pathQuery);
+        return os.estimate(q);
     }
 
     /**
