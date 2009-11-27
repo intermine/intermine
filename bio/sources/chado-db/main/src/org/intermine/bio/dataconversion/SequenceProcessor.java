@@ -117,6 +117,8 @@ public class SequenceProcessor extends ChadoProcessor
     static final String SEQUENCE_STRING = "sequence";
     static final String LENGTH_STRING = "length";
 
+    static final String SOURCE_STRING = "source";
+
     /**
      * Create a new SequenceProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
@@ -381,9 +383,24 @@ public class SequenceProcessor extends ChadoProcessor
                 }
             }
         }
+
+        if (chadoType.equalsIgnoreCase("gene")){
+            setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
+        }
+        
         addToFeatureMap(featureId, fdat);
 
         return true;
+    }
+
+    protected void setGeneSource(Integer imObjectId,
+            String dataSourceName) throws ObjectStoreException {
+        // for gene in modENCODE
+        ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
+        if (cd.getFieldDescriptorByName("source") != null){
+            // if it is there (e.g. modmine) let's set it
+            setAttribute(imObjectId, "source", dataSourceName);
+        }
     }
 
     /**
