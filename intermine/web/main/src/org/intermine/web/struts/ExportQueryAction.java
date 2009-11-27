@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,19 +21,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
@@ -95,6 +86,7 @@ public class ExportQueryAction extends InterMineAction
         }
 
         response.setContentType("text/plain; charset=us-ascii");
+        WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
 
         String format;
         if (!StringUtils.isEmpty(request.getParameter("as"))) {
@@ -107,30 +99,10 @@ public class ExportQueryAction extends InterMineAction
             xml = XmlUtil.indentXmlSimple(xml);
             response.getWriter().write(xml);
         } else if (format.equals("iql")) {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-
-            Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-            Query osQuery = QueryCreationHelper.makeQuery(query, allBags, pathToQueryNode,
-                    (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER),
-                    null, false,
-                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    (Map) servletContext.getAttribute(Constants.CLASS_KEYS),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-            String iql = osQuery.toString();
-            response.getWriter().println(iql);
-            //response.getWriter().println("\npathToQueryNode: " + pathToQueryNode);
+            Query osQuery = webResultsExecutor.makeQuery(query);
+            response.getWriter().println(osQuery.toString());
         } else if (format.equals("sql")) {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-
-            Query osQuery = QueryCreationHelper.makeQuery(query, allBags, servletContext,
-                    null);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            if (os instanceof ObjectStoreInterMineImpl) {
-                String sql = ((ObjectStoreInterMineImpl) os).generateSql(osQuery);
-                response.getWriter().println(sql);
-            } else {
-                response.getWriter().println("Not an ObjectStoreInterMineImpl");
-            }
+            response.getWriter().println(webResultsExecutor.makeSql(query));
         }  else if (format.equals("link")) {
             String serviceFormat;
             if (request.getParameter("serviceFormat") != null) {
