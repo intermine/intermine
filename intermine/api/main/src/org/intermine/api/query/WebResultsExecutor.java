@@ -134,6 +134,18 @@ public class WebResultsExecutor
     }
 
     /**
+     * Take a query and return the results row count.
+     *
+     * @param pathQuery the query to count
+     * @return the number of rows returned
+     * @throws ObjectStoreException if there is a problem counting the query
+     */
+    public int count(PathQuery pathQuery) throws ObjectStoreException {
+        Query q = makeQuery(pathQuery);
+        return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+    }
+
+    /**
      * Creates an SQL query from a PathQuery.
      *
      * @param pathQuery the query to convert
@@ -179,6 +191,25 @@ public class WebResultsExecutor
 
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
                 pathToBagQueryResult, false);
+        return q;
+    }
+
+    /**
+     * Creates a query that returns the summary for a column in a PathQuery.
+     *
+     * @param pathQuery the query to convert
+     * @param summaryPath the column to summarise
+     * @return an IQL Query object
+     * @throws ObjectStoreException if there is a problem creating the query
+     */
+    public Query makeSummaryQuery(PathQuery pathQuery,
+            String summaryPath) throws ObjectStoreException {
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
+                conversionTemplates);
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Query q = MainHelper.makeSummaryQuery(pathQuery, summaryPath, allBags, pathToQueryNode,
+                bqr);
         return q;
     }
 }

@@ -44,7 +44,6 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
@@ -53,6 +52,7 @@ import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
@@ -67,7 +67,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
@@ -82,7 +81,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
-import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
@@ -363,23 +361,18 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             ServletContext servletContext = session.getServletContext();
+            WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
             ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
 
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
+            Query distinctQuery = webResultsExecutor.makeSummaryQuery(pathQuery, summaryPath);
 
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-
-            Query distinctQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
-                    new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
             Results results = os.execute(distinctQuery);
 
             // Start the count of results
-            Query countQuery = QueryCreationHelper.makeSummaryQuery(pathQuery, allBags,
-                    new HashMap<String, QuerySelectable>(), summaryPath, servletContext);
+            Query countQuery = webResultsExecutor.makeSummaryQuery(pathQuery, summaryPath);
             QueryCountQueryMonitor clientState
                 = new QueryCountQueryMonitor(Constants.QUERY_TIMEOUT_SECONDS * 1000, countQuery);
             MessageResources messages = (MessageResources) ctx.getHttpServletRequest()
@@ -600,14 +593,13 @@ public class AjaxServices
             String pckName =  os.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
 
             InterMineBag imBag = null;
             int count = 0;
             try {
                 imBag = bagManager.getUserOrGlobalBag(profile, bagName);
                 Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-                Map<String, InterMineBag> bagMap = new HashMap<String, InterMineBag>();
-                bagMap.put(imBag.getName(), imBag);
 
                 ProfileManager pm =
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -615,12 +607,7 @@ public class AjaxServices
                     getConversionTemplates(pm.getSuperuserProfile()),
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
-                Query query = QueryCreationHelper.makeQuery(pathQuery, bagMap, pathToQueryNode,
-                    pm, null, false,
-                    (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE),
-                    getClassKeys(servletContext),
-                    (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG));
-                count = os.count(query, ObjectStore.SEQUENCE_IGNORE);
+                count = webResultsExecutor.count(pathQuery);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
