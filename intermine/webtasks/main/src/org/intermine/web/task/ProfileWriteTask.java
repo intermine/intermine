@@ -66,7 +66,7 @@ public class ProfileWriteTask extends Task
      * @throws BuildException if there is a problem while writing to the file or reading the
      * profiles.
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileName == null) {
             throw new BuildException("fileName parameter not set");
         }
@@ -87,8 +87,8 @@ public class ProfileWriteTask extends Task
         try {
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
-                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);            
-            
+                ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+
             ProfileManager pm = new ProfileManager(os, userProfileOS);
 
             XMLOutputFactory factory = XMLOutputFactory.newInstance();

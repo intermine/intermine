@@ -121,7 +121,7 @@ public class PrecomputeTemplatesTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
         }
@@ -238,8 +238,7 @@ public class PrecomputeTemplatesTask extends Task
      * is thrown
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection indexes,
-                              String name) throws BuildException {
+    protected void precompute(ObjectStore os, Query query, Collection indexes, String name) {
         long start = System.currentTimeMillis();
 
         try {
@@ -248,9 +247,9 @@ public class PrecomputeTemplatesTask extends Task
                 osInterMineImpl.precompute(query, indexes,
                                                        PRECOMPUTE_CATEGORY_TEMPLATE);
             } else {
-                 LOG.info("Skipping template " + name + " - already precomputed.");
+                LOG.info("Skipping template " + name + " - already precomputed.");
             }
-         } catch (ObjectStoreException e) {
+        } catch (ObjectStoreException e) {
             LOG.error("Exception while precomputing query: " + name + ", " + query
                     + " with indexes " + indexes, e);
         }
@@ -265,7 +264,7 @@ public class PrecomputeTemplatesTask extends Task
      * @return Map from template name to TemplateQuery
      * @throws BuildException if an IO error occurs loading the template queries
      */
-    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() throws BuildException {
+    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         if (!pm.hasProfile(username)) {
             throw new BuildException("user profile doesn't exist for " + username);
