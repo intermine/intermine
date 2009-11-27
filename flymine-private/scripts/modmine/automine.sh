@@ -156,11 +156,11 @@ shift $(($OPTIND - 1))
 
 #
 # Getting some values from the properties file.
-# NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
-#     -a to grep also (alleged) binary files
+# -a to grep also (alleged) binary files
 #
 
 DBHOST=`grep -a metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+MINEHOST=`grep -a production.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 DBUSER=`grep -a metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
 CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
@@ -170,7 +170,7 @@ LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations 
 
 echo
 echo "================================="
-echo "Building modmine-$REL on $DBHOST."
+echo "Building modmine-$REL on $MINEHOST."
 echo "================================="
 echo "Log: $LOG"
 echo
