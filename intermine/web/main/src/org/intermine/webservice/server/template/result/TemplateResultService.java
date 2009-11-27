@@ -27,7 +27,6 @@ import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
-import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -40,6 +39,11 @@ import org.intermine.webservice.server.query.result.QueryResultService;
  */
 public class TemplateResultService extends QueryResultService
 {
+
+    /** Name of type parameter **/
+    public static final String TYPE_PARAMETER = "type";
+    /** Name of name parameter **/
+    public static final String NAME_PARAMETER = "name";
 
     /**
      * {@inheritDoc}}
@@ -83,7 +87,7 @@ public class TemplateResultService extends QueryResultService
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
         ret += "?" + getQueryString(request, template, input);
-        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateForm.TYPE_PARAMETER
+        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateResultService.TYPE_PARAMETER
             + "=" + Scope.ALL;
         return ret;
     }
@@ -91,7 +95,7 @@ public class TemplateResultService extends QueryResultService
     private String getQueryString(HttpServletRequest request, TemplateQuery template,
             TemplateResultInput input) {
         String ret = "";
-        ret += TemplateForm.NAME_PARAMETER + "=" + en(input.getName()) + "&";
+        ret += TemplateResultService.NAME_PARAMETER + "=" + en(input.getName()) + "&";
         int i = 1;
         for (PathNode node : template.getEditableNodes()) {
             for (Constraint cons : template.getEditableConstraints(node)) {

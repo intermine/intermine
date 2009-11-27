@@ -11,27 +11,12 @@ package org.intermine.web.struts;
  */
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.ConstraintValueParser;
-import org.intermine.pathquery.ParseValueException;
-import org.intermine.pathquery.PathNode;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -47,20 +32,13 @@ public class TemplateForm extends ActionForm
     private Map<String, Object> attributeOps;
 
     private Map<String, Object> attributeValues;
+    private Map<String, Boolean> useBagConstraint;
 
-    private Map parsedAttributeValues, useBagConstraint;
-
-    private Map extraValues, selectedBags, bagOps;
-
+    private Map<String, Object> extraValues, selectedBags;
+    private Map<String, String> bagOps;
     private String type, name;
 
     private String view;
-
-    /** Name of type parameter **/
-    public static final String TYPE_PARAMETER = "type";
-
-    /** Name of name parameter **/
-    public static final String NAME_PARAMETER = "name";
 
     /**
      * Constructor
@@ -74,7 +52,7 @@ public class TemplateForm extends ActionForm
      * Set the attribute ops
      * @param attributeOps the attribute ops
      */
-    public void setAttributeOps(Map attributeOps) {
+    public void setAttributeOps(Map<String, Object> attributeOps) {
         this.attributeOps = attributeOps;
     }
 
@@ -82,7 +60,7 @@ public class TemplateForm extends ActionForm
      * Get the attribute ops
      * @return the attribute ops
      */
-    public Map getAttributeOps() {
+    public Map<String, Object> getAttributeOps() {
         return attributeOps;
     }
 
@@ -108,7 +86,7 @@ public class TemplateForm extends ActionForm
      * Set the attribute values
      * @param attributeValues the attribute values
      */
-    public void setAttributeValues(Map attributeValues) {
+    public void setAttributeValues(Map<String, Object> attributeValues) {
         this.attributeValues = attributeValues;
     }
 
@@ -116,7 +94,7 @@ public class TemplateForm extends ActionForm
      * Get the attribute values
      * @return the attribute values
      */
-    public Map getAttributeValues() {
+    public Map<String, Object> getAttributeValues() {
         return attributeValues;
     }
 
@@ -142,7 +120,7 @@ public class TemplateForm extends ActionForm
      * Sets the extra values
      * @param extraValues the extra values
      */
-    public void setExtraValues(Map extraValues) {
+    public void setExtraValues(Map<String, Object> extraValues) {
         this.extraValues = extraValues;
     }
 
@@ -150,7 +128,7 @@ public class TemplateForm extends ActionForm
      * Get the extra values
      * @return the extra values
      */
-    public Map getExtraValues() {
+    public Map<String, Object> getExtraValues() {
         return extraValues;
     }
 
@@ -227,15 +205,6 @@ public class TemplateForm extends ActionForm
     }
 
     /**
-     * Get a parsed attribute value
-     * @param key the key
-     * @return the value
-     */
-    public Object getParsedAttributeValues(String key) {
-        return parsedAttributeValues.get(key);
-    }
-
-    /**
      * Get the template name.
      * @return the template name
      */
@@ -286,74 +255,6 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 HttpServletRequest request) {
-        HttpSession session = request.getSession();
-
-        String queryName = getName();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
-        TemplateQuery template = templateManager.getTemplate(profile, queryName, getType());
-
-        ActionErrors errors = new ActionErrors();
-
-        parseAttributeValues(template, session, errors, false);
-
-        return errors;
-    }
-
-    /**
-     * For each value entered, parse the value into a format that can be
-     * applied to the particular constraint.
-     *
-     * @param template the related template query
-     * @param session the current session
-     * @param errors a place to store any parse errors
-     * @param appendWildcard if true a "%" will be append to string fields
-     */
-    public void parseAttributeValues(TemplateQuery template, HttpSession session,
-                                     ActionErrors errors, boolean appendWildcard) {
-        int j = 0;
-        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-            for (Iterator ci = template.getEditableConstraints(node).iterator(); ci.hasNext();) {
-                Constraint c = (Constraint) ci.next();
-
-                String key = "" + (j + 1);
-                Class fieldClass;
-                if (node.isAttribute()) {
-                    fieldClass = TypeUtil.getClass(node.getType());
-                } else {
-                    fieldClass = String.class;
-                }
-
-                if (getUseBagConstraint(key)) {
-                    // validate choice of bag in some way?
-                } else {
-                    Integer opIndex = Integer.valueOf((String) getAttributeOps(key));
-                    ConstraintOp constraintOp = ConstraintOp.getOpForIndex(opIndex);
-                    Object parseVal = null;
-                    try {
-                        parseVal = ConstraintValueParser.parse((String) attributeValues
-                                        .get(key), fieldClass, constraintOp);
-                    } catch (ParseValueException ex) {
-                        errors.add(ActionErrors.GLOBAL_MESSAGE,
-                                new ActionMessage("errors.message", ex.getMessage()));
-                    }
-                    if (parseVal instanceof String && appendWildcard) {
-                        parseVal = ((String) parseVal) + "%";
-                    }
-                    parsedAttributeValues.put(key, parseVal);
-                }
-                j++;
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void reset(ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         reset();
@@ -363,13 +264,12 @@ public class TemplateForm extends ActionForm
      * Reset the form
      */
     protected void reset() {
-        attributeOps = new HashMap();
-        attributeValues = new HashMap();
-        parsedAttributeValues = new HashMap();
-        useBagConstraint = new HashMap();
-        selectedBags = new HashMap();
-        bagOps = new HashMap();
-        extraValues = new HashMap();
+        attributeOps = new HashMap<String, Object>();
+        attributeValues = new HashMap<String, Object>();
+        useBagConstraint = new HashMap<String, Boolean>();
+        selectedBags = new HashMap<String, Object>();
+        bagOps = new HashMap<String, String>();
+        extraValues = new HashMap<String, Object>();
         name = null;
         type = null;
         view = "";

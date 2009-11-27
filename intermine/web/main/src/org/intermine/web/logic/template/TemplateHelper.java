@@ -39,7 +39,8 @@ import org.intermine.web.struts.TemplateForm;
 /**
  * Static helper routines related to templates.
  *
- * @author  Thomas Riley
+ * @author Thomas Riley
+ * @author Richard Smith
  */
 public class TemplateHelper
 {
@@ -65,14 +66,13 @@ public class TemplateHelper
                 } else {
                 	 String op = (String) tf.getAttributeOps(key);
                      ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
-                     Object constraintValue = tf.getParsedAttributeValues(key);
+                     Object constraintValue = tf.getAttributeValues(key);
                      Object extraValue = tf.getExtraValues(key);
                      value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode(), extraValue);
                 }                    
                 nodeValues.add(value);
         	}
-        }
-    	
+        }	
     	return templateValues;
     }
     
