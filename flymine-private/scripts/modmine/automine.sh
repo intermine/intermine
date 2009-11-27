@@ -155,16 +155,17 @@ done
 shift $(($OPTIND - 1))
 
 #
+# NOTE: all modencode sources are supposed to be on the same server, etc.
 # Getting some values from the properties file.
-# -a to grep also (alleged) binary files
+# -m1 to grep only the first occurrence (multiple modencode sources)
 #
 
-DBHOST=`grep -a metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-MINEHOST=`grep -a production.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBUSER=`grep -a metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-MINEDB=`grep -a db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
+MINEHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 production.datasource.serverName | awk -F "=" '{print $2}'`
+DBUSER=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.user | awk -F "=" '{print $2}'`
+DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.password | awk -F "=" '{print $2}'`
+CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
+MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
 LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
