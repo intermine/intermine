@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,14 +22,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -71,6 +67,7 @@ public class SaveQueryAction extends InterMineAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String queryName = ((SaveQueryForm) form).getQueryName();
+        WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
 
         // TODO just add default fields to select list?
         if (query.getView().isEmpty()) {
@@ -81,10 +78,7 @@ public class SaveQueryAction extends InterMineAction
         try {
 
             if (query.getInfo() == null) {
-                BagManager bagManager = SessionMethods.getBagManager(servletContext);
-                Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-                query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
-                                servletContext, null)));
+                query.setInfo(webResultsExecutor.explain(query));
             }
         } catch (ObjectStoreException e) {
             recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);

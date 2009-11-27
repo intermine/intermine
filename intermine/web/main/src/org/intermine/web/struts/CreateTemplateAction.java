@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +24,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
@@ -39,7 +37,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryCreationHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -78,6 +75,7 @@ public class CreateTemplateAction extends InterMineAction
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         TemplateBuildState tbs =
             (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
 
         boolean seenProblem = false;
 
@@ -152,10 +150,7 @@ public class CreateTemplateAction extends InterMineAction
         if (!seenProblem) {
             try {
                 if (query.getInfo() == null) {
-                    BagManager bagManager = SessionMethods.getBagManager(servletContext);
-                    Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-                    query.setInfo(os.estimate(QueryCreationHelper.makeQuery(query, allBags,
-                                    servletContext, null)));
+                    query.setInfo(webResultsExecutor.explain(query));
                 }
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);
