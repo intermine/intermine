@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,8 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
@@ -85,7 +80,6 @@ public class TemplateAction extends InterMineAction
         throws Exception {
         TemplateForm tf = (TemplateForm) form;
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String templateName = tf.getName();
         String templateType = tf.getType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
@@ -101,12 +95,10 @@ public class TemplateAction extends InterMineAction
 
         TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
 
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
-        Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
-
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-            TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                    savedBags);
+            TemplateQuery configuredTmpl = TemplatePopulator.getPopulatedTemplate(template,
+                    TemplateHelper.templateFormToTemplateValues(tf, template));
+
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
             String htmlLink = gen.getHtmlLink(new URLGenerator(request).getPermanentBaseURL(),
                     configuredTmpl);
