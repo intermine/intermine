@@ -62,9 +62,9 @@ import org.xml.sax.InputSource;
 public class ProfileBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
-    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache = 
+    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache =
         new HashMap<Class, Set<FieldDescriptor>>();
-    
+
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -93,7 +93,7 @@ public class ProfileBinding
     public static void marshal(Profile profile, ObjectStore os, XMLStreamWriter writer,
             boolean writeUserAndPassword, boolean writeQueries, boolean writeTemplates,
             boolean writeBags, boolean writeTags, boolean onlyConfigTags, int version) {
-        
+
         try {
             writer.writeStartElement("userprofile");
 
@@ -104,7 +104,7 @@ public class ProfileBinding
 
             if (writeBags) {
                 writeItemsForBagIds(os, profile, writer);
-                
+
                 writer.writeStartElement("bags");
                 for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
                     String bagName = entry.getKey();
@@ -160,7 +160,7 @@ public class ProfileBinding
     }
 
 
-    private static void writeItemsForBagIds(ObjectStore os, Profile profile, 
+    private static void writeItemsForBagIds(ObjectStore os, Profile profile,
             XMLStreamWriter writer) throws ObjectStoreException, XMLStreamException {
         Set<Integer> idsOfAllBagElements = getProfileObjectIds(profile, os);
 
@@ -177,15 +177,15 @@ public class ProfileBinding
     }
 
     // we actually need to write out the primary key fields, these are the only needed for upgrade
-    private static void writeItemPrimaryKeyFields(ObjectStore os, InterMineObject objToWrite, 
+    private static void writeItemPrimaryKeyFields(ObjectStore os, InterMineObject objToWrite,
             XMLStreamWriter writer) {
-        Model model = os.getModel();             
+        Model model = os.getModel();
         ItemFactory itemFactory = new ItemFactory(model);
         Set<String> fieldsToWrite = getPrimaryKeyFieldnamesForClass(model, objToWrite.getClass());
         Item item = itemFactory.makeItemImpl(objToWrite, fieldsToWrite);
         FullRenderer.renderImpl(writer, item);
     }
-    
+
     /**
      * Get the ids of objects in all bags and all objects mentioned in primary keys of those
      * items.
@@ -238,7 +238,7 @@ public class ProfileBinding
                                            Set<Integer> idsToSerialise) {
         idsToSerialise.add(object.getId());
         for (FieldDescriptor fd
-                : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {            
+                : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {
             if (fd instanceof ReferenceDescriptor) {
                 String fieldName = fd.getName();
                 InterMineObject referencedObject;
@@ -258,8 +258,8 @@ public class ProfileBinding
         }
     }
 
-    
-    private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model, 
+
+    private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model,
             Class lookupClass) {
         Set<FieldDescriptor> primaryKeyFields = primaryKeyFieldsCache.get(lookupClass);
         if (primaryKeyFields == null) {
@@ -276,7 +276,7 @@ public class ProfileBinding
         }
         return primaryKeyFields;
     }
-    
+
     private static Set<String> getPrimaryKeyFieldnamesForClass(Model model, Class lookupClass) {
         Set<String> primaryKeyFieldNames = new HashSet<String>();
         for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, lookupClass)) {
@@ -284,7 +284,7 @@ public class ProfileBinding
         }
         return primaryKeyFieldNames;
     }
-    
+
     /**
      * Read a Profile from an XML stream Reader.  Note that Tags from the XML are stored immediately
      * using the ProfileManager.

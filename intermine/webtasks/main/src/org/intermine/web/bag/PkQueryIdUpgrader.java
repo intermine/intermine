@@ -43,7 +43,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
     private Map<Integer, Set<Integer>> newIdsCacheMultiple = new HashMap<Integer, Set<Integer>>();
     private int cacheHits = 0;
     private int cacheLookups = 0;
-    
+
     /**
      * No argument constructor - will use all available keyDefs to upgrade bags.
      * @param os the ObjectStore to query
@@ -109,7 +109,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
         SingletonResults results = os.executeSingleton(query, 0, false, false, false);
 
         int size = results.size();
-       
+
         if (size == 0) {
             LOG.error("createPKQuery() found no results for old object: " + oldObject.getId()
                       + " executed query: " + query);
@@ -136,7 +136,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
             return returnSet;
         }
     }
-    
+
     private void cacheNewIds(Integer oldId, Set<Integer> newIds) {
         if (newIds.size() == 1) {
             Integer newId = newIds.iterator().next();
@@ -145,8 +145,8 @@ public class PkQueryIdUpgrader implements IdUpgrader
             newIdsCacheMultiple.put(oldId, newIds);
         }
     }
-    
-    
+
+
     private Set<Integer> fetchFromCache(Integer oldId) {
         Integer newId = newIdsCacheSingle.get(oldId);
         if (newId != null) {

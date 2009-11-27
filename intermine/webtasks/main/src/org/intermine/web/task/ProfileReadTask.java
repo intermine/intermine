@@ -75,7 +75,7 @@ public class ProfileReadTask extends Task
      * @throws BuildException if there is a problem while reading from the file or writing to the
      * profiles.
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileName == null) {
             throw new BuildException("fileName parameter not set");
         }

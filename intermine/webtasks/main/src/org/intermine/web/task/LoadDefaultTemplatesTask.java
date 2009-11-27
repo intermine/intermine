@@ -101,7 +101,7 @@ public class LoadDefaultTemplatesTask extends Task
      * Load templates from an xml file into a userprofile account.
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         log("Loading default templates and tags into profile " + username);
 
         // Needed so that STAX can find its implementation classes
@@ -114,7 +114,7 @@ public class LoadDefaultTemplatesTask extends Task
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            
+
             ProfileManager pm = new ProfileManager(os, userProfileOS);
             Reader reader = new FileReader(xmlFile);
 
@@ -159,17 +159,17 @@ public class LoadDefaultTemplatesTask extends Task
             // Tags not loaded automatically when unmarshalling profile
             TagManager tagManager = new TagManagerFactory(userProfileOS).getTagManager();
             for (Tag tag : tags) {
-                 if (tagManager.getTags(tag.getTagName(), tag.getObjectIdentifier(),
-                                            tag.getType(), profileDest.getUsername()).isEmpty()) {
-                     try {
-                         tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(),
-                                           tag.getType(), profileDest.getUsername());
-                     } catch (RuntimeException ex) {
-                         LOG.error("Error happened during adding tag. Ignored. Tag: "
-                                   + tag.toString(), ex);
-                     }
-                 }
-             }
+                if (tagManager.getTags(tag.getTagName(), tag.getObjectIdentifier(),
+                            tag.getType(), profileDest.getUsername()).isEmpty()) {
+                    try {
+                        tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(),
+                                tag.getType(), profileDest.getUsername());
+                    } catch (RuntimeException ex) {
+                        LOG.error("Error happened during adding tag. Ignored. Tag: "
+                                + tag.toString(), ex);
+                    }
+                }
+            }
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new BuildException(e);
