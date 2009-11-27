@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -42,7 +41,9 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -295,7 +296,6 @@ public class PortalQueryAction extends InterMineAction
             String extId, @SuppressWarnings("unused") String origin) throws InterruptedException {
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
-        Integer op = ConstraintOp.EQUALS.getIndex();
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
@@ -303,22 +303,18 @@ public class PortalQueryAction extends InterMineAction
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
         }
 
-        // Populate template form bean
-        TemplateForm tf = new TemplateForm();
-        tf.setAttributeOps("1", op.toString());
-        tf.setAttributeValues("1", extId);
-        tf.parseAttributeValues(template, session, new ActionErrors(), false);
-
-        // Convert form to path query
-        PathQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                new HashMap());
-        // Convert path query to intermine query
-        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+        Map<String, List<TemplateValue>> templateValues = 
+            TemplateHelper.singleConstraintTemplateValues(template, ConstraintOp.EQUALS, extId);
+        TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
+                templateValues);
+        
+        SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, false, queryCopy);
+        String qid = SessionMethods.startQuery(clientState, session, messages, false,
+                populatedTemplate);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return qid;
     }

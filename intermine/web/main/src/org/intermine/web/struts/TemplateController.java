@@ -147,7 +147,7 @@ public class TemplateController extends TilesAction
         } else {
             if (scope == null) {
                 scope = Scope.ALL;
-            }
+            }            
             template = templateManager.getTemplate(profile, templateName, scope);
         }
         if (template == null) {

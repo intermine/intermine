@@ -10,8 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -33,9 +32,11 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
@@ -77,27 +78,29 @@ public class ModifyDetails extends DispatchAction
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
-        TemplateForm templateForm = new TemplateForm();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-
+        
+        Map<String, List<TemplateValue>> templateValues;
         if (idForLookup != null && idForLookup.length() != 0) {
             Integer objectId = new Integer(idForLookup);
             ObjectStore os = SessionMethods.getObjectStore(servletContext);
             InterMineObject object = os.getObjectById(objectId);
-            TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
-        } else if (bagName != null && bagName.length() != 0) {
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
-            InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
-            TemplateHelper.fillTemplateForm(template, null, bag, templateForm, model);
+            templateValues = TemplateHelper.objectToTemplateValues(template, object);
+        } else {
+            templateValues = TemplateHelper.bagToTemplateValues(template, bagName);
         }
         String identifier = "itt." + template.getName() + "." + idForLookup;
 
-        templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
-
-        // note that savedBags parameter is an empty set, we are on a report page for an object,
-        // the object/bag we are using is already set in the TemplateForm, we can't use other bags
-        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm,
-                template, new HashMap());
+        
+        TemplateQuery populatedTemplate;
+        try {
+            populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
+                    templateValues);
+        } catch (TemplatePopulatorException e) {
+            LOG.error("Error running up template '" + template.getName() + "' from report page for"
+                    + ((idForLookup == null) ? " bag " + bagName :
+                        " object " + idForLookup) + ".");
+            return null;
+        }  
 
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
