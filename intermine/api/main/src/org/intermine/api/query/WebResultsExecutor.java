@@ -28,6 +28,7 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -102,14 +103,7 @@ public class WebResultsExecutor
             BagQueryResult> pathToBagQueryResult) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
 
-        BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
-                conversionTemplates);
-
-
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-
-        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
-                pathToBagQueryResult, false);
+        Query q = makeQuery(pathQuery, pathToBagQueryResult, pathToQueryNode);
 
         Results results = os.execute(q, Constants.BATCH_SIZE, true, true, false);
 
@@ -124,5 +118,54 @@ public class WebResultsExecutor
                 pathToQueryNode, classKeys, pathToBagQueryResult);
 
         return webResults;
+    }
+
+    /**
+     * Creates an SQL query from a PathQuery.
+     *
+     * @param pathQuery the query to convert
+     * @return an SQL String
+     * @throws ObjectStoreException if problem creating query
+     */
+    public String makeSql(PathQuery pathQuery) throws ObjectStoreException {
+        Query query = makeQuery(pathQuery);
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+        return osimi.generateSql(query);
+    }
+
+    /**
+     * Creates an IQL query from a PathQuery.
+     *
+     * @param pathQuery the query to convert
+     * @return an IQL Query object
+     * @throws ObjectStoreException if problem creating query
+     */
+    public Query makeQuery(PathQuery pathQuery) throws ObjectStoreException {
+        Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        return makeQuery(pathQuery, pathToBagQueryResult, pathToQueryNode);
+    }
+
+    /**
+     * Creates an IQL query from a PathQuery.
+     *
+     * @param pathQuery the query to convert
+     * @param pathToBagQueryResult will be populated with results from bag queries used in any
+     * LOOKUP constraints
+     * @param pathToQueryNode a Map from String path in the PathQuery to QuerySelectable in the
+     * resulting IQL Query
+     * @return an IQL Query object
+     * @throws ObjectStoreException if problem creating query
+     */
+    public Query makeQuery(PathQuery pathQuery, Map<String, BagQueryResult> pathToBagQueryResult,
+            Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
+        BagQueryRunner bqr = new BagQueryRunner(os, classKeys, bagQueryConfig,
+                conversionTemplates);
+
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+
+        Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bqr,
+                pathToBagQueryResult, false);
+        return q;
     }
 }
