@@ -47,7 +47,7 @@ public class BagManagerTest extends TestCase
     private Integer DUMMY_ID = 2;
     
     
-        public void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
