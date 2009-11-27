@@ -298,9 +298,7 @@ public class TemplateForm extends ActionForm
 
         ActionErrors errors = new ActionErrors();
 
-        boolean appendWildcard = (request.getParameter("appendWildcard") != null
-                                  && !request.getParameter("appendWildcard").equals("no"));
-        parseAttributeValues(template, session, errors, appendWildcard);
+        parseAttributeValues(template, session, errors, false);
 
         return errors;
     }

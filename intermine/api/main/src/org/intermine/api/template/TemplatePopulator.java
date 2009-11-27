@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
@@ -104,21 +106,35 @@ public class TemplatePopulator
         Constraint newConstraint = new Constraint(templateValue.getOperation(), value,
                 true, c.getDescription(), c.getCode(), c.getIdentifier(), extraValue);
 
-        // if this is a bag constraint we may need to switch to the parent node
         if (templateValue.isBagConstraint()) {
             if (!BagConstraint.VALID_OPS.contains(templateValue.getOperation())) {
-                // TODO list the bag ops...
+                // TODO list the bag ops in error message ...
                 throw new TemplatePopulatorException("A bag (list) constraint on path "
                         + node.getPathString() + " with value " + c.getValue() + " does not have a "
                         + "valid constraint type, must be ...");
             }
 
-            // should we check the bag exists here?
-
-            // bag constraints need to be on a class, if this an attribute first get the parent node
-        } if (templateValue.isBagConstraint() && node.isAttribute()) {	
+            // TODO should we check the bag exists here?
+        } 
+        
+        // if this is a bag constraint we may need to switch to the parent node
+        if (templateValue.isBagConstraint() && node.isAttribute()) {	
             PathNode parentNode = template.addNode(node.getParent().getPathString());
             parentNode.getConstraints().add(newConstraint);
+            node.removeConstraint(c);
+        } else if (templateValue.isObjectConstraint()) {
+            String basePath = node.getPathString();
+            if (node.isAttribute())  {
+                basePath = node.getParent().getPathString();
+            }
+            String idPath = basePath + ".id";
+            PathNode idNode = template.addNode(idPath);
+            Integer idValue = ((InterMineObject) value).getId();
+            Constraint idConstraint = new Constraint(ConstraintOp.EQUALS, idValue,
+                    true, c.getDescription(), c.getCode(), c.getIdentifier(), null);
+            idNode.getConstraints().add(idConstraint);
+
+            // TODO any other constraints on this node are now irrelevant
             node.removeConstraint(c);
         } else {
             node.getConstraints().set(constraintIndex, newConstraint);

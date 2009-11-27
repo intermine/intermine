@@ -26,6 +26,7 @@ public class TemplateValue
     private String path;
     private String code;
     private boolean bagConstraint = false;
+    private boolean objectConstraint = false;
 
 
     /**
@@ -126,5 +127,12 @@ public class TemplateValue
         this.bagConstraint = bagConstraint;
     }
 
+    public boolean isObjectConstraint() {
+        return objectConstraint;
+    }
+
+    public void setObjectConstraint(boolean objectConstraint) {
+        this.objectConstraint = objectConstraint;
+    }
 
 }
