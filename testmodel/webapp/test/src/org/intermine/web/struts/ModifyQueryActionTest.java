@@ -47,8 +47,7 @@ public class ModifyQueryActionTest extends MockStrutsTestCase
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, query.clone());
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(testmodel),
-                                     "");
+                new PathQuery(testmodel));
 
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);

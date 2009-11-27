@@ -56,8 +56,7 @@ public class ProfileTest extends MockStrutsTestCase
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")),
-                                     "");
+                new PathQuery(Model.getInstanceByName("testmodel")));
         profileManager = new DummyProfileManager(userprofileOS);
         
     }
