@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.bio.util.LinkInTask;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Transcript;
@@ -113,7 +114,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 LOGGER.info("Starting CalculateLocations.setMissingChromosomeLocations()");
                 cl.setMissingChromosomeLocations();
-            }else if ("create-references".equals(operation)) {
+            } else if ("create-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOGGER.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
@@ -246,6 +247,8 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("create-bioseg-location-index".equals(operation)) {
                 BiosegIndexTask bit = new BiosegIndexTask(getObjectStoreWriter());
                 bit.createIndex();
+            } else if ("link-ins".equals(operation)) {
+                LinkInTask.execute(getObjectStoreWriter());
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
