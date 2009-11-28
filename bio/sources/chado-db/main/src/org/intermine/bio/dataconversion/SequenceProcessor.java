@@ -384,7 +384,8 @@ public class SequenceProcessor extends ChadoProcessor
             }
         }
 
-        if (chadoType.equalsIgnoreCase("gene")){
+        // check interMineType not chadoType - FlyBase subclass converts some Genes to Alleles
+        if (fdat.getInterMineType().endsWith("Gene")) {
             setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
         }
         
