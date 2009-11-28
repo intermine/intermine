@@ -102,7 +102,7 @@
       <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
     </source>
 		<source name="pubmed-gene" type="pubmed-gene">
-			<property name="src.data.dir" location="/shared/data/pubmed/current"/>
+			<property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
 			<property name="pubmed.organisms" value="7227 6239"/>
 			<property name="src.data.dir.includes" value="gene2pubmed"/>
 			<property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
