@@ -205,6 +205,9 @@
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.shortName" />
     </fields>
+<bagdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+</bagdisplayers>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/locatedSequenceFeatureImage.jsp"/>
