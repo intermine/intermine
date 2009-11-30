@@ -27,7 +27,6 @@ P=
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-SOURCES="modmine-static,modencode-$Pmetadata"
 #SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
@@ -173,6 +172,8 @@ MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.da
 
 LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
+SOURCES=modmine-static,modencode-"$P"metadata
+
 echo
 echo "================================="
 echo "Building modmine-$REL on $MINEHOST."
@@ -182,7 +183,8 @@ echo
 echo "current directory: $MINEDIR"
 echo
 
-echo $P
+#echo $P
+#echo $SOURCES
 
 if [ -n "$1" ]
 then
