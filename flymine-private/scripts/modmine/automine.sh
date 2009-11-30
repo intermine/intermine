@@ -23,9 +23,11 @@ DATADIR=$SUBDIR/chado
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
 
+P=
+
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-SOURCES=modmine-static,modencode-metadata
+SOURCES="modmine-static,modencode-$Pmetadata"
 #SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
@@ -80,6 +82,7 @@ $progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DC
 	-M: test build (metadata only)
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
+  -P project_name: as -M, but restricted to a project.
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -128,16 +131,17 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVabf:gipr:stvwx" opt; do
+while getopts ":FMRVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	P )  echo; P=$OPTARG;echo "Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
-	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is not run)" ; PREP4FULL=y;;
+	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
 	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files: "; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
@@ -177,6 +181,8 @@ echo "Log: $LOG"
 echo
 echo "current directory: $MINEDIR"
 echo
+
+echo $P
 
 if [ -n "$1" ]
 then
