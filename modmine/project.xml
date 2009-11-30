@@ -83,7 +83,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
@@ -93,20 +93,20 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.includes" value="*dna*.fasta"/>
       <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
       <property name="fasta.dataSourceName" value="WormBase"/>
-      <property name="src.data.dir" location="/shared/data/wormbase/ws175"/>
+      <property name="src.data.dir" location="/shared/data/wormbase/ws190/fasta"/>
     </source>
-		<source name="pubmed-gene" type="pubmed-gene">
-			<property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
-			<property name="pubmed.organisms" value="7227 6239"/>
-			<property name="src.data.dir.includes" value="gene2pubmed"/>
-			<property name="infoFile" location="/shared/data/pubmed/current/gene_info"/>
-		</source>
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+	<property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
+	<property name="pubmed.organisms" value="7227 6239"/>
+	<property name="src.data.dir.includes" value="gene2pubmed"/>
+	<property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
+    </source>
 <!-- INTEREACTION: added 24/11/08
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
@@ -148,26 +148,25 @@
 		</source>
 		-->
     <source name="modencode-fly-metadata" type="chado-db" dump="true">
-			<property name="organisms" value="7227"/>
+      <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="modENCODE"/>
       <property name="dataSetTitle" value="modENCODE submission"/>
-      <property name="source.db.name" value="modencode-metadata"/>
+      <property name="source.db.name" value="modencode-fly-metadata"/>
       <property name="processors"
                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source> 
-		<source name="modencode-piano-metadata" type="chado-db" dump="true">
-			<property name="organisms" value="6239"/>
-			<property name="dataSourceName" value="modENCODE"/>
-			<property name="dataSetTitle" value="modENCODE submission"/>
-			<property name="source.db.name" value="modencode-metadata"/>
-			<property name="processors"
-								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-			<property name="converter.class"
-								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-		</source>
-
+    <source name="modencode-piano-metadata" type="chado-db" dump="true">
+	<property name="organisms" value="6239"/>
+	<property name="dataSourceName" value="modENCODE"/>
+	<property name="dataSetTitle" value="modENCODE submission"/>
+	<property name="source.db.name" value="modencode-piano-metadata"/>
+	<property name="processors"
+	          value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+        <property name="converter.class"
+                  value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
     </source>
