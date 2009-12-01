@@ -31,16 +31,25 @@ public class ChromosomeCoverage
     private static String serviceRootUrl = "http://intermine.modencode.org/release-14/service";
 
     /**
+     * Executes a query and prints out the coverage of the given type of object over the given
+     * chromosomes.
      * 
      * @param args command line arguments
-     * @throws IOException
      */
     public static void main(String[] args) {
+        calculate("7227", "BindingSite", null);
+    }
+
+    private static void calculate(String taxonId, String featureType, String chromosomeId) {
         QueryService service =
             new ServiceFactory(serviceRootUrl, "ChromosomeCoverage").getQueryService();
         Model model = getModel();
         PathQuery query = new PathQuery(model);
         query.setView("Chromosome.primaryIdentifier Chromosome.length");
+        query.addConstraint("Chromosome.organism.taxonId", Constraints.eq(taxonId));
+        if (chromosomeId != null) {
+            query.addConstraint("Chromosome.primaryIdentifier", Constraints.eq(chromosomeId));
+        }
         List<List<String>> result = service.getResult(query, 100000);
         Map<String, Integer> chromosomeSizes = new HashMap<String, Integer>();
         for (List<String> row : result) {
@@ -49,8 +58,15 @@ public class ChromosomeCoverage
             }
         }
         query = new PathQuery(model);
-        query.setView("BindingSite.chromosome.primaryIdentifier BindingSite.chromosomeLocation.start BindingSite.chromosomeLocation.end");
-        query.setOrderBy("BindingSite.chromosome.primaryIdentifier BindingSite.chromosomeLocation.start");
+        query.setView(featureType + ".chromosome.primaryIdentifier " + featureType
+                + ".chromosomeLocation.start " + featureType + ".chromosomeLocation.end");
+        query.setOrderBy(featureType + ".chromosome.primaryIdentifier " + featureType
+                + ".chromosomeLocation.start");
+        query.addConstraint(featureType + ".chromosome.organism.taxonId", Constraints.eq(taxonId));
+        if (chromosomeId != null) {
+            query.addConstraint(featureType + ".chromosome.primaryIdentifier",
+                    Constraints.eq(chromosomeId));
+        }
         String currentChromosome = null;
         int coverage = 0;
         int lastEnd = Integer.MIN_VALUE;
@@ -88,12 +104,13 @@ public class ChromosomeCoverage
         return service.getModel();
     }
 
-    private static void printStatus(String chromosome, int coverage, Map<String, Integer> chromosomeSizes) {
+    private static void printStatus(String chromosome, int coverage,
+            Map<String, Integer> chromosomeSizes) {
         if (chromosomeSizes.containsKey(chromosome)) {
             System.out.println("Chromosome " + chromosome + " has coverage " + coverage
                     + " with size " + chromosomeSizes.get(chromosome)
-                    + " equals coverage of "
-                    + (Math.round(((10000.0 * coverage) / chromosomeSizes.get(chromosome))) / 100.0) + "%");
+                    + " equals coverage of " + (Math.round(((10000.0 * coverage)
+                                / chromosomeSizes.get(chromosome))) / 100.0) + "%");
         }
     }
 }
