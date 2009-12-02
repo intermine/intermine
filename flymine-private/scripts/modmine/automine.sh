@@ -68,7 +68,8 @@ SUB=n            # if we are using a single submission, SUB=dccid
 INCR=y
 FULL=n
 META=n           # it builds a new mine with static and metadata only
-RESTART=n
+RESTART=n        # restart building recovering last dumped db
+QRESTART=n       # restart building using current db
 
 progname=$0
 
@@ -130,12 +131,13 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVP:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
+	Q )  echo; echo "Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	P )  echo; P=$OPTARG;echo "Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
@@ -184,7 +186,7 @@ echo "current directory: $MINEDIR"
 echo
 
 #echo $P
-#echo $SOURCES
+echo $SOURCES
 
 if [ -n "$1" ]
 then
@@ -644,8 +646,14 @@ ant $V -Drelease=$REL -Dsource=modencode-metadata-inc || { printf "%b" "\n modMi
 elif [ $RESTART = "y" ]
 then
 # restart build after failure
-echo; echo "Restating build.."
+echo; echo "Restarting build using last available back-up db.."
 ../bio/scripts/project_build -V $REL $V -l -t localhost /tmp/mod-all\
+|| { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
+elif [ $QRESTART = "y" ]
+then
+# restart build without recovering last dumped db
+echo; echo "Quick restart of the build (using current db).."
+../bio/scripts/project_build -V $REL $V -r -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then
