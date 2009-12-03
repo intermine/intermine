@@ -39,7 +39,7 @@ public class GenesOverlappingTranscriptRegions
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        calculate("6239", "TranscriptRegion", null);
+        calculate("7227", "TranscriptRegion", null);
     }
 
     private static void calculate(String taxonId, String featureType, String chromosomeId) {
@@ -131,6 +131,9 @@ public class GenesOverlappingTranscriptRegions
             //query.addConstraint("Gene.dataSets.title", Constraints.eq("We don't know this"));
             query.addConstraint("Gene.symbol", Constraints.isNotNull());
         }
+        if (chromosomeId != null) {
+            query.addConstraint("Gene.chromosome.primaryIdentifier", Constraints.eq(chromosomeId));
+        }
         result = service.getResult(query, 10000000);
         if (result.size() >= 10000000) {
             throw new IllegalArgumentException("There are too many Genes for the web service");
@@ -155,17 +158,21 @@ public class GenesOverlappingTranscriptRegions
             currentChromosome = chromosome;
             geneCount++;
             IntRange range = new IntRange(start, end);
+            //System.err.println("Inspecting Gene with range " + range);
             IntRange floor = coverageForChromosome.floor(range);
-            if (floor != null) {
-                SortedSet<IntRange> coverageRanges = coverageForChromosome.tailSet(floor);
-                for (IntRange covered : coverageRanges) {
-                    if (covered.getStart() >= end) {
-                        break;
-                    }
-                    if (covered.getEnd() > start) {
-                        overlapping++;
-                        break;
-                    }
+            SortedSet<IntRange> coverageRanges;
+            if (floor == null) {
+                coverageRanges = coverageForChromosome;
+            } else {
+                coverageRanges = coverageForChromosome.tailSet(floor);
+            }
+            for (IntRange covered : coverageRanges) {
+                if (covered.getStart() >= end) {
+                    break;
+                }
+                if (covered.getEnd() > start) {
+                    overlapping++;
+                    break;
                 }
             }
         }
