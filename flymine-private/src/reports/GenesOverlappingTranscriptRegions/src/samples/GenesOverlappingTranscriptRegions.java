@@ -124,37 +124,44 @@ public class GenesOverlappingTranscriptRegions
         entryCount = 0;
         for (List<String> row : new IteratorIterable<List<String>>(service.getResultIterator(query, 10000000))) {
             String chromosome = row.get(0);
-            int start = Integer.parseInt(row.get(1));
-            int end = Integer.parseInt(row.get(2));
-            if (!chromosome.equals(currentChromosome)) {
-                if (currentChromosome != null) {
-                    results.add(currentChromosome, geneCount, overlapping);
+            if (!(chromosome.startsWith("U") || chromosome.equals("dmel_mitochondrion_genome"))) {
+                int start = Integer.parseInt(row.get(1));
+                int end = Integer.parseInt(row.get(2));
+                if (!chromosome.equals(currentChromosome)) {
+                    if (currentChromosome != null) {
+                        results.add(currentChromosome, geneCount, overlapping);
+                    }
+                    coverageForChromosome = coverage.get(chromosome);
+                    if (coverageForChromosome == null) {
+                        System.err.println("No " + featureType1 + "s for Chromosome " + chromosome);
+                        coverageForChromosome = new TreeSet<IntRange>();
+                    }
+                    geneCount = 0;
+                    overlapping = 0;
                 }
-                coverageForChromosome = coverage.get(chromosome);
-                if (coverageForChromosome == null) {
-                    System.err.println("No " + featureType1 + "s for Chromosome " + chromosome);
-                    coverageForChromosome = new TreeSet<IntRange>();
+                currentChromosome = chromosome;
+                geneCount++;
+                IntRange range = new IntRange(start, end);
+                IntRange floor = coverageForChromosome.floor(range);
+                SortedSet<IntRange> coverageRanges;
+                if (floor == null) {
+                    coverageRanges = coverageForChromosome;
+                } else {
+                    coverageRanges = coverageForChromosome.tailSet(floor);
                 }
-                geneCount = 0;
-                overlapping = 0;
-            }
-            currentChromosome = chromosome;
-            geneCount++;
-            IntRange range = new IntRange(start, end);
-            IntRange floor = coverageForChromosome.floor(range);
-            SortedSet<IntRange> coverageRanges;
-            if (floor == null) {
-                coverageRanges = coverageForChromosome;
-            } else {
-                coverageRanges = coverageForChromosome.tailSet(floor);
-            }
-            for (IntRange covered : coverageRanges) {
-                if (covered.getStart() >= end) {
-                    break;
+                boolean thisOneOverlaps = false;
+                for (IntRange covered : coverageRanges) {
+                    if (covered.getStart() >= end) {
+                        break;
+                    }
+                    if (covered.getEnd() > start) {
+                        overlapping++;
+                        thisOneOverlaps = true;
+                        break;
+                    }
                 }
-                if (covered.getEnd() > start) {
-                    overlapping++;
-                    break;
+                if ((!thisOneOverlaps) && "Gene".equals(featureType2)) {
+                    System.out.println(row.get(3));
                 }
             }
         }
@@ -170,27 +177,21 @@ public class GenesOverlappingTranscriptRegions
         return service.getModel();
     }
 
-    private static void printStatus(String chromosome, int geneCount, int overlapping,
-            String featureType1, String featureType2) {
-        System.out.println("Chromosome " + chromosome + " has " + geneCount + " " + featureType2
-                + "s, of which " + overlapping + " overlap " + featureType1 + "s, which is "
-                + (Math.round(((10000.0 * overlapping) / geneCount)) / 100.0) + "%");
-    }
-
     private static PathQuery makeQuery(String taxonId, String featureType, String chromosomeId) {
         PathQuery query = new PathQuery(getModel());
         query.setView(featureType + ".chromosome.primaryIdentifier " + featureType
-                + ".chromosomeLocation.start " + featureType + ".chromosomeLocation.end");
+                + ".chromosomeLocation.start " + featureType + ".chromosomeLocation.end "
+                + featureType + ".primaryIdentifier");
         query.setOrderBy(featureType + ".chromosome.primaryIdentifier " + featureType
                 + ".chromosomeLocation.start");
         query.addConstraint(featureType + ".chromosome.organism.taxonId", Constraints.eq(taxonId));
-        if ("Gene".equals(featureType)) {
+        if ("Gene".equals(featureType) || "Exon".equals(featureType)) {
             if ("7227".equals(taxonId)) {
-                query.addConstraint("Gene.dataSets.title",
+                query.addConstraint(featureType + ".dataSets.title",
                         Constraints.eq("FlyBase Drosophila melanogaster data set"));
             } else if ("6239".equals(taxonId)) {
                 //query.addConstraint("Gene.dataSets.title", Constraints.eq("We don't know this"));
-                query.addConstraint("Gene.symbol", Constraints.isNotNull());
+                query.addConstraint(featureType + ".symbol", Constraints.isNotNull());
             }
         }
         if (chromosomeId != null) {
@@ -247,14 +248,12 @@ public class GenesOverlappingTranscriptRegions
         }
 
         public void add(String chromosome, int count, int overlaps) {
-            if (!chromosome.startsWith("U")) {
-                double percent = Math.round(((10000.0 * overlaps) / count)) / 100.0;
-                int nonOverlap = count - overlaps;
-                double nonPercent = Math.round(((10000.0 * nonOverlap) / count)) / 100.0;
-                table.addRow(chromosome, "" + count, "" + overlaps, "" + percent, "" + nonOverlap, "" + nonPercent);
-                totalCount += count;
-                totalOverlaps += overlaps;
-            }
+            double percent = Math.round(((10000.0 * overlaps) / count)) / 100.0;
+            int nonOverlap = count - overlaps;
+            double nonPercent = Math.round(((10000.0 * nonOverlap) / count)) / 100.0;
+            table.addRow(chromosome, "" + count, "" + overlaps, "" + percent, "" + nonOverlap, "" + nonPercent);
+            totalCount += count;
+            totalOverlaps += overlaps;
         }
 
         public void printResults() {
