@@ -23,6 +23,7 @@ import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
 import org.intermine.util.IteratorIterable;
+import org.intermine.util.TextTable;
 
 /**
  * Calculate the coverage of BindingSites over Chromosomes.
@@ -64,22 +65,8 @@ public class GenesOverlappingTranscriptRegions
     private static void calculate(String taxonId, String featureType1, String featureType2, String chromosomeId) {
         QueryService service =
             new ServiceFactory(serviceRootUrl, "ChromosomeCoverage").getQueryService();
-        System.err.println("Getting chromosome sizes");
-        PathQuery query = new PathQuery(getModel());
-        query.setView("Chromosome.primaryIdentifier Chromosome.length");
-        query.addConstraint("Chromosome.organism.taxonId", Constraints.eq(taxonId));
-        if (chromosomeId != null) {
-            query.addConstraint("Chromosome.primaryIdentifier", Constraints.eq(chromosomeId));
-        }
-        List<List<String>> result = service.getResult(query, 100000);
-        Map<String, Integer> chromosomeSizes = new HashMap<String, Integer>();
-        for (List<String> row : result) {
-            if (row.size() == 2) {
-                chromosomeSizes.put(row.get(0), Integer.parseInt(row.get(1)));
-            }
-        }
         System.err.println("Getting " + featureType1 + "s");
-        query = makeQuery(taxonId, featureType1, chromosomeId);
+        PathQuery query = makeQuery(taxonId, featureType1, chromosomeId);
         Map<String, TreeSet<IntRange>> coverage = new HashMap<String, TreeSet<IntRange>>();
         IntRange lastRange = null;
         String currentChromosome = null;
@@ -129,6 +116,7 @@ public class GenesOverlappingTranscriptRegions
         System.err.println("Reduced " + entryCount + " overlapping " + featureType1 + "s to "
                 + coverageCount + " coverage ranges");
         System.err.println("Getting " + featureType2 + "s");
+        Output results = new Output(featureType1, featureType2);
         query = makeQuery(taxonId, featureType2, chromosomeId);
         currentChromosome = null;
         int overlapping = 0;
@@ -139,7 +127,9 @@ public class GenesOverlappingTranscriptRegions
             int start = Integer.parseInt(row.get(1));
             int end = Integer.parseInt(row.get(2));
             if (!chromosome.equals(currentChromosome)) {
-                printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping, featureType1, featureType2);
+                if (currentChromosome != null) {
+                    results.add(currentChromosome, geneCount, overlapping);
+                }
                 coverageForChromosome = coverage.get(chromosome);
                 if (coverageForChromosome == null) {
                     System.err.println("No " + featureType1 + "s for Chromosome " + chromosome);
@@ -171,7 +161,8 @@ public class GenesOverlappingTranscriptRegions
         if (entryCount >= 10000000) {
             throw new IllegalArgumentException("There are too many " + featureType2 + "s for the web service");
         }
-        printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping, featureType1, featureType2);
+        results.add(currentChromosome, geneCount, overlapping);
+        results.printResults();
     }
 
     private static Model getModel() {
@@ -179,14 +170,11 @@ public class GenesOverlappingTranscriptRegions
         return service.getModel();
     }
 
-    private static void printStatus(String chromosome, Map<String, Integer> chromosomeSizes,
-            int geneCount, int overlapping, String featureType1, String featureType2) {
-        if (chromosomeSizes.containsKey(chromosome)) {
-            System.out.println("Chromosome " + chromosome + " of size "
-                    + chromosomeSizes.get(chromosome) + " has " + geneCount + " " + featureType2
-                    + "s, of which " + overlapping + " overlap " + featureType1 + "s, which is "
-                    + (Math.round(((10000.0 * overlapping) / geneCount)) / 100.0) + "%");
-        }
+    private static void printStatus(String chromosome, int geneCount, int overlapping,
+            String featureType1, String featureType2) {
+        System.out.println("Chromosome " + chromosome + " has " + geneCount + " " + featureType2
+                + "s, of which " + overlapping + " overlap " + featureType1 + "s, which is "
+                + (Math.round(((10000.0 * overlapping) / geneCount)) / 100.0) + "%");
     }
 
     private static PathQuery makeQuery(String taxonId, String featureType, String chromosomeId) {
@@ -240,6 +228,40 @@ public class GenesOverlappingTranscriptRegions
 
         public String toString() {
             return start + " - " + end;
+        }
+    }
+
+    private static class Output
+    {
+        String featureType1, featureType2;
+        TextTable table;
+        int totalCount = 0;
+        int totalOverlaps = 0;
+
+        public Output(String featureType1, String featureType2) {
+            this.featureType1 = featureType1;
+            this.featureType2 = featureType2;
+            table = new TextTable(false, false, false);
+            table.addRow("Chromosome", featureType2 + "s", "Overlapping", "Percent", "Non-overlapping", "Percent");
+            table.addRow(TextTable.ROW_SEPARATOR);
+        }
+
+        public void add(String chromosome, int count, int overlaps) {
+            if (!chromosome.startsWith("U")) {
+                double percent = Math.round(((10000.0 * overlaps) / count)) / 100.0;
+                int nonOverlap = count - overlaps;
+                double nonPercent = Math.round(((10000.0 * nonOverlap) / count)) / 100.0;
+                table.addRow(chromosome, "" + count, "" + overlaps, "" + percent, "" + nonOverlap, "" + nonPercent);
+                totalCount += count;
+                totalOverlaps += overlaps;
+            }
+        }
+
+        public void printResults() {
+            System.out.println("Overlaps report for " + featureType2 + "s which overlap " + featureType1 + "s");
+            table.addRow(TextTable.ROW_SEPARATOR);
+            add("Total", totalCount, totalOverlaps);
+            System.out.print(table.toString());
         }
     }
 }
