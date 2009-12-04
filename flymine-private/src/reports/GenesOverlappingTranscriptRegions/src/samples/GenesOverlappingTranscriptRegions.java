@@ -22,6 +22,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
+import org.intermine.util.IteratorIterable;
 
 /**
  * Calculate the coverage of BindingSites over Chromosomes.
@@ -39,14 +40,32 @@ public class GenesOverlappingTranscriptRegions
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        calculate("7227", "TranscriptRegion", null);
+        if (args.length == 0) {
+            System.err.println("Using default parameters of 7227 TranscriptRegion Gene");
+            calculate("7227", "TranscriptRegion", "Gene", null);
+        } else {
+            String taxonId = args[0];
+            if ("fly".equals(taxonId)) {
+                taxonId = "7227";
+            } else if ("worm".equals(taxonId)) {
+                taxonId = "6239";
+            }
+            if (args.length == 3) {
+                calculate(taxonId, args[1], args[2], null);
+            } else if (args.length == 4) {
+                calculate(taxonId, args[1], args[2], args[3]);
+            } else {
+                System.err.println("Usage: program <taxonId> <coverage feature> <query feature> [<chromosome>]");
+                System.err.println("Instead of numeric taxonIds, you can specify \"fly\" or \"worm\"");
+            }
+        }
     }
 
-    private static void calculate(String taxonId, String featureType, String chromosomeId) {
+    private static void calculate(String taxonId, String featureType1, String featureType2, String chromosomeId) {
         QueryService service =
             new ServiceFactory(serviceRootUrl, "ChromosomeCoverage").getQueryService();
-        Model model = getModel();
-        PathQuery query = new PathQuery(model);
+        System.err.println("Getting chromosome sizes");
+        PathQuery query = new PathQuery(getModel());
         query.setView("Chromosome.primaryIdentifier Chromosome.length");
         query.addConstraint("Chromosome.organism.taxonId", Constraints.eq(taxonId));
         if (chromosomeId != null) {
@@ -59,27 +78,15 @@ public class GenesOverlappingTranscriptRegions
                 chromosomeSizes.put(row.get(0), Integer.parseInt(row.get(1)));
             }
         }
-        System.err.println("Getting " + featureType + "s");
-        query = new PathQuery(model);
-        query.setView(featureType + ".chromosome.primaryIdentifier " + featureType
-                + ".chromosomeLocation.start " + featureType + ".chromosomeLocation.end");
-        query.setOrderBy(featureType + ".chromosome.primaryIdentifier " + featureType
-                + ".chromosomeLocation.start");
-        query.addConstraint(featureType + ".chromosome.organism.taxonId", Constraints.eq(taxonId));
-        if (chromosomeId != null) {
-            query.addConstraint(featureType + ".chromosome.primaryIdentifier",
-                    Constraints.eq(chromosomeId));
-        }
-        result = service.getResult(query, 10000000);
-        if (result.size() >= 10000000) {
-            throw new IllegalArgumentException("There are too many rows for the web service");
-        }
-        System.err.println("Flattening " + featureType + " coverage");
+        System.err.println("Getting " + featureType1 + "s");
+        query = makeQuery(taxonId, featureType1, chromosomeId);
         Map<String, TreeSet<IntRange>> coverage = new HashMap<String, TreeSet<IntRange>>();
         IntRange lastRange = null;
         String currentChromosome = null;
         TreeSet<IntRange> coverageForChromosome = null;
-        for (List<String> row : result) {
+        int entryCount = 0;
+        for (List<String> row : new IteratorIterable<List<String>>(service.getResultIterator(query, 10000000))) {
+            entryCount++;
             String chromosome = row.get(0);
             int start = Integer.parseInt(row.get(1));
             int end = Integer.parseInt(row.get(2));
@@ -111,45 +118,31 @@ public class GenesOverlappingTranscriptRegions
         if (lastRange != null) {
             coverageForChromosome.add(lastRange);
         }
-        System.err.println("Coverage: " + coverage.keySet());
+        if (entryCount >= 10000000) {
+            throw new IllegalArgumentException("There are too many " + featureType1 + "s for the web service");
+        }
+        //System.err.println("Coverage: " + coverage.keySet());
         int coverageCount = 0;
         for (Map.Entry<String, TreeSet<IntRange>> coverageEntry : coverage.entrySet()) {
             coverageCount += coverageEntry.getValue().size();
         }
-        System.err.println("Reduced " + result.size() + " overlapping " + featureType + "s to "
+        System.err.println("Reduced " + entryCount + " overlapping " + featureType1 + "s to "
                 + coverageCount + " coverage ranges");
-        result = null;
-        System.gc();
-        System.err.println("Getting Genes");
-        query = new PathQuery(model);
-        query.setView("Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end");
-        query.setOrderBy("Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start");
-        query.addConstraint("Gene.chromosome.organism.taxonId", Constraints.eq(taxonId));
-        if ("7227".equals(taxonId)) {
-            query.addConstraint("Gene.dataSets.title", Constraints.eq("FlyBase Drosophila melanogaster data set"));
-        } else if ("6239".equals(taxonId)) {
-            //query.addConstraint("Gene.dataSets.title", Constraints.eq("We don't know this"));
-            query.addConstraint("Gene.symbol", Constraints.isNotNull());
-        }
-        if (chromosomeId != null) {
-            query.addConstraint("Gene.chromosome.primaryIdentifier", Constraints.eq(chromosomeId));
-        }
-        result = service.getResult(query, 10000000);
-        if (result.size() >= 10000000) {
-            throw new IllegalArgumentException("There are too many Genes for the web service");
-        }
+        System.err.println("Getting " + featureType2 + "s");
+        query = makeQuery(taxonId, featureType2, chromosomeId);
         currentChromosome = null;
         int overlapping = 0;
         int geneCount = 0;
-        for (List<String> row : result) {
+        entryCount = 0;
+        for (List<String> row : new IteratorIterable<List<String>>(service.getResultIterator(query, 10000000))) {
             String chromosome = row.get(0);
             int start = Integer.parseInt(row.get(1));
             int end = Integer.parseInt(row.get(2));
             if (!chromosome.equals(currentChromosome)) {
-                printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping);
+                printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping, featureType1, featureType2);
                 coverageForChromosome = coverage.get(chromosome);
                 if (coverageForChromosome == null) {
-                    System.err.println("No " + featureType + "s for Chromosome " + chromosome);
+                    System.err.println("No " + featureType1 + "s for Chromosome " + chromosome);
                     coverageForChromosome = new TreeSet<IntRange>();
                 }
                 geneCount = 0;
@@ -158,7 +151,6 @@ public class GenesOverlappingTranscriptRegions
             currentChromosome = chromosome;
             geneCount++;
             IntRange range = new IntRange(start, end);
-            //System.err.println("Inspecting Gene with range " + range);
             IntRange floor = coverageForChromosome.floor(range);
             SortedSet<IntRange> coverageRanges;
             if (floor == null) {
@@ -176,7 +168,10 @@ public class GenesOverlappingTranscriptRegions
                 }
             }
         }
-        printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping);
+        if (entryCount >= 10000000) {
+            throw new IllegalArgumentException("There are too many " + featureType2 + "s for the web service");
+        }
+        printStatus(currentChromosome, chromosomeSizes, geneCount, overlapping, featureType1, featureType2);
     }
 
     private static Model getModel() {
@@ -185,13 +180,36 @@ public class GenesOverlappingTranscriptRegions
     }
 
     private static void printStatus(String chromosome, Map<String, Integer> chromosomeSizes,
-            int geneCount, int overlapping) {
+            int geneCount, int overlapping, String featureType1, String featureType2) {
         if (chromosomeSizes.containsKey(chromosome)) {
             System.out.println("Chromosome " + chromosome + " of size "
-                    + chromosomeSizes.get(chromosome) + " has " + geneCount + " genes, of which "
-                    + overlapping + " overlap, which is " + (Math.round(((10000.0 * overlapping)
-                                / geneCount)) / 100.0) + "%");
+                    + chromosomeSizes.get(chromosome) + " has " + geneCount + " " + featureType2
+                    + "s, of which " + overlapping + " overlap " + featureType1 + "s, which is "
+                    + (Math.round(((10000.0 * overlapping) / geneCount)) / 100.0) + "%");
         }
+    }
+
+    private static PathQuery makeQuery(String taxonId, String featureType, String chromosomeId) {
+        PathQuery query = new PathQuery(getModel());
+        query.setView(featureType + ".chromosome.primaryIdentifier " + featureType
+                + ".chromosomeLocation.start " + featureType + ".chromosomeLocation.end");
+        query.setOrderBy(featureType + ".chromosome.primaryIdentifier " + featureType
+                + ".chromosomeLocation.start");
+        query.addConstraint(featureType + ".chromosome.organism.taxonId", Constraints.eq(taxonId));
+        if ("Gene".equals(featureType)) {
+            if ("7227".equals(taxonId)) {
+                query.addConstraint("Gene.dataSets.title",
+                        Constraints.eq("FlyBase Drosophila melanogaster data set"));
+            } else if ("6239".equals(taxonId)) {
+                //query.addConstraint("Gene.dataSets.title", Constraints.eq("We don't know this"));
+                query.addConstraint("Gene.symbol", Constraints.isNotNull());
+            }
+        }
+        if (chromosomeId != null) {
+            query.addConstraint(featureType + ".chromosome.primaryIdentifier",
+                    Constraints.eq(chromosomeId));
+        }
+        return query;
     }
 
     private static class IntRange implements Comparable<IntRange>
