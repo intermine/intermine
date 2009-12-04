@@ -392,7 +392,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     hasBioSeg = true;
                 } catch (SQLException e) {
                     // We don't have bioseg
-                    LOG.error("Database " + osAlias + " doesn't have bioseg", e);
+                    LOG.warn("Database " + osAlias + " doesn't have bioseg", e);
                 } finally {
                     if (c != null) {
                         try {
