@@ -1,3 +1,4 @@
+
 package samples;
 
 /*
@@ -37,7 +38,7 @@ public class ChromosomeCoverage
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        calculate("7227", "BindingSite", null);
+        calculate("7227", "TFBindingSite", null);
     }
 
     private static void calculate(String taxonId, String featureType, String chromosomeId) {
@@ -52,9 +53,16 @@ public class ChromosomeCoverage
         }
         List<List<String>> result = service.getResult(query, 100000);
         Map<String, Integer> chromosomeSizes = new HashMap<String, Integer>();
+        int genomeSize = 0;
         for (List<String> row : result) {
             if (row.size() == 2) {
-                chromosomeSizes.put(row.get(0), Integer.parseInt(row.get(1)));
+                String chrName = row.get(0);
+                int size = Integer.parseInt(row.get(1));
+                if (chrName.startsWith("U")) {
+                    continue;
+                }
+                genomeSize += size;
+                chromosomeSizes.put(chrName, size);
             }
         }
         query = new PathQuery(model);
@@ -67,8 +75,11 @@ public class ChromosomeCoverage
             query.addConstraint(featureType + ".chromosome.primaryIdentifier",
                     Constraints.eq(chromosomeId));
         }
+
+        System.out.println("\nCoverage report for " + featureType + "s in organism " + taxonId + ":\n");
         String currentChromosome = null;
         int coverage = 0;
+        int totalCoverage = 0;
         int lastEnd = Integer.MIN_VALUE;
         int lastStart = Integer.MIN_VALUE;
         result = service.getResult(query, 10000000);
@@ -77,10 +88,15 @@ public class ChromosomeCoverage
         }
         for (List<String> row : result) {
             String chromosome = row.get(0);
+
+            if (!chromosomeSizes.containsKey(chromosome)) {
+                continue;
+            }
             int start = Integer.parseInt(row.get(1));
             int end = Integer.parseInt(row.get(2));
             if ((currentChromosome != null) && !currentChromosome.equals(chromosome)) {
-                printStatus(currentChromosome, coverage, chromosomeSizes);
+                printStatus("Chromosome " + currentChromosome, coverage, chromosomeSizes.get(currentChromosome));
+                totalCoverage += coverage;
                 coverage = 0;
                 lastEnd = Integer.MIN_VALUE;
                 lastStart = Integer.MIN_VALUE;
@@ -96,7 +112,10 @@ public class ChromosomeCoverage
                 lastEnd = end;
             }
         }
-        printStatus(currentChromosome, coverage, chromosomeSizes);
+        totalCoverage += coverage;
+        printStatus("Chromosome " + currentChromosome, coverage, chromosomeSizes.get(currentChromosome));
+        printStatus("\nWhole geneome", totalCoverage, genomeSize);
+        System.out.println("\n");
     }
 
     private static Model getModel() {
@@ -104,13 +123,12 @@ public class ChromosomeCoverage
         return service.getModel();
     }
 
-    private static void printStatus(String chromosome, int coverage,
-            Map<String, Integer> chromosomeSizes) {
-        if (chromosomeSizes.containsKey(chromosome)) {
-            System.out.println("Chromosome " + chromosome + " has coverage " + coverage
-                    + " with size " + chromosomeSizes.get(chromosome)
+    private static void printStatus(String startMessage, int coverage, Integer size) {
+        if (size != null) {
+            System.out.println(startMessage + " has coverage " + coverage
+                    + " with size " + size
                     + " equals coverage of " + (Math.round(((10000.0 * coverage)
-                                / chromosomeSizes.get(chromosome))) / 100.0) + "%");
+                                / size)) / 100.0) + "%");
         }
     }
 }
