@@ -153,4 +153,36 @@ public class NameUtil
             return newName;
         }
     }
+    
+    private static final String QUERY_NAME_PREFIX = "query_";
+
+    /**
+     * Return a query name that isn't currently in use.
+     *
+     * @param savedQueries the Map of current saved queries
+     * @return the new query name
+     */
+    public static String findNewQueryName(Map savedQueries) {
+        return findNewQueryName(savedQueries, null);
+    }
+
+    /**
+     * Return a query name that isn't currently in use, returning the given name
+     * if it is available.
+     *
+     * @param savedQueries the Map of current saved queries
+     * @param name name to return if it's available
+     * @return the new query name
+     */
+    public static String findNewQueryName(Map savedQueries, String name) {
+        if (name != null && !savedQueries.containsKey(name)) {
+            return name;
+        }
+        for (int i = 1;; i++) {
+            String testName = QUERY_NAME_PREFIX + i;
+            if (savedQueries == null || savedQueries.get(testName) == null) {
+                return testName;
+            }
+        }
+    }
 }
