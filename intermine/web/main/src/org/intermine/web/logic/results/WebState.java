@@ -12,6 +12,7 @@ package org.intermine.web.logic.results;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This class saves things related to the state of web GUI. It  is meant as box for future
@@ -22,7 +23,7 @@ public class WebState
 {
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
-
+    protected Map<String, String> userOptions = new TreeMap();
     private Map<String, Object> statesMap = new HashMap<String, Object>();
 
     /**
@@ -64,6 +65,31 @@ public class WebState
      */
     public Map<String, Object> getStates() {
         return statesMap;
+    }
+    
+    /**
+     * Return the userOption
+     * @param name the name
+     * @return the value
+     */
+    public String getUserOption(String name) {
+        return userOptions.get(name);
+    }
+
+    /**
+     * Set the userOption
+     * @param name the userOption name
+     * @param value the userOption value
+     */
+    public void setUserOption(String name, String value) {
+        userOptions.put(name, value);
+    }
+    
+    /**
+     * @return the userOptions
+     */
+    public Map<String, String> getUserOptionsMap() {
+        return userOptions;
     }
 }
 

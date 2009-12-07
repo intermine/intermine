@@ -18,8 +18,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.results.WebState;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the submenu at the top of every page
@@ -38,13 +38,13 @@ public class SubMenuController extends TilesAction
         throws Exception {
         String subtab = request.getParameter("subtab");
         String pageName = (String) request.getAttribute("pageName");
-        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+        WebState webState = SessionMethods.getWebState(request.getSession());
 
         if (subtab != null && subtab.length() != 0) {
-            profile.setUserOption("subtab" + pageName, subtab);
+            webState.setUserOption("subtab" + pageName, subtab);
         }
 
-        request.setAttribute("userOptionMap", profile.getUserOptionsMap());
+        request.setAttribute("userOptionMap", webState.getUserOptionsMap());
         return null;
     }
 
