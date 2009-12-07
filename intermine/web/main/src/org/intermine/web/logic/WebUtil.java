@@ -22,10 +22,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.Profile;
+import org.intermine.util.StringUtil;
 
 /**
  * Utility methods for the web package.
@@ -117,7 +122,31 @@ public abstract class WebUtil
     }
 
 
+    /**
+     * Look at the current webapp page and subtab and return the help page and tab.
+     * @param request the request object
+     * @return the help page and tab
+     */
+    public static String[] getHelpPage(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        ServletContext servletContext = session.getServletContext();
+        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String pageName = (String) request.getAttribute("pageName");
+        String subTab = profile.getUserOption("subtab" + pageName);
 
+        String prop;
+        if (subTab == null) {
+            prop = webProps.getProperty("help.page." + pageName);
+        } else {
+            prop = webProps.getProperty("help.page." + pageName + "." + subTab);
+        }
+
+        if (prop == null) {
+            return new String[0];
+        }
+        return StringUtil.split(prop, ":");
+    }
 
     /**
      * Formats column name. Replaces " &gt; " with "&amp;nbsp;&amp;gt; ".
