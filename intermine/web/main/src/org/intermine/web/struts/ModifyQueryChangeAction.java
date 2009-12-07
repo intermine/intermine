@@ -24,9 +24,9 @@ import org.apache.struts.util.MessageResources;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -142,7 +142,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         String queryName = request.getParameter("name");
         SavedQuery sq = profile.getHistory().get(queryName);
         sq = SessionMethods.saveQuery(session,
-                SaveQueryHelper.findNewQueryName(profile.getSavedQueries(), queryName),
+                NameUtil.findNewQueryName(profile.getSavedQueries(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
         recordMessage(new ActionMessage("savedInSavedQueries.message", sq.getName()), request);
         return new ForwardParameters(mapping.findForward("mymine"))
