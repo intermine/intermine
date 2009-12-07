@@ -117,6 +117,8 @@ public class SequenceProcessor extends ChadoProcessor
     static final String SEQUENCE_STRING = "sequence";
     static final String LENGTH_STRING = "length";
 
+    static final String SOURCE_STRING = "source";
+
     /**
      * Create a new SequenceProcessor
      * @param chadoDBConverter the ChadoDBConverter that is controlling this processor
@@ -381,9 +383,25 @@ public class SequenceProcessor extends ChadoProcessor
                 }
             }
         }
+
+        // check interMineType not chadoType - FlyBase subclass converts some Genes to Alleles
+        if (fdat.getInterMineType().endsWith("Gene")) {
+            setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
+        }
+        
         addToFeatureMap(featureId, fdat);
 
         return true;
+    }
+
+    protected void setGeneSource(Integer imObjectId,
+            String dataSourceName) throws ObjectStoreException {
+        // for gene in modENCODE
+        ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
+        if (cd.getFieldDescriptorByName("source") != null){
+            // if it is there (e.g. modmine) let's set it
+            setAttribute(imObjectId, "source", dataSourceName);
+        }
     }
 
     /**
@@ -1583,7 +1601,7 @@ public class SequenceProcessor extends ChadoProcessor
                 }
                 continue;
             }
-            Integer pubMedId = Integer.parseInt(res.getString("pub_db_identifier"));
+            Integer pubMedId = fixPubMedId(res.getString("pub_db_identifier"));
             if (lastPubFeatureId != null && !featureId.equals(lastPubFeatureId)) {
                 makeFeaturePublications(lastPubFeatureId, currentPublicationIds);
                 currentPublicationIds = new ArrayList<String>();
@@ -1599,6 +1617,16 @@ public class SequenceProcessor extends ChadoProcessor
         }
         LOG.info("Created " + count + " publications");
         res.close();
+    }
+
+    /**
+     * Parser a pubmed id from a results string, extracted to a method so subclasses can override
+     * and fix prefixed pubmed ids.
+     * @param string pubmed id fetched from databaase
+     * @return the pubmed id
+     */
+    protected Integer fixPubMedId(String pubmedStr) {
+        return Integer.parseInt(pubmedStr);
     }
 
     /**

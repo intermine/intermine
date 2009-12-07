@@ -55,7 +55,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     private Results results;
     private int widgetTotal = 0;
     private static final double MINIMUM_VALUE = 0.0;
-    private static CacheMap<String, XYSeries> FEATURE_LENGTH_CACHE = new CacheMap();
+    private static CacheMap<String, XYSeries> featureLengthCache = new CacheMap();
     
     /**
      * Creates a FeatureLengthDataSetLdr used to retrieve, organise
@@ -114,7 +114,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     throws ClassNotFoundException {
 
         Query q = getQuery(organismName, bag);
-        XYSeries series = FEATURE_LENGTH_CACHE.get(q.toString());
+        XYSeries series = featureLengthCache.get(q.toString());
 
         /** 
          * actual   = series will always be null for bag queries, we probably don't want to cache 
@@ -149,8 +149,11 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
                                                                         stats.getMax(), 
                                                                         total, seriesName);
             if (bag == null) {
-                FEATURE_LENGTH_CACHE.put(q.toString(), series);
+                featureLengthCache.put(q.toString(), series);
+                LOG.info("caching feature length results:" + q.toString());
             }
+        } else {
+            LOG.info("using cached feature length results:" + q.toString());
         }
 //        
 //        LOG.error("total:" + total);

@@ -23,9 +23,10 @@ DATADIR=$SUBDIR/chado
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
 
+P=
+
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 #SOURCES=modmine-static,modencode-metadata,entrez-organism
-SOURCES=modmine-static,modencode-metadata
 #SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
@@ -67,7 +68,8 @@ SUB=n            # if we are using a single submission, SUB=dccid
 INCR=y
 FULL=n
 META=n           # it builds a new mine with static and metadata only
-RESTART=n
+RESTART=n        # restart building recovering last dumped db
+QRESTART=n       # restart building using current db
 
 progname=$0
 
@@ -80,6 +82,7 @@ $progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DC
 	-M: test build (metadata only)
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
+  -P project_name: as -M, but restricted to a project.
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -128,16 +131,18 @@ EOF
 	exit 0
 }
 
-while getopts ":FMRVabf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
 	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
+	Q )  echo; echo "Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	P )  echo; P=$OPTARG;echo "Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
 	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
-	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is not run)" ; PREP4FULL=y;;
+	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
 	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files: "; more $INFILE;;
 	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo; echo "Interactive mode" ; INTERACT=y;;
@@ -155,27 +160,33 @@ done
 shift $(($OPTIND - 1))
 
 #
+# NOTE: all modencode sources are supposed to be on the same server, etc.
 # Getting some values from the properties file.
-# NOTE: it is assumed that dbhost and dbuser are the same for chado and modmine!!
-#     -a to grep also (alleged) binary files
+# -m1 to grep only the first occurrence (multiple modencode sources)
 #
 
-DBHOST=`grep -a metadata.datasource.serverName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBUSER=`grep -a metadata.datasource.user $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-DBPW=`grep -a metadata.datasource.password $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-CHADODB=`grep -a metadata.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
-MINEDB=`grep -a db.production.datasource.databaseName $PROPDIR/modmine.properties.$REL | awk -F "=" '{print $2}'`
+DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.serverName  | awk -F "=" '{print $2}'`
+MINEHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 production.datasource.serverName | awk -F "=" '{print $2}'`
+DBUSER=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.user | awk -F "=" '{print $2}'`
+DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.password | awk -F "=" '{print $2}'`
+CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
+MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
 LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
+SOURCES=modmine-static,modencode-"$P"metadata
+
 echo
 echo "================================="
-echo "Building modmine-$REL on $DBHOST."
+echo "Building modmine-$REL on $MINEHOST."
 echo "================================="
 echo "Log: $LOG"
 echo
 echo "current directory: $MINEDIR"
 echo
+
+#echo $P
+echo $SOURCES
 
 if [ -n "$1" ]
 then
@@ -635,8 +646,14 @@ ant $V -Drelease=$REL -Dsource=modencode-metadata-inc || { printf "%b" "\n modMi
 elif [ $RESTART = "y" ]
 then
 # restart build after failure
-echo; echo "Restating build.."
+echo; echo "Restarting build using last available back-up db.."
 ../bio/scripts/project_build -V $REL $V -l -t localhost /tmp/mod-all\
+|| { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
+elif [ $QRESTART = "y" ]
+then
+# restart build without recovering last dumped db
+echo; echo "Quick restart of the build (using current db).."
+../bio/scripts/project_build -V $REL $V -r -t localhost /tmp/mod-all\
 || { printf "%b" "\n modMine build (restart) FAILED.\n" ; exit 1 ; }
 elif [ $META = "y" ]
 then

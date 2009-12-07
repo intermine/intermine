@@ -47,6 +47,7 @@ import org.intermine.xml.full.ReferenceList;
 public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
+    private static final String NOLOG = "don't log query";
 
     // submission maps
     // ---------------
@@ -258,7 +259,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME querying: " + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME: " + (System.currentTimeMillis() - bT));
+        return res;
+    }
+    /**
+     * method to wrap the execution of a query (without log info)
+     * @param connection
+     * @param query
+     * @param flag for not logging
+     * @return the result set
+     * @throws SQLException
+     */
+    private ResultSet doQuery(Connection connection, String query, String nolog)
+    throws SQLException {
+        // with 3rd argument does not log query and timing
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
@@ -320,7 +336,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subFeatureMap, chadoExperimentId,queryList);
         }
-        LOG.info("TIME processing features: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME features: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -359,7 +375,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             collection.addRefId(submissionItemId);
             getChadoDBConverter().store(collection, featureObjectId);
         }
-        LOG.info("TIME processing data_feature table: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME data_feature table: " + (System.currentTimeMillis() - bT));
     }
 
     private ResultSet getDataFeatureResultSet(Connection connection, String queryList)
@@ -512,7 +528,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         traverseDag();
         // set the dag level as an attribute to applied protocol
         setAppliedProtocolSteps(connection);
-        LOG.info("TIME processing DAG: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME DAG: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -699,7 +715,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             storeInProjectMaps(pro, project, intermineObjectId);
         }
         LOG.info("created " + projectIdMap.size() + " project");
-        LOG.info("TIME processing projects: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME projects: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -770,7 +786,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             storeInLabMaps(lab, prov, intermineObjectId);
         }
         LOG.info("created " + labIdMap.size() + " labs");
-        LOG.info("TIME processing labs: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME labs: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -837,7 +853,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             experimentIdRefMap .put(name, exp.getIdentifier());
         }
         LOG.info("created " + expSubMap.size() + " experiments");
-        LOG.info("TIME processing experiments: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME experiments: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -911,7 +927,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
         LOG.info("created " + submissionOrganismMap.size() + " organisms");
-        LOG.info("TIME processing organisms: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
 }
 
 
@@ -1001,7 +1017,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " submissions");
         res.close();
-        LOG.info("TIME processing submissions: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME submissions: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -1060,7 +1076,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " submission properties");
         res.close();
-        LOG.info("TIME processing submission properties: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME submission properties: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -1139,7 +1155,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
         LOG.info("created " + count + " experimental factors");        
-        LOG.info("TIME processing experimental factors: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME experimental factors: " + (System.currentTimeMillis() - bT));
 }
 
     /**
@@ -1196,7 +1212,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         res.close();
         LOG.info("created " + count + " protocols");
-        LOG.info("TIME processing protocols: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME protocols: " + (System.currentTimeMillis() - bT));
 }
 
     /**
@@ -1246,7 +1262,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " protocol attributes");
         res.close();
-        LOG.info("TIME processing protocol attributes: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME protocol attributes: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -1302,7 +1318,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " appliedProtocol");
         res.close();
-        LOG.info("TIME processing applied protocols: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME applied protocols: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -1396,7 +1412,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " SubmissionData");
         res.close();
-        LOG.info("TIME processing submission data: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME submission data: " + (System.currentTimeMillis() - bT));
     }
 
     /**
@@ -1432,7 +1448,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " where a.attribute_id=da.attribute_id "
             + " and da.data_id=" + dataId
             + " and a.heading='official name'";
-        return doQuery(connection, query);
+        return doQuery(connection, query, NOLOG);
     }
 
     /**
@@ -1504,7 +1520,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         LOG.info("created " + count + " data attributes");
         res.close();
-        LOG.info("TIME processing data attributes: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME data attributes: " + (System.currentTimeMillis() - bT));
     }
 
     // first value in the list of synonyms is the 'preferred' value
@@ -1666,10 +1682,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
-            LOG.info("EX unified factor names: " + exFactorNames);
-            
-            LOG.info("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
-            LOG.debug("PROP " + dccId + " typeToProp entries: " + typeToProp.entrySet());                        
+            LOG.debug("EX unified factor names: " + exFactorNames);            
+            LOG.debug("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
             
             List<Item> allPropertyItems = new ArrayList<Item>();
             
@@ -1711,14 +1725,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
             arrayItems.addAll(createFromWikiPage("Array", typeToProp, makeLookupList("array")));
-            LOG.info("ARRAY: " + typeToProp.get("array"));
+            LOG.debug("ARRAY: " + typeToProp.get("array"));
             if (arrayItems.isEmpty()) {
                 arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
                         typeToProp, new String[] {
                         "adf.official name"
                         }));
                 if (!arrayItems.isEmpty()) {
-                    LOG.info("Attribute found in other wiki pages: " 
+                    LOG.debug("Attribute found in other wiki pages: " 
                             + dccId + " ARRAY ");                    
                 }
             }
@@ -1744,7 +1758,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<Item> reagentItems = new ArrayList<Item>();
             reagentItems.addAll(createFromWikiPage("SubmissionProperty", typeToProp, 
                     makeLookupList("dsRNA")));
-            LOG.info("RNA exFactorNames: " + exFactorNames);
             if (!reagentItems.isEmpty() && exFactorNames.contains("RNAi reagent")) {
                 createExperimentalFactors(submissionId, "RNAi reagent", reagentItems);
                 exFactorNames.remove("RNAi reagent");
@@ -1756,13 +1769,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             antibodyItems.addAll(createFromWikiPage("Antibody", typeToProp, 
                     makeLookupList("antibody")));
             if (antibodyItems.isEmpty()) {
-                LOG.info("ANTIBODY: " + typeToProp.get("antibody"));
+                LOG.debug("ANTIBODY: " + typeToProp.get("antibody"));
                 antibodyItems.addAll(lookForAttributesInOtherWikiPages("Antibody",
                         typeToProp, new String[] {
                         "antibody.official name"
                         }));
                 if (!antibodyItems.isEmpty()) {
-                    LOG.info("Attribute found in other wiki pages: " 
+                    LOG.debug("Attribute found in other wiki pages: " 
                             + dccId + " ANTIBODY ");                    
                 }
             }
@@ -1788,10 +1801,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     LOG.info("Attribute found in other wiki pages: " 
                             + dccId + " TISSUE");                    
                 } 
-                // if we want to fill it with 'whole organism' 
-                //   else {
-                //         tissueIds.add(createNonWikiSubmissionPropertyItem("Tissue", "whole organism"));
-                //        }
             }
             storeSubmissionCollection(storedSubmissionId, "tissues", tissueItems);
             if (!tissueItems.isEmpty() && exFactorNames.contains("tissue")) {
@@ -1819,18 +1828,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // Store Submission.properties/ SubmissionProperty.submissions
             storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
             
-            
-            
             // deal with remaining factor names (e.g. the ones for which we did
             // not find a corresponding attribute
-            LOG.info("EX remaining factor names: " + dccId + " - " + exFactorNames);
             for (String exFactor : exFactorNames) {
                 String type = ef.efTypes.get(exFactor);
-                LOG.info("EXX type: " + type + " - names: " + exFactorNames);
                 createEFItem(submissionId, type, exFactor, null);
             }        
         }
-        LOG.info("TIME processing submission properties: " + (System.currentTimeMillis() - bT));
+        LOG.info("PROCESS TIME submission properties: " + (System.currentTimeMillis() - bT));
     }
 
     
@@ -1876,7 +1881,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (propertyIdentifier != null) {
                 ef.setReference("property", propertyIdentifier);
             }
-            LOG.info("CREATE EF name: " + efName + "|" + type + "|" + current);
+            LOG.info("ExFactor created for sub " + current + ":" + efName + "|" + type);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
             eFactorIdMap.put(efName, intermineObjectId);
@@ -2597,8 +2602,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // store Submission.experimentType if it can be inferred from protocols
     private void setSubmissionExperimentType(Integer storedSubId, List<Integer> protocolIds) 
     throws ObjectStoreException {
-        long bT = System.currentTimeMillis(); // to monitor time spent in the process
-
         Set<String> protocolTypes = new HashSet<String>();
         for (Integer protocolId : protocolIds) {
             protocolTypes.add(protocolTypesMap.get(protocolId).trim());
@@ -2609,7 +2612,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Attribute expTypeAtt = new Attribute("experimentType", experimentType);
             getChadoDBConverter().store(expTypeAtt, storedSubId);
         }
-        LOG.info("TIME setting experiment types: " + (System.currentTimeMillis() - bT));
     }
     
     // Fetch protocols used to create reagents that are inputs to this submission, these are
@@ -2740,17 +2742,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer thisSubmissionId = subs.next();
             List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
-            LOG.info("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
+            LOG.debug("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
             Iterator<String> ef = eFactors.iterator();
             ReferenceList collection = new ReferenceList();
             collection.setName("experimentalFactors");
             while (ef.hasNext()) {
                 String currentEF = ef.next();
                 collection.addRefId(eFactorIdRefMap.get(currentEF));
-                LOG.info("EF REFS: ->" + currentEF + " ref: " + eFactorIdRefMap.get(currentEF));
+                LOG.debug("EF REFS: ->" + currentEF + " ref: " + eFactorIdRefMap.get(currentEF));
             }
             if (!collection.equals(null)) {
-                LOG.info("EF REFS: ->" + thisSubmissionId + "|"
+                LOG.debug("EF REFS: ->" + thisSubmissionId + "|"
                         + submissionMap.get(thisSubmissionId).interMineObjectId);
                 getChadoDBConverter().store(collection,
                         submissionMap.get(thisSubmissionId).interMineObjectId);

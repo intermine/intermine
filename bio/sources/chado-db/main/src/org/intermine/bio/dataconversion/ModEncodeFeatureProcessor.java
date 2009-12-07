@@ -196,41 +196,22 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 
         // adding scores
         processFeatureScores(connection);
-        
-        // adding gene sources
-        processGeneSource(connection, featureDataMap);
     }
 
 
     /**
-     * Method to add datasource for gene
+     * Method to set the source for gene
+     * for modencode datasources it will add the title 
      * @param connection
      * @param fdat feature information
      */
-    private void processGeneSource(Connection connection,
-            Map<Integer, FeatureData> featureDataMap) throws SQLException,
-            ObjectStoreException {
-        long bT = System.currentTimeMillis();
-        
-        String source = null;
-        String dataSourceName = getChadoDBConverter().getDataSourceName();
-        // this should always be the case, could avoid the check..
-        if (dataSourceName.equalsIgnoreCase("modENCODE")){
-            source = dataSourceName + "-" + title;
-        } else {
-            source = dataSourceName;
-        }
-        
-        for (Map.Entry<Integer, FeatureData> entry: featureDataMap.entrySet()) {
-            FeatureData fdat = entry.getValue();
-            String type = fdat.getInterMineType();
-            if (type.equalsIgnoreCase("gene")){
-                Attribute scoreAttribute = new Attribute("source", source);
-                getChadoDBConverter().store(scoreAttribute, fdat.getIntermineObjectId());
-            }
-        }
-        LOG.info("TIME GENE SOURCE: " + (System.currentTimeMillis() - bT));
+    @Override
+    protected void setGeneSource(Integer imObjectId,
+            String dataSourceName) throws ObjectStoreException {
+        String source = dataSourceName + "-" + title;
+        setAttribute(imObjectId, "source", source);
     }
+
 
     /**
      * Override method that adds completed features to featureMap.  Also put features that will
@@ -274,7 +255,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING MATCH TYPES" + ":" + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME match types" + ":" + (System.currentTimeMillis() - bT));
         return res;
     }
     

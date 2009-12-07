@@ -238,11 +238,11 @@
   </p>
 </div>
 
-<!--
+
 <tiles:insert page="/bagDisplayers.jsp">
    <tiles:put name="bag" beanName="bag"/>
 </tiles:insert>
- -->
+
 </TD></TR>
 </TABLE>
 
