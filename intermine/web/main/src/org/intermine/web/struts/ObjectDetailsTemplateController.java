@@ -34,7 +34,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Controller for an inline table created by running a template on an object details page.
@@ -64,20 +63,20 @@ public class ObjectDetailsTemplateController extends TilesAction
         Map<String, List<TemplateValue>> templateValues;
 
         // this is either a report page for an InterMineObject or a list analysis page
-        if (displayObject != null) {
-            InterMineObject obj = displayObject.getObject();
-            templateValues = TemplateHelper.objectToTemplateValues(template, obj);
-        } else if (interMineBag != null) {
-            templateValues = TemplateHelper.bagToTemplateValues(template, interMineBag.getName());
-        } else {
-            // should only have been called with an object or a bag
-            return null;
-        }
-
+        
         TemplateQuery populatedTemplate;
         try {
-            populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
-                    templateValues);
+            if (displayObject != null) {
+                InterMineObject obj = displayObject.getObject();
+                populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, 
+                        obj);
+            } else if (interMineBag != null) {
+                populatedTemplate = TemplatePopulator.populateTemplageWithBag(template,
+                        interMineBag.getName());
+            } else {
+                // should only have been called with an object or a bag
+                return null;
+            }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error setting up template '" + template.getName() + "' on report page for"
                     + ((displayObject == null) ? " bag " + interMineBag.getName() :

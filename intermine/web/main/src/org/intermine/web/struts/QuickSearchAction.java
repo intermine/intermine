@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -29,12 +28,10 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.template.TemplateValue;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * @author Xavier Watkins
@@ -97,10 +94,9 @@ public class QuickSearchAction extends InterMineAction
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 
             String value = qsf.getParsedValue();
-            Map<String, List<TemplateValue>> templateValues = 
-                TemplateHelper.singleConstraintTemplateValues(template, ConstraintOp.EQUALS, value);
-            TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
-                    templateValues);
+            TemplateQuery populatedTemplate = 
+                TemplatePopulator.populateTemplateOneConstraint(template, ConstraintOp.EQUALS, 
+                        value);
             
             String qid = SessionMethods.startQuery(clientState, session, messages, false,
                                                    populatedTemplate);

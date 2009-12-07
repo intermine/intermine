@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +34,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.template.TemplateValue;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -43,7 +41,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Action to handle events from the object details page
@@ -78,30 +75,25 @@ public class ModifyDetails extends DispatchAction
         TemplateManager templateManager = SessionMethods.getTemplateManager(session);
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
-        
-        Map<String, List<TemplateValue>> templateValues;
-        if (idForLookup != null && idForLookup.length() != 0) {
-            Integer objectId = new Integer(idForLookup);
-            ObjectStore os = SessionMethods.getObjectStore(servletContext);
-            InterMineObject object = os.getObjectById(objectId);
-            templateValues = TemplateHelper.objectToTemplateValues(template, object);
-        } else {
-            templateValues = TemplateHelper.bagToTemplateValues(template, bagName);
-        }
-        String identifier = "itt." + template.getName() + "." + idForLookup;
-
-        
         TemplateQuery populatedTemplate;
         try {
-            populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
-                    templateValues);
+            if (idForLookup != null && idForLookup.length() != 0) {
+                Integer objectId = new Integer(idForLookup);
+                ObjectStore os = SessionMethods.getObjectStore(servletContext);
+                InterMineObject object = os.getObjectById(objectId);
+                populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
+            } else {
+                populatedTemplate = TemplatePopulator.populateTemplageWithBag(template, bagName);
+            }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error running up template '" + template.getName() + "' from report page for"
                     + ((idForLookup == null) ? " bag " + bagName :
                         " object " + idForLookup) + ".");
             return null;
-        }  
+        }     
+        String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;
 
+        
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
         PagedTable pagedResults = new PagedTable(webResults, 10);
