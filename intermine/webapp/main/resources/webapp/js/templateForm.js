@@ -106,7 +106,7 @@ updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
 function forwardToLinks() {
 	// needed validation that bag is not used, validation is performed in the Struts action as well
 	if (isBagUsed()) {
-		new Insertion.Bottom('error_msg','Link could not be created. This template contains list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list contraint.<br/>');
+		new Insertion.Bottom('error_msg','Link could not be created. This template contains a list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list constraint.<br/>');
 		haserrors=1;
 		jQuery('#error_msg').fadeIn();
 		return;
@@ -127,7 +127,7 @@ function isBagUsed() {
 	return false;
 }
 
-// FIXME this is broken
+// FIXME this is broken - setSelectElement is in imutils
 function filterByTag(tag) {
 	if (tag != "") {
 		if (origSelectValues == null) {

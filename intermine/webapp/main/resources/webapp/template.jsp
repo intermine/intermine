@@ -38,7 +38,7 @@
 	<%-- description --%>
 	<div class="templateDescription">${templateQuery.description}</div>
 	
-		<ol class="templateForm">
+	<ol class="templateForm">
 			        
 		<%-- constraint list --%>
 		<c:forEach items="${templateQuery.editableNodes}" var="node">
@@ -61,7 +61,7 @@
 	            </c:if>
 				<li>
 				
- 			  <%-- this should be moved --%>
+ 			  <%-- this should be moved to the controller --%>
               <script type="text/javascript">
                 <!--
                    fixedOps[${index-1}] = new Array();
@@ -299,6 +299,8 @@
         </c:forEach>
       </c:forEach>
     </ol>
+    
+<%-- edit/submit buttons --%>
 <c:if test="${empty previewTemplate}">
 	<br/>
      <table width="100%">
@@ -321,7 +323,7 @@
 
 <%-- embed link --%>
 <c:if test="${empty previewTemplate}">
-	<div style="font-style: italic;"><b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService">Help</a></div>
+	<div style="font-style: italic;"><b>NEW:</b> <a href="javascript:forwardToLinks()">Embed</a> this query. <a href="http://intermine.org/wiki/TemplateWebService#a2.2Templatewebservice">Help</a></div>
 </c:if>
 
 <%-- login msg --%>
