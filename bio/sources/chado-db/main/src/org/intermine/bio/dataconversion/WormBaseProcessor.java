@@ -19,7 +19,9 @@ import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
+import org.intermine.xml.full.Item;
 
 /**
  * A converter for chado that handles WormBase specific configuration.
@@ -38,6 +40,45 @@ public class WormBaseProcessor extends SequenceProcessor
         super(chadoDBConverter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Integer store(Item feature, int taxonId) throws ObjectStoreException {
+        processItem(feature, new Integer(taxonId));
+        Integer itemId = super.store(feature, taxonId);
+        return itemId;
+    }
+    
+    /**
+     * Method to add dataSets and DataSources to items before storing
+     */
+    private void processItem(Item item, Integer taxonId) {
+        if (item.getClassName().equals("DataSource")
+            || item.getClassName().equals("DataSet")
+            || item.getClassName().equals("Organism")
+            || item.getClassName().equals("Sequence")) {
+            return;
+        }
+
+        if (taxonId == null) {
+            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = getClass().getClassLoader();
+            Thread.currentThread().setContextClassLoader(classLoader);
+            try {
+                throw new RuntimeException("getCurrentTaxonId() returned null while processing "
+                                           + item);
+            } finally {
+                Thread.currentThread().setContextClassLoader(currentClassLoader);
+            }
+        }
+        ChadoDBConverter converter = getChadoDBConverter();
+        DataSetStoreHook.setDataSets(getModel(), item,
+                                     converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
+                                     converter.getDataSourceItem().getIdentifier());
+    }
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -102,5 +143,18 @@ public class WormBaseProcessor extends SequenceProcessor
         } else {
             return identifier;
         }
+    }
+    
+    /**
+     * Wormbase chado has pmid prefixed to pubmed identifiers
+     * @param string pubmed id fetched from databaase
+     * @return the pubmed id
+     */
+    protected Integer fixPubMedId(String pubmedStr) {
+        String prefix = "pmid";
+        if (pubmedStr.startsWith(prefix)) {
+            pubmedStr = pubmedStr.substring(prefix.length());
+        }
+        return Integer.parseInt(pubmedStr);
     }
 }
