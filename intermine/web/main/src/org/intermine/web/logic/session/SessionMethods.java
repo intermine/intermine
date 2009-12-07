@@ -43,6 +43,7 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -60,7 +61,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
-import org.intermine.web.logic.query.SaveQueryHelper;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
@@ -525,7 +525,7 @@ public class SessionMethods
 
                         if (saveQuery) {
                             String queryName =
-                                SaveQueryHelper.findNewQueryName(profile.getHistory());
+                                NameUtil.findNewQueryName(profile.getHistory());
                             pathQuery.setInfo(pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),

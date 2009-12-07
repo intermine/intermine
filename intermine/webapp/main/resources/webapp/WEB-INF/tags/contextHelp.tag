@@ -5,7 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <%
-   String[] results = org.intermine.web.logic.TagUtil.getHelpPage(request);
+   String[] results = org.intermine.web.logic.WebUtil.getHelpPage(request);
    if (results.length > 0) {
       request.setAttribute("helpPage", results[0]);
       if (results.length > 1 && results[1] != null) {
