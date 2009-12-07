@@ -34,6 +34,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -59,7 +60,7 @@ public class MyMineController extends TilesAction
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
+                
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
          */
@@ -81,10 +82,12 @@ public class MyMineController extends TilesAction
                 }
             }
         }
+        
+        WebState webState = SessionMethods.getWebState(request.getSession());        
         // get the precomputed and summarised info
         if ((request.getParameter("subtab") != null && request.getParameter("subtab").equals(
                         "templates"))
-            || (profile.getUserOption("subtabmymine") != null && profile.getUserOption(
+            || (webState.getUserOption("subtabmymine") != null && webState.getUserOption(
                             "subtabmymine").equals("templates"))) {
             getPrecomputedSummarisedInfo(profile, session, request);
         }

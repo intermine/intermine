@@ -29,8 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.profile.Profile;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.results.WebState;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Utility methods for the web package.
@@ -128,12 +129,12 @@ public abstract class WebUtil
      * @return the help page and tab
      */
     public static String[] getHelpPage(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        HttpSession session = request.getSession();        
         ServletContext servletContext = session.getServletContext();
         Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        WebState webState = SessionMethods.getWebState(request.getSession());
         String pageName = (String) request.getAttribute("pageName");
-        String subTab = profile.getUserOption("subtab" + pageName);
+        String subTab = webState.getUserOption("subtab" + pageName);
 
         String prop;
         if (subTab == null) {
