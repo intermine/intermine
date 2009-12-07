@@ -10,7 +10,10 @@ package org.intermine.api.template;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +90,83 @@ public class TemplatePopulator
         return template;
     }
 
+    // TODO this method should be in api project
+    // TODO use a better exception type
+    public static  TemplateQuery populateTemplateWithObject(TemplateQuery template,
+            InterMineObject obj) {
+        Map<String, List<TemplateValue>> templateValues = 
+            new HashMap<String, List<TemplateValue>>();
+        
+        // TODO move out to common method between object and bag
+        if (template.getAllEditableConstraints().size() != 1) {
+            throw new RuntimeException("Template must have exactly one editable constraint to be "
+                    + " configured with an object.");
+        }
+        
+        // TODO check the types are compatible
+        PathNode node = template.getEditableNodes().get(0);
+            //String editableNodeType = 
+            //if (!TypeUtil.isInstanceOf(obj, className))
+            
+        Constraint constraint = template.getEditableConstraints(node).get(0);
+        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS, 
+                obj, constraint.getCode());
+        templateValue.setObjectConstraint(Boolean.TRUE);
+        templateValues.put(node.getPathString(), 
+                new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
+        
+        return TemplatePopulator.getPopulatedTemplate(template, templateValues);
+    }
+    
+    // TODO this method should be in api project
+    // TODO use a better exception type
+    public static  TemplateQuery populateTemplageWithBag(TemplateQuery template,
+            String bagName) {
+        Map<String, List<TemplateValue>> templateValues = 
+            new HashMap<String, List<TemplateValue>>();
+        
+        
+        // TODO move out to common method between object and bag
+        if (template.getAllEditableConstraints().size() != 1) {
+            throw new RuntimeException("Template must have exactly one editable constraint to be "
+                    + " configured with an object.");
+        }
+        
+        // TODO check the types are compatible
+        PathNode node = template.getEditableNodes().get(0);
+            //String editableNodeType = 
+            //if (!TypeUtil.isInstanceOf(obj, className))
+            
+        Constraint constraint = template.getEditableConstraints(node).get(0);
+        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN, 
+                bagName, constraint.getCode());
+        templateValue.setBagConstraint(Boolean.TRUE);
+        templateValues.put(node.getPathString(), 
+                new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
+        
+        return TemplatePopulator.getPopulatedTemplate(template, templateValues);
+    }
 
+    
+    public static TemplateQuery populateTemplateOneConstraint(
+            TemplateQuery template, ConstraintOp op, Object value) {
+        Map<String, List<TemplateValue>> templateValues = 
+            new HashMap<String, List<TemplateValue>>();
+        
+        if (template.getAllEditableConstraints().size() != 1) {
+            throw new RuntimeException("Template must have exactly one editable constraint to be "
+                    + " configured with a single value.");
+        }
+        PathNode node = template.getEditableNodes().get(0);
+        Constraint constraint = template.getEditableConstraints(node).get(0);
+        TemplateValue templateValue = new TemplateValue(node.getPathString(), op, value,
+                constraint.getCode());
+        templateValues.put(node.getPathString(), 
+                new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
+        
+        return TemplatePopulator.getPopulatedTemplate(template, templateValues);        
+    }
+    
     private static void checkPaths(Model model, Collection<List<TemplateValue>> collection,
             TemplateQuery templateQuery) {
         for (List<TemplateValue> col : collection) {

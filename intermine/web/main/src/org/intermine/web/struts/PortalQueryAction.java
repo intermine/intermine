@@ -43,7 +43,6 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.template.TemplateValue;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -61,7 +60,6 @@ import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * The portal query action handles links into flymine from external sites.
@@ -303,10 +301,8 @@ public class PortalQueryAction extends InterMineAction
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
         }
 
-        Map<String, List<TemplateValue>> templateValues = 
-            TemplateHelper.singleConstraintTemplateValues(template, ConstraintOp.EQUALS, extId);
-        TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(template, 
-                templateValues);
+        TemplateQuery populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
+                ConstraintOp.EQUALS, extId);
         
         SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 
