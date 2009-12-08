@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.api.profile.SavedQuery;
 
 /**
  * Utility methods for naming queries and lists.
@@ -128,7 +127,7 @@ public class NameUtil
      * @param allBags a list of all lists
      * @return a unique name for the list
      */
-    public static String generateNewName(String listName, Set<String> listNames) {
+    public static String generateNewName(Set<String> listNames, String listName) {
         int i = 1;
         while (listNames.contains(listName + "_copy" + i)) {
             i++;
@@ -137,9 +136,10 @@ public class NameUtil
     }
     
     /**
-     * Checks that the query name doesn't already exist and returns a numbered name if it does.
-     * @param queryName the query name
-     * @param profile the user profile
+     * Checks that the name doesn't already exist and returns a numbered name if it does.  Used in
+     * situations where prompting the user for a good name wouldn't work, eg. query import
+     * @param name the query or list name
+     * @param names list of current names
      * @return a validated name for the query
      */
     public static String validateName(Collection<String> names, String name) {
@@ -151,7 +151,7 @@ public class NameUtil
             int i = 1;
             while (true) {
                 String testName = newName + "_" + i;
-                if (names.contains(testName)) {
+                if (!names.contains(testName)) {
                     return testName;
                 }
                 i++;
@@ -167,7 +167,7 @@ public class NameUtil
      * @param savedQueries the Map of current saved queries
      * @return the new query name
      */
-    public static String findNewQueryName(Map<String, SavedQuery> savedQueries) {
+    public static String findNewQueryName(Set<String> savedQueries) {
         return findNewQueryName(savedQueries, null);
     }
 
@@ -179,13 +179,13 @@ public class NameUtil
      * @param name name to return if it's available
      * @return the new query name
      */
-    public static String findNewQueryName(Map<String, SavedQuery> savedQueries, String name) {
-        if (StringUtils.isNotEmpty(name) && !savedQueries.containsKey(name)) {
+    public static String findNewQueryName(Set<String> savedQueries, String name) {
+        if (StringUtils.isNotEmpty(name) && !savedQueries.contains(name)) {
             return name;
         }
         for (int i = 1;; i++) {
             String testName = QUERY_NAME_PREFIX + i;
-            if (savedQueries == null || savedQueries.get(testName) == null) {
+            if (savedQueries == null || !savedQueries.contains(testName)) {
                 return testName;
             }
         }

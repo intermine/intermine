@@ -142,7 +142,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         String queryName = request.getParameter("name");
         SavedQuery sq = profile.getHistory().get(queryName);
         sq = SessionMethods.saveQuery(session,
-                NameUtil.findNewQueryName(profile.getSavedQueries(), queryName),
+                NameUtil.findNewQueryName(profile.getSavedQueries().keySet(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
         recordMessage(new ActionMessage("savedInSavedQueries.message", sq.getName()), request);
         return new ForwardParameters(mapping.findForward("mymine"))
