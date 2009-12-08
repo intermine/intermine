@@ -524,7 +524,8 @@ public class SessionMethods
                         SessionMethods.runQuery(session, messages, qid, action, completionCallBack);
 
                         if (saveQuery) {
-                            String queryName = NameUtil.findNewQueryName(profile.getHistory());
+                            String queryName = NameUtil.findNewQueryName(
+                                    profile.getHistory().keySet());
                             pathQuery.setInfo(pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),

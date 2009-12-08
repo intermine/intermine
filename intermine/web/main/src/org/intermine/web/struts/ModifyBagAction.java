@@ -136,7 +136,7 @@ public class ModifyBagAction extends InterMineAction
             if (newNameTextBox != null) {
                 newBagName = newNameTextBox;
             } else {
-                newBagName = NameUtil.generateNewName(selectedBagName, allBags.keySet());
+                newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
             }
 
             if (createBag(origBag, newBagName, profile)) {
@@ -158,7 +158,7 @@ public class ModifyBagAction extends InterMineAction
                     return;
                 }
                 
-                String newBagName = NameUtil.generateNewName(selectedBagName, allBags.keySet());
+                String newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
                 if (createBag(origBag, newBagName, profile)) {
                     msg += newBagName + ", ";
                 }
