@@ -148,7 +148,7 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
         }
-        String bagName = NameUtil.generateNewName("link", profile.getSavedBags());
+        String bagName = NameUtil.generateNewName("link", profile.getSavedBags().keySet());
 
         PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null,

@@ -87,8 +87,8 @@ public class MyMineController extends TilesAction
         // get the precomputed and summarised info
         if ((request.getParameter("subtab") != null && request.getParameter("subtab").equals(
                         "templates"))
-            || (webState.getUserOption("subtabmymine") != null && webState.getUserOption(
-                            "subtabmymine").equals("templates"))) {
+            || (webState.getSubtab("subtabmymine") != null 
+                    && webState.getSubtab("subtabmymine").equals("templates"))) {
             getPrecomputedSummarisedInfo(profile, session, request);
         }
         return null;
