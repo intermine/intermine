@@ -47,7 +47,7 @@ public class TextTable
      *
      * @param row an array of Strings - each String being a column
      */
-    public void addRow(String row[]) {
+    public void addRow(String... row) {
         for (int i = 0; i < row.length; i++) {
             int width = row[i].length();
             if (i >= columnWidths.size()) {
