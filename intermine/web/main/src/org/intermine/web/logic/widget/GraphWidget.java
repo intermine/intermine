@@ -164,7 +164,7 @@ public class GraphWidget extends Widget
 
             ((GraphWidgetConfig) config).setHeight(400);
             formatBarCharts(categoryPlot);
-
+            setURLGen(categoryRenderer);
         /* regular bar chart */
         } else {
             chart = ChartFactory.createBarChart(config.getTitle(), // chart title
