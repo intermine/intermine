@@ -76,6 +76,14 @@ public class WebState
     }
     
     /**
+     *  @param tab the tab/pageName name
+     * @return the subtab for the specified page, if any
+     */
+    public String getSubtab(String tab) {
+        return subtabs.get(tab);
+    }
+    
+    /**
      * map of tab --> subtab
      * @return the subtabs
      */

@@ -134,7 +134,7 @@ public abstract class WebUtil
         Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         WebState webState = SessionMethods.getWebState(request.getSession());
         String pageName = (String) request.getAttribute("pageName");
-        String subTab = webState.getUserOption("subtab" + pageName);
+        String subTab = webState.getSubtab("subtab" + pageName);
 
         String prop;
         if (subTab == null) {

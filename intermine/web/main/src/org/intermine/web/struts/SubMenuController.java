@@ -44,7 +44,7 @@ public class SubMenuController extends TilesAction
             webState.addSubtab("subtab" + pageName, subtab);
         }
 
-        request.setAttribute("tabsToSubtabs", webState.getSubtabs());
+        request.setAttribute("subtabs", webState.getSubtabs());
         return null;
     }
 

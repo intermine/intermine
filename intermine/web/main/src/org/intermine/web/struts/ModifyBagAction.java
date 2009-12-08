@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -100,13 +101,15 @@ public class ModifyBagAction extends InterMineAction
         return getReturn(mbf.getPageName(), mapping);
     }
 
-    private String getNewNameTextBox(HttpServletRequest request,
-            ModifyBagForm frm) {
+    // make sure new list name doesn't equal the default example list name
+    private String getNewNameTextBox(HttpServletRequest request, String newBagName) {
         Properties properties = (Properties) request.getSession()
                 .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String defaultName = properties.getProperty("lists.input.example");
-        String newBagName = frm.getNewBagName();
-        return NameUtil.getNewNameTextBox(defaultName, newBagName);
+        String exampleName = properties.getProperty("lists.input.example");
+        if (StringUtils.isEmpty(newBagName) && newBagName.equalsIgnoreCase(exampleName)) {
+            return null;
+        }
+        return newBagName;
     }
 
     private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
@@ -118,22 +121,24 @@ public class ModifyBagAction extends InterMineAction
         BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
-        String newNameTextBox = getNewNameTextBox(request, frm);
+        String newNameTextBox = getNewNameTextBox(request, frm.getNewBagName());
 
         if (selectedBagNames.length == 1) {
             String selectedBagName = selectedBagNames[0];
             InterMineBag origBag = allBags.get(selectedBagName);
 
-            String newBagName;
-            if (newNameTextBox != null) {
-                newBagName = newNameTextBox;
-            } else {
-                newBagName = NameUtil.generateNewName(selectedBagName, allBags);
-            }
             if (origBag == null) {
                 recordError(new ActionMessage("errors.bag.notfound"), request);
                 return;
             }
+            
+            String newBagName;
+            if (newNameTextBox != null) {
+                newBagName = newNameTextBox;
+            } else {
+                newBagName = NameUtil.generateNewName(selectedBagName, allBags.keySet());
+            }
+
             if (createBag(origBag, newBagName, profile)) {
                 recordMessage(new ActionMessage("bag.createdlists", newBagName), request);
             }
@@ -144,13 +149,16 @@ public class ModifyBagAction extends InterMineAction
             }
             String msg = "";
             for (int i = 0; i < selectedBagNames.length; i++) {
-                String selectedBagName = selectedBagNames[i];
-                String newBagName = NameUtil.generateNewName(selectedBagName, allBags);
+                
+                String selectedBagName = selectedBagNames[i];                
                 InterMineBag origBag = allBags.get(selectedBagName);
+                
                 if (origBag == null) {
                     recordError(new ActionMessage("errors.bag.notfound"), request);
                     return;
                 }
+                
+                String newBagName = NameUtil.generateNewName(selectedBagName, allBags.keySet());
                 if (createBag(origBag, newBagName, profile)) {
                     msg += newBagName + ", ";
                 }
@@ -164,8 +172,8 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private boolean createBag(InterMineBag origBag, String newBagName,
-            Profile profile) throws ObjectStoreException {
+    private boolean createBag(InterMineBag origBag, String newBagName, Profile profile) 
+    throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone();
         newBag.setDate(new Date());
