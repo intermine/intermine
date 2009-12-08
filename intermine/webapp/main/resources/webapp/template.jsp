@@ -14,12 +14,10 @@
 <script type="text/javascript" src="js/templateForm.js"></script>
 <script type="text/javascript" src="js/autocompleter.js"></script>
 <link rel="stylesheet" href="css/autocompleter.css" type="text/css"/>
-<link rel="stylesheet" type="text/css" href="css/template.css"/>
+<link rel="stylesheet" href="css/template.css" type="text/css"/>
 
 <%-- object trail --%>
 <tiles:get name="objectTrail.tile"/>
-
-
 
 <div class="body" align="center">
 <im:boxarea stylename="plainbox" fixedWidth="60%">

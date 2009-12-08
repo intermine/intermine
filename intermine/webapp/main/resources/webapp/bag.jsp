@@ -8,7 +8,7 @@
 
 <div class="body">
   <c:choose>
-    <c:when test="${empty userOptionMap[subtabName]  || userOptionMap[subtabName] == 'upload'}">
+    <c:when test="${empty subtabs[subtabName]  || subtabs[subtabName] == 'upload'}">
       <!-- <div id="leftCol"> -->
             <div align="center">
               <tiles:insert name="bagBuild.tile"/>
