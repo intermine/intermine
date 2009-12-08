@@ -106,7 +106,7 @@ updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
 function forwardToLinks() {
 	// needed validation that bag is not used, validation is performed in the Struts action as well
 	if (isBagUsed()) {
-		new Insertion.Bottom('error_msg','Link could not be created. This template contains a list constraint(s). The service for this special template is not implemented yet. Solution: Don\'t use list constraint.<br/>');
+		new Insertion.Bottom('error_msg','Link could not be created. This template contains a list constraint, which is currently not supported.  Remove the list constraint and try again.<br/>');
 		haserrors=1;
 		jQuery('#error_msg').fadeIn();
 		return;
@@ -116,7 +116,7 @@ function forwardToLinks() {
 }
 
 function isBagUsed() {
-	// 		checks if bag is used, the presumption is that there aren't more than 10 bag constraints
+	// checks if bag is used, the presumption is that there aren't more than 10 bag constraints
 	for (var i = 0; i < 10; i++) {
 		if (document.templateForm["useBagConstraint("+i+")"]) {
 			if (document.templateForm["useBagConstraint("+i+")"].checked) {
