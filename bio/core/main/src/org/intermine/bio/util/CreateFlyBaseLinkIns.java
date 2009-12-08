@@ -68,8 +68,19 @@ public class CreateFlyBaseLinkIns
     private static final String INFO_FILENAME = DBNAME + "_dbinfo.txt";
     private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
     private static final String DATASOURCE = "FlyBase";
-    
-    
+
+//    private static final String DBNAME = "modMine";
+//    private static final String HOMEURL = "http://intermine.modencode.org";
+//    private static final String BASEURL = HOMEURL + "/query/portal.do?origin=flybase&externalid=";
+//    private static final String DESC = "Integrated database of genomic, expression and protein data for Drosophila, and C. elegans.";
+//    private static final String EMAIL = "help@modencode.org";
+//    private static final String ENDL = System.getProperty("line.separator");
+//    private static final String GENUS = "Drosophila";
+//    private static final String INFO_FILENAME = DBNAME + "_dbinfo.txt";
+//    private static final String LINKOUT_FILENAME = DBNAME + "_linkout.txt";
+//    private static final String DATASOURCE = "FlyBase";
+
+        
     /**
      * Create link-in file.
      * @param os ObjectStore to find Genes in
