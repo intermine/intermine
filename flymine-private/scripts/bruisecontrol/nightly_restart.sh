@@ -5,6 +5,6 @@ sleep 30
 
 OLD_DIRS=`find /home/bruiser/public_html/tests/archived -maxdepth 1 -name 20\* -ctime +30`
 if ! test -z "$OLD_DIRS" ; then
-    echo "There are some old test result directories:"
-    find /home/bruiser/public_html/tests/archived -maxdepth 1 -name 20\* -ctime +30
+    echo "There are some old test result directories:" 1>&2
+    find /home/bruiser/public_html/tests/archived -maxdepth 1 -name 20\* -ctime +30 1>&2
 fi
