@@ -42,7 +42,7 @@ public class MirandaURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String viewStrings = "Gene.secondaryIdentifier,Gene.name,Gene.organism.name,"
-            + "Gene.primaryIdentifier, Gene.miRNAtargets.primaryIdentifier";
+            + "Gene.primaryIdentifier, Gene.miRNAtargets.name, Gene.miRNAtargets.primaryIdentifier";
         q.setView(viewStrings);
         q.addConstraint(bag.getType(),  Constraints.in(bag.getName()));
         if (!showAll) {
