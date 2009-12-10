@@ -65,9 +65,7 @@ public class MirandaLdr extends EnrichmentWidgetLdr
 
         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
         QueryField qfGene = new QueryField(qcGene, "id");
-        QueryField qfTarget = new QueryField(qcMiRNATarget, "primaryIdentifier");
-
-        QueryFunction qfCount = new QueryFunction();
+        QueryField qfTarget = new QueryField(qcMiRNATarget, "name");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -88,28 +86,54 @@ public class MirandaLdr extends EnrichmentWidgetLdr
         q.addFrom(qcGene);
         q.setConstraint(cs);
 
+        // which columns to return when the user clicks on 'export'
         if (action.equals("export")) {
             q.addToSelect(qfTarget);
             q.addToSelect(qfPrimaryIdentifier);
             q.addToOrderBy(qfTarget);
-            return q;
+            
+        // analysed query:  return the gene only
         } else if (action.equals("analysed")) {
             q.addToSelect(qfGene);
-            return q;
+            
+        // total query:  only return the count of unique genes
         } else if (action.endsWith("Total")) {
-            q.addToSelect(new QueryField(qcGene, "id"));
+            q.addToSelect(qfGene);
             
             Query subQ = q;
             q = new Query();
             q.addFrom(subQ);
             q.addToSelect(new QueryFunction());
                         
+        // enrichment queries
         } else {
-            q.addToSelect(qfCount);
+
+            // subquery
+            Query subQ = q;
+            // used for count
+            subQ.addToSelect(qfGene);
+            // feature name
+            subQ.addToSelect(qfTarget);
+            // needed so we can select this field in the parent query
+            QueryField qfUniqueTargets = new QueryField(subQ, qfTarget);
+
+            q = new Query();
+            q.setDistinct(false);
+            q.addFrom(subQ);
+            
+            // add the unique-ified targets to select
+            q.addToSelect(qfUniqueTargets);
+            
+            // gene count
+            q.addToSelect(new QueryFunction());
+            
+            // if this is the sample query, it expects a third column
             if (action.equals("sample")) {
-                q.addToSelect(qfTarget);
+                q.addToSelect(qfUniqueTargets);
             }
-            q.addToGroupBy(qfTarget);
+            
+            // group by target
+            q.addToGroupBy(qfUniqueTargets);
          }
         return q;
     }
