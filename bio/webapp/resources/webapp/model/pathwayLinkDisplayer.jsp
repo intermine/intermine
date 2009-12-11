@@ -3,10 +3,12 @@
 
 <!-- pathwayLinkDisplayer.jsp -->
 
+<%-- get dataset name --%>
 <c:forEach items="${object.dataSets}" var="dataset">
 	<c:set var="datasetTitle" value="${dataset.title}"/>
 </c:forEach>
 
+<%-- set variables ~~ based on dataset, set link and image to KEGG or Reactome --%>
 <c:choose>        
 <c:when test="${datasetTitle == 'KEGG pathways data set'}">
 	<%-- KEGG --%>
@@ -25,18 +27,12 @@
     </c:if>
 </c:otherwise>
 </c:choose>
-          
+         
+<%-- display logo and link --%>      
 <table class="lookupReport" cellspacing="5" cellpadding="0">
 <tr>
 	<td align="right">
-    	<c:if test="${!empty imageName}">
         	<a href="${href}" class="ext_link" target="_new"><html:img src="model/images/${imageName}" width="28" height="20" title="${text}"/></a>
-        </c:if>
-    </td>
-    <td>
-         <c:if test="${!empty text}">
-            <a href="${href}" class="ext_link" target="_new">${text}&nbsp;<img src="images/ext_link.png" title="${text}"/></a>
-         </c:if>
     </td>
 </tr>
 </table>
