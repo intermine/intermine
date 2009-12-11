@@ -59,8 +59,8 @@ public class BeginAction extends InterMineAction
             
             String msg = "<b>Welcome to FlyMine, GALAXY users!</b><br/><br/>"
              + "You can run queries by clicking on the 'Templates' tab at the top of this page."
-             + "&nbsp;&nbsp;Above the query results will be a 'Send to Galaxy' button, clicking "
-             + "this button takes you back to Galaxy with the results of that query."; 
+             + "&nbsp;&nbsp;Above your query results will be a 'Send to Galaxy' button; clicking "
+             + "this button will take you back to Galaxy with the results of that query."; 
             
             SessionMethods.recordMessage(msg, session);
         }
