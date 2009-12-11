@@ -154,6 +154,15 @@ echo "Getting Redfly GFF files"
         "error getting Redfly GFF files" 2>&1 >> tempfile
     fi
 echo "==========================================================="
+echo
+echo "==========================================================="
+echo "Getting Reactome BioPAX files"
+./get_data_file http://reactome.org/download/current biopax.zip $shared_data/biopax/reactome 
+    if [ $? -ne 0 ]
+    then
+        "error getting Reactome files" 2>&1 >> tempfile
+    fi
+echo "==========================================================="
 
 
 today=$(date +"%F")
