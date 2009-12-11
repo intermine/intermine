@@ -59,7 +59,7 @@ sub update_files(){
 	&make_link($date,$link);
 
 	system "chmod -R a+r,g+w $new_dir";	
-	if ($new_name =~ m/zip/) {
-	    system "unzip $new_name"
+	if ($newfile =~ m/zip/) {
+	    system "unzip $newfile -d $new_dir"
 	}
 }	
