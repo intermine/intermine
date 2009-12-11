@@ -76,8 +76,8 @@ public class FormattedTextParser
      * @return an Iterator over the lines of the Reader
      * @throws IOException if there is an error while reading from the Reader
      */
-    public static Iterator<String[]> parseDelimitedReader(final Reader reader,
-            char delim) throws IOException {
+    public static Iterator<String[]> parseDelimitedReader(final Reader reader, char delim) 
+    throws IOException {
         return parseDelimitedReader(reader, false, String.valueOf(delim));
     }
 
