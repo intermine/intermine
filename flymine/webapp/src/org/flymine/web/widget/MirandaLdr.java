@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.MRNA;
 import org.intermine.model.bio.MiRNATarget;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
@@ -27,6 +29,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
@@ -35,6 +38,8 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
  */
 public class MirandaLdr extends EnrichmentWidgetLdr
 {
+    
+    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
@@ -62,43 +67,59 @@ public class MirandaLdr extends EnrichmentWidgetLdr
 
         QueryClass qcMiRNATarget = new QueryClass(MiRNATarget.class);
         QueryClass qcGene = new QueryClass(Gene.class);
-
-        QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
-        QueryField qfGene = new QueryField(qcGene, "id");
-        QueryField qfTarget = new QueryField(qcMiRNATarget, "name");
+        QueryClass qcMiR = new QueryClass(Gene.class);
+        QueryClass qcTranscript = new QueryClass(MRNA.class);
+        
+        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        QueryField qfMiRIdentifier = new QueryField(qcMiR, "primaryIdentifier");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         if (keys != null) {
-            cs.addConstraint(new BagConstraint(qfTarget, ConstraintOp.IN, keys));
+            cs.addConstraint(new BagConstraint(qfMiRIdentifier, ConstraintOp.IN, keys));
         }
 
         if (!action.startsWith("population")) {
-            cs.addConstraint(new BagConstraint(qfGene, ConstraintOp.IN, bag.getOsb()));
+            cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
 
-        QueryCollectionReference r1 = new QueryCollectionReference(qcGene, "miRNAtargets");
+        // MiR is the enrichment 
+        // gene is what's in our list
+        
+        // gene.miRNAtargets.target.gene
+        QueryCollectionReference r1 = new QueryCollectionReference(qcMiR, "miRNAtargets");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMiRNATarget));
+        
+        QueryObjectReference qcr1 = new QueryObjectReference(qcMiRNATarget, "target");
+        cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcTranscript));
+        
+        QueryObjectReference qcr2 = new QueryObjectReference(qcTranscript, "gene");
+        cs.addConstraint(new ContainsConstraint(qcr2, ConstraintOp.CONTAINS, qcGene));
+      
 
         Query q = new Query();
 
         q.addFrom(qcMiRNATarget);
         q.addFrom(qcGene);
+        q.addFrom(qcMiR);
+        q.addFrom(qcTranscript);
+        
         q.setConstraint(cs);
 
         // which columns to return when the user clicks on 'export'
         if (action.equals("export")) {
-            q.addToSelect(qfTarget);
-            q.addToSelect(qfPrimaryIdentifier);
-            q.addToOrderBy(qfTarget);
+            q.addToSelect(qfMiRIdentifier);
+            q.addToSelect(qfGeneIdentifier);
+            q.addToOrderBy(qfMiRIdentifier);
             
         // analysed query:  return the gene only
         } else if (action.equals("analysed")) {
-            q.addToSelect(qfGene);
+            q.addToSelect(qfGeneId);
             
         // total query:  only return the count of unique genes
         } else if (action.endsWith("Total")) {
-            q.addToSelect(qfGene);
+            q.addToSelect(qfGeneId);
             
             Query subQ = q;
             q = new Query();
@@ -111,11 +132,11 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             // subquery
             Query subQ = q;
             // used for count
-            subQ.addToSelect(qfGene);
+            subQ.addToSelect(qfGeneId);
             // feature name
-            subQ.addToSelect(qfTarget);
+            subQ.addToSelect(qfMiRIdentifier);
             // needed so we can select this field in the parent query
-            QueryField qfUniqueTargets = new QueryField(subQ, qfTarget);
+            QueryField qfUniqueTargets = new QueryField(subQ, qfMiRIdentifier);
 
             q = new Query();
             q.setDistinct(false);
@@ -135,6 +156,8 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             // group by target
             q.addToGroupBy(qfUniqueTargets);
          }
+        
+        LOG.error("~~~ query:" + q);
         return q;
     }
 }
