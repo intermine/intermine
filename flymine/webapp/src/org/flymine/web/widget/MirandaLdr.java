@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNA;
@@ -39,7 +38,7 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 public class MirandaLdr extends EnrichmentWidgetLdr
 {
     
-    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
+//    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
@@ -84,10 +83,6 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
 
-        // MiR is the enrichment 
-        // gene is what's in our list
-        
-        // gene.miRNAtargets.target.gene
         QueryCollectionReference r1 = new QueryCollectionReference(qcMiR, "miRNAtargets");
         cs.addConstraint(new ContainsConstraint(r1, ConstraintOp.CONTAINS, qcMiRNATarget));
         
@@ -156,8 +151,6 @@ public class MirandaLdr extends EnrichmentWidgetLdr
             // group by target
             q.addToGroupBy(qfUniqueTargets);
          }
-        
-        LOG.error("~~~ query:" + q);
         return q;
     }
 }
