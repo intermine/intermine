@@ -10,12 +10,22 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.bio.util.Constants;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Synonym;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -26,21 +36,8 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.bio.util.Constants;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
-
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.Synonym;
-
-import java.io.InputStream;
 
 /**
  * This post-process sets the isPrimary field on all Synonyms that have a value field that matches
