@@ -23,6 +23,7 @@ import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -166,7 +167,9 @@ public class PathQueryAPI
      */
     public static List<TemplateQuery> getConversionTemplates() {
         if (conversionTemplates == null) {
-            conversionTemplates = TypeConverterHelper.getConversionTemplates(getProfile());
+            TemplateManager templateManger = new TemplateManager(getProfile(),
+                    getObjectStore().getModel());
+            conversionTemplates = templateManger.getConversionTemplates();
         }
         return conversionTemplates;
     }

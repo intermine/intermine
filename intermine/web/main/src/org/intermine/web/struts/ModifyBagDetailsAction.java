@@ -23,11 +23,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -136,10 +135,9 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
-            ProfileManager pm =
-                (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,
-                TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile()),
+                templateManager.getConversionTemplates(),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);

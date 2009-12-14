@@ -38,9 +38,9 @@ import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -1266,8 +1266,9 @@ public class MainHelper
             Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig,
             ProfileManager pm) {
-        List<TemplateQuery> conversionTemplates =
-            TypeConverterHelper.getConversionTemplates(pm.getSuperuserProfile());
+        TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
+                os.getModel());
+        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
         BagQueryRunner bagQueryRunner = null;
         if (os != null) {
             bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);

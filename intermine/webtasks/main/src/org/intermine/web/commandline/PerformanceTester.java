@@ -23,7 +23,6 @@ import java.util.Set;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -32,6 +31,7 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -139,8 +139,10 @@ public class PerformanceTester
         try {
             //Query q = TemplateHelper.getPrecomputeQuery(entry.getValue(), new ArrayList(), null);
             long queryStartTime = System.currentTimeMillis();
-            List<TemplateQuery> conversionTemplates = TypeConverterHelper.getConversionTemplates(pm
-                    .getSuperuserProfile());
+            TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
+                    productionOs.getModel());
+            
+            List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
             BagQueryRunner bqr = new BagQueryRunner(productionOs, classKeys, bagQueryConfig,
                     conversionTemplates);
             Query q = MainHelper.makeQuery(templateQuery, new HashMap(), new HashMap(), bqr, null,

@@ -30,7 +30,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -955,8 +954,9 @@ public class SessionMethods
      */
     public static WebResultsExecutor getWebResultsExecutor(ServletContext servletContext,
             Profile profile) {
-        List<TemplateQuery> conversionTemplates = TypeConverterHelper
-            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
+        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+        
         WebResultsExecutor ret = new WebResultsExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext),
@@ -977,8 +977,9 @@ public class SessionMethods
      */
     public static PathQueryExecutor getPathQueryExecutor(HttpSession session) {
         ServletContext servletContext = session.getServletContext();
-        List<TemplateQuery> conversionTemplates = TypeConverterHelper
-            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
+        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+        
         PathQueryExecutor ret = new PathQueryExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext),
