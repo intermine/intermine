@@ -40,15 +40,15 @@ public class TemplateValue
         this.op = op;
         this.value = value;
         this.code = code;
-    } 
-    
+    }
+
     /**
      * @param op operation
      * @param value value
      * @param extraValue extra value
      * @param the constraint code - needed as there may be more than one constraint on a path
      */
-    public TemplateValue(String path, ConstraintOp op, Object value, String code, 
+    public TemplateValue(String path, ConstraintOp op, Object value, String code,
             Object extraValue) {
         super();
         this.path = path;
@@ -57,7 +57,7 @@ public class TemplateValue
         this.code = code;
         this.extraValue = extraValue;
     }
-    
+
     public String getCode() {
         return code;
     }

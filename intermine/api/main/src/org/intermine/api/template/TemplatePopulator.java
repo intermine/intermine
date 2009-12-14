@@ -81,7 +81,7 @@ public class TemplatePopulator
                 }
                 if (!found) {
                     throw new TemplatePopulatorException("Did not find a value for constraint "
-                            + " with code '" + con.getCode() + "' on path " 
+                            + " with code '" + con.getCode() + "' on path "
                             + node.getPathString());
                 }
             }
@@ -94,65 +94,65 @@ public class TemplatePopulator
     // TODO use a better exception type
     public static  TemplateQuery populateTemplateWithObject(TemplateQuery template,
             InterMineObject obj) {
-        Map<String, List<TemplateValue>> templateValues = 
+        Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
-        
+
         // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
             throw new RuntimeException("Template must have exactly one editable constraint to be "
                     + " configured with an object.");
         }
-        
+
         // TODO check the types are compatible
         PathNode node = template.getEditableNodes().get(0);
-            //String editableNodeType = 
+            //String editableNodeType =
             //if (!TypeUtil.isInstanceOf(obj, className))
-            
+
         Constraint constraint = template.getEditableConstraints(node).get(0);
-        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS, 
+        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS,
                 obj, constraint.getCode());
         templateValue.setObjectConstraint(Boolean.TRUE);
-        templateValues.put(node.getPathString(), 
+        templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
-        
+
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
-    
+
     // TODO this method should be in api project
     // TODO use a better exception type
     public static  TemplateQuery populateTemplageWithBag(TemplateQuery template,
             String bagName) {
-        Map<String, List<TemplateValue>> templateValues = 
+        Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
-        
-        
+
+
         // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
             throw new RuntimeException("Template must have exactly one editable constraint to be "
                     + " configured with an object.");
         }
-        
+
         // TODO check the types are compatible
         PathNode node = template.getEditableNodes().get(0);
-            //String editableNodeType = 
+            //String editableNodeType =
             //if (!TypeUtil.isInstanceOf(obj, className))
-            
+
         Constraint constraint = template.getEditableConstraints(node).get(0);
-        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN, 
+        TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
                 bagName, constraint.getCode());
         templateValue.setBagConstraint(Boolean.TRUE);
-        templateValues.put(node.getPathString(), 
+        templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
-        
+
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
-    
+
     public static TemplateQuery populateTemplateOneConstraint(
             TemplateQuery template, ConstraintOp op, Object value) {
-        Map<String, List<TemplateValue>> templateValues = 
+        Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
-        
+
         if (template.getAllEditableConstraints().size() != 1) {
             throw new RuntimeException("Template must have exactly one editable constraint to be "
                     + " configured with a single value.");
@@ -161,12 +161,12 @@ public class TemplatePopulator
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), op, value,
                 constraint.getCode());
-        templateValues.put(node.getPathString(), 
+        templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
-        
-        return TemplatePopulator.getPopulatedTemplate(template, templateValues);        
+
+        return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
-    
+
     private static void checkPaths(Model model, Collection<List<TemplateValue>> collection,
             TemplateQuery templateQuery) {
         for (List<TemplateValue> col : collection) {
@@ -177,7 +177,8 @@ public class TemplatePopulator
         }
     }
 
-    private static void setConstraint(TemplateQuery template, PathNode node, Constraint c, TemplateValue templateValue) {
+    private static void setConstraint(TemplateQuery template, PathNode node, Constraint c,
+            TemplateValue templateValue) {
         int constraintIndex = node.getConstraints().indexOf(c);
 
         Object extraValue = getExtraValue(c, templateValue, node);
@@ -194,10 +195,10 @@ public class TemplatePopulator
             }
 
             // TODO should we check the bag exists here?
-        } 
-        
+        }
+
         // if this is a bag constraint we may need to switch to the parent node
-        if (templateValue.isBagConstraint() && node.isAttribute()) {	
+        if (templateValue.isBagConstraint() && node.isAttribute()) {
             PathNode parentNode = template.addNode(node.getParent().getPathString());
             parentNode.getConstraints().add(newConstraint);
             node.removeConstraint(c);
