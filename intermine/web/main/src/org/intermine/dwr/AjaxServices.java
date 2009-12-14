@@ -45,7 +45,6 @@ import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
@@ -59,6 +58,7 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
@@ -593,6 +593,8 @@ public class AjaxServices
             String pckName =  os.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+            
             WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
 
             InterMineBag imBag = null;
@@ -603,8 +605,9 @@ public class AjaxServices
 
                 ProfileManager pm =
                     (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-                PathQuery pathQuery = TypeConverter.getConversionQuery(TypeConverterHelper.
-                    getConversionTemplates(pm.getSuperuserProfile()),
+                List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+                
+                PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
                 count = webResultsExecutor.count(pathQuery);
