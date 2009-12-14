@@ -155,10 +155,6 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         } else {
             LOG.info("using cached feature length results:" + q.toString());
         }
-//        
-//        LOG.error("total:" + total);
-//        LOG.error("stats.getMin():" + stats.getMin());
-//        LOG.error("stats.getMax():" + stats.getMax());
         return series;
     }
     
@@ -181,7 +177,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS,
                                                    new QueryValue(organism.toLowerCase()));
         cs.addConstraint(sc);
-
+        cs.addConstraint(new SimpleConstraint(lengthQF, ConstraintOp.IS_NOT_NULL));
         if (bag != null) {
             QueryField qf2 = new QueryField(featureQC, "id");
             cs.addConstraint(new BagConstraint(qf2, ConstraintOp.IN, bag.getOsb()));
