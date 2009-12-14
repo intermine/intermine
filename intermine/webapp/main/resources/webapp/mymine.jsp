@@ -11,35 +11,35 @@
 
 <c:choose>
   <%-- bags --%>
-  <c:when test="${userOptionMap[subtabName]  =='lists'||userOptionMap[subtabName]  == null}">
+  <c:when test="${subtabs[subtabName]  =='lists'||subtabs[subtabName]  == null}">
     <tiles:insert name="historyBagView.jsp">
     <tiles:put name="type" value="bag"/>
   </tiles:insert>
   </c:when>
 
     <%-- query history --%>
-    <c:when test="${userOptionMap[subtabName]  =='history'}">
+    <c:when test="${subtabs[subtabName]  =='history'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="history"/>
       </tiles:insert>
     </c:when>
     
     <%-- saved queries --%>
-    <c:when test="${userOptionMap[subtabName]  =='saved'}">
+    <c:when test="${subtabs[subtabName]  =='saved'}">
       <tiles:insert name="historyQueryView.jsp">
         <tiles:put name="type" value="saved"/>
       </tiles:insert>
     </c:when>
            
     <%-- saved templates --%>    
-    <c:when test="${userOptionMap[subtabName]  =='templates'}">
+    <c:when test="${subtabs[subtabName]  =='templates'}">
       <tiles:insert name="historyTemplateView.jsp">
         <tiles:put name="type" value="template"/>
       </tiles:insert>
     </c:when>
     
     <%-- password --%> 
-    <c:when test="${userOptionMap[subtabName]  =='password'}">
+    <c:when test="${[subtabName]  =='password'}">
       <tiles:insert name="changePassword.jsp" />
     </c:when>
   </c:choose>

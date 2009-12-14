@@ -17,10 +17,10 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 
 /**

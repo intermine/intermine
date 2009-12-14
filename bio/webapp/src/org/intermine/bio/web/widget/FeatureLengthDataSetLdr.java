@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
@@ -32,7 +33,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.CacheMap;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.DataSetLdr;
 import org.jfree.data.function.Function2D;
 import org.jfree.data.function.NormalDistributionFunction2D;

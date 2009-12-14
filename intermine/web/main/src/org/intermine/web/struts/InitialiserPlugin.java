@@ -33,6 +33,19 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.search.Scope;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -49,22 +62,13 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.AspectBinding;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryHelper;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
 
 /**
  * Initialiser for the InterMine web application.
@@ -115,6 +119,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
         servletContext.setAttribute(Constants.OBJECTSTORE, os);
+        servletContext.setAttribute(Constants.MODEL, os.getModel());
 
         WebConfig webConfig = loadWebConfig(servletContext, os);
 
@@ -122,7 +127,7 @@ public class InitialiserPlugin implements PlugIn
 
         loadClassDescriptions(servletContext, os);
 
-        summarizeObjectStore(servletContext, os);
+        summariseObjectStore(servletContext, os);
         Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
         for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
             boolean keyless = true;
@@ -147,11 +152,21 @@ public class InitialiserPlugin implements PlugIn
 
         final ProfileManager pm = createProfileManager(servletContext, os);
 
+        final TemplateSummariser summariser = new TemplateSummariser(os, pm
+                .getProfileObjectStoreWriter());
+        servletContext.setAttribute(Constants.TEMPLATE_SUMMARISER, summariser);
+
         final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
+
+        final BagManager bagManager = new BagManager(superProfile, os.getModel());
+        servletContext.setAttribute(Constants.BAG_MANAGER, bagManager);
+
+        final TemplateManager templateManager = new TemplateManager(superProfile, os.getModel());
+        servletContext.setAttribute(Constants.TEMPLATE_MANAGER, templateManager);
 
         // index global webSearchables
         SearchRepository searchRepository =
-            new SearchRepository(superProfile, SearchRepository.GLOBAL);
+            new SearchRepository(superProfile, Scope.GLOBAL);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
 
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
@@ -310,7 +325,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private void summarizeObjectStore(ServletContext servletContext, final ObjectStore os)
+    private void summariseObjectStore(ServletContext servletContext, final ObjectStore os)
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =

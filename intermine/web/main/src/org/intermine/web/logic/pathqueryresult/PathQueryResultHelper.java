@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -34,7 +35,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -58,7 +58,7 @@ public class PathQueryResultHelper
      * @return a List of Paths representing the view
      */
     public static List<Path> getDefaultView(String type, Model model, WebConfig webConfig,
-            String prefix, boolean excludeNonAttributes) {
+                          String prefix, boolean excludeNonAttributes) {
         List<Path> view = new ArrayList<Path>();
         ClassDescriptor classDescriptor = model.getClassDescriptorByName(type);
         List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig,
@@ -116,7 +116,7 @@ public class PathQueryResultHelper
      * @return a PathQuery
      */
     public static PathQuery makePathQueryForBag(InterMineBag imBag, WebConfig webConfig,
-            Model model) {
+                                                Model model) {
         PathQuery pathQuery = new PathQuery(model);
 
         List<Path> view = PathQueryResultHelper.getDefaultView(imBag.getType(), model, webConfig,
@@ -134,14 +134,15 @@ public class PathQueryResultHelper
      * Create a PathQuery to get results for a collection of items from an InterMineObject
      *
      * @param webConfig the WebConfig
-     * @param os the ObjectStore
+     * @param os the production ObjectStore
      * @param object the InterMineObject
      * @param referencedClassName the collection type
      * @param field the name of the field for the collection in the InterMineObject
      * @return a PathQuery
      */
     public static PathQuery makePathQueryForCollection(WebConfig webConfig, ObjectStore os,
-            InterMineObject object, String referencedClassName, String field) {
+                                                       InterMineObject object,
+                                                       String referencedClassName, String field) {
         String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
                         .getClass()));
         Path path = new Path(os.getModel(), className + "." + field);
@@ -158,29 +159,29 @@ public class PathQueryResultHelper
         } else if (path.endIsReference()) {
             sr.add(path.getLastClassDescriptor().getType());
         }
-        return makePathQueryForCollectionForClass(webConfig, os, object, field, sr);
+        return makePathQueryForCollectionForClass(webConfig, os.getModel(), object, field, sr);
     }
 
     /**
      * Called by makePathQueryForCollection
      *
      * @param webConfig the webConfig
-     * @param os the objectstore
+     * @param model the object model
      * @param object the InterMineObject
      * @param field the name of the field for the collection in the InterMineObject
      * @param sr the list of classes and subclasses
      * @return a PathQuery
      */
-    static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, ObjectStore os,
+    static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, Model model,
             InterMineObject object, String field, List<Class> sr) {
         Class commonClass = CollectionUtil.findCommonSuperclass(sr);
         List<Path> view = PathQueryResultHelper.getDefaultView(TypeUtil.unqualifiedName(DynamicUtil
-                            .getSimpleClassName(commonClass)), os.getModel(),
+                            .getSimpleClassName(commonClass)), model,
                             webConfig, TypeUtil.unqualifiedName(DynamicUtil
                                             .getSimpleClassName(object.getClass()))
                                        + "." + field, false);
 
-        PathQuery pathQuery = new PathQuery(os.getModel());
+        PathQuery pathQuery = new PathQuery(model);
         pathQuery.setViewPaths(view);
         String label = null, id2 = null, code = pathQuery.getUnusedConstraintCode();
         Constraint c = new Constraint(ConstraintOp.EQUALS, object.getId(), false, label, code, id2,

@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +28,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -36,8 +38,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -45,7 +45,6 @@ import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
 import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
 import org.intermine.web.logic.export.string.StringTableExporter;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
@@ -123,9 +122,8 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(ldr);
 
@@ -184,9 +182,8 @@ public class WidgetAction extends InterMineAction
             allOrSelected = "Selected";
         }
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(link);
         Constructor<?> constr = clazz.getConstructor(new Class[] {ObjectStore.class,
@@ -268,8 +265,8 @@ public class WidgetAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward export(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         WidgetForm widgetForm = (WidgetForm) form;
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -302,10 +299,11 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getHighlight());
                 attributes.add(widgetForm.getPValue());
                 attributes.add(widgetForm.getNumberOpt());
+
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-                Map<String, InterMineBag> allBags = WebUtil.getAllBags(currentProfile
-                        .getSavedBags(), SessionMethods.getGlobalSearchRepository(servletContext));
-                InterMineBag bag = allBags.get(widgetForm.getBagName());
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile,
+                        widgetForm.getBagName());
                 Widget widget = widgetConfig.getWidget(bag, os, attributes);
                 stringExporter.export(widget.getExportResults(widgetForm.getSelected()));
             }

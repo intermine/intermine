@@ -27,10 +27,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
@@ -41,14 +46,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -71,8 +70,7 @@ public class QueryBuilderConstraintController extends TilesAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         query = query.clone();
         for (Path p : query.getView()) {
@@ -109,7 +107,7 @@ public class QueryBuilderConstraintController extends TilesAction
             // be constrained to inner joins - get current style for query
             //String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
 //            if (correctJoinPath.indexOf(":") == -1 && !node.isAttribute()) {
-            // loop query arguments
+                // loop query arguments
             ArrayList paths = new ArrayList();
             String nodeJoinGroup = node.getOuterJoinGroup();
             Iterator iter = query.getNodes().values().iterator();
@@ -125,7 +123,7 @@ public class QueryBuilderConstraintController extends TilesAction
             }
 
             Map attributeOps = MainHelper.mapOps(ClassConstraint.VALID_OPS);
-//            request.setAttribute("loopQueryOJ", node.isOuterJoin());
+//                request.setAttribute("loopQueryOJ", node.isOuterJoin());
             request.setAttribute ("loopQueryOps", attributeOps);
             request.setAttribute ("loopQueryPaths", paths);
 //            }
@@ -205,13 +203,12 @@ public class QueryBuilderConstraintController extends TilesAction
             }
 
             if (useBags) {
-                Map<String, InterMineBag> allBags =
-                    WebUtil.getAllBags(profile.getSavedBags(),
-                            SessionMethods.getGlobalSearchRepository(servletContext));
-                Map bags = WebUtil.getBagsOfType(allBags, nodeType, os.getModel());
-                if (!bags.isEmpty()) {
+                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                Map<String, InterMineBag> bagsOfType =
+                    bagManager.getUserOrGlobalBagsOfType(profile, nodeType);
+                if (!bagsOfType.isEmpty()) {
                     request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
-                    request.setAttribute("bags", bags);
+                    request.setAttribute("bags", bagsOfType);
                 }
             }
             Integer index = (Integer) request.getAttribute("editingConstraintOperand");

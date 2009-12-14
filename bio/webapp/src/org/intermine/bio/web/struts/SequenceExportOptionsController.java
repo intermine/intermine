@@ -25,13 +25,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.results.Column;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.results.Column;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 

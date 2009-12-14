@@ -30,15 +30,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagConversionHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.BagQueryRunner;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
+import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -79,10 +79,10 @@ public class BuildBagAction extends InterMineAction
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         BagQueryConfig bagQueryConfig =
             (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
         BagQueryRunner bagRunner =
-            new BagQueryRunner(os, classKeys, bagQueryConfig,
-                    BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()));
+            new BagQueryRunner(os, classKeys, bagQueryConfig, 
+                    templateManager.getConversionTemplates());
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);

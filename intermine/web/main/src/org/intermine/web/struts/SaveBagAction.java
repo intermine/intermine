@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Date;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,14 +20,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -82,11 +76,8 @@ public class SaveBagAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm sbf = (SaveBagForm) form;
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(Constants
-                    .PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         String operation = "";
@@ -119,30 +110,20 @@ public class SaveBagAction extends InterMineAction
             return mapping.findForward("results");
         }
 
-        ObjectStoreWriter osw = null;
         try {
             if (bag == null) {
-                bag = new InterMineBag(bagName, pt.getSelectedClass(), null, new Date(), os,
-                        profile.getUserId(), uosw);
-                profile.saveBag(bagName, bag);
+                bag = profile.createBag(bagName, pt.getSelectedClass(), "");
             }
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            pt.addSelectedToBag(osw, bag.getOsb());
+
+            pt.addSelectedToBag(bag);
             recordMessage(new ActionMessage("bag.saved", bagName), request);
             SessionMethods.invalidateBagTable(session, bagName);
         } catch (ObjectStoreException e) {
             LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");
-        } finally {
-            try {
-                if (osw != null) {
-                    osw.close();
-                }
-            } catch (ObjectStoreException e) {
-                // empty
-            }
         }
+
         if (operation.equals("saveNewBag")) {
             return new ForwardParameters(mapping.findForward("bag")).addParameter("bagName",
                 bag.getName()).forward();

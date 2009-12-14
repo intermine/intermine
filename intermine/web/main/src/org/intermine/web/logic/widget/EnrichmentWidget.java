@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.WidgetUtil;
 
 /**
  * @author "Xavier Watkins"
@@ -80,7 +80,7 @@ public class EnrichmentWidget extends Widget
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
                 .newInstance(new Object[] {bag, os, filter});
 
-            resultMaps = WebUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
+            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max), errorCorrection);
             int analysedTotal = 0;
             if (!resultMaps.isEmpty()) {
                 analysedTotal = ((Integer) (resultMaps.get(3)).get("widgetTotal")).intValue();
@@ -214,7 +214,7 @@ public class EnrichmentWidget extends Widget
             Map<String, String> labelToId = resultMaps.get(2);
             List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
             for (String id : pvalues.keySet()) {
-                List<String[]> row = new LinkedList();
+                List<String[]> row = new LinkedList<String[]>();
 
                 row.add(new String[] {"<input name=\"selected\" value=\"" + id
                         + "\" id=\"selected_" + id + "\" type=\"checkbox\">"});

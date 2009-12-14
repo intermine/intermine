@@ -19,17 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathError;
-import org.intermine.web.logic.ClassKeyHelper;
-import org.intermine.web.logic.PathUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -291,12 +291,11 @@ public class InlineResultsTable
 
     /**
      * Return a List containing the ResultElements for a given row in the table.
-     * @param os The ObjectStore to pass to the Path constructor
      * @param rowIndex the index of the row to create the List for
      * @return a List of ResultElements, one for each column returned by getColumnFullNames().  If
      *   a particular column isn't relavent for this row, that element of the List will be null.
      */
-    public List getResultElementRow(ObjectStore os, int rowIndex) {
+    public List getResultElementRow(int rowIndex) {
         Object o = getRowObjects().get(rowIndex);
         List retList = new ArrayList();
         for (int i = 0; i < getColumnFullNames().size(); i++) {

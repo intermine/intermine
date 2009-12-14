@@ -22,6 +22,18 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.IdUpgrader;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.xml.InterMineBagBinding;
+import org.intermine.api.xml.SavedQueryBinding;
+import org.intermine.api.xml.TagBinding;
+import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -35,18 +47,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.bag.IdUpgrader;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.bag.InterMineBagBinding;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.query.SavedQueryBinding;
-import org.intermine.web.logic.tagging.TagBinding;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateQueryBinding;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemFactory;
@@ -62,9 +62,9 @@ import org.xml.sax.InputSource;
 public class ProfileBinding
 {
     private static final Logger LOG = Logger.getLogger(ProfileBinding.class);
-    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache = 
+    private static HashMap<Class, Set<FieldDescriptor>> primaryKeyFieldsCache =
         new HashMap<Class, Set<FieldDescriptor>>();
-    
+
     /**
      * Convert a Profile to XML and write XML to given writer.
      * @param profile the UserProfile
@@ -93,7 +93,7 @@ public class ProfileBinding
     public static void marshal(Profile profile, ObjectStore os, XMLStreamWriter writer,
             boolean writeUserAndPassword, boolean writeQueries, boolean writeTemplates,
             boolean writeBags, boolean writeTags, boolean onlyConfigTags, int version) {
-        
+
         try {
             writer.writeStartElement("userprofile");
 
@@ -104,7 +104,7 @@ public class ProfileBinding
 
             if (writeBags) {
                 writeItemsForBagIds(os, profile, writer);
-                
+
                 writer.writeStartElement("bags");
                 for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
                     String bagName = entry.getKey();
@@ -160,7 +160,7 @@ public class ProfileBinding
     }
 
 
-    private static void writeItemsForBagIds(ObjectStore os, Profile profile, 
+    private static void writeItemsForBagIds(ObjectStore os, Profile profile,
             XMLStreamWriter writer) throws ObjectStoreException, XMLStreamException {
         Set<Integer> idsOfAllBagElements = getProfileObjectIds(profile, os);
 
@@ -177,15 +177,15 @@ public class ProfileBinding
     }
 
     // we actually need to write out the primary key fields, these are the only needed for upgrade
-    private static void writeItemPrimaryKeyFields(ObjectStore os, InterMineObject objToWrite, 
+    private static void writeItemPrimaryKeyFields(ObjectStore os, InterMineObject objToWrite,
             XMLStreamWriter writer) {
-        Model model = os.getModel();             
+        Model model = os.getModel();
         ItemFactory itemFactory = new ItemFactory(model);
         Set<String> fieldsToWrite = getPrimaryKeyFieldnamesForClass(model, objToWrite.getClass());
         Item item = itemFactory.makeItemImpl(objToWrite, fieldsToWrite);
         FullRenderer.renderImpl(writer, item);
     }
-    
+
     /**
      * Get the ids of objects in all bags and all objects mentioned in primary keys of those
      * items.
@@ -238,7 +238,7 @@ public class ProfileBinding
                                            Set<Integer> idsToSerialise) {
         idsToSerialise.add(object.getId());
         for (FieldDescriptor fd
-                : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {            
+                : getPrimaryKeyFieldDescriptorsForClass(model, object.getClass())) {
             if (fd instanceof ReferenceDescriptor) {
                 String fieldName = fd.getName();
                 InterMineObject referencedObject;
@@ -258,8 +258,8 @@ public class ProfileBinding
         }
     }
 
-    
-    private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model, 
+
+    private static Set<FieldDescriptor> getPrimaryKeyFieldDescriptorsForClass(Model model,
             Class lookupClass) {
         Set<FieldDescriptor> primaryKeyFields = primaryKeyFieldsCache.get(lookupClass);
         if (primaryKeyFields == null) {
@@ -276,7 +276,7 @@ public class ProfileBinding
         }
         return primaryKeyFields;
     }
-    
+
     private static Set<String> getPrimaryKeyFieldnamesForClass(Model model, Class lookupClass) {
         Set<String> primaryKeyFieldNames = new HashSet<String>();
         for (FieldDescriptor fd : getPrimaryKeyFieldDescriptorsForClass(model, lookupClass)) {
@@ -284,7 +284,7 @@ public class ProfileBinding
         }
         return primaryKeyFieldNames;
     }
-    
+
     /**
      * Read a Profile from an XML stream Reader.  Note that Tags from the XML are stored immediately
      * using the ProfileManager.

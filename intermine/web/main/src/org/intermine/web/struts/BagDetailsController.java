@@ -26,27 +26,25 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebTable;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
+import org.intermine.api.results.flatouterjoins.MultiRowValue;
+import org.intermine.api.search.Scope;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowFirstValue;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
@@ -65,10 +63,13 @@ public class BagDetailsController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
 
@@ -79,27 +80,23 @@ public class BagDetailsController extends TilesAction
         InterMineBag imBag = null;
         String scope = request.getParameter("scope");
         if (scope == null) {
-            scope = TemplateHelper.ALL_TEMPLATE;
+            scope = Scope.ALL;
         }
 
-        if (scope.equals(TemplateHelper.USER_TEMPLATE)
-                || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        if (scope.equals(Scope.USER)
+                        || scope.equals(Scope.ALL)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            imBag = profile.getSavedBags().get(bagName);
+            imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
                 myBag = Boolean.TRUE;
             }
         }
 
-        if (scope.equals(TemplateHelper.GLOBAL_TEMPLATE)
-            || scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        if (scope.equals(Scope.GLOBAL)
+            || scope.equals(Scope.ALL)) {
             // scope == all or global
-            SearchRepository searchRepository = SessionMethods
-                .getGlobalSearchRepository(servletContext);
-            Map<String, ? extends WebSearchable> publicBagMap = searchRepository
-                .getWebSearchableMap(TagTypes.BAG);
-            if (publicBagMap.get(bagName) != null) {
-                imBag = (InterMineBag) publicBagMap.get(bagName);
+            if (bagManager.getGlobalBag(bagName) != null) {
+                imBag = (InterMineBag) bagManager.getGlobalBag(bagName);
             }
         }
 
@@ -115,7 +112,8 @@ public class BagDetailsController extends TilesAction
         Map<String, Map<String, Collection<String>>> widget2extraAttrs
             = new HashMap<String, Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
-            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(imBag, os));
+            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(
+                            imBag, os));
         }
         request.setAttribute("widgets", widgets);
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
@@ -129,9 +127,9 @@ public class BagDetailsController extends TilesAction
         // TODO this needs to be removed when InterMineBag can store the initial ids of when the
         // bag was made.
         BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
-            .getAttribute(Constants.BAG_QUERY_CONFIG);
+                        .getAttribute(Constants.BAG_QUERY_CONFIG);
         Map<String, String[]> additionalConverters = bagQueryConfig.getAdditionalConverters(imBag
-                .getType());
+                        .getType());
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
                 String[] paramArray = additionalConverters.get(converterClassName);
@@ -163,8 +161,9 @@ public class BagDetailsController extends TilesAction
         }
         boolean gotoHighlighted = false;
         String gotoHighlightedStr = request.getParameter("gotoHighlighted");
-        if (gotoHighlightedStr != null && (gotoHighlightedStr.equalsIgnoreCase("t")
-                    || gotoHighlightedStr.equalsIgnoreCase("true"))) {
+        if (gotoHighlightedStr != null
+            && (gotoHighlightedStr.equalsIgnoreCase("t")
+                || gotoHighlightedStr.equalsIgnoreCase("true"))) {
             gotoHighlighted = true;
         }
         if (highlightId != null && gotoHighlighted) {

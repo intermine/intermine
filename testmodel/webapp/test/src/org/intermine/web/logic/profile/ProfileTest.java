@@ -14,6 +14,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -21,9 +26,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.template.TemplateQuery;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -54,8 +56,7 @@ public class ProfileTest extends MockStrutsTestCase
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(Model.getInstanceByName("testmodel")),
-                                     "");
+                new PathQuery(Model.getInstanceByName("testmodel")));
         profileManager = new DummyProfileManager(userprofileOS);
         
     }

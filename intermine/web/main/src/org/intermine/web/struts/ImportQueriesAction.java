@@ -13,23 +13,22 @@ package org.intermine.web.struts;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -42,18 +41,14 @@ public class ImportQueriesAction extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    @Override
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+    @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
 
@@ -64,7 +59,7 @@ public class ImportQueriesAction extends InterMineAction
             // special case to redirect straight to the query builder
             PathQuery pathQuery = queries.values().iterator().next();
             if (!pathQuery.isValid()) {
-                recordError(new ActionError("errors.importFailed",
+                recordError(new ActionMessage("errors.importFailed",
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
             }
             SessionMethods.loadQuery(pathQuery, session,
@@ -85,7 +80,7 @@ public class ImportQueriesAction extends InterMineAction
             while (iter.hasNext()) {
                 String queryName = (String) iter.next();
                 PathQuery query = queries.get(queryName);
-                queryName = validateQueryName(queryName, profile);
+                queryName = NameUtil.validateName(queries.keySet(), queryName);
                 SessionMethods.saveQuery(session, queryName, query);
                 if (sb.length() > 0) {
                     sb.append(", ");
@@ -102,32 +97,4 @@ public class ImportQueriesAction extends InterMineAction
     }
 
 
-    /**
-     * Checks that the query name doesn't already exist and returns a numbered
-     * name if it does.
-     * @param queryName the query name
-     * @param profile the user profile
-     * @return a validated name for the query
-     */
-    private String validateQueryName(String queryName, Profile profile) {
-
-        String newQueryName = queryName;
-
-        if (!WebUtil.isValidName(queryName)) {
-            newQueryName = WebUtil.replaceSpecialChars(newQueryName);
-        }
-
-        if (profile.getSavedQueries().containsKey(newQueryName)) {
-            int i = 1;
-            while (true) {
-                String testName = newQueryName + "_" + i;
-                if (!profile.getSavedQueries().containsKey(testName)) {
-                    return testName;
-                }
-                i++;
-            }
-        } else {
-            return newQueryName;
-        }
-    }
 }

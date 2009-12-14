@@ -28,7 +28,23 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,29 +56,15 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagConversionHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.profile.TagManagerFactory;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
-import org.intermine.web.logic.query.PathQueryExecutor;
 import org.intermine.web.logic.query.QueryMonitor;
-import org.intermine.web.logic.query.SaveQueryHelper;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.results.WebState;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.template.TemplateBuildState;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
 
@@ -521,8 +523,8 @@ public class SessionMethods
                         SessionMethods.runQuery(session, messages, qid, action, completionCallBack);
 
                         if (saveQuery) {
-                            String queryName =
-                                SaveQueryHelper.findNewQueryName(profile.getHistory());
+                            String queryName = NameUtil.findNewQueryName(
+                                    profile.getHistory().keySet());
                             pathQuery.setInfo(pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),
@@ -814,11 +816,10 @@ public class SessionMethods
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
             ServletContext servletContext, InterMineBag imBag) throws ObjectStoreException {
         HttpSession session = request.getSession();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os
-                        .getModel());
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
 
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery);
@@ -953,15 +954,16 @@ public class SessionMethods
      */
     public static WebResultsExecutor getWebResultsExecutor(ServletContext servletContext,
             Profile profile) {
-        List<TemplateQuery> conversionTemplates = BagConversionHelper
-            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
+        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+        
         WebResultsExecutor ret = new WebResultsExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext),
                 getBagQueryConfig(servletContext),
                 profile,
                 conversionTemplates,
-                getGlobalSearchRepository(servletContext));
+                getBagManager(servletContext));
         return ret;
 
     }
@@ -975,15 +977,16 @@ public class SessionMethods
      */
     public static PathQueryExecutor getPathQueryExecutor(HttpSession session) {
         ServletContext servletContext = session.getServletContext();
-        List<TemplateQuery> conversionTemplates = BagConversionHelper
-            .getConversionTemplates(getProfileManager(servletContext).getSuperuserProfile());
+        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
+        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+        
         PathQueryExecutor ret = new PathQueryExecutor(
                 getObjectStore(servletContext),
                 getClassKeys(servletContext),
                 getBagQueryConfig(servletContext),
                 getProfile(session),
                 conversionTemplates,
-                getGlobalSearchRepository(servletContext));
+                getBagManager(servletContext));
         return ret;
     }
 
@@ -1005,5 +1008,42 @@ public class SessionMethods
      */
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+    }
+
+    /**
+     * Fetch the BagManager for finding global and user bags.
+     * @param servletContext servlet context to fetch attribute from
+     * @return the BagManager
+     */
+    public static final BagManager getBagManager(ServletContext servletContext) {
+        return (BagManager) servletContext.getAttribute(Constants.BAG_MANAGER);
+    }
+
+    /**
+     * Fetch the BagManager for finding global and user bags.
+     * @param session to get servletContext and hence BagManager
+     * @return the BagManager
+     */
+    public static final BagManager getBagManager(HttpSession session) {
+        return (BagManager) session.getServletContext().getAttribute(Constants.BAG_MANAGER);
+    }
+
+    /**
+     * Fetch the TemplateManager for finding global and user templates
+     * @param servletContext servlet context to fetch attribute from
+     * @return the TemplateManager
+     */
+    public static final TemplateManager getTemplateManager(ServletContext servletContext) {
+        return (TemplateManager) servletContext.getAttribute(Constants.TEMPLATE_MANAGER);
+    }
+
+    /**
+     * Fetch the TemplateManager for finding global and user templates
+     * @param session to get servletContext and hence TemplateManager
+     * @return the TemplateManager
+     */
+    public static final TemplateManager getTemplateManager(HttpSession session) {
+        return (TemplateManager) session.getServletContext().getAttribute(
+                Constants.TEMPLATE_MANAGER);
     }
 }

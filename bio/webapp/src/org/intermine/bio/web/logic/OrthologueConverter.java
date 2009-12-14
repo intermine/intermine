@@ -20,6 +20,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -31,8 +33,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.query.WebResultsExecutor;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

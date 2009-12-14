@@ -17,15 +17,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
-import org.intermine.web.struts.TemplateForm;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.core.TemplateManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.query.result.QueryResultService;
@@ -38,18 +40,25 @@ import org.intermine.webservice.server.query.result.QueryResultService;
 public class TemplateResultService extends QueryResultService
 {
 
+    /** Name of type parameter **/
+    public static final String TYPE_PARAMETER = "type";
+    /** Name of name parameter **/
+    public static final String NAME_PARAMETER = "name";
+
     /**
      * {@inheritDoc}}
      */
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
 
+        TemplateManager templateManager = SessionMethods.getTemplateManager(request.getSession());
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {
-            template = new TemplateManager(request).getTemplate(input.getName());
+            Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+            template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         } else {
-            template = new TemplateManager(request).getGlobalTemplate(input.getName());
+            template = templateManager.getGlobalTemplate(input.getName());
         }
         if (template == null) {
             throw new ResourceNotFoundException("public template with name '" + input.getName()
@@ -78,15 +87,15 @@ public class TemplateResultService extends QueryResultService
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
         ret += "?" + getQueryString(request, template, input);
-        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateForm.TYPE_PARAMETER
-            + "=" + TemplateHelper.ALL_TEMPLATE;
+        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateResultService.TYPE_PARAMETER
+            + "=" + Scope.ALL;
         return ret;
     }
 
     private String getQueryString(HttpServletRequest request, TemplateQuery template,
             TemplateResultInput input) {
         String ret = "";
-        ret += TemplateForm.NAME_PARAMETER + "=" + en(input.getName()) + "&";
+        ret += TemplateResultService.NAME_PARAMETER + "=" + en(input.getName()) + "&";
         int i = 1;
         for (PathNode node : template.getEditableNodes()) {
             for (Constraint cons : template.getEditableConstraints(node)) {

@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -25,14 +24,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.PathNode;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * @author Xavier Watkins
@@ -64,7 +63,6 @@ public class QuickSearchAction extends InterMineAction
         QuickSearchForm qsf = (QuickSearchForm) form;
         String qsType = qsf.getQuickSearchType();
         session.setAttribute("quickSearchType", qsType);
-        Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
         if (qsType.equals("ids")) {
             Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
 
@@ -72,7 +70,6 @@ public class QuickSearchAction extends InterMineAction
             session.removeAttribute(Constants.QUERY);
 
             String templateName = (String) webPropertiesMap.get("begin.browse.template");
-            String templateType = "global";
 
             if (templateName == null) {
                 LOG.error("'begin.browse.template' not configured correctly in properties file.");
@@ -80,11 +77,10 @@ public class QuickSearchAction extends InterMineAction
                 return mapping.findForward("error");
             }
 
-            SessionMethods.logTemplateQueryUse(session, templateType, templateName);
+            SessionMethods.logTemplateQueryUse(session, Scope.GLOBAL, templateName);
 
-            String userName = profile.getUsername();
-            TemplateQuery template = TemplateHelper.findTemplate(context, session, userName,
-                                                                 templateName, templateType);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+            TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
             if (template == null) {
                 LOG.error("'begin.browse.template' not configured correctly in properties file.");
@@ -97,18 +93,13 @@ public class QuickSearchAction extends InterMineAction
             MessageResources messages =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 
-            Map<String, Object> valuesMap = new HashMap <String, Object> ();
-            Map <String, ConstraintOp> constraintOpsMap = new HashMap <String, ConstraintOp> ();
-
-            PathNode node = (template.getEditableNodes().get(0));
-
-            valuesMap.put(node.getPathString(), qsf.getParsedValue());
-            constraintOpsMap.put(node.getPathString(), ConstraintOp.EQUALS);
-
-            TemplateQuery queryCopy = TemplateHelper.editTemplate(valuesMap,
-                    constraintOpsMap, template, null, new HashMap<String, String>());
+            String value = qsf.getParsedValue();
+            TemplateQuery populatedTemplate = 
+                TemplatePopulator.populateTemplateOneConstraint(template, ConstraintOp.EQUALS, 
+                        value);
+            
             String qid = SessionMethods.startQuery(clientState, session, messages, false,
-                                                   queryCopy);
+                                                   populatedTemplate);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)
@@ -126,7 +117,5 @@ public class QuickSearchAction extends InterMineAction
         } else {
             throw new RuntimeException("Quick search type not valid");
         }
-
     }
-
 }

@@ -20,14 +20,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.results.WebTable;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -75,8 +74,7 @@ public class AddColumnAction extends InterMineAction
         }
 
         HttpSession session = request.getSession();
-        Model model = ((ObjectStore) session.getServletContext().getAttribute
-                (Constants.OBJECTSTORE)).getModel();
+        Model model = (Model) session.getServletContext().getAttribute(Constants.MODEL);
 
         List<Path> paths = new ArrayList<Path>();
         paths.add(new Path(model, columnToAdd));

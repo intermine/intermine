@@ -217,7 +217,7 @@ public class WebConfig
         for (String widgetType: widgetTypes) {
             Type type = types.get(widgetType);
             if (type == null) {
-                String msg = "Invalid web config. " + widgetType + " is not a valid class.  "
+                String msg = "Invalid web config. " + widgetType + " is not a valid class. "
                     + "Please correct the entry in the webconfig-model.xml for the "
                     + widget.getId() + " widget.";
                 throw new RuntimeException(msg);

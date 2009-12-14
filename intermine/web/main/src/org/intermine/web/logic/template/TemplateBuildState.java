@@ -1,5 +1,7 @@
 package org.intermine.web.logic.template;
 
+import org.intermine.api.template.TemplateQuery;
+
 /*
  * Copyright (C) 2002-2009 FlyMine
  *
@@ -22,9 +24,7 @@ public class TemplateBuildState
     private String title = "";
     private String description = "";
     private String comment = "";
-    private String keywords = "";
     private String name = "";
-    private boolean important;
     private TemplateQuery updating;
 
     /**
@@ -36,7 +36,6 @@ public class TemplateBuildState
         title = template.getTitle();
         comment = template.getComment();
         name = template.getName();
-        keywords = template.getKeywords();
         updating = template;
     }
 
@@ -45,36 +44,6 @@ public class TemplateBuildState
      */
     public TemplateBuildState() {
         // empty
-    }
-
-    /**
-     * @return Returns the important.
-     */
-    public boolean isImportant() {
-        return important;
-    }
-
-    /**
-     * @param important The important to set.
-     */
-    public void setImportant(boolean important) {
-        this.important = important;
-    }
-
-    /**
-     * Get keywords
-     * @return keywords
-     */
-    public String getKeywords() {
-        return keywords;
-    }
-
-    /**
-     * Set keywords
-     * @param keywords the keywords
-     */
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
     }
 
     /**

@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -22,7 +23,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
 /**

@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -29,31 +28,23 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.tag.AspectTagUtil;
+import org.intermine.api.tag.TagNames;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.ObjectStoreBagsForObject;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.aspects.AspectTagUtil;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.TagManager;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an
@@ -78,7 +69,8 @@ public class ObjectDetailsController extends InterMineAction
         HttpSession session = request.getSession();
         TagManager tagManager = SessionMethods.getTagManager(session);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = (ObjectStore) servletContext
+                .getAttribute(Constants.OBJECTSTORE);
         Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
@@ -139,18 +131,6 @@ public class ObjectDetailsController extends InterMineAction
             }
         }
 
-        String publicBagsWithThisObject = getBags(os, session, servletContext,
-                id, true);
-        String myBagsWithThisObject = getBags(os, session, servletContext, id,
-                false);
-
-        request.setAttribute("bagsWithThisObject",
-                             publicBagsWithThisObject
-                                + ((publicBagsWithThisObject.length() != 0
-                                    && myBagsWithThisObject.length() != 0)
-                                   ? ","
-                                   : "")
-                                + myBagsWithThisObject);
         request.setAttribute("placementRefsAndCollections", placementRefsAndCollections);
 
         Set<Class> cls = DynamicUtil.decomposeClass(object.getClass());
@@ -180,9 +160,10 @@ public class ObjectDetailsController extends InterMineAction
             // get all summary tags for all refs and collections of
             // this class
             List<Tag> placementTags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_SUMMARY,
-                        cd.getUnqualifiedName() + ".%", "reference", superuser));
+                                                                    cd.getUnqualifiedName() + ".%",
+                                                                    "reference", superuser));
             placementTags.addAll(tagManager.getTags(TagNames.IM_SUMMARY,
-                        cd.getUnqualifiedName() + ".%", "collection", superuser));
+                    cd.getUnqualifiedName() + ".%", "collection", superuser));
 
             for (Tag tag : placementTags) {
                 String name = getFieldName(tag);
@@ -259,109 +240,18 @@ public class ObjectDetailsController extends InterMineAction
     /**
      * Make a new DisplayObject from the given object.
      *
-     * @param session
-     *            used to get WEB_PROPERTIES and DISPLAYERS Maps
-     * @param object
-     *            the InterMineObject
+     * @param session used to get WEB_PROPERTIES and DISPLAYERS Maps
+     * @param object the InterMineObject
      * @return the new DisplayObject
-     * @throws Exception
-     *             if an error occurs
+     * @throws Exception if an error occurs
      */
     public static DisplayObject makeDisplayObject(HttpSession session,
             InterMineObject object) throws Exception {
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        return new DisplayObject(object, os.getModel(), webConfig, webPropertiesMap, classKeys);
-    }
-
-    private static String getBags(ObjectStore os, HttpSession session,
-            ServletContext servletContext, Integer id, boolean isGlobal) {
-
-        Results results = getBagsAsResults(os, session, servletContext, id, isGlobal);
-        StringBuffer sb = new StringBuffer();
-        for (Object object : results) {
-            List list = (List) object;
-            if (sb.length() != 0) {
-                sb.append(",");
-            }
-            sb.append(list.get(0));
-        }
-        return sb.toString();
-    }
-
-    private static List<String> getGlobalBagsIds(HttpSession session, Integer id) {
-        ObjectStore os = (ObjectStore) session.getServletContext().
-            getAttribute(Constants.OBJECTSTORE);
-        Results results = getBagsAsResults(os, session, session.getServletContext(), id, true);
-        List<String> ret = new ArrayList<String>();
-        for (Object object : results) {
-            List list = (List) object;
-            ret.add(list.get(0).toString());
-        }
-        return ret;
-    }
-
-    /**
-     * Returns global bags containing object with specified id.
-     * @param session session
-     * @param objectId object id
-     * @return bags
-     */
-    public static List<InterMineBag> getGlobalBags(HttpSession session, Integer objectId) {
-        List<InterMineBag> ret = new ArrayList<InterMineBag>();
-
-        List<String> list = getGlobalBagsIds(session, objectId);
-        SearchRepository searchRepository = (SearchRepository) session.getServletContext().
-            getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        Map<String, ? extends WebSearchable> webSearchables =
-            searchRepository.getWebSearchableMap(TagTypes.BAG);
-
-        for (WebSearchable webSearchable : webSearchables.values()) {
-            InterMineBag bag = (InterMineBag) webSearchable;
-            ObjectStoreBag osb = bag.getOsb();
-            Integer i = new Integer(osb.getBagId());
-            // check that this is in our list
-            if (list.contains(i.toString())) {
-                ret.add(bag);
-            }
-        }
-        return ret;
-    }
-
-    private static Results getBagsAsResults(ObjectStore os, HttpSession session,
-            ServletContext servletContext, Integer id, boolean isGlobal) {
-        Map webSearchables = null;
-        // get all of the bags with this object
-        if (isGlobal) {
-            SearchRepository searchRepository = (SearchRepository) servletContext
-                    .getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-            webSearchables = searchRepository.getWebSearchableMap(TagTypes.BAG);
-        } else {
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            webSearchables = profile.getSavedBags();
-        }
-        Collection<WebSearchable> webSearchableColl = webSearchables.values();
-        Collection<ObjectStoreBag> objectStoreBags = new ArrayList<ObjectStoreBag>();
-
-        // loop though and convert InterMineBag to ObjectStoreBag
-        for (WebSearchable o : webSearchableColl) {
-            InterMineBag bag = (InterMineBag) o;
-            ObjectStoreBag osb = bag.getOsb();
-            objectStoreBags.add(osb);
-        }
-
-        // this searches bags for an object
-        ObjectStoreBagsForObject osbo = new ObjectStoreBagsForObject(id,
-                objectStoreBags);
-
-        // run query
-        Query q = new Query();
-        q.addToSelect(osbo);
-
-        // this should return all bags with that object
-        return os.execute(q);
+        return new DisplayObject(object, model, webConfig, webPropertiesMap, classKeys);
     }
 }

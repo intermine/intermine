@@ -21,8 +21,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * @author Xavier Watkins

@@ -12,7 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -25,6 +25,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -42,18 +53,11 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.DisplayConstraint;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template tile. This tile can be used for real template
@@ -91,24 +95,29 @@ public class TemplateController extends TilesAction
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
         Model model = os.getModel();
         ObjectStoreSummary oss = (ObjectStoreSummary) servletContext
-                .getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        BagQueryConfig bagQueryConfig =
-            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            .getAttribute(Constants.OBJECT_STORE_SUMMARY);
+        TemplateSummariser summariser = (TemplateSummariser) servletContext
+            .getAttribute(Constants.TEMPLATE_SUMMARISER);
+        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
+            .getAttribute(Constants.BAG_QUERY_CONFIG);
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
+        
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
-        String queryName = request.getParameter("name");
+        String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
-        String bagName = request.getParameter("bagName");
+        String preSelectedBagName = request.getParameter("bagName");
+
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
 
         String idForLookup = request.getParameter("idForLookup");
         InterMineObject imObj = null;
         if (idForLookup != null && idForLookup.length() != 0) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-        if (queryName == null) {
-            queryName = request.getParameter("templateName");
+        if (templateName == null) {
+            templateName = request.getParameter("templateName");
         }
 
         // look for request attribute "previewTemplate" which is set while building a template
@@ -121,10 +130,8 @@ public class TemplateController extends TilesAction
         // replaced by constraining the id to be in the bag.
         TemplateQuery modifiedTemplate = null;
         if (loadModifiedTemplate != null) {
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-            modifiedTemplate = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                           queryName, TemplateHelper.TEMP_TEMPLATE);
-            queryName = modifiedTemplate.getName();
+            modifiedTemplate = getTemporaryTemplate(session, templateName);
+            templateName = modifiedTemplate.getName();
         }
 
         if (context.getAttribute("builder") != null) {
@@ -135,29 +142,28 @@ public class TemplateController extends TilesAction
             request.setAttribute("previewTemplate", template);
         }
 
-        if (queryName == null && template != null) {
-            queryName = template.getName();
+        if (templateName == null && template != null) {
+            templateName = template.getName();
         } else {
             if (scope == null) {
-                scope = TemplateHelper.ALL_TEMPLATE;
-            }
-            String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
-            template = TemplateHelper.findTemplate(servletContext, session, userName, queryName,
-                                                   scope);
+                scope = Scope.ALL;
+            }            
+            template = templateManager.getTemplate(profile, templateName, scope);
         }
         if (template == null) {
             return null;
         }
 
-        Map displayConstraints = new HashMap();
-        Map names = new HashMap();
-        Map constraints = new HashMap();
-        Map bags = new HashMap();
-        Map constraintBagTypes = new HashMap();
-        Map selectedBagNames = new HashMap();
-        Map keyFields = new HashMap();
-        Map haveExtraConstraint = new HashMap();
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<Constraint, DisplayConstraint> displayConstraints = new HashMap();
+        Map<Constraint, String> names = new HashMap();
+        Map<PathNode, List<Constraint>> constraints = new HashMap();
+        Map<Constraint, Map<String, InterMineBag>> bags = new HashMap();
+        Map<Constraint, String> constraintBagTypes = new HashMap();
+        Map<Constraint, Object> selectedBagNames = new HashMap();
+        Map<Constraint, String> keyFields = new HashMap();
+        Map<Constraint, Boolean> haveExtraConstraint = new HashMap();
+        Map<String, List<FieldDescriptor>> classKeys = 
+        	(Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
         // for the autocompleter
         Map<String, String> classDesc = new HashMap();
@@ -167,8 +173,7 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
 
-        Map<String, InterMineBag> searchBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(servletContext));
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
 
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
         for (PathNode node : template.getEditableNodes()) {
@@ -186,13 +191,11 @@ public class TemplateController extends TilesAction
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
-            constructAutocompleteIndex(displayTemplate, servletContext, os, node, classDesc,
-                            fieldDesc);
+            constructAutocompleteIndex(displayTemplate, servletContext, os.getModel(), node,
+                    classDesc, fieldDesc);
 
             int j = 1;
-            for (Iterator ci = displayTemplate.getEditableConstraints(node).iterator();
-                ci.hasNext();) {
-                Constraint c = (Constraint) ci.next();
+            for (Constraint c : displayTemplate.getEditableConstraints(node)) {
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
                     Object value;
@@ -214,15 +217,16 @@ public class TemplateController extends TilesAction
                         selectedBagNames.put(c, modC.getValue());
                     }
                 }
-                displayConstraints.put(c, new DisplayConstraint(displayNode, os
-                        .getModel(), oss, template.getPossibleValues(node), classKeys));
+                displayConstraints.put(c, new DisplayConstraint(displayNode,
+                            os.getModel(), oss, summariser.getPossibleValues(template, node),
+                            classKeys));
 
                 // create display name
                 PathNode parent;
                 if (displayNode.getPathString().indexOf('.') >= 0) {
                     parent = displayTemplate.getNodes().get(
                             displayNode.getPathString().substring(0,
-                            displayNode.getPathString().lastIndexOf(".")));
+                                displayNode.getPathString().lastIndexOf(".")));
                 } else {
                     parent = displayNode;
                 }
@@ -237,25 +241,27 @@ public class TemplateController extends TilesAction
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
                         .getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
-                    Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, parent.getType(), os.getModel());
+                    Map<String, InterMineBag> constraintBags =
+                        bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (bagName != null && constraintBags.containsKey(bagName)) {
+                        if (preSelectedBagName != null 
+                        		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
-                            selectedBagNames.put(c, bagName);
+                            selectedBagNames.put(c, preSelectedBagName);
                         }
                     }
                 }
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
-                    Map constraintBags =
-                        WebUtil.getBagsOfType(searchBags, node.getType(), os.getModel());
+                    Map<String, InterMineBag> constraintBags =
+                        bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (bagName != null && constraintBags.containsKey(bagName)) {
+                        if (preSelectedBagName != null 
+                        		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
-                            selectedBagNames.put(c, bagName);
+                            selectedBagNames.put(c, preSelectedBagName);
                         }
                     }
                     // this might be a lookup constraint, find the key fields for a help message
@@ -301,7 +307,7 @@ public class TemplateController extends TilesAction
             constraints.put(displayNode, displayTemplate.getEditableConstraints(displayNode));
         }
         populateTemplateForm(displayTemplate, tf, request, servletContext, imObj);
-        tf.setName(queryName);
+        tf.setName(templateName);
         tf.setType(scope);
         // A Map which have as key the pathstring and as value the name of the last class
         request.setAttribute("classDesc", classDesc);
@@ -331,18 +337,33 @@ public class TemplateController extends TilesAction
         // A List of values for the extra constraint
         request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
                     bagQueryConfig.getConstrainField()));
-        if (searchBags.size() > 0) {
+        if (bagManager.getUserAndGlobalBags(profile).size() > 0) {
             request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
         }
         return null;
     }
 
+    private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        SavedQuery savedQuery = profile.getHistory().get(templateName);
+        TemplateQuery template = null;
+        if (savedQuery.getPathQuery() instanceof TemplateQuery) {
+            template = (TemplateQuery) savedQuery.getPathQuery();
+        } else if (session.getAttribute(Constants.QUERY)
+                        instanceof TemplateQuery) {
+            // see #1435
+            template = (TemplateQuery) session.getAttribute(Constants.QUERY);
+        }
+        return template;
+    }
+
     private void constructAutocompleteIndex(PathQuery query, ServletContext servletContext,
-                                            ObjectStore os, PathNode node, Map classDesc,
-                                            Map fieldDesc) {
+                                            Model model, PathNode node,
+                                            Map<String, String> classDesc,
+                                            Map<String, String> fieldDesc) {
         AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
         if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
-            Path path = PathQuery.makePath(os.getModel(), query, node.getPathString());
+            Path path = PathQuery.makePath(model, query, node.getPathString());
             if (path.getEndFieldDescriptor() != null) {
                 fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
                 String[] tmp = path.getLastClassDescriptor().getName().split("\\.");
@@ -352,7 +373,7 @@ public class TemplateController extends TilesAction
     }
 
     /**
-     *  Populate parts of the template form that are used in javscript methods in template.jsp
+     *  Populate parts of the template form that are used in javascript methods in template.jsp
      */
     private static void populateTemplateForm(TemplateQuery template,
             TemplateForm tf, HttpServletRequest request, ServletContext servletContext,
@@ -361,19 +382,16 @@ public class TemplateController extends TilesAction
 
         Map<String, String> autoMap = new HashMap<String, String>();
 
-        for (Iterator i = template.getEditableNodes().iterator(); i.hasNext();) {
-            PathNode node = (PathNode) i.next();
-
-            for (Iterator ci = template.getEditableConstraints(node).iterator(); ci
-                    .hasNext();) {
-                Constraint c = (Constraint) ci.next();
+        for (PathNode node : template.getEditableNodes()) {
+        	for (Constraint c : template.getEditableConstraints(node)) {
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
                 tf.setExtraValues(attributeKey, "" + c.getExtraValue());
                 if (imObject != null) {
-                    Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-                    Collection keyFields = (Collection) classKeys.get(DynamicUtil
+                    Map<String, List<FieldDescriptor>> classKeys = 
+                    	(Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+                    Collection<FieldDescriptor> keyFields = (Collection) classKeys.get(DynamicUtil
                             .getFriendlyName(imObject.getClass()));
                     AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
                         .next();
@@ -393,8 +411,6 @@ public class TemplateController extends TilesAction
                         && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     autoMap.put(node.getParentType() + "." + node.getFieldName(),
                             "useAutoCompleter");
-                    //request.setAttribute("classDescriptor", node.getParentType());
-                    //request.setAttribute("fieldDescriptor", node.getFieldName());
                 }
                 j++;
             }

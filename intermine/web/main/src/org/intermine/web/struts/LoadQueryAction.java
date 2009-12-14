@@ -23,18 +23,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.MainHelper;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.MainHelper;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.results.DisplayObject;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +18,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.search.Scope;
+import org.intermine.web.logic.results.DisplayObject;
 
 /**
  * Controller for the objectDetailsAspect tile.
@@ -41,7 +41,7 @@ public class ObjectDetailsAspectController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
         ComponentContext cc = new ComponentContext();
-        cc.putAttribute("scope", "global");
+        cc.putAttribute("scope", Scope.GLOBAL);
         cc.putAttribute("placement", context.getAttribute("placement"));
         cc.putAttribute("displayObject", dobj);
         cc.putAttribute("interMineIdBag", interMineIdBag);

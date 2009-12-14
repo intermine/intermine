@@ -136,7 +136,7 @@
             <li>&nbsp;|&nbsp;</li>
           </c:if>
           <c:choose>
-            <c:when test="${((empty userOptionMap[subtabName] && count == 0)||(userOptionMap[subtabName] == tabArray[2])) && (tab == pageName)}">
+            <c:when test="${((empty subtabs[subtabName] && count == 0)||(subtabs[subtabName] == tabArray[2])) && (tab == pageName)}">
               <li id="subactive_${tab}"><fmt:message key="${tabArray[1]}" /></li>
             </c:when>
             <c:when test="${(tabArray[3] == '1') && (loggedin == false)}">

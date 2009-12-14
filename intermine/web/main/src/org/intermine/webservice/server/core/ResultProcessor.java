@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.intermine.api.results.ResultElement;
 import org.intermine.pathquery.Constraint;
-import org.intermine.web.logic.results.ResultElement;
 import org.intermine.webservice.server.output.Output;
 
 /**

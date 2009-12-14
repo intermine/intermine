@@ -17,13 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.ClassKeyHelper;
 
 /**
  * When an constraint is being applied to an attribute, an instance of this class is used

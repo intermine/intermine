@@ -11,12 +11,11 @@ package org.intermine.web.struts;
  */
 
 
-import org.intermine.web.logic.bag.InterMineBag;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.InterMineBag;
 
 /**
  *

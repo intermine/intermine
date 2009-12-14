@@ -14,7 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.api.results.ResultElement;
 
 /*
  * Copyright (C) 2002-2007 FlyMine

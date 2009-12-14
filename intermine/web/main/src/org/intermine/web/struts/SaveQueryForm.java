@@ -20,9 +20,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.util.NameUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * Form bean to represent the inputs to the query saving action
@@ -67,7 +67,7 @@ public class SaveQueryForm extends ActionForm
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                        new ActionMessage("errors.savequery.blank", queryName));
 
-        } else if (!WebUtil.isValidName(queryName)) {
+        } else if (!NameUtil.isValidName(queryName)) {
 
             errors = new ActionErrors();
             errors.add(ActionMessages.GLOBAL_MESSAGE,

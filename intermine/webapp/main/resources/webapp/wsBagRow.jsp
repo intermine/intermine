@@ -7,7 +7,7 @@
 <tiles:importAttribute name="wsName"/>
 <tiles:importAttribute name="scope"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable" 
-                    classname="org.intermine.web.logic.search.WebSearchable"/>
+                    classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="showDescriptions" ignore="true"/>
 <tiles:importAttribute name="statusIndex"/>
 <tiles:importAttribute name="wsCheckBoxId" ignore="true"/>

@@ -7,7 +7,7 @@
 <tiles:importAttribute name="wsListId"/>
 <tiles:importAttribute name="wsName"/>
 <tiles:useAttribute id="webSearchable" name="webSearchable"
-                    classname="org.intermine.web.logic.search.WebSearchable"/>
+                    classname="org.intermine.api.search.WebSearchable"/>
 <tiles:importAttribute name="scope"/>
 <tiles:importAttribute name="showNames" ignore="true"/>
 <tiles:importAttribute name="showTitles" ignore="true"/>

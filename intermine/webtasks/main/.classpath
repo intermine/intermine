@@ -7,5 +7,6 @@
 	<classpathentry kind="src" path="/fulldata"/>
 	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

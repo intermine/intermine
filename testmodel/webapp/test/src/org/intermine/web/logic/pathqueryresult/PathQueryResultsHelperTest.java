@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
@@ -28,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -112,7 +112,7 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
         d1.setEmployees(employees);
         List<Class> sr = new ArrayList<Class>();
         sr.add(Employee.class);
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os, (InterMineObject)d1, "employees",sr);
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollectionForClass(webConfig, os.getModel(), (InterMineObject)d1, "employees",sr);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Department.employees.name Department.employees:department.name Department.employees:department:company.name Department.employees.age Department.employees.fullTime\">" +
         		"<node path=\"Department\" type=\"Department\"></node>" +
         		"<node path=\"Department.employees\" type=\"Employee\"></node>" +

@@ -11,12 +11,15 @@ package org.intermine.webservice.server.core;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.struts.ObjectDetailsController;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Manager of public lists used by web service.
@@ -41,8 +44,11 @@ public class ListManager
      */
     public List<String> getListsNames(Integer objectId) {
         List<String> ret = new ArrayList<String>();
-        List<InterMineBag> bags = ObjectDetailsController.
-            getGlobalBags(request.getSession(), objectId);
+
+        HttpSession session = request.getSession();
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+
+        Collection<InterMineBag> bags = bagManager.getGlobalBags().values();
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
         }

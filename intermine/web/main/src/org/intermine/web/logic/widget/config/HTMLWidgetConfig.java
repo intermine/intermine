@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.Widget;
 
 /**

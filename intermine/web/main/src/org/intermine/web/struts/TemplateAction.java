@@ -10,9 +10,11 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,14 +26,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateValue;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.Constraint;
+import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
 
@@ -81,7 +88,6 @@ public class TemplateAction extends InterMineAction
         throws Exception {
         TemplateForm tf = (TemplateForm) form;
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String templateName = tf.getName();
         String templateType = tf.getType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
@@ -92,15 +98,15 @@ public class TemplateAction extends InterMineAction
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        String userName = profile.getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             templateName, templateType);
-        Map savedBags = WebUtil.getAllBags(profile.getSavedBags(), SessionMethods
-                .getGlobalSearchRepository(servletContext));
+
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+
+        TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-            TemplateQuery configuredTmpl = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                    savedBags);
+            TemplateQuery configuredTmpl = TemplatePopulator.getPopulatedTemplate(template,
+                    templateFormToTemplateValues(tf, template));
+
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
             String htmlLink = gen.getHtmlLink(new URLGenerator(request).getPermanentBaseURL(),
                     configuredTmpl);
@@ -126,8 +132,9 @@ public class TemplateAction extends InterMineAction
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                                                                                 savedBags);
+            TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
+            		templateFormToTemplateValues(tf, template));
+        	
             SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
             form.reset(mapping, request);
@@ -136,8 +143,9 @@ public class TemplateAction extends InterMineAction
             // We want to edit the template: Load the query as a TemplateQuery
             // Don't care about the form
             // Reload the initial template
-            template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                   template.getName(), TemplateHelper.ALL_TEMPLATE);
+
+            template = templateManager.getTemplate(profile, templateName, Scope.ALL);
+
             if (template == null) {
                 recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
                 return mapping.findForward("template");
@@ -152,8 +160,9 @@ public class TemplateAction extends InterMineAction
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                                                                             savedBags);
+        TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
+        		templateFormToTemplateValues(tf, template));
+        
         if (!queryCopy.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
                                         PathQueryUtil.getProblemsSummary(template.getProblems())),
@@ -197,6 +206,37 @@ public class TemplateAction extends InterMineAction
      */
     private boolean forwardToLinksPage(HttpServletRequest request) {
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
+    }
+
+    
+    
+    public Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
+                                                            TemplateQuery template) {
+    	Map<String, List<TemplateValue>> templateValues = 
+    		new HashMap<String, List<TemplateValue>>();
+        int j = 0;
+        for (PathNode node : template.getEditableNodes()) {
+        	List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
+        	templateValues.put(node.getPathString(), nodeValues);
+        	for (Constraint c : template.getEditableConstraints(node)) {
+                String key = "" + (j + 1);
+    
+                TemplateValue value;
+                if (tf.getUseBagConstraint(key)) {
+                	ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
+                	Object constraintValue = tf.getBag(key);                	
+                	value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode());
+                } else {
+                	 String op = (String) tf.getAttributeOps(key);
+                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
+                     Object constraintValue = tf.getAttributeValues(key);
+                     Object extraValue = tf.getExtraValues(key);
+                     value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode(), extraValue);
+                }                    
+                nodeValues.add(value);
+        	}
+        }	
+    	return templateValues;
     }
 
 }

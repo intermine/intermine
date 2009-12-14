@@ -21,21 +21,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -65,11 +63,11 @@ public class ModifyBagDetailsAction extends InterMineAction
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-        SearchRepository globalRepository =
-            (SearchRepository) servletContext.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
-        InterMineBag imBag = BagHelper.getBag(profile, globalRepository, mbdf.getBagName());
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
+        InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, mbdf.getBagName());
         String bagIdentifier = "bag." + imBag.getName();
 
         if (request.getParameter("removeFromBag") != null) {
@@ -80,19 +78,18 @@ public class ModifyBagDetailsAction extends InterMineAction
                 // TODO these messages need to be moved to properties file
                 msg = "You can't remove all items from your list.  Try deleting your list instead.";
             } else {
-                int removed = pc.removeFromBag(mbdf.getBagName(),
-                                               profile, os, session, imBag.getSize());
+                int removed = pc.removeSelectedFromBag(imBag, session);
                 msg = "You have removed " + removed + " items from your list.";
             }
             SessionMethods.recordMessage(msg, session);
         } else if (request.getParameter("addToBag") != null) {
-            InterMineBag newBag = BagHelper.getBag(profile, globalRepository,
+            InterMineBag newBag = bagManager.getUserOrGlobalBag(profile,
                     mbdf.getExistingBagName());
             String msg = "";
             if (newBag.getType().equals(imBag.getType())) {
                 PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
                 int oldSize = newBag.size();
-                pc.addSelectedToBag(os, newBag);
+                pc.addSelectedToBag(newBag);
                 int newSize = newBag.size();
                 int added = newSize - oldSize;
                 msg = "You have added " + added + " items from list <strong>" + imBag.getName()
@@ -105,17 +102,15 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("convertToThing") != null) {
             BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-            Map<String, String []> additionalConverters = bagQueryConfig
-                .getAdditionalConverters(imBag.getType());
+            Map<String, String []> additionalConverters
+                = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
                     Class clazz = Class.forName(converterClassName);
                     Constructor constructor = clazz.getConstructor();
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    WebResults result =
-                        bagConverter.getConvertedObjects(session, mbdf.getExtraFieldValue(),
-                                                         imBag.getContentsAsIds(),
-                                                         imBag.getType());
+                    WebResults result = bagConverter.getConvertedObjects(session,
+                            mbdf.getExtraFieldValue(), imBag.getContentsAsIds(), imBag.getType());
 
                     PagedTable pc = new PagedTable(result);
                     String identifier = "col" + index++;
@@ -123,8 +118,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     String trail = "|bag." + imBag.getName();
                     session.removeAttribute(Constants.QUERY);
                     return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("table", identifier)
-                        .addParameter("trail", trail).forward();
+                        .addParameter("table", identifier).addParameter("trail", trail).forward();
                 }
             }
         // "use in bag" link
@@ -141,11 +135,9 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
-            Model model = os.getModel();
-            ProfileManager pm = (ProfileManager) servletContext
-                .getAttribute(Constants.PROFILE_MANAGER);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,
-                BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()),
+                templateManager.getConversionTemplates(),
                 TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                 TypeUtil.instantiate(model.getPackageName() + "." + type2),
                 imBag);
