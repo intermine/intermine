@@ -19,7 +19,6 @@ import java.util.Properties;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;

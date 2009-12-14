@@ -174,7 +174,7 @@ public class BagUploadConfirmController extends TilesAction
                     o = (InterMineObject) obj;
                 }
                 sb.append(o.getId() + "," + objectListIndex + ","
-                          + identifier + "," + issueType + "|");
+                        + identifier.replace("'", "\\'") + "," + issueType + "|");
                 objectListIndex++;
             }
         }

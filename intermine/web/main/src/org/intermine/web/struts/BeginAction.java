@@ -51,9 +51,16 @@ public class BeginAction extends InterMineAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
+        // TODO this message should be moved to properties file
         if (request.getParameter("GALAXY_URL") != null) {
             request.getSession().setAttribute("GALAXY_URL", request.getParameter("GALAXY_URL"));
-            SessionMethods.recordMessage("Welcome to FlyMine, GALAXY users. ", session);
+            
+            String msg = "<b>Welcome to FlyMine, GALAXY users!</b><br/><br/>"
+             + "You can run queries by clicking on the 'Templates' tab at the top of this page."
+             + "&nbsp;&nbsp;Above your query results will be a 'Send to Galaxy' button; clicking "
+             + "this button will take you back to Galaxy with the results of that query."; 
+            
+            SessionMethods.recordMessage(msg, session);
         }
 
         BagManager bagManager = SessionMethods.getBagManager(servletContext);

@@ -244,5 +244,9 @@ ant -v precompute-queries -Drelease=test
 -->
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>
+		<!-- NB: you need to change the setting in
+				 bio/core/main/src/org/intermine/bio/util/CreateFlyBaseLinkIns.java
+		<post-process name="link-ins"/>
+		-->
   </post-processing>
 </project>

@@ -1,0 +1,15 @@
+!date: 2009/11/25 12:11:33
+!Mapping of InterPro entries to GO
+!Nicola Mulder, Hinxton
+!
+InterPro:IPR000003 Retinoid X receptor > GO:DNA binding ; GO:0003677
+InterPro:IPR000003 Retinoid X receptor > GO:ligand-dependent nuclear receptor activity ; GO:0004879
+InterPro:IPR000003 Retinoid X receptor > GO:steroid binding ; GO:0005496
+InterPro:IPR000003 Retinoid X receptor > GO:zinc ion binding ; GO:0008270
+InterPro:IPR000003 Retinoid X receptor > GO:regulation of transcription, DNA-dependent ; GO:0006355
+InterPro:IPR000003 Retinoid X receptor > GO:nucleus ; GO:0005634
+InterPro:IPR000005 Helix-turn-helix, AraC type > GO:transcription factor activity ; GO:0003700
+InterPro:IPR000005 Helix-turn-helix, AraC type > GO:sequence-specific DNA binding ; GO:0043565
+InterPro:IPR000005 Helix-turn-helix, AraC type > GO:regulation of transcription, DNA-dependent ; GO:0006355
+InterPro:IPR000005 Helix-turn-helix, AraC type > GO:intracellular ; GO:0005622
+InterPro:IPR000006 Metallothionein, vertebrate > GO:metal ion binding ; GO:0046872

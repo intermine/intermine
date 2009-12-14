@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+
+# this file downloads a single file to the specified download directory.
+# then the file is compared to the current version (if any).
+# if the file is the same as the current file, it's deleted.  if the file
+# is newer, a directory is created, the current link is updated.
+
+use strict;
+use warnings;
+
+BEGIN {
+  # find the lib directory by looking at the path to this script
+  push (@INC, ($0 =~ m:(.*)/.*:)[0] . '/../../intermine/perl/lib/');
+}
+use InterMine::DataDownloader;
+
+#Define ARGVs
+my ($main_dir, $server, $file);
+if(@ARGV!=3){
+	die "Wrong number of ARGVs!\n FILE_URL FILE_NAME DESTINATION_DIRECTORY \n";
+}else{
+	$file = $ARGV[1];
+	$server = $ARGV[0];
+	$main_dir = $ARGV[2];
+}
+
+#data source
+my $file_to_get = "$server/$file";
+
+#data destination
+my $download_dir = "$main_dir/temp";
+my $temp_file = "$download_dir/temp.txt";
+
+&checkdir_exists($main_dir);
+&checkdir_exists($download_dir);
+&http_download($file_to_get,$temp_file);
+
+my $current_link = "$main_dir/current";
+my $old_file = "$current_link/$file";
+
+#compare the files, create version directory if it is a new version or
+#the current data link is missing
+if(&compare_files($old_file,$temp_file)==1){
+	print "Keeping downloaded files.\n";
+	&update_files($main_dir,$file,$temp_file,$current_link);
+}else{
+	print "Downloaded files deleted.\n";
+	unlink $temp_file;	
+}
+
+#create data directory, move files, make link	
+sub update_files(){
+	my ($dir,$new_name,$oldfile,$link) = @_;
+	my $date = &convert_date();
+	my $new_dir = "$dir/$date";
+	my $newfile = "$new_dir/$new_name";
+	&checkdir_exists($new_dir);
+	rename($oldfile, $newfile) or die "Cannot rename $oldfile: $!";
+	&make_link($date,$link);
+
+	system "chmod -R a+r,g+w $new_dir";	
+	if ($newfile =~ m/zip/) {
+	    system "unzip $newfile -d $new_dir"
+	}
+}	

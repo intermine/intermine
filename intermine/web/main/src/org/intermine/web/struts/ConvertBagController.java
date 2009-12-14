@@ -28,7 +28,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
-import org.intermine.api.bag.TypeConverterHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateManager;

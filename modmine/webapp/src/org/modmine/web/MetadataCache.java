@@ -575,9 +575,18 @@ public class MetadataCache
                 String list = result[1];
                 String[] dccIds = list.split("\\s");
                 parseTokens(dccIds, newTrack, false);
-                // look for dccId in the track name
-                String[] nameSplit = trackName.split("_");
-                parseTokens(nameSplit, newTrack, true);
+                
+                if (list.length()<2){
+                    // look for dccId in the track name
+                    // (only if there are no dccid in the proper field)
+                    String[] nameSplit = trackName.split("_");
+                    parseTokens(nameSplit, newTrack, true);
+                }
+//                
+//                
+//                // look for dccId in the track name
+//                String[] nameSplit = trackName.split("_");
+//                parseTokens(nameSplit, newTrack, true);
             }
             reader.close();
         } catch (Exception err) {
