@@ -266,7 +266,7 @@ public class ProfileManagerTest extends StoreDataTestCase
         ProfileManagerBinding.unmarshal(reader, pm, osw, new PkQueryIdUpgrader(os));
 
         // only profiles from file, not from setUpUserprofiles()
-        assertEquals(2, pm.getProfileUserNames().size());
+        assertEquals(3, pm.getProfileUserNames().size());
 
         assertTrue(pm.getProfileUserNames().contains("bob"));
 
