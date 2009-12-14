@@ -1,0 +1,119 @@
+<items>
+<item id="2_2" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR000005"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="4_7"/><reference ref_id="4_8"/><reference ref_id="4_9"/><reference ref_id="4_10"/></collection>
+</item>
+<item id="4_6" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_6"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_4" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_4"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_8" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_8"/>
+<reference name="subject" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_9" class="GOTerm">
+<attribute name="identifier" value="GO:0005622"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_3" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_3"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_1" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_1"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_2" class="GOTerm">
+<attribute name="identifier" value="GO:0004879"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_2" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_2"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="1_1" class="DataSet">
+<attribute name="title" value="InterPro GO Annotation data set"/>
+<reference name="dataSource" ref_id="0_1"/>
+</item>
+<item id="3_6" class="GOTerm">
+<attribute name="identifier" value="GO:0005634"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_1" class="GOTerm">
+<attribute name="identifier" value="GO:0003677"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_5" class="GOTerm">
+<attribute name="identifier" value="GO:0006355"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_7" class="GOTerm">
+<attribute name="identifier" value="GO:0003700"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_7" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_7"/>
+<reference name="subject" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_4" class="GOTerm">
+<attribute name="identifier" value="GO:0008270"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_8" class="GOTerm">
+<attribute name="identifier" value="GO:0043565"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_11" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_10"/>
+<reference name="subject" ref_id="2_3"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_3" class="GOTerm">
+<attribute name="identifier" value="GO:0005496"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="4_10" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_9"/>
+<reference name="subject" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="2_1" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR000003"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/><reference ref_id="4_6"/></collection>
+</item>
+<item id="3_10" class="GOTerm">
+<attribute name="identifier" value="GO:0046872"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="2_3" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR000006"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="4_11"/></collection>
+</item>
+<item id="4_5" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_5"/>
+<reference name="subject" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="0_1" class="DataSource">
+<attribute name="name" value="InterPro"/>
+</item>
+<item id="4_9" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="3_5"/>
+<reference name="subject" ref_id="2_2"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+</items>
