@@ -43,8 +43,8 @@ public class TemplateSummariser
     private static final Logger LOG = Logger.getLogger(TemplateSummariser.class);
     protected ObjectStore os;
     protected ObjectStoreWriter osw;
-    protected Map<TemplateQuery, HashMap<PathNode, List>> possibleValues
-        = new IdentityHashMap<TemplateQuery, HashMap<PathNode, List>>();
+    protected Map<TemplateQuery, HashMap<String, List>> possibleValues
+        = new IdentityHashMap<TemplateQuery, HashMap<String, List>>();
 
     /**
      * Construct a TemplateSummariser.
@@ -64,9 +64,9 @@ public class TemplateSummariser
      * @throws ObjectStoreException if something goes wrong
      */
     public void summarise(TemplateQuery templateQuery) throws ObjectStoreException {
-        HashMap templatePossibleValues = possibleValues.get(templateQuery);
+        HashMap<String, List> templatePossibleValues = possibleValues.get(templateQuery);
         if (templatePossibleValues == null) {
-            templatePossibleValues = new HashMap();
+            templatePossibleValues = new HashMap<String, List>();
             possibleValues.put(templateQuery, templatePossibleValues);
         }
         for (PathNode node : templateQuery.getEditableNodes()) {
@@ -151,9 +151,9 @@ public class TemplateSummariser
      * @return a List of possible values
      */
     public List getPossibleValues(TemplateQuery templateQuery, PathNode node) {
-        Map<PathNode, List> templatePossibleValues = getPossibleValues(templateQuery);
+        Map<String, List> templatePossibleValues = getPossibleValues(templateQuery);
         if (templatePossibleValues != null) {
-            return templatePossibleValues.get(node);
+            return templatePossibleValues.get(node.getPathString());
         }
         return null;
     }
@@ -162,10 +162,10 @@ public class TemplateSummariser
      * Returns a Map of the possible values for editable nodes on a template query.
      *
      * @param templateQuery a TemplateQuery
-     * @return a Map from PathNode to List
+     * @return a Map from String path to List
      */
-    public Map<PathNode, List> getPossibleValues(TemplateQuery templateQuery) {
-        HashMap<PathNode, List> templatePossibleValues = possibleValues.get(templateQuery);
+    public Map<String, List> getPossibleValues(TemplateQuery templateQuery) {
+        HashMap<String, List> templatePossibleValues = possibleValues.get(templateQuery);
         if (templatePossibleValues == null) {
             SavedTemplateQuery template = templateQuery.getSavedTemplateQuery();
             if (template != null) {
@@ -173,7 +173,7 @@ public class TemplateSummariser
                     Iterator summaryIter = template.getSummaries().iterator();
                     if (summaryIter.hasNext()) {
                         TemplateSummary summary = (TemplateSummary) summaryIter.next();
-                        templatePossibleValues = (HashMap<PathNode, List>) Base64
+                        templatePossibleValues = (HashMap<String, List>) Base64
                             .decodeToObject(summary.getSummary());
                     }
                 } catch (Exception err) {
