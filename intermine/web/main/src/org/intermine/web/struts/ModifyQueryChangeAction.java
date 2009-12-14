@@ -10,14 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.SaveQueryHelper;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,6 +21,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a saved query or bag.
@@ -143,7 +142,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         String queryName = request.getParameter("name");
         SavedQuery sq = profile.getHistory().get(queryName);
         sq = SessionMethods.saveQuery(session,
-                SaveQueryHelper.findNewQueryName(profile.getSavedQueries(), queryName),
+                NameUtil.findNewQueryName(profile.getSavedQueries().keySet(), queryName),
                 sq.getPathQuery(), sq.getDateCreated());
         recordMessage(new ActionMessage("savedInSavedQueries.message", sq.getName()), request);
         return new ForwardParameters(mapping.findForward("mymine"))

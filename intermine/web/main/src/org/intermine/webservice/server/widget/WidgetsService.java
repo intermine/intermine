@@ -12,7 +12,6 @@ package org.intermine.webservice.server.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +20,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
@@ -33,13 +34,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -104,19 +100,14 @@ public class WidgetsService extends WebService
      */
     protected InterMineBag getBag(String className, List<String> ids,
             ServletContext servletContext, Profile profile) throws ObjectStoreException {
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
         try {
             className = StringUtil.capitalise(className);
             Class.forName(model.getPackageName() + "." + className);
         } catch (ClassNotFoundException clse) {
             return null;
         }
-//      ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
-
-        ObjectStoreWriter uosw = ((ProfileManager) servletContext.getAttribute(
-                                 Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
 
         String bagName = null;
         Map<String, InterMineBag> profileBags = profile.getSavedBags();
@@ -165,12 +156,8 @@ public class WidgetsService extends WebService
         List<Integer> bagList = new ArrayList();
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                profile.getUserId(), uosw);
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        osw.addAllToBag(imBag.getOsb(), bagList);
-        osw.close();
-        profile.saveBag(imBag.getName(), imBag);
+        InterMineBag imBag = profile.createBag(bagName, className, "");
+        imBag.addIdsToBag(bagList);
         return imBag;
     }
 

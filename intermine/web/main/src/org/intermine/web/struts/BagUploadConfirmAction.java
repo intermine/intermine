@@ -11,19 +11,8 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,6 +21,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.Constants;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.
@@ -59,8 +52,6 @@ public class BagUploadConfirmAction extends InterMineAction
         }
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = confirmForm.getNewBagName();
@@ -90,24 +81,9 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        ProfileManager profileManager =
-            (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
-        ObjectStoreWriter profileOs = profileManager.getProfileObjectStoreWriter();
+        InterMineBag bag = profile.createBag(bagName, bagType, "");
+        bag.addIdsToBag(contents);
 
-        InterMineBag bag = new InterMineBag(bagName, bagType, null, new Date(), os,
-                                            profile.getUserId(),
-                profileOs);
-        ObjectStoreWriter osw = null;
-        try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
-            osw.addAllToBag(bag.getOsb(), contents);
-        } finally {
-            if (osw != null) {
-                osw.close();
-            }
-        }
-
-        profile.saveBag(bagName, bag);
         session.removeAttribute("bagQueryResult");
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));

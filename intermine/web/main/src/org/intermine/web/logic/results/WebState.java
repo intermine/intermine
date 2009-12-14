@@ -22,7 +22,7 @@ public class WebState
 {
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
-
+    protected Map<String, String> subtabs = new HashMap();
     private Map<String, Object> statesMap = new HashMap<String, Object>();
 
     /**
@@ -64,6 +64,31 @@ public class WebState
      */
     public Map<String, Object> getStates() {
         return statesMap;
+    }
+
+    /**
+     * Set the subtab for a particular tab
+     * @param tab the tab/pageName name
+     * @param subtab the subtab value
+     */
+    public void addSubtab(String tab, String subtab) {
+        subtabs.put(tab, subtab);
+    }
+    
+    /**
+     *  @param tab the tab/pageName name
+     * @return the subtab for the specified page, if any
+     */
+    public String getSubtab(String tab) {
+        return subtabs.get(tab);
+    }
+    
+    /**
+     * map of tab --> subtab
+     * @return the subtabs
+     */
+    public Map<String, String> getSubtabs() {
+        return subtabs;
     }
 }
 

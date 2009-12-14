@@ -1,17 +1,16 @@
 package org.intermine.web.struts;
 
-import java.util.Arrays;
 import java.util.Date;
 
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -42,8 +41,7 @@ public class ModifyQueryChangeActionTest extends MockStrutsTestCase
         hist = new SavedQuery("query2", date, (PathQuery) query.clone());
         hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
         template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                     new PathQuery(testmodel),
-                                     "");
+                new PathQuery(testmodel));
 
         SessionMethods.initSession(this.getSession());
         Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);

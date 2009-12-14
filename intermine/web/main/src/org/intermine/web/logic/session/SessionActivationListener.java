@@ -16,9 +16,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 
 /**
  * Added to each session to monitor activation events.

@@ -19,11 +19,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.SavedQuery;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to display the query builder (if there is a current query) or redirect to

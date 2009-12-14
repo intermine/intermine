@@ -15,6 +15,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -25,27 +42,8 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.ClassKeyHelper;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 
 /**
  * Action to search a list for an identifier and then highlight it on the list details page.
@@ -76,9 +74,9 @@ public class FindInListAction extends InterMineAction
         String textToFind = qsf.getTextToFind().trim();
         String bagName = qsf.getBagName();
         Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(context));
-        InterMineBag bag = allBags.get(bagName);
+        BagManager bagManager = SessionMethods.getBagManager(context);
+        InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
         forwardParameters.addParameter("name", bagName);
@@ -97,7 +95,7 @@ public class FindInListAction extends InterMineAction
             }
             if (foundId == -1) {
                 // no class key fields match so try all keys
-                List<String> allStringFields = getStringFields(os, bagQualifiedType);
+                List<String> allStringFields = getStringFields(os.getModel(), bagQualifiedType);
                 Query q = makeQuery(textToFind, bag, allStringFields, os.getModel());
                 foundId = findFirst(os, q);
             }
@@ -114,9 +112,8 @@ public class FindInListAction extends InterMineAction
         return forwardParameters.forward();
     }
 
-    private List<String> getStringFields(ObjectStore os, String bagQualifiedType) {
+    private List<String> getStringFields(Model model, String bagQualifiedType) {
         List<String> retList = new ArrayList<String>();
-        Model model = os.getModel();
         ClassDescriptor cd = model.getClassDescriptorByName(bagQualifiedType);
         for (AttributeDescriptor ad: cd.getAllAttributeDescriptors()) {
             if (ad.getType().equals(String.class.getName())) {

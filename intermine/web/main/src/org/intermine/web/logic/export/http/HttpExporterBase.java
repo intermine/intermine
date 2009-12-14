@@ -12,9 +12,9 @@ package org.intermine.web.logic.export.http;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.query.PathQueryExecutor;
-import org.intermine.web.logic.results.ExportResultsIterator;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 

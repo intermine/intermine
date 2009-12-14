@@ -22,11 +22,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebTable;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

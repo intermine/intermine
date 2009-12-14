@@ -12,14 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +20,13 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Form bean representing template import form.
@@ -103,13 +102,14 @@ public class TemplatesImportForm extends ValidatorForm
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
+        BagManager bagManager = SessionMethods.getBagManager(servletContext);
         ActionErrors errors = super.validate(mapping, request);
         if (errors != null && errors.size() > 0) {
             return errors;
         }
+
         try {
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                    SessionMethods.getGlobalSearchRepository(servletContext));
+            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
             TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {

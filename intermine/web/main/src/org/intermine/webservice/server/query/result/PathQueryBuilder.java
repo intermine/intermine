@@ -13,10 +13,10 @@ package org.intermine.webservice.server.query.result;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
 import org.intermine.web.logic.ServletMethods;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 

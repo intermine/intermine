@@ -1,20 +1,16 @@
 package org.intermine.web.aspects;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
-import org.xml.sax.SAXException;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.aspects.AspectSource;
-
-import junit.framework.TestCase;
 
 public class AspectBindingTest extends TestCase
 {

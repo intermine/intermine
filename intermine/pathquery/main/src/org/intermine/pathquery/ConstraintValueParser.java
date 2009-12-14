@@ -52,7 +52,7 @@ public class ConstraintValueParser
         } else if (String.class.equals(type)) {
             if (value.length() == 0) {
                 // Is the expression valid? We need a non-zero length string at least
-                throw new ParseValueException("Please supply a valid wildcard expression.");
+                throw new ParseValueException("Please supply a valid expression.");
             } else {
                 parsedValue = value.trim();
             }

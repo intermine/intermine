@@ -64,7 +64,6 @@ public class ObjectTrailController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
         String trail = request.getParameter("trail");
 
         String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')
@@ -138,7 +137,7 @@ public class ObjectTrailController extends TilesAction
                     LOG.warn("failed to getObjectById " + breadcrumbs[0]);
                     continue;
                 }
-                String label = createTrailLabel(o, model);
+                String label = createTrailLabel(o, os.getModel());
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }

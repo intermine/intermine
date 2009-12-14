@@ -6,25 +6,31 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowValue;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -32,14 +38,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
-import org.intermine.web.logic.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateQueryBinding;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -53,7 +51,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     
     public void setUp() throws Exception {
         super.setUp();
-        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" important=\"false\">\n" + 
+        String template = "<template name=\"convertEmployeesToAddresses\" title=\"Convert employees to addresses\" longDescription=\"\" comment=\"\" >\n" + 
                 "      <query name=\"convertEmployeesToAddresses\" model=\"testmodel\" view=\"Employee.id Employee.address.id\">\n" + 
                 "        <node path=\"Employee\" type=\"Employee\"/>\n" + 
                 "        <node path=\"Employee.id\" type=\"Integer\">\n" + 
@@ -88,11 +86,9 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         Results r = getEmployeesAndAddresses();
         
         assertEquals("Results: " + r, 2, r.size());
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
-        ObjectStoreBag osb = imb.getOsb();
-        osw.addToBag(osb, ((Employee) ((List) r.get(0)).get(0)).getId());
-        osw.addToBag(osb, ((Employee) ((List) r.get(1)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId());
         profile.saveBag("Fred", imb);
         List expected = new ArrayList();
         expected.add(((List) r.get(0)).get(1));

@@ -19,21 +19,21 @@ import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
+import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.Sequence;
-import org.intermine.bio.web.biojava.BioSequence;
-import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.web.logic.results.ResultElement;
 
 /**
  * Export data in FASTA format. Select cell in each row

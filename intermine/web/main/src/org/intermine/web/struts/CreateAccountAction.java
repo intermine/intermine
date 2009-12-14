@@ -21,11 +21,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -82,7 +82,7 @@ public class CreateAccountAction extends LoginHandler
          * md5.digest(); String encoded = HexBin.encode(array); } catch
          * (NoSuchAlgorithmException e) { }
          */
-        doLogin(servletContext, request, response, session, pm, username, password);
+        doLogin(request, response, session, pm, username, password);
         return mapping.findForward("mymine");
     }
 

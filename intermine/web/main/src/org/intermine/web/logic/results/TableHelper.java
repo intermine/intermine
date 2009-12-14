@@ -10,11 +10,11 @@ package org.intermine.web.logic.results;
  *
  */
 
+import org.intermine.api.config.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
-import org.intermine.web.logic.Constants;
 
 /**
  * Helper methods for the PagedTable object.

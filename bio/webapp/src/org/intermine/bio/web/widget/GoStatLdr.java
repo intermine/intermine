@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Gene;
@@ -34,7 +35,6 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**

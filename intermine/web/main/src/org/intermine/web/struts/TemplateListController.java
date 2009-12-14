@@ -10,14 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,20 +22,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.aspects.AspectTagUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.TagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.search.Scope;
+import org.intermine.api.tag.AspectTagUtil;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateListHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Controller for the template list tile.
- * @author Thomas Riley
+ * @author Richard Smith
  */
 public class TemplateListController extends TilesAction
 {
@@ -55,56 +47,31 @@ public class TemplateListController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
+        DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
 
         if (AspectTagUtil.isAspectTag(aspect)) {
             aspect = AspectTagUtil.getAspect(aspect);
         }
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
-        DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
         List<TemplateQuery> templates = null;
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
 
-        if (StringUtils.equals("global", scope)) {
+        if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
-                templates = TemplateListHelper.getAspectTemplatesForType(aspect, servletContext,
-                            interMineIdBag, new HashMap<TemplateQuery, List<String>>());
-            } else if (object == null) {
-                templates = TemplateListHelper.getAspectTemplates(aspect, servletContext);
+                templates = templateManager.getReportPageTemplatesForAspect(aspect,
+                        interMineIdBag.getType());
+            } else if (object != null) {
+                templates = templateManager.getReportPageTemplatesForAspect(aspect,
+                        DynamicUtil.getFriendlyName(object.getObject().getClass()));
             } else {
-                Map<TemplateQuery, List<String>> fieldExprs =
-                    new HashMap<TemplateQuery, List<String>>();
-                templates = TemplateListHelper
-                    .getAspectTemplateForClass(aspect, servletContext, object.getObject(),
-                            fieldExprs);
-                request.setAttribute("fieldExprMap", fieldExprs);
+                templates = templateManager.getAspectTemplates(aspect);
             }
 
-            TagManager tagManager = SessionMethods.getTagManager(session);
-            String sup = SessionMethods.getProfileManager(servletContext).getSuperuser();
-            List<Tag> noReportTags =
-                tagManager.getTags(TagNames.IM_NO_REPORT, null, TagTypes.TEMPLATE, sup);
-
-            Set<String> noReportNames = new HashSet<String>();
-
-            for (Tag tag: noReportTags) {
-                noReportNames.add(tag.getObjectIdentifier());
-            }
-
-            Iterator<TemplateQuery> templateIter = templates.iterator();
-
-            // don't show templates that are invalid or have no report tag
-            while (templateIter.hasNext()) {
-                TemplateQuery tq = templateIter.next();
-                if (noReportNames.contains(tq.getName()) || !tq.isValid()) {
-                    templateIter.remove();
-                }
-            }
-
-        } else if (StringUtils.equals("user", scope)) {
-            //templates = profile.get
+        } else if (StringUtils.equals(Scope.USER, scope)) {
+            // no user template functionality implemented
         }
 
         request.setAttribute("templates", templates);

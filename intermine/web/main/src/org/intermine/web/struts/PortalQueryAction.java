@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.lang.reflect.Constructor;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,19 +25,28 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.ResultElement;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.results.flatouterjoins.MultiRow;
+import org.intermine.api.results.flatouterjoins.MultiRowValue;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
@@ -47,22 +55,11 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryResult;
-import org.intermine.web.logic.bag.InterMineBag;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ResultElement;
-import org.intermine.web.logic.results.WebResults;
-import org.intermine.web.logic.results.flatouterjoins.MultiRow;
-import org.intermine.web.logic.results.flatouterjoins.MultiRowValue;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * The portal query action handles links into flymine from external sites.
@@ -138,9 +135,8 @@ public class PortalQueryAction extends InterMineAction
                 .addParameter("qid", qid).forward();
         }
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
         BagQueryConfig bagQueryConfig =
                 (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
 
@@ -152,39 +148,20 @@ public class PortalQueryAction extends InterMineAction
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
         }
-        ObjectStoreWriter uosw = profile.getProfileManager().getProfileObjectStoreWriter();
-        String bagName = null;
-        Map<String, InterMineBag> profileBags = profile.getSavedBags();
-        boolean bagExists = true;
-        int number = 0;
-        while (bagExists) {
-            bagName = "link";
-            if (origin != null) {
-                bagName += origin;
-            }
-            bagName += "_" + number;
-            bagExists = false;
-            for (String name : profileBags.keySet()) {
-                if (bagName.equals(name)) {
-                    bagExists = true;
-                }
-            }
-            number++;
-        }
+        String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), "link");
 
         PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null,
-                                                               true);
+                true);
         pathQuery.setViewPaths(view);
-        pathQuery.addConstraint(className,
-                                Constraints.lookup(StringUtils.replace(extId, ",", "\t")));
+        pathQuery.addConstraint(className, Constraints.lookup(StringUtils.replace(extId, ",",
+                        "\t")));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
-        InterMineBag imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                                              profile.getUserId(), uosw);
+        InterMineBag imBag = profile.createBag(bagName, className, "");
         List<Integer> bagList = new ArrayList();
 
         // There's only one node, get the first value
@@ -192,7 +169,7 @@ public class PortalQueryAction extends InterMineAction
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
         DisplayLookupMessageHandler.handleMessages(bagQueryResult, session, properties, className,
-                                                   null);
+                null);
 
         ActionMessages actionMessages = new ActionMessages();
 
@@ -218,8 +195,7 @@ public class PortalQueryAction extends InterMineAction
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
                     WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
                         addparameter, bagList, className);
-                    imBag = new InterMineBag(bagName, className, null, new Date(), os,
-                                             profile.getUserId(), uosw);
+                    imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = new ArrayList<Integer>();
                     for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
                             : convertedWebResult) {
@@ -243,7 +219,7 @@ public class PortalQueryAction extends InterMineAction
                     if (converted.size() == 1) {
                         return goToObjectDetails(mapping, converted.get(0).toString());
                     }
-                    return goToBagDetails(mapping, os, imBag, converted, profile);
+                    return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
             }
         }
@@ -276,21 +252,11 @@ public class PortalQueryAction extends InterMineAction
             return goToObjectDetails(mapping, bagList.get(0).toString());
         // Make a bag
         } else if (bagList.size() >= 1) {
-            return goToBagDetails(mapping, os, imBag, bagList, profile);
+            return createBagAndGoToBagDetails(mapping, imBag, bagList);
         // No matches
         } else {
             return goToResults(mapping, session, webResults);
         }
-    }
-
-    private ActionForward goToBagDetails(ActionMapping mapping, ObjectStore os, InterMineBag imBag,
-            List<Integer> bagList, Profile profile) throws ObjectStoreException {
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
-        osw.addAllToBag(imBag.getOsb(), bagList);
-        osw.close();
-        profile.saveBag(imBag.getName(), imBag);
-        return new ForwardParameters(mapping.findForward("bagDetails"))
-            .addParameter("bagName", imBag.getName()).forward();
     }
 
     private ActionForward goToResults(ActionMapping mapping,
@@ -308,46 +274,44 @@ public class PortalQueryAction extends InterMineAction
     }
 
     private ActionForward goToNoResults(ActionMapping mapping,
-                                        @SuppressWarnings("unused") HttpSession session) {
+            @SuppressWarnings("unused") HttpSession session) {
         ActionForward forward = mapping.findForward("noResults");
         return new ForwardParameters(forward).addParameter("trail", "").forward();
+    }
+
+    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
+            List<Integer> bagList) throws ObjectStoreException {
+        imBag.addIdsToBag(bagList);
+        return new ForwardParameters(mapping.findForward("bagDetails"))
+            .addParameter("bagName", imBag.getName()).forward();
     }
 
     /**
      * @deprecated Use the BagQueryRunner instead
      */
-    private String loadObjectDetails(ServletContext servletContext,
-            HttpSession session, HttpServletRequest request, HttpServletResponse response,
-            String userName, String extId,
-            @SuppressWarnings("unused") String origin) throws InterruptedException {
+    private String loadObjectDetails(ServletContext servletContext, HttpSession session,
+            HttpServletRequest request, HttpServletResponse response, String userName,
+            String extId, @SuppressWarnings("unused") String origin) throws InterruptedException {
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
-        Integer op = ConstraintOp.EQUALS.getIndex();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             templateName, "global");
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
         if (template == null) {
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
         }
 
-        // Populate template form bean
-        TemplateForm tf = new TemplateForm();
-        tf.setAttributeOps("1", op.toString());
-        tf.setAttributeValues("1", extId);
-        tf.parseAttributeValues(template, session, new ActionErrors(), false);
-
-        // Convert form to path query
-        PathQuery queryCopy = TemplateHelper.templateFormToTemplateQuery(tf, template,
-                                                                         new HashMap());
-        // Convert path query to intermine query
-        SessionMethods.loadQuery(queryCopy, request.getSession(), response);
+        TemplateQuery populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
+                ConstraintOp.EQUALS, extId);
+        
+        SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, false, queryCopy);
+        String qid = SessionMethods.startQuery(clientState, session, messages, false,
+                populatedTemplate);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return qid;
     }
-
 }

@@ -19,12 +19,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.search.SearchRepository;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.tagging.TagTypes;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Make some change to a user template.

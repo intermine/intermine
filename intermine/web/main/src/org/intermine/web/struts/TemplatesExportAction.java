@@ -20,13 +20,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Exports templates to XML.
@@ -52,10 +54,10 @@ public class TemplatesExportAction extends InterMineAction
         String xml = null;
 
         if (name == null) {
-            if (scope == null || scope.equals("user")) {
+            if (scope == null || scope.equals(Scope.USER)) {
                 xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);
-            } else if (scope.equals("global")) {
+            } else if (scope.equals(Scope.GLOBAL)) {
                 xml = TemplateHelper.templateMapToXml(SessionMethods
                         .getSuperUserProfile(servletContext).getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);
@@ -64,10 +66,10 @@ public class TemplatesExportAction extends InterMineAction
                                                    + scope);
             }
         } else {
-            TemplateQuery t = TemplateHelper.findTemplate(servletContext, session,
-                    profile.getUsername(), name, scope);
-            if (t != null) {
-                xml = t.toXml(PathQuery.USERPROFILE_VERSION);
+            TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+            TemplateQuery template = templateManager.getTemplate(profile, name, scope);
+            if (template != null) {
+                xml = template.toXml(PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot find template " + name + " in context "
                         + scope);

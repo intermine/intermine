@@ -10,19 +10,21 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.search.WebSearchable;
-import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author "Xavier Watkins"
@@ -38,19 +40,15 @@ public class ObjectDetailsInListController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        String list = (String) context.getAttribute("list");
-        String objectid = (String) context.getAttribute("objectid");
-        Map globalWebSearchables = WebSearchableListController.getFilterWebSearchables(request,
-                        "bag", TemplateHelper.GLOBAL_TEMPLATE, null);
-        Map userWebSearchables = WebSearchableListController.getFilterWebSearchables(request,
-                        "bag", TemplateHelper.USER_TEMPLATE, null);
-        Map filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
-        filteredWebSearchables.putAll(globalWebSearchables);
-        if (list != null) {
-            filteredWebSearchables = WebSearchableListController.filterByList(
-                            filteredWebSearchables, list);
-        }
-        request.setAttribute("filteredWebSearchables", filteredWebSearchables);
+        String id = (String) context.getAttribute("objectid");
+        HttpSession session = request.getSession();
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+
+        Collection<InterMineBag> bagsWithId =
+            bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));
+
+        request.setAttribute("bagsWithId", bagsWithId);
         return null;
     }
 }

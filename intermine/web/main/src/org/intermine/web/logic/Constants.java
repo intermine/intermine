@@ -24,24 +24,6 @@ public interface Constants
     public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
-     * ServletContext attribute maps category name to List of TemplateQuerys
-     */
-    //public static final String CATEGORY_TEMPLATES = "CATEGORY_TEMPLATES";
-
-    /**
-     * ServletContext attribute maps a class name to a Map of category names to List of
-     * TemplateQuerys.
-     */
-    //public static final String CLASS_CATEGORY_TEMPLATES = "CLASS_CATEGORY_TEMPLATES";
-
-    /**
-     * ServletContext attribute maps a class name to a Map of template names to simple expressions -
-     * the expression describes a field that should be set when a template is linked to from the
-     * object details page.  eg. Gene.identifier
-     */
-    //public static final String CLASS_TEMPLATE_EXPRS = "CLASS_TEMPLATE_EXPRS";
-
-    /**
      * ServletContext attribute, List of category names.
      */
     public static final String CATEGORIES = "CATEGORIES";
@@ -76,6 +58,11 @@ public interface Constants
      * ServletContext attribute used to store the ObjectStore
      */
     public static final String OBJECTSTORE = "OBJECTSTORE";
+
+    /**
+     * ServletContext attribute used to store the Model
+     */
+    public static final String MODEL = "MODEL";
 
     /**
      * ServletContext attribute used to store the ProfileManager
@@ -220,6 +207,16 @@ public interface Constants
     public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
 
     /**
+     * Servlet attribute.  The BagManager for fetching global and user bags.
+     */
+    public static final String BAG_MANAGER = "BAG_MANAGER";
+
+    /**
+     * Servlet attribute.  The TemplateManager for fetching global and user templates.
+     */
+    public static final String TEMPLATE_MANAGER = "TEMPLATE_MANAGER";
+
+    /**
      * Default size of table implemented by PagedTable.
      */
     public static final int DEFAULT_TABLE_SIZE = 25;
@@ -235,11 +232,6 @@ public interface Constants
     public static final String WEB_STATE = "WEB_STATE";
 
     /**
-     * Batch size for the underlying objectstore
-     */
-    public static final int BATCH_SIZE = 500;
-
-    /**
      * Current version of InterMine. This constant must changed by every new InterMine release.
      */
     public static final int INTERMINE_VERSION = 1;
@@ -249,4 +241,9 @@ public interface Constants
      * any class keys.
      */
     public static final String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
+
+    /**
+     * Key for a TemplateSummariser.
+     */
+    public static final String TEMPLATE_SUMMARISER = "TEMPLATE_SUMMARISER";
 }

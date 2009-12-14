@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.Constants;
@@ -51,8 +51,8 @@ public class GalaxyController extends TilesAction
         ServletContext servletContext = session.getServletContext();
 
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        String queryXML = PathQueryBinding.marshal(query, "tmpName", os.getModel().getName(),
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                 PathQuery.USERPROFILE_VERSION);
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
         Properties webProperties = InterMineAction.getWebProperties(request);

@@ -1,7 +1,5 @@
 package org.intermine.webservice.client.services;
 
-import java.util.Collections;
-
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ClassDescriptor;

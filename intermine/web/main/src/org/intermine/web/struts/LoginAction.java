@@ -23,9 +23,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to handle button presses on the main tile
@@ -37,22 +37,15 @@ public class LoginAction extends LoginHandler
     /**
      * Method called for login in
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
-    @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+    @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
@@ -63,18 +56,18 @@ public class LoginAction extends LoginHandler
             saveErrors(request, (ActionMessages) errors);
             return mapping.findForward("login");
         }
-        Map<String, String> renamedBags = doLogin(servletContext, request, response, session,
-                                                  pm, lf.getUsername(), lf.getPassword());
+        Map<String, String> renamedBags = doLogin(request, response, session, pm, lf.getUsername(),
+                lf.getPassword());
         recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
         if (renamedBags.size() > 0) {
             for (String initName : renamedBags.keySet()) {
                 recordMessage(new ActionMessage("login.renamedbags", initName,
-                                                renamedBags.get(initName)), request);
+                            renamedBags.get(initName)), request);
             }
             return mapping.findForward("mymine");
         }
         if (lf.returnToString != null && lf.returnToString.startsWith("/")
-            && lf.returnToString.indexOf("error") == -1) {
+                && lf.returnToString.indexOf("error") == -1) {
             return new ActionForward(lf.returnToString);
         }
         return mapping.findForward("mymine");

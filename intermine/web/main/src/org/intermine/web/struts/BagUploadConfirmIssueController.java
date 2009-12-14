@@ -28,13 +28,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.ConvertedObjectPair;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.InlineResultsTable;
 
@@ -99,12 +99,12 @@ public class BagUploadConfirmIssueController extends TilesAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
 
-        InlineResultsTable table = new InlineResultsTable(objectList, os.getModel(), webConfig,
+        InlineResultsTable table = new InlineResultsTable(objectList, model, webConfig,
                                                           webPropertiesMap, classKeys, -1, true);
 
         identifierIter = identifierResultElementMap.keySet().iterator();
@@ -113,9 +113,8 @@ public class BagUploadConfirmIssueController extends TilesAction
             List objectForIdentifierList = (List) identifierResultElementMap.get(identifier);
             for (int i = 0; i < objectForIdentifierList.size(); i++) {
                 Integer thisObjectListIndex = (Integer) objectForIdentifierList.get(i);
-                List resultElementRow = new ArrayList(table.getResultElementRow(os,
-                                                                                thisObjectListIndex
-                                                                                    .intValue()));
+                List resultElementRow =
+                    new ArrayList(table.getResultElementRow(thisObjectListIndex.intValue()));
                 if (initialTypeMap == null || initialTypeMap.size() == 0) {
                     Set cds = (Set) (table.getTypes().get(thisObjectListIndex.intValue()));
                     ClassDescriptor classDesc = (ClassDescriptor) cds.iterator().next();

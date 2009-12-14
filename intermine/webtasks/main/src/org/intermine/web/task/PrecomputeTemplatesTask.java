@@ -20,6 +20,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePrecomputeHelper;
+import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -30,11 +36,6 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.tagging.TagNames;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -120,7 +121,7 @@ public class PrecomputeTemplatesTask extends Task
     /**
      * {@inheritDoc}
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (alias == null) {
             throw new BuildException("alias attribute is not set");
         }
@@ -186,7 +187,7 @@ public class PrecomputeTemplatesTask extends Task
             }
 
             List indexes = new ArrayList();
-            Query q = TemplateHelper.getPrecomputeQuery(template, indexes, null);
+            Query q = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
 
             if (q.getConstraint() == null) {
                 // see ticket #255
@@ -216,10 +217,11 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException(e);
         }
 
+        TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS);
         for (TemplateQuery template : toSummarise) {
             if (doSummarise) {
                 try {
-                    template.summarise(os, userProfileOS);
+                    summariser.summarise(template);
                 } catch (ObjectStoreException e) {
                     LOG.error("Exception while summarising template " + template.getName(), e);
                 }
@@ -236,8 +238,7 @@ public class PrecomputeTemplatesTask extends Task
      * is thrown
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection indexes,
-                              String name) throws BuildException {
+    protected void precompute(ObjectStore os, Query query, Collection indexes, String name) {
         long start = System.currentTimeMillis();
 
         try {
@@ -246,9 +247,9 @@ public class PrecomputeTemplatesTask extends Task
                 osInterMineImpl.precompute(query, indexes,
                                                        PRECOMPUTE_CATEGORY_TEMPLATE);
             } else {
-                 LOG.info("Skipping template " + name + " - already precomputed.");
+                LOG.info("Skipping template " + name + " - already precomputed.");
             }
-         } catch (ObjectStoreException e) {
+        } catch (ObjectStoreException e) {
             LOG.error("Exception while precomputing query: " + name + ", " + query
                     + " with indexes " + indexes, e);
         }
@@ -263,12 +264,13 @@ public class PrecomputeTemplatesTask extends Task
      * @return Map from template name to TemplateQuery
      * @throws BuildException if an IO error occurs loading the template queries
      */
-    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() throws BuildException {
+    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         if (!pm.hasProfile(username)) {
             throw new BuildException("user profile doesn't exist for " + username);
         }
         Profile profile = pm.getProfile(username, pm.getPassword(username));
-        return profile.getSavedTemplates(TagNames.IM_PUBLIC);
+        TemplateManager templateManager = new TemplateManager(profile, os.getModel());
+        return templateManager.getGlobalTemplates();
     }
 }

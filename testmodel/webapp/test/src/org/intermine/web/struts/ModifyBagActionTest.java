@@ -7,14 +7,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.objectstore.query.SingletonResults;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -23,18 +23,17 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
-import org.intermine.web.logic.query.SavedQuery;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateQuery;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import servletunit.ServletContextSimulator;
 import servletunit.struts.MockStrutsTestCase;
@@ -98,8 +97,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
             hist = new SavedQuery("query2", date, (PathQuery) query.clone());
             hist2 = new SavedQuery("query1", date, (PathQuery) query.clone());
             template = new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
-                                         new PathQuery(model),
-                                         "");
+                    new PathQuery(model));
 
             //Profile profile = (Profile) getSession().getAttribute(Constants.PROFILE);
             profile.saveQuery(sq.getName(), sq);

@@ -21,9 +21,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Action to change a user's password with the authority of a token previously emailed to them.
@@ -61,7 +61,7 @@ public class PasswordResetAction extends LoginHandler
         session.removeAttribute("passwordResetToken");
         try {
             String username = pm.changePasswordWithToken(token, password);
-            Map<String, String> renamedBags = doLogin(servletContext, request, response, session,
+            Map<String, String> renamedBags = doLogin(request, response, session,
                     pm, username, password);
             recordMessage(new ActionMessage("password.changed", username), request);
             recordMessage(new ActionMessage("login.loggedin", username), request);

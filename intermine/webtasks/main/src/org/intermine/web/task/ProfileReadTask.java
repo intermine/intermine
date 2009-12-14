@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -23,7 +24,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
-import org.intermine.web.logic.profile.ProfileManager;
 
 /**
  * Task to read an XML file of a webapp userprofiles into a userprofile ObjectStore.
@@ -75,7 +75,7 @@ public class ProfileReadTask extends Task
      * @throws BuildException if there is a problem while reading from the file or writing to the
      * profiles.
      */
-    public void execute() throws BuildException {
+    public void execute() {
         if (fileName == null) {
             throw new BuildException("fileName parameter not set");
         }

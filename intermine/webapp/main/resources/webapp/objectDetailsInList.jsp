@@ -5,21 +5,21 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!-- objectDetailsInList.jsp -->
-<c:if test="${(!empty filteredWebSearchables) || (! empty PROFILE.savedBags)}">
+<c:if test="${(!empty bagsWithId) || (! empty PROFILE.savedBags)}">
   <div class="heading">
     Lists
   </div>
 
 <div class="body" style="padding:10px;border:1px #CCC solid">
-<c:if test="${! empty filteredWebSearchables}">
+<c:if test="${! empty bagsWithId}">
 <div>
       Lists in which this
       <c:forEach items="${object.clds}" var="cld">
             ${cld.unqualifiedName}
       </c:forEach> can be found:
-      <c:forEach items="${filteredWebSearchables}" var="webSearchable" varStatus="status">
+      <c:forEach items="${bagsWithId}" var="interMineBag" varStatus="status">
         <c:if test="${status.count > 1}">,&nbsp;</c:if>
-        <html:link href="bagDetails.do?bagName=${webSearchable.key}"><c:out value="${webSearchable.key}"/></html:link>
+        <html:link href="bagDetails.do?bagName=${interMineBag.name}"><c:out value="${interMineBag.name}"/></html:link>
       </c:forEach>
 </div>
 </c:if>

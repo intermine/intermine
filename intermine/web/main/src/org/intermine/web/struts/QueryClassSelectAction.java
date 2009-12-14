@@ -15,15 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
 
 /**
  * Implementation of <strong>Action</strong> that processes
@@ -74,8 +73,8 @@ public class QueryClassSelectAction extends InterMineAction
      */
     public static void newQuery(String className, HttpSession session) {
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        PathQuery query = new PathQuery(os.getModel());
+        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        PathQuery query = new PathQuery(model);
         session.setAttribute(Constants.QUERY, query);
         session.setAttribute("path", TypeUtil.unqualifiedName(className));
         session.setAttribute("prefix", TypeUtil.unqualifiedName(className));

@@ -30,19 +30,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.search.Scope;
+import org.intermine.api.search.SearchFilterEngine;
+import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.WebSearchable;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.TagManager;
-import org.intermine.web.logic.search.Scope;
-import org.intermine.web.logic.search.SearchFilterEngine;
-import org.intermine.web.logic.search.SearchRepository;
-import org.intermine.web.logic.search.WebSearchable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.stringtree.json.JSONWriter;
 
 /**
@@ -75,13 +74,13 @@ public class WebSearchableListController extends TilesAction
         if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
             filteredWebSearchables = getFilterWebSearchables(request, type,
-                                                          TemplateHelper.USER_TEMPLATE, tags);
+                                                          Scope.USER, tags);
 
-        } else if (scope.equals(TemplateHelper.ALL_TEMPLATE)) {
+        } else if (scope.equals(Scope.ALL)) {
             Map globalWebSearchables =
-                getFilterWebSearchables(request, type, TemplateHelper.GLOBAL_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, Scope.GLOBAL, tags);
             Map userWebSearchables =
-                getFilterWebSearchables(request, type, TemplateHelper.USER_TEMPLATE, tags);
+                getFilterWebSearchables(request, type, Scope.USER, tags);
             filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
             filteredWebSearchables.putAll(globalWebSearchables);
 

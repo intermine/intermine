@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -21,28 +20,27 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
+import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.TemplatePopulator;
+import org.intermine.api.template.TemplatePopulatorException;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.bag.InterMineBag;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateListHelper;
-import org.intermine.web.logic.template.TemplateQuery;
 
 /**
  * Action to handle events from the object details page
@@ -55,17 +53,12 @@ public class ModifyDetails extends DispatchAction
     /**
      * Show in table for inline template queries.
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward runTemplate(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -77,34 +70,30 @@ public class ModifyDetails extends DispatchAction
         String bagName = request.getParameter("bagName");
         String idForLookup = request.getParameter("idForLookup");
         Profile profile = (Profile) session
-                        .getAttribute(Constants.PROFILE);
-        String userName = (profile).getUsername();
-        TemplateQuery template = TemplateHelper.findTemplate(servletContext, session, userName,
-                                                             name, scope);
+            .getAttribute(Constants.PROFILE);
 
-        TemplateForm templateForm = new TemplateForm();
-        Model model = SessionMethods.getObjectStore(servletContext).getModel();
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
-        if (idForLookup != null && idForLookup.length() != 0) {
-            Integer objectId = new Integer(idForLookup);
-            ObjectStore os = SessionMethods.getObjectStore(servletContext);
-            InterMineObject object = os.getObjectById(objectId);
-            TemplateHelper.fillTemplateForm(template, object, null, templateForm, model);
-        } else if (bagName != null && bagName.length() != 0) {
-            Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                    SessionMethods.getGlobalSearchRepository(servletContext));
-            InterMineBag interMineBag = allBags.get(bagName);
-            TemplateHelper.fillTemplateForm(template, null, interMineBag, templateForm, model);
-        }
-        String identifier = "itt." + template.getName() + "." + idForLookup;
+        TemplateQuery populatedTemplate;
+        try {
+            if (idForLookup != null && idForLookup.length() != 0) {
+                Integer objectId = new Integer(idForLookup);
+                ObjectStore os = SessionMethods.getObjectStore(servletContext);
+                InterMineObject object = os.getObjectById(objectId);
+                populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
+            } else {
+                populatedTemplate = TemplatePopulator.populateTemplageWithBag(template, bagName);
+            }
+        } catch (TemplatePopulatorException e) {
+            LOG.error("Error running up template '" + template.getName() + "' from report page for"
+                    + ((idForLookup == null) ? " bag " + bagName :
+                        " object " + idForLookup) + ".");
+            return null;
+        }     
+        String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;
 
-        templateForm.parseAttributeValues(template, null, new ActionErrors(), false);
-
-        // note that savedBags parameter is an empty set, we are on a report page for an object,
-        // the object/bag we are using is already set in the TemplateForm, we can't use other bags
-        TemplateQuery populatedTemplate = TemplateHelper.templateFormToTemplateQuery(templateForm,
-                template, new HashMap());
-
+        
         WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
         WebResults webResults = executor.execute(populatedTemplate);
         PagedTable pagedResults = new PagedTable(webResults, 10);
@@ -122,22 +111,16 @@ public class ModifyDetails extends DispatchAction
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("templateQueryTitle", template.getTitle())
             .addParameter("templateQueryDescription", template.getDescription())
-            .addParameter("table", identifier)
-            .addParameter("trail", trail).forward();
+            .addParameter("table", identifier).addParameter("trail", trail).forward();
     }
 
     /**
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward verbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -161,17 +144,12 @@ public class ModifyDetails extends DispatchAction
     }
 
     /**
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward unverbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -188,17 +166,12 @@ public class ModifyDetails extends DispatchAction
     }
 
     /**
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward ajaxVerbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -228,30 +201,27 @@ public class ModifyDetails extends DispatchAction
     /**
      * Count number of results for a template on the object details page.
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward ajaxTemplateCount(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext sc = session.getServletContext();
-        String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String type = request.getParameter("type");
         String id = request.getParameter("id");
         String templateName = request.getParameter("template");
         String detailsType = request.getParameter("detailsType");
         ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
 
-        TemplateQuery tq = TemplateHelper.findTemplate(sc, session, userName, templateName, type);
+        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateQuery tq = templateManager.getTemplate(profile, templateName, type);
+
         ComponentContext cc = new ComponentContext();
 
         if (detailsType.equals("object")) {
@@ -261,38 +231,28 @@ public class ModifyDetails extends DispatchAction
             cc.putAttribute("displayObject", obj);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
-            Map fieldExprs = new HashMap();
-            TemplateListHelper.getAspectTemplateForClass(request.getParameter("placement"), sc, o,
-                                                         fieldExprs);
-            cc.putAttribute("fieldExprMap", fieldExprs);
+
             new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("objectDetailsTemplateTable");
         }
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map<String, InterMineBag> allBags = WebUtil.getAllBags(profile.getSavedBags(),
-                SessionMethods.getGlobalSearchRepository(sc));
-        InterMineBag interMineIdBag = allBags.get(id);
-        cc.putAttribute("interMineIdBag", interMineIdBag);
+        BagManager bagManager = SessionMethods.getBagManager(sc);
+
+        InterMineBag interMineBag = bagManager.getUserOrGlobalBag(profile, id);
+        cc.putAttribute("interMineIdBag", interMineBag);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));
-        Map fieldExprs = new HashMap();
-        TemplateListHelper.getAspectTemplatesForType(request.getParameter("placement"), sc,
-                                                     interMineIdBag, fieldExprs);
-        cc.putAttribute("fieldExprMap", fieldExprs);
+
         new ObjectDetailsTemplateController().execute(cc, mapping, form, request, response);
         request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
         return mapping.findForward("objectDetailsTemplateTable");
-
     }
 
     /**
      * For a dynamic class, find the class descriptor from which a field is derived
      *
-     * @param clds
-     *            the class descriptors for the dynamic class
-     * @param fieldName
-     *            the field name
+     * @param clds the class descriptors for the dynamic class
+     * @param fieldName the field name
      * @return the relevant class descriptor
      */
     protected ClassDescriptor cldContainingField(Set clds, String fieldName) {
@@ -318,10 +278,8 @@ public class ModifyDetails extends DispatchAction
     /**
      * Get a DisplayObject from the session given the object id as a string.
      *
-     * @param session
-     *            the current http session
-     * @param idString
-     *            intermine object id
+     * @param session the current http session
+     * @param idString intermine object id
      * @return DisplayObject for the intermine object
      */
     protected DisplayObject getDisplayObject(HttpSession session, String idString) {

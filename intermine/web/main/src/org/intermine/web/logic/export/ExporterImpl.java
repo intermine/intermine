@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.web.logic.results.ResultElement;
+import org.intermine.api.results.ResultElement;
 
 
 /**
