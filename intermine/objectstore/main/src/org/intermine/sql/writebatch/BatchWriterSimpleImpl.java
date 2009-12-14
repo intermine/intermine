@@ -416,8 +416,8 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 long start = System.currentTimeMillis();
                 doAnalyse(name, conn);
                 int tableSize = getTableSize(name, conn);
-                stat.setTableSize(tableSize);
                 long end = System.currentTimeMillis();
+                stat.setTableSize(tableSize, end - start);
                 LOG.info("Analysing table " + name + " took " + (end - start) + "ms ("
                         + tableSize + " rows)");
             }
@@ -468,6 +468,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
         private String name;
         private int tableSize, totalActivity;
         private long lastResizeTime = 0;
+        private long analyseTime = 0;
 
         public Statistic(String name, int tableSize, int activity) {
             this.name = name;
@@ -485,16 +486,17 @@ public class BatchWriterSimpleImpl implements BatchWriter
                     + (this.totalActivity + activity) + "    - Activity of " + activity + " rows");
             this.totalActivity += activity;
             return (this.totalActivity > (tableSize / 2) + 1000) || ((this.totalActivity > 100000)
-                && (System.currentTimeMillis() - lastResizeTime > 600000));
+                && (System.currentTimeMillis() - lastResizeTime > 600000 + (analyseTime * 20)));
         }
 
-        public void setTableSize(int tableSize) {
+        public void setTableSize(int tableSize, long analyseTime) {
             LOG.debug("Statistics: " + name + ", tableSize = " + this.tableSize + ", activity "
                     + this.totalActivity + " --> tableSize = " + tableSize
                     + ", activity = 0   - New table size");
             this.tableSize = tableSize;
             this.totalActivity = 0;
             this.lastResizeTime = System.currentTimeMillis();
+            this.analyseTime = analyseTime;
         }
     }
 }
