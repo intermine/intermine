@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
@@ -104,6 +105,14 @@ public class InterMineAPI {
     public PathQueryExecutor getPathQueryExecutor(Profile profile) {
         return new PathQueryExecutor(objectStore, classKeys, bagQueryConfig, profile,
                 templateManager.getConversionTemplates(), bagManager);
+    }
+
+    /**
+     * @return the bagQueryRunner
+     */
+    public BagQueryRunner getBagQueryRunner() {
+        return new BagQueryRunner(objectStore, classKeys, bagQueryConfig,
+                templateManager.getConversionTemplates());
     }
     
     
