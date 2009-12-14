@@ -460,6 +460,7 @@
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="7227 6239"/>
       <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
       <property name="biopax.curated" value="false"/>
     </source>
 
@@ -467,6 +468,7 @@
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
       <property name="biopax.organisms" value="7227 6239"/>
       <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="FlyReactome data set"/>
       <property name="biopax.curated" value="true"/>
     </source>
     
@@ -474,12 +476,14 @@
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/not-curated"/>
       <property name="biopax.organisms" value="4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
       <property name="biopax.curated" value="false"/>
     </source>
     <source name="reactome-yeast-curated" type="biopax">
       <property name="src.data.dir" location="/shared/data/biopax/reactome/current/curated"/>
       <property name="biopax.organisms" value="4932"/>
       <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="FlyReactome data set"/>
       <property name="biopax.curated" value="true"/>
     </source>
     <source name="bdgp-insitu" type="bdgp-insitu">
