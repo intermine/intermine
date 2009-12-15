@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -87,8 +86,8 @@ public class ModifyDetails extends DispatchAction
             }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error running up template '" + template.getName() + "' from report page for"
-                    + ((idForLookup == null) ? " bag " + bagName :
-                        " object " + idForLookup) + ".");
+                    + ((idForLookup == null) ? " bag " + bagName
+                        : " object " + idForLookup) + ".");
             return null;
         }     
         String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;

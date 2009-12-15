@@ -22,7 +22,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.TableHelper;
 import org.intermine.web.logic.session.SessionMethods;
 

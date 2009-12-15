@@ -46,7 +46,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ObjectDetailsTemplateController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(ObjectDetailsTemplateController.class);
-    
+
     /**
      * {@inheritDoc}
      */
@@ -67,12 +67,12 @@ public class ObjectDetailsTemplateController extends TilesAction
         Map<String, List<TemplateValue>> templateValues;
 
         // this is either a report page for an InterMineObject or a list analysis page
-        
+
         TemplateQuery populatedTemplate;
         try {
             if (displayObject != null) {
                 InterMineObject obj = displayObject.getObject();
-                populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, 
+                populatedTemplate = TemplatePopulator.populateTemplateWithObject(template,
                         obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplageWithBag(template,
@@ -83,11 +83,11 @@ public class ObjectDetailsTemplateController extends TilesAction
             }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error setting up template '" + template.getName() + "' on report page for"
-                    + ((displayObject == null) ? " bag " + interMineBag.getName() :
-                        " object " + displayObject.getId()) + ".");
+                    + ((displayObject == null) ? " bag " + interMineBag.getName()
+                        : " object " + displayObject.getId()) + ".");
             return null;
         }
-        
+
         WebResultsExecutor executor = im.getWebResultsExecutor((Profile) session
                 .getAttribute(Constants.PROFILE));
         WebResults webResults = executor.execute(populatedTemplate);
