@@ -21,9 +21,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to change a user's password with the authority of a token previously emailed to them.
@@ -53,8 +55,8 @@ public class PasswordResetAction extends LoginHandler
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ProfileManager pm = im.getProfileManager();
         String token = ((PasswordResetForm) form).getToken();
         String password = ((PasswordResetForm) form).getNewpassword();
 

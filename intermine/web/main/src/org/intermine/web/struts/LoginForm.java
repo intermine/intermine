@@ -19,8 +19,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * The main form, using for editing constraints
@@ -89,8 +91,8 @@ public class LoginForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ProfileManager pm = im.getProfileManager();
 
         ActionErrors errors = new ActionErrors();
 

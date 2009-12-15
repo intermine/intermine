@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.xml.TagBinding;
@@ -55,9 +56,9 @@ public class ImportTagsAction extends InterMineAction
         throws Exception {
         ImportTagsForm f = (ImportTagsForm) form;
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        ProfileManager pm = im.getProfileManager();
         StringReader reader = new StringReader(f.getXml());
         int count = 0;
         if (!StringUtils.isEmpty(f.getXml())) {
@@ -66,5 +67,4 @@ public class ImportTagsAction extends InterMineAction
         recordMessage(new ActionMessage("history.importedTags", new Integer(count)), request);
         return mapping.findForward("success");
     }
-
 }

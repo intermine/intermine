@@ -23,7 +23,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplatePopulator;
@@ -31,6 +33,7 @@ import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
 import org.intermine.model.InterMineObject;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -55,6 +58,7 @@ public class ObjectDetailsTemplateController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         DisplayObject displayObject = (DisplayObject) context.getAttribute("displayObject");
         InterMineBag interMineBag = (InterMineBag) context.getAttribute("interMineIdBag");
 
@@ -84,7 +88,8 @@ public class ObjectDetailsTemplateController extends TilesAction
             return null;
         }
         
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor((Profile) session
+                .getAttribute(Constants.PROFILE));
         WebResults webResults = executor.execute(populatedTemplate);
         // if there was a problem running query ignore and don't put up results
         if (webResults != null) {

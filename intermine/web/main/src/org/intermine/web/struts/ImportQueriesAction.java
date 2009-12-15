@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -44,9 +45,10 @@ public class ImportQueriesAction extends InterMineAction
     @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         Map<String, PathQuery> queries = null;
@@ -62,8 +64,7 @@ public class ImportQueriesAction extends InterMineAction
                 recordError(new ActionMessage("errors.importFailed",
                         PathQueryUtil.getProblemsSummary(pathQuery.getProblems())), request);
             }
-            SessionMethods.loadQuery(pathQuery, session,
-                                     response);
+            SessionMethods.loadQuery(pathQuery, session, response);
             return mapping.findForward("query");
         }
         if (!profile.isLoggedIn()) {

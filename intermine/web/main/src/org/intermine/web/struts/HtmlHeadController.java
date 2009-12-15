@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
@@ -63,8 +64,8 @@ public class HtmlHeadController extends TilesAction
         throws Exception {
 
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
         Map displayObjects = SessionMethods.getDisplayObjects(session);
 
         String pageName = (String) context.getAttribute("pageName");
@@ -95,7 +96,7 @@ public class HtmlHeadController extends TilesAction
             TemplateQuery template = null;
             Profile profile = null;
 
-            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+            TemplateManager templateManager = im.getTemplateManager();
             if (scope != null && scope.equals(Scope.USER)) {
                 profile = (Profile) session.getAttribute(Constants.PROFILE);
                 template = templateManager.getUserOrGlobalTemplate(profile, name);

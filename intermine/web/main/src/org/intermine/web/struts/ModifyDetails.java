@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -64,22 +65,21 @@ public class ModifyDetails extends DispatchAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
         String idForLookup = request.getParameter("idForLookup");
-        Profile profile = (Profile) session
-            .getAttribute(Constants.PROFILE);
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
         TemplateQuery populatedTemplate;
         try {
             if (idForLookup != null && idForLookup.length() != 0) {
                 Integer objectId = new Integer(idForLookup);
-                ObjectStore os = SessionMethods.getObjectStore(servletContext);
+                ObjectStore os = im.getObjectStore();
                 InterMineObject object = os.getObjectById(objectId);
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
             } else {
@@ -94,7 +94,7 @@ public class ModifyDetails extends DispatchAction
         String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;
 
         
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(populatedTemplate);
         PagedTable pagedResults = new PagedTable(webResults, 10);
 
@@ -211,15 +211,15 @@ public class ModifyDetails extends DispatchAction
     public ActionForward ajaxTemplateCount(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext sc = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String type = request.getParameter("type");
         String id = request.getParameter("id");
         String templateName = request.getParameter("template");
         String detailsType = request.getParameter("detailsType");
-        ObjectStore os = (ObjectStore) sc.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = im.getObjectStore();
 
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery tq = templateManager.getTemplate(profile, templateName, type);
 
         ComponentContext cc = new ComponentContext();
@@ -236,7 +236,7 @@ public class ModifyDetails extends DispatchAction
             request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
             return mapping.findForward("objectDetailsTemplateTable");
         }
-        BagManager bagManager = SessionMethods.getBagManager(sc);
+        BagManager bagManager = im.getBagManager();
 
         InterMineBag interMineBag = bagManager.getUserOrGlobalBag(profile, id);
         cc.putAttribute("interMineIdBag", interMineBag);

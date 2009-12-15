@@ -26,12 +26,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the object trail tile.
@@ -62,8 +63,8 @@ public class ObjectTrailController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
         String trail = request.getParameter("trail");
 
         String ids[] = (!StringUtils.isEmpty(trail)) ? StringUtils.split(trail.substring(1), '|')

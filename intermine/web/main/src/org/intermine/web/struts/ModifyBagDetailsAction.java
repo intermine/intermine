@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
@@ -61,11 +62,12 @@ public class ModifyBagDetailsAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = im.getModel();
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        BagManager bagManager = im.getBagManager();
 
         InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, mbdf.getBagName());
         String bagIdentifier = "bag." + imBag.getName();
@@ -100,8 +102,7 @@ public class ModifyBagDetailsAction extends InterMineAction
             SessionMethods.recordMessage(msg, session);
         // orthologues form
         } else if (request.getParameter("convertToThing") != null) {
-            BagQueryConfig bagQueryConfig =
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+            BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
             Map<String, String []> additionalConverters
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
@@ -135,12 +136,11 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
-            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
+            TemplateManager templateManager = im.getTemplateManager();
             WebResults webResults = BagConversionHelper.getConvertedObjects(session,
-                templateManager.getConversionTemplates(),
-                TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
-                TypeUtil.instantiate(model.getPackageName() + "." + type2),
-                imBag);
+                    templateManager.getConversionTemplates(),
+                    TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
+                    TypeUtil.instantiate(model.getPackageName() + "." + type2), imBag);
             PagedTable pc = new PagedTable(webResults);
             String identifier = "bagconvert." + imBag.getName() + "." + type2;
 

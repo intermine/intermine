@@ -23,9 +23,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to handle button presses on the main tile
@@ -47,8 +49,8 @@ public class LoginAction extends LoginHandler
     @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ProfileManager pm = im.getProfileManager();
         LoginForm lf = (LoginForm) form;
 
         ActionErrors errors = lf.validate(mapping, request);

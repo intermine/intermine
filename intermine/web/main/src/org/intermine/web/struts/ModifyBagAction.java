@@ -29,6 +29,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleBagTypesException;
@@ -114,11 +115,12 @@ public class ModifyBagAction extends InterMineAction
 
     private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
 
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         String newNameTextBox = getNewNameTextBox(request, frm.getNewBagName());
@@ -184,11 +186,12 @@ public class ModifyBagAction extends InterMineAction
 
     private void combine(ActionForm form, HttpServletRequest request, String opText) {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
 
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
         String[] selectedBagNames = mbf.getSelectedBags();

@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
@@ -67,10 +68,10 @@ public class ObjectDetailsController extends InterMineAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        TagManager tagManager = SessionMethods.getTagManager(session);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        TagManager tagManager = im.getTagManager();
         ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext
-                .getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = im.getObjectStore();
         Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
@@ -81,7 +82,7 @@ public class ObjectDetailsController extends InterMineAction
             return null;
         }
 
-        String superuser = SessionMethods.getProfileManager(servletContext).getSuperuser();
+        String superuser = im.getProfileManager().getSuperuser();
 
         DisplayObject dobj = displayObjects.get(id);
         if (dobj == null) {
@@ -247,11 +248,12 @@ public class ObjectDetailsController extends InterMineAction
      */
     public static DisplayObject makeDisplayObject(HttpSession session,
             InterMineObject object) throws Exception {
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Model model = im.getModel();
+        Map classKeys = im.getClassKeys();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
         return new DisplayObject(object, model, webConfig, webPropertiesMap, classKeys);
     }
 }

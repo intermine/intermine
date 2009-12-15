@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -23,6 +24,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.TableHelper;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Takes a parameter "type" with value "webapp" or "query" and prints "OK"
@@ -44,8 +46,8 @@ public class HeartbeatAction extends InterMineAction
         if ("webapp".equals(type)) {
             response.getOutputStream().print("OK");
         } else if ("query".equals(type)) {
-            ObjectStore os = (ObjectStore) request.getSession().getServletContext()
-                .getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+            ObjectStore os = im.getObjectStore();
             Query q = new Query();
             QueryClass c = new QueryClass(InterMineObject.class);
             q.addFrom(c);

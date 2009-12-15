@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -85,7 +86,8 @@ public class InlineTagEditorController extends TilesAction
 
         Set<String> currentTags;
         Set<String> availableTags;
-        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        TagManager tagManager = im.getTagManager();
         if (profile.isLoggedIn()) {
             currentTags = tagManager.getObjectTagNames(tagged, type, profile.getUsername());
             availableTags = tagManager.getUserTagNames(type, profile.getUsername());
@@ -102,5 +104,3 @@ public class InlineTagEditorController extends TilesAction
         return tagged + "@" + counter++;
     }
 }
-
-
