@@ -15,9 +15,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,12 +28,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
-import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -66,9 +63,9 @@ public class BuildBagAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         BuildBagForm buildBagForm = (BuildBagForm) form;
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
         String type = buildBagForm.getType();
 
         if (StringUtils.isEmpty(type)) {
@@ -76,13 +73,10 @@ public class BuildBagAction extends InterMineAction
             return mapping.findForward("bags");
         }
 
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        BagQueryConfig bagQueryConfig =
-            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
-        BagQueryRunner bagRunner =
-            new BagQueryRunner(os, classKeys, bagQueryConfig, 
-                    templateManager.getConversionTemplates());
+        TemplateManager templateManager = im.getTemplateManager();
+        BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(), 
+                                                      im.getBagQueryConfig(),
+                                                      templateManager.getConversionTemplates());
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -91,9 +85,7 @@ public class BuildBagAction extends InterMineAction
             maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
                                                        defaultMaxNotLoggedSize);
         }
-
         BufferedReader reader = null;
-
         FormFile formFile = buildBagForm.getFormFile();
 
         /*
@@ -103,8 +95,8 @@ public class BuildBagAction extends InterMineAction
          * 2. When user specified empty file path or very invalid file path,
          * like file path not starting at '/' then formFile.getFileName() returns empty string.
          */
-        if (formFile != null && formFile.getFileName() != null
-                            && formFile.getFileName().length() > 0) {
+        if (formFile != null && formFile.getFileName() != null 
+                        && formFile.getFileName().length() > 0) {
 
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {
