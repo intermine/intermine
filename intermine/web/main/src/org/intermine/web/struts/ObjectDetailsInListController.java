@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -42,8 +43,9 @@ public class ObjectDetailsInListController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         String id = (String) context.getAttribute("objectid");
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        BagManager bagManager = im.getBagManager();
 
         Collection<InterMineBag> bagsWithId =
             bagManager.getUserOrGlobalBagsContainingId(profile, Integer.parseInt(id));

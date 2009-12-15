@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.query.WebResultsExecutor;
@@ -61,6 +62,7 @@ public class LoadQueryAction extends DispatchAction
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String trail = request.getParameter("trail");
         String queryXml = request.getParameter("query");
@@ -91,7 +93,7 @@ public class LoadQueryAction extends DispatchAction
         } else {
             PagedTable pt = null;
             try {
-                WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+                WebResultsExecutor executor = im.getWebResultsExecutor(profile);
                 pt = new PagedTable(executor.execute(query));
 
                 if (pt.getWebTable() instanceof WebResults) {

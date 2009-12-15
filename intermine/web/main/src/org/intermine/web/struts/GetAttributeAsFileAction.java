@@ -23,6 +23,7 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
@@ -32,6 +33,7 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.FieldExporter;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Provide an attribute value as a file
@@ -48,13 +50,13 @@ public class GetAttributeAsFileAction extends Action
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         Integer objectId = new Integer(request.getParameter("object"));
         String fieldName = request.getParameter("field");
         String fileType = request.getParameter("type");
         InterMineObject object = os.getObjectById(objectId);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         FieldExporter fieldExporter = null;
 

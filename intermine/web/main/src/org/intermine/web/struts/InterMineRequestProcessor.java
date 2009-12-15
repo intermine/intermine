@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.config.ForwardConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -65,6 +67,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      * {@inheritDoc}
      */
     protected boolean processPreprocess(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         try {
             String processPath = processPath(request, response);
             // Avoid creating a session for each page accessed via SSI
@@ -72,12 +76,10 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 return true;
             }
 
-            HttpSession session = request.getSession();
             String userAgent = null;
             if (request.getHeader("user-agent") != null) {
                 userAgent = request.getHeader("user-agent").toLowerCase();
             }
-            Set<String> bots = getBots();
 
             if (request.getSession().getAttribute(Constants.PROFILE) == null) {
                 request.getSession().invalidate();
@@ -94,8 +96,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 }
             }
 
-            ServletContext sc = session.getServletContext();
-            ProfileManager pm = (ProfileManager) sc.getAttribute(Constants.PROFILE_MANAGER);
+            ProfileManager pm = im.getProfileManager();
 
             if (session.getAttribute("ser") != null) {
                 session.removeAttribute("ser");
@@ -114,7 +115,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
 
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
-                    BagManager bagManager = SessionMethods.getBagManager(sc);
+                    BagManager bagManager = im.getBagManager();
                     Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
                     PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
                             PathQuery.USERPROFILE_VERSION);
@@ -193,15 +194,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
         super.processForwardConfig(request, response, forward);
     }
 
-    /* TODO get this from properties file */
-    private Set<String> getBots() {
-        Set<String> bots = new HashSet<String>();
-        bots.add("googlebot");
-        bots.add("slurp");
-        bots.add("msnbot");
-        bots.add("lycos_spider");
-        bots.add("webcrawler");
-        bots.add("scooter");
-        return bots;
-    }
+    private final Set<String> bots = Collections.unmodifiableSet(new HashSet<String>(
+                Arrays.asList("googlebot", "slurp", "msnbot", "lycos_spider", "webcrawler",
+                    "scooter")));
 }

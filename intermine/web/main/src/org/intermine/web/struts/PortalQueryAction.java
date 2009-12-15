@@ -31,6 +31,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
@@ -93,6 +94,7 @@ public class PortalQueryAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
         String extId = request.getParameter("externalid");
         String origin = request.getParameter("origin");
@@ -135,10 +137,9 @@ public class PortalQueryAction extends InterMineAction
                 .addParameter("qid", qid).forward();
         }
 
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = im.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        BagQueryConfig bagQueryConfig =
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
 
         // If the class is not in the model, we can't continue
         try {
@@ -158,7 +159,7 @@ public class PortalQueryAction extends InterMineAction
                         "\t")));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         InterMineBag imBag = profile.createBag(bagName, className, "");
@@ -292,9 +293,10 @@ public class PortalQueryAction extends InterMineAction
     private String loadObjectDetails(ServletContext servletContext, HttpSession session,
             HttpServletRequest request, HttpServletResponse response, String userName,
             String extId, @SuppressWarnings("unused") String origin) throws InterruptedException {
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String templateName = properties.getProperty("begin.browse.template");
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
         if (template == null) {

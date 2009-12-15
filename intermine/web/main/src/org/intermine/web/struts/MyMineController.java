@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
@@ -56,7 +57,8 @@ public class MyMineController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        TagManager tagManager = SessionMethods.getTagManager(session);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        TagManager tagManager = im.getTagManager();
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -105,15 +107,14 @@ public class MyMineController extends TilesAction
      */
     public static void getPrecomputedSummarisedInfo(Profile profile, HttpSession session,
             HttpServletRequest request) throws ObjectStoreException {
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
-        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) session.getServletContext()
-            .getAttribute(Constants.OBJECTSTORE);
+        ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
 
         Map<String, String> precomputedTemplateMap = new HashMap<String, String>();
         Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
 
-        TemplateSummariser summariser = (TemplateSummariser) session.getServletContext()
-            .getAttribute(Constants.TEMPLATE_SUMMARISER);
+        TemplateSummariser summariser = im.getTemplateSummariser();
         for (TemplateQuery template : templates.values()) {
             if (template.isValid()) {
                 if (session.getAttribute("precomputing_" + template.getName()) != null

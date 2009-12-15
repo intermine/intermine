@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
@@ -122,6 +123,7 @@ public class ModifyTemplateAction extends InterMineAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         ServletContext servletContext = session.getServletContext();
@@ -132,8 +134,7 @@ public class ModifyTemplateAction extends InterMineAction
         PrintStream out = new PrintStream(response.getOutputStream());
         out.println("<template-queries>");
         Map myTemplates = profile.getSavedTemplates();
-        Map publicTemplates = SessionMethods.getSuperUserProfile(servletContext)
-            .getSavedTemplates();
+        Map publicTemplates = im.getProfileManager().getSuperuserProfile().getSavedTemplates();
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String name = mqf.getSelected()[i];
             String xml = null;
