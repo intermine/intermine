@@ -305,7 +305,7 @@ public class ProfileManager
     }
 
 
-    private TagManager getTagManager() {
+    public TagManager getTagManager() {
         return new TagManagerFactory(this).getTagManager();
     }
 

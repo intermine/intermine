@@ -38,13 +38,6 @@ public interface Constants
     public static final String SUBCLASSES = "SUBCLASSES";
 
     /**
-     * ServletContext attribute, provides an interface for actions and
-     * controllers to query some model meta-data like class counts and
-     * field enumerations.
-     */
-    public static final String OBJECT_STORE_SUMMARY = "OBJECT_STORE_SUMMARY";
-
-    /**
      * Session attribute, name of tab selected on MyMine page.
      */
     public static final String MYMINE_PAGE = "MYMINE_PAGE"; // serializes
@@ -53,21 +46,6 @@ public interface Constants
      * ServletContext attribute used to store the WebConfig object for the Model.
      */
     public static final String WEBCONFIG = "WEBCONFIG";
-
-    /**
-     * ServletContext attribute used to store the ObjectStore
-     */
-    public static final String OBJECTSTORE = "OBJECTSTORE";
-
-    /**
-     * ServletContext attribute used to store the Model
-     */
-    public static final String MODEL = "MODEL";
-
-    /**
-     * ServletContext attribute used to store the ProfileManager
-     */
-    public static final String PROFILE_MANAGER = "PROFILE_MANAGER";
 
     /**
      * Session attribute used to store the user's Profile
@@ -192,29 +170,9 @@ public interface Constants
     public static final int MAX_NOT_LOGGED_BAG_SIZE = 500;
 
     /**
-     * Servlet attribute.  Map from class name to set of defined keys.
-     */
-    public static final String CLASS_KEYS = "CLASS_KEYS";
-
-    /**
-     * Servlet attribute.  Map from class name to custom bag query.
-     */
-    public static final String BAG_QUERY_CONFIG = "BAG_QUERY_CONFIG";
-
-    /**
      * Servlet attribute.  Contains the SearchRepository for global/public WebSearchable objects.
      */
     public static final String GLOBAL_SEARCH_REPOSITORY = "GLOBAL_SEARCH_REPOSITORY";
-
-    /**
-     * Servlet attribute.  The BagManager for fetching global and user bags.
-     */
-    public static final String BAG_MANAGER = "BAG_MANAGER";
-
-    /**
-     * Servlet attribute.  The TemplateManager for fetching global and user templates.
-     */
-    public static final String TEMPLATE_MANAGER = "TEMPLATE_MANAGER";
 
     /**
      * Default size of table implemented by PagedTable.
@@ -243,7 +201,7 @@ public interface Constants
     public static final String KEYLESS_CLASSES_MAP = "KEYLESS_CLASSES_MAP";
 
     /**
-     * Key for a TemplateSummariser.
+     * Key for the InterMine API object
      */
-    public static final String TEMPLATE_SUMMARISER = "TEMPLATE_SUMMARISER";
+    public static final String INTERMINE_API = "INTERMINE_API";
 }

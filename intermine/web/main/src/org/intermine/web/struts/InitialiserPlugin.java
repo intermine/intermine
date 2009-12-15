@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
-import org.intermine.api.bag.BagManager;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
@@ -44,8 +44,6 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -68,7 +66,6 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Initialiser for the InterMine web application.
@@ -107,8 +104,8 @@ public class InitialiserPlugin implements PlugIn
         loadWebProperties(servletContext);
 
         ObjectStore os = null;
-        Properties props = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        String osAlias = (String) props.get("webapp.os.alias");
+        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        String osAlias = (String) webProps.get("webapp.os.alias");
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
@@ -118,8 +115,6 @@ public class InitialiserPlugin implements PlugIn
             }
             throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
         }
-        servletContext.setAttribute(Constants.OBJECTSTORE, os);
-        servletContext.setAttribute(Constants.MODEL, os.getModel());
 
         WebConfig webConfig = loadWebConfig(servletContext, os);
 
@@ -127,7 +122,7 @@ public class InitialiserPlugin implements PlugIn
 
         loadClassDescriptions(servletContext, os);
 
-        summariseObjectStore(servletContext, os);
+        ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
         for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
             boolean keyless = true;
@@ -145,26 +140,18 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
 
         // load class keys
-        loadClassKeys(servletContext, os);
+        final Map <String, List<FieldDescriptor>> classKeys = loadClassKeys(servletContext, os);
 
         // load custom bag queries
-        loadBagQueries(servletContext, os);
+        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
 
-        final ProfileManager pm = createProfileManager(servletContext, os);
-
-        final TemplateSummariser summariser = new TemplateSummariser(os, pm
-                .getProfileObjectStoreWriter());
-        servletContext.setAttribute(Constants.TEMPLATE_SUMMARISER, summariser);
-
-        final Profile superProfile = SessionMethods.getSuperUserProfile(servletContext);
-
-        final BagManager bagManager = new BagManager(superProfile, os.getModel());
-        servletContext.setAttribute(Constants.BAG_MANAGER, bagManager);
-
-        final TemplateManager templateManager = new TemplateManager(superProfile, os.getModel());
-        servletContext.setAttribute(Constants.TEMPLATE_MANAGER, templateManager);
-
+        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProps);
+        
+        InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig, oss);
+        servletContext.setAttribute(Constants.INTERMINE_API, im);
+        
         // index global webSearchables
+        final Profile superProfile = im.getProfileManager().getSuperuserProfile();
         SearchRepository searchRepository =
             new SearchRepository(superProfile, Scope.GLOBAL);
         servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
@@ -173,7 +160,7 @@ public class InitialiserPlugin implements PlugIn
 
         loadAutoCompleter(servletContext, os);
 
-        cleanTags(SessionMethods.getTagManager(servletContext));
+        cleanTags(im.getTagManager());
 
     }
 
@@ -262,8 +249,8 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private void loadClassKeys(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
+    private Map<String, List<FieldDescriptor>> loadClassKeys(ServletContext servletContext,
+            ObjectStore os) throws ServletException {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(InitialiserPlugin.class.getClassLoader()
@@ -273,20 +260,19 @@ public class InitialiserPlugin implements PlugIn
         }
         Map<String, List<FieldDescriptor>>  classKeys =
             ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
-        servletContext.setAttribute(Constants.CLASS_KEYS, classKeys);
+        return classKeys;
     }
 
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private void loadBagQueries(ServletContext servletContext, ObjectStore os)
+    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os)
         throws ServletException {
+        BagQueryConfig bagQueryConfig = null;
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
             try {
-                BagQueryConfig bagQueryConfig = BagQueryHelper
-                    .readBagQueryConfig(os.getModel(), is);
-                servletContext.setAttribute(Constants.BAG_QUERY_CONFIG, bagQueryConfig);
+                bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
             } catch (Exception e) {
                 throw new ServletException("Error loading class bag queries", e);
             }
@@ -294,6 +280,7 @@ public class InitialiserPlugin implements PlugIn
             // can used defaults so just log a warning
             LOG.warn("No custom bag queries found - using default query");
         }
+        return bagQueryConfig;
     }
 
     /**
@@ -325,7 +312,8 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private void summariseObjectStore(ServletContext servletContext, final ObjectStore os)
+    private ObjectStoreSummary summariseObjectStore(ServletContext servletContext,
+            final ObjectStore os)
         throws ServletException {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
@@ -355,7 +343,6 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to get class count for " + className, e);
             }
         }
-        servletContext.setAttribute(Constants.OBJECT_STORE_SUMMARY, oss);
         servletContext.setAttribute("classes", classes);
         servletContext.setAttribute("classCounts", classCounts);
         // Build subclass lists for JSPs
@@ -406,33 +393,26 @@ public class InitialiserPlugin implements PlugIn
             }
         };
         servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
+        return oss;
     }
 
 
-    /**
-     * Create the profile manager and place it into to the servlet context.
-     */
-    private ProfileManager createProfileManager(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        if (profileManager == null) {
-            try {
-                Properties props =
-                    (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-                String userProfileAlias = (String) props.get("webapp.userprofile.os.alias");
-                ObjectStoreWriter userProfileOS =
-                    ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-                profileManager = new ProfileManager(os, userProfileOS);
-            } catch (ObjectStoreException e) {
-                LOG.error("Unable to create profile manager - please check that the "
-                        + "userprofile database is available", e);
-                throw new ServletException("Unable to create profile manager - please check that "
-                        + "the userprofile database is available", e);
-            }
+    private ObjectStoreWriter getUserprofileWriter(Properties webProperties) 
+    throws ServletException {
+        ObjectStoreWriter userprofileOSW;        
+        try {
+            String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
+            userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+        } catch (ObjectStoreException e) {
+            LOG.error("Unable to create userprofile - please check that the "
+                    + "userprofile database is available", e);
+            throw new ServletException("Unable to create profile manager - please check that "
+                    + "the userprofile database is available", e);
         }
-        servletContext.setAttribute(Constants.PROFILE_MANAGER, profileManager);
-        return profileManager;
+        return userprofileOSW;
     }
-
+    
+    
     /**
      * Destroy method called at Servlet destroy
      */
