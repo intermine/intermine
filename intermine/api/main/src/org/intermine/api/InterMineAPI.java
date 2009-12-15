@@ -148,4 +148,18 @@ public class InterMineAPI
     public ObjectStoreSummary getObjectStoreSummary() {
         return oss;
     }
+
+    /**
+     * @return the classKeys
+     */
+    public Map<String, List<FieldDescriptor>> getClassKeys() {
+        return classKeys;
+    }
+
+    /**
+     * @return the bagQueryConfig
+     */
+    public BagQueryConfig getBagQueryConfig() {
+        return bagQueryConfig;
+    }
 }
