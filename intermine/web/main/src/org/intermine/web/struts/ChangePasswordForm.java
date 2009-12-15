@@ -10,17 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean to represent the inputs needed to change a password from user input.
@@ -104,9 +103,9 @@ public class ChangePasswordForm extends ActionForm
      */
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ProfileManager pm = im.getProfileManager();
         ActionErrors errors = new ActionErrors();
         if (username == null || username.length() == 0) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.emptyusername"));
@@ -122,7 +121,6 @@ public class ChangePasswordForm extends ActionForm
         } else if (!pm.validPassword(username, oldpassword)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.wrongpass"));
         }
-
         return errors;
     }
 

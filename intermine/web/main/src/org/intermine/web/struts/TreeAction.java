@@ -10,16 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.util.Set;
-
-import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.actions.DispatchAction;
 
 /**
  * Implementation of <strong>Action</strong> that modifies a tree

@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,9 +32,10 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.api.InterMineAPI;
+import org.intermine.model.userprofile.Tag;
 
 /**
  * Controller for the favourites tile responsible for getting and displaying the
@@ -52,28 +53,27 @@ public class FavouritesController extends TilesAction
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
                                  @SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList();
+                                 HttpServletRequest request, 
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ProfileManager pm = (ProfileManager) request.getSession().getServletContext().getAttribute(
-                Constants.PROFILE_MANAGER);
 
+        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList();
+        
         if (profile.getUsername() != null) {
-            Profile superuserProfile = pm.getSuperuserProfile();
-            Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
+            Profile superuserProfile = im.getProfileManager().getSuperuserProfile();
+            Map<String, TemplateQuery> savedTemplates = new HashMap();
             savedTemplates.putAll(superuserProfile.getSavedTemplates());
             savedTemplates.putAll(profile.getSavedTemplates());
-            TagManager tagManager = SessionMethods.getTagManager(session);
+            TagManager tagManager = im.getTagManager();
 
-            List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null,
-                                       TagTypes.TEMPLATE, profile.getUsername());
+            List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE, 
+                                               profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
-                TemplateQuery templateQuery =
-                    savedTemplates.get(element.getObjectIdentifier());
+                TemplateQuery templateQuery = savedTemplates.get(element.getObjectIdentifier());
                 if (templateQuery != null) {
                     favouriteTemplates.add(templateQuery);
                 }

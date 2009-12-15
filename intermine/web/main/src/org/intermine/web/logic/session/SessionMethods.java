@@ -777,17 +777,16 @@ public class SessionMethods
      * Execute a query and return a PagedTable to display contents of an InterMineBag
      *
      * @param request the request
-     * @param servletContext the ServletContext
      * @param imBag the InterMineBag
      * @return a PagedTable
      * @throws ObjectStoreException thrown exception
      */
-    public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
-            ServletContext servletContext, InterMineBag imBag) throws ObjectStoreException {
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineBag imBag) 
+    throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = getInterMineAPI(session);
         Model model = im.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
 
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
         WebResultsExecutor executor = im.getWebResultsExecutor(getProfile(session));
@@ -804,20 +803,19 @@ public class SessionMethods
      * a given InterMineObject
      *
      * @param request the ServletRequest
-     * @param servletContext the ServletContext
      * @param obj the InterMineObject
      * @param field the name of the collection field in the InterMineObject
      * @param referencedClassName the type of the collection
      * @return a PagedTable
      * @throws ObjectStoreException exception thrown
      */
-    public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
-            ServletContext servletContext, InterMineObject obj, String field,
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineObject obj, 
+                                                  String field,
             String referencedClassName) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = getWebConfig(request);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
                         referencedClassName, field);
         session.setAttribute(Constants.QUERY, pathQuery);

@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
@@ -52,13 +52,14 @@ public class CreateAccountAction extends LoginHandler
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ProfileManager pm = im.getProfileManager();
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Map webProperties = 
+            (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
         try {
             MailUtils.email(username, webProperties);
             if (((CreateAccountForm) form).getMailinglist()

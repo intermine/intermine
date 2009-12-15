@@ -10,19 +10,16 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author Xavier Watkins
@@ -30,34 +27,23 @@ import org.intermine.web.logic.Constants;
  */
 public class ChangePasswordAction extends InterMineAction
 {
-
     /**
-     * Method called when user has finished updating a constraint
+     * Method called when user has finished filling out the 'change password' form
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-            HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ProfileManager pm = im.getProfileManager();
         String username = ((ChangePasswordForm) form).getUsername();
         String password = ((ChangePasswordForm) form).getNewpassword();
         pm.setPassword(username, password);
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-
         try {
             recordMessage(new ActionMessage("password.changed", username), request);
         } catch (Exception e) {

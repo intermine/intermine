@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
@@ -57,11 +58,14 @@ public class EditTemplateAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
+        
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
+        
         String queryName = request.getParameter("name");
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
+        TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
 
         PathQuery queryClone = template.clone();

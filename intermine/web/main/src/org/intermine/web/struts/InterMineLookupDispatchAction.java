@@ -12,11 +12,10 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.LookupDispatchAction;
-
-import org.apache.log4j.Logger;
 
 /**
  * An InterMine specific version of LookupDispatchAction.

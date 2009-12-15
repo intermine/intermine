@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,6 +25,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
@@ -65,10 +65,11 @@ public class BagDetailsController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        ObjectStore os = im.getObjectStore();
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        BagManager bagManager = im.getBagManager();
 
         String bagName = request.getParameter("bagName");
         Boolean myBag = Boolean.FALSE;
@@ -83,8 +84,7 @@ public class BagDetailsController extends TilesAction
             scope = Scope.ALL;
         }
 
-        if (scope.equals(Scope.USER)
-                        || scope.equals(Scope.ALL)) {
+        if (scope.equals(Scope.USER) || scope.equals(Scope.ALL)) {
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
@@ -96,7 +96,7 @@ public class BagDetailsController extends TilesAction
             || scope.equals(Scope.ALL)) {
             // scope == all or global
             if (bagManager.getGlobalBag(bagName) != null) {
-                imBag = (InterMineBag) bagManager.getGlobalBag(bagName);
+                imBag = bagManager.getGlobalBag(bagName);
             }
         }
 
@@ -104,16 +104,14 @@ public class BagDetailsController extends TilesAction
             return null;
         }
 
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = os.getModel();
         Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
-        Map<String, Map<String, Collection<String>>> widget2extraAttrs
-            = new HashMap<String, Map<String, Collection<String>>>();
+        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap();
         for (WidgetConfig widget2 : widgets) {
-            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(
-                            imBag, os));
+            widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(imBag, os));
         }
         request.setAttribute("widgets", widgets);
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
@@ -121,13 +119,12 @@ public class BagDetailsController extends TilesAction
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
 
         if (pagedResults == null || pagedResults.getExactSize() != imBag.getSize()) {
-            pagedResults = SessionMethods.doQueryGetPagedTable(request, servletContext, imBag);
+            pagedResults = SessionMethods.doQueryGetPagedTable(request, imBag);
         }
 
         // TODO this needs to be removed when InterMineBag can store the initial ids of when the
         // bag was made.
-        BagQueryConfig bagQueryConfig = (BagQueryConfig) servletContext
-                        .getAttribute(Constants.BAG_QUERY_CONFIG);
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         Map<String, String[]> additionalConverters = bagQueryConfig.getAdditionalConverters(imBag
                         .getType());
         if (additionalConverters != null) {
@@ -192,8 +189,6 @@ public class BagDetailsController extends TilesAction
 
         request.setAttribute("firstSelectedFields",
                              pagedResults.getFirstSelectedFields(os, classKeys));
-
-
         if (page == -1) {
             // use the page from the URL
             page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
@@ -210,15 +205,8 @@ public class BagDetailsController extends TilesAction
         // disable using pathquery saved in session in following jsp page
         // because it caused displaying invalid column names
         request.setAttribute("notUseQuery", Boolean.TRUE);
-
         return null;
     }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
-        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-    }
-
 }
 
 

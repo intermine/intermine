@@ -13,22 +13,22 @@ package org.intermine.web.struts;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-
-import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 
 /**
@@ -58,11 +58,9 @@ public class ContactAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         ContactForm ff = (ContactForm) form;
-
-
         try {
-            Map webProperties = (Map) session.getServletContext()
-                .getAttribute(Constants.WEB_PROPERTIES);
+            Map webProperties 
+            = (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
             MessageResources strings = getResources(request);
             String host = (String) ((Map) session.getServletContext().
                         getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");

@@ -71,16 +71,13 @@ public class CurrentQueryAction extends InterMineAction
                     return new ForwardParameters(mapping.findForward("template"))
                         .addParameter("loadModifiedTemplate", "true")
                         .addParameter("name", sq.getName()).forward();
-                } else { // The template is quick search
-                    return new ForwardParameters(mapping.findForward("template"))
-                        .addParameter("name", template.getName()).forward();
                 }
-            } else {
                 return new ForwardParameters(mapping.findForward("template"))
                     .addParameter("name", template.getName()).forward();
             }
-        } else {
-            return mapping.findForward("query");
+            return new ForwardParameters(mapping.findForward("template"))
+                .addParameter("name", template.getName()).forward();
         }
+        return mapping.findForward("query");
     }
 }

@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,11 +18,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -51,13 +50,15 @@ public class CollectionDetailsAction extends Action
      * @exception Exception
      *                if an error occurs
      */
-    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused")
-    ActionForm form, HttpServletRequest request, @SuppressWarnings("unused")
-    HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping, 
+                                 @SuppressWarnings("unused") ActionForm form, 
+                                 HttpServletRequest request, 
+                                 @SuppressWarnings("unused") HttpServletResponse response) 
+    throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
+        
         Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
         String trail = request.getParameter("trail");
@@ -73,8 +74,8 @@ public class CollectionDetailsAction extends Action
         }
         String referencedClassName = refDesc.getReferencedClassDescriptor().getUnqualifiedName();
 
-        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, servletContext, o,
-                        field, referencedClassName);
+        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, o, field, 
+                                                                    referencedClassName);
 
         // add results table to trail
         if (trail != null) {
