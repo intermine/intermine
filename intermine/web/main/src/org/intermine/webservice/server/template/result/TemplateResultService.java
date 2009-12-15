@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
@@ -46,12 +47,19 @@ public class TemplateResultService extends QueryResultService
     public static final String NAME_PARAMETER = "name";
 
     /**
+     * {@inheritDoc}
+     */
+    public TemplateResultService(InterMineAPI im) {
+        super(im);
+    }
+    
+    /**
      * {@inheritDoc}}
      */
     protected void execute(HttpServletRequest request,
             HttpServletResponse response) {
 
-        TemplateManager templateManager = SessionMethods.getTemplateManager(request.getSession());
+        TemplateManager templateManager = this.im.getTemplateManager();
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {

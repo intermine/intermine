@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -27,14 +26,14 @@ import org.intermine.web.logic.session.SessionMethods;
  **/
 public class ListManager
 {
-    private HttpServletRequest request;
+    private BagManager bagManager;
 
     /**
      * ListManager constructor.
      * @param request request
      */
     public ListManager(HttpServletRequest request) {
-        this.request = request;
+        this.bagManager = SessionMethods.getInterMineAPI(request.getSession()).getBagManager();
     }
 
     /**
@@ -44,9 +43,6 @@ public class ListManager
      */
     public List<String> getListsNames(Integer objectId) {
         List<String> ret = new ArrayList<String>();
-
-        HttpSession session = request.getSession();
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
 
         Collection<InterMineBag> bags = bagManager.getGlobalBags().values();
         for (InterMineBag bag : bags) {

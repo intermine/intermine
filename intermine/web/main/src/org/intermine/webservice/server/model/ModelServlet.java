@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.session.SessionMethods;
+
 
 
 /**
@@ -48,6 +51,7 @@ public class ModelServlet extends HttpServlet
 
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
-        new ModelService().service(request, response);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
+        new ModelService(im).service(request, response);
     }
 }

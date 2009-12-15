@@ -20,6 +20,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -36,7 +37,6 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
@@ -62,6 +62,13 @@ public class WidgetsService extends WebService
 {
 
     /**
+     * {@inheritDoc}
+     */
+    public WidgetsService(InterMineAPI im) {
+        super(im);
+    }
+    
+    /**
      * Executes service specific logic.
      *
      * @param request request
@@ -80,10 +87,9 @@ public class WidgetsService extends WebService
         InterMineBag imBag = getBag(className, ids, servletContext, profile);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         WidgetConfig widgetConfig = webConfig.getWidgets().get(widgetsServiceInput.getWidgetId());
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = this.im.getObjectStore();
         if (widgetConfig instanceof TableWidgetConfig) {
-            ((TableWidgetConfig) widgetConfig).setClassKeys((Map) servletContext
-                                                            .getAttribute(Constants.CLASS_KEYS));
+            ((TableWidgetConfig) widgetConfig).setClassKeys(this.im.getClassKeys());
         }
         response.getWriter().print(getHtml(widgetConfig, imBag,
                     new URLGenerator(request).getBaseURL(), os));
@@ -100,7 +106,7 @@ public class WidgetsService extends WebService
      */
     protected InterMineBag getBag(String className, List<String> ids,
             ServletContext servletContext, Profile profile) throws ObjectStoreException {
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = this.im.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         try {
             className = StringUtil.capitalise(className);
@@ -146,7 +152,7 @@ public class WidgetsService extends WebService
         pathQuery.syncLogicExpression("and");
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap();
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(servletContext, profile);
+        WebResultsExecutor executor = this.im.getWebResultsExecutor(profile);
 
         // execute query, we just need the bag query results
         executor.execute(pathQuery, returnBagQueryResults);
@@ -171,7 +177,7 @@ public class WidgetsService extends WebService
      * @param bag the list
      * @param os the ObjectStore
      * @return a String representing the generated HTML
-     * @throws Exception an error has occured
+     * @throws Exception an error has occurred
      */
     private String getHtml(WidgetConfig widgetConfig, InterMineBag bag, String prefix,
             ObjectStore os) throws Exception {
