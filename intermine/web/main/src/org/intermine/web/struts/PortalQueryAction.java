@@ -305,7 +305,7 @@ public class PortalQueryAction extends InterMineAction
 
         TemplateQuery populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
                 ConstraintOp.EQUALS, extId);
-        
+
         SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 
         QueryMonitorTimeout clientState

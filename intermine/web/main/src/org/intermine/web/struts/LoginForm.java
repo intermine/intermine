@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -21,7 +20,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
