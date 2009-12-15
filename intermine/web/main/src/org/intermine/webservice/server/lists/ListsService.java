@@ -17,6 +17,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
@@ -28,7 +30,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
@@ -52,7 +53,13 @@ import org.intermine.webservice.server.output.Output;
  **/
 public class ListsService extends WebService
 {
-
+    /**
+     * {@inheritDoc}
+     */
+    public ListsService(InterMineAPI im) {
+        super(im);
+    }
+    
     /**
      * Executes service specific logic.
      * @param request request
@@ -82,8 +89,7 @@ public class ListsService extends WebService
     }
 
     private boolean objectExists(HttpServletRequest request, Integer objectId) {
-        ObjectStore os = (ObjectStore) request.getSession().
-            getServletContext().getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = this.im.getObjectStore();
         try {
             InterMineObject objectById = os.getObjectById(objectId);
             return objectById != null;
@@ -102,8 +108,7 @@ public class ListsService extends WebService
 
     private Integer resolveMineId(HttpServletRequest request,
             ListsServiceInput input) {
-        Model model = (Model) request.getSession().getServletContext()
-            .getAttribute(Constants.OBJECTSTORE);
+        Model model = this.im.getModel();
 
         // checks  type
         if (model.getClassDescriptorByName(input.getType()) == null) {
@@ -118,7 +123,8 @@ public class ListsService extends WebService
         node.getConstraints().add(constraint);
         pathQuery.getNodes().put(input.getType(), node);
         pathQuery.setView(getViewAccordingClasskeys(request, input.getType()));
-        PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {
             List<ResultElement> row = (ArrayList) it.next();
@@ -136,8 +142,7 @@ public class ListsService extends WebService
     private List<String> getViewAccordingClasskeys(HttpServletRequest request,
             String type) {
         List<String> ret = new ArrayList<String>();
-        List<FieldDescriptor> descs = SessionMethods.getClassKeys(request.getSession()
-                .getServletContext()).get(type);
+        List<FieldDescriptor> descs = this.im.getClassKeys().get(type);
         for (FieldDescriptor desc : descs) {
             ret.add(type + "." + desc.getName());
         }

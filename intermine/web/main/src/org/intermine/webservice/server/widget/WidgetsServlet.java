@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.session.SessionMethods;
+
 /**
  * Servlet running WidgetsService.
  * @see org.intermine.webservice.lists.WidgetsService for more information.
@@ -49,7 +52,8 @@ public class WidgetsServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        new WidgetsService().service(request, response);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        new WidgetsService(im).service(request, response);
     }
 
 }

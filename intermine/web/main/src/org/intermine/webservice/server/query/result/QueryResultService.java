@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.EnumerationUtils;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -56,6 +57,13 @@ public class QueryResultService extends WebService
     private static final int BATCH_SIZE = 5000;
 
     /**
+     * {@inheritDoc}
+     */
+    public QueryResultService(InterMineAPI im) {
+        super(im);
+    }
+    
+    /**
      * Executes service specific logic.
      * @param request request
      * @param response response
@@ -67,7 +75,7 @@ public class QueryResultService extends WebService
 
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
-        BagManager bagManager = SessionMethods.getBagManager(session.getServletContext());
+        BagManager bagManager = this.im.getBagManager();
 
         Map<String, InterMineBag> savedBags = bagManager.getUserAndGlobalBags(profile);
 
@@ -157,7 +165,8 @@ public class QueryResultService extends WebService
      */
     public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults,  String title,
             String description, WebServiceInput input, String mineLink, String layout) {
-        PathQueryExecutor executor = SessionMethods.getPathQueryExecutor(request.getSession());
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
         executor.setBatchSize(BATCH_SIZE);
         ExportResultsIterator resultIt = executor.execute(pathQuery, firstResult,
                 maxResults);

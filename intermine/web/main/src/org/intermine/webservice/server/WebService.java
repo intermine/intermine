@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -95,6 +96,17 @@ public abstract class WebService
 
     private boolean authenticated = false;
 
+    protected InterMineAPI im;
+    
+    /**
+     * Construct the web service with the InterMine API object that gives access to the core
+     * InterMine functionality.
+     * @param im the InterMine application
+     */
+    public WebService(InterMineAPI im) {
+        this.im = im;
+    }
+    
     /**
      * Starting method of web service. The web service should be run like
      *
@@ -162,8 +174,8 @@ public abstract class WebService
         if (password.length() == 0) {
             throw new BadRequestException("Empty password.");
         }
-        ProfileManager pm = SessionMethods.getProfileManager(request.getSession()
-                .getServletContext());
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ProfileManager pm = im.getProfileManager();
         if (pm.hasProfile(userName)) {
             if (!pm.validPassword(userName, password)) {
                 throw new BadRequestException("Invalid password: " + password);
@@ -173,8 +185,7 @@ public abstract class WebService
         }
 
         HttpSession session = request.getSession();
-        LoginHandler.setUpProfile(session, SessionMethods.getProfileManager(
-                session.getServletContext()), userName, password);
+        LoginHandler.setUpProfile(session, pm, userName, password);
         authenticated = true;
     }
 

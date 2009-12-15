@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.session.SessionMethods;
+
 
 
 /**
@@ -49,6 +52,7 @@ public class ListsServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        new ListsService().service(request, response);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
+        new ListsService(im).service(request, response);
     }
 }
