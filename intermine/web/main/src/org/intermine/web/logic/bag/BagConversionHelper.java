@@ -16,8 +16,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.intermine.InterMineException;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateQuery;
@@ -57,14 +59,15 @@ public class BagConversionHelper
             List<TemplateQuery> conversionTemplates, Class typeA, Class typeB,
             InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         PathQuery pq = TypeConverter.getConversionQuery(conversionTemplates, typeA, typeB, imBag);
         if (pq == null) {
             return null;
         }
         Path configuredPath = pq.getView().get(0);
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = im.getModel();
         pq.setViewPaths(PathQueryResultHelper
                 .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,
                     webConfig, configuredPath.getPrefix().toStringNoConstraints(), false));
@@ -75,7 +78,8 @@ public class BagConversionHelper
         pq.syncLogicExpression("and");
         pq.setConstraintLogic("A and B");
 
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         return executor.execute(pq);
     }
 }
