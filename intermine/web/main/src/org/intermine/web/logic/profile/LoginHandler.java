@@ -24,6 +24,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.struts.InterMineAction;
@@ -70,7 +71,8 @@ public abstract class LoginHandler extends InterMineAction
             // Make sure the userId gets set to be the profile one
             try {
                 bag.setProfileId(profile.getUserId());
-                String name = makeUniqueQueryName(entry.getKey(), profile.getSavedBags().keySet());
+                String name = NameUtil.validateName(profile.getSavedBags().keySet(), 
+                        entry.getKey());
                 if (!entry.getKey().equals(name)) {
                     renamedBags.put(entry.getKey(), name);
                 }
@@ -109,15 +111,4 @@ public abstract class LoginHandler extends InterMineAction
         }
         return profile;
     }
-
-    private String makeUniqueQueryName(String name, Set<String> names) {
-        String newName = name;
-        int i = 1;
-        while (names.contains(newName)) {
-            newName =  name + "_" + i;
-            i++;
-        }
-        return newName;
-    }
-
 }
