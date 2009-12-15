@@ -44,6 +44,7 @@ import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.model.userprofile.Tag; 
 
 /**
  * Implementation of <strong>Action</strong> that assembles data for viewing an

@@ -65,6 +65,7 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.model.userprofile.Tag; 
 
 /**
  * Initialiser for the InterMine web application.

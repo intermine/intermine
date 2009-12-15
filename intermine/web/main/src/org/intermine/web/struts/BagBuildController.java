@@ -27,9 +27,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.profile.ProfileManager;
+
 import org.intermine.api.profile.TagManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -43,8 +44,10 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
+
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.model.userprofile.Tag; 
+
 
 /**
  * Controller Action for buildBag.jsp
@@ -71,28 +74,28 @@ public class BagBuildController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);        
         ServletContext servletContext = session.getServletContext();
-        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        ProfileManager pm = SessionMethods.getProfileManager(servletContext);
+        Model model = im.getModel();
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreSummary oss =
-            (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        Collection<String> qualifiedTypes = os.getModel().getClassNames();
+        ObjectStore os = im.getObjectStore();
+        ObjectStoreSummary oss = im.getObjectStoreSummary();
+        
+        Collection<String> qualifiedTypes = model.getClassNames();
 
-        ArrayList<String> typeList = new ArrayList<String>();
-        ArrayList<String> preferedTypeList = new ArrayList<String>();
-        String superUserName = pm.getSuperuser();
+        ArrayList<String> typeList = new ArrayList();
+        ArrayList<String> preferedTypeList = new ArrayList();
 
-        TagManager tagManager = SessionMethods.getTagManager(session);
-        List<Tag> preferredBagTypeTags =
-            tagManager.getTags("im:preferredBagType", null, "class", superUserName);
+
+        TagManager tagManager = im.getTagManager();
+        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class", 
+                                                            im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
-        Map<String, List<FieldDescriptor>> classKeys =
-            (Map<String, List<FieldDescriptor>>) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         for (Iterator<String> iter = qualifiedTypes.iterator(); iter.hasNext();) {
             String className = iter.next();
             String unqualifiedName = TypeUtil.unqualifiedName(className);
@@ -106,8 +109,7 @@ public class BagBuildController extends TilesAction
         request.setAttribute("typeList", typeList);
         request.setAttribute("preferredTypeList", preferedTypeList);
 
-        BagQueryConfig bagQueryConfig =
-            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
         if (extraClassName != null) {
             request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
@@ -133,7 +135,6 @@ public class BagBuildController extends TilesAction
             }
             request.setAttribute("typesWithConnectingField", typesWithConnectingField);
         }
-
         return null;
     }
 
