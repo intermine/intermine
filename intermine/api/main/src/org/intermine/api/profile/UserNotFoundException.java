@@ -25,6 +25,14 @@ public class UserNotFoundException extends RuntimeException
     }
 
     /**
+     * Constructor with throwable
+     * @param t another throwable
+     */
+    public UserNotFoundException(Throwable t) {
+        super(t);
+    }
+    
+    /**
      * Constructor with message and nested exception.
      * @param msg message
      * @param t nested exception
