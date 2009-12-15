@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -26,16 +25,15 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.api.InterMineAPI;
-import org.intermine.model.userprofile.Tag;
 
 /**
  * Controller for the favourites tile responsible for getting and displaying the
@@ -79,7 +77,7 @@ public class FavouritesController extends TilesAction
                 }
             }
         }
-        servletContext.setAttribute("favouriteTemplates", favouriteTemplates);
+        session.getServletContext().setAttribute("favouriteTemplates", favouriteTemplates);
         return null;
     }
 }
