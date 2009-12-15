@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -75,7 +74,6 @@ public class SaveBagAction extends InterMineAction
                                  HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
         SaveBagForm sbf = (SaveBagForm) form;
 

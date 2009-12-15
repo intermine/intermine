@@ -12,17 +12,16 @@ package org.intermine.web.struts;
 
 import java.util.Locale;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.ConstraintValueParser;
@@ -39,8 +38,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class QueryBuilderForm extends ActionForm
 {
-    private static final Logger LOG = Logger.getLogger(QueryBuilderForm.class);
-
     protected String bagOp, bagValue;
     protected String attributeOp, attributeValue, attributeOptions, extraValue;
     protected String subclassValue;
@@ -352,8 +349,9 @@ public class QueryBuilderForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+
+        Model model = im.getModel();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
 

@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
@@ -47,16 +48,14 @@ public class SetFavouriteController extends TilesAction
         String name = (String) context.getAttribute("name");
         String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        TagManager tagManager = SessionMethods.getTagManager(session);
+        TagManager tagManager = im.getTagManager();
+        
         Set<String> userTags = tagManager.getObjectTagNames(name, type, profile.getUsername());
-        String isFavourite = "false";
-        for (String tag : userTags) {
-            if (tag.equals(TagNames.IM_FAVOURITE)) {
-                isFavourite = "true";
-                break;
-            }
-        }
+        String isFavourite = Boolean.toString(userTags.contains(TagNames.IM_FAVOURITE));
+
         request.setAttribute("isFavourite", isFavourite);
         return null;
     }

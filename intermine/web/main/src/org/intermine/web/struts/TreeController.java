@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,10 +28,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.TreeNode;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Perform initialisation steps for displaying a tree
@@ -51,7 +52,8 @@ public class TreeController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Set<String> openClasses = (Set<String>) session.getAttribute("openClasses");
         if (openClasses == null) {
             openClasses = new HashSet<String>();
@@ -60,7 +62,7 @@ public class TreeController extends TilesAction
         }
 
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = im.getModel();
 
         String rootClass = (String) request.getAttribute("rootClass");
         List<ClassDescriptor> rootClasses = new ArrayList<ClassDescriptor>();
@@ -97,24 +99,23 @@ public class TreeController extends TilesAction
      * @param classCounts the classCounts attribute from the ServletContext
      * @return a List of nodes
      */
-    protected List makeNodes(ClassDescriptor parent, Set openClasses, int depth,
+    protected List<TreeNode> makeNodes(ClassDescriptor parent, Set openClasses, int depth,
                              Map classCounts) {
-        List nodes = new ArrayList();
+        List<TreeNode> nodes = new ArrayList<TreeNode>();
         nodes.add(new TreeNode(parent, classCounts.get(parent.getName()).toString(),
                                depth, false,
                                parent.getSubDescriptors().size() == 0,
                                openClasses.contains(parent.getName())));
         if (openClasses.contains(parent.getName())) {
-            Set sortedClds = new TreeSet(new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        return ((ClassDescriptor) o1).getName().compareTo(((ClassDescriptor) o2)
-                                                                          .getName());
-                    }
-                });
+            Set<ClassDescriptor> sortedClds = new TreeSet<ClassDescriptor>(
+                    new Comparator<ClassDescriptor>() {
+                        public int compare(ClassDescriptor c1, ClassDescriptor c2) {
+                            return c1.getName().compareTo(c2.getName());
+                        }
+                    });
             sortedClds.addAll(parent.getSubDescriptors());
-            for (Iterator i = sortedClds.iterator(); i.hasNext();) {
-                nodes.addAll(makeNodes((ClassDescriptor) i.next(), openClasses, depth + 1,
-                                       classCounts));
+            for (ClassDescriptor cld : sortedClds) {
+                nodes.addAll(makeNodes(cld, openClasses, depth + 1, classCounts));
             }
         }
         return nodes;

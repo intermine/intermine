@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.results.Column;
 import org.intermine.api.template.TemplateQuery;
@@ -70,7 +71,9 @@ public class TableController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
+        
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
@@ -223,16 +226,11 @@ public class TableController extends TilesAction
         }
         request.setAttribute("pathNames", pathNames);
 
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        ObjectStore os = im.getObjectStore();
         request.setAttribute("firstSelectedFields", pt.getFirstSelectedFields(os, classKeys));
 
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
-        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
     }
 
     private HashMap<String, String> setSortOrderMap(PathQuery q) {

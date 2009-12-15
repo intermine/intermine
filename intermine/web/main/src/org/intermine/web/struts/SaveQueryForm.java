@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.web.logic.Constants;
 
@@ -59,7 +60,7 @@ public class SaveQueryForm extends ActionForm
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        Map savedQueries = profile.getSavedQueries();
+        Map<String, SavedQuery> savedQueries = profile.getSavedQueries();
 
         ActionErrors errors = null;
         if (queryName.equals("")) {

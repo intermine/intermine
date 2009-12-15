@@ -36,8 +36,6 @@ public class QuickSearchController extends TilesAction
                                  @SuppressWarnings("unused")  HttpServletResponse response)
         throws Exception {
 
-        // might want to make the operator a model web.properties property
-        //context.putAttribute("browseOperator", ConstraintOp.MATCHES.getIndex());
         HttpSession session = request.getSession();
         String selectedQuickSearch = (String) session.getAttribute("quickSearchType");
         request.setAttribute("quickSearchType", selectedQuickSearch);

@@ -12,18 +12,16 @@ package org.intermine.web.struts;
 
 import java.util.Locale;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
@@ -31,6 +29,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to handle button presses on the main tile
@@ -39,7 +38,6 @@ import org.intermine.web.logic.Constants;
  */
 public class QueryBuilderAction extends InterMineAction
 {
-    private static final Logger LOG = Logger.getLogger(QueryBuilderAction.class);
 
     /**
      * Method called when user has finished updating a constraint
@@ -59,13 +57,12 @@ public class QueryBuilderAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         QueryBuilderForm mf = (QueryBuilderForm) form;
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        Model model = im.getModel();
         Path path = PathQuery.makePath(model, query, mf.getPath());
         String rootPath = null;
         if (path.endIsAttribute()) {
@@ -119,7 +116,6 @@ public class QueryBuilderAction extends InterMineAction
             // current constraint
             label = c.getDescription();
             id = c.getIdentifier();
-
         }
 
         if (request.getParameter("attribute") != null) {
@@ -130,7 +126,6 @@ public class QueryBuilderAction extends InterMineAction
                 id = mf.getTemplateId();
                 editable = mf.isEditable();
             }
-            Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
 
             ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(mf
                     .getAttributeOp()));

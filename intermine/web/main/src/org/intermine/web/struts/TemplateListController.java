@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -22,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
@@ -46,7 +46,8 @@ public class TemplateListController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
@@ -57,8 +58,8 @@ public class TemplateListController extends TilesAction
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         List<TemplateQuery> templates = null;
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
-
+        TemplateManager templateManager = im.getTemplateManager();
+        
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
                 templates = templateManager.getReportPageTemplatesForAspect(aspect,

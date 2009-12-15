@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -84,8 +84,9 @@ public class QueryBuilderController extends TilesAction
     public static void populateRequest(HttpServletRequest request,
                                        @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
+        Model model = im.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         assureCorrectSortOrder(query);
 
@@ -134,7 +135,7 @@ public class QueryBuilderController extends TilesAction
         request.setAttribute("viewPaths", listToMap(new ArrayList(viewStrings.keySet())));
 
         // set up the metadata
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         boolean isSuperUser = SessionMethods.isSuperUser(session);
 
         String prefix = (String) session.getAttribute("prefix");

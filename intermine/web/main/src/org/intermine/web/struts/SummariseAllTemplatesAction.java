@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,14 +21,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to summarise all templates.
@@ -57,15 +55,12 @@ public class SummariseAllTemplatesAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        ObjectStoreWriter osw = ((ProfileManager) servletContext.getAttribute(
-                    Constants.PROFILE_MANAGER)).getProfileObjectStoreWriter();
+        final TemplateSummariser summariser = im.getTemplateSummariser();
+        
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
-
-        TemplateSummariser summariser = new TemplateSummariser(os, osw);
-
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
             //String templateName = entry.getKey();
             TemplateQuery template = entry.getValue();

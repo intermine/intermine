@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.io.PrintStream;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
@@ -46,27 +46,27 @@ public class TemplatesExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
 
         String xml = null;
 
+        TemplateManager templateManager = im.getTemplateManager();
         if (name == null) {
             if (scope == null || scope.equals(Scope.USER)) {
                 xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);
             } else if (scope.equals(Scope.GLOBAL)) {
-                xml = TemplateHelper.templateMapToXml(SessionMethods
-                        .getSuperUserProfile(servletContext).getSavedTemplates(),
+                xml = TemplateHelper.templateMapToXml(templateManager.getGlobalTemplates(),
                         PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot export all templates for scope "
                                                    + scope);
             }
         } else {
-            TemplateManager templateManager = SessionMethods.getTemplateManager(session);
             TemplateQuery template = templateManager.getTemplate(profile, name, scope);
             if (template != null) {
                 xml = template.toXml(PathQuery.USERPROFILE_VERSION);

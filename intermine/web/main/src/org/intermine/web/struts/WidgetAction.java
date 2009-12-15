@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,6 +27,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -101,10 +101,11 @@ public class WidgetAction extends InterMineAction
                                 HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Model model = os.getModel();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        ObjectStore os = im.getObjectStore();
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        Model model = im.getModel();
 
         WidgetForm wf = (WidgetForm) form;
         String bagName = wf.getBagName();
@@ -122,7 +123,7 @@ public class WidgetAction extends InterMineAction
         }
 
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(ldr);
@@ -167,8 +168,9 @@ public class WidgetAction extends InterMineAction
             HttpServletRequest request, String bagName, boolean showAll)
         throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
+        ObjectStore os = im.getObjectStore();
         String key = request.getParameter("key");
         String link = request.getParameter("link");
         String allOrSelected = "All";
@@ -182,7 +184,7 @@ public class WidgetAction extends InterMineAction
             allOrSelected = "Selected";
         }
         Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
         Class<?> clazz = TypeUtil.instantiate(link);
@@ -267,12 +269,13 @@ public class WidgetAction extends InterMineAction
      */
     public ActionForward export(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        WidgetForm widgetForm = (WidgetForm) form;
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        WidgetForm widgetForm = (WidgetForm) form;
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        ObjectStore os = im.getObjectStore();
+        Model model = im.getModel();
 
         String widgetId = widgetForm.getWidgetid();
         Type type = webConfig.getTypes().get(
@@ -301,7 +304,7 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getNumberOpt());
 
                 Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
-                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                BagManager bagManager = im.getBagManager();
                 InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile,
                         widgetForm.getBagName());
                 Widget widget = widgetConfig.getWidget(bag, os, attributes);

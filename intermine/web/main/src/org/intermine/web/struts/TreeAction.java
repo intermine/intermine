@@ -77,7 +77,7 @@ public class TreeAction extends DispatchAction
                                   HttpServletRequest request,
                                   @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        Set openClasses = (Set) request.getSession().getAttribute("openClasses");
+        Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
 
         return mapping.findForward("renderTree");

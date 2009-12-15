@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
@@ -86,8 +87,10 @@ public class TemplateAction extends InterMineAction
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
-        TemplateForm tf = (TemplateForm) form;
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        TemplateForm tf = (TemplateForm) form;
         String templateName = tf.getName();
         String templateType = tf.getType();
         boolean saveQuery = (request.getParameter("noSaveQuery") == null);
@@ -98,9 +101,8 @@ public class TemplateAction extends InterMineAction
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-
-        TemplateManager templateManager = SessionMethods.getTemplateManager(session);
-
+        TemplateManager templateManager = im.getTemplateManager();
+        
         TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
 
         if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
@@ -209,8 +211,7 @@ public class TemplateAction extends InterMineAction
     }
 
     
-    
-    public Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
+    private Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
                                                             TemplateQuery template) {
     	Map<String, List<TemplateValue>> templateValues = 
     		new HashMap<String, List<TemplateValue>>();

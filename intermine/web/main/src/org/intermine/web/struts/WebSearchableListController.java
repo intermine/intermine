@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -187,13 +188,14 @@ public class WebSearchableListController extends TilesAction
             HttpServletRequest request, String type, String scope, String tags) {
         Map<String, ? extends WebSearchable> filteredWebSearchables;
         HttpSession session = request.getSession();
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         ServletContext servletContext = session.getServletContext();
 
         Profile profile;
         // TODO what about "all" scopes?
         if (scope.equals(Scope.GLOBAL)) {
-            profile = SessionMethods.getSuperUserProfile(servletContext);
+            profile = im.getProfileManager().getSuperuserProfile();
         } else {
             profile = (Profile) session.getAttribute(Constants.PROFILE);
         }
@@ -207,7 +209,7 @@ public class WebSearchableListController extends TilesAction
         Map<String, ? extends WebSearchable> webSearchables =
             searchRepository.getWebSearchableMap(type);
 
-        TagManager tagManager = SessionMethods.getTagManager(session);
+        TagManager tagManager = im.getTagManager();
 
         filteredWebSearchables = webSearchables;
 
