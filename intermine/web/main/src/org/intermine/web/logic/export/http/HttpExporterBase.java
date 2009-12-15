@@ -11,7 +11,10 @@ package org.intermine.web.logic.export.http;
  */
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.PathQuery;
@@ -38,7 +41,11 @@ public abstract class HttpExporterBase
      */
     public ExportResultsIterator getResultRows(PagedTable pt, HttpServletRequest request) {
         PathQuery pathQuery = pt.getWebTable().getPathQuery();
-        executor = SessionMethods.getPathQueryExecutor(request.getSession());
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
+        Profile profile = SessionMethods.getProfile(session);
+
+        executor = im.getPathQueryExecutor(profile);
         executor.setBatchSize(BATCH_SIZE);
         return executor.execute(pathQuery);
     }
