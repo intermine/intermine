@@ -69,9 +69,9 @@ public class MirandaLdr extends EnrichmentWidgetLdr
         QueryClass qcMiR = new QueryClass(Gene.class);
         QueryClass qcTranscript = new QueryClass(MRNA.class);
         
-        QueryField qfGeneIdentifier = new QueryField(qcGene, "primaryIdentifier");
+        QueryField qfGeneIdentifier = new QueryField(qcGene, "symbol");
         QueryField qfGeneId = new QueryField(qcGene, "id");
-        QueryField qfMiRIdentifier = new QueryField(qcMiR, "primaryIdentifier");
+        QueryField qfMiRIdentifier = new QueryField(qcMiR, "symbol");
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
