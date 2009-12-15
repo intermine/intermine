@@ -18,6 +18,7 @@
         <pathelement location="../../intermine/web/main/src"/>
         <pathelement location="../../intermine/web/model/userprofile/build/main/src"/>
         <pathelement location="../../intermine/pathquery/main/src"/>
+        <pathelement location="../../intermine/api/main/src"/>
         <pathelement location="../../intermine/objectstore/main/src"/>
         <pathelement location="../../intermine/integrate/main/src"/>
         <pathelement location="../../intermine/integrate/model/fulldata/build/main/src"/>
