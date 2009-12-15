@@ -24,13 +24,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
@@ -69,13 +69,13 @@ public class CreateTemplateAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         TemplateBuildState tbs =
             (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
-        WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         boolean seenProblem = false;
 
@@ -120,7 +120,7 @@ public class CreateTemplateAction extends InterMineAction
         }
 
         // Check for a name clash with system templates
-        Profile superUser = SessionMethods.getSuperUserProfile(servletContext);
+        Profile superUser = im.getProfileManager().getSuperuserProfile();
         if (!superUser.equals(profile)) {
             if (superUser.getSavedTemplates().containsKey(tbs.getName())) {
                 recordError(new ActionMessage("errors.createtemplate.existing", tbs.getName()),
@@ -180,6 +180,7 @@ public class CreateTemplateAction extends InterMineAction
         profile.saveTemplate(template.getName(), template);
         // If superuser then rebuild shared templates
         if (SessionMethods.isSuperUser(session)) {
+            ServletContext servletContext = session.getServletContext();
             SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
             if (editing != null) {
                 tr.webSearchableUpdated(template, TagTypes.TEMPLATE);
@@ -187,11 +188,8 @@ public class CreateTemplateAction extends InterMineAction
                 tr.webSearchableAdded(template, TagTypes.TEMPLATE);
             }
         }
-
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
-
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
     }
-
 }

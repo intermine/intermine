@@ -30,10 +30,7 @@ import org.intermine.web.logic.Constants;
  */
 public class DisplayLookupMessageHandler
 {
-    private static int matches;
-
     private static Set<String> unresolved, duplicates, translated, lowQuality;
-
     private static Map<String, List> wildcards;
 
     /**
@@ -129,7 +126,7 @@ public class DisplayLookupMessageHandler
         if (wildcards.size() > 0) {
             if (wildcards.size() == 1) {
                 List<String> list = wildcards.values().iterator().next();
-                String key = (String) wildcards.keySet().iterator().next();
+                String key = wildcards.keySet().iterator().next();
                 if (list.size() == 1) {
                     ActionMessage msg = new ActionMessage("results.lookup.wildcard.oneone", key);
                     actionMessages.add(Constants.LOOKUP_MSG, msg);
@@ -158,7 +155,6 @@ public class DisplayLookupMessageHandler
      * @param bqr the bag query Result object
      */
     private static void fillInArrays(BagQueryResult bqr) {
-        matches = bqr.getMatchAndIssueIds().size();
         unresolved = bqr.getUnresolved().keySet();
         duplicates = new HashSet<String>();
         lowQuality = new HashSet<String>();

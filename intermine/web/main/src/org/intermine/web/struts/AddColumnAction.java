@@ -20,12 +20,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.results.WebTable;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -49,11 +49,9 @@ public class AddColumnAction extends InterMineAction
      * @return action forward
      * @throws Exception if an error happens
      */
-    public ActionForward execute(ActionMapping mapping,
-            @SuppressWarnings("unused")
-            ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) 
+    throws Exception {
         String columnToAdd = request.getParameter("columnToAdd");
         HttpSession session = request.getSession();
         String tableId = request.getParameter("table");
@@ -73,9 +71,9 @@ public class AddColumnAction extends InterMineAction
             return;
         }
 
-        HttpSession session = request.getSession();
-        Model model = (Model) session.getServletContext().getAttribute(Constants.MODEL);
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        Model model = im.getModel();
+        
         List<Path> paths = new ArrayList<Path>();
         paths.add(new Path(model, columnToAdd));
         WebResults webResults = (WebResults) table;

@@ -35,7 +35,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.Constants;

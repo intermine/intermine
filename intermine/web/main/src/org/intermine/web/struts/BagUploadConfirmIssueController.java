@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -37,6 +38,7 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.InlineResultsTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the bagUploadConfirmIssue tile.
@@ -55,6 +57,9 @@ public class BagUploadConfirmIssueController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Map issuesMap = (Map) context.getAttribute("issueMap");
 
         // Make a Map from identifier to a List of rows for display.  Each row will contain
@@ -96,13 +101,13 @@ public class BagUploadConfirmIssueController extends TilesAction
             }
         }
 
-        HttpSession session = request.getSession();
+        
         ServletContext servletContext = session.getServletContext();
 
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        Model model = im.getModel();
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
+        Map classKeys = im.getClassKeys();
 
         InlineResultsTable table = new InlineResultsTable(objectList, model, webConfig,
                                                           webPropertiesMap, classKeys, -1, true);

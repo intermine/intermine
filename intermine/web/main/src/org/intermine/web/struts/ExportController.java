@@ -14,14 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.TableExportConfig;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,6 +24,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.web.logic.config.TableExportConfig;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.export.http.TableHttpExporter;
+import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller to initialise for the export.tile
@@ -54,10 +51,8 @@ public class ExportController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-
-        WebConfig wc = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-
+        WebConfig webConfig = SessionMethods.getWebConfig(request); 
+        
         String  tableName = (String) request.getAttribute("tableName");
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
@@ -66,15 +61,12 @@ public class ExportController extends TilesAction
             return null;
         }
 
-        Map<String, TableExportConfig> allExporters = wc.getTableExportConfigs();
-        Map<String, Map<String, String>> usableExporters =
-            new HashMap<String, Map<String, String>>();
+        Map<String, TableExportConfig> allExporters = webConfig.getTableExportConfigs();
+        Map<String, Map<String, String>> usableExporters = new HashMap();
 
-        for (Iterator<String> i = allExporters.keySet().
-                iterator(); i.hasNext(); ) {
+        for (Iterator<String> i = allExporters.keySet().iterator(); i.hasNext(); ) {
             String exporterId = i.next();
             TableExportConfig tableExportConfig = allExporters.get(exporterId);
-
             TableHttpExporter tableExporter =
                 (TableHttpExporter) Class.forName(tableExportConfig.getClassName()).newInstance();
 
@@ -86,7 +78,7 @@ public class ExportController extends TilesAction
             }
             if (canExport) {
                 // parameters to pass via the URL to the exportOptions page
-                Map<String, String> config = new HashMap<String, String>();
+                Map<String, String> config = new HashMap();
                 config.put("id", tableExportConfig.getId());
                 config.put("className", tableExportConfig.getClassName());
                 usableExporters.put(exporterId, config);
@@ -94,9 +86,7 @@ public class ExportController extends TilesAction
                 usableExporters.put(exporterId, null);
             }
         }
-
         request.setAttribute("exporters", usableExporters);
-
         return null;
     }
 }

@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -22,8 +21,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean to represent the inputs to create a new user account
@@ -101,8 +100,7 @@ public class CreateAccountForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
         ActionErrors errors = new ActionErrors();
         Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
         Matcher m = p.matcher(username);
@@ -115,7 +113,7 @@ public class CreateAccountForm extends ActionForm
         } else if (!password.equals(password2)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                     new ActionMessage("createAccount.nomatchpass"));
-        } else if (pm.hasProfile(username)) {
+        } else if (im.getProfileManager().hasProfile(username)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("createAccount.userexists",
                     username));
         } else if (!m.matches()) {

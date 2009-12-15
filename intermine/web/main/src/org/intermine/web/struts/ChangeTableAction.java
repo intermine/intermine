@@ -56,7 +56,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
-    public ActionForward hideColumn(ActionMapping mapping,
+    @Deprecated public ActionForward hideColumn(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
                                     HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response) {
@@ -76,7 +76,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
-    public ActionForward showColumn(ActionMapping mapping,
+    @Deprecated public ActionForward showColumn(ActionMapping mapping,
                                     @SuppressWarnings("unused") ActionForm form,
                                     HttpServletRequest request,
                                     @SuppressWarnings("unused") HttpServletResponse response) {
@@ -96,7 +96,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
-    public ActionForward moveColumnLeft(ActionMapping mapping,
+    @Deprecated public ActionForward moveColumnLeft(ActionMapping mapping,
                                         @SuppressWarnings("unused") ActionForm form,
                                         HttpServletRequest request,
                                         @SuppressWarnings("unused") HttpServletResponse response) {
@@ -116,7 +116,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
-    public ActionForward moveColumnRight(ActionMapping mapping,
+    @Deprecated public ActionForward moveColumnRight(ActionMapping mapping,
                                          @SuppressWarnings("unused") ActionForm form,
                                          HttpServletRequest request,
                                          @SuppressWarnings("unused") HttpServletResponse response) {
@@ -134,7 +134,7 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
-    public ActionForward swapColumns(ActionMapping mapping,
+    @Deprecated public ActionForward swapColumns(ActionMapping mapping,
                                      @SuppressWarnings("unused") ActionForm form,
                                      HttpServletRequest request,
                                      @SuppressWarnings("unused") HttpServletResponse response) {

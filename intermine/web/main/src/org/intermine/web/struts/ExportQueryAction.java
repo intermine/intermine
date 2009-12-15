@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.api.bag.BagManager;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.query.Query;
@@ -53,13 +52,12 @@ public class ExportQueryAction extends InterMineAction
      */
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
+                                 HttpServletRequest request, HttpServletResponse response)
+        throws Exception {        
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);                
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;
@@ -86,7 +84,7 @@ public class ExportQueryAction extends InterMineAction
         }
 
         response.setContentType("text/plain; charset=us-ascii");
-        WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         String format;
         if (!StringUtils.isEmpty(request.getParameter("as"))) {

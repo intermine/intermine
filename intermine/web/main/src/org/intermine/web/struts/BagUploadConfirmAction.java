@@ -42,9 +42,7 @@ public class BagUploadConfirmAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         if (request.getParameter("goBack") != null) {
@@ -85,8 +83,8 @@ public class BagUploadConfirmAction extends InterMineAction
         bag.addIdsToBag(contents);
 
         session.removeAttribute("bagQueryResult");
-        ForwardParameters forwardParameters =
-            new ForwardParameters(mapping.findForward("bagDetails"));
+        ForwardParameters forwardParameters 
+        = new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();
     }
 }

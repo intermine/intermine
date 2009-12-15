@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
@@ -63,28 +63,28 @@ public class FindInListAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        
         HttpSession session = request.getSession();
-        ServletContext context = session.getServletContext();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         FindInListForm qsf = (FindInListForm) form;
         String textToFind = qsf.getTextToFind().trim();
         String bagName = qsf.getBagName();
         Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
-        BagManager bagManager = SessionMethods.getBagManager(context);
+        BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
 
-        ForwardParameters forwardParameters =
+        ForwardParameters forwardParameters = 
             new ForwardParameters(mapping.findForward("bagDetails"));
         forwardParameters.addParameter("name", bagName);
 
         if (bag != null) {
-            Map<String, List<FieldDescriptor>> classKeys =
-                (Map<String, List<FieldDescriptor>>) context.getAttribute(Constants.CLASS_KEYS);
-            ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+            Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+            ObjectStore os = im.getObjectStore();
+            
             String bagQualifiedType = bag.getQualifiedType();
             Collection<String> keyFields =
                 ClassKeyHelper.getKeyFieldNames(classKeys, bagQualifiedType);
@@ -125,7 +125,6 @@ public class FindInListAction extends InterMineAction
 
     private Query makeQuery(String searchTerm, InterMineBag bag,
                             Collection<String> identifierFieldNames, Model model) {
-//        Object lowerSearchTerm = searchTerm.toLowerCase();
         String bagClassName = bag.getQualifiedType();
 
         ClassDescriptor cd = model.getClassDescriptorByName(bagClassName);

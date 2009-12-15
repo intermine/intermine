@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,13 +18,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -49,26 +49,26 @@ public class AddToBagAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response) {
         int id = Integer.parseInt(request.getParameter("object"));
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String bagName = request.getParameter("bag");
 
         InterMineBag existingBag = profile.getSavedBags().get(bagName);
         if (existingBag != null) {
             try {
-                InterMineObject o = os.getObjectById(id);
-                if (BagHelper.isOfBagType(existingBag, o, os.getModel())) {
+                InterMineObject o = im.getObjectStore().getObjectById(id);
+                if (BagHelper.isOfBagType(existingBag, o, im.getModel())) {
                     existingBag.addIdToBag(id);
                     recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
                             request);
                 } else {
                     recordError(new ActionMessage("bag.typesDontMatch"), request);
                 }
-                // TODO add a warning when object already in bag ??
+            // TODO add a warning when object already in bag ??
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("bag.error"), request, e);
-
                 return mapping.findForward("objectDetails");
             }
         } else {

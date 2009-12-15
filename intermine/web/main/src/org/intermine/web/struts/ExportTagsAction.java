@@ -22,13 +22,14 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.xml.TagBinding;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.model.userprofile.Tag;
+
 
 /**
  * Export tags.
@@ -56,6 +57,7 @@ public class ExportTagsAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
         StringWriter sw = new StringWriter();
@@ -63,8 +65,7 @@ public class ExportTagsAction extends InterMineAction
         XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
 
         writer.writeStartElement("tags");
-        TagManager tagManager = SessionMethods.getTagManager(session);
-        List<Tag> tags = tagManager.getUserTags(profile.getUsername());
+        List<Tag> tags = im.getTagManager().getUserTags(profile.getUsername());
         for (Tag tag : tags) {
             TagBinding.marshal(tag, writer);
         }

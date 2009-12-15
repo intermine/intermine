@@ -14,11 +14,10 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-
-import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
 
 /**

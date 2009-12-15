@@ -58,9 +58,9 @@ public class ExportOptionsController extends TilesAction
                                  @SuppressWarnings("unused") ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
-        String type = request.getParameter("type");
+        
         HttpSession session = request.getSession();
-
+        String type = request.getParameter("type");
         String table = request.getParameter("table");
         PagedTable pt = SessionMethods.getResultsTable(session, table);
         if (pt == null) {
@@ -74,7 +74,7 @@ public class ExportOptionsController extends TilesAction
         try {
             TableHttpExporter exporter = factory.getExporter(type);
             List<Path> initialPaths = exporter.getInitialExportPaths(pt);
-            Map<String, String> pathsMap = new LinkedHashMap<String, String>();
+            Map<String, String> pathsMap = new LinkedHashMap();
             PathQuery query = pt.getWebTable().getPathQuery();
             for (Path path : initialPaths) {
                 String pathString = path.toStringNoConstraints();

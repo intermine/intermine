@@ -26,9 +26,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.metadata.Model;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -52,52 +52,40 @@ public class ClassChooserController extends TilesAction
         throws Exception {
 
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStoreSummary oss = im.getObjectStoreSummary();
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        ObjectStoreSummary oss =
-            (ObjectStoreSummary) servletContext.getAttribute(Constants.OBJECT_STORE_SUMMARY);
-
-        Collection<String> qualifiedTypes = model.getClassNames();
+        Collection<String> qualifiedTypes = im.getModel().getClassNames();
         Map<String, String> classDescrs =
             (Map<String, String>) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
-
-        String superUserName = SessionMethods.getProfileManager(servletContext).getSuperuser();
-        TagManager tagManager = SessionMethods.getTagManager(session);
+        TagManager tagManager = im.getTagManager();
 
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null,
-                "class", superUserName);
+                "class", im.getProfileManager().getSuperuser());
 
-        ArrayList<String> typeList = new ArrayList<String>();
-        ArrayList<String> preferedTypeList = new ArrayList<String>();
+        ArrayList<String> typeList = new ArrayList();
+        ArrayList<String> preferedTypeList = new ArrayList();
 
         for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));
         }
-
         for (String className : qualifiedTypes) {
             String unqualifiedName = TypeUtil.unqualifiedName(className);
-
             if (oss.getClassCount(className) > 0) {
-
                 String helpKey = unqualifiedName;
-                String helpText = (String) classDescrs.get(helpKey);
-
+                String helpText = classDescrs.get(helpKey);
                 if (helpText != null) {
                     String escaped = helpText.replaceAll("'", "\\\\'");
                     sb.append("'" + helpKey + "': '" + escaped + "', ");
                 }
-
                 typeList.add(unqualifiedName);
-
             }
         }
-
         Collections.sort(preferedTypeList);
         Collections.sort(typeList);
         request.setAttribute("typeList", typeList);
         request.setAttribute("preferredTypeList", preferedTypeList);
-
         if (sb.length() >= 2) {
             sb.deleteCharAt(sb.length() - 2);
         }

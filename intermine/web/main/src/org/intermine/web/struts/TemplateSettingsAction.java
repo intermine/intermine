@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.template.TemplateBuildState;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,6 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
  * Action invoked when user submits general template settings form.
