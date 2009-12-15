@@ -28,22 +28,16 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.util.MessageResources;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
-import org.intermine.api.profile.TagManager;
-import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -54,7 +48,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -127,8 +120,9 @@ public class SessionMethods
                                    final Action action,
                                    final CompletionCallBack completionCallBack)
         throws Exception {
-        final ServletContext servletContext = session.getServletContext();
-        final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = getInterMineAPI(session);        
+        final ObjectStore os = im.getObjectStore();
+        
         final ObjectStoreInterMineImpl ios;
         if (os instanceof ObjectStoreInterMineImpl) {
             ios = (ObjectStoreInterMineImpl) os;
@@ -472,8 +466,8 @@ public class SessionMethods
      * @param session the new session to initialise
      */
     public static void initSession(HttpSession session) {
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        InterMineAPI im = getInterMineAPI(session);
+        ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap(), new HashMap(), new HashMap()));
         session.setAttribute(Constants.COLLAPSED, new HashMap());
@@ -508,7 +502,8 @@ public class SessionMethods
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     try {
-                        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+                        final InterMineAPI im = getInterMineAPI(session);
+                        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
                         final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
                         Action action = new Action() {
                             public void process() {
@@ -645,8 +640,8 @@ public class SessionMethods
             queries.put(qid, monitor);
 
             final Query query = monitor.getQuery();
-            ServletContext servletContext = session.getServletContext();
-            final ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = getInterMineAPI(session); 
+            final ObjectStore os = im.getObjectStore();
 
             new Thread(new Runnable() {
                 public void run () {
@@ -756,32 +751,6 @@ public class SessionMethods
         return op;
     }
 
-    /**
-     * Get the ProfileManager from the servlet context.
-     * @param context ServletContext
-     * @return ProfileManager
-     */
-    public static ProfileManager getProfileManager(ServletContext context) {
-        return (ProfileManager) context.getAttribute(Constants.PROFILE_MANAGER);
-    }
-
-    /**
-     * Get the superusers Profile.
-     * @param context servlet context
-     * @return superuser Profile
-     */
-    public static Profile getSuperUserProfile(ServletContext context) {
-        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        if (superuser == null) {
-            throw new RuntimeException("superuser.account has not been set in properties");
-        }
-        Profile suProfile = getProfileManager(context).getProfile(superuser);
-        if (suProfile == null) {
-            throw new RuntimeException("Cannot find superuser profile " + superuser + " in "
-                    + getProfileManager(context).getProfileUserNames());
-        }
-        return suProfile;
-    }
 
     /**
      * Return true if and only if the current user if the superuser.
@@ -816,12 +785,12 @@ public class SessionMethods
     public static PagedTable doQueryGetPagedTable(HttpServletRequest request,
             ServletContext servletContext, InterMineBag imBag) throws ObjectStoreException {
         HttpSession session = request.getSession();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        final InterMineAPI im = getInterMineAPI(session);
+        Model model = im.getModel();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
 
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
-
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(getProfile(session));
         WebResults webResults = executor.execute(pathQuery);
 
         String identifier = "bag." + imBag.getName();
@@ -846,13 +815,14 @@ public class SessionMethods
             ServletContext servletContext, InterMineObject obj, String field,
             String referencedClassName) throws ObjectStoreException {
         HttpSession session = request.getSession();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
         WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, obj,
                         referencedClassName, field);
         session.setAttribute(Constants.QUERY, pathQuery);
 
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(getProfile(session));
         WebResults webResults = executor.execute(pathQuery);
 
         String identifier = "coll" + index++;
@@ -861,16 +831,6 @@ public class SessionMethods
         return pagedResults;
     }
 
-    /**
-     * Returns class keys from context.
-     * @param servletContext servlet context
-     * @return class keys
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
-        return (Map<String, List<FieldDescriptor>>) servletContext.
-            getAttribute(Constants.CLASS_KEYS);
-    }
 
     /**
      * @param request request
@@ -900,98 +860,6 @@ public class SessionMethods
     }
 
     /**
-     * @param session http session
-     * @return tag manager
-     */
-    public static TagManager getTagManager(HttpSession session) {
-        return getTagManager(session.getServletContext());
-    }
-
-    /**
-     * @param context servlet context
-     * @return tag manager
-     */
-    public static TagManager getTagManager(ServletContext context) {
-        ProfileManager pm = getProfileManager(context);
-        return new TagManagerFactory(pm).getTagManager();
-    }
-
-
-    /**
-     * @param servletContext servlet context
-     * @return object store
-     */
-    public static ObjectStore getObjectStore(ServletContext servletContext) {
-        return (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-    }
-
-    /**
-     * @param servletContext servlet context
-     * @return bag query config
-     */
-    public static BagQueryConfig getBagQueryConfig(ServletContext servletContext) {
-        return (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-    }
-
-    /**
-     * Retrieves from session required objects and constructs path query executor returning
-     * results as WebResults.
-     * @param session session
-     * @return executor
-     */
-    public static WebResultsExecutor getWebResultsExecutor(HttpSession session) {
-        ServletContext servletContext = session.getServletContext();
-        Profile profile = getProfile(session);
-        return getWebResultsExecutor(servletContext, profile);
-    }
-
-    /**
-     * Retrieves from servletContext required objects and constructs a path query executor
-     * returning results as WebResults.
-     * @param servletContext servletContext
-     * @param profile the user executing the query
-     * @return executor
-     */
-    public static WebResultsExecutor getWebResultsExecutor(ServletContext servletContext,
-            Profile profile) {
-        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
-        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
-        
-        WebResultsExecutor ret = new WebResultsExecutor(
-                getObjectStore(servletContext),
-                getClassKeys(servletContext),
-                getBagQueryConfig(servletContext),
-                profile,
-                conversionTemplates,
-                getBagManager(servletContext));
-        return ret;
-
-    }
-
-
-    /**
-     * Retrieves from session required objects and constructs path query executor returning
-     * results in format suitable for export and web services.
-     * @param session session
-     * @return executor
-     */
-    public static PathQueryExecutor getPathQueryExecutor(HttpSession session) {
-        ServletContext servletContext = session.getServletContext();
-        TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);        
-        List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
-        
-        PathQueryExecutor ret = new PathQueryExecutor(
-                getObjectStore(servletContext),
-                getClassKeys(servletContext),
-                getBagQueryConfig(servletContext),
-                getProfile(session),
-                conversionTemplates,
-                getBagManager(servletContext));
-        return ret;
-    }
-
-
-    /**
      * Returns user profile saved in session.
      * @param session session
      * @return user profile
@@ -1009,41 +877,24 @@ public class SessionMethods
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
-
+    
+    
     /**
-     * Fetch the BagManager for finding global and user bags.
-     * @param servletContext servlet context to fetch attribute from
-     * @return the BagManager
+     * Get the InterMineAPI which provides access to core features of an InterMine application.
+     * @param session the webapp session
+     * @return the InterMine core object
      */
-    public static final BagManager getBagManager(ServletContext servletContext) {
-        return (BagManager) servletContext.getAttribute(Constants.BAG_MANAGER);
+    public static final InterMineAPI getInterMineAPI(HttpSession session) {
+        return getInterMineAPI(session.getServletContext());
     }
-
+    
     /**
-     * Fetch the BagManager for finding global and user bags.
-     * @param session to get servletContext and hence BagManager
-     * @return the BagManager
+     * Get the InterMineAPI which provides access to core features of an InterMine application.
+     * @param servletContext the webapp servletContext
+     * @return the InterMine core object
      */
-    public static final BagManager getBagManager(HttpSession session) {
-        return (BagManager) session.getServletContext().getAttribute(Constants.BAG_MANAGER);
+    public static final InterMineAPI getInterMineAPI(ServletContext servletContext) {
+        return (InterMineAPI) servletContext.getAttribute(Constants.INTERMINE_API);
     }
-
-    /**
-     * Fetch the TemplateManager for finding global and user templates
-     * @param servletContext servlet context to fetch attribute from
-     * @return the TemplateManager
-     */
-    public static final TemplateManager getTemplateManager(ServletContext servletContext) {
-        return (TemplateManager) servletContext.getAttribute(Constants.TEMPLATE_MANAGER);
-    }
-
-    /**
-     * Fetch the TemplateManager for finding global and user templates
-     * @param session to get servletContext and hence TemplateManager
-     * @return the TemplateManager
-     */
-    public static final TemplateManager getTemplateManager(HttpSession session) {
-        return (TemplateManager) session.getServletContext().getAttribute(
-                Constants.TEMPLATE_MANAGER);
-    }
+    
 }

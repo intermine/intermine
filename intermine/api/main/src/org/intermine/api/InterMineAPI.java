@@ -18,6 +18,7 @@ import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateManager;
@@ -25,10 +26,18 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 
-public class InterMineAPI {
-
+/**
+ * InterMineAPI provides access to manager objects for the main parts of an InterMine application:
+ * the production ObjectStore, the userprofile (via ProfileManager), template queries, bags and
+ * tags.  There should be one InterMineAPI object per application.
+ *
+ * @author Richard Smith
+ */
+public class InterMineAPI 
+{
     private ObjectStore objectStore;
     private Model model;
     private Map<String, List<FieldDescriptor>> classKeys;
@@ -37,9 +46,19 @@ public class InterMineAPI {
     private TemplateManager templateManager;
     private BagManager bagManager;
     private TemplateSummariser templateSummariser;
+    private ObjectStoreSummary oss;
     
-    protected InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
-            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig) {
+    /**
+     * Construct an InterMine API object.
+     * @param objectStore the production database
+     * @param userProfileWriter a writer for the userprofile database
+     * @param classKeys the class keys
+     * @param bagQueryConfig configured bag queries used by BagQueryRunner
+     * @param oss summary information for the ObjectStore
+     */
+    public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
+            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            ObjectStoreSummary oss) {
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
@@ -82,6 +101,14 @@ public class InterMineAPI {
     public BagManager getBagManager() {
         return bagManager;
     }
+    
+    /**
+     * @return the TagManager
+     */
+    public TagManager getTagManager() {
+        return profileManager.getTagManager();
+    }
+    
     /**
      * @return the templateSummariser
      */
@@ -114,7 +141,11 @@ public class InterMineAPI {
         return new BagQueryRunner(objectStore, classKeys, bagQueryConfig,
                 templateManager.getConversionTemplates());
     }
-    
-    
 
+    /**
+     * @return the oss
+     */
+    public ObjectStoreSummary getObjectStoreSummary() {
+        return oss;
+    }
 }
