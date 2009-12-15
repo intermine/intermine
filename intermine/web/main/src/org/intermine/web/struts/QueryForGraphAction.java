@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.lang.reflect.Constructor;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -59,9 +59,10 @@ public class QueryForGraphAction extends InterMineAction
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
+        ObjectStore os = im.getObjectStore();
+        BagManager bagManager = im.getBagManager();
 
         String bagName = request.getParameter("bagName");
         String urlGen = request.getParameter("urlGen");

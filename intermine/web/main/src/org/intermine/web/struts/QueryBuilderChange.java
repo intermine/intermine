@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,6 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -424,9 +424,10 @@ public class QueryBuilderChange extends DispatchAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
+        Model model = im.getModel();
+        
         PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
@@ -578,11 +579,12 @@ public class QueryBuilderChange extends DispatchAction
                                    @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        Model model = im.getModel();
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         List<Path> view = SessionMethods.getEditingView(session);
-        Map<Path, String> sortOrder = SessionMethods.getEditingSortOrder(session);
+
         String pathName = request.getParameter("path");
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         String prefix = (String) session.getAttribute("prefix");

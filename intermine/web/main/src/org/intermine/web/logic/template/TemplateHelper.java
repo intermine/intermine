@@ -13,7 +13,6 @@ package org.intermine.web.logic.template;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -43,22 +42,20 @@ public class TemplateHelper
      * @return  all template queries serialised as XML
      * @see  TemplateQuery
      */
-    public static String templateMapToXml(Map templates, int version) {
+    public static String templateMapToXml(Map<String, TemplateQuery> templates, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        Iterator iter = templates.values().iterator();
 
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("template-queries");
-            while (iter.hasNext()) {
-                TemplateQueryBinding.marshal((TemplateQuery) iter.next(), writer, version);
+            for (TemplateQuery template : templates.values()) {
+                TemplateQueryBinding.marshal(template, writer, version);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-
         return sw.toString();
     }
 
@@ -72,8 +69,8 @@ public class TemplateHelper
      * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */
-    public static Map xmlToTemplateMap(String xml, Map<String, InterMineBag> savedBags,
-            int version) throws Exception {
+    public static Map<String, TemplateQuery> xmlToTemplateMap(String xml, 
+            Map<String, InterMineBag> savedBags, int version) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
         return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags, version);
     }

@@ -24,6 +24,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
@@ -104,10 +106,14 @@ public class TableExportAction extends InterMineAction
     private PagedTable reorderPagedTable(PagedTable pt, String pathsString,
             HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
+        
         PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
         newPathQuery.setView(new LinkedList<String>(StringUtil
                 .serializedSortOrderToMap(pathsString).keySet()));
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         return new PagedTable(executor.execute(newPathQuery));
     }
 

@@ -15,16 +15,17 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
 /**
@@ -54,9 +55,11 @@ public class RequestPasswordAction extends InterMineAction
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ProfileManager pm = (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+
+        ProfileManager pm = im.getProfileManager();
+        
+        ServletContext servletContext = request.getSession().getServletContext();
         Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         String username = ((RequestPasswordForm) form).getUsername();
 

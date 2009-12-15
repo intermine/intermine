@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -22,6 +21,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -50,16 +50,18 @@ public class TemplatesImportAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         ServletContext servletContext = session.getServletContext();
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplatesImportForm tif = (TemplatesImportForm) form;
-        Map templates = null;
+
         int deleted = 0, imported = 0, renamed = 0;
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+        BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
-        templates = TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags,
-                PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> templates = 
+            TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags, PathQuery.USERPROFILE_VERSION);
 
         try {
             profile.disableSaving();
@@ -71,22 +73,21 @@ public class TemplatesImportAction extends InterMineAction
                 }
             }
 
-            Iterator iter = templates.values().iterator();
-            while (iter.hasNext()) {
-                TemplateQuery template = (TemplateQuery) iter.next();
-
+            for (TemplateQuery template : templates.values()) {
                 String templateName = template.getName();
 
-                templateName = NameUtil.validateName(profile.getSavedTemplates().keySet(),
+                String updatedName = NameUtil.validateName(profile.getSavedTemplates().keySet(),
                         templateName);
-                template = renameTemplate(templateName, template);
-                profile.saveTemplate(templateName, template);
+                if (!templateName.equals(updatedName)) {
+                    template = renameTemplate(updatedName, template);
+                }
+                profile.saveTemplate(template.getName(), template);
                 imported++;
             }
 
             if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.globalChange(TagTypes.TEMPLATE);
+                SearchRepository sr = SessionMethods.getGlobalSearchRepository(servletContext);
+                sr.globalChange(TagTypes.TEMPLATE);
             }
 
             recordMessage(new ActionMessage("importTemplates.done", new Integer(deleted),

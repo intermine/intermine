@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
@@ -56,8 +56,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class QueryBuilderConstraintController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(QueryBuilderConstraintController.class);
-
     /**
      * {@inheritDoc}
      */
@@ -68,9 +66,11 @@ public class QueryBuilderConstraintController extends TilesAction
             @SuppressWarnings("unused") HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ServletContext servletContext = session.getServletContext();
-        Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+        Model model = im.getModel();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         query = query.clone();
         for (Path p : query.getView()) {
@@ -79,11 +79,9 @@ public class QueryBuilderConstraintController extends TilesAction
                 query.addNode(path);
             }
         }
-        ObjectStoreSummary oss = (ObjectStoreSummary) servletContext.
-                                               getAttribute(Constants.OBJECT_STORE_SUMMARY);
-        Map classKeys = (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-        BagQueryConfig bagQueryConfig =
-            (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
+        ObjectStoreSummary oss = im.getObjectStoreSummary();
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
         PathNode node = (PathNode) session.getAttribute("editingNode");
@@ -203,7 +201,7 @@ public class QueryBuilderConstraintController extends TilesAction
             }
 
             if (useBags) {
-                BagManager bagManager = SessionMethods.getBagManager(servletContext);
+                BagManager bagManager = im.getBagManager();
                 Map<String, InterMineBag> bagsOfType =
                     bagManager.getUserOrGlobalBagsOfType(profile, nodeType);
                 if (!bagsOfType.isEmpty()) {

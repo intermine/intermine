@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -20,6 +19,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.validator.ValidatorForm;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -100,9 +100,11 @@ public class TemplatesImportForm extends ValidatorForm
      */
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        ServletContext servletContext = session.getServletContext();
-        BagManager bagManager = SessionMethods.getBagManager(servletContext);
+
+        BagManager bagManager = im.getBagManager();
         ActionErrors errors = super.validate(mapping, request);
         if (errors != null && errors.size() > 0) {
             return errors;
