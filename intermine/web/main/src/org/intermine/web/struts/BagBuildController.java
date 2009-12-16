@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,12 +29,12 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
-
 import org.intermine.api.profile.TagManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.Query;
@@ -44,9 +43,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
-
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.model.userprofile.Tag; 
 
 
 /**
@@ -77,7 +74,6 @@ public class BagBuildController extends TilesAction
         
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);        
-        ServletContext servletContext = session.getServletContext();
         Model model = im.getModel();
 
         ObjectStore os = im.getObjectStore();
