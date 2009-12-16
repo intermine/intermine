@@ -2,7 +2,7 @@
 
 <!--setFavourite.jsp-->
 
-<c:if test="${! empty PROFILE.username}">
+<c:if test="${PROFILE.loggedIn}">
 
   <tiles:importAttribute name="name" ignore="false"/>
   <tiles:importAttribute name="type" ignore="false"/>

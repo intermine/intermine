@@ -6,7 +6,7 @@
 <!-- saveQuery.jsp -->
 <html:xhtml/>
 <c:if test="${!empty QUERY}">
-  <c:if test="${!empty PROFILE.username}">
+  <c:if test="${PROFILE.loggedIn}">
     <p><html:form action="/saveQuery">
       or...&nbsp;<html:text property="queryName"/>
       <html:submit property="action">

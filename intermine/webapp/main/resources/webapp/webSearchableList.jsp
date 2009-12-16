@@ -103,9 +103,8 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
 
     <div id='${wsListId}_${type}_ws_list' class="wsList">
 
-<c:if test="${!empty loginMessageKey}">
-  <c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
-    <div class="notLogged">
+<c:if test="${!empty loginMessageKey && !PROFILE.loggedIn}">
+   <div class="notLogged">
       <em>
         <fmt:message key="${loginMessageKey}">
           <fmt:param>
@@ -113,8 +112,7 @@ document.write('<link rel="stylesheet" href="css/webSearchableList_js.css" type=
           </fmt:param>
         </fmt:message>
       </em>
-    </div>
-  </c:if>
+   </div>  
 </c:if>
       
       <c:choose>

@@ -41,7 +41,7 @@
 
   <p>
     <fmt:message key="${messageKey}"/>
-      <c:if test="${empty PROFILE.username}">
+      <c:if test="${!PROFILE.loggedIn}">
            - <html:link action="/login?returnto=/mymine.do?subtab=history">
             <fmt:message key="history.history.login"/>
             </html:link>&nbsp;&nbsp;
@@ -177,7 +177,7 @@
                     <fmt:message key="history.action.edit"/></span>
                   |
                   <c:if test="${type == 'history'}">
-                    <c:if test="${!empty PROFILE.username}">
+                    <c:if test="${PROFILE.loggedIn}">
                       <c:set var="urlPrefix" value=""/>
                       <span class="fakelink"
                          onclick="return doQueryAction('${savedQuery.key}', '<html:rewrite action='/modifyQueryChange'/>?method=save&amp;name=')"
