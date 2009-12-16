@@ -133,7 +133,7 @@ public class ModifyBagAction extends InterMineAction
                 recordError(new ActionMessage("errors.bag.notfound"), request);
                 return;
             }
-            
+
             String newBagName;
             if (newNameTextBox != null) {
                 newBagName = newNameTextBox;
@@ -151,15 +151,15 @@ public class ModifyBagAction extends InterMineAction
             }
             String msg = "";
             for (int i = 0; i < selectedBagNames.length; i++) {
-                
-                String selectedBagName = selectedBagNames[i];                
+
+                String selectedBagName = selectedBagNames[i];
                 InterMineBag origBag = allBags.get(selectedBagName);
-                
+
                 if (origBag == null) {
                     recordError(new ActionMessage("errors.bag.notfound"), request);
                     return;
                 }
-                
+
                 String newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
                 if (createBag(origBag, newBagName, profile)) {
                     msg += newBagName + ", ";
@@ -174,8 +174,8 @@ public class ModifyBagAction extends InterMineAction
         }
     }
 
-    private boolean createBag(InterMineBag origBag, String newBagName, Profile profile) 
-    throws ObjectStoreException {
+    private boolean createBag(InterMineBag origBag, String newBagName, Profile profile)
+        throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone();
         newBag.setDate(new Date());

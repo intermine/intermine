@@ -50,15 +50,15 @@ public class CollectionDetailsAction extends Action
      * @exception Exception
      *                if an error occurs
      */
-    public ActionForward execute(ActionMapping mapping, 
-                                 @SuppressWarnings("unused") ActionForm form, 
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
-    throws Exception {
+    public ActionForward execute(ActionMapping mapping,
+                                 @SuppressWarnings("unused") ActionForm form,
+                                 HttpServletRequest request,
+                                 @SuppressWarnings("unused") HttpServletResponse response)
+        throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        
+
         Integer id = new Integer(request.getParameter("id"));
         String field = request.getParameter("field");
         String trail = request.getParameter("trail");
@@ -74,7 +74,7 @@ public class CollectionDetailsAction extends Action
         }
         String referencedClassName = refDesc.getReferencedClassDescriptor().getUnqualifiedName();
 
-        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, o, field, 
+        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, o, field,
                                                                     referencedClassName);
 
         // add results table to trail

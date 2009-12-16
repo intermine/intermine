@@ -120,9 +120,9 @@ public class SessionMethods
                                    final Action action,
                                    final CompletionCallBack completionCallBack)
         throws Exception {
-        final InterMineAPI im = getInterMineAPI(session);        
+        final InterMineAPI im = getInterMineAPI(session);
         final ObjectStore os = im.getObjectStore();
-        
+
         final ObjectStoreInterMineImpl ios;
         if (os instanceof ObjectStoreInterMineImpl) {
             ios = (ObjectStoreInterMineImpl) os;
@@ -640,7 +640,7 @@ public class SessionMethods
             queries.put(qid, monitor);
 
             final Query query = monitor.getQuery();
-            final InterMineAPI im = getInterMineAPI(session); 
+            final InterMineAPI im = getInterMineAPI(session);
             final ObjectStore os = im.getObjectStore();
 
             new Thread(new Runnable() {
@@ -781,8 +781,8 @@ public class SessionMethods
      * @return a PagedTable
      * @throws ObjectStoreException thrown exception
      */
-    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineBag imBag) 
-    throws ObjectStoreException {
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineBag imBag)
+        throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = getInterMineAPI(session);
         Model model = im.getModel();
@@ -809,7 +809,7 @@ public class SessionMethods
      * @return a PagedTable
      * @throws ObjectStoreException exception thrown
      */
-    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineObject obj, 
+    public static PagedTable doQueryGetPagedTable(HttpServletRequest request, InterMineObject obj,
                                                   String field,
             String referencedClassName) throws ObjectStoreException {
         HttpSession session = request.getSession();
@@ -875,8 +875,7 @@ public class SessionMethods
     public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
     }
-    
-    
+
     /**
      * Get the InterMineAPI which provides access to core features of an InterMine application.
      * @param session the webapp session
@@ -885,7 +884,7 @@ public class SessionMethods
     public static final InterMineAPI getInterMineAPI(HttpSession session) {
         return getInterMineAPI(session.getServletContext());
     }
-    
+
     /**
      * Get the InterMineAPI which provides access to core features of an InterMine application.
      * @param servletContext the webapp servletContext
@@ -894,5 +893,4 @@ public class SessionMethods
     public static final InterMineAPI getInterMineAPI(ServletContext servletContext) {
         return (InterMineAPI) servletContext.getAttribute(Constants.INTERMINE_API);
     }
-    
 }

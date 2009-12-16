@@ -91,8 +91,8 @@ public class TemplateController extends TilesAction
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);        
-        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         ObjectStore os = im.getObjectStore();
         Model model = os.getModel();
@@ -102,9 +102,9 @@ public class TemplateController extends TilesAction
 
         ServletContext servletContext = session.getServletContext();
         AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
-        
+
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
-        
+
         TemplateForm tf = (TemplateForm) form;
         TemplateQuery template = null;
         String templateName = request.getParameter("name");
@@ -150,7 +150,7 @@ public class TemplateController extends TilesAction
         } else {
             if (scope == null) {
                 scope = Scope.ALL;
-            }            
+            }
             template = templateManager.getTemplate(profile, templateName, scope);
         }
         if (template == null) {
@@ -247,7 +247,7 @@ public class TemplateController extends TilesAction
                         bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (preSelectedBagName != null 
+                        if (preSelectedBagName != null
                         		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
                             selectedBagNames.put(c, preSelectedBagName);
@@ -260,7 +260,7 @@ public class TemplateController extends TilesAction
                         bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
-                        if (preSelectedBagName != null 
+                        if (preSelectedBagName != null
                         		&& constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
                             selectedBagNames.put(c, preSelectedBagName);
@@ -391,7 +391,7 @@ public class TemplateController extends TilesAction
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());
                 tf.setExtraValues(attributeKey, "" + c.getExtraValue());
                 if (imObject != null) {
-                    List<FieldDescriptor> keyFields = 
+                    List<FieldDescriptor> keyFields =
                         classKeys.get(DynamicUtil.getFriendlyName(imObject.getClass()));
                     AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
                         .next();

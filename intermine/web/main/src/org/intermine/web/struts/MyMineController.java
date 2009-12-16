@@ -62,7 +62,7 @@ public class MyMineController extends TilesAction
         String page = request.getParameter("page");
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-                
+
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
          */
@@ -84,12 +84,12 @@ public class MyMineController extends TilesAction
                 }
             }
         }
-        
-        WebState webState = SessionMethods.getWebState(request.getSession());        
+
+        WebState webState = SessionMethods.getWebState(request.getSession());
         // get the precomputed and summarised info
         if ((request.getParameter("subtab") != null && request.getParameter("subtab").equals(
                         "templates"))
-            || (webState.getSubtab("subtabmymine") != null 
+            || (webState.getSubtab("subtabmymine") != null
                     && webState.getSubtab("subtabmymine").equals("templates"))) {
             getPrecomputedSummarisedInfo(profile, session, request);
         }

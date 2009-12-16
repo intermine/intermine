@@ -65,7 +65,7 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.model.userprofile.Tag; 
+import org.intermine.model.userprofile.Tag;
 
 /**
  * Initialiser for the InterMine web application.
@@ -146,10 +146,10 @@ public class InitialiserPlugin implements PlugIn
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProps);
-        
+
         InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig, oss);
         servletContext.setAttribute(Constants.INTERMINE_API, im);
-        
+
         // index global webSearchables
         final Profile superProfile = im.getProfileManager().getSuperuserProfile();
         SearchRepository searchRepository =
@@ -397,9 +397,9 @@ public class InitialiserPlugin implements PlugIn
     }
 
 
-    private ObjectStoreWriter getUserprofileWriter(Properties webProperties) 
-    throws ServletException {
-        ObjectStoreWriter userprofileOSW;        
+    private ObjectStoreWriter getUserprofileWriter(Properties webProperties)
+        throws ServletException {
+        ObjectStoreWriter userprofileOSW;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
             userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
@@ -411,8 +411,7 @@ public class InitialiserPlugin implements PlugIn
         }
         return userprofileOSW;
     }
-    
-    
+
     /**
      * Destroy method called at Servlet destroy
      */
@@ -424,14 +423,7 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    /**
-     * Remove class tags from the user profile that refer to classes that non longer exist
-     * @param tagManager the ProfileManager to alter
-     */
-    /**
-     * Remove class tags from the user profile that refer to classes that non longer exist
-     * @param tagManager the tag manager
-     */
+
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
      * @param tagManager tag manager
