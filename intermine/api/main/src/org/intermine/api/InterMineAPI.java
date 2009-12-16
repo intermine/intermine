@@ -63,6 +63,7 @@ public class InterMineAPI
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
+        this.oss = oss;
         this.profileManager = new ProfileManager(objectStore, userProfileWriter);
         this.bagManager = new BagManager(profileManager.getSuperuserProfile(), model);
         this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model);
