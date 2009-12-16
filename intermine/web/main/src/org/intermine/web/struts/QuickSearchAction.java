@@ -97,10 +97,10 @@ public class QuickSearchAction extends InterMineAction
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 
             String value = qsf.getParsedValue();
-            TemplateQuery populatedTemplate = 
-                TemplatePopulator.populateTemplateOneConstraint(template, ConstraintOp.EQUALS, 
+            TemplateQuery populatedTemplate =
+                TemplatePopulator.populateTemplateOneConstraint(template, ConstraintOp.EQUALS,
                         value);
-            
+
             String qid = SessionMethods.startQuery(clientState, session, messages, false,
                                                    populatedTemplate);
             Thread.sleep(200);

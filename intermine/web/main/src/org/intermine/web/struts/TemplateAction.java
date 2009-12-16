@@ -45,8 +45,9 @@ import org.intermine.webservice.server.template.result.TemplateResultLinkGenerat
 
 /**
  * Action to handle submit from the template page. <code>setSavingQueries</code>
- * can be used to set whether or not queries run by this action are automatically
- * saved in the user's query history. This property is true by default.
+ * can be used to set whether or not queries run by this action are
+ * automatically saved in the user's query history. This property is true by
+ * default.
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
@@ -60,36 +61,39 @@ public class TemplateAction extends InterMineAction
     public static final String TEMPLATE_ACTION_PATH = "templateAction.do";
 
     /**
-     * Build a query based on the template and the input from the user.
-     * There are some request parameters that, if present, effect the behaviour of
-     * the action. These are:
+     * Build a query based on the template and the input from the user. There
+     * are some request parameters that, if present, effect the behaviour of the
+     * action. These are:
      *
      * <dl>
      * <dt>skipBuilder</dt>
-     *      <dd>If this attribute is specifed (with any value) then the action will forward
-     *      directly to the object details page if the results contain just one object.</dd>
+     * <dd>If this attribute is specifed (with any value) then the action will
+     * forward directly to the object details page if the results contain just
+     * one object.</dd>
      * <dt>noSaveQuery</dt>
-     *      <dd>If this attribute is specifed (with any value) then the query is not
-     *      automatically saved in the user's query history.</dd>
+     * <dd>If this attribute is specifed (with any value) then the query is not
+     * automatically saved in the user's query history.</dd>
      * </dl>
      *
-     * @param mapping The ActionMapping used to select this instance
-     * @param form The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
+     * @param mapping
+     *            The ActionMapping used to select this instance
+     * @param form
+     *            The optional ActionForm bean for this request (if any)
+     * @param request
+     *            The HTTP request we are processing
+     * @param response
+     *            The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      *
-     * @exception Exception if the application business logic throws
-     *  an exception
+     * @exception Exception
+     *                if the application business logic throws an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         TemplateForm tf = (TemplateForm) form;
         String templateName = tf.getName();
         String templateType = tf.getType();
@@ -102,18 +106,21 @@ public class TemplateAction extends InterMineAction
 
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         TemplateManager templateManager = im.getTemplateManager();
-        
-        TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
 
-        if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
-            TemplateQuery configuredTmpl = TemplatePopulator.getPopulatedTemplate(template,
-                    templateFormToTemplateValues(tf, template));
+        TemplateQuery template = templateManager.getTemplate(profile,
+                templateName, templateType);
+
+        if (!editQuery && !skipBuilder && !editTemplate
+                && forwardToLinksPage(request)) {
+            TemplateQuery configuredTmpl = TemplatePopulator
+                    .getPopulatedTemplate(template,
+                            templateFormToTemplateValues(tf, template));
 
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
-            String htmlLink = gen.getHtmlLink(new URLGenerator(request).getPermanentBaseURL(),
-                    configuredTmpl);
-            String tabLink = gen.getTabLink(new URLGenerator(request).getPermanentBaseURL(),
-                    configuredTmpl);
+            String htmlLink = gen.getHtmlLink(new URLGenerator(request)
+                    .getPermanentBaseURL(), configuredTmpl);
+            String tabLink = gen.getTabLink(new URLGenerator(request)
+                    .getPermanentBaseURL(), configuredTmpl);
             if (gen.getError() != null) {
                 recordError(new ActionMessage("errors.linkGenerationFailed",
                         gen.getError()), request);
@@ -122,22 +129,26 @@ public class TemplateAction extends InterMineAction
             session.setAttribute("htmlLink", htmlLink);
             session.setAttribute("tabLink", tabLink);
             String url = new URLGenerator(request).getPermanentBaseURL();
-            session.setAttribute("highlightedLink", gen.getHighlightedLink(url, configuredTmpl));
+            session.setAttribute("highlightedLink", gen.getHighlightedLink(url,
+                    configuredTmpl));
             String title = configuredTmpl.getTitle();
-            title = title.replace("-->", "&nbsp;<img src=\"images/tmpl_arrow.png\" "
-                                  + "style=\"vertical-align:middle\">&nbsp;");
+            title = title.replace("-->",
+                    "&nbsp;<img src=\"images/tmpl_arrow.png\" "
+                            + "style=\"vertical-align:middle\">&nbsp;");
             session.setAttribute("pageTitle", title);
-            session.setAttribute("pageDescription", configuredTmpl.getDescription());
+            session.setAttribute("pageDescription", configuredTmpl
+                    .getDescription());
             return mapping.findForward("serviceLink");
 
         }
 
         // We're editing the query: load as a PathQuery
         if (!skipBuilder && !editTemplate) {
-            TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
-            		templateFormToTemplateValues(tf, template));
-        	
-            SessionMethods.loadQuery(queryCopy.getPathQuery(), request.getSession(), response);
+            TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(
+                    template, templateFormToTemplateValues(tf, template));
+
+            SessionMethods.loadQuery(queryCopy.getPathQuery(), request
+                    .getSession(), response);
             session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
             form.reset(mapping, request);
             return mapping.findForward("query");
@@ -146,29 +157,33 @@ public class TemplateAction extends InterMineAction
             // Don't care about the form
             // Reload the initial template
 
-            template = templateManager.getTemplate(profile, templateName, Scope.ALL);
+            template = templateManager.getTemplate(profile, templateName,
+                    Scope.ALL);
 
             if (template == null) {
-                recordMessage(new ActionMessage("errors.edittemplate.empty"), request);
+                recordMessage(new ActionMessage("errors.edittemplate.empty"),
+                        request);
                 return mapping.findForward("template");
             }
             SessionMethods.loadQuery(template, request.getSession(), response);
             if (!template.isValid()) {
                 recordError(new ActionError("errors.template.badtemplate",
-                        PathQueryUtil.getProblemsSummary(template.getProblems())), request);
+                        PathQueryUtil
+                                .getProblemsSummary(template.getProblems())),
+                        request);
             }
 
             return mapping.findForward("query");
         }
 
         // Otherwise show the results: load the modified query from the template
-        TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(template,
-        		templateFormToTemplateValues(tf, template));
-        
+        TemplateQuery queryCopy = TemplatePopulator.getPopulatedTemplate(
+                template, templateFormToTemplateValues(tf, template));
+
         if (!queryCopy.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
-                                        PathQueryUtil.getProblemsSummary(template.getProblems())),
-                                        request);
+                    PathQueryUtil.getProblemsSummary(template.getProblems())),
+                    request);
             return mapping.findForward("template");
         }
         if (saveQuery) {
@@ -178,66 +193,71 @@ public class TemplateAction extends InterMineAction
 
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        MessageResources messages = (MessageResources) request
+                .getAttribute(Globals.MESSAGES_KEY);
         String qid = SessionMethods.startQuery(clientState, session, messages,
-                                               saveQuery, queryCopy);
+                saveQuery, queryCopy);
         Thread.sleep(200);
 
         String trail = "";
 
         // only put query on the trail if we are saving the query
         // otherwise its a "super top secret" query, e.g. quick search
-        // also, note we are not saving any previous trails.  trail resets at queries and bags
+        // also, note we are not saving any previous trails. trail resets at
+        // queries and bags
         if (saveQuery) {
             trail = "|query";
         } else {
             trail = "";
-            //session.removeAttribute(Constants.QUERY);
+            // session.removeAttribute(Constants.QUERY);
         }
 
         return new ForwardParameters(mapping.findForward("waiting"))
-                .addParameter("qid", qid)
-                .addParameter("trail", trail)
+                .addParameter("qid", qid).addParameter("trail", trail)
                 .forward();
     }
 
     /**
-     * Methods looks at request parameters if should forward to web service links page.
-     * @param request request
+     * Methods looks at request parameters if should forward to web service
+     * links page.
+     *
+     * @param request the request
      * @return true if should be forwarded
      */
     private boolean forwardToLinksPage(HttpServletRequest request) {
         return "links".equalsIgnoreCase(request.getParameter("actionType"));
     }
 
-    
-    private Map<String, List<TemplateValue>> templateFormToTemplateValues(TemplateForm tf,
-                                                            TemplateQuery template) {
-    	Map<String, List<TemplateValue>> templateValues = 
-    		new HashMap<String, List<TemplateValue>>();
+    private Map<String, List<TemplateValue>> templateFormToTemplateValues(
+            TemplateForm tf, TemplateQuery template) {
+        Map<String, List<TemplateValue>> templateValues =
+            new HashMap<String, List<TemplateValue>>();
         int j = 0;
         for (PathNode node : template.getEditableNodes()) {
-        	List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
-        	templateValues.put(node.getPathString(), nodeValues);
-        	for (Constraint c : template.getEditableConstraints(node)) {
+            List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
+            templateValues.put(node.getPathString(), nodeValues);
+            for (Constraint c : template.getEditableConstraints(node)) {
                 String key = "" + (j + 1);
-    
+
                 TemplateValue value;
                 if (tf.getUseBagConstraint(key)) {
-                	ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
-                	Object constraintValue = tf.getBag(key);                	
-                	value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode());
+                    ConstraintOp constraintOp = ConstraintOp
+                            .getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
+                    Object constraintValue = tf.getBag(key);
+                    value = new TemplateValue(node.getPathString(),
+                            constraintOp, constraintValue, c.getCode());
                 } else {
-                	 String op = (String) tf.getAttributeOps(key);
-                     ConstraintOp constraintOp = ConstraintOp.getOpForIndex(Integer.valueOf(op));
-                     Object constraintValue = tf.getAttributeValues(key);
-                     Object extraValue = tf.getExtraValues(key);
-                     value = new TemplateValue(node.getPathString(), constraintOp, constraintValue, c.getCode(), extraValue);
-                }                    
+                    String op = (String) tf.getAttributeOps(key);
+                    ConstraintOp constraintOp = ConstraintOp
+                            .getOpForIndex(Integer.valueOf(op));
+                    Object constraintValue = tf.getAttributeValues(key);
+                    Object extraValue = tf.getExtraValues(key);
+                    value = new TemplateValue(node.getPathString(),
+                            constraintOp, constraintValue, c.getCode(), extraValue);
+                }
                 nodeValues.add(value);
-        	}
-        }	
-    	return templateValues;
+            }
+        }
+        return templateValues;
     }
-
 }

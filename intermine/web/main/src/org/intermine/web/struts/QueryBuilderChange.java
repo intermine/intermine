@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -58,7 +57,6 @@ import org.intermine.web.logic.template.TemplateBuildState;
  */
 public class QueryBuilderChange extends DispatchAction
 {
-    private static final Logger LOG = Logger.getLogger(QueryBuilderChange.class);
 
     /**
      * Remove all nodes under a given path
@@ -427,7 +425,7 @@ public class QueryBuilderChange extends DispatchAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         Model model = im.getModel();
-        
+
         PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
@@ -580,7 +578,7 @@ public class QueryBuilderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         List<Path> view = SessionMethods.getEditingView(session);
@@ -781,11 +779,11 @@ public class QueryBuilderChange extends DispatchAction
     }
 
     /**
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
+     * @param mapping the action mapping
+     * @param form struts form
+     * @param request the request
+     * @param response the response
+     * @return the forward
      * @throws Exception
      */
     public ActionForward ajaxEditJoinStyle(ActionMapping mapping,
