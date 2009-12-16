@@ -38,8 +38,6 @@ public class BagHelper
     /** When generating new bag names, this is used as a prefix. */
     public static final String BAG_NAME_PREFIX = "bag";
 
-
-
     /**
      * For a given InterMineObject and an InterMineIdBag return true if
      * the types correspond

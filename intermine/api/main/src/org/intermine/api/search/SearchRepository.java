@@ -490,10 +490,4 @@ public class SearchRepository
         }
         return time;
     }
-
-
-
-
-
-
 }

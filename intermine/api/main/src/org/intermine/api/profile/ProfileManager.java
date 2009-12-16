@@ -63,7 +63,7 @@ public class ProfileManager
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
     protected TemplateQueryBinding templateBinding = new TemplateQueryBinding();
-    protected CacheMap profileCache = new CacheMap();
+    protected CacheMap<String, Profile> profileCache = new CacheMap<String, Profile>();
     private String superuser = null;
     /** Number determining format of queries in the database */
     protected int version;
@@ -221,7 +221,7 @@ public class ProfileManager
         if (username == null) {
             return null;
         }
-        Profile profile = (Profile) profileCache.get(username);
+        Profile profile = profileCache.get(username);
         if (profile != null) {
             return profile;
         }
@@ -255,8 +255,7 @@ public class ProfileManager
         }
         Map<String, org.intermine.api.profile.SavedQuery> savedQueries =
             new HashMap<String, org.intermine.api.profile.SavedQuery>();
-        for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
-            SavedQuery query = (SavedQuery) i.next();
+        for (SavedQuery query : userProfile.getSavedQuerys()) {
             try {
                 Map queries =
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
@@ -282,12 +281,12 @@ public class ProfileManager
             }
         }
         Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
-        for (Iterator i = userProfile.getSavedTemplateQuerys().iterator(); i.hasNext();) {
-            SavedTemplateQuery template = (SavedTemplateQuery) i.next();
+        for (SavedTemplateQuery template : userProfile.getSavedTemplateQuerys()) {
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map templateMap = templateBinding.unmarshal(sr, savedBags, version);
-                String templateName = (String) templateMap.keySet().iterator().next();
+                Map<String, TemplateQuery> templateMap = templateBinding.unmarshal(sr, savedBags, 
+                        version);
+                String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);
                 templateQuery.setSavedTemplateQuery(template);
                 savedTemplates.put(templateName, templateQuery);
@@ -305,6 +304,11 @@ public class ProfileManager
     }
 
 
+    /**
+     * Return the TagManager for adding, removing and fetching Tags assigned to templates, bags
+     * and classes.
+     * @return the TagManager
+     */
     public TagManager getTagManager() {
         return new TagManagerFactory(this).getTagManager();
     }
