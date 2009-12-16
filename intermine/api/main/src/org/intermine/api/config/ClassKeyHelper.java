@@ -112,10 +112,8 @@ public class ClassKeyHelper
      */
     public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, String clsName,
             String fieldName) {
-        String className = clsName;
-        if (clsName.indexOf('.') != -1) {
-            className = TypeUtil.unqualifiedName(clsName);
-        }
+        String className = TypeUtil.unqualifiedName(clsName);
+        
         List<FieldDescriptor> keys = classKeys.get(className);
         if (keys != null) {
             for (FieldDescriptor key : keys) {
@@ -140,10 +138,8 @@ public class ClassKeyHelper
      */
     public static boolean hasKeyFields(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
-        String className = clsName;
-        if (clsName.indexOf('.') != -1) {
-            className = TypeUtil.unqualifiedName(clsName);
-        }
+        String className = TypeUtil.unqualifiedName(clsName);
+
         List<FieldDescriptor> keys = classKeys.get(className);
         if (keys != null && (keys.size() > 0)) {
             return true;
@@ -159,10 +155,8 @@ public class ClassKeyHelper
      */
     public static List<FieldDescriptor> getKeyFields(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
-        String className = clsName;
-        if (clsName.indexOf('.') != -1) {
-            className = TypeUtil.unqualifiedName(clsName);
-        }
+        String className = TypeUtil.unqualifiedName(clsName);
+
         return classKeys.get(className);
     }
 
@@ -175,10 +169,8 @@ public class ClassKeyHelper
      */
     public static Collection<String> getKeyFieldNames(Map<String, List<FieldDescriptor>> classKeys,
             String clsName) {
-        String className = clsName;
-        if (clsName.indexOf('.') != -1) {
-            className = TypeUtil.unqualifiedName(clsName);
-        }
+        String className = TypeUtil.unqualifiedName(clsName);
+
         List<String> fieldNames = new ArrayList<String>();
         List<FieldDescriptor> keys = classKeys.get(className);
         if (keys != null) {
