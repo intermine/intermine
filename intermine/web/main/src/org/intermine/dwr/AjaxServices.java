@@ -197,7 +197,6 @@ public class AjaxServices
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            ServletContext servletContext = ctx.getServletContext();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, TemplateQuery> templates = profile.getSavedTemplates();
             TemplateQuery template = templates.get(templateName);
@@ -589,7 +588,6 @@ public class AjaxServices
      */
     public static int getConvertCountForBag(String bagName, String type) {
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             ObjectStore os = im.getObjectStore();
@@ -673,7 +671,6 @@ public class AjaxServices
     public static String validateBagName(String bagName) {
 
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
@@ -863,7 +860,7 @@ public class AjaxServices
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             BagManager bagManager = im.getBagManager();
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Map classKeys = im.getClassKeys();
+            Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
 
             Type type = webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
@@ -984,7 +981,6 @@ public class AjaxServices
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.selectId(new Integer(selectedId), (new Integer(columnIndex)).intValue());
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
@@ -1002,7 +998,6 @@ public class AjaxServices
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.deSelectId(new Integer(deSelectId));
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
