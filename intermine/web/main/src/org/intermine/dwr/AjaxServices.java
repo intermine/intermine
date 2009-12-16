@@ -43,6 +43,7 @@ import org.apache.struts.util.MessageResources;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
@@ -161,12 +162,11 @@ public class AjaxServices
         try {
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
-            ServletContext servletContext = ctx.getServletContext();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, TemplateQuery> templates = profile.getSavedTemplates();
             TemplateQuery template = templates.get(templateName);
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) servletContext
-                    .getAttribute(Constants.OBJECTSTORE);
+            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
             List indexes = new ArrayList();
             Query query = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
 
@@ -196,12 +196,12 @@ public class AjaxServices
         try {
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             ServletContext servletContext = ctx.getServletContext();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, TemplateQuery> templates = profile.getSavedTemplates();
             TemplateQuery template = templates.get(templateName);
-            TemplateSummariser summariser = (TemplateSummariser) servletContext
-                .getAttribute(Constants.TEMPLATE_SUMMARISER);
+            TemplateSummariser summariser = im.getTemplateSummariser();
             try {
                 session.setAttribute("summarising_" + templateName, "true");
                 summariser.summarise(template);
@@ -360,9 +360,10 @@ public class AjaxServices
         try {
             WebContext ctx = WebContextFactory.get();
             HttpSession session = ctx.getSession();
-            ServletContext servletContext = session.getServletContext();
-            WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
+            ObjectStore os = im.getObjectStore();
 
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
@@ -464,8 +465,9 @@ public class AjaxServices
                                                     String filterAction, String callId) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
-            ProfileManager pm = SessionMethods.getProfileManager(servletContext);
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            ProfileManager pm = im.getProfileManager();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, WebSearchable> wsMap;
             Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
@@ -507,7 +509,7 @@ public class AjaxServices
                 } else {
                     SearchRepository globalRepository =
                         (SearchRepository) servletContext.getAttribute(Constants.
-                                                                       GLOBAL_SEARCH_REPOSITORY);
+                                GLOBAL_SEARCH_REPOSITORY);
                     if (scope.equals(Scope.GLOBAL)) {
                         wsMap = (Map<String, WebSearchable>) globalRepository.
                             getWebSearchableMap(type);
@@ -589,13 +591,14 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            ObjectStore os = im.getObjectStore();
             String pckName =  os.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
-            TemplateManager templateManager = SessionMethods.getTemplateManager(servletContext);
-            
-            WebResultsExecutor webResultsExecutor = SessionMethods.getWebResultsExecutor(session);
+            BagManager bagManager = im.getBagManager();
+            TemplateManager templateManager = im.getTemplateManager();
+
+            WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
             InterMineBag imBag = null;
             int count = 0;
@@ -603,10 +606,9 @@ public class AjaxServices
                 imBag = bagManager.getUserOrGlobalBag(profile, bagName);
                 Map<String, QuerySelectable> pathToQueryNode = new HashMap();
 
-                ProfileManager pm =
-                    (ProfileManager) servletContext.getAttribute(Constants.PROFILE_MANAGER);
+                ProfileManager pm = im.getProfileManager();
                 List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
-                
+
                 PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
@@ -673,8 +675,9 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
 
             // TODO get message text from the properties file
             if (bagName.equals("")) {
@@ -784,15 +787,16 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os = im.getObjectStore();
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
 
             Type type = webConfig.getTypes().get(model.getPackageName()
-                            + "." + imBag.getType());
+                    + "." + imBag.getType());
             List<WidgetConfig> widgets = type.getWidgets();
             for (WidgetConfig widget: widgets) {
                 if (widget.getId().equals(widgetId)) {
@@ -818,11 +822,12 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            Model model = (Model) servletContext.getAttribute(Constants.MODEL);
+            Model model = im.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
 
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -851,13 +856,14 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os = im.getObjectStore();
             Model model =  os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Map classKeys = getClassKeys(servletContext);
+            Map classKeys = im.getClassKeys();
 
             Type type = webConfig.getTypes().get(model.getPackageName()
                             + "." + imBag.getType());
@@ -889,18 +895,17 @@ public class AjaxServices
      * @return enrichment widget
      */
     public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-                                                              String errorCorrection, String max,
-                                                              String filters,
-                                                              String externalLink,
-                                                              String externalLinkLabel) {
+            String errorCorrection, String max, String filters, String externalLink,
+            String externalLinkLabel) {
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os = im.getObjectStore();
             Model model = os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
 
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -941,11 +946,12 @@ public class AjaxServices
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-            ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+            ObjectStore os = im.getObjectStore();
             Model model = os.getModel();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            BagManager bagManager = SessionMethods.getBagManager(servletContext);
+            BagManager bagManager = im.getBagManager();
 
             InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
             Type type = webConfig.getTypes().get(model.getPackageName()
@@ -977,11 +983,12 @@ public class AjaxServices
     public static List<String> selectId(String selectedId, String tableId, String columnIndex) {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.selectId(new Integer(selectedId), (new Integer(columnIndex)).intValue());
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        ObjectStore os = im.getObjectStore();
         return pt.getFirstSelectedFields(os, classKeys);
     }
 
@@ -994,22 +1001,13 @@ public class AjaxServices
     public static List<String> deSelectId(String deSelectId, String tableId) {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = ctx.getServletContext();
         PagedTable pt = SessionMethods.getResultsTable(session, tableId);
         pt.deSelectId(new Integer(deSelectId));
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(servletContext);
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
+        ObjectStore os = im.getObjectStore();
         return pt.getFirstSelectedFields(os, classKeys);
-    }
-
-    /**
-     *
-     * @param servletContext
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private static Map<String, List<FieldDescriptor>> getClassKeys(ServletContext servletContext) {
-        return (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
     }
 
     /**
@@ -1250,10 +1248,11 @@ public class AjaxServices
                 + tagged + " type: " + type);
         try {
             HttpServletRequest request = getRequest();
-            Profile profile  = getProfile(request);
-            TagManager manager = SessionMethods.getTagManager(request.getSession());
-            manager.deleteTag(tagName, tagged, type, profile.getUsername());
             HttpSession session = request.getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            Profile profile  = getProfile(request);
+            TagManager manager = im.getTagManager();
+            manager.deleteTag(tagName, tagged, type, profile.getUsername());
             ServletContext servletContext = session.getServletContext();
             if (SessionMethods.isSuperUser(session)) {
                 SearchRepository tr =
@@ -1275,7 +1274,8 @@ public class AjaxServices
      */
     public static Set<String> getTags(String type) {
         HttpServletRequest request = getRequest();
-        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        TagManager tagManager = im.getTagManager();
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
             return tagManager.getUserTagNames(type, profile.getUsername());
@@ -1291,7 +1291,8 @@ public class AjaxServices
      */
     public static Set<String> getObjectTags(String type, String tagged) {
         HttpServletRequest request = getRequest();
-        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        TagManager tagManager = im.getTagManager();
         Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
             return tagManager.getObjectTagNames(tagged, type, profile.getUsername());
@@ -1301,7 +1302,8 @@ public class AjaxServices
 
     private static boolean tagExists(String tag, String taggedObject, String type) {
         HttpServletRequest request = getRequest();
-        TagManager tagManager = SessionMethods.getTagManager(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        TagManager tagManager = im.getTagManager();
         String userName = getProfile(request).getUsername();
         return tagManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
     }
@@ -1316,7 +1318,9 @@ public class AjaxServices
     }
 
     private static TagManager getTagManager() {
-        return SessionMethods.getTagManager(getRequest().getSession());
+        HttpServletRequest request = getRequest();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        return im.getTagManager();
     }
 
     /**
