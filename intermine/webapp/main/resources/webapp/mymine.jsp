@@ -47,7 +47,7 @@
 
   <%-- a login prompt is already in the intro msg
   login msg
-  <c:if test="${empty PROFILE.username}">
+  <c:if test="${!PROFILE.loggedIn}">
     <div class="body">
       <html:link action="/login"><fmt:message key="menu.login"/></html:link>&nbsp;&nbsp;
       <fmt:message key="mymine.login.help"/>

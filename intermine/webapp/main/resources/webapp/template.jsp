@@ -239,7 +239,7 @@
                 </html:select>
                 
                 <%-- this breaks if there is more than one on a page --%>
-                <c:if test="${!empty PROFILE.username}">
+                <c:if test="${PROFILE.loggedIn}">
 	                <tiles:insert name="tagSelect.tile">
 	                    <tiles:put name="type" value="bag" />
 	                    <tiles:put name="onChangeFunction" value="filterByTag" />
@@ -325,7 +325,7 @@
 </c:if>
 
 <%-- login msg --%>
-<c:if test="${empty PROFILE_MANAGER || empty PROFILE.username}">
+<c:if test="${!PROFILE.loggedIn}">
 	<p><i><fmt:message key="template.notlogged"><fmt:param><im:login/></fmt:param></fmt:message></i></p>
 </c:if>
 </im:boxarea>

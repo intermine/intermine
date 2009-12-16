@@ -34,14 +34,12 @@
             </form>
           </td>
           <td>
-            <c:if test="${!empty PROFILE.username}">
-              <c:if test="${!empty QUERY}">
+            <c:if test="${PROFILE.loggedIn && !empty QUERY}">              
                 <fmt:message key="${TEMPLATE_BUILD_STATE.updatingTemplate == null ?
                     'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
                 <form method="link" action="<html:rewrite action="/createTemplate"/>">
                   <input type="submit" value="${saveLabel}"/>
-                </form>
-              </c:if>
+                </form>              
             </c:if>
           </td>
         </tr>

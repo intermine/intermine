@@ -18,7 +18,7 @@
 
   <p>
     <fmt:message key="history.savedbags.intro"/>
-     <c:if test="${empty PROFILE.username}">
+     <c:if test="${!PROFILE.loggedIn}">
       - <html:link action="/login?returnto=/mymine.do?subtab=lists"><fmt:message key="history.savedbags.login"/></html:link>&nbsp;&nbsp;
     </c:if>
   </p>
@@ -32,7 +32,7 @@
     <c:otherwise>
 
 	<table>
-	<c:if test="${!empty PROFILE.username}">
+	<c:if test="${PROFILE.loggedIn}">
 		<tr><td align="right">
 			Filter:&nbsp;
 			<tiles:insert name="tagSelect.tile">
@@ -87,7 +87,7 @@
                       <tiles:put name="type" value="${type}"/>
                     </tiles:insert>
 
-                     <c:if test="${! empty PROFILE.username}">
+                     <c:if test="${PROFILE.loggedIn}">
 	                 	 <c:set var="taggable" value="${savedBag.value}"/>
 	                     <tiles:insert name="inlineTagEditor.tile">
 	                       <tiles:put name="taggable" beanName="taggable"/>

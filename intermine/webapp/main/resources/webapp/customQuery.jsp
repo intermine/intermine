@@ -25,7 +25,7 @@
             <br/>
             <%-- TODO this should be done elsewhere --%>
           <c:choose>
-            <c:when test="${empty PROFILE.username}">
+            <c:when test="${!PROFILE.loggedIn}">
               <c:set var="linky" value="login.do?returnto=%2Fmymine.do%3Fpage%3Dsaved"/>
               <html:link action="${linky}">
               Login to view saved queries
