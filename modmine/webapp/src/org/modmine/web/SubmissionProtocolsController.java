@@ -22,12 +22,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -36,10 +38,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -59,10 +58,9 @@ public class SubmissionProtocolsController extends TilesAction
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
-
         HttpSession session = request.getSession();
-        ObjectStore os =
-            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
 
         // submission object
         InterMineObject o = (InterMineObject) request.getAttribute("object");
@@ -83,7 +81,8 @@ public class SubmissionProtocolsController extends TilesAction
         q.addConstraint("Submission.id", Constraints.eq(o.getId()));
         q.addOrderBy("Submission.appliedProtocols.step");
         
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults results = executor.execute(q);
         
         if (results.size() > 2000) {
@@ -106,7 +105,8 @@ public class SubmissionProtocolsController extends TilesAction
 
         q1.addFrom(qc);
         q1.addToSelect(qc);        
-        SimpleConstraint sc = new SimpleConstraint(qcId, ConstraintOp.EQUALS, new QueryValue(o.getId()));
+        SimpleConstraint sc = new SimpleConstraint(qcId, ConstraintOp.EQUALS, 
+                new QueryValue(o.getId()));
         q1.setConstraint(sc);
         Results result = os.executeSingleton(q1);
 
@@ -115,7 +115,6 @@ public class SubmissionProtocolsController extends TilesAction
         while (i.hasNext()) {
             Submission sub = (Submission) i.next();
             DCCid = sub.getdCCid();
-//            LOG.info("DAG SUBMISSION ->: " + DCCid);
         }
         request.setAttribute("DCCid", DCCid);
         

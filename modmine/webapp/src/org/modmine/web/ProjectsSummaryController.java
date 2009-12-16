@@ -22,8 +22,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.MetadataCache.GBrowseTrack;
 
 
@@ -39,9 +41,8 @@ public class ProjectsSummaryController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         try {
-            HttpSession session = request.getSession();
-            ObjectStore os =
-                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+            ObjectStore os = im.getObjectStore();
                         
             Map<String, List<DisplayExperiment>> experiments = MetadataCache.getProjectExperiments(os);
             request.setAttribute("experiments", experiments);

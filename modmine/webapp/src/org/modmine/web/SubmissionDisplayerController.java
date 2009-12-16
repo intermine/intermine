@@ -16,16 +16,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Submission;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -40,7 +40,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for submissionDisplayer.jsp
@@ -57,11 +57,9 @@ public class SubmissionDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
-
-        HttpSession session = request.getSession();
-        ObjectStore os =
-            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ObjectStore os = im.getObjectStore();
+        
         // submission object
         InterMineObject o = (InterMineObject) request.getAttribute("object");
 

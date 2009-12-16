@@ -15,11 +15,12 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
@@ -57,11 +58,10 @@ public class OrthologueConverter implements BagConverter
     public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
                                       throws ObjectStoreException {
-        
-        ServletContext servletContext = session.getServletContext();
-        Model model = ((ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE)).getModel();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Model model = im.getModel();
+        ObjectStore os = im.getObjectStore();
+        WebConfig webConfig = (WebConfig) session.getAttribute(Constants.WEBCONFIG);
 
         PathQuery q = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
@@ -84,7 +84,8 @@ public class OrthologueConverter implements BagConverter
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
         LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
-        WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
         return executor.execute(q);
     }

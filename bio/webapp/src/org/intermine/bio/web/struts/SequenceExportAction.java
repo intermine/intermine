@@ -10,29 +10,11 @@ package org.intermine.bio.web.struts;
  *
  */
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
-import org.intermine.bio.web.biojava.BioSequence;
-import org.intermine.bio.web.biojava.BioSequenceFactory;
-import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
-import org.intermine.bio.web.export.ResidueFieldExporter;
-import org.intermine.bio.web.export.SequenceHttpExporter;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.struts.InterMineAction;
-
-import org.intermine.model.bio.BioEntity;
-import org.intermine.model.bio.LocatedSequenceFeature;
-import org.intermine.model.bio.Protein;
-import org.intermine.model.bio.Sequence;
-
-import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +28,22 @@ import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.utils.ChangeVetoException;
+import org.intermine.api.InterMineAPI;
+import org.intermine.bio.web.biojava.BioSequence;
+import org.intermine.bio.web.biojava.BioSequenceFactory;
+import org.intermine.bio.web.biojava.BioSequenceFactory.SequenceType;
+import org.intermine.bio.web.export.ResidueFieldExporter;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Protein;
+import org.intermine.model.bio.Sequence;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.InterMineAction;
 
 /**
  * Exports sequence.
@@ -71,8 +69,8 @@ public class SequenceExportAction extends InterMineAction
                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ObjectStore os =
-            (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
         BioSequence bioSequence = null;
 
         //SequenceHttpExporter.setSequenceExportHeader(response);

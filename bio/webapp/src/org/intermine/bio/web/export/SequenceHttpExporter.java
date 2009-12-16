@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.SequenceExportForm;
@@ -30,13 +29,13 @@ import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
@@ -68,9 +67,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
                        TableExportForm form) {
         boolean doGzip = (form != null) && form.getDoGzip();
-        HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ObjectStore os = im.getObjectStore();
+        
         setSequenceExportHeader(response, doGzip);
 
         SequenceExportForm sef = (SequenceExportForm) form;

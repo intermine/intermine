@@ -13,23 +13,20 @@ package org.flymine.web;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-
-import org.intermine.model.bio.Gene;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
+import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for geneMicroArrayDisplayer.jsp
@@ -47,9 +44,8 @@ public class GeneMicroArrayDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         try {
-            HttpSession session = request.getSession();
-            ObjectStore os =
-                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
+            ObjectStore os = im.getObjectStore();
             Gene gene = (Gene) request.getAttribute("object");
             Results results =
                 MicroArrayHelper.queryExperimentsInvolvingGene(gene.getPrimaryIdentifier(), os);

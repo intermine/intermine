@@ -10,28 +10,16 @@ package org.flymine.web;
  *
  */
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.struts.InterMineAction;
-
-import org.intermine.model.bio.MicroArrayAssay;
-import org.intermine.model.bio.MicroArrayResult;
-
 import java.awt.Color;
 import java.awt.RenderingHints;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +30,15 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.intermine.api.InterMineAPI;
+import org.intermine.model.bio.MicroArrayAssay;
+import org.intermine.model.bio.MicroArrayResult;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.InterMineAction;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
@@ -117,11 +114,11 @@ public class ChartRenderer extends InterMineAction
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Map<String, String> graphImageCache = new HashMap<String, String>();
         graphImageCache.putAll((Map<String, String>)
                                session.getServletContext().getAttribute(Constants.GRAPH_CACHE));
-        ObjectStore os = (ObjectStore) session.getServletContext()
-            .getAttribute(Constants.OBJECTSTORE);
+        ObjectStore os = im.getObjectStore();
         String experiment = request.getParameter("experiment");
         String gene = request.getParameter("gene");
 
