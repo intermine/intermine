@@ -10,6 +10,7 @@ package org.intermine.api.query;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.intermine.api.config.Constants;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -195,6 +197,19 @@ public class WebResultsExecutor
     }
 
     /**
+     * Returns the results for a summary for a column in a PathQuery.
+     *
+     * @param pathQuery the query to summarise
+     * @param summaryPath the column to summarise
+     * @return a Results object with varying styles of data
+     * @throws ObjectStoreException if there is a problem summarising
+     */
+    public Results summariseQuery(PathQuery pathQuery,
+            String summaryPath) throws ObjectStoreException {
+        return os.execute(makeSummaryQuery(pathQuery, summaryPath));
+    }
+
+    /**
      * Creates a query that returns the summary for a column in a PathQuery.
      *
      * @param pathQuery the query to convert
@@ -211,5 +226,24 @@ public class WebResultsExecutor
         Query q = MainHelper.makeSummaryQuery(pathQuery, summaryPath, allBags, pathToQueryNode,
                 bqr);
         return q;
+    }
+
+    /**
+     * Precomputes a template query if it is not already precomputed, returning whether precomputing
+     * was necessary.
+     *
+     * @param t the TemplateQuery to precompute
+     * @return true if the template was not already precomputed
+     * @throws ObjectStoreException if there is a problem precomputing
+     */
+    public boolean precomputeTemplate(TemplateQuery t) throws ObjectStoreException {
+        List<String> indexes = new ArrayList<String>();
+        Query q = TemplatePrecomputeHelper.getPrecomputeQuery(t, indexes);
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+        if (!osimi.isPrecomputed(q, "template")) {
+            osimi.precompute(q, indexes, "template");
+            return true;
+        }
+        return false;
     }
 }

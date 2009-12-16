@@ -60,7 +60,6 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplatePrecomputeHelper;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
@@ -68,10 +67,8 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -165,16 +162,12 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             Map<String, TemplateQuery> templates = profile.getSavedTemplates();
-            TemplateQuery template = templates.get(templateName);
-            ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
-            List indexes = new ArrayList();
-            Query query = TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
+            TemplateQuery t = templates.get(templateName);
+            WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
             try {
-                if (!os.isPrecomputed(query, "template")) {
-                    session.setAttribute("precomputing_" + templateName, "true");
-                    os.precompute(query, indexes, "template");
-                }
+                session.setAttribute("precomputing_" + templateName, "true");
+                executor.precomputeTemplate(t);
             } catch (ObjectStoreException e) {
                 LOG.error("Error while precomputing", e);
             } finally {
@@ -362,14 +355,11 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
-            ObjectStore os = im.getObjectStore();
 
             WebTable webTable = (SessionMethods.getResultsTable(session, tableName))
                                    .getWebTable();
             PathQuery pathQuery = webTable.getPathQuery();
-            Query distinctQuery = webResultsExecutor.makeSummaryQuery(pathQuery, summaryPath);
-
-            Results results = os.execute(distinctQuery);
+            List<ResultsRow> results = webResultsExecutor.summariseQuery(pathQuery, summaryPath);
 
             // Start the count of results
             Query countQuery = webResultsExecutor.makeSummaryQuery(pathQuery, summaryPath);
@@ -380,14 +370,14 @@ public class AjaxServices
             String qid = SessionMethods.startQueryCount(clientState, session, messages);
             List<ResultsRow> pageSizeResults = new ArrayList<ResultsRow>();
             int rowCount = 0;
-            for (ResultsRow row : (List<ResultsRow>) results) {
-                pageSizeResults.add(row);
+            for (ResultsRow row : results) {
                 rowCount++;
-                if (rowCount >= 10) {
+                if (rowCount > 10) {
                     break;
                 }
+                pageSizeResults.add(row);
             }
-            return Arrays.asList(new Object[] {pageSizeResults, qid, new Integer(results.size())});
+            return Arrays.asList(new Object[] {pageSizeResults, qid, new Integer(rowCount)});
         } catch (RuntimeException e) {
             processException(e);
             return null;
@@ -590,8 +580,7 @@ public class AjaxServices
         try {
             HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            ObjectStore os = im.getObjectStore();
-            String pckName =  os.getModel().getPackageName();
+            String pckName = im.getModel().getPackageName();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
             BagManager bagManager = im.getBagManager();
             TemplateManager templateManager = im.getTemplateManager();
@@ -647,20 +636,6 @@ public class AjaxServices
         } catch (RuntimeException e) {
             processException(e);
         }
-    }
-
-    /**
-     * Get state.
-     * @param name name of state
-     * @return value if state was set before during the session else null
-     */
-    public static String getState(String name) {
-        try {
-            return (String) AjaxServices.getWebState().getState(name);
-        } catch (RuntimeException e) {
-            processException(e);
-        }
-        return null;
     }
 
     /**
@@ -756,7 +731,7 @@ public class AjaxServices
      * @param bagName the name of a bag
      * @return the list of queries
      */
-    public static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
+    private static List<String> queriesThatMentionBag(Map savedQueries, String bagName) {
         try {
             List<String> queries = new ArrayList<String>();
             for (Iterator i = savedQueries.keySet().iterator(); i.hasNext();) {
@@ -1053,15 +1028,6 @@ public class AjaxServices
         HttpSession session = WebContextFactory.get().getSession();
         PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
         query.setOrderBy(path, direction);
-    }
-
-    /**
-     * Reset the sort order
-     */
-    public void clearSortOrder() {
-        HttpSession session = WebContextFactory.get().getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
-        query.resetOrderBy();
     }
 
     /**
