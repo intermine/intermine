@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -49,6 +50,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.AttributeLinkURL;
 
 /**
@@ -77,6 +79,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
 
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
+        
         ServletContext servletContext = request.getSession().getServletContext();
 
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -87,8 +91,8 @@ public class AttributeLinkDisplayerController extends TilesAction
             imo = (InterMineObject) request.getAttribute("object");
         }
 
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        ObjectStore os = im.getObjectStore();
+        Model model = im.getModel();
 
         Set<ClassDescriptor> classDescriptors;
 
@@ -131,7 +135,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
-        Properties webProperties =
+        Properties webProperties = 
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
             + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter)";
@@ -171,7 +175,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 }
 
                 Object attrValue = null;
-                Set taxIds = null;
+                Set<String> taxIds = null;
 
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
@@ -182,7 +186,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         } else { //it's a bag!
                             attrValue = getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
-                                taxIds = getTaxIds (bag, os);
+                                taxIds = getTaxIds(bag, os);
 
                                 //don't display link if
                                 // a) not a bioentity (no reference to organism)

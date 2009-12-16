@@ -17,23 +17,23 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.model.bio.Submission;
-import org.intermine.model.bio.Project;
+import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Lab;
+import org.intermine.model.bio.Project;
+import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for labs.jsp
@@ -51,10 +51,9 @@ public class LabsController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         try {
-            HttpSession session = request.getSession();
-            ObjectStore os =
-                (ObjectStore) session.getServletContext().getAttribute(Constants.OBJECTSTORE);
-
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+            ObjectStore os = im.getObjectStore();
+            
             //get the list of labs 
             Query q = new Query();  
             QueryClass qc = new QueryClass(Lab.class);

@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathNode;
@@ -55,11 +56,11 @@ public class SubmissionOverlapsAction extends InterMineAction
                                  ActionForm form,
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
-        HttpSession session = request.getSession();
+    throws Exception {        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        ObjectStore os = im.getObjectStore();
+
         SubmissionOverlapsForm submissionOverlapsForm = (SubmissionOverlapsForm) form;
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
 
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String submissionId = submissionOverlapsForm.getSubmissionId();
@@ -119,7 +120,7 @@ public class SubmissionOverlapsAction extends InterMineAction
         QueryMonitorTimeout clientState = new QueryMonitorTimeout(
                 Constants.QUERY_TIMEOUT_SECONDS * 1000);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages,
+        String qid = SessionMethods.startQuery(clientState, request.getSession(), messages,
                                                false, q);
         Thread.sleep(200);
 
@@ -129,8 +130,6 @@ public class SubmissionOverlapsAction extends InterMineAction
         .addParameter("qid", qid)
         .addParameter("trail", trail)
         .forward();
-
-
 
         //return mapping.findForward("results");
     }

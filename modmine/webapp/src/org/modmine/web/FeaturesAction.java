@@ -10,10 +10,6 @@ package org.modmine.web;
  *
  */
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,7 +19,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.WebResults;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -31,19 +32,12 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagHelper;
-import org.intermine.web.logic.bag.BagQueryConfig;
-import org.intermine.web.logic.bag.BagQueryRunner;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.profile.Profile;
-import org.intermine.web.logic.profile.ProfileManager;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.query.WebResultsExecutor;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.WebResults;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -72,9 +66,9 @@ public class FeaturesAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
-        ObjectStore os = (ObjectStore) servletContext.getAttribute(Constants.OBJECTSTORE);
-        Model model = os.getModel();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
+        Model model = im.getModel();
         
         String type = (String) request.getParameter("type");
         String featureType = (String) request.getParameter("feature");
@@ -152,7 +146,8 @@ public class FeaturesAction extends InterMineAction
         } else if (action.equals("export")) {
             String format = request.getParameter("format");
             
-            WebResultsExecutor executor = SessionMethods.getWebResultsExecutor(session);
+            Profile profile = SessionMethods.getProfile(session);
+            WebResultsExecutor executor = im.getWebResultsExecutor(profile);
             PagedTable pt = new PagedTable(executor.execute(q));
 
             if (pt.getWebTable() instanceof WebResults) {
@@ -180,19 +175,12 @@ public class FeaturesAction extends InterMineAction
             q.setView(featureType + ".id");
 
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            ProfileManager pm = profile.getProfileManager();
 
-            Map<String, List<FieldDescriptor>> classKeys = 
-                (Map) servletContext.getAttribute(Constants.CLASS_KEYS);
-            BagQueryConfig bagQueryConfig =
-                (BagQueryConfig) servletContext.getAttribute(Constants.BAG_QUERY_CONFIG);
-            BagQueryRunner bagQueryRunner =
-                new BagQueryRunner(os, classKeys, bagQueryConfig,
-                        BagConversionHelper.getConversionTemplates(pm.getSuperuserProfile()));
+            BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
 
             String bagName = (dccId != null ? "submission_" + dccId : experimentName)
                 + "_" + featureType + "_features";            
-            bagName = BagHelper.findNewBagName(profile.getSavedBags(), bagName);
+            bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
             BagHelper.createBagFromPathQuery(q, bagName, q.getDescription(), featureType, profile,
                     os, bagQueryRunner);
             ForwardParameters forwardParameters =
