@@ -78,7 +78,7 @@
     <ul id="loginbar">
         <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
         <li>|</li>
-        <c:if test="${!empty PROFILE.username}">
+        <c:if test="${PROFILE.isLoggedIn}">
             <li>&nbsp;${PROFILE.username}&nbsp;|&nbsp;</li>
         </c:if>
         <li><im:login/></li>
@@ -86,7 +86,7 @@
   </div>
 
     <!-- Logged in section -->
-  <c:set var="loggedin" value="${!empty PROFILE_MANAGER && !empty PROFILE.username}"/>
+  <c:set var="loggedin" value="${PROFILE.isLoggedIn}"/>
 
     <!-- Submenu section -->
   <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1 mymine:mymine.password.tab.title:password:1" />
