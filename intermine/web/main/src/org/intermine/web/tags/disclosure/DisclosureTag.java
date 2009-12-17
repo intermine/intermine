@@ -92,9 +92,9 @@ public class DisclosureTag extends BaseDisclosureTag
      */
     public boolean getOpened() {
         if (isConsistentType()) {
-            WebState webState =
-                (WebState) getJspContext().getAttribute(Constants.WEB_STATE,
-                                                         PageContext.SESSION_SCOPE);
+            // Alas, we do not have access to the session, so we can't use SessionMethods
+            WebState webState = (WebState) getJspContext().getAttribute(Constants.WEB_STATE,
+                    PageContext.SESSION_SCOPE);
             if (webState != null) {
                 Boolean ret = webState.getToggledElements().get(getId());
                 if (ret != null) {

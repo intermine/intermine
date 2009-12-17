@@ -33,7 +33,6 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -79,7 +78,7 @@ public class BuildBagAction extends InterMineAction
                                                       templateManager.getConversionTemplates());
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         if (profile == null || profile.getUsername() == null) {
             int defaultMaxNotLoggedSize = 3;
             maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",

@@ -26,7 +26,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -57,7 +56,7 @@ public class SummariseAllTemplatesAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         final TemplateSummariser summariser = im.getTemplateSummariser();
         
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();

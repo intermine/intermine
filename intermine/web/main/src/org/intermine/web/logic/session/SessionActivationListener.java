@@ -38,14 +38,14 @@ public class SessionActivationListener implements HttpSessionActivationListener,
         // Get rid of the tables
         session.removeAttribute(Constants.TABLE_MAP);
         // Save the username if one exists
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         if (profile != null && profile.getUsername() != null) {
             session.setAttribute("ser-username", profile.getUsername());
         }
         // Save current query as string
-        if (session.getAttribute(Constants.QUERY) != null) {
-            String queryXml = ((PathQuery) session.getAttribute(Constants.QUERY))
-                .toXml(PathQuery.USERPROFILE_VERSION);
+        PathQuery query = SessionMethods.getQuery(session);
+        if (query != null) {
+            String queryXml = query.toXml(PathQuery.USERPROFILE_VERSION);
             session.setAttribute("ser-query", queryXml);
         }
         // Rehydrate serialised stuff on first request

@@ -30,7 +30,6 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.session.SessionMethods;
@@ -66,7 +65,7 @@ public class BagConversionHelper
             return null;
         }
         Path configuredPath = pq.getView().get(0);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         Model model = im.getModel();
         pq.setViewPaths(PathQueryResultHelper
                 .getDefaultView(TypeUtil.unqualifiedName(typeB.getName()), model,

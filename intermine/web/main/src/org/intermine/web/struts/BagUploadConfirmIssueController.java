@@ -35,7 +35,6 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -106,7 +105,7 @@ public class BagUploadConfirmIssueController extends TilesAction
 
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
-        Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Map webPropertiesMap = SessionMethods.getWebProperties(servletContext);
         Map classKeys = im.getClassKeys();
 
         InlineResultsTable table = new InlineResultsTable(objectList, model, webConfig,

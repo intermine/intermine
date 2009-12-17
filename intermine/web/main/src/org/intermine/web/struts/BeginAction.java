@@ -20,7 +20,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -74,10 +73,9 @@ public class BeginAction extends InterMineAction
         request.setAttribute("templateCount", new Integer(im
                 .getTemplateManager().getGlobalTemplates().size()));
 
-        Properties properties = (Properties) session.getServletContext()
-                .getAttribute(Constants.WEB_PROPERTIES);
-        String[] beginQueryClasses = (properties.get("begin.query.classes")
-                .toString()).split("[ ,]+");
+        Properties properties = SessionMethods.getWebProperties(session.getServletContext());
+        String[] beginQueryClasses = (properties.get("begin.query.classes").toString())
+            .split("[ ,]+");
         request.setAttribute("beginQueryClasses", beginQueryClasses);
         return mapping.findForward("begin");
     }

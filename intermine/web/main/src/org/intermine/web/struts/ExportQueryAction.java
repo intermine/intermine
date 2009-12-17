@@ -26,7 +26,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.query.result.QueryResultLinkGenerator;
@@ -56,14 +55,14 @@ public class ExportQueryAction extends InterMineAction
         throws Exception {        
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);                
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;
 
         if (StringUtils.isEmpty(type) || StringUtils.isEmpty(name)) {
-            query = (PathQuery) session.getAttribute(Constants.QUERY);
+            query = SessionMethods.getQuery(session);
         } else if ("history".equals(type)) {
             query = (profile.getHistory().get(name)).getPathQuery();
         } else if ("saved".equals(type)) {

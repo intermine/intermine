@@ -20,7 +20,7 @@ import org.apache.struts.validator.ValidatorForm;
 import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean representing feedback form.
@@ -196,7 +196,7 @@ public class ContactForm extends ValidatorForm
         message = createDefaultFeedbackMsg(request);
         monkey = "";
 
-        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(request.getSession());
         if (profile != null) {
             monkey = profile.getUsername();
         }
@@ -215,7 +215,7 @@ public class ContactForm extends ValidatorForm
         if (request.getQueryString() != null) {
             msg += "?" + request.getQueryString();
         }
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         if (query != null) {
             msg += "\n\n---- Current query: ----\n\n";
             msg += PathQueryBinding.marshal(query, "", query.getModel().getName(),

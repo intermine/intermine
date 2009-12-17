@@ -40,7 +40,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.PagedTable;
@@ -85,7 +84,7 @@ public class BagDetailsController extends TilesAction
         }
 
         if (scope.equals(Scope.USER) || scope.equals(Scope.ALL)) {
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Profile profile = SessionMethods.getProfile(session);
             imBag = bagManager.getUserBag(profile, bagName);
             if (imBag != null) {
                 myBag = Boolean.TRUE;

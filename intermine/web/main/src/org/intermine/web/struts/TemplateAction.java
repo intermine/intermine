@@ -104,7 +104,7 @@ public class TemplateAction extends InterMineAction
 
         SessionMethods.logTemplateQueryUse(session, templateType, templateName);
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
         TemplateQuery template = templateManager.getTemplate(profile,

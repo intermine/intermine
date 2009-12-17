@@ -70,9 +70,8 @@ public class CreateTemplateAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        Profile profile = SessionMethods.getProfile(session);
+        PathQuery query = SessionMethods.getQuery(session);
         TemplateBuildState tbs =
             (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);

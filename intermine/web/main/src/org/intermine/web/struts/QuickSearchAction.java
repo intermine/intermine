@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -68,12 +68,12 @@ public class QuickSearchAction extends InterMineAction
         String qsType = qsf.getQuickSearchType();
         session.setAttribute("quickSearchType", qsType);
         if (qsType.equals("ids")) {
-            Map webPropertiesMap = (Map) context.getAttribute(Constants.WEB_PROPERTIES);
+            Properties webProperties = SessionMethods.getWebProperties(context);
 
             // remove the last query ran, otherwise the old query will show up on the results page
             session.removeAttribute(Constants.QUERY);
 
-            String templateName = (String) webPropertiesMap.get("begin.browse.template");
+            String templateName = webProperties.getProperty("begin.browse.template");
 
             if (templateName == null) {
                 LOG.error("'begin.browse.template' not configured correctly in properties file.");
@@ -95,7 +95,7 @@ public class QuickSearchAction extends InterMineAction
             }
 
             QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.
-                                                                      QUERY_TIMEOUT_SECONDS * 1000);
+                    QUERY_TIMEOUT_SECONDS * 1000);
             MessageResources messages =
                 (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
 

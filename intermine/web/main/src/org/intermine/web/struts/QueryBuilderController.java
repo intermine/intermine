@@ -43,7 +43,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -87,7 +86,7 @@ public class QueryBuilderController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         Model model = im.getModel();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         assureCorrectSortOrder(query);
 
         // constraint display values

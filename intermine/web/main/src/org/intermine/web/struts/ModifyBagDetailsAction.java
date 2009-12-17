@@ -63,7 +63,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ServletContext servletContext = session.getServletContext();
         Model model = im.getModel();
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;

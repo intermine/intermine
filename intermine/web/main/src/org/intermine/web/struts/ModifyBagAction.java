@@ -38,7 +38,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -104,8 +103,8 @@ public class ModifyBagAction extends InterMineAction
 
     // make sure new list name doesn't equal the default example list name
     private String getNewNameTextBox(HttpServletRequest request, String newBagName) {
-        Properties properties = (Properties) request.getSession()
-                .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        Properties properties = SessionMethods.getWebProperties(request.getSession()
+                .getServletContext());
         String exampleName = properties.getProperty("lists.input.example");
         if (StringUtils.isEmpty(newBagName) && newBagName.equalsIgnoreCase(exampleName)) {
             return null;
@@ -116,7 +115,7 @@ public class ModifyBagAction extends InterMineAction
     private void copy(ActionForm form, HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyBagForm frm = (ModifyBagForm) form;
         String[] selectedBagNames = frm.getSelectedBags();
 
@@ -187,7 +186,7 @@ public class ModifyBagAction extends InterMineAction
     private void combine(ActionForm form, HttpServletRequest request, String opText) {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyBagForm mbf = (ModifyBagForm) form;
         ServletContext servletContext = session.getServletContext();
 
@@ -247,7 +246,7 @@ public class ModifyBagAction extends InterMineAction
 
     private void delete(ActionForm form, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {

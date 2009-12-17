@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -444,17 +445,18 @@ public class SessionMethods
 
     /**
      * Return the displayObjects Map from the session or create and return it if it doesn't exist.
+     *
      * @param session the HttpSession to get the displayObjects Map from
      * @return the (possibly new) displayObjects Map
      */
-    public static Map<Integer, DisplayObject> getDisplayObjects(HttpSession session) {
-        Map<Integer, DisplayObject> displayObjects =
-            (Map<Integer, DisplayObject>) session.getAttribute("displayObjects");
+    public static DisplayObjectFactory getDisplayObjects(HttpSession session) {
+        DisplayObjectFactory displayObjects =
+            (DisplayObjectFactory) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
 
         // Build map from object id to DisplayObject
         if (displayObjects == null) {
-            displayObjects = new CacheMap();
-            session.setAttribute("displayObjects", displayObjects);
+            displayObjects = new DisplayObjectFactory(session);
+            session.setAttribute(Constants.DISPLAY_OBJECT_CACHE, displayObjects);
         }
 
         return displayObjects;
@@ -831,12 +833,19 @@ public class SessionMethods
 
 
     /**
-     * @param request request
+     * @param request a HttpServletRequest
      * @return WebConfig
      */
     public static WebConfig getWebConfig(HttpServletRequest request) {
-        WebConfig wc = (WebConfig) request.getSession().getServletContext().
-            getAttribute(Constants.WEBCONFIG);
+        return getWebConfig(request.getSession().getServletContext());
+    }
+
+    /**
+     * @param context a ServletContext
+     * @return WebConfig
+     */
+    public static WebConfig getWebConfig(ServletContext context) {
+        WebConfig wc = (WebConfig) context.getAttribute(Constants.WEBCONFIG);
         if (wc == null) {
             throw new RuntimeException("WebConfig not present in web session.");
         }
@@ -864,6 +873,36 @@ public class SessionMethods
      */
     public static Profile getProfile(HttpSession session) {
         return (Profile) session.getAttribute(Constants.PROFILE);
+    }
+
+    /**
+     * Returns the Map of aspects.
+     *
+     * @param servletContext a ServletContext object
+     * @return a Map
+     */
+    public static Map getAspects(ServletContext servletContext) {
+        return (Map) servletContext.getAttribute(Constants.ASPECTS);
+    }
+
+    /**
+     * Returns the web properties.
+     *
+     * @param servletContext a ServletContext object
+     * @return a Properties object
+     */
+    public static Properties getWebProperties(ServletContext servletContext) {
+        return (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+    }
+
+    /**
+     * Returns the PathQuery on the session.
+     *
+     * @param session a HttpSession object
+     * @return a PathQuery for the current user from the session
+     */
+    public static PathQuery getQuery(HttpSession session) {
+        return (PathQuery) session.getAttribute(Constants.QUERY);
     }
 
     /**

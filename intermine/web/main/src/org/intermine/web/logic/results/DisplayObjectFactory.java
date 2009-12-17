@@ -10,11 +10,17 @@ package org.intermine.web.logic.results;
  *
  */
 
+import java.util.Map;
+import java.util.Properties;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.util.CacheMap;
-import org.intermine.web.struts.ObjectDetailsController;
+import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.CacheMap;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A factory for DisplayObjects.  If get() is called and the is no existing DisplayObject for the
@@ -23,7 +29,7 @@ import org.intermine.model.InterMineObject;
  * @author Kim Rutherford
  */
 
-public class DisplayObjectFactory extends CacheMap
+public class DisplayObjectFactory extends CacheMap<InterMineObject, DisplayObject>
 {
     private HttpSession session = null;
 
@@ -50,23 +56,37 @@ public class DisplayObjectFactory extends CacheMap
      * @param object an InterMineObject to make a DisplayObject for
      * @return a DisplayObject
      */
-    public synchronized Object get(Object object) {
-        DisplayObject displayObject = (DisplayObject) super.get(object);
+    @Override public synchronized DisplayObject get(Object object) {
+        InterMineObject imObj = (InterMineObject) object;
+        DisplayObject displayObject = super.get(imObj);
 
         if (displayObject == null) {
-            InterMineObject interMineObject = (InterMineObject) object;
-            DisplayObject newObject;
-
             try {
-                newObject = ObjectDetailsController.makeDisplayObject(session, interMineObject);
+                final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                Model model = im.getModel();
+                Map classKeys = im.getClassKeys();
+                ServletContext servletContext = session.getServletContext();
+                WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
+                Properties webProperties = SessionMethods.getWebProperties(servletContext);
+                displayObject = new DisplayObject(imObj, model, webConfig, webProperties,
+                        classKeys);
             } catch (Exception e) {
                 throw new RuntimeException("failed to make a DisplayObject", e);
             }
 
-            put(interMineObject, newObject);
-            return newObject;
-        } else {
-            return displayObject;
+            super.put(imObj, displayObject);
         }
+        return displayObject;
+    }
+
+    /**
+     * Disable this method.
+     *
+     * @param key Do not use
+     * @param value Do not use
+     * @return never
+     */
+    public DisplayObject put(InterMineObject key, DisplayObject value) {
+        throw new UnsupportedOperationException("Put called on DisplayObjectFactory");
     }
 }

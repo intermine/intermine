@@ -26,7 +26,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -63,8 +62,8 @@ public class SaveQueryAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        Profile profile = SessionMethods.getProfile(session);
+        PathQuery query = SessionMethods.getQuery(session);
         String queryName = ((SaveQueryForm) form).getQueryName();
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 

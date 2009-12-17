@@ -133,7 +133,7 @@ public class ImportQueriesForm extends ValidatorForm
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         BagManager bagManager = im.getBagManager();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         try {
             Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);

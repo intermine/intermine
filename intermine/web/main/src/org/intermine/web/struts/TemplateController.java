@@ -93,7 +93,7 @@ public class TemplateController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ObjectStore os = im.getObjectStore();
         Model model = os.getModel();
         ObjectStoreSummary oss = im.getObjectStoreSummary();
@@ -138,7 +138,7 @@ public class TemplateController extends TilesAction
         }
 
         if (context.getAttribute("builder") != null) {
-            PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+            PathQuery query = SessionMethods.getQuery(session);
             TemplateBuildState tbs = (TemplateBuildState) session
                     .getAttribute(Constants.TEMPLATE_BUILD_STATE);
             template = TemplateHelper.buildTemplateQuery(tbs, query);
@@ -248,7 +248,7 @@ public class TemplateController extends TilesAction
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (preSelectedBagName != null
-                        		&& constraintBags.containsKey(preSelectedBagName)) {
+                                && constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
                             selectedBagNames.put(c, preSelectedBagName);
                         }
@@ -261,7 +261,7 @@ public class TemplateController extends TilesAction
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (preSelectedBagName != null
-                        		&& constraintBags.containsKey(preSelectedBagName)) {
+                                && constraintBags.containsKey(preSelectedBagName)) {
                             tf.setUseBagConstraint(j + "", true);
                             selectedBagNames.put(c, preSelectedBagName);
                         }
@@ -346,15 +346,15 @@ public class TemplateController extends TilesAction
     }
 
     private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         SavedQuery savedQuery = profile.getHistory().get(templateName);
+        PathQuery currentQuery = SessionMethods.getQuery(session);
         TemplateQuery template = null;
         if (savedQuery.getPathQuery() instanceof TemplateQuery) {
             template = (TemplateQuery) savedQuery.getPathQuery();
-        } else if (session.getAttribute(Constants.QUERY)
-                        instanceof TemplateQuery) {
+        } else if (currentQuery instanceof TemplateQuery) {
             // see #1435
-            template = (TemplateQuery) session.getAttribute(Constants.QUERY);
+            template = (TemplateQuery) currentQuery;
         }
         return template;
     }
@@ -385,7 +385,7 @@ public class TemplateController extends TilesAction
         Map<String, String> autoMap = new HashMap<String, String>();
 
         for (PathNode node : template.getEditableNodes()) {
-        	for (Constraint c : template.getEditableConstraints(node)) {
+            for (Constraint c : template.getEditableConstraints(node)) {
                 String attributeKey = "" + (j + 1);
                 tf.setAttributeValues(attributeKey, "" + c.getDisplayValue());
                 tf.setAttributeOps(attributeKey, "" + c.getOp().getIndex());

@@ -25,7 +25,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
@@ -41,24 +40,21 @@ public class GalaxyController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+
+        PathQuery query = SessionMethods.getQuery(session);
         Model model = im.getModel();
-        
-        String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(), 
+
+        String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);
-        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");        
+        String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
         StringBuffer stringUrl = new StringBuffer(new URLGenerator(request).getPermanentBaseURL()
                 + "/service/query/results?query=" + encodedQueryXML + "&size=1000000");
         request.setAttribute("urlSendBack", stringUrl.toString());
         return null;
     }
-
 }

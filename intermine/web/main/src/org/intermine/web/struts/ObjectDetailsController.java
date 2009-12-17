@@ -43,6 +43,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.DisplayReference;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.model.userprofile.Tag;
@@ -72,7 +73,7 @@ public class ObjectDetailsController extends InterMineAction
         TagManager tagManager = im.getTagManager();
         ServletContext servletContext = session.getServletContext();
         ObjectStore os = im.getObjectStore();
-        Map<Integer, DisplayObject> displayObjects = SessionMethods.getDisplayObjects(session);
+        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
 
         String idString = request.getParameter("id");
 
@@ -84,11 +85,8 @@ public class ObjectDetailsController extends InterMineAction
 
         String superuser = im.getProfileManager().getSuperuser();
 
-        DisplayObject dobj = displayObjects.get(id);
-        if (dobj == null) {
-            dobj = makeDisplayObject(session, object);
-            displayObjects.put(id, dobj);
-        }
+        DisplayObject dobj = displayObjects.get(object);
+        dobj.getClass();
         request.setAttribute("object", dobj);
 
         if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
@@ -101,8 +99,7 @@ public class ObjectDetailsController extends InterMineAction
         Set<String> aspects
             = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
 
-        Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(
-                dobj.getObject().getClass());
+        Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(object.getClass());
 
         placementRefsAndCollections.put(TagNames.IM_SUMMARY,
                 getSummaryFields(tagManager, superuser, dobj, cds));
@@ -121,14 +118,12 @@ public class ObjectDetailsController extends InterMineAction
             DisplayField df = (DisplayField) entry.getValue();
             if (df instanceof DisplayReference) {
                 categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
-                                      "reference", df, miscRefs, tagManager, superuser,
-                                      placementRefsAndCollections, SessionMethods
-                                      .isSuperUser(session));
+                        "reference", df, miscRefs, tagManager, superuser,
+                        placementRefsAndCollections, SessionMethods.isSuperUser(session));
             } else if (df instanceof DisplayCollection) {
                 categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(),
-                                      "collection", df, miscRefs, tagManager, superuser,
-                                      placementRefsAndCollections, SessionMethods
-                                      .isSuperUser(session));
+                        "collection", df, miscRefs, tagManager, superuser,
+                        placementRefsAndCollections, SessionMethods.isSuperUser(session));
             }
         }
 
@@ -235,25 +230,5 @@ public class ObjectDetailsController extends InterMineAction
             Entry<String, Map> entry = it.next();
             entry.getValue().remove(name);
         }
-    }
-
-
-    /**
-     * Make a new DisplayObject from the given object.
-     *
-     * @param session used to get WEB_PROPERTIES and DISPLAYERS Maps
-     * @param object the InterMineObject
-     * @return the new DisplayObject
-     * @throws Exception if an error occurs
-     */
-    public static DisplayObject makeDisplayObject(HttpSession session,
-            InterMineObject object) throws Exception {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Model model = im.getModel();
-        Map classKeys = im.getClassKeys();
-        ServletContext servletContext = session.getServletContext();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
-        Map webPropertiesMap = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        return new DisplayObject(object, model, webConfig, webPropertiesMap, classKeys);
     }
 }

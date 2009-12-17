@@ -63,7 +63,7 @@ public class EditTemplateAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
         
         String queryName = request.getParameter("name");
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, queryName);
@@ -72,7 +72,7 @@ public class EditTemplateAction extends InterMineAction
         SessionMethods.loadQuery(queryClone, session, response);
         session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
 
-        PathQuery sessionQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery sessionQuery = SessionMethods.getQuery(session);
         if (!sessionQuery.isValid()) {
             recordError(new ActionError("errors.template.badtemplate",
                     PathQueryUtil.getProblemsSummary(sessionQuery.getProblems())), request);

@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.web.logic.Constants;
+
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the tips page
@@ -42,8 +43,8 @@ public class TipController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        String tipCount = (String) ((Map) session.getServletContext().
-                                    getAttribute(Constants.WEB_PROPERTIES)).get("tips.size");
+        Properties props = SessionMethods.getWebProperties(session.getServletContext());
+        String tipCount = props.getProperty("tips.size");
 
         try {
             Integer i = new Integer(tipCount);

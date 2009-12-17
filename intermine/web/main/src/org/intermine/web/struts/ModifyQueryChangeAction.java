@@ -54,7 +54,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
                               HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String queryName = request.getParameter("name");
 
         SavedQuery sq;
@@ -93,7 +93,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
                              HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String queryName = request.getParameter("name");
         String trail = request.getParameter("trail");
         SavedQuery sq;
@@ -138,7 +138,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
                               @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String queryName = request.getParameter("name");
         SavedQuery sq = profile.getHistory().get(queryName);
         sq = SessionMethods.saveQuery(session,

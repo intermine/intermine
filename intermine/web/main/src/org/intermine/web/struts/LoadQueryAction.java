@@ -63,7 +63,7 @@ public class LoadQueryAction extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String trail = request.getParameter("trail");
         String queryXml = request.getParameter("query");
         Boolean skipBuilder = Boolean.valueOf(request.getParameter("skipBuilder"));

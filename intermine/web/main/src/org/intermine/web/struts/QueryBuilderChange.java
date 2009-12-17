@@ -80,7 +80,7 @@ public class QueryBuilderChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
 
-        PathQuery pathQuery = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery pathQuery = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
 
         removeNode(pathQuery, path);
@@ -247,7 +247,7 @@ public class QueryBuilderChange extends DispatchAction
                                        @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
 
         session.setAttribute("editingNode", query.getNodes().get(path));
@@ -281,7 +281,7 @@ public class QueryBuilderChange extends DispatchAction
                                           @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
@@ -312,7 +312,7 @@ public class QueryBuilderChange extends DispatchAction
                                         @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
@@ -360,7 +360,7 @@ public class QueryBuilderChange extends DispatchAction
                                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
         int index = Integer.parseInt(request.getParameter("index"));
 
@@ -392,7 +392,7 @@ public class QueryBuilderChange extends DispatchAction
                                                    HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String path = request.getParameter("path");
         Node node = query.getNodes().get(path);
         if (node == null) {
@@ -425,8 +425,8 @@ public class QueryBuilderChange extends DispatchAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         Model model = im.getModel();
+        PathQuery query = SessionMethods.getQuery(session).clone();
 
-        PathQuery query = ((PathQuery) session.getAttribute(Constants.QUERY)).clone();
         String prefix = (String) session.getAttribute("prefix");
         String path = request.getParameter("path");
 
@@ -584,7 +584,7 @@ public class QueryBuilderChange extends DispatchAction
         List<Path> view = SessionMethods.getEditingView(session);
 
         String pathName = request.getParameter("path");
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         String prefix = (String) session.getAttribute("prefix");
 
         // we may be adding a long path to the query, there are several outer join considerations:

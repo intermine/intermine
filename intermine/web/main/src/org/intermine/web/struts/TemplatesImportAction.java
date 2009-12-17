@@ -30,7 +30,6 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
@@ -53,7 +52,7 @@ public class TemplatesImportAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         
         ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         TemplatesImportForm tif = (TemplatesImportForm) form;
 
         int deleted = 0, imported = 0, renamed = 0;

@@ -23,7 +23,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action to display the query builder (if there is a current query) or redirect to
@@ -48,7 +48,7 @@ public class CurrentQueryAction extends InterMineAction
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         boolean showTemplate = (request.getParameter("showTemplate") != null);
 
         if (query == null) {
@@ -59,7 +59,7 @@ public class CurrentQueryAction extends InterMineAction
         if (query instanceof TemplateQuery && showTemplate) {
             TemplateQuery template = (TemplateQuery) query;
             if (template.isEdited()) {
-                Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                Profile profile = SessionMethods.getProfile(session);
                 SavedQuery sq = null;
                 for (Iterator iter = profile.getHistory().values().iterator(); iter.hasNext();) {
                     sq = (SavedQuery) iter.next();

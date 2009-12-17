@@ -104,7 +104,7 @@ public class PortalQueryAction extends InterMineAction
             extId = request.getParameter("externalids");
         }
         // Add a message to welcome the user
-        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Properties properties = SessionMethods.getWebProperties(servletContext);
         String welcomeMsg = properties.getProperty("portal.welcome." + origin);
         if (StringUtil.isEmpty(welcomeMsg)) {
             welcomeMsg = properties.getProperty("portal.welcome");
@@ -125,7 +125,7 @@ public class PortalQueryAction extends InterMineAction
         collapsed.put("further", Boolean.FALSE);
         collapsed.put("summary", Boolean.FALSE);
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String[] idList = extId.split(",");
 
         // Use the old way = quicksearch template in case some people used to link in
@@ -138,7 +138,7 @@ public class PortalQueryAction extends InterMineAction
         }
 
         Model model = im.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
 
         // If the class is not in the model, we can't continue
@@ -294,7 +294,7 @@ public class PortalQueryAction extends InterMineAction
             HttpServletRequest request, HttpServletResponse response, String userName,
             String extId, @SuppressWarnings("unused") String origin) throws InterruptedException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Properties properties = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Properties properties = SessionMethods.getWebProperties(servletContext);
         String templateName = properties.getProperty("begin.browse.template");
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getGlobalTemplate(templateName);
