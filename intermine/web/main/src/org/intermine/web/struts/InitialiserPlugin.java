@@ -48,6 +48,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -60,12 +61,12 @@ import org.intermine.sql.Database;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
-import org.intermine.model.userprofile.Tag;
 
 /**
  * Initialiser for the InterMine web application.
@@ -101,28 +102,41 @@ public class InitialiserPlugin implements PlugIn
 
         System.setProperty("java.awt.headless", "true");
 
-        loadWebProperties(servletContext);
+        // initialise properties
+        Properties webProperties = loadWebProperties(servletContext);
+        servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
 
-        ObjectStore os = null;
-        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
-        String osAlias = (String) webProps.get("webapp.os.alias");
-        try {
-            os = ObjectStoreFactory.getObjectStore(osAlias);
-        } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                cause.printStackTrace();
-            }
-            throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
-        }
-
+        // set up core InterMine application
+        ObjectStore os = getProductionObjectStore(webProperties);
+       
+        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+        final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
+        final Map <String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
+        
+        final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig, 
+                oss);
+        servletContext.setAttribute(Constants.INTERMINE_API, im);
+        
+        
+        // read in additional webapp specific information and put in servletContext
         WebConfig webConfig = loadWebConfig(servletContext, os);
 
-        loadAspectsConfig(servletContext, os);
+        loadAspectsConfig(servletContext);
+        loadClassDescriptions(servletContext);
 
-        loadClassDescriptions(servletContext, os);
+        // index global webSearchables
+        final Profile superProfile = im.getProfileManager().getSuperuserProfile();
+        SearchRepository searchRepository =
+            new SearchRepository(superProfile, Scope.GLOBAL);
+        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
 
-        ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
+        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
+
+        loadAutoCompleter(servletContext, os);
+
+        cleanTags(im.getTagManager());
+
         Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
         for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
             boolean keyless = true;
@@ -139,53 +153,41 @@ public class InitialiserPlugin implements PlugIn
         LOG.error("Keyless classes: " + keylessClasses);
         servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
 
-        // load class keys
-        final Map <String, List<FieldDescriptor>> classKeys = loadClassKeys(servletContext, os);
-
-        // load custom bag queries
-        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-
-        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProps);
-
-        InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig, oss);
-        servletContext.setAttribute(Constants.INTERMINE_API, im);
-
-        // index global webSearchables
-        final Profile superProfile = im.getProfileManager().getSuperuserProfile();
-        SearchRepository searchRepository =
-            new SearchRepository(superProfile, Scope.GLOBAL);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
-
-        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap());
-
-        loadAutoCompleter(servletContext, os);
-
-        cleanTags(im.getTagManager());
-
+        setupClassSummaryInformation(servletContext, oss, os.getModel());
     }
 
-    /**
-     * Load the Aspects configuration from aspects.xml
-     * @param servletContext the servlet context
-     * @param os the main objectstore
-     */
-    private void loadAspectsConfig(ServletContext servletContext,
-                                   @SuppressWarnings("unused") ObjectStore os) {
+    
+    private ObjectStore getProductionObjectStore(Properties webProperties) throws ServletException {
+        ObjectStore os;
+        String osAlias = (String) webProperties.get("webapp.os.alias");
+        try {
+            os = ObjectStoreFactory.getObjectStore(osAlias);
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                cause.printStackTrace();
+            }
+            throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
+        }
+        return os;
+    }
+    
+    private void loadAspectsConfig(ServletContext servletContext) {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
             servletContext.setAttribute(Constants.ASPECTS, Collections.EMPTY_MAP);
             servletContext.setAttribute(Constants.CATEGORIES, Collections.EMPTY_SET);
         } else {
-            Map sets;
+            Map<String, Aspect> aspects;
             try {
-                sets = AspectBinding.unmarhsal(is);
+                aspects = AspectBinding.unmarhsal(is);
             } catch (Exception e) {
                 throw new RuntimeException("problem while reading aspect configuration file", e);
             }
-            servletContext.setAttribute(Constants.ASPECTS, sets);
+            servletContext.setAttribute(Constants.ASPECTS, aspects);
             servletContext.setAttribute(Constants.CATEGORIES,
-                    Collections.unmodifiableSet(sets.keySet()));
+                    Collections.unmodifiableSet(aspects.keySet()));
         }
     }
 
@@ -212,7 +214,7 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Load the displayer configuration
+     * Object and widget display configuration
      */
     private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os)
         throws ServletException {
@@ -231,10 +233,9 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Load the user-friendly class descriptions
+     *  Load user-friendly class description
      */
-    private void loadClassDescriptions(ServletContext servletContext,
-                                       @SuppressWarnings("unused") ObjectStore os)
+    private void loadClassDescriptions(ServletContext servletContext)
         throws ServletException {
         Properties classDescriptions = new Properties();
         try {
@@ -249,8 +250,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private Map<String, List<FieldDescriptor>> loadClassKeys(ServletContext servletContext,
-            ObjectStore os) throws ServletException {
+    private Map<String, List<FieldDescriptor>> loadClassKeys(Model model) throws ServletException {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(InitialiserPlugin.class.getClassLoader()
@@ -259,7 +259,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Error loading class descriptions", e);
         }
         Map<String, List<FieldDescriptor>>  classKeys =
-            ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
+            ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
     }
 
@@ -284,9 +284,9 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Read the example queries into the EXAMPLE_QUERIES servlet context attribute.
+     * Read in the webapp configuration properties
      */
-    private void loadWebProperties(ServletContext servletContext) throws ServletException {
+    private Properties loadWebProperties(ServletContext servletContext) throws ServletException {
         Properties webProperties = new Properties();
         InputStream globalPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
@@ -306,7 +306,7 @@ public class InitialiserPlugin implements PlugIn
                 throw new ServletException("Unable to find web.properties", e);
             }
         }
-        servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
+        return webProperties;
     }
 
     /**
@@ -329,7 +329,11 @@ public class InitialiserPlugin implements PlugIn
         }
 
         final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
-        Model model = os.getModel();
+        return oss;
+    }
+     
+    private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
+            final Model model) throws ServletException {
         Map classes = new LinkedHashMap();
         Map classCounts = new LinkedHashMap();
         for (Iterator i = new TreeSet(model.getClassNames()).iterator(); i.hasNext();) {
@@ -389,11 +393,10 @@ public class InitialiserPlugin implements PlugIn
                 if (key == null) {
                     return Collections.EMPTY_SET;
                 }
-                return DisplayObject.getLeafClds(key.getClass(), os.getModel());
+                return DisplayObject.getLeafClds(key.getClass(), model);
             }
         };
         servletContext.setAttribute(Constants.LEAF_DESCRIPTORS_MAP, leafDescriptorsMap);
-        return oss;
     }
 
 
@@ -412,6 +415,8 @@ public class InitialiserPlugin implements PlugIn
         return userprofileOSW;
     }
 
+    
+    
     /**
      * Destroy method called at Servlet destroy
      */
