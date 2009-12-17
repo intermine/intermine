@@ -39,20 +39,10 @@
     </c:when>
     
     <%-- password --%> 
-    <c:when test="${[subtabName]  =='password'}">
+    <c:when test="${subtabs[subtabName]  =='password'}">
       <tiles:insert name="changePassword.jsp" />
     </c:when>
   </c:choose>
-
-
-  <%-- a login prompt is already in the intro msg
-  login msg
-  <c:if test="${!PROFILE.loggedIn}">
-    <div class="body">
-      <html:link action="/login"><fmt:message key="menu.login"/></html:link>&nbsp;&nbsp;
-      <fmt:message key="mymine.login.help"/>
-    </div>
-  </c:if> --%>
 
   <%-- tag actions for super user --%>
   <div class="body">
