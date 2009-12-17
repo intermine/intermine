@@ -25,6 +25,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
@@ -82,8 +83,10 @@ public class QuickSearchAction extends InterMineAction
 
             SessionMethods.logTemplateQueryUse(session, Scope.GLOBAL, templateName);
 
+            // the quick search template may not be public so look directly in the superuser profile
+            Profile superUser = im.getProfileManager().getSuperuserProfile();
             TemplateManager templateManager = im.getTemplateManager();
-            TemplateQuery template = templateManager.getGlobalTemplate(templateName);
+            TemplateQuery template = templateManager.getUserTemplate(superUser, templateName);
 
             if (template == null) {
                 LOG.error("Template configured for 'begin.browse.template' doesn't exist.");
