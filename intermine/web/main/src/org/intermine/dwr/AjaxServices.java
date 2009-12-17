@@ -68,7 +68,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
@@ -591,9 +590,6 @@ public class AjaxServices
             int count = 0;
             try {
                 imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-                Map<String, QuerySelectable> pathToQueryNode = new HashMap();
-
-                ProfileManager pm = im.getProfileManager();
                 List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
 
                 PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
@@ -714,7 +710,7 @@ public class AjaxServices
                 if (!operation.equals("copy") && (bagName.equals("")
                             || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
-                } else if (!NameUtil.isValidName(bagName)) {
+                } else if (!operation.equals("copy") && !NameUtil.isValidName(bagName)) {
                     return INVALID_NAME_MSG;
                 }
             }
