@@ -21,8 +21,7 @@ if (returnToPath != null) {
   <c:set var="returnToString" value="?returnto=${returnToPath}"/>
 </c:if>
 <c:choose>
-  <c:when test="${PROFILE.loggedIn}">
-  
+  <c:when test="${!PROFILE.loggedIn}">  
     <a href="/${WEB_PROPERTIES['webapp.path']}/login.do${returnToString}" rel="NOFOLLOW">
       <c:if test="${empty loginMessage}">
         <fmt:message var="loginMessage" key="menu.login"/>
