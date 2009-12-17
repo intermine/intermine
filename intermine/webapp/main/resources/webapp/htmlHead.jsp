@@ -36,7 +36,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
   <link rel="stylesheet" href="model/css/frontpage_sections.css" type="text/css" media="screen" title="no title" charset="utf-8">
 </c:if>
-<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag'}">
+<c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'objectDetails' || pageName == 'bag' || pageName == 'mymine'}">
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
   <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
   <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
