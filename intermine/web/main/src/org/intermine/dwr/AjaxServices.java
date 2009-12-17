@@ -694,23 +694,21 @@ public class AjaxServices
             if (operation.equals("delete")) {
                 for (int i = 0; i < selectedBags.length; i++) {
                     Set<String> queries = new HashSet<String>();
-                    queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
+                    queries.addAll(queriesThatMentionBag(profile.getSavedQueries(), 
                                                          selectedBags[i]));
-                    queries.addAll(queriesThatMentionBag(profile.getHistory(),
-                                                         selectedBags[i]));
+                    queries.addAll(queriesThatMentionBag(profile.getHistory(), selectedBags[i]));
                     if (queries.size() > 0) {
                         return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
                             + "by other queries " + queries;
                     }
                 }
-            } else {
+            } else if (!operation.equals("copy")) {
                 Properties properties = (Properties) servletContext
                     .getAttribute(Constants.WEB_PROPERTIES);
                 String defaultName = properties.getProperty("lists.input.example");
-                if (!operation.equals("copy") && (bagName.equals("")
-                            || (bagName.equalsIgnoreCase(defaultName)))) {
+                if ((bagName.equals("") || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
-                } else if (!operation.equals("copy") && !NameUtil.isValidName(bagName)) {
+                } else if (!NameUtil.isValidName(bagName)) {
                     return INVALID_NAME_MSG;
                 }
             }
