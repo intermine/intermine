@@ -86,7 +86,7 @@ public class QuickSearchAction extends InterMineAction
             TemplateQuery template = templateManager.getGlobalTemplate(templateName);
 
             if (template == null) {
-                LOG.error("'begin.browse.template' not configured correctly in properties file.");
+                LOG.error("Template configured for 'begin.browse.template' doesn't exist.");
                 recordError(new ActionMessage("quicksearch.fail"), request);
                 return mapping.findForward("error");
             }
