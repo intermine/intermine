@@ -29,7 +29,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action handles submission of user feedback form.
@@ -59,16 +59,14 @@ public class ContactAction extends InterMineAction
         HttpSession session = request.getSession();
         ContactForm ff = (ContactForm) form;
         try {
-            Map webProperties 
-            = (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+            Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
             MessageResources strings = getResources(request);
-            String host = (String) ((Map) session.getServletContext().
-                        getAttribute(Constants.WEB_PROPERTIES)).get("mail.host");
+            String host = webProperties.getProperty("mail.host");
             String from = ff.getMonkey();
             String subject = ff.getSubject();
             String text = MessageFormat.format(strings.getMessage("contact.template"),
                                 new Object[] {ff.getName(), ff.getMonkey(), ff.getMessage()});
-            String dest = (String) webProperties.get("feedback.destination");
+            String dest = webProperties.getProperty("feedback.destination");
             Properties properties = System.getProperties();
             properties.put("mail.smtp.host", host);
 

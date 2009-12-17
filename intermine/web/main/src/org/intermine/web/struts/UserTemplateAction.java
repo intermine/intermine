@@ -23,7 +23,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -52,7 +51,7 @@ public class UserTemplateAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         String templateName = request.getParameter("name");
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         TemplateQuery template = profile.getSavedTemplates().get(templateName);
         if (template != null) {

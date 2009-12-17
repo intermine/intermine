@@ -37,8 +37,9 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -69,7 +70,7 @@ public class ModifyDetails extends DispatchAction
         String scope = request.getParameter("scope");
         String bagName = request.getParameter("bagName");
         String idForLookup = request.getParameter("idForLookup");
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
@@ -211,7 +212,7 @@ public class ModifyDetails extends DispatchAction
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String type = request.getParameter("type");
         String id = request.getParameter("id");
         String templateName = request.getParameter("template");
@@ -225,8 +226,8 @@ public class ModifyDetails extends DispatchAction
 
         if (detailsType.equals("object")) {
             InterMineObject o = os.getObjectById(new Integer(id));
-            Map displayObjects = (Map) session.getAttribute(Constants.DISPLAY_OBJECT_CACHE);
-            DisplayObject obj = (DisplayObject) displayObjects.get(o);
+            DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+            DisplayObject obj = displayObjects.get(o);
             cc.putAttribute("displayObject", obj);
             cc.putAttribute("templateQuery", tq);
             cc.putAttribute("placement", request.getParameter("placement"));
@@ -282,11 +283,22 @@ public class ModifyDetails extends DispatchAction
      * @return DisplayObject for the intermine object
      */
     protected DisplayObject getDisplayObject(HttpSession session, String idString) {
-        Map displayObjects = (Map) session.getAttribute("displayObjects");
-        if (displayObjects != null && displayObjects.get(new Integer(idString)) != null) {
-            return (DisplayObject) displayObjects.get(new Integer(idString));
+        ObjectStore os = SessionMethods.getInterMineAPI(session).getObjectStore();
+        InterMineObject obj = null;
+        try {
+            obj = os.getObjectById(new Integer(idString));
+        } catch (ObjectStoreException e) {
+            LOG.error("Exception while fetching object with id " + idString, e);
         }
-        LOG.error("Could not find DisplayObject on session for id " + idString);
-        return null;
+        if (obj == null) {
+            LOG.error("Could not find object with id " + idString);
+            return null;
+        }
+        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
+        DisplayObject retval = displayObjects.get(obj);
+        if (retval == null) {
+            LOG.error("Could not find DisplayObject on session for id " + idString);
+        }
+        return retval;
     }
 }

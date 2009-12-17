@@ -32,7 +32,6 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -49,17 +48,15 @@ public class FavouritesController extends TilesAction
      * {@inheritDoc}
      */
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, 
-                                 @SuppressWarnings("unused") HttpServletResponse response) 
-    throws Exception {
+            @SuppressWarnings("unused") ActionMapping mapping,
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         ArrayList<TemplateQuery> favouriteTemplates = new ArrayList();
-        
+
         if (profile.getUsername() != null) {
             Profile superuserProfile = im.getProfileManager().getSuperuserProfile();
             Map<String, TemplateQuery> savedTemplates = new HashMap();
@@ -67,8 +64,8 @@ public class FavouritesController extends TilesAction
             savedTemplates.putAll(profile.getSavedTemplates());
             TagManager tagManager = im.getTagManager();
 
-            List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE, 
-                                               profile.getUsername());
+            List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE,
+                    profile.getUsername());
             for (Iterator iter = userTags.iterator(); iter.hasNext();) {
                 Tag element = (Tag) iter.next();
                 TemplateQuery templateQuery = savedTemplates.get(element.getObjectIdentifier());

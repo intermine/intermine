@@ -80,11 +80,11 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 userAgent = request.getHeader("user-agent").toLowerCase();
             }
 
-            if (request.getSession().getAttribute(Constants.PROFILE) == null) {
-                request.getSession().invalidate();
+            Profile profile = SessionMethods.getProfile(session);
+            if (profile == null) {
+                session.invalidate();
+                profile = SessionMethods.getProfile(session);
             }
-
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
 
             if (userAgent != null && !profile.isLoggedIn()) {
                 for (String bot : bots) {

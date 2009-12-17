@@ -68,10 +68,10 @@ public class QueryBuilderConstraintController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ServletContext servletContext = session.getServletContext();
         Model model = im.getModel();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         query = query.clone();
         for (Path p : query.getView()) {
             String path = p.toStringNoConstraints();

@@ -61,7 +61,7 @@ public class MyMineController extends TilesAction
         TagManager tagManager = im.getTagManager();
         String page = request.getParameter("page");
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         /* if the user is on a restricted page and they are not logged in, send them to the bags
          * page.  query history is not a restricted page.
@@ -77,7 +77,7 @@ public class MyMineController extends TilesAction
         if (page != null) {
             if (page.equals("templates")) {
                 // prime the tags cache so that the templates tags will be quick to access
-                String userName = ((Profile) session.getAttribute(Constants.PROFILE)).getUsername();
+                String userName = profile.getUsername();
                 if (userName != null) {
                     // discard result
                     tagManager.getTags(null, null, TagTypes.TEMPLATE, userName);

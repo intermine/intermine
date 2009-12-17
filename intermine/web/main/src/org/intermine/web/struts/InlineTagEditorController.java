@@ -31,7 +31,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -55,7 +54,7 @@ public class InlineTagEditorController extends TilesAction
         throws Exception {
         // Retrieve the taggable thing from the context
         Object taggable = context.getAttribute("taggable");
-        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(request.getSession());
 
         String tagged = null;
         String type = null;

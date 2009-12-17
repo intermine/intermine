@@ -23,7 +23,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -44,15 +43,14 @@ public class AddToBagAction extends InterMineAction
      * @return an ActionForward object defining where control goes next
      */
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            @SuppressWarnings("unused") HttpServletResponse response) {
         int id = Integer.parseInt(request.getParameter("object"));
         HttpSession session = request.getSession();
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+
+        Profile profile = SessionMethods.getProfile(session);
         String bagName = request.getParameter("bag");
 
         InterMineBag existingBag = profile.getSavedBags().get(bagName);

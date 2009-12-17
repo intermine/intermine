@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,24 +31,18 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author Xavier Watkins
- *
  */
 public class CreateAccountAction extends LoginHandler
 {
     /**
-     * Method called when user has finished updating a constraint
+     * Method called when user has finished updating a constraint.
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception if the application business logic throws an exception
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -58,13 +53,12 @@ public class CreateAccountAction extends LoginHandler
         String password = ((CreateAccountForm) form).getPassword();
         pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
                 new HashMap()));
-        Map webProperties = 
-            (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
             MailUtils.email(username, webProperties);
             if (((CreateAccountForm) form).getMailinglist()
-                && webProperties.get("mail.mailing-list") != null
-                && ((String) webProperties.get("mail.mailing-list")).length() > 0) {
+                && webProperties.getProperty("mail.mailing-list") != null
+                && webProperties.getProperty("mail.mailing-list").length() > 0) {
                 MailUtils.subscribe(username, webProperties);
             }
             SessionMethods.recordMessage("You have successfully created an account.", session);
@@ -86,5 +80,4 @@ public class CreateAccountAction extends LoginHandler
         doLogin(request, response, session, pm, username, password);
         return mapping.findForward("mymine");
     }
-
 }

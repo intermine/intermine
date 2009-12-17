@@ -25,7 +25,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.xml.TagBinding;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -56,7 +55,7 @@ public class ImportTagsAction extends InterMineAction
         ImportTagsForm f = (ImportTagsForm) form;
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ProfileManager pm = im.getProfileManager();
         StringReader reader = new StringReader(f.getXml());
         int count = 0;

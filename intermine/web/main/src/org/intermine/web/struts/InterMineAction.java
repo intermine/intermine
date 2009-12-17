@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * An InterMine specific version of Action.
@@ -83,7 +83,6 @@ public class InterMineAction extends Action
      * @return Properties
      */
     public static Properties getWebProperties(HttpServletRequest request) {
-        return (Properties) request.getSession().getServletContext()
-            .getAttribute(Constants.WEB_PROPERTIES);
+        return SessionMethods.getWebProperties(request.getSession().getServletContext());
     }
 }

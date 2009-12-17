@@ -108,16 +108,16 @@ public class InitialiserPlugin implements PlugIn
 
         // set up core InterMine application
         ObjectStore os = getProductionObjectStore(webProperties);
-       
+
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
         final ObjectStoreSummary oss = summariseObjectStore(servletContext, os);
         final Map <String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os);
-        
-        final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig, 
+
+        final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss);
         servletContext.setAttribute(Constants.INTERMINE_API, im);
-        
+
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
         
@@ -158,7 +158,7 @@ public class InitialiserPlugin implements PlugIn
         setupClassSummaryInformation(servletContext, oss, os.getModel());
     }
 
-    
+
     private ObjectStore getProductionObjectStore(Properties webProperties) throws ServletException {
         ObjectStore os;
         String osAlias = (String) webProperties.get("webapp.os.alias");
@@ -173,7 +173,7 @@ public class InitialiserPlugin implements PlugIn
         }
         return os;
     }
-    
+
     private void loadAspectsConfig(ServletContext servletContext) {
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
@@ -333,7 +333,7 @@ public class InitialiserPlugin implements PlugIn
         final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
         return oss;
     }
-     
+
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
             final Model model) throws ServletException {
         Map classes = new LinkedHashMap();
@@ -417,8 +417,7 @@ public class InitialiserPlugin implements PlugIn
         return userprofileOSW;
     }
 
-    
-    
+
     /**
      * Destroy method called at Servlet destroy
      */

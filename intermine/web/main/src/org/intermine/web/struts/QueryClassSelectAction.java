@@ -83,4 +83,3 @@ public class QueryClassSelectAction extends InterMineAction
         session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
     }
 }
-

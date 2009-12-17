@@ -112,8 +112,7 @@ public class TableController extends TilesAction
                 String extraConstraint = (String) query.getNode(path).getConstraint(0)
                     .getExtraValue();
                 BagQueryResult bqr = entry.getValue();
-                Properties properties =
-                    (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+                Properties properties = SessionMethods.getWebProperties(servletContext);
                 DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type,
                                                            extraConstraint);
             }
@@ -122,9 +121,9 @@ public class TableController extends TilesAction
             request.setAttribute("lookupResults", Collections.EMPTY_MAP);
         }
 
-        if (session.getAttribute(Constants.QUERY) != null) {
-            if (session.getAttribute(Constants.QUERY) instanceof TemplateQuery) {
-                request.setAttribute("templateQuery", session.getAttribute(Constants.QUERY));
+        if (query != null) {
+            if (query instanceof TemplateQuery) {
+                request.setAttribute("templateQuery", query);
             }
         }
 

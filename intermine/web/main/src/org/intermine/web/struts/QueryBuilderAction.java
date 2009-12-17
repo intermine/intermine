@@ -59,7 +59,7 @@ public class QueryBuilderAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         QueryBuilderForm mf = (QueryBuilderForm) form;
 
         Model model = im.getModel();

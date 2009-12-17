@@ -31,7 +31,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.TreeNode;
 import org.intermine.web.logic.session.SessionMethods;
 

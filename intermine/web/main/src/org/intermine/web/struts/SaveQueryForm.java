@@ -23,7 +23,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean to represent the inputs to the query saving action
@@ -59,7 +59,7 @@ public class SaveQueryForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         Map<String, SavedQuery> savedQueries = profile.getSavedQueries();
 
         ActionErrors errors = null;

@@ -42,7 +42,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -66,25 +65,25 @@ public class FindInListAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         FindInListForm qsf = (FindInListForm) form;
         String textToFind = qsf.getTextToFind().trim();
         String bagName = qsf.getBagName();
-        Profile profile = ((Profile) session.getAttribute(Constants.PROFILE));
+        Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
 
-        ForwardParameters forwardParameters = 
+        ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
         forwardParameters.addParameter("name", bagName);
 
         if (bag != null) {
             Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
             ObjectStore os = im.getObjectStore();
-            
+
             String bagQualifiedType = bag.getQualifiedType();
             Collection<String> keyFields =
                 ClassKeyHelper.getKeyFieldNames(classKeys, bagQualifiedType);

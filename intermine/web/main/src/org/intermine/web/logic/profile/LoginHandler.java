@@ -27,7 +27,9 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
+
 /**
  * @author Xavier Watkins
  *
@@ -50,7 +52,7 @@ public abstract class LoginHandler extends InterMineAction
             HttpSession session, ProfileManager pm, String username,
             String password) {
         // Merge current history into loaded profile
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile currentProfile = SessionMethods.getProfile(request.getSession());
         Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {

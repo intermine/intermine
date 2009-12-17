@@ -40,7 +40,6 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.stringtree.json.JSONWriter;
@@ -116,7 +115,7 @@ public class WebSearchableListController extends TilesAction
             wsMapForJS.put(wsName, new Integer(1));
         }
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
 
@@ -197,12 +196,11 @@ public class WebSearchableListController extends TilesAction
         if (scope.equals(Scope.GLOBAL)) {
             profile = im.getProfileManager().getSuperuserProfile();
         } else {
-            profile = (Profile) session.getAttribute(Constants.PROFILE);
+            profile = SessionMethods.getProfile(session);
         }
         SearchRepository searchRepository;
         if (scope.equals(Scope.GLOBAL)) {
-            searchRepository = (SearchRepository) servletContext.getAttribute(Constants
-                    .GLOBAL_SEARCH_REPOSITORY);
+            searchRepository = SessionMethods.getGlobalSearchRepository(servletContext);
         } else {
             searchRepository = profile.getSearchRepository();
         }

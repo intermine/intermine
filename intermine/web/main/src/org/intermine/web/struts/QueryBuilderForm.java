@@ -28,7 +28,6 @@ import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -353,7 +352,7 @@ public class QueryBuilderForm extends ActionForm
 
         Model model = im.getModel();
         Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
 
         ActionErrors errors = new ActionErrors();
         ConstraintOp constraintOp = (getAttributeOp() == null) ? null

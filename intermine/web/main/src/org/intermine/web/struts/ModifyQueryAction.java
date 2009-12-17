@@ -26,7 +26,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action that results from a button press on the user profile page.
@@ -79,7 +79,7 @@ public class ModifyQueryAction extends InterMineAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyQueryForm mqf = (ModifyQueryForm) form;
         String type = request.getParameter("type");
 
@@ -122,7 +122,7 @@ public class ModifyQueryAction extends InterMineAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyQueryForm mqf = (ModifyQueryForm) form;
         String type = request.getParameter("type");
 

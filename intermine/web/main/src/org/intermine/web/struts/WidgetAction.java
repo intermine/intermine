@@ -122,7 +122,7 @@ public class WidgetAction extends InterMineAction
             }
         }
 
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile currentProfile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
@@ -183,7 +183,7 @@ public class WidgetAction extends InterMineAction
         if (!StringUtils.isEmpty(key)) {
             allOrSelected = "Selected";
         }
-        Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile currentProfile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile, bagName);
 
@@ -303,7 +303,7 @@ public class WidgetAction extends InterMineAction
                 attributes.add(widgetForm.getPValue());
                 attributes.add(widgetForm.getNumberOpt());
 
-                Profile currentProfile = (Profile) session.getAttribute(Constants.PROFILE);
+                Profile currentProfile = SessionMethods.getProfile(session);
                 BagManager bagManager = im.getBagManager();
                 InterMineBag bag = bagManager.getUserOrGlobalBag(currentProfile,
                         widgetForm.getBagName());

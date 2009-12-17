@@ -29,7 +29,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -47,7 +46,7 @@ public class ImportQueriesAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ImportQueriesForm qif = (ImportQueriesForm) form;
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 

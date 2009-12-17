@@ -23,7 +23,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHelper;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -49,7 +48,7 @@ public class ViewChange extends DispatchAction
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
 
         // remove from view and from order by if present
         query.removeFromView(path);

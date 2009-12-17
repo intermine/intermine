@@ -73,7 +73,7 @@ public class QueryForGraphAction extends InterMineAction
         InterMineBag bag;
 
         /* get bag from user profile */
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         bag = bagManager.getUserOrGlobalBag(profile, bagName);
 
         /* its all gone horribly wrong, no one has the bag! */

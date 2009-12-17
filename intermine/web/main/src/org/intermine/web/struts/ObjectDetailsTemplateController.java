@@ -33,7 +33,6 @@ import org.intermine.api.template.TemplatePopulatorException;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateValue;
 import org.intermine.model.InterMineObject;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -88,8 +87,8 @@ public class ObjectDetailsTemplateController extends TilesAction
             return null;
         }
 
-        WebResultsExecutor executor = im.getWebResultsExecutor((Profile) session
-                .getAttribute(Constants.PROFILE));
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(populatedTemplate);
         // if there was a problem running query ignore and don't put up results
         if (webResults != null) {

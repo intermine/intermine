@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class RequestPasswordAction extends InterMineAction
         ProfileManager pm = im.getProfileManager();
         
         ServletContext servletContext = request.getSession().getServletContext();
-        Map webProperties = (Map) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Properties webProperties = SessionMethods.getWebProperties(servletContext);
         String username = ((RequestPasswordForm) form).getUsername();
 
         if (pm.hasProfile(username)) {

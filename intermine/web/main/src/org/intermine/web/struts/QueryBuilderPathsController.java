@@ -29,7 +29,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the main paths tile.
@@ -51,7 +51,7 @@ public class QueryBuilderPathsController extends TilesAction
     private static void populateRequest(HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
-        PathQuery query = (PathQuery) session.getAttribute(Constants.QUERY);
+        PathQuery query = SessionMethods.getQuery(session);
         // First merge the query and the view
         PathQuery q = query.clone();
         for (Path p : q.getView()) {

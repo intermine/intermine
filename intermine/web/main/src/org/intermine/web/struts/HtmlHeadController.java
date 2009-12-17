@@ -31,8 +31,8 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -65,7 +65,7 @@ public class HtmlHeadController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        Map displayObjects = SessionMethods.getDisplayObjects(session);
+        DisplayObjectFactory displayObjects = SessionMethods.getDisplayObjects(session);
 
         String pageName = (String) context.getAttribute("pageName");
         String bagName = (String) context.getAttribute("bagName");
@@ -97,7 +97,7 @@ public class HtmlHeadController extends TilesAction
 
             TemplateManager templateManager = im.getTemplateManager();
             if (scope != null && scope.equals(Scope.USER)) {
-                profile = (Profile) session.getAttribute(Constants.PROFILE);
+                profile = SessionMethods.getProfile(session);
                 template = templateManager.getUserOrGlobalTemplate(profile, name);
             } else {
                 template = templateManager.getGlobalTemplate(name);
@@ -117,11 +117,7 @@ public class HtmlHeadController extends TilesAction
             if (object == null) {
                 return null;
             }
-            DisplayObject dobj = (DisplayObject) displayObjects.get(id);
-            if (dobj == null) {
-                dobj = ObjectDetailsController.makeDisplayObject(session, object);
-            }
-
+            DisplayObject dobj = (DisplayObject) displayObjects.get(object);
 
             String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";

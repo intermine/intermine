@@ -28,7 +28,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.model.userprofile.Tag;
@@ -59,10 +58,10 @@ public class AspectController extends TilesAction
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = session.getServletContext();
-        
-        Map aspects = (Map) servletContext.getAttribute(Constants.ASPECTS);
+
+        Map aspects = SessionMethods.getAspects(servletContext);
         Aspect set = (Aspect) aspects.get(request.getParameter("name"));
-        
+
         if (set == null) {
             LOG.error("no such aspect: " + request.getParameter("name"));
             return null;
@@ -71,7 +70,7 @@ public class AspectController extends TilesAction
         // look up the classes for this aspect
         TagManager tagManager = im.getTagManager();
         String tagName = TagNames.IM_ASPECT_PREFIX + request.getParameter("name");
-        List<Tag> tags = tagManager.getTags(tagName, null, "class", 
+        List<Tag> tags = tagManager.getTags(tagName, null, "class",
                                             im.getProfileManager().getSuperuser());
         List<String> startingPoints = new ArrayList();
         for (Tag tag : tags) {

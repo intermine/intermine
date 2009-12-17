@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action class for saving a bag from the bagUploadConfirm page into the user profile.
@@ -49,7 +49,7 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("back");
         }
         HttpSession session = request.getSession();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
         String bagName = confirmForm.getNewBagName();

@@ -31,7 +31,6 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.XmlUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -82,7 +81,7 @@ public class ModifyTemplateAction extends InterMineAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         ActionErrors errors = new ActionErrors();
         try {
@@ -124,7 +123,7 @@ public class ModifyTemplateAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         ServletContext servletContext = session.getServletContext();
 
