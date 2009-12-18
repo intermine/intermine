@@ -117,9 +117,9 @@ public class MyMineController extends TilesAction
         TemplateSummariser summariser = im.getTemplateSummariser();
         for (TemplateQuery template : templates.values()) {
             if (template.isValid()) {
-                if (session.getAttribute("precomputing_" + template.getName()) != null
+                if ((session.getAttribute("precomputing_" + template.getName()) != null)
                         && session.getAttribute("precomputing_" + template.getName())
-                        .equals("true")) {
+                            .equals("true")) {
                     precomputedTemplateMap.put(template.getName(), "precomputing");
                 } else {
                     Query query = TemplatePrecomputeHelper
@@ -129,7 +129,7 @@ public class MyMineController extends TilesAction
                 }
                 if ((session.getAttribute("summarising_" + template.getName()) != null)
                         && session.getAttribute("summarising_" + template.getName())
-                        .equals("true")) {
+                            .equals("true")) {
                     summarisedTemplateMap.put(template.getName(), "summarising");
                 } else {
                     summarisedTemplateMap.put(template.getName(), Boolean.toString(summariser

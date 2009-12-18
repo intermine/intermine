@@ -67,7 +67,7 @@ public class QueryBuilderConstraintController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Profile profile = SessionMethods.getProfile(session);
         ServletContext servletContext = session.getServletContext();
         Model model = im.getModel();

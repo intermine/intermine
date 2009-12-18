@@ -71,14 +71,14 @@ public class BagBuildController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        
+
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
 
         ObjectStore os = im.getObjectStore();
         ObjectStoreSummary oss = im.getObjectStoreSummary();
-        
+
         Collection<String> qualifiedTypes = model.getClassNames();
 
         ArrayList<String> typeList = new ArrayList();
@@ -86,7 +86,7 @@ public class BagBuildController extends TilesAction
 
 
         TagManager tagManager = im.getTagManager();
-        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class", 
+        List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
                                                             im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));

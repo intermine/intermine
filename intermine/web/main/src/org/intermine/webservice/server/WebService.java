@@ -97,7 +97,7 @@ public abstract class WebService
     private boolean authenticated = false;
 
     protected InterMineAPI im;
-    
+
     /**
      * Construct the web service with the InterMine API object that gives access to the core
      * InterMine functionality.
@@ -106,7 +106,7 @@ public abstract class WebService
     public WebService(InterMineAPI im) {
         this.im = im;
     }
-    
+
     /**
      * Starting method of web service. The web service should be run like
      *

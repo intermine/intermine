@@ -73,16 +73,15 @@ public class BuildBagAction extends InterMineAction
         }
 
         TemplateManager templateManager = im.getTemplateManager();
-        BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(), 
-                                                      im.getBagQueryConfig(),
-                                                      templateManager.getConversionTemplates());
+        BagQueryRunner bagRunner = new BagQueryRunner(im.getObjectStore(), im.getClassKeys(),
+                im.getBagQueryConfig(), templateManager.getConversionTemplates());
 
         int maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size", 100000);
         Profile profile = SessionMethods.getProfile(session);
         if (profile == null || profile.getUsername() == null) {
             int defaultMaxNotLoggedSize = 3;
             maxBagSize = WebUtil.getIntSessionProperty(session, "max.bag.size.notloggedin",
-                                                       defaultMaxNotLoggedSize);
+                    defaultMaxNotLoggedSize);
         }
         BufferedReader reader = null;
         FormFile formFile = buildBagForm.getFormFile();
@@ -94,8 +93,8 @@ public class BuildBagAction extends InterMineAction
          * 2. When user specified empty file path or very invalid file path,
          * like file path not starting at '/' then formFile.getFileName() returns empty string.
          */
-        if (formFile != null && formFile.getFileName() != null 
-                        && formFile.getFileName().length() > 0) {
+        if (formFile != null && formFile.getFileName() != null
+                && formFile.getFileName().length() > 0) {
 
             String mimetype = formFile.getContentType();
             if (!mimetype.equals("application/octet-stream") && !mimetype.startsWith("text")) {

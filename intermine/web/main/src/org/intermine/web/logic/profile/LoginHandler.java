@@ -13,7 +13,6 @@ package org.intermine.web.logic.profile;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,7 +72,7 @@ public abstract class LoginHandler extends InterMineAction
             // Make sure the userId gets set to be the profile one
             try {
                 bag.setProfileId(profile.getUserId());
-                String name = NameUtil.validateName(profile.getSavedBags().keySet(), 
+                String name = NameUtil.validateName(profile.getSavedBags().keySet(),
                         entry.getKey());
                 if (!entry.getKey().equals(name)) {
                     renamedBags.put(entry.getKey(), name);

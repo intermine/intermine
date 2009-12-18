@@ -18,7 +18,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -43,15 +42,15 @@ public class ChangePasswordAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        
+
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
-        
+
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
         String username = profile.getUsername();
         String password = ((ChangePasswordForm) form).getNewpassword();
         String oldpassword = ((ChangePasswordForm) form).getOldpassword();
-        
+
         if (!pm.hasProfile(username)) {
             recordError(new ActionMessage("password.usernotexist", username), request);
             return mapping.findForward("changePassword");
@@ -59,7 +58,7 @@ public class ChangePasswordAction extends InterMineAction
             recordError(new ActionMessage("password.wrongpass"), request);
             return mapping.findForward("changePassword");
         }
-        
+
         pm.setPassword(username, password);
         try {
             recordMessage(new ActionMessage("password.changed", username), request);

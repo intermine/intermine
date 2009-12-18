@@ -100,7 +100,7 @@ public class TemplatesImportForm extends ValidatorForm
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Profile profile = SessionMethods.getProfile(session);
 
         BagManager bagManager = im.getBagManager();

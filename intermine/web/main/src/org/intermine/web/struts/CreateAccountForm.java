@@ -100,7 +100,7 @@ public class CreateAccountForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ActionErrors errors = new ActionErrors();
         Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
         Matcher m = p.matcher(username);

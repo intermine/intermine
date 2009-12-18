@@ -85,8 +85,8 @@ public class ChangePasswordForm extends ActionForm
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        if (StringUtils.isEmpty(oldpassword) || StringUtils.isEmpty(newpassword) 
-                        || StringUtils.isEmpty(newpassword2)) {            
+        if (StringUtils.isEmpty(oldpassword) || StringUtils.isEmpty(newpassword)
+                        || StringUtils.isEmpty(newpassword2)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.emptypassword"));
         } else if (!newpassword.equals(newpassword2)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.nomatchpass"));

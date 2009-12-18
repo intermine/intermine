@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
@@ -58,7 +57,7 @@ public class RequestPasswordAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
         ProfileManager pm = im.getProfileManager();
-        
+
         ServletContext servletContext = request.getSession().getServletContext();
         Properties webProperties = SessionMethods.getWebProperties(servletContext);
         String username = ((RequestPasswordForm) form).getUsername();

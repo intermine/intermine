@@ -59,7 +59,7 @@ public class BagConversionHelper
             InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         PathQuery pq = TypeConverter.getConversionQuery(conversionTemplates, typeA, typeB, imBag);
         if (pq == null) {
             return null;

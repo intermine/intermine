@@ -67,7 +67,7 @@ public class WidgetsService extends WebService
     public WidgetsService(InterMineAPI im) {
         super(im);
     }
-    
+
     /**
      * Executes service specific logic.
      *

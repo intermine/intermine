@@ -50,7 +50,7 @@ public class TemplatesImportAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         ServletContext servletContext = session.getServletContext();
         Profile profile = SessionMethods.getProfile(session);
         TemplatesImportForm tif = (TemplatesImportForm) form;
@@ -59,8 +59,8 @@ public class TemplatesImportAction extends InterMineAction
         BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
 
-        Map<String, TemplateQuery> templates = 
-            TemplateHelper.xmlToTemplateMap(tif.getXml(), allBags, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> templates = TemplateHelper.xmlToTemplateMap(tif.getXml(),
+                allBags, PathQuery.USERPROFILE_VERSION);
 
         try {
             profile.disableSaving();

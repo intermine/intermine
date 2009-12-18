@@ -74,7 +74,7 @@ public class WebState
     public void addSubtab(String tab, String subtab) {
         subtabs.put(tab, subtab);
     }
-    
+
     /**
      *  @param tab the tab/pageName name
      * @return the subtab for the specified page, if any
@@ -82,9 +82,9 @@ public class WebState
     public String getSubtab(String tab) {
         return subtabs.get(tab);
     }
-    
+
     /**
-     * map of tab --> subtab
+     * map of tab --&gt; subtab
      * @return the subtabs
      */
     public Map<String, String> getSubtabs() {

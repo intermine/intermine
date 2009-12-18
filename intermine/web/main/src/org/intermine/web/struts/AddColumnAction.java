@@ -50,8 +50,7 @@ public class AddColumnAction extends InterMineAction
      * @throws Exception if an error happens
      */
     public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response) 
-    throws Exception {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         String columnToAdd = request.getParameter("columnToAdd");
         HttpSession session = request.getSession();
         String tableId = request.getParameter("table");
@@ -73,7 +72,7 @@ public class AddColumnAction extends InterMineAction
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Model model = im.getModel();
-        
+
         List<Path> paths = new ArrayList<Path>();
         paths.add(new Path(model, columnToAdd));
         WebResults webResults = (WebResults) table;

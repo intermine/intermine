@@ -58,7 +58,7 @@ public class BagUploadConfirmIssueController extends TilesAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Map issuesMap = (Map) context.getAttribute("issueMap");
 
         // Make a Map from identifier to a List of rows for display.  Each row will contain
@@ -100,7 +100,6 @@ public class BagUploadConfirmIssueController extends TilesAction
             }
         }
 
-        
         ServletContext servletContext = session.getServletContext();
 
         Model model = im.getModel();

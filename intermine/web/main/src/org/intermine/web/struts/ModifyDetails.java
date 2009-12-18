@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,10 +89,9 @@ public class ModifyDetails extends DispatchAction
                     + ((idForLookup == null) ? " bag " + bagName
                         : " object " + idForLookup) + ".");
             return null;
-        }     
+        }
         String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;
 
-        
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(populatedTemplate);
         PagedTable pagedResults = new PagedTable(webResults, 10);

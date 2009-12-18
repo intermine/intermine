@@ -50,13 +50,12 @@ public class ExportQueryAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
-        throws Exception {        
+            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);                
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        
+
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         PathQuery query = null;

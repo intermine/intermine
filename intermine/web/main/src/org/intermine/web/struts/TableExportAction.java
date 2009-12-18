@@ -107,8 +107,7 @@ public class TableExportAction extends InterMineAction
             HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
-        
+
         PathQuery newPathQuery = new PathQuery(pt.getWebTable().getPathQuery());
         newPathQuery.setView(new LinkedList<String>(StringUtil
                 .serializedSortOrderToMap(pathsString).keySet()));

@@ -29,7 +29,8 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
 
-public class WidgetUtil {
+public class WidgetUtil
+{
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
 
     /**

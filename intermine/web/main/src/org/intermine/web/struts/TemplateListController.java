@@ -47,7 +47,7 @@ public class TemplateListController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        
+
         String scope = (String) context.getAttribute("scope");
         String aspect = (String) context.getAttribute("placement");
         DisplayObject object = (DisplayObject) context.getAttribute("displayObject");
@@ -59,7 +59,7 @@ public class TemplateListController extends TilesAction
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
         List<TemplateQuery> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
-        
+
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
                 templates = templateManager.getReportPageTemplatesForAspect(aspect,
