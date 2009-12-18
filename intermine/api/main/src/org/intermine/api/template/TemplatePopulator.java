@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.util.ModelUtil;
+import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
@@ -27,6 +29,7 @@ import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
 
@@ -91,22 +94,37 @@ public class TemplatePopulator
         return template;
     }
 
-    // TODO use a better exception type
+
+    /**
+     * Constrain a template query with a single editable constraint to be the given object.  This
+     * returns a copy of the template with the value filled in, if the existing constraint will be
+     * replaced by a constraint on the id field of the editable node.
+     * @param template the template to constrain
+     * @param obj the object to constrain to
+     * @return a copy of the template with values filled in
+     */
     public static  TemplateQuery populateTemplateWithObject(TemplateQuery template,
             InterMineObject obj) {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-        // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
             throw new TemplatePopulatorException("Template must have exactly one editable constraint to be "
                     + " configured with an object.");
         }
 
-        // TODO check the types are compatible
         PathNode node = template.getEditableNodes().get(0);
-            //String editableNodeType =
-            //if (!TypeUtil.isInstanceOf(obj, className))
+        String nodeType = node.getType();
+        if (node.isAttribute()) {
+            nodeType = node.getParentType();
+        }
+        
+        if (!PathUtil.canAssignObjectToType(template.getModel(), nodeType, obj)) {
+            throw new TemplatePopulatorException("The constraint of type " + nodeType
+                    + " can't be set to object if type " 
+                    + DynamicUtil.getFriendlyName(obj.getClass())
+                    + " in template query " + template.getName() + ".");
+        }
 
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS,
@@ -118,23 +136,36 @@ public class TemplatePopulator
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
+    
+    
+    /**
+     * Constrain a template query with a single editable constraint to be in the given bag.  This
+     * returns a copy of the template with the value filled in, if the constraint is on an
+     * attribute it will be replaced by a constrain on the parent class.
+     * @param template the template to constrain
+     * @param bag the bag to constrain to
+     * @return a copy of the template with values filled in
+     */
     public static  TemplateQuery populateTemplateWithBag(TemplateQuery template,
             InterMineBag bag) {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-        // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
             throw new TemplatePopulatorException("Template must have exactly one editable "
-            		+ "constraint to be configured with an object.");
+            		+ "constraint to be configured with a bag.");
         }
         
         PathNode node = template.getEditableNodes().get(0);
-        if (!bag.isOfType(node.getType())) {
-        	throw new TemplatePopulatorException("The constraint of type " + node.getType()
+        String nodeType = node.getType();
+        if (node.isAttribute()) {
+            nodeType = node.getParentType();
+        }
+        if (!bag.isOfType(nodeType)) {
+        	throw new TemplatePopulatorException("The constraint of type " + nodeType
         			+ " can't be set to a bag (list) of type " + bag.getType()
         			+ " in template query " + template.getName() + ".");
-        }        
+        }
         
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
