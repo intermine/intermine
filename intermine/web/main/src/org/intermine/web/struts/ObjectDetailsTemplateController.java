@@ -74,8 +74,8 @@ public class ObjectDetailsTemplateController extends TilesAction
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template,
                         obj);
             } else if (interMineBag != null) {
-                populatedTemplate = TemplatePopulator.populateTemplageWithBag(template,
-                        interMineBag.getName());
+                populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
+                		interMineBag);
             } else {
                 // should only have been called with an object or a bag
                 return null;

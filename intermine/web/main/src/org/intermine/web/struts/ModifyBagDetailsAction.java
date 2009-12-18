@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -64,7 +63,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        ServletContext servletContext = session.getServletContext();
+
         Model model = im.getModel();
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
         BagManager bagManager = im.getBagManager();

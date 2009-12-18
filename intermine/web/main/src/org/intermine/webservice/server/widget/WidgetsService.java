@@ -163,7 +163,7 @@ public class WidgetsService extends WebService
         bagList.addAll(bagQueryResult.getMatchAndIssueIds());
 
         InterMineBag imBag = profile.createBag(bagName, className, "");
-        imBag.addIdsToBag(bagList);
+        imBag.addIdsToBag(bagList, className);
         return imBag;
     }
 

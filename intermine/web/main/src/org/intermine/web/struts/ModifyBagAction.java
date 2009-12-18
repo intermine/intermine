@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,7 +31,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
-import org.intermine.api.bag.IncompatibleBagTypesException;
+import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
@@ -188,7 +187,6 @@ public class ModifyBagAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         ModifyBagForm mbf = (ModifyBagForm) form;
-        ServletContext servletContext = session.getServletContext();
 
         BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
@@ -208,7 +206,7 @@ public class ModifyBagAction extends InterMineAction
             } else if (opText.equals(BagOperations.SUBTRACT)) {
                 newBagSize = BagOperations.subtract(selectedBags, newBagName, profile);
             }
-        } catch (IncompatibleBagTypesException e) {
+        } catch (IncompatibleTypesException e) {
             SessionMethods.recordError(
                     "You can only perform operations on lists of the same type."
                             + " Lists " + StringUtil.prettyList(Arrays.asList(selectedBagNames))

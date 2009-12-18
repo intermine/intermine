@@ -209,8 +209,8 @@ public class BagManagerTest extends TestCase
     
     public void testGetUserOrGlobalBagsContainingId() throws Exception {
         storeAddress();
-        globalAddressBag.addIdToBag(ADDRESS_ID);
-        userAddressBag.addIdToBag(ADDRESS_ID);
+        globalAddressBag.addIdToBag(ADDRESS_ID, "Address");
+        userAddressBag.addIdToBag(ADDRESS_ID, "Address");
 
         Set<InterMineBag> expected = new HashSet<InterMineBag>(createExpected(globalAddressBag, userAddressBag).values());
         try {

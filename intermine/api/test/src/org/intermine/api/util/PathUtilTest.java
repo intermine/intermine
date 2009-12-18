@@ -29,6 +29,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("department name", PathUtil.resolvePath(path, department));
     }
 
+    
     public void testResolve() {
         Path path = new Path(model, "Department.company.name");
         Department department =

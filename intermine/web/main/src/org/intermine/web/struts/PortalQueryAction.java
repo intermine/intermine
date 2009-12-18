@@ -282,7 +282,7 @@ public class PortalQueryAction extends InterMineAction
 
     private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
             List<Integer> bagList) throws ObjectStoreException {
-        imBag.addIdsToBag(bagList);
+        imBag.addIdsToBag(bagList, imBag.getType());
         return new ForwardParameters(mapping.findForward("bagDetails"))
             .addParameter("bagName", imBag.getName()).forward();
     }

@@ -18,8 +18,10 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -30,6 +32,7 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.TypeUtil;
 
 
 /**
@@ -46,7 +49,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private Integer profileId;
     private Integer savedBagId;
     private String name;
-    private final String type;
+    protected final String type;
     private String description;
     private Date dateCreated;
     private ObjectStoreBag osb;
@@ -341,20 +344,30 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Add the given id to the bag, this updates the bag contents in the database.
+     * Add the given id to the bag, this updates the bag contents in the database. he type can
+     * be a qualified or un-qualified class name.
      * @param id the id to add
+     * @param type the type of ids being added
      * @throws ObjectStoreException if problem storing
      */
-    public void addIdToBag(Integer id) throws ObjectStoreException {
-        addIdsToBag(Collections.singleton(id));
+    public void addIdToBag(Integer id, String type) throws ObjectStoreException {
+        addIdsToBag(Collections.singleton(id), type);
     }
 
     /**
-     * Add the given ids to the bag, this updates the bag contents in the database.
+     * Add the given ids to the bag, this updates the bag contents in the database.  The type can
+     * be a qualified or un-qualified class name.
      * @param ids the ids to add
-     * @throws ObjectStoreException if problem storing
+     * @param type the type of ids being added
+     * @throws ObjectStoreException
+     *             if problem storing
      */
-    public void addIdsToBag(Collection<Integer> ids) throws ObjectStoreException {
+    public void addIdsToBag(Collection<Integer> ids, String type)
+        throws ObjectStoreException {
+        if (!isOfType(type)) {
+            throw new IncompatibleTypesException("Cannot add type " + type
+                    + " to bag of type " + getType() + ".");
+        }
         ObjectStoreWriter oswProduction = null;
         try {
             oswProduction = new ObjectStoreWriterInterMineImpl(os);
@@ -364,6 +377,27 @@ public class InterMineBag implements WebSearchable, Cloneable
                 oswProduction.close();
             }
         }
+    }
+
+    /**
+     * Test whether the given type can be added to this bag, type can be a
+     * qualified or un-qualified string.
+     * @param testType type to check
+     * @return true if type can be added to the bag
+     */
+    public boolean isOfType(String testType) {
+        Model model = os.getModel();
+        // this method works with qualified and unqualified class names
+        ClassDescriptor testCld = model.getClassDescriptorByName(testType);
+        Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(testCld
+                .getType());
+        for (ClassDescriptor cld : clds) {
+            String className = cld.getName();
+            if (TypeUtil.unqualifiedName(className).equals(getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

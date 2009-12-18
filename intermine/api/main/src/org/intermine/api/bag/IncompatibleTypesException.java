@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author Richard Smith
  *
  */
-public class IncompatibleBagTypesException extends RuntimeException
+public class IncompatibleTypesException extends RuntimeException
 {
     private Collection<String> types;
 
@@ -26,7 +26,7 @@ public class IncompatibleBagTypesException extends RuntimeException
      *
      * @param msg the detail message
      */
-    public IncompatibleBagTypesException(String msg) {
+    public IncompatibleTypesException(String msg) {
         super(msg);
     }
 
@@ -35,7 +35,7 @@ public class IncompatibleBagTypesException extends RuntimeException
      *
      * @param t the nested throwable
      */
-    public IncompatibleBagTypesException(Throwable t) {
+    public IncompatibleTypesException(Throwable t) {
         super(t);
     }
 
@@ -46,7 +46,7 @@ public class IncompatibleBagTypesException extends RuntimeException
      * @param msg the detail message
      * @param t the nested throwable
      */
-    public IncompatibleBagTypesException(String msg, Throwable t) {
+    public IncompatibleTypesException(String msg, Throwable t) {
         super(msg, t);
     }
 
