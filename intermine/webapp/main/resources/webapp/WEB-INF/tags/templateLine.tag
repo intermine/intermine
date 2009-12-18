@@ -68,30 +68,3 @@
   ${descr}
   </c:if>
 </c:if>
-<c:if test="${scope == 'user'}">
-  <%-- pull required messages --%>
-  <fmt:message var="confirmMessage" key="templateList.deleteMessage">
-    <fmt:param value="${templateQuery.name}"/>
-  </fmt:message>
-  <fmt:message var="linkTitle" key="templateList.delete">
-    <fmt:param value="${templateQuery.name}"/>
-  </fmt:message>
-  <%-- map of parameters to pass to the confirm action --%>
-  <jsp:useBean id="deleteParams" scope="page" class="java.util.TreeMap">
-    <c:set target="${deleteParams}" property="message" value="${confirmMessage}" />
-    <c:set target="${deleteParams}" property="confirmAction" value="/userTemplateAction?method=delete&amp;name=${templateQuery.name}&amp;type=${templateType}" />
-    <c:set target="${deleteParams}" property="cancelAction" value="/begin" />
-  </jsp:useBean>
-  <html:link action="/confirm" name="deleteParams" title="${linkTitle}">
-    <img border="0" class="arrow" src="images/cross.gif" title="Click here to confirm"/>
-  </html:link>
-  <c:remove var="deleteParams"/>
-  <c:if test="${templateQuery.valid}">
-    <fmt:message var="linkTitle" key="templateList.edit">
-      <fmt:param value="${templateQuery.name}"/>
-    </fmt:message>
-    <html:link action="/editTemplate?name=${templateQuery.name}" title="${linkTitle}">
-      <img border="0" class="arrow" src="images/edit.gif" title="Click here to edit"/>
-    </html:link>
-  </c:if>
-</c:if>

@@ -150,9 +150,6 @@
     <action path="/logout" type="org.intermine.web.struts.LogoutAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
-    <action path="/confirm" type="org.intermine.web.struts.ConfirmAction">
-      <forward name="confirm" path="confirm.page"/>
-    </action>
     <action path="/collectionDetails" type="org.intermine.web.struts.CollectionDetailsAction">
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
