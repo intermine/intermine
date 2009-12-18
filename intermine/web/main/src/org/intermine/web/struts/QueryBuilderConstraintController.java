@@ -46,7 +46,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -137,8 +136,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 useBags = ClassKeyHelper.isKeyField(classKeys, nodeType, node
                         .getFieldName());
                 //fetch AutoCompleter from servletContext
-                AutoCompleter ac = (AutoCompleter)
-                                        servletContext.getAttribute(Constants.AUTO_COMPLETER);
+                AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
 
                 if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     request.setAttribute("useAutoCompleter", ac);

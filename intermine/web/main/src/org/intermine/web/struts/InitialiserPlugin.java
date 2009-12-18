@@ -67,6 +67,7 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Initialiser for the InterMine web application.
@@ -104,7 +105,7 @@ public class InitialiserPlugin implements PlugIn
 
         // initialise properties
         Properties webProperties = loadWebProperties(servletContext);
-        servletContext.setAttribute(Constants.WEB_PROPERTIES, webProperties);
+        SessionMethods.setWebProperties(servletContext, webProperties);
 
         // set up core InterMine application
         ObjectStore os = getProductionObjectStore(webProperties);
@@ -116,7 +117,7 @@ public class InitialiserPlugin implements PlugIn
 
         final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss);
-        servletContext.setAttribute(Constants.INTERMINE_API, im);
+        SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
@@ -131,7 +132,7 @@ public class InitialiserPlugin implements PlugIn
         final Profile superProfile = im.getProfileManager().getSuperuserProfile();
         SearchRepository searchRepository =
             new SearchRepository(superProfile, Scope.GLOBAL);
-        servletContext.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, searchRepository);
+        SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
 
         servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
 
@@ -178,8 +179,8 @@ public class InitialiserPlugin implements PlugIn
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         if (is == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
-            servletContext.setAttribute(Constants.ASPECTS, Collections.EMPTY_MAP);
-            servletContext.setAttribute(Constants.CATEGORIES, Collections.EMPTY_SET);
+            SessionMethods.setAspects(servletContext, Collections.EMPTY_MAP);
+            SessionMethods.setCategories(servletContext, Collections.EMPTY_SET);
         } else {
             Map<String, Aspect> aspects;
             try {
@@ -187,9 +188,9 @@ public class InitialiserPlugin implements PlugIn
             } catch (Exception e) {
                 throw new RuntimeException("problem while reading aspect configuration file", e);
             }
-            servletContext.setAttribute(Constants.ASPECTS, aspects);
-            servletContext.setAttribute(Constants.CATEGORIES,
-                    Collections.unmodifiableSet(aspects.keySet()));
+            SessionMethods.setAspects(servletContext, aspects);
+            SessionMethods.setCategories(servletContext, Collections.unmodifiableSet(aspects
+                        .keySet()));
         }
     }
 
@@ -204,7 +205,7 @@ public class InitialiserPlugin implements PlugIn
 
                 if (is != null) {
                     ac = new AutoCompleter(is);
-                    servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
+                    SessionMethods.setAutoCompleter(servletContext, ac);
                 } else {
                     ac = null;
                 }
@@ -226,7 +227,7 @@ public class InitialiserPlugin implements PlugIn
         }
         try {
             WebConfig retval = WebConfig.parse(is, os.getModel());
-            servletContext.setAttribute(Constants.WEBCONFIG, retval);
+            SessionMethods.setWebConfig(servletContext, retval);
             return retval;
         } catch (Exception e) {
             LOG.error("Unable to parse webconfig-model.xml", e);

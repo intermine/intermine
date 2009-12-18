@@ -149,7 +149,7 @@ public class TemplateAction extends InterMineAction
 
             SessionMethods.loadQuery(queryCopy.getPathQuery(), request
                     .getSession(), response);
-            session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+            SessionMethods.removeTemplateBuildState(session);
             form.reset(mapping, request);
             return mapping.findForward("query");
         } else if (editTemplate) {

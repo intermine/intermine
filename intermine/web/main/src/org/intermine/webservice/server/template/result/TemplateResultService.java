@@ -25,7 +25,6 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TemplateAction;
 import org.intermine.web.util.URLGenerator;
@@ -52,7 +51,7 @@ public class TemplateResultService extends QueryResultService
     public TemplateResultService(InterMineAPI im) {
         super(im);
     }
-    
+
     /**
      * {@inheritDoc}}
      */
@@ -63,7 +62,7 @@ public class TemplateResultService extends QueryResultService
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {
-            Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+            Profile profile = SessionMethods.getProfile(request.getSession());
             template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         } else {
             template = templateManager.getGlobalTemplate(input.getName());
@@ -95,8 +94,8 @@ public class TemplateResultService extends QueryResultService
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
         ret += "?" + getQueryString(request, template, input);
-        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&" + TemplateResultService.TYPE_PARAMETER
-            + "=" + Scope.ALL;
+        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&"
+            + TemplateResultService.TYPE_PARAMETER + "=" + Scope.ALL;
         return ret;
     }
 

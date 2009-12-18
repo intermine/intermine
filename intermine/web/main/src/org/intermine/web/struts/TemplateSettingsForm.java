@@ -18,7 +18,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.util.NameUtil;
-import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 
 /**
@@ -102,8 +102,7 @@ public class TemplateSettingsForm extends ActionForm
      */
     public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       HttpServletRequest request) {
-        TemplateBuildState tbs =
-            (TemplateBuildState) request.getSession().getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(request.getSession());
         setName(tbs.getName());
         setTitle(tbs.getTitle());
         setDescription(tbs.getDescription());

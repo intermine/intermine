@@ -42,7 +42,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryHelper;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -526,7 +525,7 @@ public class QueryBuilderChange extends DispatchAction
                                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState());
+        SessionMethods.setTemplateBuildState(session, new TemplateBuildState());
         return mapping.findForward("query");
     }
 
@@ -552,7 +551,7 @@ public class QueryBuilderChange extends DispatchAction
                                            @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        SessionMethods.removeTemplateBuildState(session);
         return mapping.findForward("query");
     }
 

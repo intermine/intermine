@@ -1300,7 +1300,7 @@ public class AjaxServices
 
     public String[] getContent(String suffix, boolean wholeList, String field, String className) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
-        AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+        AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
         ac.createRAMIndex(className + "." + field);
         if (!wholeList && suffix.length() > 0) {
             String[] shortList = ac.getFastList(suffix, field, 31);

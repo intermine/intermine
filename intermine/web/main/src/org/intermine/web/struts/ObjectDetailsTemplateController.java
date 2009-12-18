@@ -75,7 +75,7 @@ public class ObjectDetailsTemplateController extends TilesAction
                         obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
-                		interMineBag);
+                        interMineBag);
             } else {
                 // should only have been called with an object or a bag
                 return null;

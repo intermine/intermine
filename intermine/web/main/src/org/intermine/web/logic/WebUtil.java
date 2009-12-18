@@ -53,9 +53,8 @@ public abstract class WebUtil
      */
     public static int getIntSessionProperty(HttpSession session, String propertyName,
                                             int defaultValue) {
-        Map webProperties =
-            (Map) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-        String n = (String) webProperties.get(propertyName);
+        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
+        String n = webProperties.getProperty(propertyName);
 
         int intVal = defaultValue;
 
@@ -131,7 +130,7 @@ public abstract class WebUtil
     public static String[] getHelpPage(HttpServletRequest request) {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+        Properties webProps = SessionMethods.getWebProperties(servletContext);
         WebState webState = SessionMethods.getWebState(request.getSession());
         String pageName = (String) request.getAttribute("pageName");
         String subTab = webState.getSubtab("subtab" + pageName);

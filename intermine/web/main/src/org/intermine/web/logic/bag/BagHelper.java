@@ -12,21 +12,16 @@ package org.intermine.web.logic.bag;
 
 
 import java.util.Date;
-import java.util.Set;
 
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
 
 /**
  * Helper methods for bags.

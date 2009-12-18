@@ -55,22 +55,22 @@ public class AddToBagAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         String bagName = request.getParameter("bag");
 
-		InterMineBag existingBag = profile.getSavedBags().get(bagName);
-		if (existingBag != null) {
-			// TODO add a warning when object already in bag ??
-			try {
-				InterMineObject o = im.getObjectStore().getObjectById(id);
-				existingBag.addIdToBag(id, DynamicUtil.getFriendlyName(o.getClass()));
-				recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
-						request);
-			} catch (IncompatibleTypesException e) {
-				recordError(new ActionMessage("bag.typesDontMatch"), request);
-			} catch (ObjectStoreException e) {
-				recordError(new ActionMessage("bag.error"), request, e);
-			}
-		} else {
-			recordError(new ActionMessage("bag.noSuchBag"), request);
-		}
-		return mapping.findForward("objectDetails");
-	}
+        InterMineBag existingBag = profile.getSavedBags().get(bagName);
+        if (existingBag != null) {
+            // TODO add a warning when object already in bag ??
+            try {
+                InterMineObject o = im.getObjectStore().getObjectById(id);
+                existingBag.addIdToBag(id, DynamicUtil.getFriendlyName(o.getClass()));
+                recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
+                        request);
+            } catch (IncompatibleTypesException e) {
+                recordError(new ActionMessage("bag.typesDontMatch"), request);
+            } catch (ObjectStoreException e) {
+                recordError(new ActionMessage("bag.error"), request, e);
+            }
+        } else {
+            recordError(new ActionMessage("bag.noSuchBag"), request);
+        }
+        return mapping.findForward("objectDetails");
+    }
 }

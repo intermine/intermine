@@ -48,7 +48,9 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -851,6 +853,16 @@ public class SessionMethods
     }
 
     /**
+     * Sets the WebConfig into the ServletContext.
+     *
+     * @param context a ServletContext
+     * @param webConfig a WebConfig object
+     */
+    public static void setWebConfig(ServletContext context, WebConfig webConfig) {
+        context.setAttribute(Constants.WEBCONFIG, webConfig);
+    }
+
+    /**
      * Get WebState object that is used for saving state of webapp GUI.
      * @param session session
      * @return WebState
@@ -874,13 +886,33 @@ public class SessionMethods
     }
 
     /**
+     * Sets the user profile in the session.
+     *
+     * @param session the session
+     * @param profile a Profile object to put in the session
+     */
+    public static void setProfile(HttpSession session, Profile profile) {
+        session.setAttribute(Constants.PROFILE, profile);
+    }
+
+    /**
      * Returns the Map of aspects.
      *
      * @param servletContext a ServletContext object
      * @return a Map
      */
-    public static Map getAspects(ServletContext servletContext) {
-        return (Map) servletContext.getAttribute(Constants.ASPECTS);
+    public static Map<String, Aspect> getAspects(ServletContext servletContext) {
+        return (Map<String, Aspect>) servletContext.getAttribute(Constants.ASPECTS);
+    }
+
+    /**
+     * Sets the Map of aspects.
+     *
+     * @param servletContext a ServletContext object
+     * @param aspects a Map
+     */
+    public static void setAspects(ServletContext servletContext, Map<String, Aspect> aspects) {
+        servletContext.setAttribute(Constants.ASPECTS, aspects);
     }
 
     /**
@@ -891,6 +923,16 @@ public class SessionMethods
      */
     public static Properties getWebProperties(ServletContext servletContext) {
         return (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
+    }
+
+    /**
+     * Sets the web properties in the session.
+     *
+     * @param servletContext a ServletContext object
+     * @param props a Properties object
+     */
+    public static void setWebProperties(ServletContext servletContext, Properties props) {
+        servletContext.setAttribute(Constants.WEB_PROPERTIES, props);
     }
 
     /**
@@ -909,8 +951,18 @@ public class SessionMethods
      * @param context the servlet context
      * @return the singleton SearchRepository object
      */
-    public static final SearchRepository getGlobalSearchRepository(ServletContext context) {
+    public static SearchRepository getGlobalSearchRepository(ServletContext context) {
         return (SearchRepository) context.getAttribute(Constants.GLOBAL_SEARCH_REPOSITORY);
+    }
+
+    /**
+     * Set the SearchRepository for global (public) objects in the servlet context.
+     *
+     * @param context the servlet context
+     * @param repo the SearchRepository object
+     */
+    public static void setGlobalSearchRepository(ServletContext context, SearchRepository repo) {
+        context.setAttribute(Constants.GLOBAL_SEARCH_REPOSITORY, repo);
     }
 
     /**
@@ -918,7 +970,7 @@ public class SessionMethods
      * @param session the webapp session
      * @return the InterMine core object
      */
-    public static final InterMineAPI getInterMineAPI(HttpSession session) {
+    public static InterMineAPI getInterMineAPI(HttpSession session) {
         return getInterMineAPI(session.getServletContext());
     }
 
@@ -927,7 +979,86 @@ public class SessionMethods
      * @param servletContext the webapp servletContext
      * @return the InterMine core object
      */
-    public static final InterMineAPI getInterMineAPI(ServletContext servletContext) {
+    public static InterMineAPI getInterMineAPI(ServletContext servletContext) {
         return (InterMineAPI) servletContext.getAttribute(Constants.INTERMINE_API);
+    }
+
+    /**
+     * Sets the InterMineAPI in the servlet context.
+     *
+     * @param servletContext the webapp servlet context
+     * @param im the InterMineAPI object
+     */
+    public static void setInterMineAPI(ServletContext servletContext, InterMineAPI im) {
+        servletContext.setAttribute(Constants.INTERMINE_API, im);
+    }
+
+    /**
+     * Get the AutoCompleter stored on the ServletContext.
+     *
+     * @param servletContext a ServletContext object
+     * @return the AutoCompleter
+     */
+    public static AutoCompleter getAutoCompleter(ServletContext servletContext) {
+        return (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+    }
+
+    /**
+     * Set the AutoCompleter into the ServletContext.
+     *
+     * @param servletContext a ServletContext object
+     * @param ac an AutoCompleter object
+     */
+    public static void setAutoCompleter(ServletContext servletContext, AutoCompleter ac) {
+        servletContext.setAttribute(Constants.AUTO_COMPLETER, ac);
+    }
+
+    /**
+     * Get the TemplateBuildState from the session.
+     *
+     * @param session the session
+     * @return a TemplateBuildState object, or null if one is not on the session
+     */
+    public static TemplateBuildState getTemplateBuildState(HttpSession session) {
+        return (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+    }
+
+    /**
+     * Remove the TemplateBuildState from the session.
+     *
+     * @param session the session
+     */
+    public static void removeTemplateBuildState(HttpSession session) {
+        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+    }
+
+    /**
+     * Sets the TemplateBuildState on the session.
+     *
+     * @param session the session
+     * @param tbs a TemplateBuildState object to put on the session
+     */
+    public static void setTemplateBuildState(HttpSession session, TemplateBuildState tbs) {
+        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, tbs);
+    }
+
+    /**
+     * Gets the aspect categories from the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @return a Set of aspect names
+     */
+    public static Set<String> getCategories(ServletContext servletContext) {
+        return (Set<String>) servletContext.getAttribute(Constants.CATEGORIES);
+    }
+
+    /**
+     * Sets the aspect categories into the servlet context.
+     *
+     * @param servletContext the ServletContext
+     * @param categories the Set of aspect names
+     */
+    public static void setCategories(ServletContext servletContext, Set<String> categories) {
+        servletContext.setAttribute(Constants.CATEGORIES, categories);
     }
 }

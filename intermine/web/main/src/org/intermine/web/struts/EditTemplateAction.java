@@ -25,7 +25,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 
@@ -67,7 +66,7 @@ public class EditTemplateAction extends InterMineAction
 
         PathQuery queryClone = template.clone();
         SessionMethods.loadQuery(queryClone, session, response);
-        session.setAttribute(Constants.TEMPLATE_BUILD_STATE, new TemplateBuildState(template));
+        SessionMethods.setTemplateBuildState(session, new TemplateBuildState(template));
 
         PathQuery sessionQuery = SessionMethods.getQuery(session);
         if (!sessionQuery.isValid()) {

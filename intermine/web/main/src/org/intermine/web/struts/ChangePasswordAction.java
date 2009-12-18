@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 /**
  * @author Xavier Watkins
@@ -46,7 +45,7 @@ public class ChangePasswordAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
 
-        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(session);
         String username = profile.getUsername();
         String password = ((ChangePasswordForm) form).getNewpassword();
         String oldpassword = ((ChangePasswordForm) form).getOldpassword();

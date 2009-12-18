@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
@@ -28,17 +26,15 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
  */
 public class ModelService extends WebService
 {
-    
+
     public ModelService(InterMineAPI im) {
         super(im);
     }
-    
+
     /**
      * {@inheritDoc}}
      */
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
-        
+    protected void execute(HttpServletRequest request, HttpServletResponse response) {
         Model model = this.im.getModel();
         try {
             response.getWriter().append(model.toString());
