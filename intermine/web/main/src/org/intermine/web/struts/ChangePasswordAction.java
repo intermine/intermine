@@ -12,15 +12,18 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-
 /**
  * @author Xavier Watkins
  *
@@ -39,10 +42,24 @@ public class ChangePasswordAction extends InterMineAction
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        HttpSession session = request.getSession();
+        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
-        String username = ((ChangePasswordForm) form).getUsername();
+        
+        Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        String username = profile.getUsername();
         String password = ((ChangePasswordForm) form).getNewpassword();
+        String oldpassword = ((ChangePasswordForm) form).getOldpassword();
+        
+        if (!pm.hasProfile(username)) {
+            recordError(new ActionMessage("password.usernotexist", username), request);
+            return mapping.findForward("changePassword");
+        } else if (!pm.validPassword(username, oldpassword)) {
+            recordError(new ActionMessage("password.wrongpass"), request);
+            return mapping.findForward("changePassword");
+        }
+        
         pm.setPassword(username, password);
         try {
             recordMessage(new ActionMessage("password.changed", username), request);

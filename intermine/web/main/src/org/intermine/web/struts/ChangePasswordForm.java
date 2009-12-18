@@ -12,14 +12,12 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean to represent the inputs needed to change a password from user input.
@@ -28,7 +26,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ChangePasswordForm extends ActionForm
 {
-    private String username, oldpassword, newpassword, newpassword2;
+    private String oldpassword, newpassword, newpassword2;
 
     /**
      * The new password
@@ -82,44 +80,16 @@ public class ChangePasswordForm extends ActionForm
     }
 
     /**
-     * The username
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * The username
-     * @param username
-     *            the username to set
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 HttpServletRequest request) {
-
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        ProfileManager pm = im.getProfileManager();
+                                 @SuppressWarnings("unused") HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        if (username == null || username.length() == 0) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.emptyusername"));
-        } else if ((oldpassword == null || oldpassword.length() == 0)
-                || (newpassword == null || newpassword.length() == 0)
-                || (newpassword2 == null || newpassword2.length() == 0)) {
+        if (StringUtils.isEmpty(oldpassword) || StringUtils.isEmpty(newpassword) 
+                        || StringUtils.isEmpty(newpassword2)) {            
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.emptypassword"));
         } else if (!newpassword.equals(newpassword2)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.nomatchpass"));
-        } else if (!pm.hasProfile(username)) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.usernotexist",
-                    username));
-        } else if (!pm.validPassword(username, oldpassword)) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("password.wrongpass"));
         }
         return errors;
     }
@@ -129,7 +99,6 @@ public class ChangePasswordForm extends ActionForm
      */
     public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
-        username = null;
         oldpassword = null;
         newpassword = null;
         newpassword2 = null;

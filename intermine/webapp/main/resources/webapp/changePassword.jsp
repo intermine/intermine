@@ -5,7 +5,6 @@
 <html:xhtml/>
 &nbsp;
   <html:form action="/changePasswordAction">
-    <html:hidden property="username" value="${PROFILE.username}"/>
     <table>
       <tr>
         <td><fmt:message key="password.oldpassword"/></td>
