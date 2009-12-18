@@ -127,6 +127,6 @@ public class BagConstraint extends Constraint
     }
 
     /** List of possible operations */
-    public static final List VALID_OPS = Arrays.asList(new ConstraintOp[] {ConstraintOp.IN,
-        ConstraintOp.NOT_IN});
+    public static final List<ConstraintOp> VALID_OPS =
+    	Arrays.asList(new ConstraintOp[] {ConstraintOp.IN, ConstraintOp.NOT_IN});
 }
