@@ -10,20 +10,31 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathError;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 
 public class TemplatePopulatorTest extends TestCase {
 	
 	
     private Map<String, TemplateQuery> templates;
     private TemplateQuery simpleTemplate;
-    private TemplateQuery template;
+    private TemplateQuery templateTwoConstraints;
     private Map<String, List<TemplateValue>> values = new HashMap();
+    private Profile profile;
     
     public void setUp() throws Exception {
         super.setUp();
@@ -31,7 +42,15 @@ public class TemplatePopulatorTest extends TestCase {
         Reader reader = new InputStreamReader(TemplatePrecomputeHelperTest.class.getClassLoader().getResourceAsStream("default-template-queries.xml"));
         templates = binding.unmarshal(reader, new HashMap(), PathQuery.USERPROFILE_VERSION);
         simpleTemplate = templates.get("employeeByName");
-        template = templates.get("employeesFromCompanyAndDepartment");
+        templateTwoConstraints = templates.get("employeesFromCompanyAndDepartment");
+        
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+
+        ObjectStoreWriter uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        ProfileManager pm = new ProfileManager(os, uosw);
+
+        profile = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        pm.createProfile(profile);
     }
 
     
@@ -112,15 +131,75 @@ public class TemplatePopulatorTest extends TestCase {
     	assertEquals("bag1", resCon.getValue());
     }
     
-//    public void testBagNotOneConstraint() {
-//    	InterMineBag bag = 
-//    	try {
-//    		
-//    	}
-//    }
     
+    public void testPopulateTemplateWithBagNotOneConstraint() throws ObjectStoreException {
+        InterMineBag bag = profile.createBag("bag1", "Company", "");
+        try {
+            TemplatePopulator.populateTemplateWithBag(templateTwoConstraints, bag);
+            fail("Expected a TemplatePopulatorException.");
+        } catch (TemplatePopulatorException e) {
+        }
+    }
     
-    public void testBagConstraintWrongOp() {
+    public void testPopulateTemplateWithBagWrongType() throws ObjectStoreException {
+    	InterMineBag bag = profile.createBag("bag1", "Company", "");
+    	try {
+    	    TemplatePopulator.populateTemplateWithBag(simpleTemplate, bag);
+    	    fail("Expected a TemplatePopulatorException.");
+    	} catch (TemplatePopulatorException e) {
+    	}
+    }
+    
+    public void testPopulateTemplateWithBag() throws ObjectStoreException {
+        InterMineBag bag = profile.createBag("bag1", "Employee", "");
+        TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simpleTemplate, bag);
+        assertEquals(1, res.getAllEditableConstraints().size());
+        // constraint should now be on parent node
+        assertEquals(1, res.getNodes().get("Employee").getConstraints().size());
+        assertEquals(0, res.getNodes().get("Employee.name").getConstraints().size());
+
+        Constraint resCon = res.getAllEditableConstraints().get(0);
+        assertEquals(ConstraintOp.IN, resCon.getOp());
+        assertEquals("bag1", resCon.getValue());
+    }
+    
+    public void testPopulateTemplateWithObject() {
+        InterMineObject obj = 
+            (InterMineObject) DynamicUtil.createObject(Employee.class);
+        obj.setId(101);
+        TemplateQuery res = TemplatePopulator.populateTemplateWithObject(simpleTemplate, obj);
+        assertEquals(0, res.getNodes().get("Employee").getConstraints().size());
+        assertEquals(0, res.getNodes().get("Employee.name").getConstraints().size());
+        assertEquals(1, res.getNodes().get("Employee.id").getConstraints().size());
+        
+        Constraint resCon = res.getAllEditableConstraints().get(0);
+        assertEquals(ConstraintOp.EQUALS, resCon.getOp());
+        assertEquals(101, resCon.getValue());
+    }
+    
+    public void testPopulateTemplateWithObjectNotOneConstraint() {
+        InterMineObject obj = 
+            (InterMineObject) DynamicUtil.createObject(Employee.class);
+        obj.setId(101);
+        try {
+            TemplatePopulator.populateTemplateWithObject(templateTwoConstraints, obj);
+            fail("Expected a TemplatePopulatorException");
+        } catch (TemplatePopulatorException e) {            
+        }
+    }
+    
+    public void testPopulateTemplateWithObjectWrongType() {
+        InterMineObject obj = 
+            (InterMineObject) DynamicUtil.createObject(Department.class);
+        obj.setId(101);
+        try {
+            TemplatePopulator.populateTemplateWithObject(simpleTemplate, obj);
+            fail("Expected a TemplatePopulatorException");
+        } catch (TemplatePopulatorException e) {
+        }
+    }
+    
+    public void testSetConstraintWrongBagOp() {
     	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.GREATER_THAN, "bag1", "A");
     	value.setBagConstraint(true);
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
@@ -130,19 +209,4 @@ public class TemplatePopulatorTest extends TestCase {
     	} catch (TemplatePopulatorException e) {    		
     	}
     }
-    
-//    private class DummyBag extends InterMineBag
-//    {
-//    	public DummyBag(String name, String type, String description) {
-//    		super();
-//    		this.type = type;
-//    		setName(name);
-//    		setDescription(description);
-//    	}
-//    }
-//    private InterMineBag createBag(String name, String type) throws ObjectStoreException {
-//    	DummayBag bag = new DummyBag(name, type, "");
-//    	return bag;
-//    }
-    
 }

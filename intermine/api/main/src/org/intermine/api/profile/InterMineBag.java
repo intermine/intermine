@@ -389,6 +389,9 @@ public class InterMineBag implements WebSearchable, Cloneable
         Model model = os.getModel();
         // this method works with qualified and unqualified class names
         ClassDescriptor testCld = model.getClassDescriptorByName(testType);
+        if (testCld == null) {
+            throw new IllegalArgumentException("Class not found in model: " + type);
+        }
         Set<ClassDescriptor> clds = model.getClassDescriptorsForClass(testCld
                 .getType());
         for (ClassDescriptor cld : clds) {
