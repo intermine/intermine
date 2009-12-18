@@ -24,7 +24,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
@@ -128,8 +127,8 @@ public abstract class WebService
             this.response = response;
             initOutput(response);
 
-            Properties webProperties = (Properties) request.getSession()
-                    .getServletContext().getAttribute(Constants.WEB_PROPERTIES);
+            Properties webProperties = SessionMethods.getWebProperties(request.getSession()
+                    .getServletContext());
             if ("true".equalsIgnoreCase(webProperties
                     .getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
                 throw new ServiceForbiddenException("Web service is disabled.");

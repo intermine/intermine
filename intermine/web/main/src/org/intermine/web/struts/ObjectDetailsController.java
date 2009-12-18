@@ -94,8 +94,7 @@ public class ObjectDetailsController extends InterMineAction
         }
 
         Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
-        Set<String> aspects
-            = new HashSet((Set<String>) servletContext.getAttribute(Constants.CATEGORIES));
+        Set<String> aspects = new HashSet<String>(SessionMethods.getCategories(servletContext));
 
         Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(object.getClass());
 

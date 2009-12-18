@@ -105,7 +105,7 @@ public abstract class LoginHandler extends InterMineAction
                     new HashMap());
             pm.saveProfile(profile);
         }
-        session.setAttribute(Constants.PROFILE, profile);
+        SessionMethods.setProfile(session, profile);
 
         if (profile.getUsername().equals(pm.getSuperuser())) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);

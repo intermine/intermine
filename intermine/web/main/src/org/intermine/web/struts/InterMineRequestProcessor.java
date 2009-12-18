@@ -107,7 +107,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     Profile p = pm.getProfile(user);
                     if (p != null) {
                         LOG.warn("Could not find profile for user " + user);
-                        session.setAttribute(Constants.PROFILE, pm.getProfile(user));
+                        SessionMethods.setProfile(session, profile);
                     }
                     session.removeAttribute("ser-username");
                 }

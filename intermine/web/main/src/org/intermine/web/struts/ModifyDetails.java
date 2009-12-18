@@ -76,7 +76,7 @@ public class ModifyDetails extends DispatchAction
 
         BagManager bagManager = im.getBagManager();
         InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
-        
+
         TemplateQuery populatedTemplate;
         try {
             if (idForLookup != null && idForLookup.length() != 0) {

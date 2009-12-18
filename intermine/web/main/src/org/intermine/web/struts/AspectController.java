@@ -59,8 +59,8 @@ public class AspectController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = session.getServletContext();
 
-        Map aspects = SessionMethods.getAspects(servletContext);
-        Aspect set = (Aspect) aspects.get(request.getParameter("name"));
+        Map<String, Aspect> aspects = SessionMethods.getAspects(servletContext);
+        Aspect set = aspects.get(request.getParameter("name"));
 
         if (set == null) {
             LOG.error("no such aspect: " + request.getParameter("name"));

@@ -36,7 +36,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -72,8 +71,7 @@ public class CreateTemplateAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         PathQuery query = SessionMethods.getQuery(session);
-        TemplateBuildState tbs =
-            (TemplateBuildState) session.getAttribute(Constants.TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         boolean seenProblem = false;
@@ -187,7 +185,7 @@ public class CreateTemplateAction extends InterMineAction
                 tr.webSearchableAdded(template, TagTypes.TEMPLATE);
             }
         }
-        session.removeAttribute(Constants.TEMPLATE_BUILD_STATE);
+        SessionMethods.removeTemplateBuildState(session);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "templates").forward();
     }

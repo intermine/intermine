@@ -54,7 +54,6 @@ import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
@@ -101,7 +100,7 @@ public class TemplateController extends TilesAction
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
 
         ServletContext servletContext = session.getServletContext();
-        AutoCompleter ac = (AutoCompleter) servletContext.getAttribute(Constants.AUTO_COMPLETER);
+        AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
 
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
@@ -139,8 +138,7 @@ public class TemplateController extends TilesAction
 
         if (context.getAttribute("builder") != null) {
             PathQuery query = SessionMethods.getQuery(session);
-            TemplateBuildState tbs = (TemplateBuildState) session
-                    .getAttribute(Constants.TEMPLATE_BUILD_STATE);
+            TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
             template = TemplateHelper.buildTemplateQuery(tbs, query);
             request.setAttribute("previewTemplate", template);
         }

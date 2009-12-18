@@ -34,9 +34,9 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
@@ -80,12 +80,12 @@ public class WidgetsService extends WebService
         throws Exception {
         WidgetsServiceInput widgetsServiceInput = getInput();
         ServletContext servletContext = request.getSession().getServletContext();
-        Profile profile = (Profile) request.getSession().getAttribute(Constants.PROFILE);
+        Profile profile = SessionMethods.getProfile(request.getSession());
 
         String className = widgetsServiceInput.getClassName();
         List<String> ids = widgetsServiceInput.getIds();
         InterMineBag imBag = getBag(className, ids, servletContext, profile);
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         WidgetConfig widgetConfig = webConfig.getWidgets().get(widgetsServiceInput.getWidgetId());
         ObjectStore os = this.im.getObjectStore();
         if (widgetConfig instanceof TableWidgetConfig) {
@@ -107,7 +107,7 @@ public class WidgetsService extends WebService
     protected InterMineBag getBag(String className, List<String> ids,
             ServletContext servletContext, Profile profile) throws ObjectStoreException {
         Model model = this.im.getModel();
-        WebConfig webConfig = (WebConfig) servletContext.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         try {
             className = StringUtil.capitalise(className);
             Class.forName(model.getPackageName() + "." + className);
