@@ -51,8 +51,8 @@ public class ExportController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        WebConfig webConfig = SessionMethods.getWebConfig(request); 
-        
+        WebConfig webConfig = SessionMethods.getWebConfig(request);
+
         String  tableName = (String) request.getAttribute("tableName");
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 

@@ -73,7 +73,7 @@ public class TableController extends TilesAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ServletContext servletContext = session.getServletContext();
-        
+
         String pageStr = request.getParameter("page");
         String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");

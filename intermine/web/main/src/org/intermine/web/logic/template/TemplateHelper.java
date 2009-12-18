@@ -69,7 +69,7 @@ public class TemplateHelper
      * @return            Map from template name to TemplateQuery
      * @throws Exception  when a parse exception occurs (wrapped in a RuntimeException)
      */
-    public static Map<String, TemplateQuery> xmlToTemplateMap(String xml, 
+    public static Map<String, TemplateQuery> xmlToTemplateMap(String xml,
             Map<String, InterMineBag> savedBags, int version) throws Exception {
         Reader templateQueriesReader = new StringReader(xml);
         return new TemplateQueryBinding().unmarshal(templateQueriesReader, savedBags, version);

@@ -102,7 +102,7 @@ public class WidgetAction extends InterMineAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         ObjectStore os = im.getObjectStore();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = im.getModel();
@@ -271,7 +271,7 @@ public class WidgetAction extends InterMineAction
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         WidgetForm widgetForm = (WidgetForm) form;
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         ObjectStore os = im.getObjectStore();

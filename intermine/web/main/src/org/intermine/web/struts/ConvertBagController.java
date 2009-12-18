@@ -63,7 +63,7 @@ public class ConvertBagController extends TilesAction
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = im.getModel();
         TemplateManager templateManager = im.getTemplateManager();
-        
+
         Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
             templateManager.getConversionTemplates(),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));

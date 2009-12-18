@@ -693,8 +693,8 @@ public class AjaxServices
             if (operation.equals("delete")) {
                 for (int i = 0; i < selectedBags.length; i++) {
                     Set<String> queries = new HashSet<String>();
-                    queries.addAll(queriesThatMentionBag(profile.getSavedQueries(), 
-                                                         selectedBags[i]));
+                    queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
+                                selectedBags[i]));
                     queries.addAll(queriesThatMentionBag(profile.getHistory(), selectedBags[i]));
                     if (queries.size() > 0) {
                         return "List " + selectedBags[i] + " cannot be deleted as it is referenced "

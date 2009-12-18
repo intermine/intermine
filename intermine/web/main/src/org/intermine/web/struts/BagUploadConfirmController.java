@@ -48,10 +48,10 @@ public class BagUploadConfirmController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
             HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
-        
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult");
         request.setAttribute("matches", bagQueryResult.getMatches());
         Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();

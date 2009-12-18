@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.text.MessageFormat;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;

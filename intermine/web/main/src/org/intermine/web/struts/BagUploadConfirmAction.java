@@ -83,8 +83,8 @@ public class BagUploadConfirmAction extends InterMineAction
         bag.addIdsToBag(contents);
 
         session.removeAttribute("bagQueryResult");
-        ForwardParameters forwardParameters 
-        = new ForwardParameters(mapping.findForward("bagDetails"));
+        ForwardParameters forwardParameters
+            = new ForwardParameters(mapping.findForward("bagDetails"));
         return forwardParameters.addParameter("bagName", bagName).forward();
     }
 }

@@ -188,7 +188,7 @@ public class WebSearchableListController extends TilesAction
         Map<String, ? extends WebSearchable> filteredWebSearchables;
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         ServletContext servletContext = session.getServletContext();
 
         Profile profile;

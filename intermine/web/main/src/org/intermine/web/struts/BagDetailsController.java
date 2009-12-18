@@ -65,7 +65,7 @@ public class BagDetailsController extends TilesAction
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         ObjectStore os = im.getObjectStore();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         BagManager bagManager = im.getBagManager();

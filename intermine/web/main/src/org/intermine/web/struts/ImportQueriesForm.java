@@ -27,7 +27,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

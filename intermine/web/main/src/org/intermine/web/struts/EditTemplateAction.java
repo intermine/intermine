@@ -53,15 +53,12 @@ public class EditTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws Exception {
-        
+    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
-        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         String queryName = request.getParameter("name");
         Profile profile = SessionMethods.getProfile(session);
 

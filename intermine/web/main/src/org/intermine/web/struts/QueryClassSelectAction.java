@@ -75,7 +75,7 @@ public class QueryClassSelectAction extends InterMineAction
     public static void newQuery(String className, HttpSession session) {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
-        
+
         PathQuery query = new PathQuery(model);
         session.setAttribute(Constants.QUERY, query);
         session.setAttribute("path", TypeUtil.unqualifiedName(className));

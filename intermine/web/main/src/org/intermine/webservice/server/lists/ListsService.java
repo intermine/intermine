@@ -59,7 +59,7 @@ public class ListsService extends WebService
     public ListsService(InterMineAPI im) {
         super(im);
     }
-    
+
     /**
      * Executes service specific logic.
      * @param request request

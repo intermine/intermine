@@ -58,7 +58,7 @@ public class SummariseAllTemplatesAction extends InterMineAction
 
         Profile profile = SessionMethods.getProfile(session);
         final TemplateSummariser summariser = im.getTemplateSummariser();
-        
+
         Map<String, TemplateQuery> templates = profile.getSavedTemplates();
         for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
             //String templateName = entry.getKey();

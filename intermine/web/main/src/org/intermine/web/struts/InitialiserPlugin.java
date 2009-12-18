@@ -120,7 +120,7 @@ public class InitialiserPlugin implements PlugIn
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
-        
+
         // read in additional webapp specific information and put in servletContext
         WebConfig webConfig = loadWebConfig(servletContext, os);
 

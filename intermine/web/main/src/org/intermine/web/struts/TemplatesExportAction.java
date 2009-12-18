@@ -46,7 +46,7 @@ public class TemplatesExportAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Profile profile = SessionMethods.getProfile(session);
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");

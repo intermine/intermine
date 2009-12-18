@@ -129,7 +129,7 @@ public abstract class WebUtil
      * @return the help page and tab
      */
     public static String[] getHelpPage(HttpServletRequest request) {
-        HttpSession session = request.getSession();        
+        HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         Properties webProps = (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         WebState webState = SessionMethods.getWebState(request.getSession());

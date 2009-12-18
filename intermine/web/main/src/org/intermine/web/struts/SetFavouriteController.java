@@ -48,10 +48,10 @@ public class SetFavouriteController extends TilesAction
         String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        
+
         Profile profile = SessionMethods.getProfile(session);
         TagManager tagManager = im.getTagManager();
-        
+
         Set<String> userTags = tagManager.getObjectTagNames(name, type, profile.getUsername());
         String isFavourite = Boolean.toString(userTags.contains(TagNames.IM_FAVOURITE));
 

@@ -54,11 +54,8 @@ public class ExportOptionsController extends TilesAction
      */
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
-        
+            ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
+            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response) {
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         String table = request.getParameter("table");

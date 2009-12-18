@@ -62,7 +62,7 @@ public class QueryResultService extends WebService
     public QueryResultService(InterMineAPI im) {
         super(im);
     }
-    
+
     /**
      * Executes service specific logic.
      * @param request request

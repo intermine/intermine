@@ -42,7 +42,7 @@ public abstract class HttpExporterBase
     public ExportResultsIterator getResultRows(PagedTable pt, HttpServletRequest request) {
         PathQuery pathQuery = pt.getWebTable().getPathQuery();
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session); 
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
 
         executor = im.getPathQueryExecutor(profile);
