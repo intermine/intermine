@@ -19,11 +19,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.bag.BagHelper;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -42,6 +43,7 @@ public class AddToBagAction extends InterMineAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      */
+
     public ActionForward execute(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) {
@@ -53,25 +55,22 @@ public class AddToBagAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         String bagName = request.getParameter("bag");
 
-        InterMineBag existingBag = profile.getSavedBags().get(bagName);
-        if (existingBag != null) {
-            try {
-                InterMineObject o = im.getObjectStore().getObjectById(id);
-                if (BagHelper.isOfBagType(existingBag, o, im.getModel())) {
-                    existingBag.addIdToBag(id);
-                    recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
-                            request);
-                } else {
-                    recordError(new ActionMessage("bag.typesDontMatch"), request);
-                }
-            // TODO add a warning when object already in bag ??
-            } catch (ObjectStoreException e) {
-                recordError(new ActionMessage("bag.error"), request, e);
-                return mapping.findForward("objectDetails");
-            }
-        } else {
-            recordError(new ActionMessage("bag.noSuchBag"), request);
-        }
-        return mapping.findForward("objectDetails");
-    }
+		InterMineBag existingBag = profile.getSavedBags().get(bagName);
+		if (existingBag != null) {
+			// TODO add a warning when object already in bag ??
+			try {
+				InterMineObject o = im.getObjectStore().getObjectById(id);
+				existingBag.addIdToBag(id, DynamicUtil.getFriendlyName(o.getClass()));
+				recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
+						request);
+			} catch (IncompatibleTypesException e) {
+				recordError(new ActionMessage("bag.typesDontMatch"), request);
+			} catch (ObjectStoreException e) {
+				recordError(new ActionMessage("bag.error"), request, e);
+			}
+		} else {
+			recordError(new ActionMessage("bag.noSuchBag"), request);
+		}
+		return mapping.findForward("objectDetails");
+	}
 }

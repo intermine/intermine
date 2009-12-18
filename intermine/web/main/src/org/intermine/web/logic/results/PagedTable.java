@@ -1058,7 +1058,7 @@ public class PagedTable
      */
     public void addSelectedToBag(InterMineBag bag) throws ObjectStoreException {
         if (allSelected == -1) {
-            bag.addIdsToBag(selectionIds.keySet());
+            bag.addIdsToBag(selectionIds.keySet(), selectedClass);
         } else {
             bag.addToBagFromQuery(getBagCreationQuery());
         }

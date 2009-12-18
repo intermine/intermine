@@ -97,8 +97,8 @@ public class TypeConverterTest extends StoreDataTestCase
         Results r = getEmployeesAndAddresses();
         assertEquals("Results: " + r, 2, r.size());
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
-        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId());
-        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
+        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId(), "Employee");
         Map expected = new HashMap();
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));

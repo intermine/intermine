@@ -114,12 +114,12 @@ public class ProfileManagerTest extends StoreDataTestCase
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
         Department departmentA1 = (Department) os.getObjectByExample(deptEx, fieldNames);
-        bag.addIdToBag(departmentA1.getId());
+        bag.addIdToBag(departmentA1.getId(), "Department");
 
         Department deptEx2 = new Department();
         deptEx2.setName("DepartmentB1");
         Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
-        bag.addIdToBag(departmentB1.getId());
+        bag.addIdToBag(departmentB1.getId(), "Department");
 
         TemplateQuery template =
             new TemplateQuery("template", "ttitle", "tdesc", "tcomment",
@@ -151,7 +151,7 @@ public class ProfileManagerTest extends StoreDataTestCase
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description", 
                 new Date(), os, sallyId, uosw);
-        objectBag.addIdToBag(ceoB1.getId());
+        objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
         template = new TemplateQuery("template", "ttitle", "some desc", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")));

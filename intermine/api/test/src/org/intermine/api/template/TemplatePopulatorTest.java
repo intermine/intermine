@@ -9,7 +9,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathError;
@@ -109,5 +111,38 @@ public class TemplatePopulatorTest extends TestCase {
     	assertEquals(ConstraintOp.IN, resCon.getOp());
     	assertEquals("bag1", resCon.getValue());
     }
+    
+//    public void testBagNotOneConstraint() {
+//    	InterMineBag bag = 
+//    	try {
+//    		
+//    	}
+//    }
+    
+    
+    public void testBagConstraintWrongOp() {
+    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.GREATER_THAN, "bag1", "A");
+    	value.setBagConstraint(true);
+    	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
+    	try {
+    		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
+    		fail("Expected an exception.");
+    	} catch (TemplatePopulatorException e) {    		
+    	}
+    }
+    
+//    private class DummyBag extends InterMineBag
+//    {
+//    	public DummyBag(String name, String type, String description) {
+//    		super();
+//    		this.type = type;
+//    		setName(name);
+//    		setDescription(description);
+//    	}
+//    }
+//    private InterMineBag createBag(String name, String type) throws ObjectStoreException {
+//    	DummayBag bag = new DummyBag(name, type, "");
+//    	return bag;
+//    }
     
 }

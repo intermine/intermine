@@ -38,25 +38,6 @@ public class BagHelper
     /** When generating new bag names, this is used as a prefix. */
     public static final String BAG_NAME_PREFIX = "bag";
 
-    /**
-     * For a given InterMineObject and an InterMineIdBag return true if
-     * the types correspond
-     *
-     * @param bag the InterMineIdBag
-     * @param o the InterMineObject
-     * @param model the model
-     * @return a boolean
-     */
-    public static boolean isOfBagType (InterMineBag bag, InterMineObject o, Model model) {
-        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
-        for (ClassDescriptor cld: classDescriptors) {
-            String className = cld.getName();
-            if (TypeUtil.unqualifiedName(className).equals(bag.getType())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Create a bag for the given profile and bag name from a PathQuery.  The PathQuery must

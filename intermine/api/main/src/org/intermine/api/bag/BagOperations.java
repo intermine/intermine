@@ -88,7 +88,7 @@ public class BagOperations
             Profile profile, int op) throws ObjectStoreException {
         String type = getCommonBagType(bags);
         if (type == null) {
-            throw new IncompatibleBagTypesException("Given bags were of incompatible types.");
+            throw new IncompatibleTypesException("Given bags were of incompatible types.");
         }
 
         InterMineBag combined = profile.createBag(newBagName, type, "");

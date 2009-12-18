@@ -80,7 +80,7 @@ public class BagUploadConfirmAction extends InterMineAction
         }
 
         InterMineBag bag = profile.createBag(bagName, bagType, "");
-        bag.addIdsToBag(contents);
+        bag.addIdsToBag(contents, bagType);
 
         session.removeAttribute("bagQueryResult");
         ForwardParameters forwardParameters

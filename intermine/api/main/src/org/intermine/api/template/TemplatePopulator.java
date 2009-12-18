@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
@@ -90,7 +91,6 @@ public class TemplatePopulator
         return template;
     }
 
-    // TODO this method should be in api project
     // TODO use a better exception type
     public static  TemplateQuery populateTemplateWithObject(TemplateQuery template,
             InterMineObject obj) {
@@ -99,7 +99,7 @@ public class TemplatePopulator
 
         // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
-            throw new RuntimeException("Template must have exactly one editable constraint to be "
+            throw new TemplatePopulatorException("Template must have exactly one editable constraint to be "
                     + " configured with an object.");
         }
 
@@ -118,28 +118,27 @@ public class TemplatePopulator
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
-    // TODO this method should be in api project
-    // TODO use a better exception type
-    public static  TemplateQuery populateTemplageWithBag(TemplateQuery template,
-            String bagName) {
+    public static  TemplateQuery populateTemplateWithBag(TemplateQuery template,
+            InterMineBag bag) {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
-
         // TODO move out to common method between object and bag
         if (template.getAllEditableConstraints().size() != 1) {
-            throw new RuntimeException("Template must have exactly one editable constraint to be "
-                    + " configured with an object.");
+            throw new TemplatePopulatorException("Template must have exactly one editable "
+            		+ "constraint to be configured with an object.");
         }
-
-        // TODO check the types are compatible
+        
         PathNode node = template.getEditableNodes().get(0);
-            //String editableNodeType =
-            //if (!TypeUtil.isInstanceOf(obj, className))
-
+        if (!bag.isOfType(node.getType())) {
+        	throw new TemplatePopulatorException("The constraint of type " + node.getType()
+        			+ " can't be set to a bag (list) of type " + bag.getType()
+        			+ " in template query " + template.getName() + ".");
+        }        
+        
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
-                bagName, constraint.getCode());
+                bag.getName(), constraint.getCode());
         templateValue.setBagConstraint(Boolean.TRUE);
         templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
@@ -148,6 +147,14 @@ public class TemplatePopulator
     }
 
 
+    /**
+     * Populate a TemplateQuery that has a single editable constraint with the given value.  This
+     * returns a copy of the template with the value filled in.
+     * @param template the template query to populate
+     * @param op operation of the constraint
+     * @param value value to be constrained to
+     * @return a copy of the template with the value filled in
+     */
     public static TemplateQuery populateTemplateOneConstraint(
             TemplateQuery template, ConstraintOp op, Object value) {
         Map<String, List<TemplateValue>> templateValues =
@@ -167,6 +174,7 @@ public class TemplatePopulator
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
+
     private static void checkPaths(Model model, Collection<List<TemplateValue>> collection,
             TemplateQuery templateQuery) {
         for (List<TemplateValue> col : collection) {
@@ -177,7 +185,7 @@ public class TemplatePopulator
         }
     }
 
-    private static void setConstraint(TemplateQuery template, PathNode node, Constraint c,
+    protected static void setConstraint(TemplateQuery template, PathNode node, Constraint c,
             TemplateValue templateValue) {
         int constraintIndex = node.getConstraints().indexOf(c);
 
@@ -188,13 +196,10 @@ public class TemplatePopulator
 
         if (templateValue.isBagConstraint()) {
             if (!BagConstraint.VALID_OPS.contains(templateValue.getOperation())) {
-                // TODO list the bag ops in error message ...
                 throw new TemplatePopulatorException("A bag (list) constraint on path "
                         + node.getPathString() + " with value " + c.getValue() + " does not have a "
-                        + "valid constraint type, must be ...");
+                        + "valid constraint type, must be one of: " + BagConstraint.VALID_OPS);
             }
-
-            // TODO should we check the bag exists here?
         }
 
         // if this is a bag constraint we may need to switch to the parent node
@@ -214,7 +219,6 @@ public class TemplatePopulator
                     true, c.getDescription(), c.getCode(), c.getIdentifier(), null);
             idNode.getConstraints().add(idConstraint);
 
-            // TODO any other constraints on this node are now irrelevant
             node.removeConstraint(c);
         } else {
             node.getConstraints().set(constraintIndex, newConstraint);

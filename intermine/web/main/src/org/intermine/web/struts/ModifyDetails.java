@@ -74,6 +74,9 @@ public class ModifyDetails extends DispatchAction
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
+        BagManager bagManager = im.getBagManager();
+        InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+        
         TemplateQuery populatedTemplate;
         try {
             if (idForLookup != null && idForLookup.length() != 0) {
@@ -82,7 +85,7 @@ public class ModifyDetails extends DispatchAction
                 InterMineObject object = os.getObjectById(objectId);
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
             } else {
-                populatedTemplate = TemplatePopulator.populateTemplageWithBag(template, bagName);
+                populatedTemplate = TemplatePopulator.populateTemplateWithBag(template, bag);
             }
         } catch (TemplatePopulatorException e) {
             LOG.error("Error running up template '" + template.getName() + "' from report page for"
