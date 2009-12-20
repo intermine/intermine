@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.util.ModelUtil;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
