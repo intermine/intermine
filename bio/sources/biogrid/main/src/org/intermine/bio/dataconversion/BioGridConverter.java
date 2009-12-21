@@ -114,6 +114,10 @@ public class BioGridConverter extends BioFileConverter
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
 
+
+    //10116.xref.ncbiGeneNumber = entrez gene/locuslink
+    //9606.secondaryIdentifier = shortLabel
+
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
 
@@ -122,20 +126,21 @@ public class BioGridConverter extends BioFileConverter
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
                                            + key);
             }
+	    if (attributes.length == 3) {
+		LOG.error("~~~ " + attributes[2]);
+	    }
             String taxonId = attributes[0];
             if (config.get(taxonId) == null) {
                 Map<String, String> configs = new HashMap();
                 config.put(taxonId, configs);
             }
             if (attributes[1].equals("xref")) {
-                config.get(taxonId).put(value, attributes[2].toLowerCase());
-            } else if (attributes[1].equals("shortLabel")) {
-                config.get(taxonId).put(value, "shortLabel");
+                config.get(taxonId).put(attributes[2], value.toLowerCase());
             } else {
-                String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
-                    + ".  This line has not been processed.";
-                LOG.error(msg);
-            }
+		// attributes[1] is the identifierType, eg. primaryIdentifier
+		// value = 'shortLabel'
+                config.get(taxonId).put(attributes[1], value);
+	    }
         }
     }
     
