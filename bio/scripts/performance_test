@@ -39,5 +39,5 @@ fi
 echo "Using classpath: $CP"
 echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-java -cp $CP -Xmx1000M org.intermine.web.logic.PerformanceTester 20 
+java -cp $CP -Xmx1000M org.intermine.web.commandline.PerformanceTester 20 
 
