@@ -71,7 +71,7 @@ public class QuickSearchAction extends InterMineAction
             Properties webProperties = SessionMethods.getWebProperties(context);
 
             // remove the last query ran, otherwise the old query will show up on the results page
-            session.removeAttribute(Constants.QUERY);
+            SessionMethods.removeQuery(session);
 
             String templateName = webProperties.getProperty("begin.browse.template");
 
