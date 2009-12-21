@@ -36,7 +36,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.ServletMethods;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -119,7 +118,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                     PathQuery pq = ServletMethods.fromXml(queryXml, allBags,
                             PathQuery.USERPROFILE_VERSION);
                     if (pq.isValid()) {
-                        session.setAttribute(Constants.QUERY, ServletMethods.fromXml(queryXml,
+                        SessionMethods.setQuery(session, ServletMethods.fromXml(queryXml,
                                     profile.getSavedBags(), PathQuery.USERPROFILE_VERSION));
                     } else {
                         LOG.warn("PathQuery XML in saved session invalid! " + queryXml);

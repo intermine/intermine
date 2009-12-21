@@ -30,7 +30,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.results.PagedTable;
@@ -116,7 +115,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     String identifier = "col" + index++;
                     SessionMethods.setResultsTable(session, identifier, pc);
                     String trail = "|bag." + imBag.getName();
-                    session.removeAttribute(Constants.QUERY);
+                    SessionMethods.removeQuery(session);
                     return new ForwardParameters(mapping.findForward("results"))
                         .addParameter("table", identifier).addParameter("trail", trail).forward();
                 }
@@ -125,7 +124,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         } else if (request.getParameter("useBag") != null) {
             PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
             PathQuery pathQuery = pc.getWebTable().getPathQuery().clone();
-            session.setAttribute(Constants.QUERY, pathQuery);
+            SessionMethods.setQuery(session, pathQuery);
             session.setAttribute("path", imBag.getType());
             session.setAttribute("prefix", imBag.getType());
             String msg = "You can now create a query using your list " + imBag.getName();
@@ -145,7 +144,7 @@ public class ModifyBagDetailsAction extends InterMineAction
 
             SessionMethods.setResultsTable(session, identifier, pc);
             String trail = "|bag." + imBag.getName();
-            session.removeAttribute(Constants.QUERY);
+            SessionMethods.removeQuery(session);
             return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("table", identifier)
                             .addParameter("size", "25")

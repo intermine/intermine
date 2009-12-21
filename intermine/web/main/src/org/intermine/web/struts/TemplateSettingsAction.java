@@ -19,8 +19,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.template.TemplateBuildState;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Action invoked when user submits general template settings form.
@@ -48,8 +48,7 @@ public class TemplateSettingsAction extends InterMineAction
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
 
-        TemplateBuildState tbs = (TemplateBuildState) session.getAttribute(Constants
-                .TEMPLATE_BUILD_STATE);
+        TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
 
         tbs.setDescription(tsf.getDescription());
         tbs.setName(tsf.getName());

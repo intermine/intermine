@@ -22,7 +22,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -77,7 +76,7 @@ public class QueryClassSelectAction extends InterMineAction
         Model model = im.getModel();
 
         PathQuery query = new PathQuery(model);
-        session.setAttribute(Constants.QUERY, query);
+        SessionMethods.setQuery(session, query);
         session.setAttribute("path", TypeUtil.unqualifiedName(className));
         session.setAttribute("prefix", TypeUtil.unqualifiedName(className));
         SessionMethods.removeTemplateBuildState(session);

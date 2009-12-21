@@ -946,6 +946,25 @@ public class SessionMethods
     }
 
     /**
+     * Set the current query on the session.
+     *
+     * @param session a HttpSession object
+     * @param query a PathQuery object
+     */
+    public static void setQuery(HttpSession session, PathQuery query) {
+        session.setAttribute(Constants.QUERY, query);
+    }
+
+    /**
+     * Removes the current query from the session.
+     *
+     * @param session a HttpSession object
+     */
+    public static void removeQuery(HttpSession session) {
+        session.removeAttribute(Constants.QUERY);
+    }
+
+    /**
      * Get the SearchRepository for global (public) objects.
      *
      * @param context the servlet context
