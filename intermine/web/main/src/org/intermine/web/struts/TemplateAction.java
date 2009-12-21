@@ -107,14 +107,11 @@ public class TemplateAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
-        TemplateQuery template = templateManager.getTemplate(profile,
-                templateName, templateType);
+        TemplateQuery template = templateManager.getTemplate(profile, templateName, templateType);
 
-        if (!editQuery && !skipBuilder && !editTemplate
-                && forwardToLinksPage(request)) {
+        if (!editQuery && !skipBuilder && !editTemplate && forwardToLinksPage(request)) {
             TemplateQuery configuredTmpl = TemplatePopulator
-                    .getPopulatedTemplate(template,
-                            templateFormToTemplateValues(tf, template));
+                    .getPopulatedTemplate(template, templateFormToTemplateValues(tf, template));
 
             TemplateResultLinkGenerator gen = new TemplateResultLinkGenerator();
             String htmlLink = gen.getHtmlLink(new URLGenerator(request)
@@ -237,7 +234,8 @@ public class TemplateAction extends InterMineAction
             List<TemplateValue> nodeValues = new ArrayList<TemplateValue>();
             templateValues.put(node.getPathString(), nodeValues);
             for (Constraint c : template.getEditableConstraints(node)) {
-                String key = "" + (j + 1);
+                j++;
+                String key = "" + j;
 
                 TemplateValue value;
                 if (tf.getUseBagConstraint(key)) {
