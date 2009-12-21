@@ -1,0 +1,2 @@
+ZDB-GENE-020228-2	sall1a	sal-like 1a (Drosophila)	salm	spalt major	FBgn0004579	
+ZDB-GENE-020228-3	sall1b	sal-like 1b (Drosophila)	salm	spalt major	FBgn0004579
