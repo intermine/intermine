@@ -17,7 +17,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
@@ -34,7 +33,6 @@ public class TemplatePopulatorTest extends TestCase {
     private TemplateQuery simpleTemplate;
     private TemplateQuery templateTwoConstraints;
     private Map<String, List<TemplateValue>> values = new HashMap();
-    private Profile profile;
     
     public void setUp() throws Exception {
         super.setUp();
@@ -42,17 +40,19 @@ public class TemplatePopulatorTest extends TestCase {
         Reader reader = new InputStreamReader(TemplatePrecomputeHelperTest.class.getClassLoader().getResourceAsStream("default-template-queries.xml"));
         templates = binding.unmarshal(reader, new HashMap(), PathQuery.USERPROFILE_VERSION);
         simpleTemplate = templates.get("employeeByName");
-        templateTwoConstraints = templates.get("employeesFromCompanyAndDepartment");
-        
+        templateTwoConstraints = templates.get("employeesFromCompanyAndDepartment"); 
+    }
+
+    private Profile setUpProfile() throws Exception {
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
 
         ObjectStoreWriter uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
 
-        profile = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
         pm.createProfile(profile);
+        return profile;
     }
-
     
     public void testInvalidPathInValues() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.error", ConstraintOp.EQUALS, "error name", "A");
@@ -132,8 +132,9 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     
-    public void testPopulateTemplateWithBagNotOneConstraint() throws ObjectStoreException {
-        InterMineBag bag = profile.createBag("bag1", "Company", "");
+    public void testPopulateTemplateWithBagNotOneConstraint() throws Exception {
+        Profile profile = setUpProfile();
+    	InterMineBag bag = profile.createBag("bag1", "Company", "");
         try {
             TemplatePopulator.populateTemplateWithBag(templateTwoConstraints, bag);
             fail("Expected a TemplatePopulatorException.");
@@ -141,7 +142,8 @@ public class TemplatePopulatorTest extends TestCase {
         }
     }
     
-    public void testPopulateTemplateWithBagWrongType() throws ObjectStoreException {
+    public void testPopulateTemplateWithBagWrongType() throws Exception {
+        Profile profile = setUpProfile();
     	InterMineBag bag = profile.createBag("bag1", "Company", "");
     	try {
     	    TemplatePopulator.populateTemplateWithBag(simpleTemplate, bag);
@@ -150,7 +152,8 @@ public class TemplatePopulatorTest extends TestCase {
     	}
     }
     
-    public void testPopulateTemplateWithBag() throws ObjectStoreException {
+    public void testPopulateTemplateWithBag() throws Exception {
+        Profile profile = setUpProfile();
         InterMineBag bag = profile.createBag("bag1", "Employee", "");
         TemplateQuery res = TemplatePopulator.populateTemplateWithBag(simpleTemplate, bag);
         assertEquals(1, res.getAllEditableConstraints().size());

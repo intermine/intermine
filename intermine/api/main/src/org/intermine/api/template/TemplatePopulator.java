@@ -270,20 +270,20 @@ public class TemplatePopulator
     }
 
     private static Object getExtraValue(Constraint c, TemplateValue templateValue, PathNode node) {
-        Object ret = templateValue.getExtraValue();
-        if (ret instanceof String) {
-            if (templateValue.getExtraValue() == null || ((String) ret).trim().length() == 0) {
+        Object extraValue = templateValue.getExtraValue();
+        if (extraValue instanceof String) {
+            if (templateValue.getExtraValue() == null || ((String) extraValue).trim().length() == 0) {
                 return c.getExtraValue();
             }
             try {
-                ret = ConstraintValueParser.parse((String) ret, getType(node),
+                extraValue = ConstraintValueParser.parse((String) extraValue, getType(node),
                         templateValue.getOperation());
             } catch (ParseValueException ex) {
                 throw new RuntimeException("invalid value: " + templateValue.getExtraValue() + ". "
                         + ex.getMessage());
             }
         }
-        return ret;
+        return extraValue;
     }
 
     private static Class getType(PathNode node) {
