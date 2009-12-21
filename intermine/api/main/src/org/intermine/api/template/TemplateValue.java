@@ -135,4 +135,9 @@ public class TemplateValue
         this.objectConstraint = objectConstraint;
     }
 
+    public String toString() {
+        return code + " - " + path + " " + op + " " + value + " (" + extraValue + ", " 
+            + objectConstraint + ", " + bagConstraint + ")";
+    }
+    
 }
