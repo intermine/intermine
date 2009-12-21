@@ -61,7 +61,7 @@ public class OrthologueConverter implements BagConverter
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         ObjectStore os = im.getObjectStore();
-        WebConfig webConfig = (WebConfig) session.getAttribute(Constants.WEBCONFIG);
+        WebConfig webConfig = SessionMethods.getWebConfig(session.getServletContext());
 
         PathQuery q = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
