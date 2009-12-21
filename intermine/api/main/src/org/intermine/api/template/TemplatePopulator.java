@@ -52,7 +52,8 @@ public class TemplatePopulator
     public static TemplateQuery getPopulatedTemplate(TemplateQuery origTemplate,
             Map<String, List<TemplateValue>> newConstraints) {
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
-
+        template.setEdited(true);
+        
         checkPaths(origTemplate.getModel(), newConstraints.values(), template);
 
         for (PathNode node : template.getEditableNodes()) {
