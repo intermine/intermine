@@ -44,7 +44,7 @@ public class ListManager
     public List<String> getListsNames(Integer objectId) {
         List<String> ret = new ArrayList<String>();
 
-        Collection<InterMineBag> bags = bagManager.getGlobalBags().values();
+        Collection<InterMineBag> bags = bagManager.getGlobalBagsContainingId(objectId);
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
         }
