@@ -10,7 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,8 +67,9 @@ public class TemplatesImportAction extends InterMineAction
         try {
             profile.disableSaving();
 
-            if (tif.isOverwriting() && profile.getSavedTemplates().size() > 0) {
-                for (String templateName : profile.getSavedTemplates().keySet()) {
+            Set<String> templateNames = new HashSet<String>(profile.getSavedTemplates().keySet());
+            if (tif.isOverwriting() && templateNames.size() > 0) {
+                for (String templateName : templateNames) {
                     profile.deleteTemplate(templateName);
                     deleted++;
                 }
