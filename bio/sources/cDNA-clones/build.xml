@@ -1,0 +1,5 @@
+<project name="cDNA-clones" default="default" basedir=".">
+  <description>build, test, package cDNA-clones</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
