@@ -1,4 +1,4 @@
-<project name="cDNA-clones-tasks" default="default" basedir=".">
-  <description>build cDNA-clones tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
+<project name="cdna-clone-tasks" default="default" basedir=".">
+  <description>build cDNA-clone tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
 </project>
