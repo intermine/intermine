@@ -69,7 +69,7 @@
             </th>
           </tr>
           <c:forEach items="${PROFILE.savedBags}" var="savedBag" varStatus="status">
-            <tr id="${savedBag.value.name}">
+            <tr>
               <td class="sorting" align="center">
                 <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
                   <c:out value="${savedBag.key}"/>
