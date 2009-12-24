@@ -1658,7 +1658,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         writer.flush();
         writer.close();
 
-        // Characteristics are modeled differently to protocol inputs/outputs, read in extra
+        // Characteristics are modelled differently to protocol inputs/outputs, read in extra
         // properties here
         addSubmissionPropsFromCharacteristics(subToTypes, connection);
  
@@ -2166,17 +2166,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "antigen", "antigen");
                     setAttributeOnProp(prop, propItem, "host", "hostOrganism");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
-                    
-                    if (prop.details.containsKey("target id")) {
-                        if (prop.details.get("target id").size() != 1) {
-                            throw new RuntimeException("Antibody should only have one target id: "
-                                    + prop.details.get("target id"));
-                        }
-                        String geneItemId = getTargetGeneItemIdentfier(prop.details.get("target id").get(0));
-                        if (geneItemId != null) {
-                            propItem.setReference("target", geneItemId);
-                        }
-                    }
+                    setGeneItem(prop, propItem, "Antibody");
                 } else if (clsName.equals("Array")) {
                     setAttributeOnProp(prop, propItem, "platform", "platform");
                     setAttributeOnProp(prop, propItem, "resolution", "resolution");
@@ -2188,10 +2178,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "tissue", "tissue");
                     setAttributeOnProp(prop, propItem, "cell type", "cellType");
+                    setAttributeOnProp(prop, propItem, "target name", "targetName");
+                    setGeneItem(prop, propItem, "CellLine");
                 } else if (clsName.equals("Strain")) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
+                    setAttributeOnProp(prop, propItem, "description", "description");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
+                    setAttributeOnProp(prop, propItem, "target name", "targetName");
+                    setGeneItem(prop, propItem, "Strain");
                 }  else if (clsName.equals("Tissue")) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "sex", "sex");
@@ -2202,6 +2197,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             subItemsMap.put(prop.wikiPageUrl, propItem);
         }
         return propItem;
+    }
+
+    private void setGeneItem(SubmissionProperty prop, Item propItem, String source)
+            throws ObjectStoreException {
+        if (prop.details.containsKey("target id")) {
+            if (prop.details.get("target id").size() != 1) {
+                throw new RuntimeException(source + " should only have one target id: "
+                        + prop.details.get("target id"));
+            }
+            String geneItemId = getTargetGeneItemIdentfier(prop.details.get("target id").get(0));
+            if (geneItemId != null) {
+                propItem.setReference("target", geneItemId);
+            }
+        }
     }
     
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
