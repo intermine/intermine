@@ -137,7 +137,7 @@
 		</source>
 		
 		<!-- cDNA-clone -->
-		<source name="cdna-clone" type="cdna-clone">
+		<source name="cdna-clone" type="modmine/cdna-clone">
 			<property name="gff3.taxonId" value="7227"/>
 			<property name="gff3.seqClsName" value="Chromosome"/>
 			<property name="gff3.DataSourceName" value="Celniker lab"/>
