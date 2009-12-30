@@ -138,11 +138,11 @@
 		
 		<!-- cDNA-clone -->
 		<source name="cdna-clone" type="modmine/cdna-clone">
-			<property name="gff3.taxonId" value="7227"/>
 			<property name="gff3.seqClsName" value="Chromosome"/>
-			<property name="gff3.DataSourceName" value="Celniker lab"/>
+			<property name="gff3.taxonId" value="7227"/>
 			<property name="gff3.seqDataSourceName" value="Celniker lab"/>
-			<property name="gff3.DataSetTitle" value="Celniker lab cDNA clones"/>
+			<property name="gff3.dataSourceName" value="Celniker lab"/>
+			<property name="gff3.dataSetTitle" value="Celniker lab cDNA clones"/>
 			<property name="src.data.dir" location="/shared/data/modmine/sources/cDNA-clones"/>
 		</source>
 

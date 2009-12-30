@@ -37,22 +37,24 @@ public class CDNAClonesGFF3RecordHandler extends GFF3RecordHandler
         // This method is called for every line of GFF3 file(s) being read.  Features and their
         // locations are already created but not stored so you can make changes here.  Attributes
         // are from the last column of the file are available in a map with the attribute name as
-        // the key.   For example:
+        // the key.
         //
-        //     Item feature = getFeature();
-        //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttrinte("symbol", symbol);
-        //
-        // Any new Items created can be stored by calling addItem().  For example:
-        // 
-        //     String geneIdentifier = record.getAttributes().get("gene");
-        //     gene = createItem("Gene");
-        //     gene.setAttribute("primaryIdentifier", geneIdentifier);
-        //     addItem(gene);
-        //
-        // You should make sure that new Items you create are unique, i.e. by storing in a map by
-        // some identifier. 
+             Item feature = getFeature();
+             
+             if (record.getType().equals("cDNA_match")) {
 
+                 feature.setClassName("CDNA");
+                 
+                 String[] target = record.getTarget().split("\\s");
+                 feature.setAttribute("primaryIdentifier", target[0]);
+                 
+                 String id = record.getId();
+                 feature.setAttribute("secondaryIdentifier", id);                 
+
+             } else {
+                 clear();                 
+             }
+                 
     }
 
 }
