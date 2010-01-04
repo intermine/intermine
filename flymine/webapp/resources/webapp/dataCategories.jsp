@@ -32,7 +32,7 @@
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
         <p> Genomics </p></html:link></td>
     <td> <i>Drosophila</i> </td>
-    <td> Genome annotation for D. melanogaster (R5.19), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R2.4), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
+    <td> Genome annotation for D. melanogaster (R5.23), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R2.6), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
     <td><a href="http://www.flybase.org" target="_new">Flybase</a> - Version FB2009_10</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
@@ -103,7 +103,7 @@
         <p> Proteins </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.11</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new">UniProt</a> - Release 15.12</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -111,7 +111,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.11</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.12</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -119,7 +119,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.11</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.12</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -127,7 +127,7 @@
   <tr>
     <td> <i>H. sapiens</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.11</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.12</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -135,7 +135,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.11</td>
+    <td> <a href="http://www.uniprot.org" target="_new">UniProt</a> - Release 15.12</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -143,7 +143,7 @@
   <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.11)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.12)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -151,7 +151,7 @@
   <tr>
     <td> <i>A. gambiae</i></td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.11)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.12)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -159,7 +159,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.11)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from UniProt Release 15.12)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -259,7 +259,7 @@
         <p> Gene Ontology </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 29th November 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 20th November 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -267,7 +267,7 @@
   <tr>
     <td> <i>C. elegans</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 2nd December 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 1st December 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -275,7 +275,7 @@
   <tr>
     <td> <i>M. musculus</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 12th December 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 11th December 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -283,7 +283,7 @@
   <tr>
     <td> <i>S. cerevisiae</i></td>
     <td> GO annotations </td>
-    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 13th December 2009</td>
+    <td> <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a> - 12th December 2009</td>
     <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -299,7 +299,7 @@
   <tr>
     <td> <i>A. gambiae</i> </td>
     <td> GO annotations </td>
-    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 23rd November 2009</td>
+    <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 13th December 2009</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/14681408" target="_new">PubMed: 14681408</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -319,7 +319,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Affymetrix microarray-based atlas of gene expression in larval and adult tissues</td>
-    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 19th October 2009 </td>
+    <td> <a href="http://www.flyatlas.org" target="_new">FlyAtlas</a> - 13th December 2009 </td>
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17534367" target="_new">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -405,7 +405,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> RNAi data from in vivo experiments</td>
-    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS204 </td>
+    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS209 </td>
     <td> Bieri et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099234" target="_new">PubMed: 17099234</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -424,7 +424,7 @@
   <tr>
     <td> <i>D. melanogaster</i>, <i>C. elegans</i>, <i>S. cerevisiae</i> </td>
     <td> Pathway information and the genes involved in them, inferred through orthologues from Human curated pathways</td>
-    <td> <a href="http://www.reactome.org/" target="_new">Reactome</a> - Version 1.0</td>
+    <td> <a href="http://www.reactome.org/" target="_new">Reactome</a> - Version 31, 15th December 2009</td>
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
@@ -432,7 +432,7 @@
 <tr>
     <td> <i>D. melanogaster</i></td>
     <td> Curated pathway information and the genes involved in them</td>
-    <td> <a href="http://fly.reactome.org/" target="_new">FlyReactome</a> - Version 1.0</td>
+    <td> <a href="http://fly.reactome.org/" target="_new">FlyReactome</a> - Version 2.0</td>
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
