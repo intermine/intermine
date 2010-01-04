@@ -132,7 +132,7 @@ public class PortalQueryAction extends InterMineAction
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
             String qid = loadObjectDetails(servletContext, session, request, response,
-                                           profile.getUsername(), extId, origin);
+                                           profile.getUsername(), extId);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid).forward();
         }
@@ -292,12 +292,14 @@ public class PortalQueryAction extends InterMineAction
      */
     private String loadObjectDetails(ServletContext servletContext, HttpSession session,
             HttpServletRequest request, HttpServletResponse response, String userName,
-            String extId, @SuppressWarnings("unused") String origin) throws InterruptedException {
+            String extId) throws InterruptedException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = SessionMethods.getWebProperties(servletContext);
         String templateName = properties.getProperty("begin.browse.template");
+        Profile superProfile = im.getProfileManager().getSuperuserProfile();
+        
         TemplateManager templateManager = im.getTemplateManager();
-        TemplateQuery template = templateManager.getGlobalTemplate(templateName);
+        TemplateQuery template = templateManager.getUserTemplate(superProfile, templateName);
 
         if (template == null) {
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
