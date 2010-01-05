@@ -22,8 +22,9 @@ public class WebState
 {
 
     private Map<String, Boolean> toggledElements = new HashMap<String, Boolean>();
-    protected Map<String, String> subtabs = new HashMap();
+    protected Map<String, String> subtabs = new HashMap<String, String>();
     private Map<String, Object> statesMap = new HashMap<String, Object>();
+    private Map<String, Integer> hintCounts = new HashMap<String, Integer>();
 
     /**
      * Gets map of ids of elements that were in the past (during session) toggled
@@ -89,6 +90,30 @@ public class WebState
      */
     public Map<String, String> getSubtabs() {
         return subtabs;
+    }
+
+    /**
+     * Increment the number of times a hint has been displayed.
+     * @param hint the hint that has been displayed
+     */
+    public void incrementHintCount(String hint) {
+        int count = 0;
+        if (hintCounts.containsKey(hint)) {
+            count = hintCounts.get(hint).intValue();
+        }
+        hintCounts.put(hint, new Integer(count + 1));
+    }
+
+    /**
+     * Get the number of times a particular hint has been shown.
+     * @param hint the hint to fetch count for
+     * @return number of times the hint has been displayed
+     */
+    public int getHintCount(String hint) {
+        if (hintCounts.containsKey(hint)) {
+            return hintCounts.get(hint).intValue();
+        }
+        return 0;
     }
 }
 

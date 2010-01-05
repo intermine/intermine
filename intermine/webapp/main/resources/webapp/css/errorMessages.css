@@ -13,3 +13,11 @@
 
 .lookupError {
     color: red;}
+    
+.hints {
+    color: black;
+    border: 1px;
+    border-style: solid;
+    border-color: #FF6;
+    background-color: #FFC;
+}
