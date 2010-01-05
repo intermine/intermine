@@ -48,6 +48,7 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
@@ -362,7 +363,13 @@ public class TemplateController extends TilesAction
                                             Map<String, String> classDesc,
                                             Map<String, String> fieldDesc) {
         if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
-            Path path = PathQuery.makePath(model, query, node.getPathString());
+            Path path;
+            try {
+                path = PathQuery.makePath(model, query, node.getPathString());
+            } catch (PathException e) {
+                // Should not happen, as the path was taken from a node
+                throw new Error("There must be a bug", e);
+            }
             if (path.getEndFieldDescriptor() != null) {
                 fieldDesc.put(node.getPathString(), path.getEndFieldDescriptor().getName());
                 String[] tmp = path.getLastClassDescriptor().getName().split("\\.");

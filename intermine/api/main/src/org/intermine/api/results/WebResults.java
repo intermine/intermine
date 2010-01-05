@@ -41,7 +41,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.TypeUtil;
@@ -388,12 +388,17 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                     String type = TypeUtil.unqualifiedName(lastCd);
                     Path path;
                     String fieldName = null;
-                    if (columnPath.endIsAttribute()) {
-                        fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
-                        path = new Path(model, type + '.' + fieldName);
-                    } else {
-                        // special case for columns that contain objects
-                        path = new Path(model, type);
+                    try {
+                        if (columnPath.endIsAttribute()) {
+                            fieldName = columnName.substring(columnName.lastIndexOf(".") + 1);
+                            path = new Path(model, type + '.' + fieldName);
+                        } else {
+                            // special case for columns that contain objects
+                            path = new Path(model, type);
+                        }
+                    } catch (PathException e) {
+                        // Should never happen if the field name is valid
+                        throw new Error("There must be a bug", e);
                     }
 
                     // Three cases:
@@ -404,7 +409,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                     Object fieldValue;
                     try {
                         fieldValue = (o == null ? null : PathUtil.resolvePath(path, o));
-                    } catch (PathError e) {
+                    } catch (PathException e) {
                         throw new IllegalArgumentException("Path: \"" + columnName
                                 + "\", pathToIndex: \"" + pathToIndex + "\", prefix: \""
                                 + parentColumnName + "\", query: \""

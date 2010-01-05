@@ -9,6 +9,7 @@ import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 
 public class PathUtilTest extends TestCase {
@@ -21,7 +22,7 @@ public class PathUtilTest extends TestCase {
     }
 
     
-    public void testResolveShort() {
+    public void testResolveShort() throws Exception {
         Path path = new Path(model, "Department.name");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -30,7 +31,7 @@ public class PathUtilTest extends TestCase {
     }
 
     
-    public void testResolve() {
+    public void testResolve() throws Exception {
         Path path = new Path(model, "Department.company.name");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -42,7 +43,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("company name", PathUtil.resolvePath(path, department));
     }
 
-    public void testResolveLong() {
+    public void testResolveLong() throws Exception {
         Path path = new Path(model, "Department.company.CEO.name");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -58,7 +59,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("ceo name", PathUtil.resolvePath(path, department));
     }
 
-    public void testResolveReference() {
+    public void testResolveReference() throws Exception {
         Path path = new Path(model, "Department.company.CEO");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -75,7 +76,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("ceo name", resCEO.getName());
     }
 
-    public void testResolveReferenceWithClassConstraint() {
+    public void testResolveReferenceWithClassConstraint() throws Exception {
         Path path = new Path(model, "Department.manager[CEO].company");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -92,7 +93,7 @@ public class PathUtilTest extends TestCase {
         assertEquals("company name", resCompany.getName());
     }
 
-    public void testResolvePathOneElement() {
+    public void testResolvePathOneElement() throws Exception {
         Path path = new Path(model, "Department");
         Department department =
             (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
@@ -100,4 +101,31 @@ public class PathUtilTest extends TestCase {
         assertEquals(department.getId(), ((Department) PathUtil.resolvePath(path, department)).getId());
     }
     
+    public void testNotSuperclass() throws Exception {
+        Path path = new Path(model, "Department.name");
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        try {
+            PathUtil.resolvePath(path, c);
+            fail("Expected exception");
+        } catch (PathException e) {
+            // Fine
+        }
+    }
+
+    public void testNullRef() throws Exception {
+        Path path = new Path(model, "Department.company.name");
+        Department d = new Department();
+        assertNull(PathUtil.resolvePath(path, d));
+    }
+
+    public void testCollections() throws Exception {
+        Path path = new Path(model, "Company.departments.name");
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        try {
+            PathUtil.resolvePath(path, c);
+            fail("Expected exception");
+        } catch (RuntimeException e) {
+            // Fine
+        }
+    }
 }

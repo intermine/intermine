@@ -17,7 +17,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -31,16 +31,18 @@ public class PathUtil
 
     /**
      * Return the object at the end of a given path, starting from the given object.
+     *
      * @param path the path to resolve
      * @param o the start object
      * @return the attribute, object or collection at the end of the path
+     * @throws PathException if the path does not match the object type
      */
-    public static Object resolvePath(Path path, Object o) {
+    public static Object resolvePath(Path path, Object o) throws PathException {
         Model model = path.getModel();
         if (path.getStartClassDescriptor() != null) {
             Set clds = model.getClassDescriptorsForClass(o.getClass());
             if (!clds.contains(path.getStartClassDescriptor())) {
-                throw new PathError("ClassDescriptor from the start of path: " + path
+                throw new PathException("ClassDescriptor from the start of path: " + path
                         + " is not a superclass of the class: "
                         + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
                         + o, path.toString());

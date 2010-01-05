@@ -70,6 +70,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -327,6 +328,9 @@ public class AjaxServices
             }
             return descr.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         } catch (RuntimeException e) {
+            processException(e);
+            return null;
+        } catch (PathException e) {
             processException(e);
             return null;
         }

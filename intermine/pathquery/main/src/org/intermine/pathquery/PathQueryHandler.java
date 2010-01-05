@@ -187,7 +187,8 @@ public class PathQueryHandler extends DefaultHandler
             query.addView(viewStrings);
             if (query.getView().size() == 0) {
                 // query has no valid view paths, which we can't handle at the moment
-                PathError e = new PathError("setView() was passed null or empty string", null);
+                PathException e = new PathException("setView() was passed null or empty string",
+                        null);
                 query.addProblem(e);
                 return;
             }

@@ -47,6 +47,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -91,7 +92,12 @@ public class TableWidgetLdr
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
         model = os.getModel();
-        origPath = new Path(model, pathWithNoConstraints(pathString));
+        try {
+            origPath = new Path(model, pathWithNoConstraints(pathString));
+        } catch (PathException e) {
+            throw new Error("Cannot create path for widget with path \"" + pathString
+                    + "\" - check widget configuration");
+        }
         cld = origPath.getEndClassDescriptor();
         type = cld.getUnqualifiedName();
         displayFields = config.getDisplayFields();
@@ -152,8 +158,15 @@ public class TableWidgetLdr
                     for (Iterator iterator3 = columns.iterator(); iterator3.hasNext();) {
 
                         String columnName = (String) iterator3.next();
-                        Path path = new Path(model, columnName);
-                        Object fieldValue = PathUtil.resolvePath(path, o);
+                        Path path;
+                        Object fieldValue;
+                        try {
+                            path = new Path(model, columnName);
+                            fieldValue = PathUtil.resolvePath(path, o);
+                        } catch (PathException e) {
+                            throw new Error("Cannot create path \"" + columnName
+                                    + "\" for widget - check config");
+                        }
                         Class thisType = path.getStartClassDescriptor().getType();
                         String fieldName = path.getEndFieldDescriptor().getName();
                         boolean isKeyField = ClassKeyHelper.isKeyField(config.getClassKeys(),

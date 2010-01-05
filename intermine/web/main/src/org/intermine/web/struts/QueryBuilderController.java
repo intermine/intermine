@@ -40,6 +40,7 @@ import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.MetadataNode;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -155,7 +156,13 @@ public class QueryBuilderController extends TilesAction
             if (dottedViewStrings.contains(fullPath)) {
                 node.setSelected(true);
             } else {
-                Path path = new Path(model, pathName);
+                Path path;
+                try {
+                    path = new Path(model, pathName);
+                } catch (PathException e) {
+                    // Should never happen, as the path came from a node
+                    throw new Error("There must be a bug", e);
+                }
                 // If an object has been selected, select its fields instead
                 if (path.getEndFieldDescriptor() == null || path.endIsReference()
                         || path.endIsCollection()) {
@@ -189,8 +196,13 @@ public class QueryBuilderController extends TilesAction
                 String token = st.nextToken();
                 current = (current == null ? token : current + "." + token);
                 navigation.put(token, current);
-                navigationPaths.put(token, TypeUtil.unqualifiedName(PathQuery.makePath(model,
-                                query, current).getEndType().getName()));
+                try {
+                    navigationPaths.put(token, TypeUtil.unqualifiedName(PathQuery.makePath(model,
+                                    query, current).getEndType().getName()));
+                } catch (PathException e) {
+                    throw new IllegalArgumentException("Error building path with \"" + prefix
+                            + "\"", e);
+                }
             }
         }
         request.setAttribute("navigation", navigation);
@@ -297,9 +309,13 @@ public class QueryBuilderController extends TilesAction
 
         while (iter.hasNext()) {
             String path = (String) iter.next();
-            String unqualifiedName = TypeUtil.unqualifiedName(PathQuery.makePath(
+            try {
+                String unqualifiedName = TypeUtil.unqualifiedName(PathQuery.makePath(
                             pathquery.getModel(), pathquery, path).getEndType().getName());
-            viewPathTypes.put(path, unqualifiedName);
+                viewPathTypes.put(path, unqualifiedName);
+            } catch (PathException e) {
+                throw new Error("There must be a bug", e);
+            }
         }
 
         return viewPathTypes;

@@ -52,10 +52,10 @@ public class Path
      * @param model the Model used to check ClassDescriptors and FieldDescriptors
      * @param path a String of the form "Department.manager.name" or
      * "Department.employees[Manager].seniority"
-     * @throws PathError thrown if there is a problem resolving the path eg. a reference doesn't
+     * @throws PathException thrown if there is a problem resolving the path eg. a reference doesn't
      * exist in the model
      */
-     public Path(Model model, String path) throws PathError {
+     public Path(Model model, String path) throws PathException {
         if (model == null) {
             throw new IllegalArgumentException("model argument is null");
         }
@@ -110,11 +110,11 @@ public class Path
      * @param stringPath a String of the form "Department.manager.name"
      * @param constraintMap a Map from paths as string to class names - use when parts of the path
      * are constrained to be sub-classes
-     * @throws PathError thrown if there is a problem resolving the path eg. a reference doesn't
+     * @throws PathException thrown if there is a problem resolving the path eg. a reference doesn't
      * exist in the model
       */
     public Path(Model model, String stringPath, Map<String, String> constraintMap)
-        throws PathError {
+        throws PathException {
         this.model = model;
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
@@ -176,7 +176,7 @@ public class Path
 //        }
 //    }
 
-    private void initialise() throws PathError {
+    private void initialise() throws PathException {
         elements = new ArrayList();
         elementClassDescriptors = new ArrayList<ClassDescriptor>();
         String parts[] = path.split("[.]");
@@ -185,7 +185,7 @@ public class Path
         if (!("".equals(clsName))) {
             cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
             if (cld == null) {
-                throw new PathError("Unable to resolve path '" + path + "': class '" + clsName
+                throw new PathException("Unable to resolve path '" + path + "': class '" + clsName
                                     + "' not found in model '" + model.getName() + "'", path);
             }
             this.startCld = cld;
@@ -202,7 +202,7 @@ public class Path
             if (!("".equals(clsName))) {
                 FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
                 if (fld == null) {
-                    throw new PathError("Unable to resolve path '" + path + "': field '"
+                    throw new PathException("Unable to resolve path '" + path + "': field '"
                                         + thisPart + "' of class '" + cld.getName()
                                         + "' not found in model '" + model.getName() + "'", path);
                 }
@@ -218,12 +218,10 @@ public class Path
 
                     // check if attribute and not at end of path
                     if (fld.isAttribute()) {
-                        throw new PathError("Unable to resolve path '" + path + "': field '"
-                                            + thisPart + "' of class '"
-                                            + cld.getName()
-                                            + "' is not a reference/collection field in "
-                                            + "the model '"
-                                            + model.getName() + "'", path);
+                        throw new PathException("Unable to resolve path '" + path + "': field '"
+                                + thisPart + "' of class '" + cld.getName()
+                                + "' is not a reference/collection field in the model '"
+                                + model.getName() + "'", path);
                     }
                 } else {
                     this.endFld = fld;
@@ -240,7 +238,7 @@ public class Path
                             + constrainedClassName;
                         cld = model.getClassDescriptorByName(qualifiedClassName);
                         if (cld == null) {
-                            throw new PathError("Unable to resolve path '" + path + "': class '"
+                            throw new PathException("Unable to resolve path '" + path + "': class '"
                                     + qualifiedClassName + "' not found in model '"
                                     + model.getName() + "'", path);
                         }
@@ -355,6 +353,7 @@ public class Path
     /**
      * Return a Path object that represents the prefix of this path, ie this Path without the
      * last element.  If the Path contains only one element, an exception is thrown.
+     *
      * @return the prefix Path
      */
     public Path getPrefix() {
@@ -367,15 +366,22 @@ public class Path
         if (lastDotIndex > lastIndex) {
             lastIndex = lastDotIndex;
         }
-        return new Path(model, pathString.substring(0, lastIndex));
+        try {
+            return new Path(model, pathString.substring(0, lastIndex));
+        } catch (PathException e) {
+            // Should not happen
+            throw new Error("There must be a bug", e);
+        }
     }
 
     /**
      * Return new Path that has this Path as its prefix and has fieldName as the last element.
+     *
      * @param fieldName the field name
      * @return the new Path
+     * @throws PathException if the resulting Path is not valid
      */
-    public Path append(String fieldName) {
+    public Path append(String fieldName) throws PathException {
        return new Path(model, toString() + "." + fieldName);
     }
 

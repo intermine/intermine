@@ -467,10 +467,11 @@ public class StringUtil
 
 
     /**
+     * Returns true if the given String is null or the empty String.
+     *
      * @param str checked string
-     * @return true if string is empty
+     * @return true if string is null or empty
      */
-
     public static boolean isEmpty(String str) {
         if (str == null) {
             return true;
@@ -479,8 +480,8 @@ public class StringUtil
     }
 
     /**
-     * Make a Map from the serialized String returned
-     * by jQuery.sortable("serialize")
+     * Make a Map from the serialized String returned by jQuery.sortable("serialize")
+     *
      * @param str the String
      * @return a Map
      */

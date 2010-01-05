@@ -244,7 +244,7 @@ public class WebResultsTest extends TestCase
         assertEquals(new MultiRow(Collections.singletonList(expected)), row1);
     }
 
-    public void test() {
+    public void test() throws Exception {
         IqlQuery fq =
             new IqlQuery("SELECT DISTINCT a1_, a3_, a4_ FROM org.intermine.model.testmodel.Department AS a1_," +
                     " org.intermine.model.testmodel.CEO AS a2_, org.intermine.model.testmodel.Company " +

@@ -16,7 +16,51 @@ import org.apache.commons.lang.StringUtils;
 public class NameUtil
 {
     private static final String QUERY_NAME_PREFIX = "query_";
-    
+    private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
+    private static final Pattern VALID_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:]");
+
+    /*
+     * Generates a map of special characters to their name, used to swap out bad characters in
+     * query/list names
+     */
+    static {
+        SPEC_CHAR_TO_TEXT.put("‘", new String("QUOTE"));
+        SPEC_CHAR_TO_TEXT.put("’", new String("QUOTE"));
+        SPEC_CHAR_TO_TEXT.put("“", new String("QUOTE"));
+        SPEC_CHAR_TO_TEXT.put("”", new String("QUOTE"));
+        SPEC_CHAR_TO_TEXT.put("‹", new String("LESS_THAN_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("›", new String("GREATER_THAN_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("!", new String("EXCLAMATION_POINT"));
+        SPEC_CHAR_TO_TEXT.put("£", new String("POUND_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("$", new String("DOLLAR_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("%", new String("PERCENT_SIGN"));
+
+        SPEC_CHAR_TO_TEXT.put("^", new String("CARET"));
+        SPEC_CHAR_TO_TEXT.put("&", new String("AMPERSAND"));
+        SPEC_CHAR_TO_TEXT.put("(", new String("LEFT_PARENTHESIS"));
+        SPEC_CHAR_TO_TEXT.put(")", new String("RIGHT_PARENTHESIS"));
+        SPEC_CHAR_TO_TEXT.put("+", new String("PLUS_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("=", new String("EQUALS_SIGN"));
+        SPEC_CHAR_TO_TEXT.put("{", new String("LEFT_BRACKET"));
+        SPEC_CHAR_TO_TEXT.put("}", new String("RIGHT_BRACKET"));
+        SPEC_CHAR_TO_TEXT.put("[", new String("LEFT_BRACKET"));
+        SPEC_CHAR_TO_TEXT.put("]", new String("RIGHT_BRACKET"));
+        SPEC_CHAR_TO_TEXT.put(":", new String("COLON"));
+
+        SPEC_CHAR_TO_TEXT.put(";", new String("SEMICOLON"));
+        SPEC_CHAR_TO_TEXT.put("@", new String("AT_SIGN"));
+        SPEC_CHAR_TO_TEXT.put(",", new String("COMMA"));
+        SPEC_CHAR_TO_TEXT.put("?", new String("QUESTION_MARK"));
+        SPEC_CHAR_TO_TEXT.put("~", new String("TILDE"));
+        SPEC_CHAR_TO_TEXT.put("#", new String("HASH"));
+        SPEC_CHAR_TO_TEXT.put("<", new String("LESS_THAN"));
+        SPEC_CHAR_TO_TEXT.put(">", new String("GREATER_THAN"));
+        SPEC_CHAR_TO_TEXT.put("'", new String("APOSTROPHE"));
+        SPEC_CHAR_TO_TEXT.put("/", new String("FORWARD_SLASH"));
+        SPEC_CHAR_TO_TEXT.put("\\", new String("BACK_SLASH"));
+        SPEC_CHAR_TO_TEXT.put("*", new String("ASTERISK"));
+    }
+
     /**
      * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
      * dashes.  And spaces.  And dots.
@@ -27,14 +71,13 @@ public class NameUtil
         if (StringUtils.isEmpty(name)) {
             return false;
         }
-        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
-        Matcher m = p.matcher(name);
+        Matcher m = VALID_PATTERN.matcher(name);
         return !m.find();
     }
 
     /**
      * Takes a string and replaces special characters with the text value, e.g. it would change
-     * "a&b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
+     * "a&amp;b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
      * characters.
      * @param name Name of query/template
      * @return rebuiltName Name of query/template with the special characters removed
@@ -55,69 +98,21 @@ public class NameUtil
         }
         return rebuiltName;
     }
-    
+
     /**
-     * Returns the word value of special characters (ie returns _AMPERSAND_ for &, etc).  Used for
-     * the forced renaming of queries/templates in the query/template import.
-     * @param specialCharacter The special character, ie &
+     * Returns the word value of special characters (ie returns _AMPERSAND_ for &amp;, etc).
+     * Used for the forced renaming of queries/templates in the query/template import.
+     *
+     * @param specialCharacter The special character, ie &amp;
      * @return wordEquivalent The special character's name, ie AMPERSAND
      */
     private static String getSpecCharToText(String specialCharacter) {
-        Map<String, String> specCharToText = mapChars();
-        String wordEquivalent = specCharToText.get(specialCharacter);
+        String wordEquivalent = SPEC_CHAR_TO_TEXT.get(specialCharacter);
         if (StringUtils.isEmpty(wordEquivalent)) {
             wordEquivalent = "SPECIAL_CHARACTER_REMOVED";
         }
         wordEquivalent = "_" + wordEquivalent + "_";
         return wordEquivalent;
-    }
-    
-    /**
-     * generates a map of special characters to their name.  used to swap out bad characters in
-     * query/list names
-     * @return map of special characters to their names
-     */
-    private static HashMap<String, String> mapChars() {
-
-        HashMap<String, String> specCharToText = new HashMap<String, String> ();
-
-        specCharToText.put("‘", new String("QUOTE"));
-        specCharToText.put("’", new String("QUOTE"));
-        specCharToText.put("“", new String("QUOTE"));
-        specCharToText.put("”", new String("QUOTE"));
-        specCharToText.put("‹", new String("LESS_THAN_SIGN"));
-        specCharToText.put("›", new String("GREATER_THAN_SIGN"));
-        specCharToText.put("!", new String("EXCLAMATION_POINT"));
-        specCharToText.put("£", new String("POUND_SIGN"));
-        specCharToText.put("$", new String("DOLLAR_SIGN"));
-        specCharToText.put("%", new String("PERCENT_SIGN"));
-
-        specCharToText.put("^", new String("CARET"));
-        specCharToText.put("&", new String("AMPERSAND"));
-        specCharToText.put("(", new String("LEFT_PARENTHESIS"));
-        specCharToText.put(")", new String("RIGHT_PARENTHESIS"));
-        specCharToText.put("+", new String("PLUS_SIGN"));
-        specCharToText.put("=", new String("EQUALS_SIGN"));
-        specCharToText.put("{", new String("LEFT_BRACKET"));
-        specCharToText.put("}", new String("RIGHT_BRACKET"));
-        specCharToText.put("[", new String("LEFT_BRACKET"));
-        specCharToText.put("]", new String("RIGHT_BRACKET"));
-        specCharToText.put(":", new String("COLON"));
-
-        specCharToText.put(";", new String("SEMICOLON"));
-        specCharToText.put("@", new String("AT_SIGN"));
-        specCharToText.put(",", new String("COMMA"));
-        specCharToText.put("?", new String("QUESTION_MARK"));
-        specCharToText.put("~", new String("TILDE"));
-        specCharToText.put("#", new String("HASH"));
-        specCharToText.put("<", new String("LESS_THAN"));
-        specCharToText.put(">", new String("GREATER_THAN"));
-        specCharToText.put("'", new String("APOSTROPHE"));
-        specCharToText.put("/", new String("FORWARD_SLASH"));
-        specCharToText.put("\\", new String("BACK_SLASH"));
-        specCharToText.put("*", new String("STAR"));
-
-        return specCharToText;
     }
 
     /**
@@ -134,7 +129,7 @@ public class NameUtil
         }
         return listName + "_copy" + i;
     }
-    
+
     /**
      * Checks that the name doesn't already exist and returns a numbered name if it does.  Used in
      * situations where prompting the user for a good name wouldn't work, eg. query import
@@ -160,7 +155,7 @@ public class NameUtil
             return newName;
         }
     }
-    
+
     /**
      * Return a query name that isn't currently in use.
      *

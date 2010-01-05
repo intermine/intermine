@@ -29,7 +29,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -217,9 +217,14 @@ public class InlineResultsTable
                 String className = theClass.getUnqualifiedName();
                 String expr = fc.getFieldExpr();
                 String pathString = "." + expr;
-                Path path = new Path(model, pathString);
 
-                fieldValues.put(expr, PathUtil.resolvePath(path, o));
+                try {
+                    Path path = new Path(model, pathString);
+                    fieldValues.put(expr, PathUtil.resolvePath(path, o));
+                } catch (PathException e) {
+                    throw new Error("Could not create path for \"" + pathString
+                            + "\" - check FieldConfig");
+                }
 
 //                try {
 //                    fieldValues.put(expr, TypeUtil.getFieldValue(o, expr));
@@ -308,7 +313,7 @@ public class InlineResultsTable
                     continue;
                 }
                 retList.add(createResultElement(path, o));
-            } catch (PathError e) {
+            } catch (PathException e) {
                 // if the field can't be resolved then this Path doesn't make sense for this object
                 retList.add(null);
             }
@@ -333,14 +338,20 @@ public class InlineResultsTable
         // object = Organism, path = Organism.shortName
         InterMineObject finalObject = null;
         if (o != null) {
-            finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
+            try {
+                finalObject = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
+            } catch (PathException e) {
+                throw new IllegalArgumentException("Failed to resolve path on object", e);
+            }
         }
         String finalPath = path.getLastClassDescriptor().getUnqualifiedName() + "."
             + path.getLastElement();
-        ResultElement resultElement =
-            new ResultElement(finalObject, new Path(path.getModel(), finalPath),
-                isKeyField);
-        return resultElement;
+        try {
+            return new ResultElement(finalObject, new Path(path.getModel(), finalPath),
+                    isKeyField);
+        } catch (PathException e) {
+            throw new Error("There must be a bug", e);
+        }
     }
 
     /**

@@ -19,7 +19,7 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -99,7 +99,7 @@ public class TemplateConfigurator
             for (ConstraintLoad load : col) {
                 try {
                     PathQuery.makePath(model, templateQuery, load.getPathId());
-                } catch (PathError ex) {
+                } catch (PathException ex) {
                     throw new BadRequestException("Invalid path specified in "
                             + load.getParameterName() + " parameter.");
                 }

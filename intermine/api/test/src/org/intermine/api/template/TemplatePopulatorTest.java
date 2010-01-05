@@ -22,7 +22,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 
@@ -59,12 +59,12 @@ public class TemplatePopulatorTest extends TestCase {
     	values.put("Employee.error", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
-        	fail("Expected a PathError.");
-    	} catch (PathError e) {
+        	fail("Expected a PathException.");
+    	} catch (PathException e) {
     	}
     }
     
-    public void testNoValuesForNode() {
+    public void testNoValuesForNode() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21", "A");
     	values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
     	try {
@@ -74,7 +74,7 @@ public class TemplatePopulatorTest extends TestCase {
     	}
     }
     
-    public void testTooManyValuesForNode() {
+    public void testTooManyValuesForNode() throws Exception {
     	TemplateValue value1 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name", "A");
     	TemplateValue value2 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "other name", "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value1, value2}));
@@ -85,7 +85,7 @@ public class TemplatePopulatorTest extends TestCase {
     	}
     }
  
-    public void testTooFewValuesForNode() {
+    public void testTooFewValuesForNode() throws Exception {
     	TemplateQuery employeesOfACertainAge = templates.get("employeesOfACertainAge");
     	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21", "A");
     	values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
@@ -96,7 +96,7 @@ public class TemplatePopulatorTest extends TestCase {
     	}
     }
     
-    public void testWrongCode() {
+    public void testWrongCode() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name", "Z");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	try {
@@ -106,7 +106,7 @@ public class TemplatePopulatorTest extends TestCase {
     	}
     }
     
-    public void testOneConstraint() {
+    public void testOneConstraint() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.NOT_EQUALS, "Kevin Bacon", "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	TemplateQuery res = TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
@@ -116,7 +116,7 @@ public class TemplatePopulatorTest extends TestCase {
     	assertEquals("Kevin Bacon", resCon.getValue());
     }
     
-    public void testOneBagConstraint() {
+    public void testOneBagConstraint() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.IN, "bag1", "A");
     	value.setBagConstraint(true);
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
@@ -166,7 +166,7 @@ public class TemplatePopulatorTest extends TestCase {
         assertEquals("bag1", resCon.getValue());
     }
     
-    public void testPopulateTemplateWithObject() {
+    public void testPopulateTemplateWithObject() throws Exception {
         InterMineObject obj = 
             (InterMineObject) DynamicUtil.createObject(Employee.class);
         obj.setId(101);
@@ -180,7 +180,7 @@ public class TemplatePopulatorTest extends TestCase {
         assertEquals(101, resCon.getValue());
     }
     
-    public void testPopulateTemplateWithObjectNotOneConstraint() {
+    public void testPopulateTemplateWithObjectNotOneConstraint() throws Exception {
         InterMineObject obj = 
             (InterMineObject) DynamicUtil.createObject(Employee.class);
         obj.setId(101);
@@ -191,7 +191,7 @@ public class TemplatePopulatorTest extends TestCase {
         }
     }
     
-    public void testPopulateTemplateWithObjectWrongType() {
+    public void testPopulateTemplateWithObjectWrongType() throws Exception {
         InterMineObject obj = 
             (InterMineObject) DynamicUtil.createObject(Department.class);
         obj.setId(101);
@@ -202,7 +202,7 @@ public class TemplatePopulatorTest extends TestCase {
         }
     }
     
-    public void testSetConstraintWrongBagOp() {
+    public void testSetConstraintWrongBagOp() throws Exception {
     	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.GREATER_THAN, "bag1", "A");
     	value.setBagConstraint(true);
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
