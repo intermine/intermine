@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <classes>
 <class name="Chromosome" is-interface="true">
-  <collection name="features" referenced-type="LocatedSequenceFeature" ordered="true" reverse-reference="chromosome"/>
-  <collection name="transcripts" referenced-type="Transcript" ordered="true"/>
-  <collection name="exons" referenced-type="Exon" ordered="true"/>
-  <collection name="genes" referenced-type="Gene" ordered="true"/>
-  <collection name="chromosomeBands" referenced-type="ChromosomeBand" ordered="true"/>
-  <collection name="chromosomalStructuralElements" referenced-type="ChromosomalStructuralElement" ordered="true"/>
-  <collection name="crossGenomeMatches" referenced-type="CrossGenomeMatch" ordered="true"/>
+  <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="chromosome"/>
+  <collection name="transcripts" referenced-type="Transcript"/>
+  <collection name="exons" referenced-type="Exon"/>
+  <collection name="genes" referenced-type="Gene"/>
+  <collection name="chromosomeBands" referenced-type="ChromosomeBand"/>
+  <collection name="chromosomalStructuralElements" referenced-type="ChromosomalStructuralElement"/>
+  <collection name="crossGenomeMatches" referenced-type="CrossGenomeMatch"/>
 </class>
 
 <class name="Exon" is-interface="true">
   <reference name="gene" referenced-type="Gene" reverse-reference="exons"/>
 </class>
 <class name="Gene" is-interface="true">
-  <collection name="exons" referenced-type="Exon" ordered="true" reverse-reference="gene"/>
+  <collection name="exons" referenced-type="Exon" reverse-reference="gene"/>
 </class>
 <class name="LocatedSequenceFeature" is-interface="true">
   <reference name="chromosomeLocation" referenced-type="Location"/>
   <reference name="chromosome" referenced-type="Chromosome" reverse-reference="features"/>
-  <collection name="overlappingFeatures" referenced-type="LocatedSequenceFeature" ordered="true"/>
+  <collection name="overlappingFeatures" referenced-type="LocatedSequenceFeature"/>
   <attribute name="length" type="java.lang.Integer"/>
 </class>
 <class name="CrossGenomeMatch" is-interface="true">
@@ -35,6 +35,6 @@
   <reference name="targetSyntenicRegion" referenced-type="SyntenicRegion" />
 </class>
 <class name="Scaffold" extends="LocatedSequenceFeature" is-interface="true">
-  <collection name="crossGenomeMatches" referenced-type="CrossGenomeMatch" ordered="true"/>
+  <collection name="crossGenomeMatches" referenced-type="CrossGenomeMatch"/>
 </class>
 </classes>
