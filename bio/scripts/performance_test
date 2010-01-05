@@ -15,9 +15,14 @@ CP=$CP:$INTERMINE/objectstore/main/dist/intermine-objectstore.jar
 for i in $INTERMINE/objectstore/main/lib/*.jar ; do
     CP=$CP:$i
 done
-CP=$CP:$INTERMINE/api/main/dist/intermine-web.jar
+for i in $INTERMINE/api/main/lib/*.jar ; do
+    CP=$CP:$i
+done
+CP=$CP:$INTERMINE/api/main/dist/intermine-api.jar
+#CP=$CP:$INTERMINE/api/main/lib/lucene-core-2.3.2.jar
 CP=$CP:$INTERMINE/web/main/dist/intermine-web.jar
 CP=$CP:$INTERMINE/webtasks/main/dist/intermine-web.jar
+CP=$CP:$INTERMINE/webtasks/main/dist/intermine-webapp-tasks.jar
 CP=$CP:$INTERMINE/pathquery/main/dist/intermine-pathquery.jar
 CP=$CP:$INTERMINE/web/model/userprofile/dist/userprofile.jar
 for i in $INTERMINE/web/main/lib/*.jar ; do
