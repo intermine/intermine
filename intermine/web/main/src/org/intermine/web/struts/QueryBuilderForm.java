@@ -27,6 +27,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -359,15 +360,20 @@ public class QueryBuilderForm extends ActionForm
                     : ConstraintOp.getOpForIndex(Integer.valueOf(getAttributeOp()));
 
         if (request.getParameter("attribute") != null) {
-            Path pathObj = PathQuery.makePath(model, query, path);
-            Class fieldClass;
-            if (pathObj.endIsAttribute()) {
-                fieldClass = pathObj.getEndType();
-            } else {
-                fieldClass = String.class;
+            try {
+                Path pathObj = PathQuery.makePath(model, query, path);
+                Class fieldClass;
+                if (pathObj.endIsAttribute()) {
+                    fieldClass = pathObj.getEndType();
+                } else {
+                    fieldClass = String.class;
+                }
+                parsedAttributeValue = parseValue(attributeValue, fieldClass, constraintOp, locale,
+                        errors);
+            } catch (PathException e) {
+                errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.message",
+                            e.getMessage()));
             }
-            parsedAttributeValue =
-                parseValue(attributeValue, fieldClass, constraintOp, locale, errors);
         }
 
         if (errors.size() > 0) {

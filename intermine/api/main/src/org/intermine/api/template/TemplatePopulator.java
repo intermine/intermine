@@ -26,6 +26,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
@@ -44,13 +45,15 @@ public class TemplatePopulator
      * Given a template and a map of values for editable constraints on each editable node create
      * a copy of the template query with the values filled in.  This may alter the query when e.g.
      * bag constraints are applied to a class rather than an attribute.
+     *
      * @param origTemplate the template to populate with values
      * @param newConstraints a map from editable node to a list of values for each editable
      *  constraint
      * @return a copy of the template with values filled in
+     * @throws PathException if the template is invalid
      */
     public static TemplateQuery getPopulatedTemplate(TemplateQuery origTemplate,
-            Map<String, List<TemplateValue>> newConstraints) {
+            Map<String, List<TemplateValue>> newConstraints) throws PathException {
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
         template.setEdited(true);
         
@@ -99,12 +102,14 @@ public class TemplatePopulator
      * Constrain a template query with a single editable constraint to be the given object.  This
      * returns a copy of the template with the value filled in, if the existing constraint will be
      * replaced by a constraint on the id field of the editable node.
+     *
      * @param template the template to constrain
      * @param obj the object to constrain to
      * @return a copy of the template with values filled in
+     * @throws PathException if the template is invalid
      */
     public static  TemplateQuery populateTemplateWithObject(TemplateQuery template,
-            InterMineObject obj) {
+            InterMineObject obj) throws PathException {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
@@ -142,12 +147,14 @@ public class TemplatePopulator
      * Constrain a template query with a single editable constraint to be in the given bag.  This
      * returns a copy of the template with the value filled in, if the constraint is on an
      * attribute it will be replaced by a constrain on the parent class.
+     *
      * @param template the template to constrain
      * @param bag the bag to constrain to
      * @return a copy of the template with values filled in
+     * @throws PathException if the template is invalid
      */
     public static  TemplateQuery populateTemplateWithBag(TemplateQuery template,
-            InterMineBag bag) {
+            InterMineBag bag) throws PathException {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
@@ -185,9 +192,10 @@ public class TemplatePopulator
      * @param op operation of the constraint
      * @param value value to be constrained to
      * @return a copy of the template with the value filled in
+     * @throws PathException if the template is invalid
      */
     public static TemplateQuery populateTemplateOneConstraint(
-            TemplateQuery template, ConstraintOp op, Object value) {
+            TemplateQuery template, ConstraintOp op, Object value) throws PathException {
         Map<String, List<TemplateValue>> templateValues =
             new HashMap<String, List<TemplateValue>>();
 
@@ -207,10 +215,9 @@ public class TemplatePopulator
 
 
     private static void checkPaths(Model model, Collection<List<TemplateValue>> collection,
-            TemplateQuery templateQuery) {
+            TemplateQuery templateQuery) throws PathException {
         for (List<TemplateValue> col : collection) {
             for (TemplateValue value : col) {
-                // will throw a PathError if not valid
                 PathQuery.makePath(model, templateQuery, value.getPath());
             }
         }

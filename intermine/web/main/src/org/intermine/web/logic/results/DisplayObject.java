@@ -31,6 +31,7 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
@@ -370,8 +371,12 @@ public class DisplayObject
                     className = TypeUtil.unqualifiedName(className);
                 }
                 String pathString = className + "." + expr;
-                Path path = new Path(model, pathString);
-                fieldValues.put(expr, PathUtil.resolvePath(path, object));
+                try {
+                    Path path = new Path(model, pathString);
+                    fieldValues.put(expr, PathUtil.resolvePath(path, object));
+                } catch (PathException e) {
+                    throw new Error("There must be a bug", e);
+                }
             }
         }
         return fieldValues;

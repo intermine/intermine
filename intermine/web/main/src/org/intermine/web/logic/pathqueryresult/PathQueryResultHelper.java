@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
@@ -82,7 +83,13 @@ public class PathQueryResultHelper
                 }
                 pathStringBuffer.append(prePath.substring(prevIndex));
                 String pathString = prefix + "[" + type + "]" + pathStringBuffer.toString();
-                Path path = new Path(model, pathString);
+                Path path;
+                try {
+                    path = new Path(model, pathString);
+                } catch (PathException e) {
+                    throw new IllegalArgumentException("Error building default view for \""
+                            + prefix + "[" + type + "]\"", e);
+                }
                 // Path path = MainHelper.makePath(model, pathQuery, pathString);
                 // TODO remove isOnlyAttribute when outer joins
                 if (!view.contains(path)
@@ -96,8 +103,14 @@ public class PathQueryResultHelper
                 for (AttributeDescriptor attributeDescriptor : attrDesc) {
                     Map<String, String> classToPath = new HashMap<String, String>();
                     classToPath.put(prefix, classDescriptor.getUnqualifiedName());
-                    Path path = new Path(model, prefix + "." + attributeDescriptor.getName(),
-                                    classToPath);
+                    Path path;
+                    try {
+                        path = new Path(model, prefix + "." + attributeDescriptor.getName(),
+                                classToPath);
+                    } catch (PathException e) {
+                        throw new IllegalArgumentException("Error building default view for \""
+                                + prefix + "\"");
+                    }
                     if (!view.contains(path)) {
                         view.add(path);
                     }
@@ -145,7 +158,13 @@ public class PathQueryResultHelper
                                                        String referencedClassName, String field) {
         String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
                         .getClass()));
-        Path path = new Path(os.getModel(), className + "." + field);
+        Path path;
+        try {
+            path = new Path(os.getModel(), className + "." + field);
+        } catch (PathException e) {
+            throw new IllegalArgumentException("Could not build path for \"" + className + "."
+                    + field);
+        }
         List<Class> sr = new ArrayList<Class>();
         if (path.endIsCollection()) {
             Query query = new Query();

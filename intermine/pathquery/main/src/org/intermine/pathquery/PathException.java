@@ -11,26 +11,28 @@ package org.intermine.pathquery;
  */
 
 /**
- * An Error thrown if there is a problem in the Path class.
+ * An Exception thrown if there is a problem in the Path class.
  * @author Kim Rutherford
  */
-public class PathError extends Error
+public class PathException extends Exception
 {
     private final String pathString;
 
     /**
-     * Create a new PathError with the given message
+     * Create a new PathException with the given message.
+     *
      * @param message the message
-     * @param pathString the String representation of the Path that generated this Error - used
-     * when the Path constructor is past a string that isn't a valid path
+     * @param pathString the String representation of the Path that generated this exception - used
+     * when the Path constructor is passed a string that isn't a valid path
      */
-    public PathError(String message, String pathString) {
+    public PathException(String message, String pathString) {
         super(message);
         this.pathString = pathString;
     }
 
     /**
-     * Return the path String that was passed to the constructor
+     * Return the path String that was passed to the constructor.
+     *
      * @return the path string
      */
     public String getPathString() {

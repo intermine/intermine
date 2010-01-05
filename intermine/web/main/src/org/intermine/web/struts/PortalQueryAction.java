@@ -52,6 +52,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
@@ -305,8 +306,13 @@ public class PortalQueryAction extends InterMineAction
             throw new IllegalStateException("Could not find template \"" + templateName + "\"");
         }
 
-        TemplateQuery populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
+        TemplateQuery populatedTemplate;
+        try {
+            populatedTemplate = TemplatePopulator.populateTemplateOneConstraint(template,
                 ConstraintOp.EQUALS, extId);
+        } catch (PathException e) {
+            throw new IllegalArgumentException("Invalid template", e);
+        }
 
         SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 

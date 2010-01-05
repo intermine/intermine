@@ -22,7 +22,7 @@ import org.apache.commons.digester.Digester;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathError;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.GridWidgetConfig;
@@ -164,7 +164,7 @@ public class WebConfig
                 }
                 try {
                     new Path(model, pathString);
-                } catch (PathError e) {
+                } catch (PathException e) {
                     badFieldExpressions.append(" " + pathString);
                     continue;
                 }

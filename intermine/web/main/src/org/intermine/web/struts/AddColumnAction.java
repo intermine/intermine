@@ -25,6 +25,7 @@ import org.intermine.api.results.WebResults;
 import org.intermine.api.results.WebTable;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -64,8 +65,8 @@ public class AddColumnAction extends InterMineAction
             .addParameter("trail", request.getParameter("trail")).forward();
     }
 
-    private void changeView(WebTable table, String columnToAdd, HttpServletRequest request) {
-
+    private void changeView(WebTable table, String columnToAdd,
+            HttpServletRequest request) throws PathException {
         if (columnAlreadyAdded(columnToAdd, table.getPathQuery().getView())) {
             return;
         }

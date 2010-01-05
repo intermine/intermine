@@ -116,14 +116,14 @@ public class PathQuery
         while (it.hasNext()) {
             String pathString = (String) it.next();
             if (pathString == null || pathString.trim().equals("")) {
-                logPathError(MSG);
+                logPathException(MSG);
                 continue;
             }
             Path path = null;
             try {
                 path = makePath(model, this, pathString.trim());
-            } catch (PathError e) {
-                logPathError(e);
+            } catch (PathException e) {
+                logPathException(e);
             }
             if (path != null) {
                 viewPaths.add(path);
@@ -140,7 +140,7 @@ public class PathQuery
      */
     public void setView(String paths) {
         if (paths == null || paths.equals("")) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         String [] pathStrings = paths.split("[, ]+");
@@ -154,7 +154,7 @@ public class PathQuery
      */
     public void setView(List<String> viewStrings) {
         if (viewStrings.isEmpty()) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         setViewPaths(makePaths(viewStrings));
@@ -231,7 +231,12 @@ public class PathQuery
             if (m.matches()) {
                 viewPathString = newPathString + viewPathString.substring(path.length());
             }
-            newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
+            try {
+                newView.add(new Path(model, viewPathString, viewPath.getSubClassConstraintPaths()));
+            } catch (PathException e) {
+                // Should never happen, but we should raise hell if it does.
+                throw new Error("There must be a bug", e);
+            }
         }
         view = newView;
 
@@ -242,8 +247,14 @@ public class PathQuery
             if (m.matches()) {
                 descPathString = newPathString + descPathString.substring(path.length());
             }
-            Path newPath = new Path(model, descPathString, entry.getKey()
-                    .getSubClassConstraintPaths());
+            Path newPath;
+            try {
+                newPath = new Path(model, descPathString, entry.getKey()
+                        .getSubClassConstraintPaths());
+            } catch (PathException e) {
+                // Should never happen, but we should raise hell if it does.
+                throw new Error("There must be a bug", e);
+            }
             newPathDescriptions.put(newPath, entry.getValue());
         }
         pathDescriptions = newPathDescriptions;
@@ -331,7 +342,12 @@ public class PathQuery
                         + lastElement;
                 }
             }
-            newView.add(new Path(model, newPathStr, viewPath.getSubClassConstraintPaths()));
+            try {
+                newView.add(new Path(model, newPathStr, viewPath.getSubClassConstraintPaths()));
+            } catch (PathException e) {
+                // Shouldn't ever happen
+                throw new Error("There must be a bug", e);
+            }
         }
         view = newView;
 
@@ -367,7 +383,7 @@ public class PathQuery
      */
     public void addView(String paths) {
         if (paths == null || paths.equals("")) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         String [] pathStrings = paths.split(",");
@@ -392,7 +408,7 @@ public class PathQuery
     public void addViewPaths(List<Path> paths) {
         validateView(paths);
         if (paths.isEmpty()) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
 
@@ -402,22 +418,19 @@ public class PathQuery
                 throw new IllegalArgumentException("Adding two join types for same path: "
                         + path + " and " + getCorrectJoinStyle(path));
             }
-            try {
-                view.add(p);
-            } catch (PathError e) {
-                logPathError(e);
-            }
+            view.add(p);
         }
     }
 
     /**
      * Convert a path and prefix to a path.
+     *
      * @param prefix the prefix (eg null or Department.company)
      * @param path the path (eg Company, Company.departments)
-     *
      * @return the new path
+     * @throws PathException if the given path is invalid
      */
-    public String toPathDefaultJoinStyle(String prefix, String path) {
+    public String toPathDefaultJoinStyle(String prefix, String path) throws PathException {
         if (prefix != null && prefix.length() > 0) {
             if (path.indexOf(".") == -1) {
                 path = prefix;
@@ -430,12 +443,14 @@ public class PathQuery
 
     /**
      * Given a path through the model set each join to outer/normal according to the defaults:
-     *  - collections and references are outer joins
+     *  - collections and references are outer joins.
      * e.g. Company.departments.name -&gt; Company:departments.name
+     *
      * @param path the path to resolve
      * @return the new path
+     * @throws PathException if the given path is invalid
      */
-    public String toPathDefaultJoinStyle(String path) {
+    public String toPathDefaultJoinStyle(String path) throws PathException {
 
         // this will validate the path so we don't have to here
         Path dummyPath = makePath(model, this, path);
@@ -503,8 +518,8 @@ public class PathQuery
                         + viewString + " and " + getCorrectJoinStyle(viewString));
             }
             view.add(PathQuery.makePath(model, this, viewString));
-        } catch (PathError e) {
-            logPathError(e);
+        } catch (PathException e) {
+            logPathException(e);
         }
     }
 
@@ -545,7 +560,9 @@ public class PathQuery
 
     /**
      * Remove the Path with the given String representation from the view.  If the pathString
-     * refers to a path that appears in a PathError in the problems collection, remove that problem.
+     * refers to a path that appears in a PathException in the problems collection, remove that
+     * problem.
+     *
      * @param pathString the path to remove
      */
     public void removeFromView(String pathString) {
@@ -560,8 +577,8 @@ public class PathQuery
         Iterator<Throwable> throwIter = problems.iterator();
         while (throwIter.hasNext()) {
             Throwable thr = throwIter.next();
-            if (thr instanceof PathError) {
-                PathError pe = (PathError) thr;
+            if (thr instanceof PathException) {
+                PathException pe = (PathException) thr;
                 if (pe.getPathString().equals(pathString)) {
                     throwIter.remove();
                 }
@@ -863,7 +880,7 @@ public class PathQuery
      */
     public void setOrderBy(String paths, String direction) {
         if (paths == null || paths.equals("")) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
@@ -876,11 +893,11 @@ public class PathQuery
                         orderBy.put(makePath(model, this, path), ASCENDING);
                     }
                 } else {
-                    logPathError("Cannot order by path " + path);
+                    logPathException("Cannot order by path " + path);
                 }
             }
-        } catch (PathError e) {
-            logPathError(e);
+        } catch (PathException e) {
+            logPathException(e);
         }
         sortOrder = orderBy;
     }
@@ -903,7 +920,7 @@ public class PathQuery
      */
     public void setOrderBy(List<String> paths, String direction) {
         if (paths == null || paths.isEmpty()) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
@@ -913,13 +930,13 @@ public class PathQuery
                     if (isValidOrderPath(path)) {
                         orderBy.put(makePath(model, this, path), direction);
                     } else {
-                        logPathError("Cannot order by path " + path);
+                        logPathException("Cannot order by path " + path);
                     }
-                } catch (PathError e) {
-                    logPathError(e);
+                } catch (PathException e) {
+                    logPathException(e);
                 }
             } else {
-                logPathError(MSG);
+                logPathException(MSG);
             }
         }
         if (!orderBy.isEmpty()) {
@@ -935,7 +952,7 @@ public class PathQuery
      */
     public void setOrderByList(Map<Path, String> paths) {
         if (paths.isEmpty()) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         Map<Path, String> orderByList = new LinkedHashMap<Path, String>();
@@ -943,7 +960,7 @@ public class PathQuery
             if (path != null) {
                 orderByList.put(path, paths.get(path));
             } else {
-                logPathError(MSG);
+                logPathException(MSG);
             }
         }
         if (!orderByList.isEmpty()) {
@@ -968,7 +985,7 @@ public class PathQuery
      */
     public void addOrderBy(String paths, String direction) {
         if (paths.equals("")) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
@@ -978,13 +995,13 @@ public class PathQuery
                     if (isValidOrderPath(path)) {
                         orderBy.put(makePath(model, this, path), direction);
                     } else {
-                        logPathError("Cannot order by path " + path);
+                        logPathException("Cannot order by path " + path);
                     }
-                } catch (PathError e) {
-                    logPathError(e);
+                } catch (PathException e) {
+                    logPathException(e);
                 }
             } else {
-                logPathError(MSG);
+                logPathException(MSG);
             }
         }
         sortOrder.putAll(orderBy);
@@ -1005,7 +1022,7 @@ public class PathQuery
      */
     public void addOrderBy(List<String> paths, String direction) {
         if (paths.size() == 0) {
-            logPathError(MSG);
+            logPathException(MSG);
             return;
         }
         Map<Path, String> orderBy = new LinkedHashMap<Path, String>();
@@ -1015,14 +1032,14 @@ public class PathQuery
                     if (isValidOrderPath(path)) {
                         orderBy.put(makePath(model, this, path), direction);
                     } else {
-                        logPathError("Cannot order by path " + path);
+                        logPathException("Cannot order by path " + path);
                     }
                 } else {
-                    logPathError(MSG);
+                    logPathException(MSG);
                 }
             }
-        } catch (PathError e) {
-            logPathError(e);
+        } catch (PathException e) {
+            logPathException(e);
         }
         if (!orderBy.isEmpty()) {
             sortOrder.putAll(orderBy);
@@ -1204,7 +1221,7 @@ public class PathQuery
             node = new PathNode(path);
             if (model.isGeneratedClassesAvailable()) {
                 if (!model.isGeneratedClassAvailable(path)) {
-                    logPathError(new ClassNotFoundException("Class "
+                    logPathException(new ClassNotFoundException("Class "
                             + path + " is not available."));
                 }
             }
@@ -1229,7 +1246,7 @@ public class PathQuery
                 try {
                     node.setModel(model);
                 } catch (Exception err) {
-                    logPathError(err);
+                    logPathException(err);
                 }
             } else {
                 addNode(prefix);
@@ -1388,8 +1405,8 @@ public class PathQuery
         try {
             Path path = makePath(model, this, viewString);
             pathDescriptions.put(path, description);
-        } catch (PathError e) {
-            logPathError(e);
+        } catch (PathException e) {
+            logPathException(e);
         }
     }
 
@@ -1420,8 +1437,10 @@ public class PathQuery
      * @param query the PathQuery
      * @param fullPathName the full path as a string
      * @return a new Path object
+     * @throws PathException if the path is not valid
      */
-    public static Path makePath(Model model, PathQuery query, String fullPathName) {
+    public static Path makePath(Model model, PathQuery query,
+            String fullPathName) throws PathException {
         Path path = null;
         if (fullPathName.indexOf("[") >= 0) {
             path = new Path(model, fullPathName);
@@ -1539,11 +1558,11 @@ public class PathQuery
         + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
     }
 
-    private void logPathError(String msg) {
-        logPathError(new PathError(msg, null));
+    private void logPathException(String msg) {
+        logPathException(new PathException(msg, null));
     }
 
-    private void logPathError(Throwable e) {
+    private void logPathException(Throwable e) {
         LOG.error("Path error", e);
         addProblem(e);
     }
