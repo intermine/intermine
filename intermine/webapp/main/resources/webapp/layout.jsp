@@ -96,6 +96,11 @@
       <%-- Context help bar --%>
       <tiles:insert page="/contextHelp.jsp"/>
 
+      <%-- Display page specific hints if available --%>
+      <tiles:insert name="hints.tile">
+        <tiles:put name="pageName" value="${pageName}"/>
+      </tiles:insert>
+      
       <tiles:get name="body"/>
 
       <%-- Render messages --%>

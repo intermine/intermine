@@ -260,6 +260,7 @@
   <definition name="headMenu.tile" path="/headMenu.jsp" controllerUrl="/initSubMenu.do" />  
   <definition name="templates.tile" path="/templates.jsp" controllerUrl="/initTemplates.do" />  
   <definition name="passwordReset.tile" path="/passwordReset.jsp" controllerUrl="/initPasswordReset.do"/>
+  <definition name="hints.tile" path="/hints.jsp" controllerUrl="/initHints.do" />  
 
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->

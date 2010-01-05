@@ -437,6 +437,7 @@
     <action path="/initGalaxy" type="org.intermine.web.struts.GalaxyController"/>
     <action path="/initTemplates" type="org.intermine.web.struts.TemplatesController"/>
     <action path="/initPasswordReset" type="org.intermine.web.struts.PasswordResetController"/>
+    <action path="/initHints" type="org.intermine.web.struts.HintsController"/>
 
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
