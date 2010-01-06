@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.digester.Digester;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
@@ -38,6 +39,7 @@ import org.xml.sax.SAXException;
  */
 public class WebConfig
 {
+    private static final Logger LOG = Logger.getLogger(WebConfig.class);
     private Map<String, Type> types = new HashMap<String, Type>();
     private Map<String, TableExportConfig> tableExportConfigs =
         new HashMap<String, TableExportConfig>();
@@ -158,9 +160,10 @@ public class WebConfig
                     pathString = Class.forName(typeName).getSimpleName()
                         + "." + fieldConfig.getFieldExpr();
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Invalid web config. Implementation for "
-                            + "specified class in "
-                            + "web config doesn't exist.", e);
+                    String msg = "Invalid web config. '" + typeName + "' doesn't exist in the "
+                    + "model.";
+                    LOG.error(msg);
+                    continue;
                 }
                 try {
                     new Path(model, pathString);
@@ -171,14 +174,14 @@ public class WebConfig
             }
         }
         if (invalidClasses.length() > 0 || badFieldExpressions.length() > 0) {
-            throw new RuntimeException("Invalid web config. "
+            String msg = "Invalid web config. "
                     + ((invalidClasses.length() > 0)
                             ? "Classes specified in web config that don't exist in model: "
                                     + invalidClasses.toString() + ". " : "")
                             + ((badFieldExpressions.length() > 0)
                                     ? "Path specified in a fieldExpr does note exist in model: "
-                                            + badFieldExpressions + ". " : "")
-            );
+                                            + badFieldExpressions + ". " : "");
+            LOG.error(msg);
         }
     }
 
@@ -220,7 +223,7 @@ public class WebConfig
                 String msg = "Invalid web config. " + widgetType + " is not a valid class. "
                     + "Please correct the entry in the webconfig-model.xml for the "
                     + widget.getId() + " widget.";
-                throw new RuntimeException(msg);
+                LOG.error(msg);
             }
             type.addWidget(widget);
         }
