@@ -39,7 +39,7 @@ public class PathTest extends TestCase
         model = Model.getInstanceByName("testmodel");
     }
 
-    public void testValid() {
+    public void testValid() throws Exception {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
@@ -54,7 +54,7 @@ public class PathTest extends TestCase
         assertEquals(stringPath, path.toString());
     }
 
-    public void testValid2() {
+    public void testValid2() throws Exception {
         String stringPath = "Department.company.name";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
@@ -63,21 +63,21 @@ public class PathTest extends TestCase
         assertEquals(cld, path.getStartClassDescriptor());
     }
 
-    public void testValid3() {
+    public void testValid3() throws Exception {
         String stringPath = "Employee.age";
         Path path = new Path(model, stringPath);
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"), path.getStartClassDescriptor());
         assertEquals(Integer.class, path.getEndType());
     }
 
-    public void testValidWithClassConstraint() {
+    public void testValidWithClassConstraint() throws Exception {
         String stringPath = "Department.manager[CEO].company.departments.employees[Manager].seniority";
         Path path = new Path(model, stringPath);
 
         checkConstrainedPath(path);
     }
 
-    public void testValidWithClassConstraintMap() {
+    public void testValidWithClassConstraintMap() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -88,7 +88,7 @@ public class PathTest extends TestCase
         checkConstrainedPath(path);
     }
 
-    public void testNotValidWithClassConstraintMap() {
+    public void testNotValidWithClassConstraintMap() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -103,7 +103,7 @@ public class PathTest extends TestCase
 
         }
     }
-    public void testNotValidConstraintMapColon() {
+    public void testNotValidConstraintMapColon() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department:manager", "CEO");
         String stringPath = "Department.manager.name";
@@ -131,7 +131,7 @@ public class PathTest extends TestCase
         assertEquals(Integer.class, path.getEndType());
     }
 
-    public void testNullPath() {
+    public void testNullPath() throws Exception {
         try {
             Path path = new Path(model, null);
             fail("Expected IllegalArgumentException");
@@ -146,7 +146,7 @@ public class PathTest extends TestCase
         }
     }
 
-    public void testShortPath() {
+    public void testShortPath() throws Exception {
         String stringPath = "Department";
         Path path = new Path(model, stringPath);
         ClassDescriptor cld =
@@ -158,7 +158,7 @@ public class PathTest extends TestCase
     }
 
 
-    public void testToString() {
+    public void testToString() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -170,7 +170,7 @@ public class PathTest extends TestCase
                      path.toString());
     }
 
-    public void testToStringNoConstraints() {
+    public void testToStringNoConstraints() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -182,18 +182,18 @@ public class PathTest extends TestCase
                      path.toStringNoConstraints());
     }
 
-    public void testGetLastClassDescriptor() {
+    public void testGetLastClassDescriptor() throws Exception {
         Path path = new Path(model, "Department.manager.name");
         assertEquals(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"), path.getLastClassDescriptor());
     }
 
-    public void testEquals() {
+    public void testEquals() throws Exception {
         Path path1 = new Path(model, "Department.manager.name");
         Path path2 = new Path(model, "Department.manager.name");
         assertEquals(path1, path2);
     }
 
-    public void testGetPrefix() {
+    public void testGetPrefix() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -225,7 +225,7 @@ public class PathTest extends TestCase
 
     }
 
-    public void testGetPrefixOuterJoin() {
+    public void testGetPrefixOuterJoin() throws Exception {
         Map constraintMap = new HashMap();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
@@ -257,7 +257,7 @@ public class PathTest extends TestCase
 
     }
 
-    public void testContainsCollections() {
+    public void testContainsCollections() throws Exception {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
         assertFalse(path.containsCollections());
@@ -266,7 +266,7 @@ public class PathTest extends TestCase
         assertTrue(path.containsCollections());
     }
 
-    public void testContainsReferences() {
+    public void testContainsReferences() throws Exception {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
         assertTrue(path.containsReferences());
@@ -275,7 +275,7 @@ public class PathTest extends TestCase
         assertFalse(path.containsReferences());
     }
 
-    public void testIsOnlyAttribute() {
+    public void testIsOnlyAttribute() throws Exception {
         String stringPath = "Department.company";
         Path path = new Path(model, stringPath);
         assertFalse(path.isOnlyAttribute());
@@ -287,7 +287,7 @@ public class PathTest extends TestCase
         assertTrue(path.isOnlyAttribute());
     }
 
-    public void testAppend() {
+    public void testAppend() throws Exception {
         Path expDepNamePath = new Path(model, "Department.name");
         Path path = new Path(model, "Department");
         Path depNamePath = path.append("name");
@@ -295,7 +295,7 @@ public class PathTest extends TestCase
         assertEquals(expDepNamePath, depNamePath);
     }
 
-    public void testAppend2() {
+    public void testAppend2() throws Exception {
         Path expDeptPath = new Path(model, "Department.manager[CEO].company.departments");
         Path expEmpPath = new Path(model, "Department.manager[CEO].company.departments.employees");
 
