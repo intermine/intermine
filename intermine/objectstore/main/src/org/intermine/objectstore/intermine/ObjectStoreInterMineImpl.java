@@ -1964,31 +1964,37 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     for (QuerySelectable qs : q.getSelect()) {
                         if (qs instanceof QueryCollectionPathExpression) {
                             Query subQ = ((QueryCollectionPathExpression) qs).getQuery(null);
-                            sql = SqlGenerator.generate(subQ, schema, db, null,
-                                    SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
-                            PrecomputedTable subPt = ptm.lookupSql(sql);
-                            if (subPt == null) {
-                                subPt = new PrecomputedTable(
-                                        new org.intermine.sql.query.Query(sql), sql,
-                                        "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                                ptm.addTableToDatabase(subPt, new HashSet(), false);
-                                tablesToDrop.add(pt.getName());
+                            if ((subQ.getFrom().size() > 1) || (subQ.getConstraint() != null)) {
+                                sql = SqlGenerator.generate(subQ, schema, db, null,
+                                        SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
+                                PrecomputedTable subPt = ptm.lookupSql(sql);
+                                if (subPt == null) {
+                                    subPt = new PrecomputedTable(
+                                            new org.intermine.sql.query.Query(sql), sql,
+                                            "temporary_precomp_" + getUniqueInteger(c), "goFaster",
+                                            c);
+                                    ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                    tablesToDrop.add(pt.getName());
+                                }
+                                pts.add(subPt);
                             }
-                            pts.add(subPt);
                         } else if (qs instanceof QueryObjectPathExpression) {
                             Query subQ = ((QueryObjectPathExpression) qs).getQuery(null,
                                     getSchema().isMissingNotXml());
-                            sql = SqlGenerator.generate(subQ, schema, db, null,
-                                    SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
-                            PrecomputedTable subPt = ptm.lookupSql(sql);
-                            if (subPt == null) {
-                                subPt = new PrecomputedTable(
-                                        new org.intermine.sql.query.Query(sql), sql,
-                                        "temporary_precomp_" + getUniqueInteger(c), "goFaster", c);
-                                ptm.addTableToDatabase(subPt, new HashSet(), false);
-                                tablesToDrop.add(pt.getName());
+                            if ((subQ.getFrom().size() > 1) || (subQ.getConstraint() != null)) {
+                                sql = SqlGenerator.generate(subQ, schema, db, null,
+                                        SqlGenerator.QUERY_FOR_GOFASTER, bagConstraintTables);
+                                PrecomputedTable subPt = ptm.lookupSql(sql);
+                                if (subPt == null) {
+                                    subPt = new PrecomputedTable(
+                                            new org.intermine.sql.query.Query(sql), sql,
+                                            "temporary_precomp_" + getUniqueInteger(c), "goFaster",
+                                            c);
+                                    ptm.addTableToDatabase(subPt, new HashSet(), false);
+                                    tablesToDrop.add(pt.getName());
+                                }
+                                pts.add(subPt);
                             }
-                            pts.add(subPt);
                         }
                     }
                     goFasterMap.put(q, pts);
