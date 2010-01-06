@@ -110,9 +110,9 @@ div#experimentFeatures {
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
 <%--NB: We assume that an experiment deals either with one or the other organism.
-TODO: check if true also with future Hanikoff experiments. 
+TODO: check if true also with future Henikoff experiments. 
 TODO: associate organism with experiment (or read tracks) 
-NBB: for fly freeze, Hanikoff has only fly submissions -> the choice
+NBB: for fly freeze, Henikoff has only fly submissions -> the choice
 --%>
 
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
