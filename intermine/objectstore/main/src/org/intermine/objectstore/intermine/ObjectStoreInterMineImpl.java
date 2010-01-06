@@ -1974,7 +1974,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                             "temporary_precomp_" + getUniqueInteger(c), "goFaster",
                                             c);
                                     ptm.addTableToDatabase(subPt, new HashSet(), false);
-                                    tablesToDrop.add(pt.getName());
+                                    tablesToDrop.add(subPt.getName());
                                 }
                                 pts.add(subPt);
                             }
@@ -1991,7 +1991,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                             "temporary_precomp_" + getUniqueInteger(c), "goFaster",
                                             c);
                                     ptm.addTableToDatabase(subPt, new HashSet(), false);
-                                    tablesToDrop.add(pt.getName());
+                                    tablesToDrop.add(subPt.getName());
                                 }
                                 pts.add(subPt);
                             }
