@@ -102,8 +102,7 @@ public class HintManager
             if (!availableHints.isEmpty()) {
                 String hintId = availableHints.get(availableHints.firstKey());
                 webState.incrementHintCount(hintId);
-                hint = pageHints.get(hintId) + " [tot: " + pageHints.size() + " disp: "
-                    + webState.getHintCount(hintId) + "]";
+                hint = pageHints.get(hintId);
             }
         }
 
