@@ -1931,11 +1931,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
      * @throws ObjectStoreException if something is wrong
      */
     public void goFasterWithConnection(Query q, Connection c) throws ObjectStoreException {
-        synchronized (goFasterMap) {
-            if (goFasterMap.containsKey(q)) {
-                int goFasterCount = goFasterCountMap.get(q).intValue();
-                goFasterCount++;
-                goFasterCountMap.put(q, new Integer(goFasterCount));
+        synchronized (q) {
+            synchronized (goFasterMap) {
+                if (goFasterMap.containsKey(q)) {
+                    int goFasterCount = goFasterCountMap.get(q).intValue();
+                    goFasterCount++;
+                    goFasterCountMap.put(q, new Integer(goFasterCount));
+                    return;
+                }
             }
             PrecomputedTableManager ptm = null;
             try {
@@ -1997,9 +2000,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             }
                         }
                     }
-                    goFasterMap.put(q, pts);
-                    goFasterCacheMap.put(q, new OptimiserCache());
-                    goFasterCountMap.put(q, new Integer(1));
+                    synchronized (goFasterMap) {
+                        goFasterMap.put(q, pts);
+                        goFasterCacheMap.put(q, new OptimiserCache());
+                        goFasterCountMap.put(q, new Integer(1));
+                    }
                 } catch (SQLException e) {
                     throw new ObjectStoreException(e);
                 } catch (IllegalArgumentException e) {
