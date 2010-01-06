@@ -147,7 +147,7 @@ public class PathQueryTest extends TestCase
         assertFalse(q.isValid());
     }
 
-    public void testSetViewPaths() {
+    public void testSetViewPaths() throws Exception {
         e = (PathQuery) expected.get("employeeDepartmentCompanyWildcard");
         q = new PathQuery(model);
         List<Path> view = new ArrayList<Path>() {{
@@ -164,7 +164,7 @@ public class PathQueryTest extends TestCase
             add(new Path(model, "Employee.name"));
             try {
                 add(new Path(model, "monkey"));
-            } catch (PathError pathError) {
+            } catch (PathException pathError) {
                 // caught!
             }
             add(new Path(model, "Employee.department.name"));
@@ -305,7 +305,7 @@ public class PathQueryTest extends TestCase
         assertFalse(q.isValid());
     }
 
-    public void testAddPathToView() {
+    public void testAddPathToView() throws Exception {
 
         e = (PathQuery) expected.get("employeeDepartmentCompanyWildcard");
         q = new PathQuery(model);
@@ -759,7 +759,7 @@ public class PathQueryTest extends TestCase
         assertFalse(q.isValid());
     }
 
-    public void testSetOrderByList() {
+    public void testSetOrderByList() throws Exception {
         // Note that setOrderByList() does not validate!
         e = (PathQuery) expected.get("orderByVat");
         q = new PathQuery(model);
@@ -928,7 +928,7 @@ public class PathQueryTest extends TestCase
 
         List<Throwable> errors = new ArrayList<Throwable>() {{
             add(new Throwable("boo"));
-            add(new PathError("monkeypants is not a valid path", "monkey.pants"));
+            add(new PathException("monkeypants is not a valid path", "monkey.pants"));
         }};
 
         q.setProblems(null);

@@ -46,7 +46,7 @@ public class PathQueryBindingTest extends TestCase
     }
 
 
-    public Map<String, PathQuery> getExpectedQueries() {
+    public Map<String, PathQuery> getExpectedQueries() throws Exception {
         Map<String, PathQuery> expected = new LinkedHashMap<String, PathQuery>();
 
         Model model = Model.getInstanceByName("testmodel");
