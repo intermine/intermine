@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.struts.TableExportForm;
 
@@ -50,6 +51,7 @@ public interface TableHttpExporter
      * for this exporter.
      * @param pt the PagedTable
      * @return the Paths
+     * @throws PathException 
      */
-    public List<Path> getInitialExportPaths(PagedTable pt);
+    public List<Path> getInitialExportPaths(PagedTable pt) throws PathException;
 }

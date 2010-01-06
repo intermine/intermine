@@ -28,6 +28,7 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -139,8 +140,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * The intial export path list is just the paths from the columns of the PagedTable with
      * chromosomeLocation added (if appropriate)
      * {@inheritDoc}
+     * @throws PathException 
      */
-    public List<Path> getInitialExportPaths(PagedTable pt) {
+    public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
         List<Path> sequencePaths = SequenceExportOptionsController.getExportClassPaths(pt);
