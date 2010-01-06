@@ -329,10 +329,6 @@ public class PrecomputedTableManager
             }
             LOG.info("Finished creating precomputed table " + pt.getName() + " for category "
                     + pt.getCategory());
-            Exception stackTrace = new Exception();
-            stackTrace.fillInStackTrace();
-            LOG.info("The following exception is not a problem, it is merely to record the current "
-                    + "stack trace while creating precomputed table " + pt.getName(), stackTrace);
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
