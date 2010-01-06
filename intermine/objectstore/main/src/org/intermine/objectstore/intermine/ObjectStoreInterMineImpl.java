@@ -196,6 +196,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public ObjectStoreWriterInterMineImpl getNewWriter() throws ObjectStoreException {
+        return new ObjectStoreWriterInterMineImpl(this);
+    }
+
+    /**
      * Returns the DatabaseSchema used by this ObjectStore.
      *
      * @return a DatabaseSchema

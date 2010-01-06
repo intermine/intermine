@@ -38,6 +38,17 @@ public interface ObjectStore
     public static final Map<Object, Integer> SEQUENCE_IGNORE = Collections.emptyMap();
 
     /**
+     * Create an ObjectStoreWriter that writes into this ObjectStore. Note that the given object
+     * will consume limited resources from the ObjectStore which must be returned by calling the
+     * ObjectStoreWriter.close() method.
+     *
+     * @return an ObjectStoreWriter
+     * @throws ObjectStoreException if an error occurs
+     * @throws UnsupportedOperationException if no writer is available for this ObjectStore
+     */
+    public ObjectStoreWriter getNewWriter() throws ObjectStoreException;
+
+    /**
      * Execute a Query on this ObjectStore
      *
      * @param q the Query to execute

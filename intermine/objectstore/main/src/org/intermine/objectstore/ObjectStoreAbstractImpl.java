@@ -89,6 +89,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
+    public ObjectStoreWriter getNewWriter() throws ObjectStoreException {
+        throw new UnsupportedOperationException("This ObjectStore does not have a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Results execute(Query q) {
         Results retval = new Results(q, this, getSequence(getComponentsForQuery(q)));
         retval.setImmutable();

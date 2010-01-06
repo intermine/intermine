@@ -716,4 +716,12 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
     public long getMaxTime() {
         return osw.getMaxTime();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ObjectStoreWriter getNewWriter() {
+        throw new UnsupportedOperationException("This IntegrationWriter can't be used to get a "
+                + "new ObjectStoreWriter");
+    }
 }

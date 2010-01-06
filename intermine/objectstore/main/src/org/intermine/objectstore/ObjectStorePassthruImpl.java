@@ -45,6 +45,13 @@ public class ObjectStorePassthruImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
+    public ObjectStoreWriter getNewWriter() throws ObjectStoreException {
+        throw new UnsupportedOperationException("This ObjectStore does not have a writer");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Results execute(Query q) {
         return os.execute(q);
     }
