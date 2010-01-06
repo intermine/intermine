@@ -113,7 +113,7 @@ public class ClassKeyHelper
     public static boolean isKeyField(Map<String, List<FieldDescriptor>> classKeys, String clsName,
             String fieldName) {
         String className = TypeUtil.unqualifiedName(clsName);
-        
+
         List<FieldDescriptor> keys = classKeys.get(className);
         if (keys != null) {
             for (FieldDescriptor key : keys) {

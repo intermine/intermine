@@ -56,7 +56,7 @@ public class TemplatePopulator
             Map<String, List<TemplateValue>> newConstraints) throws PathException {
         TemplateQuery template = (TemplateQuery) origTemplate.clone();
         template.setEdited(true);
-        
+
         checkPaths(origTemplate.getModel(), newConstraints.values(), template);
 
         for (PathNode node : template.getEditableNodes()) {
@@ -114,8 +114,8 @@ public class TemplatePopulator
             new HashMap<String, List<TemplateValue>>();
 
         if (template.getAllEditableConstraints().size() != 1) {
-            throw new TemplatePopulatorException("Template must have exactly one editable constraint to be "
-                    + " configured with an object.");
+            throw new TemplatePopulatorException("Template must have exactly one editable "
+                    + "constraint to be configured with an object.");
         }
 
         PathNode node = template.getEditableNodes().get(0);
@@ -123,10 +123,10 @@ public class TemplatePopulator
         if (node.isAttribute()) {
             nodeType = node.getParentType();
         }
-        
+
         if (!PathUtil.canAssignObjectToType(template.getModel(), nodeType, obj)) {
             throw new TemplatePopulatorException("The constraint of type " + nodeType
-                    + " can't be set to object if type " 
+                    + " can't be set to object if type "
                     + DynamicUtil.getFriendlyName(obj.getClass())
                     + " in template query " + template.getName() + ".");
         }
@@ -141,8 +141,6 @@ public class TemplatePopulator
         return TemplatePopulator.getPopulatedTemplate(template, templateValues);
     }
 
-    
-    
     /**
      * Constrain a template query with a single editable constraint to be in the given bag.  This
      * returns a copy of the template with the value filled in, if the constraint is on an
@@ -160,20 +158,20 @@ public class TemplatePopulator
 
         if (template.getAllEditableConstraints().size() != 1) {
             throw new TemplatePopulatorException("Template must have exactly one editable "
-            		+ "constraint to be configured with a bag.");
+                    + "constraint to be configured with a bag.");
         }
-        
+
         PathNode node = template.getEditableNodes().get(0);
         String nodeType = node.getType();
         if (node.isAttribute()) {
             nodeType = node.getParentType();
         }
         if (!bag.isOfType(nodeType)) {
-        	throw new TemplatePopulatorException("The constraint of type " + nodeType
-        			+ " can't be set to a bag (list) of type " + bag.getType()
-        			+ " in template query " + template.getName() + ".");
+            throw new TemplatePopulatorException("The constraint of type " + nodeType
+                    + " can't be set to a bag (list) of type " + bag.getType()
+                    + " in template query " + template.getName() + ".");
         }
-        
+
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
                 bag.getName(), constraint.getCode());
@@ -280,7 +278,8 @@ public class TemplatePopulator
     private static Object getExtraValue(Constraint c, TemplateValue templateValue, PathNode node) {
         Object extraValue = templateValue.getExtraValue();
         if (extraValue instanceof String) {
-            if (templateValue.getExtraValue() == null || ((String) extraValue).trim().length() == 0) {
+            if (templateValue.getExtraValue() == null
+                    || ((String) extraValue).trim().length() == 0) {
                 return c.getExtraValue();
             }
             try {

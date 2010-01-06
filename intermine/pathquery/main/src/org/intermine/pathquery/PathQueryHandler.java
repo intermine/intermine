@@ -61,9 +61,8 @@ public class PathQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void startElement(@SuppressWarnings("unused") String uri,
-                             @SuppressWarnings("unused") String localName,
-                             String qName, Attributes attrs)
-    throws SAXException {
+            @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
+        throws SAXException {
         if (qName.equals("query")) {
             // reset things
             gencode = 'A';
@@ -83,24 +82,24 @@ public class PathQueryHandler extends DefaultHandler
             }
 
             if (attrs.getValue("sortOrder") != null) {
-               String[] s = (attrs.getValue("sortOrder")).split(" ");
-               for (int i = 0; i < s.length; i++) {
-                   String sortDirection = null;
-                   String orderByString = s[i];
-                   // check if next string bit is a direction string
-                   if ((s.length > i + 1) && (s[i + 1].equalsIgnoreCase("desc")
-                                                   || s[i + 1].equalsIgnoreCase("asc"))) {
-                       if (s[i + 1].equalsIgnoreCase("desc")) {
-                           sortDirection = PathQuery.DESCENDING;
-                       } else {
-                           sortDirection = PathQuery.ASCENDING;
-                       }
-                       i++;
-                   } else {
-                       sortDirection = PathQuery.ASCENDING;
-                   }
-                   sortOrder.put(orderByString, sortDirection);
-               }
+                String[] s = (attrs.getValue("sortOrder")).split(" ");
+                for (int i = 0; i < s.length; i++) {
+                    String sortDirection = null;
+                    String orderByString = s[i];
+                    // check if next string bit is a direction string
+                    if ((s.length > i + 1) && (s[i + 1].equalsIgnoreCase("desc")
+                                || s[i + 1].equalsIgnoreCase("asc"))) {
+                        if (s[i + 1].equalsIgnoreCase("desc")) {
+                            sortDirection = PathQuery.DESCENDING;
+                        } else {
+                            sortDirection = PathQuery.ASCENDING;
+                        }
+                        i++;
+                    } else {
+                        sortDirection = PathQuery.ASCENDING;
+                    }
+                    sortOrder.put(orderByString, sortDirection);
+                }
             }
             if (attrs.getValue("constraintLogic") != null) {
                 query.setConstraintLogic(attrs.getValue("constraintLogic"));
@@ -196,7 +195,7 @@ public class PathQueryHandler extends DefaultHandler
                 query.setDescription(queryDescription);
             }
             setSortOrder();
-        
+
             for (Map.Entry<String, String> entry: pathStringDescriptions.entrySet()) {
                 query.addPathStringDescription(entry.getKey(), entry.getValue());
             }

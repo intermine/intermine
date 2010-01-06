@@ -74,8 +74,8 @@ public class PathUtil
 
         return current;
     }
-    
-    
+
+
     /**
      * Return true if given type (of a constraint) can be assigned to the InterMineObject - i.e.
      * if the class or any superclass of the InterMineObject are the type.  Type can be a qualified
@@ -87,7 +87,7 @@ public class PathUtil
      */
     public static boolean canAssignObjectToType(Model model, String type, InterMineObject obj) {
         type = TypeUtil.unqualifiedName(type);
-        
+
         for (Class c : DynamicUtil.decomposeClass(obj.getClass())) {
             for (ClassDescriptor cld : model.getClassDescriptorsForClass(c)) {
                 String className = cld.getName();

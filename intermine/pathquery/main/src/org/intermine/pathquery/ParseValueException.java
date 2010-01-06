@@ -13,12 +13,12 @@ package org.intermine.pathquery;
 import org.intermine.InterMineException;
 
 /**
- * Exception thrown during parsing constraint value. 
+ * Exception thrown during parsing constraint value.
  * @author Jakub Kulaviak
  **/
 public class ParseValueException extends InterMineException
 {
-    
+
     /**
      * Constructor
      * @param message  message
@@ -26,7 +26,7 @@ public class ParseValueException extends InterMineException
     public ParseValueException(String message) {
         super(message);
     }
-    
+
     /**
      * Constructor.
      * @param msg message

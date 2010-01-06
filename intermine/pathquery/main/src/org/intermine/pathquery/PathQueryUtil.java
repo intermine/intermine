@@ -14,7 +14,7 @@ package org.intermine.pathquery;
  * Utility methods for PathQuery.
  * @author Kim Rutherford
  */
-public class PathQueryUtil 
+public class PathQueryUtil
 {
     /**
      * Get a summary of the Problems
@@ -27,5 +27,5 @@ public class PathQueryUtil
             sb.append(problems[i]);
         }
         return sb.toString();
-    }   
+    }
 }

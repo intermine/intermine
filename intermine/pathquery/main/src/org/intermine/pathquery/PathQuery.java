@@ -1350,7 +1350,7 @@ public class PathQuery
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     /**
      * Returns the  path description for given path. Path description is computed according to the
      * known paths and corresponding path descriptions.
@@ -1532,22 +1532,18 @@ public class PathQuery
      * {@inheritDoc}
      */
     public boolean equals(Object o) {
-        return (o instanceof PathQuery)
-        && model.equals(((PathQuery) o).model)
-        && nodes.equals(((PathQuery) o).nodes)
-        && view.equals(((PathQuery) o).view)
-        && sortOrder.equals(((PathQuery) o).sortOrder)
-        && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
+        return (o instanceof PathQuery) && model.equals(((PathQuery) o).model)
+            && nodes.equals(((PathQuery) o).nodes) && view.equals(((PathQuery) o).view)
+            && sortOrder.equals(((PathQuery) o).sortOrder)
+            && pathDescriptions.equals(((PathQuery) o).pathDescriptions);
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        return 2 * model.hashCode()
-        + 3 * nodes.hashCode()
-        + 5 * view.hashCode()
-        + 7 * sortOrder.hashCode();
+        return 2 * model.hashCode() + 3 * nodes.hashCode() + 5 * view.hashCode()
+            + 7 * sortOrder.hashCode();
     }
 
     /**
@@ -1555,7 +1551,7 @@ public class PathQuery
      */
     public String toString() {
         return "{PathQuery: model=" + model.getName() + ", nodes=" + nodes + ", view=" + view
-        + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
+            + ", sortOrder=" + sortOrder + ", pathDescriptions=" + pathDescriptions + "}";
     }
 
     private void logPathException(String msg) {

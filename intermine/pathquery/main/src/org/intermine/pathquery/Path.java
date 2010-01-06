@@ -55,7 +55,7 @@ public class Path
      * @throws PathException thrown if there is a problem resolving the path eg. a reference doesn't
      * exist in the model
      */
-     public Path(Model model, String path) throws PathException {
+    public Path(Model model, String path) throws PathException {
         if (model == null) {
             throw new IllegalArgumentException("model argument is null");
         }
@@ -119,13 +119,13 @@ public class Path
         this.path = stringPath;
         this.subClassConstraintPaths = new HashMap<String, String>(constraintMap);
 //        validatePath(constraintMap, stringPath);
-        
+
         for (String constaintPath: subClassConstraintPaths.keySet()) {
             if (constaintPath.indexOf(':') != -1) {
                 throw new IllegalArgumentException("illegal character (':') in constraint map");
             }
-        } 
-        
+        }
+
         if (path.indexOf("[") != -1) {
             throw new IllegalArgumentException("path: " + stringPath
                                                + " contains illegal character '['");
@@ -155,7 +155,7 @@ public class Path
 //     * Method checks if there isn't incompatible join, when for example department is once joined
 //     * in constraint as inner join and in other constraint as outer join.
 //     * @param constraintMap
-//     * @param stringPath 
+//     * @param stringPath
 //     */
 //    private void validatePath(Map<String, String> constraintMap, String stringPath) {
 //        Set<String> paths = new HashSet<String>(constraintMap.keySet());
@@ -382,7 +382,7 @@ public class Path
      * @throws PathException if the resulting Path is not valid
      */
     public Path append(String fieldName) throws PathException {
-       return new Path(model, toString() + "." + fieldName);
+        return new Path(model, toString() + "." + fieldName);
     }
 
     /**
@@ -429,16 +429,16 @@ public class Path
     /**
      * Return the last string element of this path, throw an exception of there is only one element,
      * i.e. for 'Company.departments.manager' return 'manager'.
-     * @return the last string element of the path 
+     * @return the last string element of the path
      */
     public String getLastElement() {
         if (getElements().size() == 0) {
             throw new RuntimeException("path (" + this + ") has only one element");
         }
-        
+
         return elements.get(elements.size() - 1);
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -550,7 +550,7 @@ public class Path
     public Map<String, String> getSubClassConstraintPaths() {
         return subClassConstraintPaths;
     }
-    
+
     /**
      * Return the model that this path is created for.
      * @return the model

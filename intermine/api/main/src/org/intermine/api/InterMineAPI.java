@@ -36,7 +36,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Richard Smith
  */
-public class InterMineAPI 
+public class InterMineAPI
 {
     private ObjectStore objectStore;
     private Model model;
@@ -47,7 +47,7 @@ public class InterMineAPI
     private BagManager bagManager;
     private TemplateSummariser templateSummariser;
     private ObjectStoreSummary oss;
-    
+
     /**
      * Construct an InterMine API object.
      * @param objectStore the production database
@@ -67,17 +67,17 @@ public class InterMineAPI
         this.profileManager = new ProfileManager(objectStore, userProfileWriter);
         this.bagManager = new BagManager(profileManager.getSuperuserProfile(), model);
         this.templateManager = new TemplateManager(profileManager.getSuperuserProfile(), model);
-        this.templateSummariser = new TemplateSummariser(objectStore, 
+        this.templateSummariser = new TemplateSummariser(objectStore,
                 profileManager.getProfileObjectStoreWriter());
     }
-    
+
     /**
      * @return the objectStore
-     */ 
+     */
     public ObjectStore getObjectStore() {
         return objectStore;
     }
-    
+
     /**
      * @return the model
      */
@@ -102,14 +102,14 @@ public class InterMineAPI
     public BagManager getBagManager() {
         return bagManager;
     }
-    
+
     /**
      * @return the TagManager
      */
     public TagManager getTagManager() {
         return profileManager.getTagManager();
     }
-    
+
     /**
      * @return the templateSummariser
      */
@@ -125,7 +125,7 @@ public class InterMineAPI
         return new WebResultsExecutor(objectStore, classKeys, bagQueryConfig, profile,
                 templateManager.getConversionTemplates(), bagManager);
     }
-    
+
     /**
      * @param profile the user that is executing the query
      * @return the pathQueryExecutor

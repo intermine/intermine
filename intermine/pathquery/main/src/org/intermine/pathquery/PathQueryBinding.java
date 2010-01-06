@@ -77,7 +77,7 @@ public class PathQueryBinding
             if (query.getSortOrderStrings() != null && !query.getSortOrderStrings().isEmpty()) {
                 writer.writeAttribute("sortOrder",
                                       StringUtil.join(query.getSortOrderStrings(), " "));
-            } 
+            }
             if (query.getConstraintLogic() != null) {
                 writer.writeAttribute("constraintLogic", query.getConstraintLogic());
             }
@@ -93,11 +93,11 @@ public class PathQueryBinding
                     Constraint c = (Constraint) k.next();
                     writer.writeStartElement("constraint");
                     writer.writeAttribute("op", "" + c.getOp());
-                    // Date is an exception, it is saved as a displayValue, in future all 
+                    // Date is an exception, it is saved as a displayValue, in future all
                     // constraint values will be saved this way
                     Object outputValue;
                     if (c.getValue() instanceof Date) {
-                        outputValue = c.getDisplayValue();    
+                        outputValue = c.getDisplayValue();
                     } else {
                         outputValue = c.getValue();
                     }

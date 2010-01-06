@@ -103,7 +103,7 @@ public class PathNode extends Node
     public boolean getIsOuterJoin() {
         return isOuterJoin();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -129,7 +129,7 @@ public class PathNode extends Node
         return 2 * super.hashCode()
             + 3 * constraints.hashCode();
     }
-    
+
     /**
      * Returns a set of path strings that must be inner joins if the two given path strings are
      * loop constrained onto each other.
