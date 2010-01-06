@@ -54,6 +54,10 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         this.os = os;
     }
 
+    public ObjectStoreWriter getNewWriter() {
+        throw new UnsupportedOperationException("22");
+    }
+
     public ObjectStore getObjectStore() {
         return os;
     }

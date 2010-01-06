@@ -133,6 +133,14 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    public ObjectStoreWriterInterMineImpl getNewWriter() throws ObjectStoreException {
+        throw new UnsupportedOperationException("Cannot get an ObjectStoreWriter from an existing "
+                + "ObjectStoreWriter");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Results execute(Query q, int batchSize, boolean optimise, boolean explain,
             boolean prefetch) {
         if (tablesAltered.isEmpty()) {
