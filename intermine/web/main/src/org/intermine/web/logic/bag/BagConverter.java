@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.PathException;
 
 /**
  * @author "Xavier Watkins"
@@ -35,10 +36,11 @@ public interface BagConverter
      * @return a List of ResultRow elements
      * @throws ClassNotFoundException  class not found
      * @throws ObjectStoreException objectstore
+     * @throws PathException 
      */
     public WebResults getConvertedObjects(HttpSession session, String parameters,
             List<Integer> fromList, String type)
-        throws ClassNotFoundException, ObjectStoreException;
+        throws ClassNotFoundException, ObjectStoreException, PathException;
 
     /**
      * Get the ActionMessage to display in the webapp

@@ -21,6 +21,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
@@ -49,8 +50,9 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
 
     /**
      * {@inheritDoc}
+     * @throws PathException 
      */
-    public PathQuery generatePathQuery(boolean showAll) {
+    public PathQuery generatePathQuery(boolean showAll) throws PathException {
 
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);

@@ -35,6 +35,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -167,7 +168,7 @@ public class WidgetAction extends InterMineAction
     private PathQuery generatePathQuery(HttpSession session, ActionForm form,
             HttpServletRequest request, String bagName, boolean showAll)
         throws NoSuchMethodException, InstantiationException, IllegalAccessException,
-            InvocationTargetException {
+            InvocationTargetException, PathException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         ObjectStore os = im.getObjectStore();

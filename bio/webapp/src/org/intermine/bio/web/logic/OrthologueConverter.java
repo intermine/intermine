@@ -29,6 +29,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
@@ -54,10 +55,11 @@ public class OrthologueConverter implements BagConverter
 
     /**
      * {@inheritDoc}
+     * @throws PathException 
      */
     public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
-                                      throws ObjectStoreException {
+                                      throws ObjectStoreException, PathException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         ObjectStore os = im.getObjectStore();
@@ -95,8 +97,9 @@ public class OrthologueConverter implements BagConverter
      * organism is joined as a inner join. Else constraint on organism doesn't work.
      * @param pathQuery
      * @param joinPath
+     * @throws PathException 
      */
-    private List<Path> getFixedView(List<Path> view) {
+    private List<Path> getFixedView(List<Path> view) throws PathException {
         String invalidPath = "Gene.homologues.homologue:organism";
         String validPath = "Gene.homologues.homologue.organism";
         List<Path> ret = new ArrayList<Path>();

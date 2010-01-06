@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -26,6 +27,7 @@ public interface WidgetURLQuery
      * @param showAll whether or not to show all records.  If false, then only records selected
      * by the user will be returned
      * @return the query generated based on which records the user clicked on in the widget
+     * @throws PathException 
      */
-    public PathQuery generatePathQuery(boolean showAll);
+    public PathQuery generatePathQuery(boolean showAll) throws PathException;
 }
