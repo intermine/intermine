@@ -17,8 +17,6 @@ package org.intermine.pathquery;
  */
 public class PathQueryHelper
 {
-
-    
     /**
      * If the sort order of the query is empty iterate through the view and add the first view
      * path that is valid for a sort order.  If the sort order isn't empty or there are no valid
@@ -30,7 +28,7 @@ public class PathQueryHelper
         if (!query.getSortOrder().isEmpty()) {
             return;
         }
-        
+
         // add the first valid view element to the sort order list
         for (Path path : query.getView()) {
             if (query.getSortOrder().isEmpty() && query.isValidOrderPath(path.toString())) {

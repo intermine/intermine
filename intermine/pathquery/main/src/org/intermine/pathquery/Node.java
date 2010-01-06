@@ -57,11 +57,11 @@ public class Node
      * @throws IllegalArgumentException if class or field are not found in the model
      * @throws ClassNotFoundException if the class name is not in the model
      */
-    public void setModel(Model model) throws IllegalArgumentException, ClassNotFoundException {
-        // Following line commented out and replaced because it requires that class 
+    public void setModel(Model model) throws ClassNotFoundException {
+        // Following line commented out and replaced because it requires that class
         // is searched in classpath, but the code is used by webservice client as well
         // and there isn't.
-        // ClassDescriptor cld = model.getClassDescriptorByName(TypeUtil.getClass(getParentType(), 
+        // ClassDescriptor cld = model.getClassDescriptorByName(TypeUtil.getClass(getParentType(),
         // model).getName());
         ClassDescriptor cld = model.getClassDescriptorByName(getParentType());
         if (cld == null) {

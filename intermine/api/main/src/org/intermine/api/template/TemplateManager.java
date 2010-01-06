@@ -266,7 +266,7 @@ public class TemplateManager
         return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC);
     }
 
-    
+
     /**
      * Return template queries used for converting between types in bag upload and lookup queries,
      * these are Superuser templates that have been tagged with TagNames.IM_CONVERTER.
@@ -274,16 +274,16 @@ public class TemplateManager
      */
     public List<TemplateQuery> getConversionTemplates() {
         List<TemplateQuery> conversionTemplates = new ArrayList<TemplateQuery>();
-        Map<String, TemplateQuery> templatesMap = 
+        Map<String, TemplateQuery> templatesMap =
                 getTemplatesWithTag(superProfile, TagNames.IM_CONVERTER);
         if (templatesMap.size() > 0) {
             conversionTemplates.addAll(templatesMap.values());
         }
         return conversionTemplates;
     }
-    
-    
-    
+
+
+
     /**
      * Return a map from template name to template query of template in the given profile that are
      * tagged with a particular tag.

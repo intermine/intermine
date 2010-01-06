@@ -284,7 +284,7 @@ public class ProfileManager
         for (SavedTemplateQuery template : userProfile.getSavedTemplateQuerys()) {
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map<String, TemplateQuery> templateMap = templateBinding.unmarshal(sr, savedBags, 
+                Map<String, TemplateQuery> templateMap = templateBinding.unmarshal(sr, savedBags,
                         version);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = (TemplateQuery) templateMap.get(templateName);

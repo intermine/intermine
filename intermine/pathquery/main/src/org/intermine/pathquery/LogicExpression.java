@@ -41,7 +41,7 @@ public class LogicExpression
      * @param expression the logic expression
      * @throws IllegalArgumentException if parse error occurs
      */
-    public LogicExpression(String expression) throws IllegalArgumentException {
+    public LogicExpression(String expression) {
         root = parse(expression);
     }
 
