@@ -310,10 +310,13 @@ my $apache_config = '';
 
 my $tomcat_host = get_property_value('webapp.deploy.url', $new_prop_filename);
 
-#$tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
-# the preceding line was leaving the port number, for the moment substituting with this 2 expressions
-$tomcat_host =~ s!http://!$1!; # drop the http//
+# getting the host from the properties
+# (need to be stripped of 'http//' and ':8080'
+$tomcat_host =~ s!http://(.*?)(:\d+)?!$1!;
+#$tomcat_host =~ s!http://!$1!; # drop the http//
 $tomcat_host =~ s/(:\d+).*$//; # cut :8080
+
+warn "new tomcat host: $tomcat_host\n";
 
 {
   open my $apache_conf_file, '<', $APACHE_CONF_FILENAME
@@ -325,8 +328,7 @@ $tomcat_host =~ s/(:\d+).*$//; # cut :8080
       last;
     }
 
-
-	if ($line =~ m:/intermine.modencode.org/release-$current_version:) {
+	if ($line =~ m:RewriteRule(.*)/release-$current_version:) {
   # added to change the present alias for intermine.modencode.org to the new version
    		$line =~ s/release-$current_version/release-$new_version/;
 	}
