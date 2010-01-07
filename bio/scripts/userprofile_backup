@@ -33,12 +33,12 @@ my $mirror_server = shift;
 my $HOST_NAME = hostname();
 
 my $prod_db_username = 'flymine';
-my $userprofile_db_username = 'userprofile';
+my $userprofile_db_username = 'flymine';
 my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U");
 my @psql_command = qw[psql -q -U];
 my @createdb_command = qw[createdb -U];
 my $db_prefix = "userprofile-release-";
-my $prod_db_prefix = "production-release-";
+my $prod_db_prefix = "flymine-release-";
 
 sub get_max_version {
   my $max_version = -1;
