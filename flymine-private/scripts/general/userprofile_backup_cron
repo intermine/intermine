@@ -15,7 +15,7 @@ dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
 cp $dumps_dir/userprofile_backup.$latest_version $dumps_dir/$dest_file
 cp $dumps_dir/userprofile_backup.$latest_version.bags $dumps_dir/$dest_file.bags
 
-echo userprofile backup > $HOME/.userprofile_backup.output.new
+echo userprofile backup >> $HOME/.userprofile_backup.output.new
 
 gzip -9 $dumps_dir/$dest_file 2>&1 >> $HOME/.userprofile_backup.output.new
 gzip -9 $dumps_dir/$dest_file.bags 2>&1 >> $HOME/.userprofile_backup.output.new
