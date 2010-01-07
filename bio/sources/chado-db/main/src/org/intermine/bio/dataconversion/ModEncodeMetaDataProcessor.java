@@ -1580,7 +1580,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         ResultSet res = getAppliedDataResultSetAll(connection);
         String comma = ",";
-        File f = new File("all_subs_report.csv");
+        String reportName = getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
+        File f = new File(reportName);
         FileWriter writer = new FileWriter(f);
 
         writer.write("submission" + comma);
