@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -360,8 +359,7 @@ public class InparanoidConverter extends FileConverter
 
     // create and store a Homologue item
     private Item createHomologue(BioAndScores first, BioAndScores second,
-                                 String type, String cluster) 
-    throws ObjectStoreException {
+                                 String type, String cluster) {
         Item homologue = createItem("Homologue");
 
         // at least one score will be 1, if an inParalogue then we want the score that isn't 1

@@ -17,8 +17,11 @@ public class NameUtil
 {
     private static final String QUERY_NAME_PREFIX = "query_";
     private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
-    private static final Pattern VALID_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:]");
-
+    // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots.
+    private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:]");
+    // A-Z, a-z, 0-9, underscores and dashes.
+    private static final Pattern NO_SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\-:]");
+    
     /*
      * Generates a map of special characters to their name, used to swap out bad characters in
      * query/list names
@@ -68,13 +71,32 @@ public class NameUtil
      * @return isValid Returns true if this name is correct, false if this name contains a bad char
      */
     public static boolean isValidName(String name) {
+        return validateName(name, true);
+    }
+
+    private static boolean validateName(String name, boolean specialChars) {
         if (StringUtils.isEmpty(name)) {
             return false;
         }
-        Matcher m = VALID_PATTERN.matcher(name);
+        Matcher m = (specialChars ? SPECIAL_CHARS_PATTERN.matcher(name) : 
+            NO_SPECIAL_CHARS_PATTERN.matcher(name));
         return !m.find();
     }
-
+    
+    /**
+     * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
+     * dashes.  
+     * if specialChars boolean is TRUE, then dot and space are allowed.  If specialChars is FALSE,
+     * it likely means the name is going to be handled by javascript, in URLS, etc and we don't 
+     * want to have to encode it.  eg. template name.
+     * @param name Name of bag/query/template to be validated
+     * @param specialChars if true, then special characters DOT and SPACE are allowed in name
+     * @return isValid Returns true if this name is correct, false if this name contains a bad char
+     */
+    public static boolean isValidName(String name, boolean specialChars) {
+        return validateName(name, specialChars);
+    }
+    
     /**
      * Takes a string and replaces special characters with the text value, e.g. it would change
      * "a&amp;b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
