@@ -40,6 +40,8 @@ public class TreefamConverter extends BioFileConverter
     private static final String PROP_FILE = "treefam_config.properties";
     private static final String DATASET_TITLE = "TreeFam data set";
     private static final String DATA_SOURCE_NAME = "TreeFam";
+    private static final String EVIDENCE_CODE_ABBR = "AA";
+    private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private static final Logger LOG = Logger.getLogger(TreefamConverter.class);
     private Set<String> taxonIds = new HashSet();
     protected File geneFile;
@@ -192,6 +194,7 @@ public class TreefamConverter extends BioFileConverter
         } catch (IOException err) {
             throw new RuntimeException("error reading geneFile", err);
         }
+        String evidenceRefId = getEvidenceCode();
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String bits[] = lineIter.next();
@@ -207,15 +210,16 @@ public class TreefamConverter extends BioFileConverter
             if (holder1 != null) {
                 GeneHolder holder2 = idsToGenes.get(gene2id);
                 if (holder2 != null) {
-                    processHomologues(holder1, holder2, bootstrap);
-                    processHomologues(holder2, holder1, bootstrap);
+                    processHomologues(holder1, holder2, bootstrap, evidenceRefId);
+                    processHomologues(holder2, holder1, bootstrap, evidenceRefId);
                 }
             }
 
         }
     }
 
-    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
+    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap, 
+                                   String evidenceRefId)
     throws ObjectStoreException {
 
         String gene1 = holder1.getGeneRefId();
@@ -223,9 +227,9 @@ public class TreefamConverter extends BioFileConverter
 
         Item homologue = createItem("Homologue");
         homologue.setAttribute("bootstrapScore", bootstrap);
-        homologue.setAttribute("evidenceCode", "AA - Amino acid sequence comparison");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", evidenceRefId);
         String type = "orthologue";
         if (holder1.getTaxonId().equals(holder2.getTaxonId())) {
             type = "paralogue";
@@ -303,6 +307,29 @@ public class TreefamConverter extends BioFileConverter
         return refId;
     }
 
+    private String getEvidenceCode()
+    throws ObjectStoreException {
+        Item item = createItem("OrthologueEvidenceCode");
+        item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+        item.setAttribute("name", EVIDENCE_CODE_NAME);
+        try {
+            store(item);
+        } catch (ObjectStoreException e) {
+            throw new ObjectStoreException(e);
+        }
+        String refId = item.getIdentifier();
+        
+        item = createItem("OrthologueEvidence");
+        item.setReference("evidenceCode", refId);
+        try {
+            store(item);
+        } catch (ObjectStoreException e) {
+            throw new ObjectStoreException(e);
+        }
+        
+        return item.getIdentifier();
+    }
+    
     /**
      * temporary object that holds the id, identifier, and gene for each record
      * @author julie
