@@ -119,7 +119,7 @@ public class NameUtil
      * Generate a new name for a list.  Used in situations where the user has a new list without
      * creating one via the upload form, eg. when copying or posting a list from another site
      * @param listName original name for the list
-     * @param allBags a list of all lists
+     * @param listNames a list of all lists
      * @return a unique name for the list
      */
     public static String generateNewName(Set<String> listNames, String listName) {
@@ -151,9 +151,8 @@ public class NameUtil
                 }
                 i++;
             }
-        } else {
-            return newName;
         }
+        return newName;        
     }
 
     /**
