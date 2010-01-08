@@ -281,6 +281,7 @@
   <class name="SubmissionProperty" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
+    <attribute name="wikiLink" type="java.lang.String"/>
     <collection name="submissions" referenced-type="Submission" reverse-reference="properties" />
   </class>
 
@@ -290,12 +291,18 @@
     <attribute name="cellType" type="java.lang.String"/>
     <attribute name="tissue" type="java.lang.String"/>
     <attribute name="species" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <reference name="target" referenced-type="Gene"/>
   </class>
 
   <class name="Strain" extends="SubmissionProperty" is-interface="true">
     <attribute name="species" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="shortName" type="java.lang.String"/>
     <attribute name="reference" type="java.lang.String"/>
+    <attribute name="targetName" type="java.lang.String"/>
+    <reference name="target" referenced-type="Gene"/>
   </class>
   
   <class name="Tissue" extends="SubmissionProperty" is-interface="true">
@@ -320,6 +327,9 @@
     <attribute name="platform" type="java.lang.String"/>
     <attribute name="resolution" type="java.lang.String"/>
     <attribute name="genome" type="java.lang.String"/>
+  </class>
+
+  <class name="GrowthTemperature" extends="SubmissionProperty" is-interface="true">
   </class>
   
 </classes>
