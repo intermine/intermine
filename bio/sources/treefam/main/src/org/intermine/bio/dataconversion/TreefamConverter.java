@@ -194,7 +194,7 @@ public class TreefamConverter extends BioFileConverter
         } catch (IOException err) {
             throw new RuntimeException("error reading geneFile", err);
         }
-        String evidenceRefId = getEvidenceCode();
+        String evidenceRefId = getEvidence();
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String bits[] = lineIter.next();
@@ -307,7 +307,7 @@ public class TreefamConverter extends BioFileConverter
         return refId;
     }
 
-    private String getEvidenceCode()
+    private String getEvidence()
     throws ObjectStoreException {
         Item item = createItem("OrthologueEvidenceCode");
         item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);

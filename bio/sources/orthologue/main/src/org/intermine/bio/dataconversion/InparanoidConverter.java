@@ -45,7 +45,7 @@ public class InparanoidConverter extends FileConverter
 {
     protected static final String PROP_FILE = "inparanoid_config.properties";
     protected Map bioEntities = new HashMap();
-    protected Item dataSource, dataSet, pub;
+    protected Item dataSource, dataSet, pub, evidence;
     protected Map organisms = new LinkedHashMap();
     protected Map<String, Item> sources = new LinkedHashMap<String, Item>();
     protected Map orgSources = new HashMap();
@@ -54,8 +54,9 @@ public class InparanoidConverter extends FileConverter
     protected Map createObjects = new HashMap(); // which objects to create from which source
     private File genePeptideDir = null;
     private Map<String, Map<String, String>> peptideGeneMaps = null;
-    
-    private static final Logger LOG = Logger.getLogger(InparanoidConverter.class);
+    private static final String EVIDENCE_CODE_ABBR = "AA";
+    private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
+    //private static final Logger LOG = Logger.getLogger(InparanoidConverter.class);
     
     /**
      * Constructor
@@ -66,8 +67,7 @@ public class InparanoidConverter extends FileConverter
     public InparanoidConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model);
         setupItems();
-        readConfig();
-        
+        readConfig();        
     }
 
     private void readConfig() {
@@ -360,7 +360,8 @@ public class InparanoidConverter extends FileConverter
 
     // create and store a Homologue item
     private Item createHomologue(BioAndScores first, BioAndScores second,
-                                 String type, String cluster) {
+                                 String type, String cluster) 
+    throws ObjectStoreException {
         Item homologue = createItem("Homologue");
 
         // at least one score will be 1, if an inParalogue then we want the score that isn't 1
@@ -388,13 +389,11 @@ public class InparanoidConverter extends FileConverter
 
         homologue.setAttribute("type", type);
         homologue.setAttribute("clusterName", cluster);
-        homologue.setAttribute("evidenceCode", "AA - Amino acid sequence comparison");
-        homologue.addToCollection("dataSets", dataSet.getIdentifier());
-        homologue.addToCollection("publications", pub.getIdentifier());
+        homologue.addToCollection("dataSets", dataSet);
+        homologue.addToCollection("evidence", evidence);
+        homologue.addToCollection("publications", pub);
         return homologue;
     }
-
-
 
     /**
      * Convenience method to create and cache Genes/Proteins by identifier
@@ -484,6 +483,15 @@ public class InparanoidConverter extends FileConverter
         dataSet.setAttribute("title", "InParanoid data set");
         dataSet.setReference("dataSource", dataSource);
         store(dataSet);
+        
+        Item evidenceCode = createItem("OrthologueEvidenceCode");
+        evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+        evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
+        store(evidenceCode);        
+        evidence = createItem("OrthologueEvidence");
+        evidence.setReference("evidenceCode", evidenceCode);
+        evidence.addToCollection("publications", pub);
+        store(evidence);
     }
 
     private class BioAndScores
