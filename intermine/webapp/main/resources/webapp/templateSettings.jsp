@@ -25,28 +25,34 @@
 
   <div class="body">
 
-  <fmt:message key="templateBuilder.save.msg"/>
+  <fmt:message key="templateBuilder.saveIntro"/>
 
   <html:form action="/templateSettingsAction">
     <div align="center">
     <p>
     <table border="0" width="10%">
       <tr>
-        <td width="1%" align="right" nowrap><fmt:message key="templateBuilder.shortName"/></td>
+        <td width="1%" align="right" valign="top" nowrap><fmt:message key="templateBuilder.shortName"/>
+          <c:if test="${empty TEMPLATE_BUILD_STATE.name}">
+            <span class="errors"> (Required)</span>
+          </c:if>        
+        </td>
         <td nowrap>
           <html:text property="name" size="32"/>
-          <c:if test="${empty TEMPLATE_BUILD_STATE.name}">
-            <span class="errors">(Required)</span>
-          </c:if>
+          <br/>
+          <small><i><fmt:message key="templateBuilder.nameHelp"/></i></small>
         </td>
       </tr>
       <tr>
-        <td align="right"><fmt:message key="templateBuilder.templateTitle"/></td>
-        <td nowrap>
-          <html:text property="title" size="55"/>
+        <td align="right" valign="top"><fmt:message key="templateBuilder.templateTitle"/>
           <c:if test="${empty TEMPLATE_BUILD_STATE.title}">
             <span class="errors">(Required)</span>
           </c:if>
+        </td>
+        <td nowrap>
+          <html:text property="title" size="55"/>
+          <br/>
+          <small><i><fmt:message key="templateBuilder.titleHelp"/></i></small>
         </td>
       </tr>
       <tr>
