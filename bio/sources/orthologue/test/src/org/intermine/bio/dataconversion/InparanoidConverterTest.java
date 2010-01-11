@@ -52,6 +52,6 @@ public class InparanoidConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "orth-tgt-items.xml");
 
-        assertEquals(readItemSet("test/InparanoidConverterTest.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("InparanoidConverterTest.xml"), itemWriter.getItems());
     }
 }
