@@ -39,6 +39,9 @@ if ! test -e "$dumps_dir/r$latest_version_major" ; then
     mkdir $dumps_dir/r$latest_version_major
 fi
 
+LAST_DUMP=`ls -1 $dumps_dir/r$latest_version_major | grep -v "bags.gz" | sort | tail -n 1`
+LAST_BAG_DUMP=`ls -1 $dumps_dir/r$latest_version_major | grep "bags.gz" | sort | tail -n 1`
+
 dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
 cp $dumps_dir/incoming/userprofile_backup.$latest_version $dumps_dir/r$latest_version_major/$dest_file
 cp $dumps_dir/incoming/userprofile_backup.$latest_version.bags $dumps_dir/r$latest_version_major/$dest_file.bags
@@ -53,6 +56,20 @@ gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $HOME/.userpro
  ln -s r$latest_version_major/$dest_file.gz current_release_dump.gz
  ln -s r$latest_version_major/$dest_file.bags.gz current_release_dump.bags.gz
 )
+
+if test -e "$dumps_dir/r$latest_version_major/$LAST_DUMP" ; then
+    # There is a previous dump - check to see if it is identical
+    if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.gz $dumps_dir/r$latest_version_major/$LAST_DUMP ; then
+        echo "Dump is identical to previous"
+    fi
+fi
+
+if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
+    # There is a previous bag dump - check to see if it is identical
+    if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.bags.gz $dumps_dir/r$latest_version_major/$LAST_BAGS_DUMP ; then
+        echo "Bags dump is identical to previous"
+    fi
+fi
 
 echo backup complete >> $HOME/.userprofile_backup.output.new
 
