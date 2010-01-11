@@ -5,25 +5,30 @@
 PATH=/usr/local/bin:/software/arch/postgresql/bin:$PATH
 export PATH
 
-dumps_dir=/shared/dumps/userprofile
+dumps_dir=/shared/dumps/userprofile/flymine
 
-/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
+/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
 latest_version=`cat $HOME/.userprofile_latest_version`
+latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]\*\)\..*$/\1/"`
+
+if ! test -e "$dumps_dir/r$latest_version_major" ; then
+    mkdir $dumps_dir/r$latest_version_major
+fi
 
 dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
-cp $dumps_dir/userprofile_backup.$latest_version $dumps_dir/$dest_file
-cp $dumps_dir/userprofile_backup.$latest_version.bags $dumps_dir/$dest_file.bags
+cp $dumps_dir/incoming/userprofile_backup.$latest_version $dumps_dir/r$latest_version_major/$dest_file
+cp $dumps_dir/incoming/userprofile_backup.$latest_version.bags $dumps_dir/r$latest_version_major/$dest_file.bags
 
 echo userprofile backup >> $HOME/.userprofile_backup.output.new
 
-gzip -9 $dumps_dir/$dest_file 2>&1 >> $HOME/.userprofile_backup.output.new
-gzip -9 $dumps_dir/$dest_file.bags 2>&1 >> $HOME/.userprofile_backup.output.new
+gzip -9 $dumps_dir/r$latest_version_major/$dest_file 2>&1 >> $HOME/.userprofile_backup.output.new
+gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $HOME/.userprofile_backup.output.new
 
 (cd $dumps_dir
  rm -f current_release_dump.gz current_release_dump.bags.gz
- ln -s $dest_file.gz current_release_dump.gz
- ln -s $dest_file.bags.gz current_release_dump.bags.gz
+ ln -s r$latest_version_major/$dest_file.gz current_release_dump.gz
+ ln -s r$latest_version_major/$dest_file.bags.gz current_release_dump.bags.gz
 )
 
 echo backup complete >> $HOME/.userprofile_backup.output.new
