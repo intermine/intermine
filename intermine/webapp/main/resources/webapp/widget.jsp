@@ -32,7 +32,11 @@
 
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}<br/>
+  <p>${widget.description}. 
+  <c:if test="${type == 'EnrichmentWidgetConfig'}">
+    For more information about the math used in these calculations, see <a href="http://www.intermine.org/wiki/EnrichmentWidgets">here</a>.
+  </c:if>
+  <BR/>
   <c:set var="isMSIE" value='<%= new Boolean(request.getHeader("user-agent").indexOf("MSIE") != -1) %>'/>
   <c:if test="${type ne 'HTMLWidgetConfig' && !isMSIE}" >
   	<span style="margin-top:5px">Number of ${bag.type}s in this list not analysed in this widget:  <span id="widgetnotanalysed${widget.id}"><%--${widget.notAnalysed}--%></span></span>
