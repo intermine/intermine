@@ -478,10 +478,18 @@ public class PathQuery
             }
 
             FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
-            
-            // make path inner join by default
-            currentPath.append(".");            
-            
+            if (fld.isCollection()
+                || fld.isReference()
+                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null
+                    || ((getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+                            == null)
+                        || (getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+                            .size() <= 0)))) {
+                currentPath.append(":");
+            } else {
+                currentPath.append(".");
+            }
+
             currentPath.append(thisPart);
             // if an attribute this will be the end of the path, otherwise get the class of this
             // path element
