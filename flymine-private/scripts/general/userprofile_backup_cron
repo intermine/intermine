@@ -10,7 +10,7 @@ dumps_dir=/shared/dumps/userprofile/flymine
 /software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
 latest_version=`cat $HOME/.userprofile_latest_version`
-latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]\*\)\..*$/\1/"`
+latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]*\)\..*$/\1/"`
 
 if ! test -e "$dumps_dir/r$latest_version_major" ; then
     mkdir $dumps_dir/r$latest_version_major
