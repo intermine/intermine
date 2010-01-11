@@ -66,7 +66,7 @@ fi
 
 if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
     # There is a previous bag dump - check to see if it is identical
-    if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.bags.gz $dumps_dir/r$latest_version_major/$LAST_BAGS_DUMP ; then
+    if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.bags.gz $dumps_dir/r$latest_version_major/$LAST_BAG_DUMP ; then
         echo "Bags dump is identical to previous"
     fi
 fi
