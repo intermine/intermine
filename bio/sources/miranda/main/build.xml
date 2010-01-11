@@ -1,4 +1,4 @@
 <project name="miranda-tasks" default="default" basedir=".">
   <description>build miranda tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
+  <import file="../../../../imbuild/library.xml"/> 
 </project>
