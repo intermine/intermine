@@ -389,7 +389,6 @@ public class InparanoidConverter extends FileConverter
         homologue.setAttribute("clusterName", cluster);
         homologue.addToCollection("dataSets", dataSet);
         homologue.addToCollection("evidence", evidence);
-        homologue.addToCollection("publications", pub);
         return homologue;
     }
 

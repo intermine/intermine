@@ -11,7 +11,6 @@
   <reference name="protein" referenced-type="Protein"/>
   <reference name="homologueProtein" referenced-type="Protein"/>
   <collection name="dataSets" referenced-type="DataSet"/>
-  <collection name="publications" referenced-type="Publication"/>
   <collection name="evidence" referenced-type="OrthologueEvidence"/>
 </class>
 <class name="OrthologueEvidence" is-interface="true">
