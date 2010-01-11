@@ -33,13 +33,15 @@ import org.intermine.xml.full.Item;
  */
 public class DrosophilaHomologyConverter extends BioFileConverter
 {
-    private Item pub;
+    private Item pub, evidence;
     private Map<String, String> genes = new HashMap();
     private Map<String, String> organisms = new HashMap();
     protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private OrganismRepository or;
-
+    private static final String EVIDENCE_CODE_ABBR = "AA";
+    private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -54,6 +56,14 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         pub = createItem("Publication");
         pub.setAttribute("pubMedId", "17994087");
         store(pub);
+        Item evidenceCode = createItem("OrthologueEvidenceCode");
+        evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+        evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
+        store(evidenceCode);        
+        evidence = createItem("OrthologueEvidence");
+        evidence.setReference("evidenceCode", evidenceCode);
+        evidence.addToCollection("publications", pub);
+        store(evidence);
         or = OrganismRepository.getOrganismRepository();
     }
 
@@ -79,9 +89,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         }
     }
 
-    
-
-
     // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene)
     throws ObjectStoreException {
@@ -93,7 +100,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         homologue.setAttribute("type", "orthologue");
         homologue.setReference("gene", gene);
         homologue.setReference("homologue", homGene);
-        homologue.addToCollection("publications", pub);
+        homologue.addToCollection("evidence", evidence);
         store(homologue);
     }
 
