@@ -677,8 +677,7 @@ public class MainHelper
         if (andcs.getConstraints().isEmpty()) {
             q.setConstraint(null);
         } else if (andcs.getConstraints().size() == 1) {
-            q.setConstraint((org.intermine.objectstore.query.Constraint)
-                    (andcs.getConstraints().iterator().next()));
+            q.setConstraint((andcs.getConstraints().iterator().next()));
         } else {
             q.setConstraint(andcs);
         }
