@@ -72,14 +72,14 @@ gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $dumps_dir/log
 if test -e "$dumps_dir/r$latest_version_major/$LAST_DUMP" ; then
     # There is a previous dump - check to see if it is identical
     if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.gz $dumps_dir/r$latest_version_major/$LAST_DUMP ; then
-        echo "Dump is identical to previous"
+        echo "Dump is identical to previous" >>$dumps_dir/log
     fi
 fi
 
 if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
     # There is a previous bag dump - check to see if it is identical
     if zcmp -s $dumps_dir/r$latest_version_major/$dest_file.bags.gz $dumps_dir/r$latest_version_major/$LAST_BAG_DUMP ; then
-        echo "Bags dump is identical to previous"
+        echo "Bags dump is identical to previous" >>$dumps_dir/log
     fi
 fi
 
