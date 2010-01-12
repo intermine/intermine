@@ -12,7 +12,6 @@ dumps_dir=/shared/dumps/userprofile/flymine
 if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
 then
     mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
-    exit 0;
 else
     mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
     echo userprofile backup
