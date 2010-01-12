@@ -534,14 +534,13 @@ public class SessionMethods
                         Thread.sleep(20000);
                     } catch (Exception err) {
                         StringWriter sw = new StringWriter();
-                        err.printStackTrace(new PrintWriter(sw));
-                        LOG.error(sw.toString());
+                        err.printStackTrace(new PrintWriter(sw));                        
                         StringBuffer errorMessage = new StringBuffer("Error while running query");
-                        if (session.getAttribute(Constants.IS_SUPERUSER) != null
-                            && (Boolean) session.getAttribute(Constants.IS_SUPERUSER)) {
-                            errorMessage.append(": " + err.getMessage());
+                        if (SessionMethods.isSuperUser(session)) {
+                            errorMessage.append(": " + err.getMessage());                        
                         }
                         recordError(errorMessage.toString(), session);
+                        LOG.error(err.toString());
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
                         ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
