@@ -7,15 +7,12 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <!-- bagDetails.jsp -->
-<html:xhtml/>
-<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 
-<script type="text/javascript">
-<!--//<![CDATA[
-  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
-  var detailsType = 'bag';
-//]]>-->
-</script>
+<html:xhtml/>
+
+<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
+<link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
+
 <script type="text/javascript" src="js/inlinetemplate.js">
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
 </script>
@@ -30,7 +27,7 @@
 <table cellspacing="0" width="100%">
 <tr>
   <TD colspan=2 align="left" style="padding-bottom:10px">
-<link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
+
 <script type="text/javascript" src="js/toolbar.js"></script>
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
