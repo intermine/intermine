@@ -142,7 +142,8 @@ EOF
 while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
-	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
+#	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
+	F )  echo; echo "Full modMine realease"; FULL=y; INCR=n; REL=build;;
 	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
 	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	Q )  echo; echo "Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
@@ -628,7 +629,9 @@ echo
 exit;
 fi
 
-interact "$sub loaded in chado"
+#interact "$sub loaded in chado"
+
+echo "$sub loaded in chado"
 
 }
 
