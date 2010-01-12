@@ -415,11 +415,11 @@ continue
 fi
 
 # if building the release, we move the file
-if [ "$FULL" = "y" ]
-then
-mv $sub $MIRROR
-ln -s ../$sub $sub
-fi
+# if [ "$FULL" = "y" ]
+# then
+# mv $sub $MIRROR
+# ln -s ../$sub $sub
+# fi
 
 #if we are validating, we'll process an entry at a time
 if [ "$VALIDATING" = "y" ]
