@@ -194,12 +194,12 @@ public class FlyBaseUniProtRefsTask extends Task
         } catch (IOException e) {
             throw new BuildException("error while reading: " + linkFile, e);
         } finally {
-            osw = null;
             try {
                 getObjectStoreWriter().close();
             } catch (ObjectStoreException e) {
                 LOG.error("failed to close() ObjectStoreWriter", e);
             }
+            osw = null;
         }
     }
 }

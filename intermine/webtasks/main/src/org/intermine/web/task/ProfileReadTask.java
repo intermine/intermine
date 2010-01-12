@@ -21,7 +21,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.web.ProfileManagerBinding;
 import org.intermine.web.bag.PkQueryIdUpgrader;
 
@@ -103,7 +102,7 @@ public class ProfileReadTask extends Task
             ObjectStoreWriter userProfileOS =
                 ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
             ProfileManager pm = new ProfileManager(os, userProfileOS);
-            osw = new ObjectStoreWriterInterMineImpl(os);
+            osw = os.getNewWriter();
 
             PkQueryIdUpgrader upgrader;
             if (source == null) {
