@@ -22,28 +22,19 @@
   </c:if>
 </c:forEach>
 
-
 <c:choose>
-  <c:when
-    test="${!empty placementRefsAndCollections[placement] ||
-                foundDisplayer == true ||
-                !empty templates}">
-
-    <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}"
-      scope="request" />
+<c:when test="${!empty placementRefsAndCollections[placement] || foundDisplayer == true || 
+    !empty templates}">
+    <c:set var="aspect" value="${fn:replace(placement, 'im:aspect:', '')}" scope="request" />
     <c:set var="templateCount" value="${fn:length(templates)}" />
-
     <c:choose>
       <c:when test="${templateCount > 0}">
-        <c:set var="templateHeaderMsg"
-          value="(Expand this section to view all ${templateCount} templates)" />
+        <c:set var="templateHeaderMsg" value="(Expand this section to view all ${templateCount} templates)" />
       </c:when>
       <c:otherwise>
-        <c:set var="templateHeaderMsg"
-          value="(Expand this section for more information)" />
+        <c:set var="templateHeaderMsg" value="(Expand this section for more information)" />
       </c:otherwise>
     </c:choose>
-
 
     <imutil:disclosure id="${aspectId}" type="consistent" opened="${opened}">
       <imutil:disclosureHead>
@@ -53,31 +44,35 @@
       <imutil:disclosureBody>
       	  <div style="margin-left:-1px;">
 	      	  <c:if test="${!empty displayObject}">
-	          <tiles:insert page="/objectDetailsRefsCols.jsp">
-	            <tiles:put name="object" beanName="displayObject" />
-	            <tiles:put name="placement" value="${placement}" />
-	          </tiles:insert>
+    	          <tiles:insert page="/objectDetailsRefsCols.jsp">
+	                   <tiles:put name="object" beanName="displayObject" />
+	                   <tiles:put name="placement" value="${placement}" />
+	              </tiles:insert>
 	          </c:if> 
 	       </div>
           <%-- the controller of this tile should have already called the controller
-            for the template list so just insert the jsp page --%> <c:if
-          test="${!empty templates && !empty placementRefsAndCollections[placement]}">
+            for the template list so just insert the jsp page --%> 
+        <c:if test="${!empty templates && !empty placementRefsAndCollections[placement]}">
           <hr class="seperator" />
-        </c:if> <tiles:insert name="/templateList.jsp">
+        </c:if> 
+        <tiles:insert name="/templateList.jsp">
           <tiles:put name="scope" value="global" />
           <tiles:put name="placement" value="${placement}" />
           <tiles:put name="displayObject" beanName="displayObject" />
           <tiles:put name="interMineIdBag" beanName="interMineIdBag" />
           <tiles:put name="noTemplatesMsgKey" value="" />
           <tiles:put name="trail" value="${trail}" />
-        </tiles:insert> <c:if test="${!empty templates && foundDisplayer}">
+        </tiles:insert> 
+        <c:if test="${!empty templates && foundDisplayer}">
           <hr class="seperator" />
-        </c:if> <c:if test="${! empty displayObject}">
+        </c:if> 
+        <c:if test="${! empty displayObject}">
           <tiles:insert page="/objectDetailsDisplayers.jsp">
             <tiles:put name="placement" value="${placement}" />
             <tiles:put name="displayObject" beanName="displayObject" />
           </tiles:insert>
-        </c:if> <im:vspacer height="5" />
+        </c:if> 
+        <im:vspacer height="5" />
       </imutil:disclosureBody>
     </imutil:disclosure>
   </c:when>
