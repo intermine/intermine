@@ -12,13 +12,20 @@
 #       improve logs!!
 #       add switch logic / checks
 #
+# TODO 2: when validating, builds twice the chadodb at the beginning
 
 # see after argument parsing for all envs related to the release
+
+SUBDIR=/shared/data/modmine/subs
+DATADIR=$SUBDIR/chado
+
+MIRROR=$DATADIR/mirror
+LOADDIR=$DATADIR/load
+
 
 FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
 REPORTS=$SUBDIR/reports
-DATADIR=$SUBDIR/chado
 #FAILDIR=$DATADIR/new/failed
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
@@ -31,6 +38,7 @@ RECIPIENTS=contrino@flymine.org,rns@flymine.org
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
+#--rm?
 pwd | grep modmine > pathcheck.tmp
 if [ ! -s pathcheck.tmp ]
 then
@@ -39,8 +47,8 @@ echo
 rm pathcheck.tmp
 exit;
 fi
-
 rm pathcheck.tmp
+#--mr
 
 BUILDDIR=$MINEDIR/integrate/build
 
@@ -61,7 +69,7 @@ WGET=y           # use wget to get files from ftp
 PREP4FULL=n      # don't run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
 STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
-SUB=n            # if we are using a single submission, SUB=dccid
+#SUB=n            # if we are using a single submission, SUB=dccid
 
 # these are mutually exclusive
 # should be enforced
@@ -172,9 +180,14 @@ DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasourc
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
+## CHADODB becomes fixed for a given project
+
+
 LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
+#SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
 SOURCES=modmine-static,modencode-"$P"metadata
+#SOURCES=cdna-clone
 
 echo
 echo "================================="
@@ -187,6 +200,7 @@ echo
 
 #echo $P
 echo $SOURCES
+echo $SUB
 
 if [ -n "$1" ]
 then
@@ -194,10 +208,9 @@ SUB=$1
 echo "Processing submission $SUB.."
 echo
 fi
+echo $SUB
 
 
-
-# TODO: actually only read n ...
 function interact {
 # if testing, wait here before continuing
 if [ $INTERACT = "y" -o $STOP = "y" ]
@@ -211,19 +224,44 @@ fi
 
 }
 
-function chadorebuild {
+function initChado {
 # rebuild skeleton chado db
+# if a parameter is passed, this is the project name and the function
+# will build the specific modchado
+#
+# e.g. initChado celniker
+# will build modchado-celniker
+#
+
+if [ -n "$1" ]
+then
+CHADODB="modchado-$1"
+fi
+
 RETURNDIR=$PWD
-cd $MINEDIR
+
+# do a back-up?
+if [ "$BUP" = "y" ]
+then
+dropdb -e "$CHADODB"-old -h $DBHOST -U $DBUSER;
+createdb -e "$CHADODB"-old -T $CHADODB -h $DBHOST -U $DBUSER\
+|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+fi
+
+if [ "$CHADOAPPEND" = "n" ]
+then 
 dropdb -e $CHADODB -h $DBHOST -U $DBUSER;
 createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
 # initialise it
+cd $MINEDIR
 psql -q -o /dev/null -d  $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty_chado.sql\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+fi
+
 cd $RETURNDIR
 }
 
-function runtest {
+function runTest {
 # run the relevant acceptance tests and name the report
 # with dccid if validating
 # with $REL_timestamp otherwise
@@ -257,100 +295,32 @@ echo "$REPORTS/$1.html"
 echo
 }
 
-function dcczip {
+function filer {
 # in a directory, look for all the .chadoxml files that are compressed
 # i.e. newly downloaded. Depending on their location, they will be
 # decompressed and moved in the
 # proper directory (new|update), which is the argument of the function
+# also put a de-wiggled file in the load directory, ready to load into chado
 for sub in *.chadoxml
 do
-    file $sub | grep compressed > bintest
-    if [ -s bintest ]
-     then
-# unzip and rename dowloaded file
-DCCID=`echo $sub | cut -f 1 -d.`
-echo "unzipping $1 file $DCCID"
-gzip -S .chadoxml -d $sub
-      mv $DCCID $DATADIR/$1/$sub
-  		FOUND=y
-    fi
+  file $sub | grep compressed > bintest
+  if [ -s bintest ]
+    then
+    # unzip and rename dowloaded file
+    DCCID=`echo $sub | cut -f 1 -d.`
+    echo "unzipping $1 file $DCCID"
+    gzip -S .chadoxml -d $sub
+    mv $DCCID $MIRROR/$1/$sub
+  	FOUND=y
+    dewiggle $MIRROR/$1/$sub > $LOADDIR/$sub
+  fi
 done
 }
 
-function chadofill {
-# run stag and add the dccid
-echo
-echo "filling $CHADODB db with $1..."
-echo "STAG: `date "+%y%m%d.%H%M"` $1" >> $LOG
-
-DCCID=`echo $1 | cut -f 1 -d.`
-
-# stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
-# $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 \
-# || { printf "\n$1  stag-storenode FAILED. EXITING. \n\n" "%b" ; exit 1 ; }
-
-stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
-$DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
-
-exitstatus=$?
-
-if [ "$exitstatus" = "0" ]
-then
-psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
-else
-echo
-echo "$1  stag-storenode FAILED. SKIPPING SUBMISSION."
-echo
-STAGFAIL=y
-fi
-
-}
-
-function dochadosubs {
-# dochadosub {new|update}
-cd $DATADIR/$1
-# if it is a symbolic link and this is not the given input
-# we skip that file
-
-# interact qq
-
-if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
- then
- continue
- fi
-
-echo "================"
-echo "$sub..."
-echo "================"
-
-#
-# for validation, we rebuild chado for each file
-#
-if [ "$CHADOAPPEND" = "n" ] && [ "$VALIDATING" = "y" ]
-then
-chadorebuild
-fi
-
-chadofill $sub
-
-# if stag failed, we set aside the sub
-if [ "$STAGFAIL" = "y" ]
-then
-STAGFAIL=n
-mv $sub $DATADIR/$1/failed
-continue
-fi
-
-# if building the release, we move the file
-if [ "$FULL" = "y" ]
-then
-mv $sub $DATADIR
-ln -s ../$sub $sub
-fi
-
-#if we are validating, we'll process an entry at a time
-if [ "$VALIDATING" = "y" ]
-then
+function validate {
+# validate sub $sub from directory $dir
+sub=$1
+dir=$2
 
 cd $MINEDIR
 echo "Building modMine $REL"
@@ -363,25 +333,102 @@ echo
 NAMESTAMP=`echo $sub | cut -d. -f1`
 cp $MINEDIR/integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
 
-runtest $NAMESTAMP
+runTest $NAMESTAMP
 
 # go back to the chado directory and mv chado file in 'done'
 # this is to allow to run the validation as a cronjob
-cd $DATADIR/$1
+cd $MIRROR/$dir
 mv $sub validated
-cd $DATADIR/new
+cd $MIRROR/new
 rm -f ./$sub
-if [ "$1" = "new" ]
+if [ "$dir" = "new" ]
 then 
 cp -s ./validated/$sub .
 else
 cp -s ../$1/validated/$sub .
 fi
 
-fi #VAL=y
+}
+
+function fillChado {
+# fillChado full_path_to_chacoxml
+# e.g. fillChado /shared/data/modmine/subs/chado/load/100.chadoxml
+# 
+# NB: path is assumed to be fix. 
+#
+# run stag and add the dccid
+
+DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
+echo
+echo "filling $CHADODB db with $DCCID..."
+echo "STAG: `date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+
+stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
+$DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
+
+exitstatus=$?
+
+if [ "$exitstatus" = "0" ]
+then
+psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
+else
+echo
+echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
+echo
+STAGFAIL=y
+fi
 
 }
 
+function processOneChadoSub {
+# processOneChadoSub {new|update}
+cd $MIRROR/$1
+
+# if it is a symbolic link and this is not the given input
+# we skip that file
+if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
+ then
+ continue
+ fi
+
+echo "================"
+echo "$sub..."
+echo "================"
+
+#
+# for validation, we rebuild chado for each file
+#
+if [ "$VALIDATING" = "y" ]
+then
+initChado
+fi
+
+fillChado $LOADDIR/$sub
+
+# if stag failed, we set aside the sub
+if [ "$STAGFAIL" = "y" ]
+then
+STAGFAIL=n
+mv $sub $MIRROR/$1/failed
+continue
+fi
+
+# if building the release, we move the file
+if [ "$FULL" = "y" ]
+then
+mv $sub $MIRROR
+ln -s ../$sub $sub
+fi
+
+#if we are validating, we'll process an entry at a time
+if [ "$VALIDATING" = "y" ]
+then
+
+validate $sub $1
+
+fi #VAL=y
+
+}
 
 function prepareForFull {
 #------------------------------------------------------
@@ -415,23 +462,47 @@ fi
 
 }
 
+function dewiggle {
+# dewiggle dccid
+# e.g. dewiggle 100
+# to remove wiggle data from the chadoxml file
+# put the slimmed file in load directory
+sed '/<wiggle_data id/,/<\/wiggle_data>/d' $1 | sed '/<data_wiggle_data/,/<\/data_wiggle_data>/d'
+}
 
+function doProjectList {
+#--------------------------------------------------
+# building the list of live dccid for each project 
+#--------------------------------------------------
+# TODO: get the project name from a list..
 
-interact
+#grep released ftplist | grep false | awk '{print $1, $(NF-2)}' | tr -d ,
 
+grep released $DATADIR/ftplist | grep false | grep -i celniker | awk '{print $1}' > $DATADIR/celniker.live
+grep released $DATADIR/ftplist | grep false | grep -i henikoff | awk '{print $1}' > $DATADIR/henikoff.live
+grep released $DATADIR/ftplist | grep false | grep -i karpen | awk '{print $1}' > $DATADIR/karpen.live
+grep released $DATADIR/ftplist | grep false | grep -i lai | awk '{print $1}' > $DATADIR/lai.live
+
+grep released $DATADIR/ftplist | grep false | grep -i lieb | awk '{print $1}' > $DATADIR/lieb.live
+grep released $DATADIR/ftplist | grep false | grep -i macalpine | awk '{print $1}' > $DATADIR/macalpine.live
+grep released $DATADIR/ftplist | grep false | grep -i piano | awk '{print $1}' > $DATADIR/piano.live
+grep released $DATADIR/ftplist | grep false | grep -i snyder | awk '{print $1}' > $DATADIR/snyder.live
+grep released $DATADIR/ftplist | grep false | grep -i waterston | awk '{print $1}' > $DATADIR/waterston.live
+grep released $DATADIR/ftplist | grep false | grep -i white | awk '{print $1}' > $DATADIR/white.live
+
+}
+
+function getFiles {
 #---------------------------------------
-# getting the chadoxml from ftp site
+# getting the chadoxml from ftp site 
 #---------------------------------------
+echo
+echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
+echo
 
-if [ "$WGET" = "y" ]
-then
-		echo
-		echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
-		echo
-
-cd $DATADIR/new
 # this for confirmation the program runs and to avoid to grep on a non-existent file
 touch $LOG
+
 
 #FTPURL=http://submit.modencode.org/submit/public/
 # NB: files are dowloaded gzipped: see next loop for decompression
@@ -440,123 +511,51 @@ touch $LOG
 # -N timestamping
 # -t number of tries
 
-if [ -n "$1" ]
+if [ -n "$SUB" ]
 then
-LOOPVAR="$1"
+# doing only 1 sub
+LOOPVAR="$SUB"
+
 elif [ $INFILE != "undefined" ]
 then
 # use the list provided in a file
 LOOPVAR=`cat $INFILE`
+
 else
 # get the full list from the ftp site and save it for reference
 wget -O - $FTPURL/list.txt | sort > $DATADIR/loft/`date "+%y%m%d"`.list
+
 rm $DATADIR/ftplist
 ln -s $DATADIR/loft/`date "+%y%m%d"`.list $DATADIR/ftplist
 # get the list of live dccid and use it as loop variable
-grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/live.dccid
-LOOPVAR=`cat $DATADIR/live.dccid`
+grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/all.live
+LOOPVAR=`cat $DATADIR/all.live`
+
+doProjectList
+
 # get also the list of deprecated entries with their replacement
 grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
 
-awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/dead.dccid
-
-# wget -O - $FTPURL/list.txt | grep released | grep false | awk '{print $1}' | sort > $DATADIR/live.dccid
-# LOOPVAR=`cat $DATADIR/live.dccid`
-# 
-# # get also the list of deprecated entries with their replacement
-# wget -O - $FTPURL/list.txt | grep released | grep true | awk '{print $1, " -> ", $3 }' | sort > $DATADIR/deprecated.dccid
+awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 
 fi
+
+
+cd $MIRROR/new
 
 for sub in $LOOPVAR
 do
  wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
 done
 
+}
 
-#-------------------------------------------------
-# check if any NEW file, decompress and rename it
-#-------------------------------------------------
-# arg: the destination directory
-dcczip new
-
-#-------------------------------------------------
-# check if any UPDATED file, decompress and rename it
-#-------------------------------------------------
-cd $DATADIR
-dcczip update
-
-##-------------------------------------------------
-# check 'validated' directories in new and update:
-# 
-#-------------------------------------------------
-cd $DATADIR/new/validated
-dcczip new
-
-cd $DATADIR/update/validated
-dcczip update
-
-#------------------------------------------------------------------------
-# check if any update in the ERR directory, decompress, mv and rename it
-#------------------------------------------------------------------------
-cd $DATADIR/new/err
-dcczip new
-
-if [ "$FOUND" = "n" ]
+function loadChadoSubs {
+if [ -n "$SUB" ]
 then
-	echo
-	echo "no new data found on ftp. exiting."
-	echo
-	exit 0;
-fi
+LOOPVAR="$SUB.chadoxml"
+initChado
 
-
-interact
-cd $DATADIR
-fi #if $WGET=y
-
-#---------------------------------------
-# build the chado db
-#---------------------------------------
-#
-
-# do a back-up?
-if [ "$BUP" = "y" ]
-then
-dropdb -e "$CHADODB"-old -h $DBHOST -U $DBUSER;
-createdb -e "$CHADODB"-old -T $CHADODB -h $DBHOST -U $DBUSER\
-|| { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
-fi
-
-# build new?
- if [ "$CHADOAPPEND" = "n" ] && [ "$STAG" = "y" ] && [ "$VALIDATING" = "n" ]
- then
-chadorebuild
-interact 
- fi
-
-#---------------------------------------
-# fill chado db
-#---------------------------------------
-
-if [ "$FULL" = "y" -a "$PREP4FULL" = "y" ]
-then
-prepareForFull
-
-interact "just finished: directories preparation"
-
-cd $MINEDIR
-$SCRIPTDIR/checkdel.sh
-
-fi
-
-
-if [ "$STAG" = "y" ]
-then
-
-if [ -n "$1" ]
-then
-LOOPVAR="$1.chadoxml"
 elif [ $INFILE != "undefined" ]
 then
 # use the list provided in a file
@@ -564,47 +563,58 @@ then
 LOOPVAR=`sed 's/$/.chadoxml/g' $INFILE | cat`
 echo "********"
 echo $LOOPVAR
+initChado
+
+elif [ -n "$1" ]
+then
+# this is a project name, load it
+LOOPVAR=`sed 's/$/.chadoxml/g' $DATADIR/$1.live | cat`
+echo "********"
+echo $LOOPVAR
+initChado $1
+
 else
 LOOPVAR="*.chadoxml"
+initChado
 fi
 
-if [ -n "$1" ]
+if [ -n "$SUB" ]
 then
-# doing one sub only, using loop because so expects dochadosubs
+# doing one sub only, using loop because so expects processOneChadoSub
 for sub in $LOOPVAR
 do
-dochadosubs new
+processOneChadoSub new
 done
 
 elif [ "$VALIDATING" = "y" -a $INFILE="undefined" ]
 then
 # validating all: is the configuration used by cronmine.
-# run dochadosubs both in new and update directories
+# run processOneChadoSub both in new and update directories
 
-cd $DATADIR/new
+#cd $DATADIR/new
 echo "====================="
 echo "validating new..."
 echo "====================="
 for sub in $LOOPVAR
 do
-dochadosubs new
+processOneChadoSub new
 done
 
-cd $DATADIR/update
+#cd $DATADIR/update
 echo "====================="
 echo "validating update..."
 echo "====================="
 for sub in $LOOPVAR
 do
-dochadosubs update
+processOneChadoSub update
 done
 
 else
 # when not validating or using given (list of) sub(s)
-cd $DATADIR/new
+#cd $DATADIR/new
 for sub in $LOOPVAR
 do
-dochadosubs new
+processOneChadoSub new
 done
 
 fi
@@ -618,13 +628,117 @@ echo
 exit;
 fi
 
+interact "$sub loaded in chado"
+
+}
+
+interact
+
+########################################
+#
+# MAIN
+#
+########################################
+
+
+#---------------------------------------
+# get the xml files
+#---------------------------------------
+#
+if [ "$WGET" = "y" ] # new fz checkFtp ?
+then
+
+getFiles
+
+#-------------------------------------------------
+# check if any NEW file, decompress and rename it
+#-------------------------------------------------
+# arg: the destination directory
+cd $MIRROR/new
+filer new
+
+#-------------------------------------------------
+# check if any UPDATED file
+#-------------------------------------------------
+cd $MIRROR
+filer update
+
+#-------------------------------------------------
+# check if any UPDATED file from previous updates
+#-------------------------------------------------
+cd $MIRROR/update
+filer update
+
+##-------------------------------------------------
+# check 'validated' directories in new and update:
+# 
+#-------------------------------------------------
+cd $MIRROR/new/validated
+filer new
+
+cd $MIRROR/update/validated
+filer update
+
+#------------------------------------------------------------------------
+# check if any update in the ERR directory, decompress, mv and rename it
+#------------------------------------------------------------------------
+cd $MIRROR/new/err
+filer new
+
+if [ "$FOUND" = "n" ]
+then
+	echo
+	echo "no new data found on ftp. exiting."
+	echo
+	exit 0;
+fi
+
+interact
+#cd $DATADIR
+fi #if $WGET=y
+
+#------------------------------------------
+# fill chado db (and validate if required)
+#------------------------------------------
+
+# if [ "$FULL" = "y" -a "$PREP4FULL" = "y" ]
+# then
+# prepareForFull
+# 
+# interact "just finished: directories preparation"
+# 
+# cd $MINEDIR
+# $SCRIPTDIR/checkdel.sh
+# 
+# fi
+
+
+if [ "$STAG" = "y" ]
+then
+
+if [ "$FULL" = "y" ]
+then
+loadChadoSubs celniker
+loadChadoSubs henikoff
+loadChadoSubs karpen
+loadChadoSubs lai
+loadChadoSubs lieb
+loadChadoSubs macalpine
+loadChadoSubs piano
+loadChadoSubs snyder
+loadChadoSubs waterston
+loadChadoSubs white
+else
+loadChadoSubs
+fi
+
 else
 echo
 echo "Using previously loaded chado."
 echo
 fi # if $STAG=y
 
-interact chadoloading_finished
+interact "Chado loading finished"
 
 #---------------------------------------
 # build modmine
@@ -699,6 +813,6 @@ interact
 if [ "$TEST" = "y" ] && [ $VALIDATING = "n" ]
 then
 NAMESTAMP="$REL"_`date "+%y%m%d.%H%M"`
-runtest $NAMESTAMP
+runTest $NAMESTAMP
 fi
 
