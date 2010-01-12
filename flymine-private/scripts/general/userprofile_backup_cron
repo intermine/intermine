@@ -75,9 +75,9 @@ if test -e "$dumps_dir/r$latest_version_major/$LAST_DUMP" ; then
         rm -f "$dumps_dir/r$latest_version_major/$LAST_DUMP"
     else
         if zdiff "$dumps_dir/r$latest_version_major/$dest_file.gz" "$dumps_dir/r$latest_version_major/$LAST_DUMP" | grep -q "^<" ; then
-            echo "Dump contains only new data, no deleted or modified data."
+            echo "Data from previous dump is modified or deleted." >>$dumps_dir/log
         else
-            echo "Data from previous dump is modified or deleted."
+            echo "Dump contains only new data, no deleted or modified data." >>$dumps_dir/log
         fi
     fi
 fi
@@ -89,9 +89,9 @@ if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
         rm -f "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP"
     else
         if zdiff "$dumps_dir/r$latest_version_major/$dest_file.bags.gz" "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" | grep -q "^<" ; then
-            echo "Bags dump contains only new data, no deleted or modified data."
+            echo "Bags data from previous dump is modified or deleted." >>$dumps_dir/log
         else
-            echo "Bags data from previous dump is modified or deleted."
+            echo "Bags dump contains only new data, no deleted or modified data." >>$dumps_dir/log
         fi
     fi
 fi
