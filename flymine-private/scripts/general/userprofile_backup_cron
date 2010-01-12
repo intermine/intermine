@@ -9,27 +9,41 @@ dumps_dir=/shared/dumps/userprofile/flymine
 
 /software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
+if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
+then
+    mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
+    exit 0;
+else
+    mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
+    echo userprofile backup
+    cat $HOME/.userprofile_backup.output
+fi 
+
+echo "-------------- Starting backup at `date`" >>$dumps_dir/log
+
+cat $HOME/.userprofile_backup.output >>$dumps_dir/log
+
 latest_version=`cat $HOME/.userprofile_latest_version`
 
 if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version" ; then
     DUMP_SIZE=`stat -c "%s" $dumps_dir/incoming/userprofile_backup.$latest_version`
     if test $DUMP_SIZE -lt "1000000" ; then
-        echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >>$HOME/.userprofile_backup.output.new
+        echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >&2
     fi
 else
-    echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version not created - backups may be broken" >>$HOME/.userprofile_backup.output.new
+    echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version not created - backups may be broken" >>$dumps_dir/log
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version not created - backups may be broken" >&2
 fi
 
 if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version.bags" ; then
     DUMP_SIZE=`stat -c "%s" $dumps_dir/incoming/userprofile_backup.$latest_version.bags`
     if test $DUMP_SIZE -lt "100000000" ; then
-        echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >>$HOME/.userprofile_backup.output.new
+        echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >&2
     fi
 else
-    echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >>$HOME/.userprofile_backup.output.new
+    echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >>$dumps_dir/log
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >&2
 fi
 
@@ -46,10 +60,8 @@ dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
 cp $dumps_dir/incoming/userprofile_backup.$latest_version $dumps_dir/r$latest_version_major/$dest_file
 cp $dumps_dir/incoming/userprofile_backup.$latest_version.bags $dumps_dir/r$latest_version_major/$dest_file.bags
 
-echo userprofile backup >> $HOME/.userprofile_backup.output.new
-
-gzip -9 $dumps_dir/r$latest_version_major/$dest_file 2>&1 >> $HOME/.userprofile_backup.output.new
-gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $HOME/.userprofile_backup.output.new
+gzip -9 $dumps_dir/r$latest_version_major/$dest_file 2>&1 >> $dumps_dir/log
+gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $dumps_dir/log
 
 (cd $dumps_dir
  rm -f current_release_dump.gz current_release_dump.bags.gz
@@ -71,14 +83,5 @@ if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
     fi
 fi
 
-echo backup complete >> $HOME/.userprofile_backup.output.new
+echo backup complete >> $dumps_dir/log
 
-if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
-then
-    mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
-    exit 0;
-else
-    mv $HOME/.userprofile_backup.output.new $HOME/.userprofile_backup.output
-    echo userprofile backup
-    cat $HOME/.userprofile_backup.output
-fi 
