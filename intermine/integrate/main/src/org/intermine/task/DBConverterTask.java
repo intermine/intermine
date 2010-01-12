@@ -85,6 +85,7 @@ public class DBConverterTask extends ConverterTask
             configureDynamicAttributes(converter);
             converter.process();
             converter.getItemWriter().close();
+            osw.close();
         } catch (Exception e) {
             throw new BuildException("problem while running converter reading from db: "
                                      + dbAlias, e);

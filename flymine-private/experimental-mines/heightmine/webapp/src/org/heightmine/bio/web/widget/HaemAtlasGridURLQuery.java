@@ -137,15 +137,21 @@ public class HaemAtlasGridURLQuery implements WidgetURLQuery
             HttpSession session = WebContextFactory.get().getSession();
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-            osw  = ((ProfileManager) servletContext.getAttribute(Constants
+            osw = ((ProfileManager) servletContext.getAttribute(Constants
                     .PROFILE_MANAGER)).getUserProfileObjectStore();
             InterMineBag imBag = new InterMineBag("GeneIntersection", bag.getType(),
                     null, new Date(), os, profile.getUserId(), osw); 
             
             Query q1 = MainHelper.makeQuery(q, null, null, servletContext, null);
             
-            ObjectStoreWriterInterMineImpl oswi = new ObjectStoreWriterInterMineImpl(os);
-            oswi.addToBagFromQuery(imBag.getOsb(), q1);
+            ObjectStoreWriter oswi = os.getNewWriter();
+            try {
+                oswi.addToBagFromQuery(imBag.getOsb(), q1);
+            } finally {
+                if (oswi != null) {
+                    oswi.close();
+                }
+            }
             
             view = new ArrayList<Path>();
 

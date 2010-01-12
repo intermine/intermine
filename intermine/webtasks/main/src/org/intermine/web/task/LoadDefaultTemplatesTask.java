@@ -32,7 +32,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.ProfileBinding;
 
@@ -141,7 +140,7 @@ public class LoadDefaultTemplatesTask extends Task
 
             // Unmarshal
             Set<Tag> tags = new HashSet();
-            osw = new ObjectStoreWriterInterMineImpl(os);
+            osw = os.getNewWriter();
             Profile profileSrc = ProfileBinding.unmarshal(reader, pm, profileDest.getUsername(),
                     profileDest.getPassword(), tags, osw, PathQuery.USERPROFILE_VERSION);
 

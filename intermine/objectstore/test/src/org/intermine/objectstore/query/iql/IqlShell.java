@@ -248,7 +248,7 @@ public class IqlShell
             if (os instanceof ObjectStoreInterMineImpl) {
                 out.println("Storing 1,000,000 Employees");
                 long startTime = System.currentTimeMillis();
-                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+                ObjectStoreWriter osw = os.getNewWriter();
                 osw.beginTransaction();
                 for (int i = 0; i < 1000000; i++) {
                     Employee emp = new Employee();
@@ -272,7 +272,7 @@ public class IqlShell
             if (os instanceof ObjectStoreInterMineImpl) {
                 out.println("Storing 1,000,000 Companies");
                 long startTime = System.currentTimeMillis();
-                ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+                ObjectStoreWriter osw = os.getNewWriter();
                 osw.beginTransaction();
                 for (int i = 0; i < 1000000; i++) {
                     Company comp = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));

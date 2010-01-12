@@ -141,7 +141,7 @@ public class PerformanceTester
             long queryStartTime = System.currentTimeMillis();
             TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
                     productionOs.getModel());
-            
+
             List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
             BagQueryRunner bqr = new BagQueryRunner(productionOs, classKeys, bagQueryConfig,
                     conversionTemplates);

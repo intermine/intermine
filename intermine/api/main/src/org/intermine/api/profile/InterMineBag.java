@@ -27,7 +27,6 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
@@ -298,7 +297,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     private void cloneInternalObjectStoreBag(InterMineBag bag) {
         ObjectStoreWriter osw = null;
         try {
-            osw = new ObjectStoreWriterInterMineImpl(os);
+            osw = os.getNewWriter();
             ObjectStoreBag newBag = osw.createObjectStoreBag();
             Query q = new Query();
             q.addToSelect(this.osb);
@@ -370,7 +369,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
         ObjectStoreWriter oswProduction = null;
         try {
-            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction = os.getNewWriter();
             oswProduction.addAllToBag(osb, ids);
         } finally {
             if (oswProduction != null) {
@@ -414,7 +413,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         // query is checked in ObjectStoreWriter method
         ObjectStoreWriter oswProduction = null;
         try {
-            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction = os.getNewWriter();
             oswProduction.addToBagFromQuery(osb, query);
         } finally {
             if (oswProduction != null) {
@@ -440,7 +439,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void removeIdsFromBag(Collection<Integer> ids) throws ObjectStoreException {
         ObjectStoreWriter oswProduction = null;
         try {
-            oswProduction = new ObjectStoreWriterInterMineImpl(os);
+            oswProduction = os.getNewWriter();
             oswProduction.removeAllFromBag(osb, ids);
         } finally {
             if (oswProduction != null) {

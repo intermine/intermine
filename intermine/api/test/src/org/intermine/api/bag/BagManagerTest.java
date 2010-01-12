@@ -235,7 +235,7 @@ public class BagManagerTest extends TestCase
     
  
     private void storeAddress() throws ObjectStoreException {
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        ObjectStoreWriter osw = os.getNewWriter();
         Address address1 = DynamicUtil.createObject(Address.class);
         address1.setId(ADDRESS_ID);
         osw.store(address1);
@@ -243,7 +243,7 @@ public class BagManagerTest extends TestCase
     }
     
     private void deleteAddress() throws ObjectStoreException {
-        ObjectStoreWriter osw = new ObjectStoreWriterInterMineImpl(os);
+        ObjectStoreWriter osw = os.getNewWriter();
         osw.delete(os.getObjectById(ADDRESS_ID));
         osw.close();
     }

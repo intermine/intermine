@@ -19,6 +19,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
@@ -59,7 +60,7 @@ public class BagHelper
             throw new RuntimeException("Can only create bags from a PathQuery that selects just "
                     + "id");
         }
-        ObjectStoreWriterInterMineImpl osw = new ObjectStoreWriterInterMineImpl(os);
+        ObjectStoreWriterInterMineImpl osw = ((ObjectStoreInterMineImpl) os).getNewWriter();
         Query q = MainHelper.makeQuery(pathQuery, null, null, bagQueryRunner, null, false);
 
         InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(), os,
