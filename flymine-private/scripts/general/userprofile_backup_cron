@@ -47,8 +47,8 @@ else
 fi
 
 ( cd $dumps_dir/incoming
- ci -mbackup -t-backup -u userprofile_backup.$latest_version
- ci -mbackup -t-backup -u userprofile_backup.$latest_version.bags
+ ci -mbackup -t-backup -l userprofile_backup.$latest_version
+ ci -mbackup -t-backup -l userprofile_backup.$latest_version.bags
 )
 
 latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]*\)\..*$/\1/"`
