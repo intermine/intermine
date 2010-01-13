@@ -568,9 +568,10 @@
 
   <class className="org.intermine.model.bio.TFBindingSite">
     <fields>
-<!--      <fieldconfig fieldExpr="primaryIdentifier"/> -->
-      <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-<!--   NB MODMINE         <fieldconfig fieldExpr="factor.primaryIdentifier"/> -->
+      <fieldconfig fieldExpr="primaryIdentifier"/> 
+      <fieldconfig fieldExpr="length"/> 
+      <fieldconfig fieldExpr="score"/> 
+<!--   NB MODMINE      <fieldconfig fieldExpr="gene.primaryIdentifier"/> -->
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
