@@ -260,16 +260,13 @@ public class PrecomputeTemplatesTask extends Task
     }
 
     /**
-     * Get the built-in template queries.
+     * Get the super user's public templates
      * @return Map from template name to TemplateQuery
      * @throws BuildException if an IO error occurs loading the template queries
      */
     protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
-        if (!pm.hasProfile(username)) {
-            throw new BuildException("user profile doesn't exist for " + username);
-        }
-        Profile profile = pm.getProfile(username, pm.getPassword(username));
+        Profile profile = pm.getSuperuserProfile();
         TemplateManager templateManager = new TemplateManager(profile, os.getModel());
         return templateManager.getGlobalTemplates();
     }
