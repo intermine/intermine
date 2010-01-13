@@ -49,7 +49,7 @@ fi
 ( cd $dumps_dir/incoming
  ci -mbackup -t-backup -l userprofile_backup.$latest_version
  ci -mbackup -t-backup -l userprofile_backup.$latest_version.bags
-) >>$dumps_dir/log
+) >>$dumps_dir/log 2>&1
 
 latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]*\)\..*$/\1/"`
 
