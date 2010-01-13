@@ -48,6 +48,7 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
@@ -503,8 +504,8 @@ public class SessionMethods
             new Thread(new Runnable() {
                 public void run () {
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+                    final InterMineAPI im = getInterMineAPI(session);
                     try {
-                        final InterMineAPI im = getInterMineAPI(session);
                         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
                         final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
                         Action action = new Action() {
@@ -534,13 +535,15 @@ public class SessionMethods
                         Thread.sleep(20000);
                     } catch (Exception err) {
                         StringWriter sw = new StringWriter();
-                        err.printStackTrace(new PrintWriter(sw));                        
+                        err.printStackTrace(new PrintWriter(sw));
                         StringBuffer errorMessage = new StringBuffer("Error while running query");
                         if (SessionMethods.isSuperUser(session)) {
                             errorMessage.append(": " + err.getMessage());                        
                         }
                         recordError(errorMessage.toString(), session);
-                        LOG.error(err.toString());
+                        LOG.error("Error while running query \""
+                                + PathQueryBinding.marshal(pathQuery, "",
+                                    im.getModel().getName(), 1), err);
                     } finally {
                         LOG.debug("unregisterRunningQuery qid " + qid);
                         ((Map) session.getAttribute("RUNNING_QUERIES")).remove(qid);
