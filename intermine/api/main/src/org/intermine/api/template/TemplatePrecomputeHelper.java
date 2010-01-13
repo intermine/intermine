@@ -1,5 +1,15 @@
 package org.intermine.api.template;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +27,11 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 
+/**
+ * Helper class providing methods for precomputing and summarising TemplateQuery objects.
+ *
+ * @author Richard Smith
+ */
 public class TemplatePrecomputeHelper
 {
 
@@ -89,8 +104,12 @@ public class TemplatePrecomputeHelper
             // we know that templates cannot contain non-editable lookup constraints.
             query = MainHelper.makeQuery(templateClone, new HashMap(), pathToQueryNode, null,
                                          null, false);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error getting precompute query for template "
+                    + template.getName(), e);
         } catch (ObjectStoreException e) {
             // Not possible if last argument is null
+            throw new Error(e);
         }
         if (groupByNode != null) {
             query.clearOrderBy();
