@@ -244,6 +244,7 @@ public class TemplateAction extends InterMineAction
                     Object constraintValue = tf.getBag(key);
                     value = new TemplateValue(node.getPathString(),
                             constraintOp, constraintValue, c.getCode());
+                    value.setBagConstraint(true);
                 } else {
                     String op = (String) tf.getAttributeOps(key);
                     ConstraintOp constraintOp = ConstraintOp
