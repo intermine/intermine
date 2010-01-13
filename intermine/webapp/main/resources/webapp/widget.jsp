@@ -32,7 +32,7 @@
 
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close x</a></span>
   <h3>${widget.title}</h3>
-  <p>${widget.description}. 
+  <p>${widget.description}
   <c:if test="${type == 'EnrichmentWidgetConfig'}">
     For more information about the math used in these calculations, see <a href="http://www.intermine.org/wiki/EnrichmentWidgets">here</a>.
   </c:if>
