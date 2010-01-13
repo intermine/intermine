@@ -16,9 +16,9 @@ DATADIR=/shared/data/modmine/subs/chado
 MIRROR=$DATADIR/mirror
 LOADDIR=$DATADIR/load
 
-CHECKDIR=$DATADIR/deprecationCheck
+DONTDIR=$DATADIR/ade
+CHECKDIR=$DONTDIR/deprecationCheck
 NEXTDIR=$MIRROR/new/load_in_next_full_release
-DONTDIR=$DATADIR/deprecated
 
 if [ ! -s "$DATADIR/all.dead" ]
 then
@@ -50,12 +50,35 @@ else
 echo -n +
 mv $sub $DONTDIR
 fi
+echo
+done
+
+# looking for ghost subs
+ls -1 *.chadoxml | sed 's/.chadoxml.*//g' | sort > $CHECKDIR/candidates
+comm -23 $CHECKDIR/candidates $CHECKDIR/valid > $CHECKDIR/toremove
+
+LOOPVAR=`sed 's/$/.chadoxml/g' $CHECKDIR/toremove | cat`
+
+for sub in $LOOPVAR
+do
+# mv real files, rm links
+echo -n $sub
+if [ -L "$sub" ]
+then
+echo -n -
+rm $sub
+else
+echo -n +
+mv $sub $DONTDIR/neverIn
+fi
+echo
 done
 
 }
 
 cd $DATADIR
 sort $DATADIR/all.dead > $CHECKDIR/deleted
+sort $DATADIR/all.live > $CHECKDIR/valid
 
 mv_deleted $LOADDIR
 
@@ -71,6 +94,14 @@ echo
 echo
 echo "Directories now clean."
 echo
+echo "Compressing disposed files.."
+
+cd $DONTDIR
+gzip *.chadoxml
+cd $DONTDIR/neverIn
+gzip *.chadoxml
+
+echo "..done."
 
 #exit;
 
