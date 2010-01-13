@@ -21,23 +21,23 @@ DATADIR=$SUBDIR/chado
 
 MIRROR=$DATADIR/mirror
 LOADDIR=$DATADIR/load
+LOGDIR=$DATADIR/logs
+FTPARK=$DATADIR/ark
 
 
 FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
 REPORTS=$SUBDIR/reports
-#FAILDIR=$DATADIR/new/failed
 PROPDIR=$HOME/.intermine
 SCRIPTDIR=../flymine-private/scripts/modmine/
 
-P=
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
-#SOURCES=modmine-static,modencode-metadata,entrez-organism
-#SOURCES=modencode-metadata
 
 # set minedir and check that modmine in path
 MINEDIR=$PWD
+BUILDDIR=$MINEDIR/integrate/build
+
 #--rm?
 pwd | grep modmine > pathcheck.tmp
 if [ ! -s pathcheck.tmp ]
@@ -50,7 +50,6 @@ fi
 rm pathcheck.tmp
 #--mr
 
-BUILDDIR=$MINEDIR/integrate/build
 
 # default settings: edit with care
 WEBAPP=y         # build a webapp
@@ -63,13 +62,13 @@ STAG=y           # run stag loading
 TEST=y           # do acceptance tests
 VALIDATING=n     # not running as a validation
 FOUND=n          # y if new files downloaded
-INFILE=undefined # not using a given list of submissions
+INFILE=          # not using a given list of submissions
 INTERACT=n       # y: step by step interaction
 WGET=y           # use wget to get files from ftp
 PREP4FULL=n      # don't run get_all_modmine (only in F mode)
 STOP=n           # y if warning in the setting of the directories for chado.
 STAGFAIL=n       # y if stag failed. when validating, we skip the failed sub and continue
-#SUB=n            # if we are using a single submission, SUB=dccid
+P=               # no project declared
 
 # these are mutually exclusive
 # should be enforced
@@ -181,14 +180,12 @@ DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasourc
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
-## CHADODB becomes fixed for a given project
+# CHADODB becomes fixed for a given project
 
-
-LOG="$DATADIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
+LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
 SOURCES=modmine-static,modencode-"$P"metadata
-#SOURCES=cdna-clone
 
 echo
 echo "================================="
@@ -199,9 +196,7 @@ echo
 echo "current directory: $MINEDIR"
 echo
 
-#echo $P
-echo $SOURCES
-echo $SUB
+#echo $SOURCES
 
 if [ -n "$1" ]
 then
@@ -210,6 +205,36 @@ echo "Processing submission $SUB.."
 echo
 fi
 echo $SUB
+
+function setProjectFile {
+#------------------------------------------------------------------------
+# setting the appropriate project.xml
+#
+# necessary if we want to maintain generic chado db such as modchado-dev
+# in addition to the project ones used for a full build
+# e.g. modchado-piano
+#
+#------------------------------------------------------------------------
+RETURNDIR=$PWD
+
+if [ $META="y" -o $VALIDATING="y" ]
+then
+cd $MINEDIR
+if [ -n "$1" ]
+then
+echo "QQRESET"
+# resetting: going back to the normal situation
+mv project.xml.original project.xml
+else
+# setting the dev project
+echo "WWSET"
+cp -u project.xml project.xml.original # cp only if .original is not there
+cp $SCRIPTDIR/project.xml .
+fi
+cd $RETURNDIR
+fi
+
+}
 
 
 function interact {
@@ -352,7 +377,7 @@ fi
 }
 
 function fillChado {
-# fillChado full_path_to_chacoxml
+# fillChado full_path_to_chadoxml
 # e.g. fillChado /shared/data/modmine/subs/chado/load/100.chadoxml
 # 
 # NB: path is assumed to be fix. 
@@ -360,7 +385,6 @@ function fillChado {
 # run stag and add the dccid
 
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
-echo
 echo "filling $CHADODB db with $DCCID..."
 echo "STAG: `date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
@@ -370,7 +394,7 @@ $DBPW -noupdate cvterm,dbxref,db,cv,feature $1
 exitstatus=$?
 
 if [ "$exitstatus" = "0" ]
-then
+then # add insertion of embargo date?
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
 else
 echo
@@ -391,7 +415,7 @@ if [ -L "$sub" -a "$LOOPVAR" = "*.chadoxml" ]
  then
  continue
  fi
-
+echo
 echo "================"
 echo "$sub..."
 echo "================"
@@ -427,11 +451,11 @@ then
 
 validate $sub $1
 
-fi #VAL=y
+fi 
 
 }
 
-function prepareForFull {
+function prepareForFull { #this can probably go
 #------------------------------------------------------
 # prepare directories for stag in case of FULL release
 #------------------------------------------------------
@@ -498,7 +522,7 @@ function getFiles {
 # getting the chadoxml from ftp site 
 #---------------------------------------
 echo
-echo "Getting data from $FTPURL. Log in $DATADIR/wget.log"
+echo "Getting data from $FTPURL. Log in $LOGDIR/wget.log"
 echo
 
 # this for confirmation the program runs and to avoid to grep on a non-existent file
@@ -506,7 +530,7 @@ touch $LOG
 
 
 #FTPURL=http://submit.modencode.org/submit/public/
-# NB: files are dowloaded gzipped: see next loop for decompression
+# NB: files are dowloaded gzipped and later decompressed
 #
 #  a append to log
 # -N timestamping
@@ -517,17 +541,17 @@ then
 # doing only 1 sub
 LOOPVAR="$SUB"
 
-elif [ $INFILE != "undefined" ]
+elif [ -n $INFILE ]
 then
 # use the list provided in a file
 LOOPVAR=`cat $INFILE`
 
 else
 # get the full list from the ftp site and save it for reference
-wget -O - $FTPURL/list.txt | sort > $DATADIR/loft/`date "+%y%m%d"`.list
+wget -O - $FTPURL/list.txt | sort > $FTPARK/`date "+%y%m%d"`.list
 
 rm $DATADIR/ftplist
-ln -s $DATADIR/loft/`date "+%y%m%d"`.list $DATADIR/ftplist
+ln -s $FTPARK/`date "+%y%m%d"`.list $DATADIR/ftplist
 # get the list of live dccid and use it as loop variable
 grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/all.live
 LOOPVAR=`cat $DATADIR/all.live`
@@ -536,7 +560,6 @@ doProjectList
 
 # get also the list of deprecated entries with their replacement
 grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
-
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 
 fi
@@ -546,7 +569,7 @@ cd $MIRROR/new
 
 for sub in $LOOPVAR
 do
- wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $DATADIR/wget.log
+ wget -t3 -N --header="accept-encoding: gzip" $FTPURL/get_file/$sub/extracted/$sub.chadoxml  --progress=dot:mega 2>&1 | tee -a $LOGDIR/wget.log
 done
 
 }
@@ -557,7 +580,7 @@ then
 LOOPVAR="$SUB.chadoxml"
 initChado
 
-elif [ $INFILE != "undefined" ]
+elif [ -n $INFILE ]
 then
 # use the list provided in a file
 #LOOPVAR=`cat $INFILE`
@@ -570,8 +593,6 @@ elif [ -n "$1" ]
 then
 # this is a project name, load it
 LOOPVAR=`sed 's/$/.chadoxml/g' $DATADIR/$1.live | cat`
-echo "********"
-echo $LOOPVAR
 initChado $1
 
 else
@@ -587,7 +608,7 @@ do
 processOneChadoSub new
 done
 
-elif [ "$VALIDATING" = "y" -a $INFILE="undefined" ]
+elif [ "$VALIDATING" = "y" -a -z $INFILE ]
 then
 # validating all: is the configuration used by cronmine.
 # run processOneChadoSub both in new and update directories
@@ -672,7 +693,7 @@ filer update
 cd $MIRROR/update
 filer update
 
-##-------------------------------------------------
+#-------------------------------------------------
 # check 'validated' directories in new and update:
 # 
 #-------------------------------------------------
@@ -697,8 +718,13 @@ then
 fi
 
 interact
-#cd $DATADIR
+
 fi #if $WGET=y
+
+#----------------------------------------------
+# set project.xml file (for full build or dev)
+#----------------------------------------------
+setProjectFile
 
 #------------------------------------------
 # fill chado db (and validate if required)
@@ -796,6 +822,11 @@ echo
 echo "Using previously built modMine."
 echo
 fi #BUILD=y
+
+#----------------------------------------------
+# set project.xml back to the original state
+#----------------------------------------------
+setProjectFile back
 
 interact
 
