@@ -46,6 +46,11 @@ else
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >&2
 fi
 
+( cd $dumps_dir/incoming
+ ci -mbackup -t-backup -u userprofile_backup.$latest_version
+ ci -mbackup -t-backup -u userprofile_backup.$latest_version.bags
+)
+
 latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]*\)\..*$/\1/"`
 
 if ! test -e "$dumps_dir/r$latest_version_major" ; then
