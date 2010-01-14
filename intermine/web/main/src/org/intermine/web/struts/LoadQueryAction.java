@@ -17,12 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
@@ -30,11 +28,9 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -80,11 +76,7 @@ public class LoadQueryAction extends DispatchAction
             if (!skipBuilder.booleanValue()) {
                 return mapping.findForward("query");
             } else {
-                QueryMonitorTimeout clientState
-                    = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-                MessageResources msgs =
-                    (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-                String qid = SessionMethods.startQuery(clientState, session, msgs, false, query);
+                String qid = SessionMethods.startQueryWithTimeout(request, false, query);
                 Thread.sleep(200); // slight pause in the hope of avoiding holding page
                 return new ForwardParameters(mapping.findForward("waiting"))
                                    .addParameter("trail", trail)

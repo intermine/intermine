@@ -22,11 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -38,7 +36,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -46,7 +43,6 @@ import org.intermine.web.logic.export.http.HttpExportUtil;
 import org.intermine.web.logic.export.rowformatters.CSVRowFormatter;
 import org.intermine.web.logic.export.rowformatters.TabRowFormatter;
 import org.intermine.web.logic.export.string.StringTableExporter;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.Widget;
@@ -154,12 +150,8 @@ public class WidgetAction extends InterMineAction
         //PathQuery pathQuery = widgetURLQuery.generatePathQuery(widgetObjects);
         PathQuery pathQuery = widgetURLQuery.generatePathQuery(false);
 
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
-                * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-
         SessionMethods.loadQuery(pathQuery, session, response);
-        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                 "|bag." + bagName).addParameter("qid", qid).forward();
@@ -221,11 +213,8 @@ public class WidgetAction extends InterMineAction
         HttpSession session = request.getSession();
         String bagName = request.getParameter("bagName");
         PathQuery pathQuery = generatePathQuery(session, form, request, bagName, false);
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
-                                                                  * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         SessionMethods.loadQuery(pathQuery, session, response);
-        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                         "|bag." + bagName).addParameter("qid", qid).forward();
@@ -247,12 +236,9 @@ public class WidgetAction extends InterMineAction
                                 HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String bagName = request.getParameter("bagName");
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
-                                                                  * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = generatePathQuery(session, form, request, bagName, true);
         SessionMethods.loadQuery(pathQuery, session, response);
-        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting")).addParameter("trail",
                         "|bag." + bagName).addParameter("qid", qid).forward();

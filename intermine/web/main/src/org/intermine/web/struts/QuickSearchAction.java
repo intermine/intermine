@@ -18,12 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
@@ -31,8 +29,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -94,18 +90,12 @@ public class QuickSearchAction extends InterMineAction
                 return mapping.findForward("error");
             }
 
-            QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.
-                    QUERY_TIMEOUT_SECONDS * 1000);
-            MessageResources messages =
-                (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-
             String value = qsf.getParsedValue();
             TemplateQuery populatedTemplate =
                 TemplatePopulator.populateTemplateOneConstraint(template, ConstraintOp.EQUALS,
                         value);
 
-            String qid = SessionMethods.startQuery(clientState, session, messages, false,
-                                                   populatedTemplate);
+            String qid = SessionMethods.startQueryWithTimeout(request, false, populatedTemplate);
             Thread.sleep(200);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid)

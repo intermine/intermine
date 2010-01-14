@@ -15,18 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -110,12 +106,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
-        QueryMonitorTimeout clientState
-            = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messageResources =
-            (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messageResources,
-                                               false, sq.getPathQuery());
+        String qid = SessionMethods.startQueryWithTimeout(request, false, sq.getPathQuery());
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return new ForwardParameters(mapping.findForward("waiting"))
                     .addParameter("trail", trail)
