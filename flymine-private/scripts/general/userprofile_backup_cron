@@ -29,10 +29,12 @@ if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version" ; then
     if test $DUMP_SIZE -lt "1000000" ; then
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >&2
+        exit 1
     fi
 else
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version not created - backups may be broken" >>$dumps_dir/log
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version not created - backups may be broken" >&2
+    exit 1
 fi
 
 if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version.bags" ; then
@@ -40,16 +42,13 @@ if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version.bags" ; then
     if test $DUMP_SIZE -lt "100000000" ; then
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >&2
+        exit 1
     fi
 else
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >>$dumps_dir/log
     echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags not created - backups may be broken" >&2
+    exit 1
 fi
-
-( cd $dumps_dir/incoming
- ci -mbackup -t-backup -l userprofile_backup.$latest_version
- ci -mbackup -t-backup -l userprofile_backup.$latest_version.bags
-) >>$dumps_dir/log 2>&1
 
 latest_version_major=`cat $HOME/.userprofile_latest_version | sed -e "s/^\([0-9]*\)\..*$/\1/"`
 
@@ -57,51 +56,19 @@ if ! test -e "$dumps_dir/r$latest_version_major" ; then
     mkdir $dumps_dir/r$latest_version_major
 fi
 
-LAST_DUMP=`ls -1 $dumps_dir/r$latest_version_major | grep -v "bags.gz" | sort | tail -n 1`
-LAST_BAG_DUMP=`ls -1 $dumps_dir/r$latest_version_major | grep "bags.gz" | sort | tail -n 1`
+mv $dumps_dir/incoming/userprofile_backup.$latest_version $dumps_dir/r$latest_version_major/userprofile_backup.$latest_version
+mv $dumps_dir/incoming/userprofile_backup.$latest_version.bags $dumps_dir/r$latest_version_major/userprofile_backup.$latest_version.bags
 
-dest_file=userprofile-release.$latest_version.`date +'%Y%m%d-%H%M'`
-cp $dumps_dir/incoming/userprofile_backup.$latest_version $dumps_dir/r$latest_version_major/$dest_file
-cp $dumps_dir/incoming/userprofile_backup.$latest_version.bags $dumps_dir/r$latest_version_major/$dest_file.bags
-
-gzip -9 $dumps_dir/r$latest_version_major/$dest_file 2>&1 >> $dumps_dir/log
-gzip -9 $dumps_dir/r$latest_version_major/$dest_file.bags 2>&1 >> $dumps_dir/log
+( cd $dumps_dir/r$latest_version_major
+ ci -mbackup -t-backup -l userprofile_backup.$latest_version
+ ci -mbackup -t-backup -l userprofile_backup.$latest_version.bags
+) >>$dumps_dir/log 2>&1
 
 (cd $dumps_dir
- rm -f current_release_dump.gz current_release_dump.bags.gz
- ln -s r$latest_version_major/$dest_file.gz current_release_dump.gz
- ln -s r$latest_version_major/$dest_file.bags.gz current_release_dump.bags.gz
+ rm -f current_release_dump current_release_dump.bags
+ ln -s r$latest_version_major/userprofile_backup.$latest_version current_release_dump
+ ln -s r$latest_version_major/userprofile_backup.$latest_version.bags current_release_dump.bags
 )
-
-if test -e "$dumps_dir/r$latest_version_major/$LAST_DUMP" ; then
-    # There is a previous dump - check to see if it is identical
-    if zcmp -s "$dumps_dir/r$latest_version_major/$dest_file.gz" "$dumps_dir/r$latest_version_major/$LAST_DUMP" ; then
-        echo "Dump is identical to previous - deleting previous ($LAST_DUMP)" >>$dumps_dir/log
-        rm -f "$dumps_dir/r$latest_version_major/$LAST_DUMP"
-    else
-        if zdiff "$dumps_dir/r$latest_version_major/$LAST_DUMP" "$dumps_dir/r$latest_version_major/$dest_file.gz" | grep -q "^<" ; then
-            echo "Data from previous dump is modified or deleted." >>$dumps_dir/log
-        else
-            echo "Dump contains only new data, no deleted or modified data - deleting previous ($LAST_DUMP)" >>$dumps_dir/log
-            rm -f "$dumps_dir/r$latest_version_major/$LAST_DUMP"
-        fi
-    fi
-fi
-
-if test -e "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
-    # There is a previous bag dump - check to see if it is identical
-    if zcmp -s "$dumps_dir/r$latest_version_major/$dest_file.bags.gz" "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" ; then
-        echo "Bags dump is identical to previous - deleting previous ($LAST_BAG_DUMP)" >>$dumps_dir/log
-        rm -f "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP"
-    else
-        if zdiff "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP" "$dumps_dir/r$latest_version_major/$dest_file.bags.gz" | grep -q "^<" ; then
-            echo "Bags data from previous dump is modified or deleted." >>$dumps_dir/log
-        else
-            echo "Bags dump contains only new data, no deleted or modified data - deleting previous ($LAST_BAG_DUMP)" >>$dumps_dir/log
-            rm -f "$dumps_dir/r$latest_version_major/$LAST_BAG_DUMP"
-        fi
-    fi
-fi
 
 echo backup complete >> $dumps_dir/log
 
