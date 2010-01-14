@@ -172,7 +172,7 @@
       <forward name="renderTree" path="tree.page"/>
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
-    <action path="/modifyDetails" type="org.intermine.web.struts.ModifyDetails" parameter="method">
+    <action path="/modifyDetails" type="org.intermine.web.struts.InlineTableHelper" parameter="method">
       <forward name="objectDetails" redirect="true" path="/objectDetails.do"/>
       <forward name="results" path="/results.do" redirect="true"/>
       <forward name="objectDetailsCollectionTable" path="/objectDetailsCollectionTable.jsp"/>
