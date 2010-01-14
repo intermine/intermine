@@ -43,13 +43,13 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Action to handle events from the object details page
+ * Action to handle events related to displaying inline templates.
  *
  * @author Mark Woodbridge
  */
-public class ModifyDetails extends DispatchAction
+public class InlineTableHelper extends DispatchAction
 {
-    private static final Logger LOG = Logger.getLogger(ModifyDetails.class);
+    private static final Logger LOG = Logger.getLogger(InlineTableHelper.class);
     /**
      * Show in table for inline template queries.
      *
@@ -122,6 +122,7 @@ public class ModifyDetails extends DispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws an exception
+     * @deprecated ajaxVerbosify is used instead
      */
     public ActionForward verbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -135,7 +136,6 @@ public class ModifyDetails extends DispatchAction
         String trail = request.getParameter("trail");
         String placement = request.getParameter("placement");
         DisplayObject object = getDisplayObject(session, request.getParameter("id"));
-
 
         if (object != null) {
             object.setVerbosity(placement + "_" + fieldName, true);
@@ -151,6 +151,7 @@ public class ModifyDetails extends DispatchAction
      * @param response The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws an exception
+     * @deprecated ajaxVerbosify is used instead
      */
     public ActionForward unverbosify(ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
@@ -200,7 +201,7 @@ public class ModifyDetails extends DispatchAction
     }
 
     /**
-     * Count number of results for a template on the object details page.
+     * Count number of results for a template for inline templates
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
