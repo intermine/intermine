@@ -15,18 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -117,11 +113,7 @@ public class SubmissionOverlapsAction extends InterMineAction
             q.setOrderBy("GeneFlankingRegion.gene.primaryIdentifier");
         }
         q.syncLogicExpression("and");
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(
-                Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, request.getSession(), messages,
-                                               false, q);
+        String qid = SessionMethods.startQueryWithTimeout(request, false, q);
         Thread.sleep(200);
 
         String trail = "|" + submissionId;

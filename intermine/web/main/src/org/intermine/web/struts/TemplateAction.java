@@ -19,13 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
@@ -37,8 +35,6 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQueryUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
@@ -188,12 +184,7 @@ public class TemplateAction extends InterMineAction
         }
         form.reset(mapping, request);
 
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(
-                Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request
-                .getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages,
-                saveQuery, queryCopy);
+        String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, queryCopy);
         Thread.sleep(200);
 
         String trail = "";

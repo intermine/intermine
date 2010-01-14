@@ -24,13 +24,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
@@ -59,7 +57,6 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -298,7 +295,7 @@ public class PortalQueryAction extends InterMineAction
         Properties properties = SessionMethods.getWebProperties(servletContext);
         String templateName = properties.getProperty("begin.browse.template");
         Profile superProfile = im.getProfileManager().getSuperuserProfile();
-        
+
         TemplateManager templateManager = im.getTemplateManager();
         TemplateQuery template = templateManager.getUserTemplate(superProfile, templateName);
 
@@ -316,11 +313,7 @@ public class PortalQueryAction extends InterMineAction
 
         SessionMethods.loadQuery(populatedTemplate, request.getSession(), response);
 
-        QueryMonitorTimeout clientState
-            = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-        String qid = SessionMethods.startQuery(clientState, session, messages, false,
-                populatedTemplate);
+        String qid = SessionMethods.startQueryWithTimeout(request, false, populatedTemplate);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
         return qid;
     }

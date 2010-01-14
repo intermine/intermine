@@ -14,11 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.Profile;
@@ -31,12 +29,10 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
@@ -136,12 +132,7 @@ public class FeaturesAction extends InterMineAction
         }
         
         if (action.equals("results")) {
-            QueryMonitorTimeout clientState = new QueryMonitorTimeout(
-                    Constants.QUERY_TIMEOUT_SECONDS * 1000);
-            MessageResources messages = 
-                (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
-            String qid = SessionMethods.startQuery(clientState, session, messages,
-                                                   false, q);
+            String qid = SessionMethods.startQueryWithTimeout(request, false, q);
             Thread.sleep(200);
 
             return new ForwardParameters(mapping.findForward("waiting"))
@@ -178,7 +169,7 @@ public class FeaturesAction extends InterMineAction
             // need to select just id of featureType to create list
             q.setView(featureType + ".id");
 
-            Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+            Profile profile = SessionMethods.getProfile(session);
 
             BagQueryRunner bagQueryRunner = im.getBagQueryRunner();
 

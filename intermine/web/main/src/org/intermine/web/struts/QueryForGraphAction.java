@@ -16,11 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -28,8 +26,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 
@@ -90,12 +86,9 @@ public class QueryForGraphAction extends InterMineAction
             Constructor constr = clazz.getConstructor(new Class[] {String.class});
             urlGenerator = (GraphCategoryURLGenerator) constr.newInstance(new Object[] {bagName});
         }
-        QueryMonitorTimeout clientState = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS
-                * 1000);
-        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PathQuery pathQuery = urlGenerator.generatePathQuery(os, bag, category, series);
         SessionMethods.loadQuery(pathQuery, session, response);
-        String qid = SessionMethods.startQuery(clientState, session, messages, true, pathQuery);
+        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
 
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
 

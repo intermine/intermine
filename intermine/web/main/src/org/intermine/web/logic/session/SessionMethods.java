@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
+import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -56,6 +57,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitor;
+import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
@@ -479,6 +481,23 @@ public class SessionMethods
     }
 
     /**
+     * Start the given query running in the background, then return, with a default timeout.
+     * A new query id will be created and added to the RUNNING_QUERIES session attribute.
+     *
+     * @param request the Http request
+     * @param saveQuery whether or not to automatically save the query
+     * @param pathQuery query to start
+     * @return the new query id created
+     */
+    public static String startQueryWithTimeout(final HttpServletRequest request,
+            final boolean saveQuery, final PathQuery pathQuery) {
+        QueryMonitorTimeout clientState
+            = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
+        return startQuery(clientState, request.getSession(), messages, saveQuery, pathQuery);
+    }
+
+    /**
      * Start the current query running in the background, then return.  A new query id will be
      * created and added to the RUNNING_QUERIES session attriute.  That attribute is a Map from
      * query id to QueryMonitor.  A Thread will be created to update the QueryMonitor.
@@ -538,7 +557,7 @@ public class SessionMethods
                         err.printStackTrace(new PrintWriter(sw));
                         StringBuffer errorMessage = new StringBuffer("Error while running query");
                         if (SessionMethods.isSuperUser(session)) {
-                            errorMessage.append(": " + err.getMessage());                        
+                            errorMessage.append(": " + err.getMessage());
                         }
                         recordError(errorMessage.toString(), session);
                         LOG.error("Error while running query \""
