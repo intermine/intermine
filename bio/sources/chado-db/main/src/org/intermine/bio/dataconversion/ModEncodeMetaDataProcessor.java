@@ -2185,6 +2185,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
                     setAttributeOnProp(prop, propItem, "description", "description");
+                    setAttributeOnProp(prop, propItem, "aliases", "shortName");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
                     setGeneItem(prop, propItem, "Strain");
@@ -2214,14 +2215,25 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
     
+
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
-           String attributeName) {
+            String attributeName) {
         if (subProp.details.containsKey(metadataName)) {
-            String value = subProp.details.get(metadataName).get(0);
-            item.setAttribute(attributeName, value);
+            if (metadataName.equalsIgnoreCase("aliases")){
+                for (String s :subProp.details.get(metadataName)){
+                    if (s.equalsIgnoreCase("yellow cinnabar brown speck")){
+                        item.setAttribute(attributeName, s);
+                        break;
+                    }
+                }
+            } else {
+                String value = subProp.details.get(metadataName).get(0);
+                item.setAttribute(attributeName, value);
+            }
         }
     }       
-      
+
+    
     private String getTargetGeneItemIdentfier(String geneTargetIdText) throws ObjectStoreException {
         String geneItemId = null;
         if (geneTargetIdText.startsWith("fly_genes:")) {
