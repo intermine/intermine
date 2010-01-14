@@ -47,9 +47,9 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Mark Woodbridge
  */
-public class InlineTableHelper extends DispatchAction
+public class ModifyDetails extends DispatchAction
 {
-    private static final Logger LOG = Logger.getLogger(InlineTableHelper.class);
+    private static final Logger LOG = Logger.getLogger(ModifyDetails.class);
     /**
      * Show in table for inline template queries.
      *
