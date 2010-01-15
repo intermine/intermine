@@ -13,9 +13,13 @@
 <link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <link rel="stylesheet" href="css/toolbar.css" type="text/css" media="screen" title="Toolbar Style" charset="utf-8"/>
 
-<script type="text/javascript" src="js/inlinetemplate.js">
+<script type="text/javascript">
+<!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
+  var detailsType = 'object';
+//]]>-->
 </script>
+<script type="text/javascript" src="js/inlinetemplate.js"></script>
 <script type="text/javascript" src="js/widget.js"></script>
 
 <div class="heading">
