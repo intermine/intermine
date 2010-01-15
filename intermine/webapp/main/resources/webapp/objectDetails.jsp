@@ -17,9 +17,7 @@
   var detailsType = 'object';
 //]]>-->
 </script>
-<script type="text/javascript" src="js/inlinetemplate.js">
-  var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
-</script>
+<script type="text/javascript" src="js/inlinetemplate.js"></script>
 
 <%-- figure out whether we should show templates or not --%>
 <c:set var="showTemplatesFlag" value="false"/>
