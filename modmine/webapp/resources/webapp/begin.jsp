@@ -8,6 +8,8 @@
 <!-- begin.jsp -->
 <html:xhtml />
 
+<link rel="stylesheet" href="model/css/frontpage_sections.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
 <div class="body">
 
 <!-- Entry point section -->
