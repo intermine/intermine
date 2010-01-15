@@ -194,16 +194,10 @@
         <attribute name="title" value="Ensembl Anopheles gambiae [AgamP3.4]"/>
         <attribute name="description" value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
-        <attribute name="url" value="http://www.ensembl.org/Anopheles_gambiae"/>
+        <attribute name="url" value="http://metazoa.ensembl.org/Anopheles_gambiae/Info/Index"/>
         <reference name="dataSource" ref_id="210"/>
     </item>
-    <item id="212" class="" implements="DataSet">
-        <attribute name="title" value="Ensembl Apis mellifera"/>
-        <attribute name="description" value="The Ensembl Apis mellifera genome annotation"/>
-        <attribute name="version" value="2.0"/>
-        <attribute name="url" value="http://www.ensembl.org/Apis_mellifera"/>
-        <reference name="dataSource" ref_id="210"/>
-    </item>
+
 
     <item id="621" class="" implements="DataSet">
         <attribute name="title" value="Affymetrix array: DrosGenome1"/>
@@ -322,7 +316,7 @@
         <attribute name="url" value="http://www.genome.jp/en/"/>
     </item>
     <item id="491" class="" implements="DataSet">
-        <attribute name="title" value="KEGG PATHWAY"/>
+        <attribute name="title" value="KEGG pathways data set"/>
         <attribute name="description" value="Manually drawn pathway maps representing our knowledge on the molecular interaction and reaction networks for Drosophila"/>
         <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
         <reference name="dataSource" ref_id="490"/>

@@ -42,7 +42,7 @@ public class RNAiConverter extends BioFileConverter
      */
     public RNAiConverter(ItemWriter writer, Model model)
     throws ObjectStoreException {
-        super(writer, model, "WormBase", "WormBase RNAi Phenotype");
+        super(writer, model, "WormBase", "WormBase RNAi Phenotypes");
 
         org = createItem("Organism");
         org.setAttribute("taxonId", "6239");
