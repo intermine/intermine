@@ -104,14 +104,14 @@ Organism:    <html:select styleId="typeSelector" property="organism">
         <td>
         <c:if test="${!empty fly}">
                         <html:link
-                            href="http://modencode2.oicr.on.ca/gb2/gbrowse/fly/?ds=${sub.dCCid}"
+                            href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?ds=${sub.dCCid}"
                             target="_blank">
                             <html:img src="model/images/dgb_vs.png" title="View in GBrowse" />
                         </html:link></c:if>
           
         <c:if test="${!empty worm}">
                         <html:link
-                            href="http://modencode2.oicr.on.ca/gb2/gbrowse/worm/?ds=${sub.dCCid}"
+                            href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?ds=${sub.dCCid}"
                             target="_blank">
                             <html:img src="model/images/wgb_vs.png" title="View in GBrowse" />
                         </html:link>

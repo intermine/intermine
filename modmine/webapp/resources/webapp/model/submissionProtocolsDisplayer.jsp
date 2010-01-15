@@ -39,9 +39,6 @@ div#submissionProtocols h3 {
 </script> 
 
 
-<c:set var="urlPrefix" value="http://submit.modencode.org/submit/public/get_file/"/>
-
-
 <c:choose>
 <c:when test="${fn:length(pagedResults.rows) > 1}">
 
@@ -134,14 +131,11 @@ div#submissionProtocols h3 {
                   </td>
                   <c:set var="output" value="false"/>
                 </c:if>            
+
                 <c:if test="${fn:length(fn:substringBefore(resultElement.field,'File')) gt 0}">
                   <c:set var="output" value="true"/>
                   <c:set var="isFile" value="true" />
-									
   							</c:if>            
-
-
-
 
               </c:when>
               <c:otherwise>
@@ -170,7 +164,7 @@ div#submissionProtocols h3 {
 														</c:when>
 														
                               <c:when test="${doLink}">
-                                <a href="${urlPrefix}${DCCid}/extracted/${resultElement.field}" class="value extlink">
+                                <a href="${WEB_PROPERTIES['ftp.prefix']}/${DCCid}/extracted/${resultElement.field}" class="value extlink">
                                 <c:out value="${resultElement.field}" /> </a></td>
                             <c:set var="doLink" value="false" />
 
