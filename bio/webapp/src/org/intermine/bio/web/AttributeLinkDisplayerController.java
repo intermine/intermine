@@ -138,7 +138,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         Properties webProperties = 
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter)";
+            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter|enctype)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -229,6 +229,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                     config.put("usePost", value);
                 } else if (propType.equals("delimiter")) {
                     config.put("delimiter", value);
+                } else if (propType.equals("enctype")) {
+                    config.put("enctype", value);
                 } else if (propType.equals("text")) {
                     String text;
                     text = value.replaceAll(ATTR_MARKER_RE, String.valueOf(attrValue));
