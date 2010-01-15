@@ -11,6 +11,7 @@
     <c:set var="parameters" value="${confMapEntry.value.parameters}"/>
     <c:set var="usePost" value="${confMapEntry.value.usePost}"/>
     <c:set var="linkId" value="${confMapEntry.value.linkId}"/>
+    <c:set var="enctype" value="${confMapEntry.value.enctype}"/>
 
     <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
     <tr>
@@ -46,8 +47,8 @@
                     </a>
                   </c:if>
                 </td>
-
-                <form action="${href}" method="post" id="${linkId}Form" target="_blank">
+                
+                <form action="${href}" method="post" id="${linkId}Form" target="_blank" enctype="${enctype}">
                      <c:forEach var="par" items="${parameters}">
                          <input type="hidden" value="${par.value}" name="${par.key}" />
                      </c:forEach>
