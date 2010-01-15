@@ -10,7 +10,7 @@
 <reference name="publication" ref_id="8_1"/>
 </item>
 <item id="1_1" class="DataSet">
-<attribute name="title" value="WormBase RNAi Phenotype"/>
+<attribute name="title" value="WormBase RNAi Phenotypes"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
 <item id="6_1" class="RNAiPhenotype">
