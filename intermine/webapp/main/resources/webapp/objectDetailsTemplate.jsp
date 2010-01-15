@@ -37,18 +37,16 @@
 
     <c:when test="${verbose}">
       <div class="templateIcon">
-        <html:link action="/modifyDetails?method=unverbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${trail}"
-          onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
+        <a href="#" onClick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
           <img border="0" src="images/minus.gif" title="Click here to hide these data" id="img_${uid}" height="11" width="11"/>
-        </html:link>
+        </a>
       </div>
     </c:when>
     <c:otherwise>
       <div class="templateIcon">
-        <html:link action="/modifyDetails?method=verbosify&amp;field=${templateName}&amp;placement=${placement}&amp;id=${object.id}&amp;trail=${trail}"
-          onclick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
+        <a href="#" onClick="return toggleTemplateList('${fn:replace(placement, ' ', '_')}', '${templateName}')">
           <img border="0" src="images/plus.gif" title="Click here to show these data" id="img_${uid}" height="11" width="11"/>
-        </html:link>
+        </a>
       </div>
     </c:otherwise>
   </c:choose>
@@ -71,7 +69,7 @@
     </div>
     <div id="table_${uid}_int">
       <c:if test="${verbose}">
-        <tiles:insert name="objectDetailsTemplateTable.tile">
+        <tiles:insert name="objectDetailsTemplateTable.jsp">
           <tiles:put name="displayObject" beanName="displayObject"/>
           <tiles:put name="interMineIdBag" beanName="interMineIdBag"/>
           <tiles:put name="templateQuery" beanName="templateQuery"/>
@@ -81,29 +79,23 @@
     </div>
   </div>
   
-  <c:if test="${IS_SUPERUSER}">
-    <tiles:insert name="inlineTagEditor.tile">
-      <tiles:put name="taggable" beanName="templateQuery"/>
-      <tiles:put name="vertical" value="true"/>
-      <tiles:put name="show" value="true"/>
-    </tiles:insert>
-  </c:if>
-  
   <c:choose>
     <c:when test="${!verbose && displayObject != null}">
       <script type="text/javascript">
-        <!--//<![CDATA[
+      <!--//<![CDATA[      
           $('img_${uid}').src='images/spinner.gif';
           queueInlineTemplateQuery('${placement}', '${templateName}', '${displayObject.object.id}', '${trail}');
         //]]>-->
+          
       </script>
     </c:when>
     <c:when test="${!verbose && interMineIdBag != null}">
       <script type="text/javascript">
-        <!--//<![CDATA[
+      <!--//<![CDATA[
           $('img_${uid}').src='images/spinner.gif';
           queueInlineTemplateQuery('${placement}', '${templateName}', '${interMineIdBag.name}', '${trail}');
         //]]>-->
+          
       </script>
     </c:when>
   </c:choose>
