@@ -1,5 +1,3 @@
-
-
 var fixedOps = new Array();
 
 /***********************************************************
@@ -10,9 +8,9 @@ var fixedOps = new Array();
 function updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement) {
 	if (attrOptsElement == null)
 		return;
-    	 
-	for (var i=0 ; i<fixedOps[index].length ; i++) {
-		if (attrOpElement.value == [index][i]) {
+	
+	for (var i = 0 ; i < fixedOps.length ; i++) {
+		if (attrOpElement.value == fixedOps[i]) {
 			document.getElementById("operandEditSpan" + index).style.display = "none";
 			attrValElement.value = attrOptsElement.value; // constrain value
 			return;
@@ -127,6 +125,28 @@ function isBagUsed() {
 	return false;
 }
 
+function updateAttributeValues(index) {
+	var attributeValues = document.templateForm['attributeValues('+index+')'];
+	var selectedString = '';
+	var attributeOptions = document.templateForm['attributeOptions('+index+')'];
+	if (attributeOptions) {
+		var i;
+		var count = 0;
+		for (i = 0; i < attributeOptions.options.length; i++) {
+			if (attributeOptions.options[i].selected) {
+//				var selectedValue = '\'' + attributeOptions.options[i].value + '\'';
+				var selectedValue = attributeOptions.options[i].value;
+				if (selectedString != '') {
+					selectedString += ',';	
+				}
+				selectedString += selectedValue;
+			}	
+		}	
+		attributeValues.value = selectedString;		
+	}
+}	
+
+
 // FIXME this is broken - setSelectElement is in imutils
 function filterByTag(tag) {
 	if (tag != "") {
@@ -152,4 +172,3 @@ function restoreOriginalSelect() {
 		   setSelectElement('bagSelect', '', origSelectValues);
 	}
 }
-

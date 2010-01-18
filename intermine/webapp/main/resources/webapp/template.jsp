@@ -59,14 +59,14 @@
 	            </c:if>
 				<li>
 				
- 			  <%-- this should be moved to the controller --%>
+ 			  <%-- this should be moved to the js file --%>
               <script type="text/javascript">
-                <!--
-                   fixedOps[${index-1}] = new Array();
+              <!--
+                   fixedOps = new Array();
                    <c:forEach items="${fixedOps}" var="op" varStatus="oi">
-                     fixedOps[${index-1}][${oi.count}] = "<c:out value="${op}"/>";
+                     fixedOps[${oi.count}] = "<c:out value="${op}"/>";
                    </c:forEach>
-                   //-->
+                    //-->
               </script>
                             
               <%-- number --%>
@@ -173,7 +173,7 @@
               
               <%-- dropdown --%>
               <c:if test="${!empty options}">
-                <select name="attributeOptions(${index})" onchange="this.form['attributeValues(${index})'].value=this.value;">
+                <select name="attributeOptions(${index})" onchange="updateAttributeValues(${index});">
                   <c:forEach items="${options}" var="option">
                     <option value="${option}">
                       <c:out value="${option}"/>
@@ -238,7 +238,7 @@
                   </c:forEach>
                 </html:select>
                 
-                <%-- this breaks if there is more than one on a page --%>
+                <%-- TODO this breaks if there is more than one on a page --%>
                 <c:if test="${PROFILE.loggedIn}">
 	                <tiles:insert name="tagSelect.tile">
 	                    <tiles:put name="type" value="bag" />
