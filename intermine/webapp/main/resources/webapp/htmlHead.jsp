@@ -66,9 +66,8 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
   <script defer type="text/javascript" src="pngfix.js"></script>
 <![endif]-->
 
-<meta content="microarray, bioinformatics, drosophila, genomics" name="keywords"/>
-<meta content="Integrated queryable database for Drosophila and Anopheles genomics"
-      name="description"/>
+<meta content="${WEB_PROPERTIES['meta.keywords']}" name="keywords"/>
+<meta content="${WEB_PROPERTIES['meta.description']}" name="description"/>
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
 
 <title>
