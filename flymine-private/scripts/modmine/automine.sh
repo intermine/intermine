@@ -138,28 +138,30 @@ EOF
 	exit 0
 }
 
+echo
+
 while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
-	F )  echo; echo "Full modMine realease"; FULL=y; INCR=n; REL=build;;
-	M )  echo; echo "Test build (metadata only)"; META=y; INCR=n;;
-	R )  echo; echo "Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	Q )  echo; echo "Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	V )  echo; echo "Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  echo; P=$OPTARG;echo "Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
-	a )  echo; echo "Append data in chado" ; CHADOAPPEND=y;;
-	b )  echo; echo "Don't build a back-up of the database." ; BUP=n;;
-	p )  echo; echo "prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
-	f )  echo; INFILE=$OPTARG; echo "Using given list of chadoxml files: "; more $INFILE;;
-	g )  echo; echo "No checking of ftp directory (wget is not run)" ; WGET=n;;
-	i )  echo; echo "Interactive mode" ; INTERACT=y;;
-	r )  echo; REL=$OPTARG; echo "Using release $REL";;
-	s )  echo; echo "Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
-	t )  echo; echo "No acceptance test run" ; TEST=n;;
-	v )  echo; echo "Verbose mode" ; V=-v;;
-	w )  echo; echo "No new webapp will be built" ; WEBAPP=n;;
-	x )  echo; echo "modMine will NOT be built" ; BUILD=n; STAG=n; BUP=n; WGET=n;;
+	F )  echo "- Full modMine realease"; FULL=y; INCR=n; REL=build;;
+	M )  echo "- Test build (metadata only)"; META=y; INCR=n;;
+	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
+	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
+	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
+	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
+	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
+	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
+	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
+	f )  INFILE=$OPTARG; echo "- Using given list of chadoxml files: "; more $INFILE;;
+	g )  echo "- No checking of ftp directory (wget is not run)" ; WGET=n;;
+	i )  echo "- Interactive mode" ; INTERACT=y;;
+	r )  REL=$OPTARG; echo "- Using release $REL";;
+	s )  echo "- Using previous load of chado (stag is not run)" ; STAG=n; BUP=n; WGET=n;;
+	t )  echo "- No acceptance test run" ; TEST=n;;
+	v )  echo "- Verbose mode" ; V=-v;;
+	w )  echo "- No new webapp will be built" ; WEBAPP=n;;
+	x )  echo "- modMine will NOT be built" ; BUILD=n; STAG=n; BUP=n; WGET=n;;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
@@ -191,20 +193,15 @@ echo
 echo "================================="
 echo "Building modmine-$REL on $MINEHOST."
 echo "================================="
+echo "current directory: $MINEDIR"
 echo "Log: $LOG"
 echo
-echo "current directory: $MINEDIR"
-echo
-
-#echo $SOURCES
 
 if [ -n "$1" ]
 then
 SUB=$1
 echo "Processing submission $SUB.."
-echo
 fi
-echo $SUB
 
 function setProjectFile {
 #------------------------------------------------------------------------
@@ -222,12 +219,12 @@ then
 cd $MINEDIR
 if [ -n "$1" ]
 then
-echo "QQRESET"
+echo "resetting project.xml.."
 # resetting: going back to the normal situation
 mv project.xml.original project.xml
 else
 # setting the dev project
-echo "WWSET"
+echo "setting the project.xml file for a generic chado..."
 cp -u project.xml project.xml.original # cp only if .original is not there
 cp $SCRIPTDIR/project.xml .
 fi
@@ -241,7 +238,6 @@ function interact {
 # if testing, wait here before continuing
 if [ $INTERACT = "y" -o $STOP = "y" ]
 then
-echo
 echo "$1"
 echo "Press return to continue (^C to exit).."
 echo -n "->"
@@ -386,7 +382,7 @@ function fillChado {
 
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
 echo "filling $CHADODB db with $DCCID..."
-echo "STAG: `date "+%y%m%d.%H%M"` $DCCID" >> $LOG
+echo "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
@@ -575,6 +571,7 @@ done
 }
 
 function loadChadoSubs {
+echo "STARTING STAG $1 ------------------------------->" >> $LOG
 if [ -n "$SUB" ]
 then
 LOOPVAR="$SUB.chadoxml"
@@ -762,12 +759,10 @@ loadChadoSubs
 fi
 
 else
-echo
-echo "Using previously loaded chado."
-echo
+echo "Using previously loaded chado..."
 fi # if $STAG=y
 
-interact "Chado loading finished"
+interact
 
 #---------------------------------------
 # build modmine
