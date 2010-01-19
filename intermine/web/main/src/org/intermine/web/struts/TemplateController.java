@@ -108,7 +108,6 @@ public class TemplateController extends TilesAction
 
         TemplateForm tf = (TemplateForm) form;
         
-
         String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
@@ -120,6 +119,7 @@ public class TemplateController extends TilesAction
             imObj = os.getObjectById(new Integer(idForLookup));
         }
 
+        // FIXME see #2239
         // If the template has been modified and uses an object bag constraint
         // it will be missing one of its original constraints (which will have been
         // replaced by constraining the id to be in the bag.
@@ -153,7 +153,6 @@ public class TemplateController extends TilesAction
         }
 
         Map<Constraint, DisplayConstraint> displayConstraints = new HashMap();
-        Map<Constraint, String> names = new HashMap();
         Map<PathNode, List<Constraint>> constraints = new HashMap();
         Map<Constraint, Map<String, InterMineBag>> bags = new HashMap();
         Map<Constraint, String> constraintBagTypes = new HashMap();
@@ -191,6 +190,8 @@ public class TemplateController extends TilesAction
 
             int j = 1;
             for (Constraint c : displayTemplate.getEditableConstraints(node)) {
+                
+                // FIXME See #2239
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
                     Object value;
@@ -213,22 +214,7 @@ public class TemplateController extends TilesAction
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss, 
                                           summariser.getPossibleValues(template, node), classKeys));
-
-                // create display name
-                PathNode parent;
-                if (displayNode.getPathString().indexOf('.') >= 0) {
-                    parent = displayTemplate.getNodes().get(
-                            displayNode.getPathString().substring(0,
-                                displayNode.getPathString().lastIndexOf(".")));
-                } else {
-                    parent = displayNode;
-                }
-                String displayName = parent.getType();
-                if (displayNode.getPathString().indexOf('.') >= 0) {
-                    displayName += " " + displayNode.getPathString()
-                        .substring(displayNode.getPathString().lastIndexOf(".") + 1);
-                }
-                names.put(c, displayName);
+                PathNode parent = (PathNode) displayNode.getParent();
 
                 // check if this constraint can be used with bags and if any available
                 if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
@@ -308,8 +294,6 @@ public class TemplateController extends TilesAction
         request.setAttribute("fieldDesc", fieldDesc);
         // The template query
         request.setAttribute("templateQuery", displayTemplate);
-        // A Map from Constraint to a String that should be displayed as the constraint name
-        request.setAttribute("names", names);
         // A Map from displayNode to a collection of editable constraints
         request.setAttribute("constraints", constraints);
         // A Map from Constraint to a DisplayConstraint which provides access to summary data
@@ -411,4 +395,6 @@ public class TemplateController extends TilesAction
         }
         request.setAttribute("autoCompleterMap", autoMap);
     }
+    
+
 }
