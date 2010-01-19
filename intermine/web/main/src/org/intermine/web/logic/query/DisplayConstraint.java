@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -49,6 +50,8 @@ public class DisplayConstraint
     protected ObjectStoreSummary oss;
     /** The classKeys Map. */
     protected Map classKeys;
+    
+    private String name;
 
     /**
      * Creates a new instance of DisplayConstraint.
@@ -59,13 +62,14 @@ public class DisplayConstraint
      * @param optionsList a List of possible values, or null (to fall back to oss)
      * @param classKeys the ClassKeys Map
      */
-    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss,
-        List optionsList, Map classKeys) {
+    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss, List optionsList, 
+                             Map classKeys) {
         this.node = node;
         this.model = model;
         this.oss = oss;
         this.optionsList = optionsList;
         this.classKeys = classKeys;
+        this.name = setName(node);
     }
 
     /**
@@ -173,7 +177,6 @@ public class DisplayConstraint
         if (optionsList == null) {
             getFixedOpIndices();
         }
-
         return optionsList;
     }
 
@@ -183,5 +186,22 @@ public class DisplayConstraint
      */
     public boolean isAttribute() {
         return node.isAttribute();
+    }
+
+    /** 
+     * @return the name of the constraint
+     */
+    public String getName() {
+        return name;
+    }
+    
+    private String setName(PathNode displayNode) {
+        PathNode parent = (PathNode) displayNode.getParent();
+        String displayName = parent.getType();
+        if (displayNode.getPathString().indexOf('.') >= 0) {
+            displayName += " " + displayNode.getPathString()
+                .substring(displayNode.getPathString().lastIndexOf(".") + 1);
+        }
+        return displayName;
     }
 }

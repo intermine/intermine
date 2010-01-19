@@ -76,7 +76,7 @@
               
               <%-- constraint name --%>
               <label>
-                <c:out value="${names[con]}"/>:
+                <c:out value="${displayConstraints[con].name}"/>:
               </label>
               
               <%-- operator --%>
@@ -106,6 +106,8 @@
                   <c:set var="fieldDesc" value="${fieldDesc}"/>
                   <c:set var="acPath" value="${classDesc[pathString]}.${fieldDesc[pathString]}"/>
                   <c:set var="hasAutoC" value="0"/>
+                  
+                  <!-- TODO this shouldn't need to loop through map each time -->                  
                   <c:forEach items="${autoCompleterMap[acPath]}" var="useAC">
                     <%-- exist for this field a autocompleter --%>
                     <c:if test="${!empty useAC  and hasAutoC eq 0}">
@@ -208,8 +210,7 @@
           <c:if test="${empty keyFields[con]}">
             </li>
           </c:if>
-          
-          
+                    
           <%-- list constraint --%>
           
           <li>
@@ -258,39 +259,10 @@
                 <script type="text/javascript">
                   var selectedBagName = '${selectedBagNames[con]}';
                   if(selectedBagName){
-                          initClickUseBag(${index});
+                	    initClickUseBag(${index});
                   }
                 </script>
               </c:if>
-              <script type="text/javascript">
-
-                <!--
-                /* setting options popup value to correct initial state. */
-                if (document.templateForm["attributeOptions(${index})"] != null)
-                {
-                  var select = document.templateForm["attributeOptions(${index})"];
-                  var value = document.templateForm["attributeValues(${index})"].value;
-                  var set = false;
-                  for (i=0 ; i<select.options.length ; i++)
-                  {
-                    if (select.options[i].value == value)
-                    {
-                      select.selectedIndex = i;
-                      set = true;
-                      break;
-                    }
-                  }
-                  // we don't want to do this if it's a CONTAINS constraint
-/*                 if (!set)
-                  {
-                    document.templateForm["attributeValues(${index})"].value = select.value;
-                  }*/
-                  updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"],
-                                       document.templateForm["attributeOptions(${index})"],
-                                       document.templateForm["attributeValues(${index})"]);
-                }
-                //-->
-              </script>
             </span>
 
           </li>
