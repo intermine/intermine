@@ -342,11 +342,19 @@ All GBrowse tracks generated for this experiment:
 
 <%-- FACTORS --%>	
 	  <c:forEach items="${exp.factorTypes}" var="factorType">
+	  <c:set var="thisTypeCount" value="0"></c:set>
        <td class="sorting">
       		<c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
         		<c:if test="${factor.type == factorType}">
             		<c:choose>
                		<c:when test="${factor.property != null}">
+
+    <c:set var="thisTypeCount" value="${thisTypeCount + 1}"></c:set>
+               		
+               		<c:choose>
+               		<c:when test="${thisTypeCount <= 5}">
+               		
+               		
                			<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
 										<span class="tinylink">
                        <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
@@ -372,6 +380,36 @@ All GBrowse tracks generated for this experiment:
                   </im:querylink>
                   </span>
                		</c:when>
+                  <c:when test="${thisTypeCount > 5 && status.last}">
+                  ...
+<br></br>
+                  <im:querylink text="all ${thisTypeCount} ${factor.type}s" showArrow="true" skipBuilder="true" 
+                  title="View all ${thisTypeCount} ${factor.type} factors of submission ${sub.dCCid}">
+
+<query name="" model="genomic" view="SubmissionProperty.name SubmissionProperty.type" sortOrder="SubmissionProperty.type asc" constraintLogic="A and B">
+  <node path="SubmissionProperty" type="SubmissionProperty">
+  </node>
+  <node path="SubmissionProperty.submissions" type="Submission">
+    <constraint op="LOOKUP" value="${sub.dCCid}" description="" identifier="" code="A" extraValue="">
+    </constraint>
+  </node>
+  <node path="SubmissionProperty.type" type="String">
+    <constraint op="=" value="${factor.type}" description="" identifier="" code="B" extraValue="">
+    </constraint>
+  </node>
+</query>
+
+                  </im:querylink>
+
+
+
+
+</c:when>
+
+</c:choose>
+
+
+</c:when>
                		<c:otherwise>
                  		<c:out value="${factor.name}"/><c:if test="${!status.last}">,</c:if>          
                		</c:otherwise>
