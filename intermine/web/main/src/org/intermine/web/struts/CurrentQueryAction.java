@@ -72,8 +72,6 @@ public class CurrentQueryAction extends InterMineAction
                         .addParameter("loadModifiedTemplate", "true")
                         .addParameter("name", sq.getName()).forward();
                 }
-                return new ForwardParameters(mapping.findForward("template"))
-                    .addParameter("name", template.getName()).forward();
             }
             return new ForwardParameters(mapping.findForward("template"))
                 .addParameter("name", template.getName()).forward();
