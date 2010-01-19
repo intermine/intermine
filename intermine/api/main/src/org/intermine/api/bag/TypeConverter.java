@@ -107,7 +107,7 @@ public class TypeConverter
         tq = (TemplateQuery) tq.clone();
         // We can be reckless here because all this is checked by getConversionTemplate
         PathNode node = tq.getEditableNodes().iterator().next();
-        Constraint c = (Constraint) tq.getEditableConstraints(node).iterator().next();
+        Constraint c = tq.getEditableConstraints(node).iterator().next();
         // This is a MAJOR hack - we assume that the constraint is on an ATTRIBUTE of the node we
         // want to constrain.
         PathNode parent = tq.getNodes().get(node.getParent().getPathString());
