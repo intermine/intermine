@@ -65,10 +65,8 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 
         if (sq.getPathQuery() instanceof TemplateQuery) {
             return new ForwardParameters(mapping.findForward("template"))
-                        .addParameter("loadModifiedTemplate",
-                                      "true")
-                        .addParameter("name", sq.getName())
-                                      .forward();
+                        .addParameter("loadModifiedTemplate", "true")
+                        .addParameter("name", sq.getName()).forward();
         }
         return mapping.findForward("query");
     }

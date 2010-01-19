@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -90,43 +91,34 @@ public class TemplateController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
         Profile profile = SessionMethods.getProfile(session);
         ObjectStore os = im.getObjectStore();
         Model model = os.getModel();
         ObjectStoreSummary oss = im.getObjectStoreSummary();
         TemplateSummariser summariser = im.getTemplateSummariser();
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-
         ServletContext servletContext = session.getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
-
+        TemplateManager templateManager = im.getTemplateManager();
+        BagManager bagManager = im.getBagManager();        
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
         TemplateForm tf = (TemplateForm) form;
-        TemplateQuery template = null;
+        
+
         String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String preSelectedBagName = request.getParameter("bagName");
-
-        TemplateManager templateManager = im.getTemplateManager();
-
         String idForLookup = request.getParameter("idForLookup");
-        InterMineObject imObj = null;
-        if (idForLookup != null && idForLookup.length() != 0) {
+        
+        InterMineObject imObj = null;        
+        if (!StringUtils.isEmpty(idForLookup)) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-        if (templateName == null) {
-            templateName = request.getParameter("templateName");
-        }
-
-        // look for request attribute "previewTemplate" which is set while building a template
-        template = (TemplateQuery) request.getAttribute("previewTemplate");
-
-        // load the temporary template from the query history
 
         // If the template has been modified and uses an object bag constraint
         // it will be missing one of its original constraints (which will have been
@@ -136,12 +128,14 @@ public class TemplateController extends TilesAction
             modifiedTemplate = getTemporaryTemplate(session, templateName);
             templateName = modifiedTemplate.getName();
         }
-
+        
+        TemplateQuery template = null;
+        
+        // we're in querybuilder with templatePreview.jsp
         if (context.getAttribute("builder") != null) {
             PathQuery query = SessionMethods.getQuery(session);
             TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
             template = TemplateHelper.buildTemplateQuery(tbs, query);
-            request.setAttribute("previewTemplate", template);
         }
 
         if (templateName == null && template != null) {
@@ -152,6 +146,8 @@ public class TemplateController extends TilesAction
             }
             template = templateManager.getTemplate(profile, templateName, scope);
         }
+        
+        // something's gone horribly wrong
         if (template == null) {
             return null;
         }
@@ -173,15 +169,14 @@ public class TemplateController extends TilesAction
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
-
-        BagManager bagManager = im.getBagManager();
-
         Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
+        
         for (PathNode node : template.getEditableNodes()) {
             editableNodesMap.put(node.getPathString(), node);
         }
 
         Map<String, PathNode> constrainedNodesMap = new HashMap<String, PathNode>();
+        
         for (Map.Entry<String, PathNode> nodeEntry : template.getNodes().entrySet()) {
             PathNode node = nodeEntry.getValue();
             if (node.getConstraints().size() > 0) {
@@ -192,8 +187,7 @@ public class TemplateController extends TilesAction
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
 
-            constructAutocompleteIndex(displayTemplate, ac, os.getModel(), node,
-                    classDesc, fieldDesc);
+            constructAutocompleteIndex(displayTemplate, ac, model, node, classDesc, fieldDesc);
 
             int j = 1;
             for (Constraint c : displayTemplate.getEditableConstraints(node)) {
@@ -202,8 +196,7 @@ public class TemplateController extends TilesAction
                     Object value;
                     String selectedBagName = null;
                     ConstraintOp newOp = modC.getOp();
-                    if (!newOp.equals(ConstraintOp.IN)
-                                    && !newOp.equals(ConstraintOp.NOT_IN)) {
+                    if (!newOp.equals(ConstraintOp.IN) && !newOp.equals(ConstraintOp.NOT_IN)) {
                         value = modC.getValue();
                     } else {
                         // modified constraint set to a bag
@@ -218,9 +211,8 @@ public class TemplateController extends TilesAction
                         selectedBagNames.put(c, modC.getValue());
                     }
                 }
-                displayConstraints.put(c, new DisplayConstraint(displayNode,
-                            os.getModel(), oss, summariser.getPossibleValues(template, node),
-                            classKeys));
+                displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss, 
+                                          summariser.getPossibleValues(template, node), classKeys));
 
                 // create display name
                 PathNode parent;
