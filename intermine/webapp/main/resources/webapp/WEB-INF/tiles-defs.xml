@@ -45,10 +45,6 @@
     <put name="body" value="templates.tile"/>
     <put name="pageName" value="templates"/>
   </definition>
-  <definition name="templateBuilder.page" extends="layout.template">
-    <put name="body" value="templateBuilder.tile"/>
-    <put name="pageName" value="templateBuilder"/>
-  </definition>
   <definition name="bagUploadConfirm.page" extends="layout.template">
     <put name="body" value="bagUploadConfirm.tile"/>
     <put name="pageName" value="bagUploadConfirm"/>
@@ -231,9 +227,6 @@
   <definition name="bagUploadConfirm.tile" path="/bagUploadConfirm.jsp" controllerUrl="/initBagUploadConfirm.do"/>
   <definition name="bagUploadConfirmIssue.tile" path="/bagUploadConfirmIssue.jsp" controllerUrl="/initBagUploadConfirmIssue.do"/>
   <definition name="objectDetailsAspect.tile" path="/objectDetailsAspect.jsp" controllerUrl="/initObjectDetailsAspect.do"/>
-  <definition name="templateBuilder.tile" path="/templateBuilder.jsp" controllerUrl="/initTemplateBuilder.do">
-    <put name="preview" value="template.tile"/>
-  </definition>
   <definition name="setFavourite.tile" path="setFavourite.jsp" controllerUrl="/initSetFavourite.do" />
   <definition name="precomputeTemplate.tile" path="precompute.jsp"  />
   <definition name="summariseTemplate.tile" path="summarise.jsp" />
