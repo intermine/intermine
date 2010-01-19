@@ -1683,7 +1683,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
-            LOG.debug("EX unified factor names: " + exFactorNames);            
             LOG.debug("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
             
             List<Item> allPropertyItems = new ArrayList<Item>();
@@ -1839,8 +1838,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("PROCESS TIME submission properties: " + (System.currentTimeMillis() - bT));
     }
 
-    
-    
     // Traverse DAG following previous applied protocol links to build a list of all AppliedData
     private void findAppliedProtocolsAndDataFromEarlierInDag(Integer startDataId, 
             List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
@@ -1876,13 +1873,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // create the EF, if not there already
         if (!eFactorIdMap.containsKey(efName)) {
             Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
-            ef.setAttribute ("name", efName);
             String preferredType = getPreferredSynonym(type);
             ef.setAttribute ("type", preferredType);
+            ef.setAttribute ("name", efName);
             if (propertyIdentifier != null) {
                 ef.setReference("property", propertyIdentifier);
             }
-            LOG.info("ExFactor created for sub " + current + ":" + efName + "|" + type);
+            LOG.debug("ExFactor created for sub " + current + ":" + efName + "|" + type);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
             eFactorIdMap.put(efName, intermineObjectId);
@@ -1924,8 +1921,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return noResult;
     }
 
-
-    
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, 
             Integer submissionId, SubmissionProperty prop) {
      // submissionId -> [type -> SubmissionProperty]
@@ -2290,7 +2285,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             for (String value : subProp.details.get(propName)) {
                                 items.add(createNonWikiSubmissionPropertyItem(clsName, 
                                         getPreferredSynonym(propName), 
-                                        value));
+                                        correctAttrValue(value)));
                             }
                         }
                     }
@@ -2313,13 +2308,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         }
                         
                         items.add(createNonWikiSubmissionPropertyItem(clsName, subProp.type, 
-                                value));
+                                correctAttrValue(value)));
                     }
                 }
             }
         }
         return items;
     }
+  
+    private String correctAttrValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        value = value.replace("–", "-");
+        return value;  
+    }
+
     
     private Item createNonWikiSubmissionPropertyItem(String clsName, String type, String name) 
     throws ObjectStoreException {
