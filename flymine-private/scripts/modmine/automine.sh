@@ -225,6 +225,11 @@ function setProjectFile {
 #------------------------------------------------------------------------
 RETURNDIR=$PWD
 
+if [ -n "$P" ]
+then
+return
+fi
+
 if [ $META="y" -o $VALIDATING="y" ]
 then
 cd $MINEDIR
