@@ -55,52 +55,6 @@ attrValElement.value = attrOptsElement.value;
 updateConstraintForm(index, attrOpElement, attrOptsElement, attrValElement);
 }*/
 
-/***************Handle display of help windows******************************/
-//var helpMsgArray = new Array();
-//var ourDate;
-//var isIE = '${iePre7}';
-//function displayHelpMsg(e, id) {
-//if(isIE != 'true') {
-//// IE is retarded and doesn't pass the event object
-//if (e == null)
-//e = window.event;
-//
-//// IE uses srcElement, others use target
-//var target = e.target != null ? e.target : e.srcElement;
-//// grab the clicked element's position
-//_clientX = e.clientX;
-//_clientY = e.clientY;
-//
-//// grab the clicked element's position
-//_offsetX = ExtractNumber(target.style.left);
-//_offsetY = ExtractNumber(target.style.top);
-//
-//$(id).style.left = (_clientX + _offsetX) + "px";
-//$(id).style.top = (_clientY + _offsetY) + "px";
-//jQuery('#' + id).fadeIn(300);
-//helpMsgArray[helpMsgArray.length] = id;
-//ourDate = new Date().getTime();
-//} else {
-//$(id).style.position = "relative";
-//$(id).style.display = "block";
-//}
-//}
-//document.body.onclick = function clearHelpMsg() {
-//newDate = new Date().getTime();
-//if(newDate > (ourDate + 100)){
-//    										 for(var i=0;i<helpMsgArray.length;i++) {
-//jQuery('#' + helpMsgArray[i]).hide(300);
-//$('DivShim').style.display = "none";
-//}
-//}
-//}
-//function ExtractNumber(value)
-//{
-//var n = parseInt(value);
-//
-//return n == null || isNaN(n) ? 0 : n;
-//}
-
 function forwardToLinks() {
 	// needed validation that bag is not used, validation is performed in the Struts action as well
 	if (isBagUsed()) {

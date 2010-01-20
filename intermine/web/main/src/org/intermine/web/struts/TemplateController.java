@@ -214,11 +214,16 @@ public class TemplateController extends TilesAction
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss, 
                                           summariser.getPossibleValues(template, node), classKeys));
-                PathNode parent = (PathNode) displayNode.getParent();
+                PathNode parent = null;
+                if (displayNode.getPathString().indexOf('.') >= 0) { 
+                    parent = (PathNode) displayNode.getParent();
+                } else { 
+                    parent = displayNode; 
+                } 
 
                 // check if this constraint can be used with bags and if any available
-                if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), displayNode
-                        .getFieldName())) {
+                if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), 
+                                              displayNode.getFieldName())) {
                     constraintBagTypes.put(c, parent.getType());
                     Map<String, InterMineBag> constraintBags =
                         bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
@@ -231,6 +236,7 @@ public class TemplateController extends TilesAction
                         }
                     }
                 }
+                
                 if (!node.isAttribute()) {
                     constraintBagTypes.put(c, node.getType());
                     Map<String, InterMineBag> constraintBags =
@@ -243,6 +249,7 @@ public class TemplateController extends TilesAction
                             selectedBagNames.put(c, preSelectedBagName);
                         }
                     }
+                    
                     // this might be a lookup constraint, find the key fields for a help message
                     if (c.getOp().equals(ConstraintOp.LOOKUP)) {
                         Collection<String> keyFieldCol = ClassKeyHelper.getKeyFieldNames(classKeys,
