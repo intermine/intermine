@@ -159,12 +159,7 @@
                   
 				<%-- help link --%>
                 <c:if test="${!empty keyFields[con]}">
-                  <span onMouseDown="displayHelpMsg(event,'lookupHelp')" style="cursor:pointer">?</span>
-                  <div class="smallnote helpnote" id="lookupHelp" style="display:none" >
-                    <fmt:message key="query.lookupConstraintHelp"><%--This will search...--%>
-                      <fmt:param value="${keyFields[con]}"/>
-                    </fmt:message>
-                  </div>
+                  <im:helplink text="Search multiple fields including:  ${keyFields[con]}"/>
                 </c:if>
                 
                 <%-- might want to show up arrow --%>
