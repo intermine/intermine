@@ -149,7 +149,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`-";;
+	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="-`echo $P|tr '[A-Z]' '[a-z]'`";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -179,15 +179,26 @@ DBHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasou
 MINEHOST=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 production.datasource.serverName | awk -F "=" '{print $2}'`
 DBUSER=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.user | awk -F "=" '{print $2}'`
 DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.password | awk -F "=" '{print $2}'`
-CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
 # CHADODB becomes fixed for a given project
+if [ -n $P ]
+then
+CHADODB="modchado$P"
+else
+CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
+fi
+
+echo $P
+echo ---
+echo $CHADODB
 
 LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
-SOURCES=modmine-static,modencode-"$P"metadata
+SOURCES=modmine-static,modencode"$P"-metadata
+echo ---
+echo $SOURCES
 
 echo
 echo "================================="
@@ -278,6 +289,19 @@ createdb -e $CHADODB -h $DBHOST -U $DBUSER || { printf "%b" "\nMine building FAI
 cd $MINEDIR
 psql -q -o /dev/null -d  $CHADODB -h $DBHOST -U $DBUSER < $SCRIPTDIR/build_empty_chado.sql\
 || { printf "%b" "\nMine building FAILED. Please check previous error message.\n\n" ; exit 1 ; }
+
+
+if [ "$CHADODB" = "modchado-white" ]
+then
+echo "Dropping constraint attribute_name_key in modchado-white.."
+# there are white submissions that give an error in the row size of the index because of the very
+# long string in the value of the attribute (a seq). Here postgres suggestions.
+# ERROR:  index row size 3376 exceeds btree maximum, 2712
+# HINT:  Values larger than 1/3 of a buffer page cannot be indexed.
+# Consider a function index of an MD5 hash of the value, or use full text indexing
+psql -h $DBHOST -d $CHADODB -U $DBUSER -c "alter table attribute drop constraint attribute_name_key;"
+fi
+
 fi
 
 cd $RETURNDIR
@@ -571,7 +595,7 @@ done
 }
 
 function loadChadoSubs {
-echo "STARTING STAG $1 ------------------------------->" >> $LOG
+echo "STARTING STAG $1 ------------------>" >> $LOG
 if [ -n "$SUB" ]
 then
 LOOPVAR="$SUB.chadoxml"
@@ -610,7 +634,6 @@ then
 # validating all: is the configuration used by cronmine.
 # run processOneChadoSub both in new and update directories
 
-#cd $DATADIR/new
 echo "====================="
 echo "validating new..."
 echo "====================="
@@ -619,7 +642,6 @@ do
 processOneChadoSub new
 done
 
-#cd $DATADIR/update
 echo "====================="
 echo "validating update..."
 echo "====================="
@@ -630,7 +652,6 @@ done
 
 else
 # when not validating or using given (list of) sub(s)
-#cd $DATADIR/new
 for sub in $LOOPVAR
 do
 processOneChadoSub new
