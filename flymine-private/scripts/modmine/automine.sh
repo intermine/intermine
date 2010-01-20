@@ -149,7 +149,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="-`echo $P|tr '[A-Z]' '[a-z]'`";;
+	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -184,7 +184,7 @@ MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.da
 # CHADODB becomes fixed for a given project
 if [ -n $P ]
 then
-CHADODB="modchado$P"
+CHADODB="modchado-$P"
 else
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
@@ -196,7 +196,12 @@ echo $CHADODB
 LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
 #SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
-SOURCES=modmine-static,modencode"$P"-metadata
+if [ -n "$P" ]
+then
+SOURCES=modmine-static,modencode-"$P"-metadata
+else
+SOURCES=modmine-static,modencode-metadata
+fi
 echo ---
 echo $SOURCES
 
@@ -248,7 +253,6 @@ cd $RETURNDIR
 fi
 
 }
-
 
 function interact {
 # if testing, wait here before continuing
@@ -605,11 +609,9 @@ if [ -n "$SUB" ]
 then
 LOOPVAR="$SUB.chadoxml"
 initChado
-
-elif [ -n $INFILE ]
+elif [ -n "$INFILE" ]
 then
 # use the list provided in a file
-#LOOPVAR=`cat $INFILE`
 LOOPVAR=`sed 's/$/.chadoxml/g' $INFILE | cat`
 echo "********"
 echo $LOOPVAR
@@ -620,7 +622,6 @@ then
 # this is a project name, load it
 LOOPVAR=`sed 's/$/.chadoxml/g' $DATADIR/$1.live | cat`
 initChado $1
-
 else
 LOOPVAR="*.chadoxml"
 initChado
@@ -780,6 +781,9 @@ loadChadoSubs piano
 loadChadoSubs snyder
 loadChadoSubs waterston
 loadChadoSubs white
+elif [ -n "$P" ]
+then
+loadChadoSubs $P
 else
 loadChadoSubs
 fi
