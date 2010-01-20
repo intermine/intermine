@@ -25,20 +25,12 @@ import org.apache.struts.action.ActionMapping;
  */
 public class TemplateForm extends ActionForm
 {
-
-    private static final long serialVersionUID = 1L;
-
-    /** Maps containing form state for each constraint. */
     private Map<String, Object> attributeOps;
-
     private Map<String, Object> attributeValues;
     private Map<String, Boolean> useBagConstraint;
-
     private Map<String, Object> extraValues, selectedBags;
     private Map<String, String> bagOps;
-    private String type, name;
-
-    private String view;
+    private String type, name, view;
 
     /**
      * Constructor
@@ -192,7 +184,7 @@ public class TemplateForm extends ActionForm
      * @return the bag operation selected
      */
     public String getBagOp(String key) {
-        return (String) bagOps.get(key);
+        return bagOps.get(key);
     }
 
     /**
@@ -254,8 +246,9 @@ public class TemplateForm extends ActionForm
 
     /**
      * {@inheritDoc}
+
      */
-    public void reset(ActionMapping mapping,
+    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         reset();
     }
