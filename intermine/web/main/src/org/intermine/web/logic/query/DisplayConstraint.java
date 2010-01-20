@@ -197,12 +197,12 @@ public class DisplayConstraint
     
     private String setName(PathNode displayNode) {
         PathNode parent = (PathNode) displayNode.getParent();
-        String displayName = "";
-        if (parent != null && parent.getType() != null) {
-            displayName = parent.getType();
+        if (parent == null) {
+            parent = displayNode;
         }
-        if (displayNode.getPathString().indexOf('.') >= 0) {
-            displayNode.getFriendlyName();
+        String displayName = parent.getType();
+        if (displayNode.getPathString().contains(".")) {
+            displayName += " " + displayNode.getFriendlyName();
         }
         return displayName;
     }

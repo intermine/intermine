@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -100,8 +99,7 @@ public class TemplateController extends TilesAction
         ObjectStoreSummary oss = im.getObjectStoreSummary();
         TemplateSummariser summariser = im.getTemplateSummariser();
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-        ServletContext servletContext = session.getServletContext();
-        AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
+        AutoCompleter ac = SessionMethods.getAutoCompleter(session.getServletContext());
         TemplateManager templateManager = im.getTemplateManager();
         BagManager bagManager = im.getBagManager();        
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
@@ -112,13 +110,11 @@ public class TemplateController extends TilesAction
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String preSelectedBagName = request.getParameter("bagName");
-        String idForLookup = request.getParameter("idForLookup");
-        
+        String idForLookup = request.getParameter("idForLookup");        
         InterMineObject imObj = null;        
         if (!StringUtils.isEmpty(idForLookup)) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
-
         // FIXME see #2239
         // If the template has been modified and uses an object bag constraint
         // it will be missing one of its original constraints (which will have been
@@ -127,17 +123,14 @@ public class TemplateController extends TilesAction
         if (loadModifiedTemplate != null) {
             modifiedTemplate = getTemporaryTemplate(session, templateName);
             templateName = modifiedTemplate.getName();
-        }
-        
-        TemplateQuery template = null;
-        
+        }        
+        TemplateQuery template = null;        
         // we're in querybuilder with templatePreview.jsp
         if (context.getAttribute("builder") != null) {
             PathQuery query = SessionMethods.getQuery(session);
             TemplateBuildState tbs = SessionMethods.getTemplateBuildState(session);
             template = TemplateHelper.buildTemplateQuery(tbs, query);
         }
-
         if (templateName == null && template != null) {
             templateName = template.getName();
         } else {
@@ -145,13 +138,11 @@ public class TemplateController extends TilesAction
                 scope = Scope.ALL;
             }
             template = templateManager.getTemplate(profile, templateName, scope);
-        }
-        
+        }        
         // something's gone horribly wrong
         if (template == null) {
             return null;
         }
-
         Map<Constraint, DisplayConstraint> displayConstraints = new HashMap();
         Map<PathNode, List<Constraint>> constraints = new HashMap();
         Map<Constraint, Map<String, InterMineBag>> bags = new HashMap();
@@ -160,22 +151,18 @@ public class TemplateController extends TilesAction
         Map<Constraint, String> keyFields = new HashMap();
         Map<Constraint, Boolean> haveExtraConstraint = new HashMap();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-
         // for the autocompleter
         Map<String, String> classDesc = new HashMap();
         Map<String, String> fieldDesc = new HashMap();
-
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
-        Map<String, PathNode> editableNodesMap = new HashMap<String, PathNode>();
-        
+        Map<String, PathNode> editableNodesMap = new HashMap();        
         for (PathNode node : template.getEditableNodes()) {
             editableNodesMap.put(node.getPathString(), node);
         }
 
-        Map<String, PathNode> constrainedNodesMap = new HashMap<String, PathNode>();
-        
+        Map<String, PathNode> constrainedNodesMap = new HashMap();        
         for (Map.Entry<String, PathNode> nodeEntry : template.getNodes().entrySet()) {
             PathNode node = nodeEntry.getValue();
             if (node.getConstraints().size() > 0) {
@@ -185,12 +172,9 @@ public class TemplateController extends TilesAction
 
         for (PathNode node : template.getEditableNodes()) {
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
-
             constructAutocompleteIndex(displayTemplate, ac, model, node, classDesc, fieldDesc);
-
             int j = 1;
-            for (Constraint c : displayTemplate.getEditableConstraints(node)) {
-                
+            for (Constraint c : displayTemplate.getEditableConstraints(node)) {                
                 // FIXME See #2239
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
@@ -214,19 +198,18 @@ public class TemplateController extends TilesAction
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss, 
                                           summariser.getPossibleValues(template, node), classKeys));
-                PathNode parent = null;
-                if (displayNode.getPathString().indexOf('.') >= 0) { 
-                    parent = (PathNode) displayNode.getParent();
-                } else { 
+                PathNode parent = (PathNode) displayNode.getParent();
+                if (parent == null) {
                     parent = displayNode; 
                 } 
-
                 // check if this constraint can be used with bags and if any available
-                if (ClassKeyHelper.isKeyField(classKeys, parent.getType(), 
-                                              displayNode.getFieldName())) {
-                    constraintBagTypes.put(c, parent.getType());
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, parent.getType(), 
+                                                               displayNode.getFieldName());
+                if (isKeyField || !node.isAttribute()) {
+                    String nodeType = (isKeyField ? parent.getType() : node.getType());
+                    constraintBagTypes.put(c, nodeType);
                     Map<String, InterMineBag> constraintBags =
-                        bagManager.getUserOrGlobalBagsOfType(profile, parent.getType());
+                        bagManager.getUserOrGlobalBagsOfType(profile, nodeType);
                     if (constraintBags != null && constraintBags.size() != 0) {
                         bags.put(c, constraintBags);
                         if (preSelectedBagName != null
@@ -236,57 +219,46 @@ public class TemplateController extends TilesAction
                         }
                     }
                 }
-                
-                if (!node.isAttribute()) {
-                    constraintBagTypes.put(c, node.getType());
-                    Map<String, InterMineBag> constraintBags =
-                        bagManager.getUserOrGlobalBagsOfType(profile, node.getType());
-                    if (constraintBags != null && constraintBags.size() != 0) {
-                        bags.put(c, constraintBags);
-                        if (preSelectedBagName != null
-                                && constraintBags.containsKey(preSelectedBagName)) {
-                            tf.setUseBagConstraint(j + "", true);
-                            selectedBagNames.put(c, preSelectedBagName);
-                        }
+                if (!node.isAttribute() && c.getOp().equals(ConstraintOp.LOOKUP)) {
+
+                    //find the key fields for a help message
+                    Collection<String> keyFieldCol = ClassKeyHelper.getKeyFieldNames(classKeys,
+                                                     node.getType());
+                    String keyFieldStr = StringUtil.prettyList(keyFieldCol, true);
+                    keyFields.put(c, keyFieldStr);
+
+                    // check for extra constraint
+                    String connectFieldName = bagQueryConfig.getConnectField();
+                    Class nodeType;
+                    try {
+                        nodeType = Class.forName(model.getPackageName() + "." + node.getType());
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException("Can't find class for: " + node.getType());
                     }
-                    
-                    // this might be a lookup constraint, find the key fields for a help message
-                    if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                        Collection<String> keyFieldCol = ClassKeyHelper.getKeyFieldNames(classKeys,
-                                node.getType());
-                        String keyFieldStr = StringUtil.prettyList(keyFieldCol, true);
-                        keyFields.put(c, keyFieldStr);
-                        String connectFieldName = bagQueryConfig.getConnectField();
-                        Class nodeType;
-                        try {
-                            nodeType = Class.forName(model.getPackageName() + "." + node.getType());
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException("Can't find class for: " + node.getType());
+                    FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
+                    .get(connectFieldName);
+                    if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
+                        // An extra constraint is possible, now check if it has already been
+                        // constrained elsewhere in the query:
+                        String extraPath = node.getPathString() + "." + connectFieldName;
+                        boolean alreadyConstrained = constrainedNodesMap.containsKey(extraPath);
+                        PathNode extraNode = template.getNode(extraPath);
+                        if (extraNode != null) {
+                            for (String classKey : ClassKeyHelper.getKeyFieldNames(classKeys,
+                                                                  extraNode.getType())) {
+                                alreadyConstrained = alreadyConstrained || constrainedNodesMap
+                                .containsKey(extraPath + "." + classKey);
+                            }
                         }
-                        FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
-                            .get(connectFieldName);
-                        if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
-                            // An extra constraint is possible, now check if it has already been
-                            // constrained elsewhere in the query:
-                            String extraPath = node.getPathString() + "." + connectFieldName;
-                            boolean alreadyConstrained = constrainedNodesMap.containsKey(extraPath);
-                            PathNode extraNode = template.getNode(extraPath);
-                            if (extraNode != null) {
-                                for (String classKey : ClassKeyHelper.getKeyFieldNames(classKeys,
-                                            extraNode.getType())) {
-                                    alreadyConstrained = alreadyConstrained || constrainedNodesMap
-                                        .containsKey(extraPath + "." + classKey);
-                                }
-                            }
-                            if (alreadyConstrained) {
-                                haveExtraConstraint.put(c, Boolean.FALSE);
-                            } else {
-                                haveExtraConstraint.put(c, Boolean.TRUE);
-                            }
-                        } else {
+                        if (alreadyConstrained) {
                             haveExtraConstraint.put(c, Boolean.FALSE);
+                        } else {
+                            haveExtraConstraint.put(c, Boolean.TRUE);
                         }
+                    } else {
+                        haveExtraConstraint.put(c, Boolean.FALSE);
                     }
+
                 }
                 j++;
             }
@@ -402,6 +374,4 @@ public class TemplateController extends TilesAction
         }
         request.setAttribute("autoCompleterMap", autoMap);
     }
-    
-
 }
