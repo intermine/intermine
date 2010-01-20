@@ -185,13 +185,11 @@ MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.da
 if [ -n $P ]
 then
 CHADODB="modchado-$P"
+echo "- Single project: $P"
 else
 CHADODB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasource.databaseName | awk -F "=" '{print $2}'`
 fi
 
-echo $P
-echo ---
-echo $CHADODB
 
 LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
@@ -202,8 +200,6 @@ SOURCES=modmine-static,modencode-"$P"-metadata
 else
 SOURCES=modmine-static,modencode-metadata
 fi
-echo ---
-echo $SOURCES
 
 echo
 echo "================================="
@@ -435,7 +431,7 @@ fi
 }
 
 function processOneChadoSub {
-# processOneChadoSub {new|update}
+# processOneChadoSub {|new|update}
 cd $MIRROR/$1
 
 # if it is a symbolic link and this is not the given input
@@ -632,10 +628,10 @@ then
 # doing one sub only, using loop because so expects processOneChadoSub
 for sub in $LOOPVAR
 do
-processOneChadoSub new
+processOneChadoSub
 done
 
-elif [ "$VALIDATING" = "y" -a -z $INFILE ]
+elif [ "$VALIDATING" = "y" -a -z "$INFILE" ]
 then
 # validating all: is the configuration used by cronmine.
 # run processOneChadoSub both in new and update directories
@@ -660,7 +656,7 @@ else
 # when not validating or using given (list of) sub(s)
 for sub in $LOOPVAR
 do
-processOneChadoSub new
+processOneChadoSub
 done
 
 fi
