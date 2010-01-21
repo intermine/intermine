@@ -83,7 +83,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
         addRequestParameter("trail", "|42|43|44");
 
         actionPerform();
@@ -139,7 +139,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectTrail");
         addRequestParameter("table", "results.0");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
 
@@ -180,7 +180,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         setRequestPathInfo("/initObjectTrail");
         addRequestParameter("trail", "|results.0|42");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
 
@@ -200,7 +200,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
 
         actionPerform();
 
@@ -212,7 +212,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
         addRequestParameter("trail", "");
 
         actionPerform();
@@ -225,7 +225,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
         addRequestParameter("trail", "sdfklksdkasdf");
 
         actionPerform();
@@ -238,7 +238,7 @@ public class ObjectTrailControllerTest extends MockStrutsTestCase
         ComponentContext.setContext(componentContext, getRequest());
         setRequestPathInfo("/initObjectTrail");
 
-        getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        //getActionServlet().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
         addRequestParameter("trail", "_234234_2345544");
 
         actionPerform();

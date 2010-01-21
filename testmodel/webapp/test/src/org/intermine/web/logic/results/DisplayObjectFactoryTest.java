@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -26,6 +27,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -52,7 +54,8 @@ public class DisplayObjectFactoryTest extends MockStrutsTestCase
     }
 
     public void testDisplayObjectCache() throws Exception {
-        getSession().getServletContext().setAttribute(Constants.OBJECTSTORE, os);
+        InterMineAPI im = new InterMineAPI(os, null, null, null, null);
+        SessionMethods.setInterMineAPI(getSession().getServletContext(), im);
         Map webProperties = new HashMap();
         getSession().getServletContext().setAttribute(Constants.WEB_PROPERTIES, webProperties);
         WebConfig webConfig = new WebConfig();
