@@ -182,7 +182,7 @@ DBPW=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 metadata.datasourc
 MINEDB=`grep -v "#" $PROPDIR/modmine.properties.$REL | grep -m1 db.production.datasource.databaseName | awk -F "=" '{print $2}'`
 
 # CHADODB becomes fixed for a given project
-if [ -n $P ]
+if [ -n "$P" ]
 then
 CHADODB="modchado-$P"
 echo "- Single project: $P"
@@ -372,6 +372,8 @@ function validate {
 # validate sub $sub from directory $dir
 sub=$1
 dir=$2
+RETURNDIR=$PWD
+
 
 cd $MINEDIR
 echo "Building modMine $REL"
@@ -386,19 +388,19 @@ cp $MINEDIR/integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
 
 runTest $NAMESTAMP
 
-# go back to the chado directory and mv chado file in 'done'
+# go back to the reference chado directory and mv chado file in 'done'
 # this is to allow to run the validation as a cronjob
-cd $MIRROR/$dir
-mv $sub validated
 cd $MIRROR/new
 rm -f ./$sub
 if [ "$dir" = "new" ]
-then 
+then
 cp -s ./validated/$sub .
 else
 cp -s ../$1/validated/$sub .
 fi
+ 
 
+cd $RETURNDIR
 }
 
 function fillChado {
@@ -431,7 +433,7 @@ fi
 }
 
 function processOneChadoSub {
-# processOneChadoSub {|new|update}
+# processOneChadoSub {new|update}
 cd $MIRROR/$1
 
 # if it is a symbolic link and this is not the given input
@@ -485,28 +487,33 @@ function prepareForFull { #this can probably go
 # prepare directories for stag in case of FULL release
 #------------------------------------------------------
 # TODO: if no $1, no infile, no incr -> do all
-cd $DATADIR
-mv *.chadoxml $DATADIR/new
-mv $DATADIR/update/validated/*.chadoxml $DATADIR/new
-mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
-cd $DATADIR/new
-for sub in *.chadoxml
- do
- # if found symbolic link not to err directory throw an error
- if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
-   then
-     echo "WARNING: $sub is missing from load directory" | tee -a $LOG
-	   STOP=y # TODO: if incr you should exit! or exit always
-   fi
-# CHECK XML and experiment title
-if [ ! -L "$sub" ]
-then
-echo $sub
-xmllint -noout $sub
-grep -2 "<experiment id"  $sub | grep "ename></uniquen"
-fi
+# REWRITE
 
- done
+echo "Function prepareForFull needs rewriting!!"
+exit;
+
+# cd $DATADIR
+# mv *.chadoxml $DATADIR/new
+# mv $DATADIR/update/validated/*.chadoxml $DATADIR/new
+# mv $DATADIR/new/validated/*.chadoxml $DATADIR/new
+# cd $DATADIR/new
+# for sub in *.chadoxml
+#  do
+#  # if found symbolic link not to err directory throw an error
+#  if [ -L "$sub" -a ! -e "$DATADIR/new/err/$sub" ]
+#    then
+#      echo "WARNING: $sub is missing from load directory" | tee -a $LOG
+# 	   STOP=y # TODO: if incr you should exit! or exit always
+#    fi
+# # CHECK XML and experiment title
+# if [ ! -L "$sub" ]
+# then
+# echo $sub
+# xmllint -noout $sub
+# grep -2 "<experiment id"  $sub | grep "ename></uniquen"
+# fi
+# 
+#  done
 
 # TODO: add check deletions 
 
@@ -628,7 +635,7 @@ then
 # doing one sub only, using loop because so expects processOneChadoSub
 for sub in $LOOPVAR
 do
-processOneChadoSub
+processOneChadoSub new
 done
 
 elif [ "$VALIDATING" = "y" -a -z "$INFILE" ]
@@ -656,7 +663,7 @@ else
 # when not validating or using given (list of) sub(s)
 for sub in $LOOPVAR
 do
-processOneChadoSub
+processOneChadoSub new
 done
 
 fi
@@ -669,8 +676,6 @@ echo "**VALIDATION FINISHED**"
 echo
 exit;
 fi
-
-#interact "$sub loaded in chado"
 
 echo "$sub loaded in chado"
 
@@ -784,11 +789,12 @@ else
 loadChadoSubs
 fi
 
+interact
 else
 echo "Using previously loaded chado..."
 fi # if $STAG=y
 
-interact
+
 
 #---------------------------------------
 # build modmine
