@@ -48,20 +48,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
     private static final String NOLOG = "don't log query";
+    private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php/";
 
     // submission maps
     // ---------------
-    
+
     private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
     // maps from chado identifier to lab/project details
     private Map<Integer, SubmissionDetails> submissionMap =
         new HashMap<Integer, SubmissionDetails>();
     // chado submission id to list of top level attributes, e.g. dev stage, organism_part
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
-    
+
     private Map<Integer, ExperimentalFactor> submissionEFMap =
         new HashMap<Integer, ExperimentalFactor>();
-    
+
     // applied_protocol/data/attribute maps
     // -------------------
 
@@ -130,7 +131,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
     Map<Integer, SubmissionReference> submissionRefs = null;
-    private IdResolverFactory resolverFactory= null;
+    private IdResolverFactory flyResolverFactory = null;
+    private IdResolverFactory wormResolverFactory = null;
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
     
     
@@ -238,8 +240,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // TODO: clean up
         processEFactor(connection);
 
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
-        
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
+
         processSubmissionProperties(connection);
         setSubmissionProtocolsRefs(connection);
         setSubmissionEFactorsRefs(connection);
@@ -926,7 +929,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             count++;
         }
         res.close();
-        LOG.info("created " + submissionOrganismMap.size() + " organisms");
+        LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
         LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
 }
 
@@ -1621,7 +1624,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             writer.write(dccId + comma + dataHeading + comma + dataName + comma 
                     + wikiPageUrl + comma + cvTerm + comma + attHeading + comma + attName 
                     + comma + attValue + comma + attDbxref + System.getProperty("line.separator"));
-            
+
             // Currently using attValue for referenced submission DCC id, should be dbUrl but seems
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
@@ -1632,9 +1635,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (referencedSubId != null) {
                     SubmissionReference subRef = new SubmissionReference(referencedSubId, wikiPageUrl);
                     submissionRefs.put(submissionId, subRef);
-                }  
+                }
             }
-            
+
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
                 // have we seen this modencodewiki entry before?
@@ -1689,7 +1692,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // DEVELOPMENTAL STAGE
             List<Item> devStageItems = new ArrayList<Item>();
-            devStageItems.addAll(createFromWikiPage("DevelopmentalStage", typeToProp, 
+            devStageItems.addAll(createFromWikiPage(dccId, "DevelopmentalStage", typeToProp, 
                     makeLookupList("developmental stage")));
             if (devStageItems.isEmpty()) {
                 devStageItems.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
@@ -1712,7 +1715,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // STRAIN
             List<Item> strainItems = new ArrayList<Item>();
-            strainItems.addAll(createFromWikiPage("Strain", typeToProp, makeLookupList("strain")));
+            strainItems.addAll(createFromWikiPage(dccId, "Strain", typeToProp, makeLookupList("strain")));
             
             storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
             if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
@@ -1724,7 +1727,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
-            arrayItems.addAll(createFromWikiPage("Array", typeToProp, makeLookupList("array")));
+            arrayItems.addAll(createFromWikiPage(dccId, "Array", typeToProp, makeLookupList("array")));
             LOG.debug("ARRAY: " + typeToProp.get("array"));
             if (arrayItems.isEmpty()) {
                 arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
@@ -1745,7 +1748,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // CELL LINE
             List<Item> lineItems = new ArrayList<Item>();
-            lineItems.addAll(createFromWikiPage("CellLine", typeToProp, 
+            lineItems.addAll(createFromWikiPage(dccId, "CellLine", typeToProp, 
                     makeLookupList("cell line")));
             storeSubmissionCollection(storedSubmissionId, "cellLines", lineItems);
             if (!lineItems.isEmpty() && exFactorNames.contains("cell line")) {
@@ -1756,7 +1759,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // RNAi REAGENT
             List<Item> reagentItems = new ArrayList<Item>();
-            reagentItems.addAll(createFromWikiPage("SubmissionProperty", typeToProp, 
+            reagentItems.addAll(createFromWikiPage(dccId, "SubmissionProperty", typeToProp, 
                     makeLookupList("dsRNA")));
             if (!reagentItems.isEmpty() && exFactorNames.contains("RNAi reagent")) {
                 createExperimentalFactors(submissionId, "RNAi reagent", reagentItems);
@@ -1766,7 +1769,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // ANTIBODY
             List<Item> antibodyItems = new ArrayList<Item>();
-            antibodyItems.addAll(createFromWikiPage("Antibody", typeToProp, 
+            antibodyItems.addAll(createFromWikiPage(dccId, "Antibody", typeToProp, 
                     makeLookupList("antibody")));
             if (antibodyItems.isEmpty()) {
                 LOG.debug("ANTIBODY: " + typeToProp.get("antibody"));
@@ -1789,7 +1792,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // TISSUE
             List<Item> tissueItems = new ArrayList<Item>();
-            tissueItems.addAll(createFromWikiPage("Tissue", typeToProp, makeLookupList("tissue")));
+            tissueItems.addAll(createFromWikiPage(dccId, "Tissue", typeToProp, makeLookupList("tissue")));
             if (tissueItems.isEmpty()) {
                 tissueItems.addAll(lookForAttributesInOtherWikiPages("Tissue",
                         typeToProp, new String[] {
@@ -2071,7 +2074,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
     
     
-    private List<Item> createFromWikiPage(String clsName, 
+    private List<Item> createFromWikiPage(String dccId, String clsName, 
             Map<String, List<SubmissionProperty>> typeToProp, List<String> types) 
             throws ObjectStoreException {
         List<Item> items = new ArrayList<Item>();
@@ -2082,7 +2085,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 props.addAll(typeToProp.get(type));
             }
         }
-        items.addAll(createItemsForSubmissionProperties(clsName, props));
+        items.addAll(createItemsForSubmissionProperties(dccId, clsName, props));
         return items;
     }
     
@@ -2104,12 +2107,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return ids;
     }
     
-    private List<Item> createItemsForSubmissionProperties(String clsName, 
+    private List<Item> createItemsForSubmissionProperties(String dccId, String clsName, 
             List<SubmissionProperty> subProps)
     throws ObjectStoreException {
         List<Item> items = new ArrayList<Item>();
         for (SubmissionProperty subProp : subProps) {
-            Item item = getItemForSubmissionProperty(clsName, subProp);
+            Item item = getItemForSubmissionProperty(clsName, subProp, dccId);
             if (item != null) {
                 items.add(item);
             }
@@ -2119,7 +2122,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         
     
 
-    private Item getItemForSubmissionProperty(String clsName, SubmissionProperty prop)
+    private Item getItemForSubmissionProperty(String clsName, SubmissionProperty prop, String dccId)
     throws ObjectStoreException {
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
         if (propItem == null) {
@@ -2144,7 +2147,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 String officialName = getCorrectedOfficialName(prop);
                 propItem = createSubmissionProperty(clsName, officialName);
                 propItem.setAttribute("type", getPreferredSynonym(prop.type));
-                
+                propItem.setAttribute("wikiLink", WIKI_URL + prop.wikiPageUrl);
                 if (clsName.equals("DevelopmentalStage")) {                    
                     setAttributeOnProp(prop, propItem, "sex", "sex");
                     
@@ -2162,7 +2165,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "antigen", "antigen");
                     setAttributeOnProp(prop, propItem, "host", "hostOrganism");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
-                    setGeneItem(prop, propItem, "Antibody");
+                    setGeneItem(dccId, prop, propItem, "Antibody");
                 } else if (clsName.equals("Array")) {
                     setAttributeOnProp(prop, propItem, "platform", "platform");
                     setAttributeOnProp(prop, propItem, "resolution", "resolution");
@@ -2175,7 +2178,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "tissue", "tissue");
                     setAttributeOnProp(prop, propItem, "cell type", "cellType");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
-                    setGeneItem(prop, propItem, "CellLine");
+                    setGeneItem(dccId, prop, propItem, "CellLine");
                 } else if (clsName.equals("Strain")) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
@@ -2183,7 +2186,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "aliases", "shortName");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
-                    setGeneItem(prop, propItem, "Strain");
+                    setGeneItem(dccId, prop, propItem, "Strain");
                 }  else if (clsName.equals("Tissue")) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "sex", "sex");
@@ -2196,20 +2199,33 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return propItem;
     }
 
-    private void setGeneItem(SubmissionProperty prop, Item propItem, String source)
+    private void setGeneItem(String dccId, SubmissionProperty prop, Item propItem, String source)
             throws ObjectStoreException {
-        if (prop.details.containsKey("target id")) {
-            if (prop.details.get("target id").size() != 1) {
-                throw new RuntimeException(source + " should only have one target id: "
-                        + prop.details.get("target id"));
+        String targetText = null;
+        String[] possibleTypes = new String[] {"target id"}; 
+
+        for (String targetType : possibleTypes) {
+            if (prop.details.containsKey(targetType)) {
+                if (prop.details.get(targetType).size() != 1) {
+                    throw new RuntimeException(source + " should only have one '" + targetType 
+                            + "' field: " + prop.details.get(targetType));
+                }
+                targetText = prop.details.get(targetType).get(0);
+                break;
             }
-            String geneItemId = getTargetGeneItemIdentfier(prop.details.get("target id").get(0));
+        }
+        if (targetText != null) {
+            // if no target name was found use the target id
+            if (!propItem.hasAttribute("targetName")) {
+                propItem.setAttribute("targetName", targetText);
+            }
+            String geneItemId = getTargetGeneItemIdentfier(targetText, dccId);
             if (geneItemId != null) {
                 propItem.setReference("target", geneItemId);
             }
         }
     }
-    
+
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
             String attributeName) {
@@ -2229,43 +2245,75 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }       
 
     
-    private String getTargetGeneItemIdentfier(String geneTargetIdText) throws ObjectStoreException {
-        String geneItemId = null;
-        if (geneTargetIdText.startsWith("fly_genes:")) {
-            String flyStart = "fly_genes:";
-            if (geneTargetIdText.startsWith(flyStart)) {
-                String id = geneTargetIdText.substring(flyStart.length());
+    private String getTargetGeneItemIdentfier(String geneTargetIdText, String dccId)
+    throws ObjectStoreException {
+        String taxonId = "";
+        String originalId = null;
+        
+        String flyPrefix = "fly_genes:";
+        String wormPrefix = "worm_genes:";
+        
+        if (geneTargetIdText.startsWith(flyPrefix)) {
+            originalId = geneTargetIdText.substring(flyPrefix.length());
+            taxonId = "7227";
+        } else if (geneTargetIdText.startsWith(wormPrefix)) {
+            originalId = geneTargetIdText.substring(wormPrefix.length());
+            taxonId = "6239";
+        } else {
+            // attempt to work out the organism from the submission
+            Integer subChadoId = getSubmissionIdFromDccId(dccId);
+            String organism = submissionOrganismMap.get(subChadoId);
+            OrganismRepository or = OrganismRepository.getOrganismRepository();
+            taxonId = "" + or.getOrganismDataByFullName(organism).getTaxonId();
+            originalId = geneTargetIdText;
+            LOG.info("RESOLVER: found organism '" + organism + "', taxon " + taxonId 
+                    + " for submission " + dccId);
+        }
 
-                IdResolver resolver = resolverFactory.getIdResolver();
-                int resCount = resolver.countResolutions("7227", id);
-                if (resCount != 1) {
-                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring "
-                            + "gene: " + id + " count: " + resCount + " FBgn: "
-                            + resolver.resolveId("7227", id) + " for string: "
-                            + geneTargetIdText);
-                } else {
-                    String primaryIdentifier = 
-                        resolver.resolveId("7227", id).iterator().next();
-                    geneItemId = geneToItemIdentifier.get(primaryIdentifier);
-                    LOG.info("RESOLVER found gene " + primaryIdentifier 
-                            + " for string: " + geneTargetIdText);
-                    if (geneItemId == null) {
-                        Item gene = getChadoDBConverter().createItem("Gene");
-                        geneItemId = gene.getIdentifier();
-                        gene.setAttribute("primaryIdentifier", primaryIdentifier);
-                        getChadoDBConverter().store(gene);
-                        geneToItemIdentifier.put(primaryIdentifier, geneItemId);
-                    } else {
-                        LOG.info("RESOLVER fetched gene from cache: " + primaryIdentifier);
-                    }
-                }
-            } else if (geneTargetIdText.startsWith("worm_genes:")) {
-                // TODO add worm gene resolver, we don't have any worm 
-                // antibodies yet
+        IdResolver resolver = null;
+        if (taxonId.equals("7227")) {
+            resolver = flyResolverFactory.getIdResolver();
+        } else if (taxonId.equals("6239")) {
+            resolver = wormResolverFactory.getIdResolver();
+        } else {
+            LOG.info("RESOLVER: unable to work out organism for target id text: " 
+                    + geneTargetIdText);
+        }
+
+        String geneItemId = null;
+
+        String primaryIdentifier = resolveGene(originalId, taxonId, resolver);
+        if (primaryIdentifier != null) {
+            geneItemId = geneToItemIdentifier.get(primaryIdentifier);
+            if (geneItemId == null) {
+                Item gene = getChadoDBConverter().createItem("Gene");
+                geneItemId = gene.getIdentifier();
+                gene.setAttribute("primaryIdentifier", primaryIdentifier);
+                getChadoDBConverter().store(gene);
+                geneToItemIdentifier.put(primaryIdentifier, geneItemId);
+            } else {
+                LOG.info("RESOLVER fetched gene from cache: " + primaryIdentifier);
             }
         }
         return geneItemId;
     }
+
+    private String resolveGene(String originalId, String taxonId, IdResolver resolver) {
+        String primaryIdentifier = null;
+        int resCount = resolver.countResolutions(taxonId, originalId);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring "
+                    + "gene: " + originalId + " for organism " + taxonId + " count: " + resCount
+                    + " found ids: " + resolver.resolveId(taxonId, originalId) + ".");
+        } else {
+            primaryIdentifier = 
+                resolver.resolveId(taxonId, originalId).iterator().next();
+            LOG.info("RESOLVER found gene " + primaryIdentifier 
+                    + " for original id: " + originalId);
+        }
+        return primaryIdentifier;
+    }
+    
 
     private List<Item> lookForAttributesInOtherWikiPages(String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
@@ -2513,7 +2561,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         protected SubmissionProperty() {
             details = new HashMap<String, List<String>>();
         }
-        
+
         public SubmissionProperty(String type, String wikiPageUrl) {
             this.type = type;
             this.wikiPageUrl = wikiPageUrl;
@@ -2528,7 +2576,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             values.add(value);
         }
-        
+
         public String toString() {
             return this.type + ": " + this.wikiPageUrl + this.details.entrySet();
         }
