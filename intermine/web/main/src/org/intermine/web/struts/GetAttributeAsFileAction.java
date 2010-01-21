@@ -82,7 +82,7 @@ public class GetAttributeAsFileAction extends Action
         if (fieldExporter == null) {
             Object fieldValue = TypeUtil.getFieldValue(object, fieldName);
             if (fileType == null || fileType.length() == 0) {
-                response.setContentType("text/plain");
+                response.setContentType("text/plain; charset=UTF-8");
                 response.setHeader("Content-Disposition ",
                                    "inline; filename=" + fieldName + ".txt");
             } else {
