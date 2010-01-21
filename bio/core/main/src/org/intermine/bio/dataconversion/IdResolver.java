@@ -276,10 +276,13 @@ public class IdResolver
                 addEntry(taxonId, primaryId, Arrays.asList(mainIds), true);
             }
 
-            String synonymsStr = cols[3];
-            if (synonymsStr != null && !synonymsStr.equals("")) {
-                String[] synonyms = synonymsStr.split(",");
-                addEntry(taxonId, primaryId, Arrays.asList(synonyms), false);
+            // read synonyms if they are present
+            if (cols.length >= 4) {
+                String synonymsStr = cols[3];
+                if (synonymsStr != null && !synonymsStr.equals("")) {
+                    String[] synonyms = synonymsStr.split(",");
+                    addEntry(taxonId, primaryId, Arrays.asList(synonyms), false);
+                }
             }
         }
     }

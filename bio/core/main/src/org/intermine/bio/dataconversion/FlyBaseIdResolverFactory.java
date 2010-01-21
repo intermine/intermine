@@ -115,7 +115,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String organismId = null;
                 res.next();
                 organismId = res.getString("organism_id");
-                    
+                stmt.close(); 
                 orgConstraint = " and o.organism_id = " + organismId;
             }
             
@@ -146,6 +146,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 i++;
             }
             LOG.info("feature query returned " + i + " rows.");
+            stmt.close();
             
             // fetch gene synonyms
             query = "select distinct o.abbreviation, f.uniquename, s.name, "
@@ -178,6 +179,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     resolver.addSynonyms(taxonId, uniquename, Collections.singleton(synonym));
                 }
             }
+            stmt.close();
             LOG.info("synonym query returned " + i + " rows.");
             
             // fetch FlyBase dbxrefs for located genes
@@ -211,6 +213,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     resolver.addSynonyms(taxonId, uniquename, Collections.singleton(accession));
                 }
             }
+            stmt.close();
             LOG.info("dbxref query returned " + i + " rows.");
         } catch (Exception e) {
             LOG.error(e);
