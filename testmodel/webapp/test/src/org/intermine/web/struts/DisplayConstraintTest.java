@@ -13,12 +13,14 @@ package org.intermine.web.struts;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -36,9 +38,9 @@ public class DisplayConstraintTest extends MockStrutsTestCase
         PathQuery query = new PathQuery(Model.getInstanceByName("testmodel"));
         PathNode node = query.addNode("Employee.name");
 
+        InterMineAPI im = SessionMethods.getInterMineAPI(getActionServlet().getServletContext());
         dc = new DisplayConstraint(node, Model.getInstanceByName("testmodel"),
-                (ObjectStoreSummary) getActionServlet().getServletContext().getAttribute(Constants.OBJECT_STORE_SUMMARY),
-                null, null);
+                im.getObjectStoreSummary(), null, null);
     }
 
     public void testValidOps() throws Exception {

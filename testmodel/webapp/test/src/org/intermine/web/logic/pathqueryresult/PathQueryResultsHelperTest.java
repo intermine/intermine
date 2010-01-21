@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -32,6 +33,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -88,7 +90,8 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
     public void testMakePathQueryForBag() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         ServletContext context = getActionServlet().getServletContext();
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        ObjectStore os = im.getObjectStore();
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
         String expectedXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
@@ -102,7 +105,8 @@ public class PathQueryResultsHelperTest extends MockStrutsTestCase
 
     public void testMakePathQueryForCollection() throws Exception {
         ServletContext context = getActionServlet().getServletContext();
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        ObjectStore os = im.getObjectStore();
         Department d1 = new Department();
         d1.setId(1);
         Set<Employee> employees = new HashSet<Employee>();

@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -38,6 +39,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 import servletunit.struts.MockStrutsTestCase;
 
@@ -81,14 +83,15 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     
     // this calls getConvertedObjects with a list of Employees and gets back converted Addresses
     public void testGetConvertedObjects() throws Exception {
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        ObjectStore os = im.getObjectStore();
         
         Results r = getEmployeesAndAddresses();
         
         assertEquals("Results: " + r, 2, r.size());
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(), os, null, uosw);
-        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId());
-        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId());
+        imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
+        imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId(), "Employee");
         profile.saveBag("Fred", imb);
         List expected = new ArrayList();
         expected.add(((List) r.get(0)).get(1));
@@ -103,7 +106,8 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
     }
     
     private Results getEmployeesAndAddresses() throws Exception {
-        ObjectStore os = (ObjectStore) context.getAttribute(Constants.OBJECTSTORE);
+        InterMineAPI im = SessionMethods.getInterMineAPI(context);
+        ObjectStore os = im.getObjectStore();
         List names = Arrays.asList(new String[] {"EmployeeA3", "EmployeeB2"});
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Employee.class);

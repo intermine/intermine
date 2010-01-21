@@ -215,7 +215,7 @@
     <reference name="employee" ref_id="8"/>
   </item>
   <item class="SimpleObject">
-    <attribute name="name" value="Robert"/>
+    <attribute name="name" value="Robert–"/>
     <reference name="employee" ref_id="9"/>
   </item>
   <item id="26" class="Range">
