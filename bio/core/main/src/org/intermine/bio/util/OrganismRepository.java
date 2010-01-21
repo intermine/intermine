@@ -165,4 +165,19 @@ public class OrganismRepository
         MultiKey key = new MultiKey(genus, species);
         return genusSpeciesMap.get(key);
     }
+    
+    /**
+     * Look up OrganismData objects by a full name that is genus <space> species.  Returns null if
+     * there is no OrganismData in this OrganismRepository that matches.
+     * @param fullName the genus and species separated by a space
+     * @return the OrganismData
+     */
+    public OrganismData getOrganismDataByFullName(String fullName) {
+        if (fullName.indexOf(" ") == -1) {
+            return null;
+        }
+        String genus = fullName.split(" ")[0];
+        String species = fullName.split(" ")[1];
+        return getOrganismDataByGenusSpecies(genus, species);
+    }
 }
