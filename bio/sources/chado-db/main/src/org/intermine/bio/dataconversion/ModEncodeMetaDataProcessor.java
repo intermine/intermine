@@ -2182,7 +2182,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 } else if (clsName.equals("Strain")) {
                     setAttributeOnProp(prop, propItem, "species", "species");
                     setAttributeOnProp(prop, propItem, "source", "source");
-                    setAttributeOnProp(prop, propItem, "description", "description");
+                    // the following 2 should be mutually exclusive
+                    setAttributeOnProp(prop, propItem, "Description", "description");
+                    setAttributeOnProp(prop, propItem, "details", "description");
+                    
                     setAttributeOnProp(prop, propItem, "aliases", "shortName");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
@@ -2229,6 +2232,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
             String attributeName) {
+
         if (subProp.details.containsKey(metadataName)) {
             if (metadataName.equalsIgnoreCase("aliases")){
                 for (String s :subProp.details.get(metadataName)){
@@ -2237,6 +2241,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         break;
                     }
                 }
+            } else if (metadataName.equalsIgnoreCase("description") || 
+                    metadataName.equalsIgnoreCase("details")) {
+                // description is often split in more than 1 line
+                int size = subProp.details.get(metadataName).size();
+                String all = subProp.details.get(metadataName).get(size-1);
+                for (int i = size-2; i > -1; i--){
+                    all = all.concat(subProp.details.get(metadataName).get(i));
+                }
+                
+                LOG.info("DESCR 0: " +  subProp.details.get(metadataName).get(0));
+                LOG.info("DESCR 1: " +  subProp.details.get(metadataName).get(1));
+                LOG.info("DESCR 2: " +  subProp.details.get(metadataName).get(2));
+                LOG.info("DESCR 3: " +  subProp.details.get(metadataName).get(3));
+                
+                LOG.info("DESCR A: " +  all);
+                item.setAttribute(attributeName, all);
+                
             } else {
                 String value = subProp.details.get(metadataName).get(0);
                 item.setAttribute(attributeName, value);
