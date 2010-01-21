@@ -588,6 +588,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     return uniqueName;
                 }
             }
+            
+            // Piano submissions have Gene: in front of gene identifiers
+            if (type.equalsIgnoreCase("Gene")) {
+            	if (uniqueName.startsWith("Gene:")) {
+            		return uniqueName.substring(5);
+            	}
+            }
         }
 
         if (StringUtil.isEmpty(identifier)) {
