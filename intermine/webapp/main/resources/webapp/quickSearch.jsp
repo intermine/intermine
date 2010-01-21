@@ -9,8 +9,6 @@
 <c:set var="tpls" value="${WEB_PROPERTIES['quickSearch.templates']}"/>
 <c:set var="bgs" value="${WEB_PROPERTIES['quickSearch.lists']}"/>
 
-
-<script type="text/javascript" src="js/browse.js"></script>
 <script type="text/javascript">
 function updateExample(i) {
   if (isUpdatedByUser(jQuery('#quickSearchInput').val())) {
