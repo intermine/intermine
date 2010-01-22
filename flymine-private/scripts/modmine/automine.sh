@@ -226,12 +226,12 @@ function setProjectFile {
 #------------------------------------------------------------------------
 RETURNDIR=$PWD
 
-if [ -n "$P" ]
+if [ -n "$P" -o "$FULL" = "y" ]
 then
 return
 fi
 
-if [ $META="y" -o $VALIDATING="y" ]
+if [ "$META" = "y" -o "$VALIDATING" = "y" ]
 then
 cd $MINEDIR
 if [ -n "$1" ]
