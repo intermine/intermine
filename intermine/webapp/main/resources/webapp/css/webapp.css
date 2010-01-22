@@ -242,7 +242,7 @@ ul#submenulist li {
   line-height: 1.14286;
   background-color: transparent;
   font-size: 14px; font-weight:bold; 
-  background: url('../theme/heading-bg.jpg') top center repeat-x; white-space: nowrap;}
+}
 
 div.templateLine {
   margin-bottom: 5px; margin-top: 5px;}
