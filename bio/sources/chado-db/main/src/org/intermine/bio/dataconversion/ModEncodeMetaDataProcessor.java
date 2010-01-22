@@ -2249,13 +2249,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (int i = size-2; i > -1; i--){
                     all = all.concat(subProp.details.get(metadataName).get(i));
                 }
-                
-                LOG.info("DESCR 0: " +  subProp.details.get(metadataName).get(0));
-                LOG.info("DESCR 1: " +  subProp.details.get(metadataName).get(1));
-                LOG.info("DESCR 2: " +  subProp.details.get(metadataName).get(2));
-                LOG.info("DESCR 3: " +  subProp.details.get(metadataName).get(3));
-                
-                LOG.info("DESCR A: " +  all);
                 item.setAttribute(attributeName, all);
                 
             } else {
