@@ -48,10 +48,10 @@
             <span class="templateTitleBold">
             <c:choose>
               <c:when test="${!empty param.templateQueryTitle}">
-                ${param.templateQueryTitle}
+                <c:out value="${param.templateQueryTitle}"/>
               </c:when>
               <c:otherwise>
-                ${templateQuery.title}
+                <c:out value="${templateQuery.title}"/>
               </c:otherwise>
             </c:choose>
             </span>
@@ -63,17 +63,17 @@
        <div class="templateDescription">
          <c:choose>
            <c:when test="${!empty param.templateQueryDescription}">
-             ${param.templateQueryDescription}
+             <c:out value="${param.templateQueryDescription}"/>
            </c:when>
            <c:otherwise>
-             ${pathQuery.description}
+             <c:out value="${pathQuery.description}"/>
            </c:otherwise>
          </c:choose>
          </div>
      </c:if>
       
      <c:if test="${!empty param.bagName}">
-       <div>Results for list:  ${param.bagName}</div>
+       <div>Results for list:  <c:out value="${param.bagName}"/></div>
      </c:if>
       
        </div>
