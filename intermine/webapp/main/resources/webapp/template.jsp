@@ -234,16 +234,7 @@
                     </html:option>
                   </c:forEach>
                 </html:select>
-                
-                <%-- TODO this breaks if there is more than one on a page --%>
-                <c:if test="${PROFILE.loggedIn}">
-	                <tiles:insert name="tagSelect.tile">
-	                    <tiles:put name="type" value="bag" />
-	                    <tiles:put name="onChangeFunction" value="filterByTag" />
-	                    <tiles:put name="selectId" value="tagSelect" />
-	                    <tiles:put name="title" value="-- filter by a tag --" />
-	                </tiles:insert>
-                </c:if>
+
                 <c:if test="${empty bags}">
                   <div class="noBagsMessage">
                     <fmt:message key="template.nobags">
