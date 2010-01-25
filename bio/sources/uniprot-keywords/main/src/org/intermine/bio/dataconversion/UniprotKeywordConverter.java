@@ -13,7 +13,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.dataconversion.FileConverter;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -29,7 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Importer to add descriptions to UniProt keywords
  * @author Julie Sullivan
  */
-public class UniprotKeywordConverter extends FileConverter
+public class UniprotKeywordConverter extends BioFileConverter
 {
     private Map<String, String> ontologies = new HashMap();
     private Map<String, String> keywords = new HashMap();
@@ -41,7 +40,7 @@ public class UniprotKeywordConverter extends FileConverter
      * @param model the Model
      */
     public UniprotKeywordConverter(ItemWriter writer, Model model) {
-        super(writer, model);
+        super(writer, model, "UniProt", "UniProt keywords data set");
     }
 
     /**
