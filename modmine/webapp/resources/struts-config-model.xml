@@ -23,9 +23,6 @@
 <action path="/initProjectsSummary"
   type="org.modmine.web.ProjectsSummaryController" />
 
-<action path="/initExperiments"
-  type="org.modmine.web.ExperimentsController" />
-
 <action path="/initExperiment"
   type="org.modmine.web.ExperimentController" />
 
