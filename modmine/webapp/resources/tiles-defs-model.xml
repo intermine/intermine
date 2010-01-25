@@ -16,9 +16,6 @@
         controllerUrl="/initProjects.do"/>
 <definition name="submissions.tile" path="/model/submissions.jsp"
         controllerUrl="/initSubmissions.do"/>
-
-<definition name="experiments.tile" path="/model/experiments.jsp"
-        controllerUrl="/initExperiments.do"/>
         
 <definition name="experiment.tile" path="/model/experiment.jsp"
         controllerUrl="/initExperiment.do"/>
