@@ -20,8 +20,8 @@
   var detailsType = 'bag';
 //]]>-->
 </script>
-<script type="text/javascript" src="js/inlinetemplate.js"></script>
-<script type="text/javascript" src="js/widget.js"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/widget.js'/>"></script>
 
 <div class="heading">
      <fmt:message key="bagDetails.title"/> <span style="font-size:0.9em;font-weight:normal">for <b>${bag.name}</b> (${bag.size} ${bag.type}s)</span>
