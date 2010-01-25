@@ -157,7 +157,7 @@
       <property name="src.data.dir" location="/shared/data/go-annotation/current"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
     </source>
-    <source name="flyreg" type="flyreg">
+    <source name="flyreg" type="flyreg" dump="true">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.seqDataSourceName" value="FlyBase"/>
@@ -183,7 +183,7 @@
       <property name="src.data.dir" location="/shared/data/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
     </source>
-    <source name="flybase-dmel-gene-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila melanogaster"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
