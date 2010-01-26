@@ -5,7 +5,7 @@
     <attribute name="description" type="java.lang.String"/>
     <attribute name="begin" type="java.lang.Integer"/>
     <attribute name="end" type="java.lang.Integer"/>
-    <reference name="protein" referenced-type="Protein"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="features" />
     <reference name="feature" referenced-type="OntologyTerm"/>
   </class>
   <class name="Protein" is-interface="true">
@@ -19,7 +19,7 @@
     <collection name="comments" referenced-type="Comment" />
     <collection name="components" referenced-type="Component" reverse-reference="protein" />
     <collection name="keywords" referenced-type="OntologyTerm" />
-    <collection name="features" referenced-type="UniProtFeature" />
+    <collection name="features" referenced-type="UniProtFeature" reverse-reference="protein" />
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins" />
   </class>
   <class name="Sequence" is-interface="true">

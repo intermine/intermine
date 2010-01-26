@@ -267,17 +267,14 @@ public class UniprotConverter extends DirectoryConverter
                 if (!entry.getKeywords().isEmpty()) {
                     protein.setCollection("keywords", entry.getKeywords());
                 }
-
+                
                 /* features */
-                if (!entry.getFeatures().isEmpty() && !entry.isIsoform()) {
-                    protein.setCollection("features", entry.getFeatures());
-                }
+                processFeatures(protein, entry);
 
                 /* components */
                 if (!entry.getComponents().isEmpty()) {
                     processComponents(protein, entry);
                 }
-                
                 
                 List<String> synonymRefIds = new ArrayList();
                 try {
@@ -350,6 +347,19 @@ public class UniprotConverter extends DirectoryConverter
         }
     }
 
+    
+    private void processFeatures(Item protein, UniprotEntry entry) 
+    throws SAXException {
+        for (Item feature : entry.getFeatures()) {
+            feature.setReference("protein", protein);            
+            try {
+                store(feature);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+        }
+    }
+    
     private void processSynonyms(List<String> proteinSynonyms, String proteinRefId,
                                  UniprotEntry entry)
     throws SAXException {
@@ -430,6 +440,9 @@ public class UniprotConverter extends DirectoryConverter
             }
         }        
     }
+
+
+    
     
     private void processGoAnnotation(UniprotEntry entry, Item gene) 
     throws SAXException {
@@ -796,11 +809,6 @@ public class UniprotConverter extends DirectoryConverter
         throws SAXException {
             super.endElement(uri, localName, qName);
             stack.pop();
-
-            if (qName.equals("feature") && entry.processingFeature()) {
-                storeFeature(entry);
-            }
-
             if (attName == null || attValue.toString() == null) {
                 return;
             }
@@ -1125,15 +1133,6 @@ public class UniprotConverter extends DirectoryConverter
             return feature;
         }
         return null;
-    }
-
-    private void storeFeature(UniprotEntry entry)
-    throws SAXException {
-        try {
-            store(entry.getFeature());
-        } catch (ObjectStoreException e) {
-            throw new SAXException(e);
-        }
     }
 
     /**
