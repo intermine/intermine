@@ -414,7 +414,7 @@
     </action>
     <action path="/initTemplate" name="templateForm" type="org.intermine.web.struts.TemplateController" validate="false">
     </action>
-    <action path="/initSetFavourite" type="org.intermine.web.struts.SetFavouriteController">
+    <action path="/initSetFavourite" type="org.intermine.web.struts.FavouriteController">
     </action>
     <action path="/initBagDetails" type="org.intermine.web.struts.BagDetailsController">
     </action>
