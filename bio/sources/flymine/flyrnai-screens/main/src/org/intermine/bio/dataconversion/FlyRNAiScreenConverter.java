@@ -133,7 +133,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
-
+        int lineNumber = 0;
         while (tsvIter.hasNext()) {
 
             String [] line = (String[]) tsvIter.next();
@@ -160,8 +160,10 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 }
             } else {
                 if (line.length != headerLength) {
-                    throw new RuntimeException("Incorrect number of entries in line: "
-                                               + line + " (should be " + headerLength);
+                    String msg = "Incorrect number of entries in line number " + lineNumber 
+                    + ": " + line.toString() 
+                    + ".  Should be " + headerLength + " but is " + line.length + "instead";
+                    throw new RuntimeException(msg);
                 }
 
                 Set<Item> ampliconGenes = new LinkedHashSet<Item>();
@@ -227,6 +229,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 }
                 store(amplicon);
             }
+            lineNumber++;
         }
 
         for (Item gene : genes.values()) {
