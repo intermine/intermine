@@ -10,11 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,14 +25,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateQuery;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Controller for the favourites tile responsible for getting and displaying the
- * list of favourite templates
+ * Controller for the starTemplate tile. This tile handles the display of the
+ * star which lets you set a template as a favourite, using DWR Ajax.
  *
  * @author Xavier Watkins
  *
@@ -47,34 +40,22 @@ public class FavouritesController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
+    public ActionForward execute(ComponentContext context,
             @SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+        String name = (String) context.getAttribute("name");
+        String type = (String) context.getAttribute("type");
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         Profile profile = SessionMethods.getProfile(session);
+        TagManager tagManager = im.getTagManager();
 
-        ArrayList<TemplateQuery> favouriteTemplates = new ArrayList();
+        Set<String> userTags = tagManager.getObjectTagNames(name, type, profile.getUsername());
+        String isFavourite = Boolean.toString(userTags.contains(TagNames.IM_FAVOURITE));
 
-        if (profile.getUsername() != null) {
-            Profile superuserProfile = im.getProfileManager().getSuperuserProfile();
-            Map<String, TemplateQuery> savedTemplates = new HashMap();
-            savedTemplates.putAll(superuserProfile.getSavedTemplates());
-            savedTemplates.putAll(profile.getSavedTemplates());
-            TagManager tagManager = im.getTagManager();
-
-            List userTags = tagManager.getTags(TagNames.IM_FAVOURITE, null, TagTypes.TEMPLATE,
-                    profile.getUsername());
-            for (Iterator iter = userTags.iterator(); iter.hasNext();) {
-                Tag element = (Tag) iter.next();
-                TemplateQuery templateQuery = savedTemplates.get(element.getObjectIdentifier());
-                if (templateQuery != null) {
-                    favouriteTemplates.add(templateQuery);
-                }
-            }
-        }
-        session.getServletContext().setAttribute("favouriteTemplates", favouriteTemplates);
+        request.setAttribute("isFavourite", isFavourite);
         return null;
     }
 }
