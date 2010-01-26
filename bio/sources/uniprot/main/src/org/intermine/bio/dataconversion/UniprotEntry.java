@@ -29,7 +29,7 @@ public class UniprotEntry
     private static final Logger LOG = Logger.getLogger(UniprotEntry.class);
     private String datasetRefId = null;
     private String length, molecularWeight;
-    private List<String> features = new ArrayList();
+    private List<Item> features = new ArrayList();
     private List<String> domains = new ArrayList();
     private List<String> pubs = new ArrayList();
     private List<String> comments = new ArrayList();
@@ -177,7 +177,7 @@ public class UniprotEntry
     public void addFeature(Item item) {
         if (item != null) {
             feature = item;
-            features.add(item.getIdentifier());
+            features.add(item);
         }
     }
 
@@ -204,7 +204,7 @@ public class UniprotEntry
     /**
      * @return list of ids representing feature objects for this entry
      */
-    public List<String> getFeatures() {
+    public List<Item> getFeatures() {
         return features;
     }
 
@@ -713,7 +713,7 @@ public class UniprotEntry
      */
     public String getGeneDesignation(String dbrefName) {
         for (Map.Entry<String, Dbref> entry : geneDesignationToDbref.entrySet()) {
-            if(entry.getValue().getType().equals(dbrefName)) {
+            if (entry.getValue().getType().equals(dbrefName)) {
                 return entry.getKey();
             }
         }
@@ -839,7 +839,7 @@ public class UniprotEntry
     {
         // map of name type to name value, eg ORF --> CG1234
         protected Map<String, String> geneIdentifiers = new HashMap();
-        protected List<String> goTerms = new ArrayList();
+        protected List<String> geneGOTerms = new ArrayList();
         
         /**
          * @param type type of variable, eg. ORF, primary
@@ -868,14 +868,14 @@ public class UniprotEntry
          * @return list of refIds representing go term objects
          */
         protected List<String> getGOTerms() {
-            return goTerms;
+            return geneGOTerms;
         }
 
         /**
-         * @param goTerms list of refIds representing go terms
+         * @param terms list of refIds representing go terms
          */
-        protected void setGOTerms(List<String> goTerms) {
-            this.goTerms = goTerms;
+        protected void setGOTerms(List<String> terms) {
+            this.geneGOTerms = terms;
         }
         
         /**
