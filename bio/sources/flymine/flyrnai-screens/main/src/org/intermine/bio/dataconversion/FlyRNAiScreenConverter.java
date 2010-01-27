@@ -135,7 +135,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         }
         int lineNumber = 0;
         while (tsvIter.hasNext()) {
-
+            lineNumber++;
             String [] line = (String[]) tsvIter.next();
             if (!readingData) {
                 if (line.length == 2) {
@@ -162,7 +162,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 if (line.length != headerLength) {
                     String msg = "Incorrect number of entries in line number " + lineNumber 
                     + ": " + line.toString() 
-                    + ".  Should be " + headerLength + " but is " + line.length + "instead";
+                    + ".  Should be " + headerLength + " but is " + line.length + " instead."
+                    + "  content:" + line[0];
                     throw new RuntimeException(msg);
                 }
 
@@ -229,7 +230,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 }
                 store(amplicon);
             }
-            lineNumber++;
+            
         }
 
         for (Item gene : genes.values()) {
