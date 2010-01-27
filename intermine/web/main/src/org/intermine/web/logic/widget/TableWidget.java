@@ -47,12 +47,12 @@ public class TableWidget extends Widget
         super(config);
         this.bag = interMineBag;
         this.os = os;
-        createBagContet();
+        createBagContent();
         process();
     }
 
 
-    private void createBagContet() {
+    private void createBagContent() {
 
         List<Integer> bagResults = bag.getContentsAsIds();
         Iterator<Integer> it = bagResults.iterator();
