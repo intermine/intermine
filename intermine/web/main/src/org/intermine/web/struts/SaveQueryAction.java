@@ -75,8 +75,8 @@ public class SaveQueryAction extends InterMineAction
 
         try {
 
-            if (query.getInfo() == null) {
-                query.setInfo(webResultsExecutor.explain(query));
+            if (webResultsExecutor.getQueryInfo(query) == null) {
+                webResultsExecutor.setQueryInfo(query, webResultsExecutor.explain(query));
             }
         } catch (ObjectStoreException e) {
             recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);

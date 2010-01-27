@@ -47,6 +47,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -306,9 +307,15 @@ public class SessionMethods
                                  PathQuery query,
                                  Date created) {
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
+        PathQuery cloned = query.clone();
         SavedQuery sq = new SavedQuery(queryName, (created != null ? created : new Date()),
-                                       query.clone());
+                cloned);
         profile.saveQuery(sq.getName(), sq);
+        WebResultsExecutor wre = getInterMineAPI(session).getWebResultsExecutor(profile);
+        ResultsInfo info = wre.getQueryInfo(query);
+        if (info != null) {
+            wre.setQueryInfo(cloned, info);
+        }
         return sq;
     }
 
@@ -336,8 +343,15 @@ public class SessionMethods
                                           String queryName,
                                           PathQuery query) {
         Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
-        SavedQuery sq = new SavedQuery(queryName, new Date(), query.clone());
+        PathQuery cloned = query.clone();
+        SavedQuery sq = new SavedQuery(queryName, new Date(), cloned);
         profile.saveHistory(sq);
+        WebResultsExecutor wre = getInterMineAPI(session).getWebResultsExecutor(profile);
+        ResultsInfo info = wre.getQueryInfo(query);
+        if (info != null) {
+            wre.setQueryInfo(cloned, info);
+        }
+        session.setAttribute("infoCache", wre.getInfoCache());
     }
 
     /**
@@ -542,7 +556,7 @@ public class SessionMethods
                         if (saveQuery) {
                             String queryName = NameUtil.findNewQueryName(
                                     profile.getHistory().keySet());
-                            pathQuery.setInfo(pr.getWebTable().getInfo());
+                            executor.setQueryInfo(pathQuery, pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                             recordMessage(messages.getMessage("saveQuery.message", queryName),
                                           session);

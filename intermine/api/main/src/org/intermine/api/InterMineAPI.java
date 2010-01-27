@@ -10,6 +10,7 @@ package org.intermine.api;
  *
  */
 
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,13 +118,22 @@ public class InterMineAPI
         return templateSummariser;
     }
 
+    private Map<Profile, WebResultsExecutor> wreCache = new IdentityHashMap<Profile,
+            WebResultsExecutor>();
     /**
      * @param profile the user that is executing the query
      * @return the webResultsExecutor
      */
     public WebResultsExecutor getWebResultsExecutor(Profile profile) {
-        return new WebResultsExecutor(objectStore, classKeys, bagQueryConfig, profile,
-                templateManager.getConversionTemplates(), bagManager);
+        synchronized (wreCache) {
+            WebResultsExecutor retval = wreCache.get(profile);
+            if (retval == null) {
+                retval = new WebResultsExecutor(objectStore, classKeys, bagQueryConfig, profile,
+                        templateManager.getConversionTemplates(), bagManager);
+                wreCache.put(profile, retval);
+            }
+            return retval;
+        }
     }
 
     /**

@@ -131,10 +131,12 @@
                 </td>
                 <td class="sorting" align="right">
                   <c:choose>
-                    <c:when test="${savedQuery.value.pathQuery.info != null}">
-                      <c:out value="${savedQuery.value.pathQuery.info.rows}"/>
+                    <c:when test="${infoCache[savedQuery.value.pathQuery] != null}">
+                      <c:out value="${infoCache[savedQuery.value.pathQuery].rows}"/>
                     </c:when>
                     <c:otherwise>
+                      <c:out value="${infoCache}"/><BR/>
+                      <c:out value="${savedQuery.value.pathQuery}"/><BR/>
                       n/a
                     </c:otherwise>
                   </c:choose>

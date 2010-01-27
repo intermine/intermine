@@ -899,23 +899,6 @@ public class PathQueryTest extends TestCase
 //        // TODO test me
 //    }
 
-    public void testInfo() {
-        int start = 123;
-        int complete = 456;
-        int rows = 789;
-        int min = 1;
-        int max = 123456789;
-
-        ResultsInfo r = new ResultsInfo(start, complete, rows, min, max);
-        q = new PathQuery(model);
-        q.setInfo(r);
-        assertEquals(123, q.getInfo().getStart());
-        assertEquals(456, q.getInfo().getComplete());
-        assertEquals(789, q.getInfo().getRows());
-        assertEquals(1, q.getInfo().getMin());
-        assertEquals(123456789, q.getInfo().getMax());
-    }
-
     public void testGetBagNames() {
         e = (PathQuery) expected.get("departmentBagConstraint");
         List<Object> bags = e.getBagNames();

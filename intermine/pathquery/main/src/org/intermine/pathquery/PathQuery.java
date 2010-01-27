@@ -33,7 +33,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.StringUtil;
 
@@ -50,7 +49,6 @@ public class PathQuery
     protected LinkedHashMap<String, PathNode> nodes = new LinkedHashMap<String, PathNode>();
     private List<Path> view = new ArrayList<Path>();
     private Map<Path, String> sortOrder = new LinkedHashMap<Path, String>();
-    private ResultsInfo info;
     private List<Throwable> problems = new ArrayList<Throwable>();
     protected LogicExpression constraintLogic = null;
     private Map<Path, String> pathDescriptions = new HashMap<Path, String>();
@@ -90,7 +88,6 @@ public class PathQuery
         this.nodes = new LinkedHashMap<String, PathNode>(query.nodes);
         this.view = new ArrayList<Path>(query.view);
         this.sortOrder = new HashMap<Path, String>(query.sortOrder);
-        this.info = query.info;
         this.problems = new ArrayList<Throwable>(query.problems);
         this.constraintLogic = query.constraintLogic;
         this.pathDescriptions = new HashMap<Path, String>(query.pathDescriptions);
@@ -483,11 +480,12 @@ public class PathQuery
 //                && (getNode(dummyPath.getPrefix().toStringNoConstraints()) == null
 //                    || ((getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
 //                            == null)
-//                        || (getNode(dummyPath.getPrefix().toStringNoConstraints()).getConstraints()
+//                        || (getNode(dummyPath.getPrefix().toStringNoConstraints())
+//            .getConstraints()
 //                            .size() <= 0)))) {
 //                currentPath.append(":");
 //            } else {
-            // default to inner join 
+            // default to inner join
             currentPath.append(".");
 //            }
 
@@ -1280,7 +1278,6 @@ public class PathQuery
         query.description = description;
         query.pathDescriptions = new HashMap<Path, String>(pathDescriptions);
         query.setConstraintLogic(getConstraintLogic());
-        query.info = info;
         return query;
     }
 
@@ -1456,22 +1453,6 @@ public class PathQuery
             path = new Path(model, fullPathName, subClassConstraintMap);
         }
         return path;
-    }
-
-    /**
-     * Get info regarding this query
-     * @return the info
-     */
-    public ResultsInfo getInfo() {
-        return info;
-    }
-
-    /**
-     * Set info about this query
-     * @param info the info
-     */
-    public void setInfo(ResultsInfo info) {
-        this.info = info;
     }
 
     /**
