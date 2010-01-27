@@ -672,6 +672,59 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return nextIterationProtocols;
     }
 
+    /**
+    *
+    * ==============
+    *    ORGANISM
+    * ==============
+    *
+    * Organism for a submission is derived from the organism associated with
+    * the protocol of the first applied protocol (of the submission).
+    * it is the name. a request to associate the submission directly with
+    * the taxonid has been made to chado people.
+    *
+    * @param connection
+    * @throws SQLException
+    * @throws ObjectStoreException
+    */
+   private void processSubmissionOrganism(Connection connection)
+   throws SQLException, ObjectStoreException {
+       long bT = System.currentTimeMillis(); // to monitor time spent in the process
+
+       ResultSet res = getSubmissionOrganism(connection);
+       int count = 0;
+       while (res.next()) {
+           Integer submissionId = new Integer(res.getInt("experiment_id"));
+           String value = res.getString("value");
+           submissionOrganismMap.put(submissionId, value);
+           count++;
+       }
+       res.close();
+       LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
+       LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
+}
+
+
+   /**
+    * Return the row needed for the organism.
+    * This is a protected method so that it can be overridden for testing
+    *
+    * @param connection the db connection
+    * @return the SQL result set
+    * @throws SQLException if a database problem occurs
+    */
+   protected ResultSet getSubmissionOrganism(Connection connection)
+   throws SQLException {
+       String query =
+           "select distinct eap.experiment_id, a.value "
+           + " from experiment_applied_protocol eap, applied_protocol ap, "
+           + " protocol_attribute pa, attribute a "
+           + " where eap.first_applied_protocol_id = ap.applied_protocol_id "
+           + " and ap.protocol_id=pa.protocol_id "
+           + " and pa.attribute_id=a.attribute_id "
+           + " and a.heading='species' ";
+       return doQuery(connection, query);
+   }
 
     /**
      *
@@ -828,7 +881,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
-        ResultSet res = getExpResultSet(connection);
+        ResultSet res = getExperimentResultSet(connection);
         Map<String, String> expProMap = new HashMap<String, String>();
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
@@ -889,7 +942,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getExpResultSet(Connection connection)
+    protected ResultSet getExperimentResultSet(Connection connection)
     throws SQLException {
         // TODO use standard SQl and deal with string in java
         String query =
@@ -898,60 +951,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " from experiment_prop e, dbxref x "
             + " where e.dbxref_id = x.dbxref_id "
             + " and e.name='Experiment Description' ";
-        return doQuery(connection, query);
-    }
-
-    /**
-     *
-     * ==============
-     *    ORGANISM
-     * ==============
-     *
-     * Organism for a submission is derived from the organism associated with
-     * the protocol of the first applied protocol (of the submission).
-     * it is the name. a request to associate the submission directly with
-     * the taxonid has been made to chado people.
-     *
-     * @param connection
-     * @throws SQLException
-     * @throws ObjectStoreException
-     */
-    private void processSubmissionOrganism(Connection connection)
-    throws SQLException, ObjectStoreException {
-        long bT = System.currentTimeMillis(); // to monitor time spent in the process
-
-        ResultSet res = getSubmissionOrganism(connection);
-        int count = 0;
-        while (res.next()) {
-            Integer submissionId = new Integer(res.getInt("experiment_id"));
-            String value = res.getString("value");
-            submissionOrganismMap.put(submissionId, value);
-            count++;
-        }
-        res.close();
-        LOG.info("found an organism for " + submissionOrganismMap.size() + " submissions.");
-        LOG.info("PROCESS TIME organisms: " + (System.currentTimeMillis() - bT));
-}
-
-
-    /**
-     * Return the row needed for the organism.
-     * This is a protected method so that it can be overridden for testing
-     *
-     * @param connection the db connection
-     * @return the SQL result set
-     * @throws SQLException if a database problem occurs
-     */
-    protected ResultSet getSubmissionOrganism(Connection connection)
-    throws SQLException {
-        String query =
-            "select distinct eap.experiment_id, a.value "
-            + " from experiment_applied_protocol eap, applied_protocol ap, "
-            + " protocol_attribute pa, attribute a "
-            + " where eap.first_applied_protocol_id = ap.applied_protocol_id "
-            + " and ap.protocol_id=pa.protocol_id "
-            + " and pa.attribute_id=a.attribute_id "
-            + " and a.heading='species' ";
         return doQuery(connection, query);
     }
 
@@ -970,7 +969,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
-        ResultSet res = getExperimentResultSet(connection);
+        ResultSet res = getSubmissionResultSet(connection);
         int count = 0;
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
@@ -1031,7 +1030,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getExperimentResultSet(Connection connection)
+    protected ResultSet getSubmissionResultSet(Connection connection)
     throws SQLException {
         String query =
             "SELECT experiment_id, uniquename"
@@ -1040,7 +1039,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * experiment attributes
+     * submission attributes (table experiment_prop)
      *
      * @param connection
      * @throws SQLException
@@ -1647,7 +1646,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     buildSubProperty = new SubmissionProperty(getPreferredSynonym(dataName), wikiPageUrl);
                     props.put(wikiPageUrl, buildSubProperty);
                 }
-                
                 // submissionId -> [type -> SubmissionProperty]
                 addToSubToTypes(subToTypes, submissionId, props.get(wikiPageUrl));
             }
@@ -1686,7 +1684,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
-            LOG.debug("PROP " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
+            LOG.debug("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
             
             List<Item> allPropertyItems = new ArrayList<Item>();
             
@@ -1952,7 +1950,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Map<Integer, SubmissionProperty> createdProps = new HashMap<Integer, SubmissionProperty>();
         SubmissionProperty buildSubProperty = null;
         boolean isValidCharacteristic = false;
-        Integer submissionId = null;
+        Integer currentSubId = null;   // we need those to attach the property to the correct sub
+        Integer previousSubId = null;
         
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -1961,22 +1960,21 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attValue = res.getString("att_value");
             Integer attDbxref = new Integer(res.getInt("att_dbxref"));
             
-            submissionId = dataSubmissionMap.get(dataId);
-            if (attDbxref.intValue() != lastAttDbXref.intValue()) {
-                
+            currentSubId = dataSubmissionMap.get(dataId);
+
+            if (attDbxref.intValue() != lastAttDbXref.intValue()) {                
                 // store the last build property if created, type is set only if we found an
                 // attHeading of Characteristics
                 if (buildSubProperty != null && buildSubProperty.type != null) {
                     createdProps.put(lastAttDbXref, buildSubProperty);    
-                    addToSubToTypes(subToTypes, submissionId, buildSubProperty);
+                    addToSubToTypes(subToTypes, previousSubId, buildSubProperty);
                 }
-                
                 // set up for next attDbxref 
                 if (createdProps.containsKey(attDbxref) && isValidCharacteristic) {
                     // seen this property before so just add for this submission, don't build again
                     buildSubProperty = null;
                     isValidCharacteristic = false;
-                    addToSubToTypes(subToTypes, submissionId, createdProps.get(attDbxref));
+                    addToSubToTypes(subToTypes, currentSubId, createdProps.get(attDbxref));
                 } else {
                     buildSubProperty = new SubmissionProperty();
                     isValidCharacteristic = false;
@@ -1991,21 +1989,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (attHeading.startsWith("Characteristic")) {
                     buildSubProperty.type = getPreferredSynonym(attName);
                     buildSubProperty.wikiPageUrl = attValue;
-                    
-                    // add detail here as some Characteristics that don't reference a wiki page
-                    
+                    // add detail here as some Characteristics that don't reference a wiki page                    
                     // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
                 } else {
                     buildSubProperty.addDetail(attHeading, attValue);
                 }
             }
+            previousSubId = currentSubId;
             lastAttDbXref = attDbxref;
         }
 
         if (buildSubProperty != null && buildSubProperty.type != null) {
             createdProps.put(lastAttDbXref, buildSubProperty);    
-            addToSubToTypes(subToTypes, submissionId, buildSubProperty);
+            addToSubToTypes(subToTypes, currentSubId, buildSubProperty);
         }
     }
     
@@ -2539,6 +2536,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " LEFT JOIN cvterm c ON (d.type_id = c.cvterm_id)"
             + " LEFT JOIN dbxref as x ON (a.dbxref_id = x.dbxref_id)"
             + " WHERE d.name != '" + SRA_ACC + "'"
+            + " AND d.value != '' "
             + " ORDER BY d.data_id";
         return doQuery(connection, query);
     }
@@ -2561,7 +2559,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " AND da.attribute_id = a.attribute_id"
             + " AND a.dbxref_id = ax.dbxref_id"
             + " AND ax.db_id = db.db_id"
-            + " ORDER BY d.data_id, a.dbxref_id";
+            + " ORDER BY d.data_id, a.dbxref_id ";
 
         return doQuery(connection, query);
     }
@@ -2914,6 +2912,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
         FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
         FIELD_NAME_MAP.put("dcc_id", "DCCid");
+        //FIELD_NAME_MAP.put("PubMed ID", "publication");
         FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Mid Initials", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
