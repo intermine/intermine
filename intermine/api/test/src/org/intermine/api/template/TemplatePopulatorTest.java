@@ -49,13 +49,15 @@ public class TemplatePopulatorTest extends TestCase {
         ObjectStoreWriter uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
 
-        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap());
+        Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(), 
+        		new HashMap(), new HashMap());
         pm.createProfile(profile);
         return profile;
     }
     
     public void testInvalidPathInValues() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.error", ConstraintOp.EQUALS, "error name", "A");
+    	TemplateValue value = new TemplateValue("Employee.error", ConstraintOp.EQUALS, "error name",
+    			TemplateValue.ValueType.SIMPLE_VALUE, "A");
     	values.put("Employee.error", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
@@ -65,7 +67,8 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testNoValuesForNode() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21", "A");
+    	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21", 
+    			TemplateValue.ValueType.SIMPLE_VALUE, "A");
     	values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
@@ -75,8 +78,10 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testTooManyValuesForNode() throws Exception {
-    	TemplateValue value1 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name", "A");
-    	TemplateValue value2 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "other name", "A");
+    	TemplateValue value1 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name", 
+    			TemplateValue.ValueType.SIMPLE_VALUE, "A");
+    	TemplateValue value2 = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "other name", 
+    			TemplateValue.ValueType.SIMPLE_VALUE, "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value1, value2}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
@@ -87,7 +92,8 @@ public class TemplatePopulatorTest extends TestCase {
  
     public void testTooFewValuesForNode() throws Exception {
     	TemplateQuery employeesOfACertainAge = templates.get("employeesOfACertainAge");
-    	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21", "A");
+    	TemplateValue value = new TemplateValue("Employee.age", ConstraintOp.EQUALS, "21",
+    			TemplateValue.ValueType.SIMPLE_VALUE, "A");
     	values.put("Employee.age", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(employeesOfACertainAge, values);
@@ -97,7 +103,8 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testWrongCode() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name", "Z");
+    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.EQUALS, "name",
+    			TemplateValue.ValueType.SIMPLE_VALUE, "Z");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
@@ -107,7 +114,8 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testOneConstraint() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.NOT_EQUALS, "Kevin Bacon", "A");
+    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.NOT_EQUALS,
+    			"Kevin Bacon", TemplateValue.ValueType.SIMPLE_VALUE, "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	TemplateQuery res = TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
     	assertEquals(1, res.getAllEditableConstraints().size());
@@ -117,8 +125,8 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testOneBagConstraint() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.IN, "bag1", "A");
-    	value.setBagConstraint(true);
+    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.IN, "bag1",
+    			TemplateValue.ValueType.BAG_VALUE, "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	TemplateQuery res = TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);
     	assertEquals(1, res.getAllEditableConstraints().size());
@@ -203,8 +211,8 @@ public class TemplatePopulatorTest extends TestCase {
     }
     
     public void testSetConstraintWrongBagOp() throws Exception {
-    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.GREATER_THAN, "bag1", "A");
-    	value.setBagConstraint(true);
+    	TemplateValue value = new TemplateValue("Employee.name", ConstraintOp.GREATER_THAN, "bag1",
+    			TemplateValue.ValueType.BAG_VALUE, "A");
     	values.put("Employee.name", Arrays.asList(new TemplateValue[] {value}));
     	try {
     		TemplatePopulator.getPopulatedTemplate(simpleTemplate, values);

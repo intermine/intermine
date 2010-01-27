@@ -133,8 +133,7 @@ public class TemplatePopulator
 
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.EQUALS,
-                obj, constraint.getCode());
-        templateValue.setObjectConstraint(Boolean.TRUE);
+                obj, TemplateValue.ValueType.OBJECT_VALUE, constraint.getCode());
         templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
@@ -174,8 +173,7 @@ public class TemplatePopulator
 
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), ConstraintOp.IN,
-                bag.getName(), constraint.getCode());
-        templateValue.setBagConstraint(Boolean.TRUE);
+                bag.getName(), TemplateValue.ValueType.BAG_VALUE, constraint.getCode());
         templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
@@ -204,7 +202,7 @@ public class TemplatePopulator
         PathNode node = template.getEditableNodes().get(0);
         Constraint constraint = template.getEditableConstraints(node).get(0);
         TemplateValue templateValue = new TemplateValue(node.getPathString(), op, value,
-                constraint.getCode());
+                TemplateValue.ValueType.SIMPLE_VALUE, constraint.getCode());
         templateValues.put(node.getPathString(),
                 new ArrayList<TemplateValue>(Collections.singleton(templateValue)));
 
@@ -221,6 +219,14 @@ public class TemplatePopulator
         }
     }
 
+    /**
+     * Set the value for a constraint in the template query with the given TempalteValue.  This may
+     * move a constraint from an attribute to the parent class if the constraint is object or bag.
+     * @param template the template to constrain
+     * @param node the node the constraint is on
+     * @param c the constraint to set the value
+     * @param templateValue container for the value to set constraint to
+     */
     protected static void setConstraint(TemplateQuery template, PathNode node, Constraint c,
             TemplateValue templateValue) {
         int constraintIndex = node.getConstraints().indexOf(c);
