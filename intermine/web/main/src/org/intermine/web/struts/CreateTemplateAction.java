@@ -146,8 +146,8 @@ public class CreateTemplateAction extends InterMineAction
         // Ensure that we can actually execute the query
         if (!seenProblem) {
             try {
-                if (query.getInfo() == null) {
-                    query.setInfo(webResultsExecutor.explain(query));
+                if (webResultsExecutor.getQueryInfo(query) == null) {
+                    webResultsExecutor.setQueryInfo(query, webResultsExecutor.explain(query));
                 }
             } catch (ObjectStoreException e) {
                 recordError(new ActionMessage("errors.query.objectstoreerror"), request, e, LOG);

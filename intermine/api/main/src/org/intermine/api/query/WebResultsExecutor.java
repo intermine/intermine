@@ -13,6 +13,7 @@ package org.intermine.api.query;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -37,6 +38,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathQuery;
 
+import org.apache.log4j.Logger;
+
 /**
  * Executes a PathQuery and returns a WebResults object, to be used when multi-row
  * style results are required.
@@ -46,6 +49,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class WebResultsExecutor
 {
+    private static final Logger LOG = Logger.getLogger(WebResultsExecutor.class);
     private ObjectStore os;
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
@@ -54,7 +58,8 @@ public class WebResultsExecutor
     private BagManager bagManager;
     private static Map<Query, Map<String, QuerySelectable>> queryToPathToQueryNode
         = Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
-
+    private Map<PathQuery, ResultsInfo> infoCache = Collections.synchronizedMap(
+            new IdentityHashMap<PathQuery, ResultsInfo>());
 
     /**
      * Constructor with necessary objects to generate an ObjectStore query from a PathQuery and
@@ -245,5 +250,36 @@ public class WebResultsExecutor
             return true;
         }
         return false;
+    }
+
+    /**
+     * Sets a ResultsInfo entry in the infoCache for a given PathQuery. This info can then be used
+     * later on the MyMine page to see a preview of how many rows are in the results.
+     *
+     * @param query a PathQuery object
+     * @param info a ResultsInfo object corresponding to the query
+     */
+    public void setQueryInfo(PathQuery query, ResultsInfo info) {
+        infoCache.put(query, info);
+    }
+
+    /**
+     * Retrieve an entry from the infoCache.
+     *
+     * @param query a PathQuery object
+     * @return a ResultsInfo object, or null if none is present in the cache
+     */
+    public ResultsInfo getQueryInfo(PathQuery query) {
+        return infoCache.get(query);
+    }
+
+    /**
+     * Returns the entire infoCache, which is an unmodifiable Map from PathQuery (by identity) to
+     * ResultsInfo.
+     *
+     * @return a Map
+     */
+    public Map<PathQuery, ResultsInfo> getInfoCache() {
+        return Collections.unmodifiableMap(infoCache);
     }
 }
