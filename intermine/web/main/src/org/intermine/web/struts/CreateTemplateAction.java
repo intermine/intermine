@@ -11,7 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,6 @@ import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraint;
-import org.intermine.pathquery.PathNode;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateBuildState;
@@ -85,23 +83,15 @@ public class CreateTemplateAction extends InterMineAction
             recordError(new ActionMessage("errors.createtemplate.templatewithlist"), request);
             seenProblem = true;
         }
-        Iterator iter = query.getNodes().values().iterator();
+
         boolean foundEditableConstraint = false;
         boolean foundNonEditableLookup = false;
-        while (iter.hasNext()) {
-            PathNode node = (PathNode) iter.next();
-            Iterator citer = node.getConstraints().iterator();
-            while (citer.hasNext()) {
-                Constraint c = (Constraint) citer.next();
-                if (c.isEditable()) {
-                    foundEditableConstraint = true;
-                    break;
-                }
-                if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-                    foundNonEditableLookup = true;
-                }
-
-            }
+        for (Constraint c : query.getAllConstraints()) {
+        	if (c.isEditable()) {
+        		foundEditableConstraint = true;
+        	} else if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+        		foundNonEditableLookup = true;
+        	}
         }
 
         // template must have at least one editable constrain

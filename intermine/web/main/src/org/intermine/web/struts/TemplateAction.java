@@ -234,8 +234,8 @@ public class TemplateAction extends InterMineAction
                             .getOpForIndex(Integer.valueOf(tf.getBagOp(key)));
                     Object constraintValue = tf.getBag(key);
                     value = new TemplateValue(node.getPathString(),
-                            constraintOp, constraintValue, c.getCode());
-                    value.setBagConstraint(true);
+                            constraintOp, constraintValue, TemplateValue.ValueType.BAG_VALUE,
+                            c.getCode());
                 } else {
                     String op = (String) tf.getAttributeOps(key);
                     ConstraintOp constraintOp = ConstraintOp
@@ -243,7 +243,9 @@ public class TemplateAction extends InterMineAction
                     Object constraintValue = tf.getAttributeValues(key);
                     Object extraValue = tf.getExtraValues(key);
                     value = new TemplateValue(node.getPathString(),
-                            constraintOp, constraintValue, c.getCode(), extraValue);
+                            constraintOp, constraintValue, TemplateValue.ValueType.SIMPLE_VALUE,
+                            c.getCode(),
+                            extraValue);
                 }
                 nodeValues.add(value);
             }
