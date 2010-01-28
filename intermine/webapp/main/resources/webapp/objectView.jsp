@@ -16,7 +16,7 @@
 
 <c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
 
-<span class="objectView">
+
   <c:choose>
     <c:when test="${empty leafClds}">
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
@@ -96,5 +96,5 @@
       </div>
     </c:otherwise>
   </c:choose>
-</span>
+
 <!-- /objectView.jsp -->
