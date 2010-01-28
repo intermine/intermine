@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -90,11 +91,6 @@ public class UniprotConverter extends DirectoryConverter
      */
     @Override
     public void process(File dataDir) throws Exception {
-        Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
-        // check that we have valid files before we start storing ANY data
-        if (taxonIdToFiles == null || taxonIdToFiles.isEmpty()) {
-            throw new RuntimeException("no files found in " + dataDir.getCanonicalPath());
-        }
         try {
             datasourceRefId = getDataSource("UniProt");
             setOntology("UniProtKeyword");
@@ -102,40 +98,64 @@ public class UniprotConverter extends DirectoryConverter
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        Iterator iter = taxonIds.iterator();
-        while (iter.hasNext()) {
-            String taxonId = iter.next().toString();
-            if (taxonIdToFiles.get(taxonId) == null) {
-                throw new RuntimeException("no files found for " + taxonId);
-            }
-            File[] files = taxonIdToFiles.get(taxonId);
-            for (int i = 0; i <= 1; i++) {
-                File file = files[i];
-                if (file == null) {
-                    continue;
-                }
-                Set<UniprotEntry> entries = new HashSet();
-                UniprotHandler handler = new UniprotHandler(entries);
-                try {
-                    Reader reader = new FileReader(file);
-                    SAXParser.parse(new InputSource(reader), handler);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-                // process all uniprot entries
-                Set<UniprotEntry> isoforms = processEntries(entries);
-                // process all isoforms created
-                processEntries(isoforms);
-            }
+        Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
 
-            // reset all variables here, new organism
-            synonyms = new HashMap();
-            sequences = new HashMap();
-            genes = new HashMap();
+        // if files aren't in taxonId_sprot|trembl format, assume they are in uniprot_sprot.xml 
+        // format
+        if (taxonIdToFiles == null || taxonIdToFiles.isEmpty()) {
+            File[] files = dataDir.listFiles();
+            File[] sortedFiles = new File[2];
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                String filename = file.getName();
+                // process sprot, then trembl
+                if (filename.equals("uniprot_sprot.xml")) {
+                    sortedFiles[0] = file;
+                } else if (filename.equals("uniprot_trembl.xml")) {
+                    sortedFiles[1] = file;
+                }                
+            }
+            processFiles(sortedFiles);
+        } else {
+            Iterator iter = taxonIds.iterator();
+            while (iter.hasNext()) {
+                String taxonId = iter.next().toString();
+                if (taxonIdToFiles.get(taxonId) == null) {
+                    throw new RuntimeException("no files found for " + taxonId);
+                }
+                processFiles(taxonIdToFiles.get(taxonId));
+            }
         }
     }
 
+    // process the sprot file, then the trembl file
+    private void processFiles(File[] files) 
+    throws SAXException {
+        for (int i = 0; i <= 1; i++) {
+            File file = files[i];
+            if (file == null) {
+                continue;
+            }
+            Set<UniprotEntry> entries = new HashSet();
+            UniprotHandler handler = new UniprotHandler(entries);
+            try {
+                Reader reader = new FileReader(file);
+                SAXParser.parse(new InputSource(reader), handler);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            // process all uniprot entries
+            Set<UniprotEntry> isoforms = processEntries(entries);
+            // process all isoforms created
+            processEntries(isoforms);
+        } 
+        // reset all variables here, new organism
+        synonyms = new HashMap();
+        sequences = new HashMap();
+        genes = new HashMap();
+    }
+    
     /*
      * sprot data files need to be processed immediately before trembl ones
      * not all organisms are going to have both files
@@ -440,9 +460,6 @@ public class UniprotConverter extends DirectoryConverter
             }
         }        
     }
-
-
-    
     
     private void processGoAnnotation(UniprotEntry entry, Item gene) 
     throws SAXException {
