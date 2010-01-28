@@ -29,29 +29,29 @@ public class UniprotEntry
     private static final Logger LOG = Logger.getLogger(UniprotEntry.class);
     private String datasetRefId = null;
     private String length, molecularWeight;
-    private List<Item> features = new ArrayList();
-    private List<String> domains = new ArrayList();
-    private List<String> pubs = new ArrayList();
-    private List<String> comments = new ArrayList();
-    private List<String> keywords = new ArrayList();
-    private List<String> accessions = new ArrayList();
-    private List<String> isoforms = new ArrayList();
-    private List<String> isoformSynonyms = new ArrayList();
-    private List<String> components = new ArrayList();
-    private List<String> proteinNames = new ArrayList();
-    private List<String> goTerms = new ArrayList();
+    private List<Item> features = new ArrayList<Item>();
+    private List<String> domains = new ArrayList<String>();
+    private List<String> pubs = new ArrayList<String>();
+    private List<String> comments = new ArrayList<String>();
+    private List<String> keywords = new ArrayList<String>();
+    private List<String> accessions = new ArrayList<String>();
+    private List<String> isoforms = new ArrayList<String>();
+    private List<String> isoformSynonyms = new ArrayList<String>();
+    private List<String> components = new ArrayList<String>();
+    private List<String> proteinNames = new ArrayList<String>();
+    private List<String> goTerms = new ArrayList<String>();
     private boolean isDuplicate = false, isIsoform = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String seqRefId, md5checksum;
     private String commentType;
-    private List<UniprotGene> geneEntries = new ArrayList();
-    private Map<String, List<String>> dbrefs = new HashMap();
+    private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
+    private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
 
     // map of gene designation (normally the primary name) to dbref (eg. FlyBase, FBgn001)
     // this map is used when there is more than one gene but the dbref is needed to set an
     // identifier
-    private Map<String, Dbref> geneDesignationToDbref = new HashMap();
+    private Map<String, Dbref> geneDesignationToDbref = new HashMap<String, Dbref>();
 
     // temporary objects that hold attribute value until the item is stored
     // usually on the next line of XML
@@ -192,7 +192,6 @@ public class UniprotEntry
         return currentFeature;
     }
 
-
     /**
      * @param orientation begin or end
      * @param position position
@@ -208,12 +207,10 @@ public class UniprotEntry
         return features;
     }
 
-
-
     /**
      * @return list of refIds representing the publication objects
      */
-    public List getPubs() {
+    public List<String> getPubs() {
         return pubs;
     }
 
@@ -227,7 +224,7 @@ public class UniprotEntry
     /**
      * @return list of refIds representing the keyword objects
      */
-    public List getKeywords() {
+    public List<String> getKeywords() {
         return keywords;
     }
 
@@ -424,8 +421,8 @@ public class UniprotEntry
      * @return list of all the synonyms for this entry, including name and accessions but not
      * isoform synonyms
      */
-    public List getSynonyms() {
-        List<String> synonyms = new ArrayList();
+    public List<String> getSynonyms() {
+        List<String> synonyms = new ArrayList<String>();
         synonyms.addAll(accessions);
         synonyms.add(primaryAccession);
         synonyms.add(name);
@@ -625,7 +622,7 @@ public class UniprotEntry
     public void setGOTerms(List<String> goterms) {
         this.goTerms = goterms;
     }
-    
+
     /**
      * @return the primaryIdentifier
      */
@@ -681,7 +678,7 @@ public class UniprotEntry
          * pair */
         dbref = new Dbref(type, id);
         if (dbrefs.get(type) == null) {
-            dbrefs.put(type, new ArrayList());
+            dbrefs.put(type, new ArrayList<String>());
         }
         dbrefs.get(type).add(id);
     }
@@ -701,7 +698,7 @@ public class UniprotEntry
             LOG.error("Could not set 'gene designation' for dbref:" + dbref);
         }
     }
-    
+
     /**
      *
      *  <dbReference type="Ensembl" key="23" id="FBtr0082909">
@@ -719,7 +716,7 @@ public class UniprotEntry
         }
         return null;
     }
-    
+
     /**
      * @return true if this uniprot entry has more than 1 gene
      */
@@ -752,7 +749,7 @@ public class UniprotEntry
      */
     public List<Map<String, String>> getGeneEntries() {
         Iterator<UniprotEntry.UniprotGene> it = geneEntries.iterator();
-        List<Map<String, String>> identifiers = new ArrayList();
+        List<Map<String, String>> identifiers = new ArrayList<Map<String, String>>();
         while (it.hasNext()) {
             UniprotGene uniprotGene = it.next();
             identifiers.add(uniprotGene.getGeneNames());
@@ -762,7 +759,7 @@ public class UniprotEntry
 
     // using all identifiers, find dbrefs with valid "gene designation" values
     private Map<String, List<String>> getValidDbrefs(List<String> identifiers) {
-        Map<String, List<String>> validDbrefs = new HashMap();
+        Map<String, List<String>> validDbrefs = new HashMap<String, List<String>>();
 
         // get all gene designation entries
         for (Map.Entry<String, Dbref> refs : geneDesignationToDbref.entrySet()) {
@@ -772,7 +769,7 @@ public class UniprotEntry
             String identifier = geneDesignationDbref.getValue();   // eg. FBgn001
             if (identifiers.contains(geneDesignation)) {
                 if (validDbrefs.get(dbname) == null) {
-                    validDbrefs.put(dbname, new ArrayList());
+                    validDbrefs.put(dbname, new ArrayList<String>());
                 }
                 validDbrefs.get(dbname).add(identifier);
             }
@@ -815,7 +812,7 @@ public class UniprotEntry
          * @return map representing dbref
          */
         public Map<String, String> toMap() {
-            Map<String, String> dbrefMap = new HashMap();
+            Map<String, String> dbrefMap = new HashMap<String, String>();
             dbrefMap.put(type, value);
             return dbrefMap;
         }
@@ -838,9 +835,9 @@ public class UniprotEntry
     public class UniprotGene
     {
         // map of name type to name value, eg ORF --> CG1234
-        protected Map<String, String> geneIdentifiers = new HashMap();
-        protected List<String> geneGOTerms = new ArrayList();
-        
+        protected Map<String, String> geneIdentifiers = new HashMap<String, String>();
+        protected List<String> geneGOTerms = new ArrayList<String>();
+
         /**
          * @param type type of variable, eg. ORF, primary
          * @param value value of variable, eg FBgn, CG
@@ -862,8 +859,8 @@ public class UniprotEntry
         protected void setGeneNames(Map<String, String> geneNames) {
             this.geneIdentifiers = geneNames;
         }
-        
-        
+
+
         /**
          * @return list of refIds representing go term objects
          */
@@ -877,12 +874,12 @@ public class UniprotEntry
         protected void setGOTerms(List<String> terms) {
             this.geneGOTerms = terms;
         }
-        
+
         /**
          * @return list of gene names
          */
         protected List<String> getGenes() {
-            List<String> genes = new ArrayList();
+            List<String> genes = new ArrayList<String>();
             genes.addAll(geneIdentifiers.values());
             return genes;
         }
@@ -892,7 +889,7 @@ public class UniprotEntry
      * @return cloned uniprot entry, an isoform of original entry
      */
     public List<UniprotEntry> cloneGenes() {
-        List<UniprotEntry> dummyEntries = new ArrayList();
+        List<UniprotEntry> dummyEntries = new ArrayList<UniprotEntry>();
 
         Iterator<UniprotGene> iter = geneEntries.iterator();
         while (iter.hasNext()) {
@@ -906,9 +903,9 @@ public class UniprotEntry
 
             // set gene names
             entry.setGeneNames(gene.getGeneNames());
-            
+
             entry.setGOTerms(goTerms);
-            
+
             // add to list
             dummyEntries.add(entry);
         }
