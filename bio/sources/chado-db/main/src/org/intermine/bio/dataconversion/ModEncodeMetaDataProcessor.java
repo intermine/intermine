@@ -105,6 +105,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // and chado identifiers with item identifiers (Integer, String)
     private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
+
+    private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
+    private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
+    
+    
+    
     private Map<Integer, String> protocolTypesMap = new HashMap<Integer, String>();
     private Map<Integer, Integer> appliedProtocolIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> appliedProtocolIdRefMap = new HashMap<Integer, String>();
@@ -246,7 +252,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processSubmissionProperties(connection);
         setSubmissionProtocolsRefs(connection);
         setSubmissionEFactorsRefs(connection);
-
+        setSubmissionPublicationRefs(connection);
     }
 
     /**
@@ -1073,6 +1079,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.info("DCC: " + submissionId + ", " + value);
                 dccIdMap.put(submissionId, value);
             }
+
+            if (fieldName.equals("pubMedId")) {
+                //LOG.info("PUBMED DCC: " + submissionId + ", " + value);
+                
+                if (value.contains(":")){
+                    value = value.substring(value.indexOf(':')+1);
+                }
+                
+                Item pub = getChadoDBConverter().createItem("Publication");
+                pub.setAttribute(fieldName, value);
+                Integer intermineObjectId = getChadoDBConverter().store(pub);
+                
+                publicationIdMap.put(submissionId, intermineObjectId);
+                publicationIdRefMap.put(submissionId, pub.getIdentifier());
+                continue;
+            }
+
+            
             setAttribute(submissionMap.get(submissionId).interMineObjectId, fieldName, value);
             count++;
         }
@@ -2848,6 +2872,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
+    //sub -> publication
+    private void setSubmissionPublicationRefs(Connection connection)
+    throws ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
+
+        Iterator<Integer> subs = publicationIdMap.keySet().iterator();
+        while (subs.hasNext()) {
+            Integer thisSubmissionId = subs.next();
+            Integer im_oid = publicationIdMap.get(thisSubmissionId);
+            Reference reference = new Reference();
+            reference.setName("publication");
+            reference.setRefId(publicationIdRefMap.get(thisSubmissionId));
+            getChadoDBConverter().store(reference,
+                    submissionMap.get(thisSubmissionId).interMineObjectId);
+            }
+        LOG.info("TIME setting submission-publication references: " + (System.currentTimeMillis() - bT));        
+    }
+
+    
+    
+    
 
     /**
      * to store references between applied protocols and their input data
@@ -2912,7 +2957,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
         FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
         FIELD_NAME_MAP.put("dcc_id", "DCCid");
-        //FIELD_NAME_MAP.put("PubMed ID", "publication");
+        FIELD_NAME_MAP.put("PubMed ID", "pubMedId");
         FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Mid Initials", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Person Last Name", NOT_TO_BE_LOADED);
