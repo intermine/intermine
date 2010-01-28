@@ -29,6 +29,10 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 import org.intermine.web.logic.widget.ErrorCorrection;
 import org.intermine.web.logic.widget.Hypergeometric;
 
+/**
+ * Helper class for widgets.  It's where the math is done for enrichment widgets 
+ * @author julie
+  */
 public class WidgetUtil
 {
     private static Map<String, List> statsCalcCache = new HashMap<String, List>();
