@@ -101,7 +101,7 @@ function swapStyles(elementId,style1,style2,checkbox){
     }
 }
 
-/* Show or hide element with specified id */
+// Show or hide element with specified id 
 function display(id, beDisplayed) {
     if (beDisplayed == true) {
         document.getElementById(id).style.display = 'block';
