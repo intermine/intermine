@@ -14,19 +14,16 @@ function getProcessGraphWidgetConfig(widgetId, bagName) {
 }
 
 function handleGraphWidget(widget) {
-  Element.hide($('widgetdatanoresults' + widget.configId));
+  display('widgetdatanoresults' + widget.configId, false);
   if(widget.hasResults) {
     var widgetdataname = document.getElementById('widgetdata' + widget.configId);
-    var widgetdatawait = document.getElementById('widgetdatawait' + widget.configId);
-
-    Element.update($(widgetdataname),widget.html);
-    Element.hide($(widgetdatawait));
-    Element.show($(widgetdataname));
+    widgetdataname.innerHTML = widget.html;
+    display('widgetdatawait' + widget.configId, false);
+    widgetdataname.style.display = 'block';
   } else {
-    Element.hide($('widgetdatawait' + widget.configId));
-    Element.hide($('widgetdata' + widget.configId));
-    Element.show($('widgetdatanoresults' + widget.configId));
-    //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
+    display('widgetdatawait' + widget.configId, false);
+    display('widgetdata' + widget.configId, false);
+    display('widgetdatanoresults' + widget.configId, true);
   }
   calcNotAnalysed(widget);
 }
@@ -44,13 +41,12 @@ function handleHTMLWidget(widget) {
     Element.show($(widgetdatacontent));
 }
 
-
 function getProcessTableWidgetConfig(widgetId, bagName) {
   AjaxServices.getProcessTableWidget(widgetId,bagName,handleTableWidget);
 }
 
 function handleTableWidget(widget) {
-  Element.hide($('widgetdatanoresults' + widget.configId));
+  display('widgetdatanoresults' + widget.configId, false);
 
   if(widget.hasResults) {
     removeChildren($("tablewidget"+widget.configId+"head"));
@@ -104,54 +100,16 @@ function handleTableWidget(widget) {
     Element.hide($(widgetdatawait));
      Element.show($(widgetdataname));
   } else {
-    Element.hide($('widgetdatawait' + widget.configId));
-    Element.hide($('widgetdata' + widget.configId));
-    Element.show($('widgetdatanoresults' + widget.configId));
-    //toggleWidget('widgetcontainer' + widget.configId, 'togglelink' + widget.configId);
+    display('widgetdatawait' + widget.configId, false);
+    display('widgetdata' + widget.configId, false);
+    display('widgetdatanoresults' + widget.configId, true);
   }
   calcNotAnalysed(widget);
 }
 
-function getProcessGridWidgetConfig(widgetId, bagName) {
-  var widgetdataname = document.getElementById('widgetdata' + widgetId);
-  var widgetdatawait = document.getElementById('widgetdatawait' + widgetId);
-
-  Element.hide($(widgetdataname));
-  Element.show($(widgetdatawait));
-
-  var externalLink;
-  if($("externalLink" + widgetId)!=null) {
-    externalLink = $("externalLink" + widgetId).value;
-  }
-
-  var externalLinkLabel;
-  if($("externalLinkLabel" + widgetId)!=null) {
-    externalLinkLabel = $("externalLinkLabel" + widgetId).value;
-  }
-
-  var highlight;
-  if($("highlight" + widgetId)!=null) {
-    highlight = $("highlight" + widgetId).value;
-  }
-
-  var numberOpt;
-  if($("numberOpt" + widgetId)!=null) {
-    numberOpt = $("numberOpt" + widgetId).value;
-  }
-
-  var pValue;
-  if($("pValue" + widgetId)!=null) {
-    pValue = $("pValue" + widgetId).value;
-  }
-  AjaxServices.getProcessGridWidget(widgetId,bagName,highlight,pValue,numberOpt,externalLink,externalLinkLabel,handleGridWidget);
-}
-
 function getProcessEnrichmentWidgetConfig(widgetId, bagName) {
-  var widgetdataname = document.getElementById('widgetdata' + widgetId);
-  var widgetdatawait = document.getElementById('widgetdatawait' + widgetId);
-
-  Element.hide($(widgetdataname));
-  Element.show($(widgetdatawait));
+  display('widgetdata' + widgetId, false);
+  display('widgetdatawait' + widgetId, true);
   var errorCorrection;
   if($("errorCorrection" + widgetId)!=null) {
     errorCorrection = $("errorCorrection" + widgetId).value;
@@ -209,8 +167,8 @@ function displayNotAnalysed(widgetId,type,extra) {
 function calcNotAnalysed(widget) {
         var isMSIE = /*@cc_on!@*/false;
         if (!isMSIE) {
-            //document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
-            $('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
+            document.getElementById('widgetnotanalysed' + widget.configId).innerHTML=widget.notAnalysed;
+            //$('widgetnotanalysed' + widget.configId).update(widget.notAnalysed);
         }
 }
 
