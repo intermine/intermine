@@ -108,6 +108,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("MRNA");
         commonFeatureInterMineTypes.add("CDNA");
         commonFeatureInterMineTypes.add("EST");
+        commonFeatureInterMineTypes.add("CDS");
     }
 
     /**
