@@ -381,11 +381,18 @@ public class BioPAXConverter extends FileConverter implements Visitor
         String filename = file.getName();
         String[] bits = filename.split(" ");
 
+        // bad filename eg `Human immunodeficiency virus 1.owl`, 
+        // expecting "Drosophila melanogaster.owl"
+        if (bits.length != 2) {
+            String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
+            + "'Drosophila melanogaster.owl'";
+            LOG.error(msg);
+            return null;
+        }
+        
         String genus = bits[0];
         String species = bits[1].split("\\.")[0];
-
-        String organismName = genus + " " + species;
-        
+        String organismName = genus + " " + species;        
         OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
         if (od == null) {
             LOG.error("No data for " + organismName + ".  Please add to repository.");
