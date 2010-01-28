@@ -13,6 +13,7 @@
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />
 
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
@@ -63,6 +64,7 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
 <script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/table.js'/>"></script>
 <!--[if lt IE 7.]>
   <script defer type="text/javascript" src="pngfix.js"></script>
 <![endif]-->
@@ -81,17 +83,4 @@ if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()
     </c:otherwise>
   </c:choose>
 </title>
-
-<script type="text/javascript">
-<!--
-  function showContactForm()
-  {
-    document.getElementById('contactFormDiv').style.display='';
-    document.getElementById('contactFormDivButton').style.display='none';
-    window.scrollTo(0, 99999);
-    document.getElementById("fbname").focus();
-  }
-
-//-->
-</script>
 <!-- /htmlHead.jsp -->

@@ -323,3 +323,10 @@ function findPosition(obj) {
 	}
 	return [curleft,curtop];
 }
+
+function showContactForm() {
+  document.getElementById('contactFormDiv').style.display='';
+  document.getElementById('contactFormDivButton').style.display='none';
+  window.scrollTo(0, 99999);
+  document.getElementById("fbname").focus();
+}

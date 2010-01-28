@@ -14,8 +14,6 @@
 <tiles:importAttribute name="inlineTable" ignore="true"/>
 <tiles:importAttribute name="highlightId" ignore="true"/>
 
-<script type="text/javascript" src="js/table.js" ></script>
-<link rel="stylesheet" href="css/resultstables.css" type="text/css" />
 <script type="text/javascript">
   function changePageSize() {
     var url = '${requestScope['javax.servlet.include.context_path']}/results.do?';
