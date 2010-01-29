@@ -53,8 +53,8 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
     private Map<String, String> comments = new HashMap<String, String>();
-    private Map<String, String> synonyms = new HashMap<String, String>();
     private Map<String, String> datasets = new HashMap<String, String>();
+    private Map<String, String> synonyms = new HashMap<String, String>();
     private Map<String, String> domains = new HashMap<String, String>();
     private Map<String, List<String>> sequences = new HashMap<String, List<String>>();
     private Map<String, String> datasources = new HashMap<String, String>();
@@ -134,8 +134,7 @@ public class UniprotConverter extends DirectoryConverter
             if (file == null) {
                 continue;
             }
-            Set<UniprotEntry> entries = new HashSet<UniprotEntry>();
-            UniprotHandler handler = new UniprotHandler(entries);
+            UniprotHandler handler = new UniprotHandler();
             try {
                 System.out.println("Processing file: " + file.getPath());
                 Reader reader = new FileReader(file);
@@ -146,7 +145,6 @@ public class UniprotConverter extends DirectoryConverter
             }
         } 
         // reset all variables here, new organism
-        synonyms = new HashMap<String, String>();
         sequences = new HashMap<String, List<String>>();
         genes = new HashMap<String, String>();
     }
@@ -237,16 +235,15 @@ public class UniprotConverter extends DirectoryConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private String taxonId = null;
-        private Set<UniprotEntry> entries;
-
+        private Map<String, String> synonyms = new HashMap<String, String>();
+        
         private int entryCount = 0;
         
         /**
          * @param entries empty map to be populated with uniprot entries
          * @param isoforms empty map to be populated with isoforms
          */
-        public UniprotHandler(Set<UniprotEntry> entries) {
-            this.entries = entries;
+        public UniprotHandler() {
         }
 
         /**
@@ -258,7 +255,6 @@ public class UniprotConverter extends DirectoryConverter
             attName = null;
             if (qName.equals("entry")) {
                 entry = new UniprotEntry();
-                entries.add(entry);
                 entry.setDatasetRefId(getDataset(getAttrValue(attrs, "dataset")));
 //            } else if (qName.equals("protein")) {
 //                String isFragment = "false";
@@ -561,14 +557,11 @@ public class UniprotConverter extends DirectoryConverter
                     store(protein);
 
                     processSynonyms(synonymRefIds, protein.getIdentifier(), entry);
-                    if (!synonymRefIds.isEmpty()) {
-                        protein.setCollection("synonyms", synonymRefIds);
-                    }
 
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
                 }
-
+                synonyms = new HashMap<String, String>();
             }
             return isoforms;
         }
@@ -589,7 +582,6 @@ public class UniprotConverter extends DirectoryConverter
             sb.append("genes: " + genes.size() + endl);
             sb.append("goterms: " + goterms.size() + endl);
             sb.append("geneIdentifiers: " + geneIdentifiers.size() + endl);
-            sb.append("entries: " + entries.size() + endl);
             sb.append("stack: " + stack.size() + endl);
             LOG.info("Processed " + entryCount + " entries: " + endl + sb.toString());
         }
