@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import org.intermine.web.logic.SortableMap;
 
@@ -32,8 +33,8 @@ import org.intermine.web.logic.SortableMap;
  */
 public class BenjaminiHochberg implements ErrorCorrection
 {
-    private HashMap<String, BigDecimal> originalMap = new HashMap<String, BigDecimal>();
-    private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
+    private LinkedHashMap<String, BigDecimal> originalMap;
+    private HashMap<String, BigDecimal> adjustedMap;
     private double numberOfTests;
 
     /**
@@ -45,18 +46,17 @@ public class BenjaminiHochberg implements ErrorCorrection
         SortableMap sortedMap = new SortableMap(originalMap);
         // sort descending
         sortedMap.sortValues(false, false);
-        this.originalMap = new HashMap<String, BigDecimal>(sortedMap);
+        this.originalMap = new LinkedHashMap(sortedMap);
     }
 
     /**
-     * Calculates the Benjamini and Hochberg correction of
-     * the false discovery rate
+     * Calculates the Benjamini and Hochberg correction of the false discovery rate
      * @param max maximum value we are interested in - used for display purposes only
      */
     @SuppressWarnings("unchecked")
     public void calculate(Double max) {
 
-        adjustedMap = new HashMap<String, BigDecimal>();
+        adjustedMap = new LinkedHashMap();
         BigDecimal adjustedP = new BigDecimal(0);
         int i = 0;
 
