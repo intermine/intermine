@@ -31,7 +31,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
-import org.intermine.util.Util;
 import org.intermine.xml.full.Item;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -56,7 +55,8 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> datasets = new HashMap<String, String>();
     private Map<String, String> synonyms = new HashMap<String, String>();
     private Map<String, String> domains = new HashMap<String, String>();
-    private Map<String, List<String>> sequences = new HashMap<String, List<String>>();
+    // taxonId -> [md5Checksum -> stored protein identifier]
+    private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
     private Map<String, String> datasources = new HashMap<String, String>();
     private Map<String, String> ontologies = new HashMap<String, String>();
     private Map<String, String> keywords = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class UniprotConverter extends DirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
 
     // don't allow duplicate identifiers
-    private List<String> geneIdentifiers = new ArrayList<String>();
+    private Set<String> geneIdentifiers = new HashSet<String>();
 
     private boolean createInterpro = false;
     private boolean creatego = false;
@@ -145,8 +145,9 @@ public class UniprotConverter extends DirectoryConverter
             }
         } 
         // reset all variables here, new organism
-        sequences = new HashMap<String, List<String>>();
+        sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
+        geneIdentifiers = new HashSet<String>();
     }
 
     /*
@@ -235,7 +236,6 @@ public class UniprotConverter extends DirectoryConverter
         private String attName = null;
         private StringBuffer attValue = null;
         private String taxonId = null;
-        private Map<String, String> synonyms = new HashMap<String, String>();
         
         private int entryCount = 0;
         
@@ -384,7 +384,7 @@ public class UniprotConverter extends DirectoryConverter
                 return;
             }
             if (qName.equals("sequence")) {
-                setSequence(entry, attValue.toString().replaceAll("\n", ""));
+                entry.setSequence(attValue.toString().replaceAll("\n", ""));
             } else if (attName.equals("proteinName")) {
                 entry.setName(attValue.toString());
             } else if (attName.equals("synonym")) {
@@ -482,17 +482,30 @@ public class UniprotConverter extends DirectoryConverter
 
             entryCount++;
             
-            if (entryCount % 1000 == 0) {
-                logMapSizes();
+            if (entryCount % 10000 == 0) {
+                LOG.info("Processed " + entryCount + " entries.");
             }
-            
+
             Set<UniprotEntry> isoforms = new HashSet<UniprotEntry>();
 
+            // have we already seen a protein for this organism with the same sequence?
+            if (!entry.isIsoform() && seenSequence(entry.getTaxonId(), entry.getMd5checksum())) {
+                // if we have seen this sequence before for this organism just add the
+                // primaryAccession of this protein as a synonym for the one already stored.
+                Map<String, String> orgSequences = sequences.get(taxonId);
+                if (orgSequences != null && orgSequences.containsKey(entry.getMd5checksum())) {
+                    getSynonym(orgSequences.get(entry.getMd5checksum()), "accession",
+                            entry.getPrimaryAccession(), "false", entry.getDatasetRefId());
+                }
+                return isoforms;
+            }
+            
+            
             // TODO there are uniparc entries so check for swissprot-trembl datasets
-            if (entry.hasDatasetRefId() && entry.hasPrimaryAccession() && !entry.isDuplicate()) {
+            if (entry.hasDatasetRefId() && entry.hasPrimaryAccession()) {
 
                 for (String isoformAccession: entry.getIsoforms()) {
-                    isoforms.add(entry.clone(isoformAccession));
+                    isoforms.add(entry.createIsoformEntry(isoformAccession));
                 }
 
                 Item protein = createItem("Protein");
@@ -546,17 +559,20 @@ public class UniprotConverter extends DirectoryConverter
                     processComponents(protein, entry);
                 }
 
-                List<String> synonymRefIds = new ArrayList<String>();
+                // record that we have seen this sequence for this organism
+                addSeenSequence(entry.getTaxonId(), entry.getMd5checksum(),
+                        protein.getIdentifier());
+               
                 try {
                     /* dbrefs (go terms, refseq) */
-                    processDbrefs(protein, entry, synonymRefIds);
+                    processDbrefs(protein, entry);
 
                     /* genes */
                     processGene(protein, entry);
 
                     store(protein);
 
-                    processSynonyms(synonymRefIds, protein.getIdentifier(), entry);
+                    processSynonyms(protein.getIdentifier(), entry);
 
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
@@ -566,29 +582,18 @@ public class UniprotConverter extends DirectoryConverter
             return isoforms;
         }
 
-        private void logMapSizes() {
-            StringBuffer sb = new StringBuffer();
-            String endl = System.getProperty("line.separator");
-            sb.append("pubs: " + pubs.size() + endl);
-            sb.append("organisms: " + organisms.size() + endl);
-            sb.append("comments: " + comments.size() + endl);
-            sb.append("synonyms: " + synonyms.size() + endl);
-            sb.append("datasets: " + datasets.size() + endl);
-            sb.append("domains: " + domains.size() + endl);
-            sb.append("sequences: " + sequences.size() + endl);
-            sb.append("datasources: " + datasources.size() + endl);
-            sb.append("ontologies: " + ontologies.size() + endl);
-            sb.append("keywords: " + keywords.size() + endl);
-            sb.append("genes: " + genes.size() + endl);
-            sb.append("goterms: " + goterms.size() + endl);
-            sb.append("geneIdentifiers: " + geneIdentifiers.size() + endl);
-            sb.append("stack: " + stack.size() + endl);
-            LOG.info("Processed " + entryCount + " entries: " + endl + sb.toString());
-        }
         
         private void processSequence(Item protein, UniprotEntry entry) {
+            Item item = createItem("Sequence");
+            item.setAttribute("residues", entry.getSequence());
+            item.setAttribute("length", entry.getLength());
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
             protein.setAttribute("length", entry.getLength());
-            protein.setReference("sequence", entry.getSeqRefId());
+            protein.setReference("sequence", item.getIdentifier());
             protein.setAttribute("molecularWeight", entry.getMolecularWeight());
             protein.setAttribute("md5checksum", entry.getMd5checksum());
         }
@@ -646,64 +651,48 @@ public class UniprotConverter extends DirectoryConverter
             }
         }
 
-        private void processSynonyms(List<String> proteinSynonyms, String proteinRefId,
-                UniprotEntry entry)
+        private void processSynonyms(String proteinRefId, UniprotEntry entry)
         throws SAXException {
 
             String datasetRefId = entry.getDatasetRefId();
 
             // primary accession
-            String refId = getSynonym(proteinRefId, "accession", entry.getPrimaryAccession(),
+            getSynonym(proteinRefId, "accession", entry.getPrimaryAccession(),
                     "true", datasetRefId);
-            proteinSynonyms.add(refId);
 
             // accessions
             for (String accession : entry.getAccessions()) {
-                refId = getSynonym(proteinRefId, "accession", accession, "false", datasetRefId);
-                proteinSynonyms.add(refId);
+                getSynonym(proteinRefId, "accession", accession, "false", datasetRefId);
             }
 
             // primaryIdentifier
             String primaryIdentifier = entry.getPrimaryIdentifier();
-            refId = getSynonym(proteinRefId, "identifier", primaryIdentifier, "false",
+            getSynonym(proteinRefId, "identifier", primaryIdentifier, "false",
                     datasetRefId);
-            proteinSynonyms.add(refId);
 
             // primaryIdentifier if isoform
             if (entry.isIsoform()) {
-                String isoformIdentifier
-                = getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
-                refId = getSynonym(proteinRefId, "identifier", isoformIdentifier, "false",
+                String isoformIdentifier =
+                    getIsoformIdentifier(entry.getPrimaryAccession(), entry.getPrimaryIdentifier());
+                getSynonym(proteinRefId, "identifier", isoformIdentifier, "false",
                         datasetRefId);
-                proteinSynonyms.add(refId);
             }
 
             // name <recommendedName> or <alternateName>
             for (String name : entry.getProteinNames()) {
-                refId = getSynonym(proteinRefId, "name", name, "false", datasetRefId);
-                proteinSynonyms.add(refId);
-            }
-
-            // duplicate trembl entries
-            if (!entry.isIsoform() && entry.getMd5checksum() != null
-                            && !sequences.get(entry.getMd5checksum()).isEmpty()) {
-                for (String synonym : sequences.get(entry.getMd5checksum())) {
-                    refId = getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
-                    proteinSynonyms.add(refId);
-                }
+                getSynonym(proteinRefId, "name", name, "false", datasetRefId);
             }
 
             // isoforms with extra identifiers
             List<String> isoformSynonyms = entry.getIsoformSynonyms();
             if (!isoformSynonyms.isEmpty()) {
                 for (String synonym : isoformSynonyms) {
-                    refId = getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
-                    proteinSynonyms.add(refId);
+                    getSynonym(proteinRefId, "accession", synonym, "false", datasetRefId);
                 }
             }
         }
 
-        private void processDbrefs(Item protein, UniprotEntry entry, List<String> synonymRefIds)
+        private void processDbrefs(Item protein, UniprotEntry entry)
         throws SAXException {
             Map<String, List<String>> dbrefs = entry.getDbrefs();
 
@@ -716,9 +705,8 @@ public class UniprotConverter extends DirectoryConverter
                     protein.setAttribute("ecNumber", values.get(0));
                 } else if (key.equals("RefSeq")) {
                     for (String synonym : values) {
-                        String refId = getSynonym(protein.getIdentifier(), "identifier", synonym, 
+                        getSynonym(protein.getIdentifier(), "identifier", synonym, 
                                 "false", entry.getDatasetRefId());
-                        synonymRefIds.add(refId);
                     }
                 } else if (creatego && key.equals("GO")) {
                     for (String identifier : values) {
@@ -827,6 +815,7 @@ public class UniprotConverter extends DirectoryConverter
                      * identifier will always be a duplicate in this case.
                      */
                     if (!entry.isIsoform() && geneIdentifiers.contains(identifier)) {
+                        // TODO this should create a synonym
                         LOG.error("not assigning duplicate identifier:  " + identifier);
                         continue;
                         // if the canonical protein is processed and the gene has a duplicate
@@ -945,29 +934,29 @@ public class UniprotConverter extends DirectoryConverter
         }
     }
 
-    private void setSequence(UniprotEntry entry, String sequence)
+    private void addSeenSequence(String taxonId, String md5checksum, String proteinIdentifier)
     throws SAXException {
-        String md5checksum = Util.getMd5checksum(sequence);
-        if (!sequences.containsKey(md5checksum)) {
-            entry.setDuplicate(false);
-            entry.setMd5checksum(md5checksum);
-            sequences.put(md5checksum, new ArrayList<String>());
-            Item item = createItem("Sequence");
-            item.setAttribute("residues", sequence);
-            item.setAttribute("length", entry.getLength());
-            entry.setSeqRefId(item.getIdentifier());
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        } else {
-            // duplicate trembl protein
-            entry.setDuplicate(true);
-            sequences.get(md5checksum).addAll(entry.getSynonyms());
+        Map<String, String> orgSequences = sequences.get(taxonId);
+        if (orgSequences == null) {
+            orgSequences = new HashMap<String, String>();
+            sequences.put(taxonId, orgSequences);
+        }
+        if (!orgSequences.containsKey(md5checksum)) {
+            orgSequences.put(md5checksum, proteinIdentifier);
         }
     }
 
+    private boolean seenSequence(String taxonId, String md5checksum)
+    throws SAXException {
+        Map<String, String> orgSequences = sequences.get(taxonId);
+        if (orgSequences == null) {
+            orgSequences = new HashMap<String, String>();
+            sequences.put(taxonId, orgSequences);
+        }
+        return orgSequences.containsKey(md5checksum);
+    }
+    
+    
     private String getDataSource(String title)
     throws SAXException {
         String refId = datasources.get(title);

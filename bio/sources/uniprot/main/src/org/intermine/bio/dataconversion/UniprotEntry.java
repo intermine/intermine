@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.util.Util;
 import org.intermine.xml.full.Item;
 
 /**
@@ -40,11 +41,12 @@ public class UniprotEntry
     private List<String> components = new ArrayList<String>();
     private List<String> proteinNames = new ArrayList<String>();
     private List<String> goTerms = new ArrayList<String>();
-    private boolean isDuplicate = false, isIsoform = false;
+    private boolean isIsoform = false;
     private String taxonId, name, isFragment;
     private String primaryAccession, uniprotAccession, primaryIdentifier;
-    private String seqRefId, md5checksum;
+    private String sequence, md5checksum;
     private String commentType;
+
     private List<UniprotGene> geneEntries = new ArrayList<UniprotGene>();
     private Map<String, List<String>> dbrefs = new HashMap<String, List<String>>();
 
@@ -364,26 +366,20 @@ public class UniprotEntry
     }
 
     /**
-     * @param md5checksum the md5checksum to set
-     */
-    public void setMd5checksum(String md5checksum) {
-        this.md5checksum = md5checksum;
-    }
-
-    /**
-     * @return the seqRefId
-     */
-    public String getSeqRefId() {
-        return seqRefId;
-    }
-
-    /**
      * @param seqRefId the seqRefId to set
      */
-    public void setSeqRefId(String seqRefId) {
-        this.seqRefId = seqRefId;
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+        this.md5checksum = Util.getMd5checksum(sequence);
     }
 
+    /** 
+     * @return the protein sequence
+     */
+    public String getSequence() {
+        return sequence;
+    }
+    
     /**
      * @return the name
      */
@@ -427,21 +423,6 @@ public class UniprotEntry
         synonyms.add(primaryAccession);
         synonyms.add(name);
         return synonyms;
-    }
-
-    /**
-     * if duplicate, the protein will not be processed
-     * @return isDuplicate - whether or not this trembl protein has a duplicate swissprot entry
-     */
-    public boolean isDuplicate() {
-        return isDuplicate;
-    }
-
-    /**
-     * @param isDuplicate the isDuplicate to set
-     */
-    public void setDuplicate(boolean isDuplicate) {
-        this.isDuplicate = isDuplicate;
     }
 
     /**
@@ -925,10 +906,9 @@ public class UniprotEntry
      * @param accession for isoform
      * @return cloned uniprot entry, an isoform of original entry
      */
-    public UniprotEntry clone(String accession) {
+    public UniprotEntry createIsoformEntry(String accession) {
         UniprotEntry entry = new UniprotEntry(accession);
         entry.setIsoform(true);
-        entry.setDuplicate(false);
         entry.setDatasetRefId(datasetRefId);
         entry.setPrimaryIdentifier(primaryIdentifier);
         entry.setTaxonId(taxonId);
