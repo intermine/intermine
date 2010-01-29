@@ -695,7 +695,7 @@ public class UniprotEntry
         if (dbref != null && geneDesignationToDbref.get(geneDesignation) == null) {
             geneDesignationToDbref.put(geneDesignation, dbref);
         } else {
-            LOG.error("Could not set 'gene designation' for dbref:" + dbref);
+            LOG.debug("Could not set 'gene designation' for dbref:" + dbref);
         }
     }
 

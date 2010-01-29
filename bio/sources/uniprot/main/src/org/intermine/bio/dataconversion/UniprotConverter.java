@@ -239,6 +239,8 @@ public class UniprotConverter extends DirectoryConverter
         private String taxonId = null;
         private Set<UniprotEntry> entries;
 
+        private int entryCount = 0;
+        
         /**
          * @param entries empty map to be populated with uniprot entries
          * @param isoforms empty map to be populated with isoforms
@@ -482,6 +484,12 @@ public class UniprotConverter extends DirectoryConverter
         private Set<UniprotEntry> processEntry(UniprotEntry entry)
         throws SAXException {
 
+            entryCount++;
+            
+            if (entryCount % 1000 == 0) {
+                logMapSizes();
+            }
+            
             Set<UniprotEntry> isoforms = new HashSet<UniprotEntry>();
 
             // TODO there are uniparc entries so check for swissprot-trembl datasets
@@ -565,6 +573,27 @@ public class UniprotConverter extends DirectoryConverter
             return isoforms;
         }
 
+        private void logMapSizes() {
+            StringBuffer sb = new StringBuffer();
+            String endl = System.getProperty("line.separator");
+            sb.append("pubs: " + pubs.size() + endl);
+            sb.append("organisms: " + organisms.size() + endl);
+            sb.append("comments: " + comments.size() + endl);
+            sb.append("synonyms: " + synonyms.size() + endl);
+            sb.append("datasets: " + datasets.size() + endl);
+            sb.append("domains: " + domains.size() + endl);
+            sb.append("sequences: " + sequences.size() + endl);
+            sb.append("datasources: " + datasources.size() + endl);
+            sb.append("ontologies: " + ontologies.size() + endl);
+            sb.append("keywords: " + keywords.size() + endl);
+            sb.append("genes: " + genes.size() + endl);
+            sb.append("goterms: " + goterms.size() + endl);
+            sb.append("geneIdentifiers: " + geneIdentifiers.size() + endl);
+            sb.append("entries: " + entries.size() + endl);
+            sb.append("stack: " + stack.size() + endl);
+            LOG.info("Processed " + entryCount + " entries: " + endl + sb.toString());
+        }
+        
         private void processSequence(Item protein, UniprotEntry entry) {
             protein.setAttribute("length", entry.getLength());
             protein.setReference("sequence", entry.getSeqRefId());
