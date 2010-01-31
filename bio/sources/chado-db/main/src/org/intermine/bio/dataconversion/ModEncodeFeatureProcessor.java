@@ -109,6 +109,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("CDNA");
         commonFeatureInterMineTypes.add("EST");
         commonFeatureInterMineTypes.add("CDS");
+        commonFeatureInterMineTypes.add("Transcript");
     }
 
     /**
@@ -592,10 +593,15 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
             
-            // Piano submissions have Gene: in front of gene identifiers
+            // Piano submissions have Gene: and Transcript: in front of gene and transcript identifiers
             if (type.equalsIgnoreCase("Gene")) {
             	if (uniqueName.startsWith("Gene:")) {
             		return uniqueName.substring(5);
+            	}
+            }
+            if (type.equalsIgnoreCase("Transcript")) {
+            	if (uniqueName.startsWith("Transcript:")) {
+            		return uniqueName.substring(11);
             	}
             }
         }
