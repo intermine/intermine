@@ -1,7 +1,10 @@
 package org.intermine.web.logic;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -18,8 +21,8 @@ public class WidgetUtilTest extends TestCase
     private BigDecimal[] expectedResults = new BigDecimal[4];
     private int bagsize = 3;
     private int total = 100;
-    HashMap<String, BigDecimal> bonferroniMap = new HashMap();
-    HashMap<String, BigDecimal> benjaminiMap = new HashMap();
+    private HashMap<String, BigDecimal> bonferroniMap = new HashMap();
+    private LinkedHashMap<String, BigDecimal> benjaminiMap = new LinkedHashMap();
 
     public  WidgetUtilTest(String arg) {
         super(arg);
@@ -30,32 +33,46 @@ public class WidgetUtilTest extends TestCase
         // these numbers are generated via this website:
         // http://www.quantitativeskills.com/sisa/distributions/hypghlp.htm
 
-        id[0] = "notEnriched";
-        taggedSample[0] = 1;
-        taggedPopulation[0] = 10;
-        expectedResults[0] = new BigDecimal(0.27346938775509510577421679045073688030242919921875);
+        id[2] = "notEnriched";
+        taggedSample[2] = 1;
+        taggedPopulation[2] = 10;
+        expectedResults[2] = new BigDecimal(0.27346938775509510577421679045073688030242919921875);
 
         id[1] = "underrepresented";
         taggedSample[1] = 1;
         taggedPopulation[1] = 50;
         expectedResults[1] = new BigDecimal(0.8787878787878582);
 
-        id[2] = "overrepresented";
-        taggedSample[2] = 3;
-        taggedPopulation[2] = 20;
-        expectedResults[2] = new BigDecimal(0.00705009276437833);
-
-        id[3] = "one";
+        id[3] = "overrepresented";
         taggedSample[3] = 3;
-        taggedPopulation[3] = 100;
-        expectedResults[3] = new BigDecimal(1);
+        taggedPopulation[3] = 20;
+        expectedResults[3] = new BigDecimal(0.00705009276437833);
 
+        id[0] = "one";
+        taggedSample[0] = 3;
+        taggedPopulation[0] = 100;
+        expectedResults[0] = new BigDecimal(1);
 
+        BigDecimal numberOfTests = new BigDecimal(id.length);
+        BigDecimal alpha = new BigDecimal(0.05);
+        BigDecimal alphaPerTest = alpha.divide(numberOfTests);
+        
+        MathContext mc = new MathContext(10, RoundingMode.HALF_EVEN);
+        
         for (int i = 0; i < 4; i++) {
-            double p = Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total);
-            resultsMap.put(id[i], new BigDecimal(p));
-            bonferroniMap.put(id[i], new BigDecimal(p * bagsize));
-            benjaminiMap.put(id[i], new BigDecimal(p));
+            BigDecimal p = new BigDecimal(Hypergeometric.calculateP(taggedSample[i], bagsize, taggedPopulation[i], total));
+            resultsMap.put(id[i], p);            
+            bonferroniMap.put(id[i], p.add(alphaPerTest)); 
+            
+            //p-value * (n/ n - index)
+            if (i == 0) {
+                // biggest one isn't changed
+                benjaminiMap.put(id[i], p);
+            } else {
+                BigDecimal divisor = numberOfTests.subtract(new BigDecimal(i));
+                BigDecimal m = numberOfTests.divide(divisor, mc);
+                benjaminiMap.put(id[i], p.multiply(m));
+            }
         }
     }
 
@@ -67,36 +84,15 @@ public class WidgetUtilTest extends TestCase
 
     public void testBonferroni() throws Exception {
         Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("Bonferroni", maxValue, resultsMap);
-
-        // rounding issue
         for (String label : bonferroniMap.keySet()) {
-            BigDecimal expected = bonferroniMap.get(label);
-            BigDecimal actual = adjustedMap.get(label);
-            assert(expected.compareTo(actual) == 0);
+            assertEquals(bonferroniMap.get(label), adjustedMap.get(label));
         }
-
     }
 
     public void testBenjaminiHochberg() throws Exception {
-
-        // largest p-value doesn't get adjusted
-        // id[1] = "underrepresented";
-
-        double p = resultsMap.get(id[0]).doubleValue();
-        p = p * (bagsize / (bagsize -1) );
-        benjaminiMap.put(id[0], new BigDecimal(p));
-
-        p = resultsMap.get(id[2]).doubleValue();
-        p = p * (bagsize / (bagsize -2) );
-        benjaminiMap.put(id[2], new BigDecimal(p));
-
        Map<String, BigDecimal> adjustedMap = WidgetUtil.calcErrorCorrection("BenjaminiHochberg", maxValue, resultsMap);
-
-        // rounding issue
         for (String label : benjaminiMap.keySet()) {
-            BigDecimal expected = benjaminiMap.get(label);
-            BigDecimal actual = adjustedMap.get(label);
-            assert(expected.compareTo(actual) == 0);
+            assertEquals(benjaminiMap.get(label), adjustedMap.get(label));
         }
     }
 }
