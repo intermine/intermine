@@ -21,9 +21,9 @@ else
     echo "changing to webapp directory"
     cd ~/svn/dev/flymine/webapp
     echo "removing temporary directories"
-    ant clean > ant_output.log
+    ant clean-all > ant_output.log
     echo "building webapp"
-    ant default -Drelease=$release1 > ant_output.log
+    ant default -Drelease=$release1 >> ant_output.log
     
 # run the performance_test script                                                                                                                                                                              
     echo "changing back to the script directory"
@@ -35,9 +35,9 @@ else
     echo "changing to webapp directory"
     cd ~/svn/dev/flymine/webapp
     echo "removing temporary directories"
-    ant clean > ant_output.log
+    ant clean-all >> ant_output.log
     echo "building webapp"
-    ant default -Drelease=$release2 > ant_output.log
+    ant default -Drelease=$release2 >> ant_output.log
    
 # run the performance_test script                                                                                                                                                                              
     echo "changing back to the script directory"
