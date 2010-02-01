@@ -11,9 +11,11 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.intermine.web.logic.SortableMap;
 
@@ -35,7 +37,7 @@ public class BenjaminiHochberg implements ErrorCorrection
 {
     private LinkedHashMap<String, BigDecimal> originalMap;
     private HashMap<String, BigDecimal> adjustedMap;
-    private double numberOfTests;
+    private int numberOfTests;
 
     /**
     * @param originalMap HashMap of go terms and their p-value
@@ -55,28 +57,32 @@ public class BenjaminiHochberg implements ErrorCorrection
      */
     @SuppressWarnings("unchecked")
     public void calculate(Double max) {
+        MathContext mc = new MathContext(10, RoundingMode.HALF_EVEN);
 
-        adjustedMap = new LinkedHashMap();
+        adjustedMap = new HashMap();
         BigDecimal adjustedP = new BigDecimal(0);
-        int i = 0;
+        int index = 0;
 
-        for (Iterator iter = originalMap.keySet().iterator(); iter.hasNext(); i++) {
+        for (Map.Entry<String, BigDecimal> entry : originalMap.entrySet()) {
 
-            String label = (String) iter.next();
-            BigDecimal p = new BigDecimal("" + originalMap.get(label)); // unadjusted p-value
+            String label = entry.getKey();
+            BigDecimal p = entry.getValue();
 
             // largest value is not adjusted
-            if (i == 0) {
+            if (index == 0) {
                 adjustedP = p;
             } else {
                 // p-value * (n/ n - index)
-                double m = numberOfTests / (numberOfTests - i);
-                adjustedP = p.multiply(new BigDecimal(m));
+                BigDecimal n = new BigDecimal(numberOfTests);
+                BigDecimal divisor = n.subtract(new BigDecimal(index));
+                BigDecimal m = n.divide(divisor, mc);
+                adjustedP = p.multiply(m);
             }
 
             if (adjustedP.doubleValue() < max.doubleValue()) {
                 adjustedMap.put(label, adjustedP);
             }
+            index++;
         }
     }
 
