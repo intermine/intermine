@@ -7,20 +7,21 @@
 if test $# -ne 4
 then
     echo "Please enter four arguments:  mine_name release1 release2 email_address"
-    echo "eg. flymine release-19.0 preview-20.0 email@domain.org"
+    echo "eg. flymine release-22.0 preview-23.0 julie@flymine.org"
 exit 1
 else
-    mine=$0
-    release1=$1
-    release2=$2
-    mailto=$3
+
+    mine=$1
+    release1=$2
+    release2=$3
+    mailto=$4
 
     run_performance_test() {
 # release webapp                                                                                                                                                                                               
     echo "changing to webapp directory"
     cd ~/svn/dev/flymine/webapp
     echo "removing temporary directories"
-    ant clean-all > ant_output.log
+    ant clean > ant_output.log
     echo "building webapp"
     ant default -Drelease=$release1 > ant_output.log
     
@@ -34,7 +35,7 @@ else
     echo "changing to webapp directory"
     cd ~/svn/dev/flymine/webapp
     echo "removing temporary directories"
-    ant clean-all > ant_output.log
+    ant clean > ant_output.log
     echo "building webapp"
     ant default -Drelease=$release2 > ant_output.log
    
