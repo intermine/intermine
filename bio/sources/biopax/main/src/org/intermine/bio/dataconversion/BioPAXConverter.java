@@ -336,6 +336,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
             Item syn = createItem("Synonym");
             syn.setReference("subject", subjectId);
             syn.setAttribute("value", value);
+            syn.setAttribute("type", "identifier");
             syn.addToCollection("dataSets", dataset);
             synonyms.add(key);
             try {
