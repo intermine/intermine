@@ -102,6 +102,7 @@ div#experimentFeatures {
 <%-- for gbrowse: to modify and take the organism from the submission --%>
 <c:set var="fly" value=""/>
 <c:set var="worm" value=""/>
+<c:set var="ncbiftp" value="ftp://ftp.ncbi.nlm.nih.gov"/>
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -497,9 +498,18 @@ All GBrowse tracks generated for this experiment:
               <c:otherwise>
 							<c:forEach items="${subFiles.value}" var="fileName"	varStatus="file_status">
 								<br>
+                <c:choose>
+								<c:when test="${fn:startsWith(fileName,ncbiftp)}">
+                <a href="${fileName}"
+                  title="Download ${fileName}" class="value extlink"> <c:out
+                  value="${fileName}" /> </a>								
+								</c:when>
+								<c:otherwise>
 								<a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${fileName}"
 									title="Download ${fileName}" class="value extlink"> <c:out
 									value="${fileName}" /> </a>
+								</c:otherwise>
+							  </c:choose>
 							</c:forEach>
 </c:otherwise>
 </c:choose>
