@@ -74,7 +74,7 @@ public class UniProtFeaturesLdr extends EnrichmentWidgetLdr
                                                           + ".UniProtFeature"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
-            return null;
+            throw new RuntimeException("No such class UniProtFeature", e);
         }
 
         QueryField qfProtId = new QueryField(qcProtein, "id");

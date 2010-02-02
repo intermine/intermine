@@ -120,17 +120,17 @@ public class PrecomputedTable implements SQLStringable, Comparable
                                         }
                                     } else {
                                         useOrderByField = false;
-                                        LOG.error("getColumns returned wrong data for column "
+                                        LOG.warn("getColumns returned wrong data for column "
                                                 + column.getSQLString());
                                     }
                                 } else {
                                     useOrderByField = false;
-                                    LOG.error("getColumns return no data for column "
+                                    LOG.warn("getColumns return no data for column "
                                             + column.getSQLString() + " in table " + tableName);
                                 }
                                 if (r.next()) {
                                     useOrderByField = false;
-                                    LOG.error("getColumns returned too much data for column "
+                                    LOG.warn("getColumns returned too much data for column "
                                             + column.getSQLString());
                                 }
                             } else {
@@ -173,15 +173,15 @@ public class PrecomputedTable implements SQLStringable, Comparable
                                     firstOrderByHasNoNulls = true;
                                 }
                             } else {
-                                LOG.error("getColumns returned wrong data for column "
+                                LOG.warn("getColumns returned wrong data for column "
                                         + column.getSQLString());
                             }
                         } else {
-                            LOG.error("getColumns returned no data for column "
+                            LOG.warn("getColumns returned no data for column "
                                     + column.getSQLString());
                         }
                         if (r.next()) {
-                            LOG.error("getColumns returned too much data for column "
+                            LOG.warn("getColumns returned too much data for column "
                                     + column.getSQLString());
                         }
                     }
@@ -189,7 +189,7 @@ public class PrecomputedTable implements SQLStringable, Comparable
             }
         } catch (SQLException e) {
             useOrderByField = false;
-            LOG.error("Caught SQLException while examining order by fields: " + e);
+            LOG.warn("Caught SQLException while examining order by fields: " + e);
         }
 
         if (useOrderByField) {

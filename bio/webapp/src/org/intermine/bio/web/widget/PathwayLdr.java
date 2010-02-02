@@ -78,7 +78,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             qcPathway = new QueryClass(Class.forName(model.getPackageName() + ".Pathway"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
-            return null;
+            throw new RuntimeException("No such class Pathway", e);
         }        
 
         QueryField qfPathwayIdentifier = new QueryField(qcPathway, "identifier");
@@ -100,7 +100,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
                 LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
-                return null;
+                throw e;
             }
         }
         cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));

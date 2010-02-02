@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -50,7 +49,7 @@ public class DisplayConstraint
     protected ObjectStoreSummary oss;
     /** The classKeys Map. */
     protected Map classKeys;
-    
+
     private String name;
 
     /**
@@ -62,7 +61,7 @@ public class DisplayConstraint
      * @param optionsList a List of possible values, or null (to fall back to oss)
      * @param classKeys the ClassKeys Map
      */
-    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss, List optionsList, 
+    public DisplayConstraint(PathNode node, Model model, ObjectStoreSummary oss, List optionsList,
                              Map classKeys) {
         this.node = node;
         this.model = model;
@@ -188,13 +187,13 @@ public class DisplayConstraint
         return node.isAttribute();
     }
 
-    /** 
+    /**
      * @return the name of the constraint
      */
     public String getName() {
         return name;
     }
-    
+
     private String setName(PathNode displayNode) {
         PathNode parent = (PathNode) displayNode.getParent();
         if (parent == null) {

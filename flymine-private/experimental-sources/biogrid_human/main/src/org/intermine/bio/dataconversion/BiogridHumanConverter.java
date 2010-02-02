@@ -236,6 +236,7 @@ public class BiogridHumanConverter extends BioFileConverter
                     setGene(taxId, interactorHolder,genePrim);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store organism:" + taxId);
+                    throw new RuntimeException("Could not store organism " + taxId, e);
                 }
 
 
@@ -329,6 +330,7 @@ public class BiogridHumanConverter extends BioFileConverter
                     storeExperiment(experimentHolder);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store experiment");
+                    throw new RuntimeException("Could not store experiment", e);
                 }
 
             /********************************* GENES ***********************************/

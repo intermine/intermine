@@ -89,7 +89,7 @@ public class TableController extends TilesAction
         PagedTable pt = SessionMethods.getResultsTable(session, table);
         if (pt == null) {
             LOG.error("PagedTable for " + table + " is null");
-            return null;
+            throw new NullPointerException("PagedTable for " + table + " is null");
         }
 
         PathQuery query = pt.getWebTable().getPathQuery();

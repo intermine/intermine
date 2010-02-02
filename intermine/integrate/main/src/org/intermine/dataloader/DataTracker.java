@@ -218,7 +218,7 @@ public class DataTracker
                 try {
                     prefetchConn.close();
                 } catch (SQLException e) {
-                    LOG.error("Error while closing prefetch connection", e);
+                    LOG.warn("Error while closing prefetch connection", e);
                 }
             }
         }
@@ -274,7 +274,7 @@ public class DataTracker
                 long now = System.currentTimeMillis();
                 //LOG.debug("Fetched entry from DB (time = " + (now - start) + " ms)");
                 if (now - start > 2000) {
-                    LOG.error("Query on tracker table took too long (" + (now - start) + " ms) "
+                    LOG.warn("Query on tracker table took too long (" + (now - start) + " ms) "
                             + "- switching off sequential scans. You should analyse the database");
                     conn.createStatement().execute("SET enable_seqscan = off;");
                 }

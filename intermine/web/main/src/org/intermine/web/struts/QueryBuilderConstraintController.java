@@ -33,7 +33,6 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
@@ -100,7 +99,7 @@ public class QueryBuilderConstraintController extends TilesAction
             request.setAttribute("editingPath", editingPath);
             request.setAttribute("displayConstraint", new DisplayConstraint(node, model, oss,
                         null, classKeys));
-            
+
             // we can't create loop constraints on outer join paths, nodes on this path may already
             // be constrained to inner joins - get current style for query
             //String correctJoinPath = query.getCorrectJoinStyle(node.getPathString());
@@ -227,6 +226,6 @@ public class QueryBuilderConstraintController extends TilesAction
 
         return null;
     }
-    
+
 
 }

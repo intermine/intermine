@@ -30,7 +30,7 @@ public class Bonferroni implements ErrorCorrection
     private BigDecimal alpha = new BigDecimal(0.05);
     private BigDecimal alphaPerTest;
 
-    
+
     /**
      * @param originalMap HashMap of go terms and their p-value
      */
@@ -51,7 +51,7 @@ public class Bonferroni implements ErrorCorrection
             // get original values
             String label = (String) iter.next();
             BigDecimal p = new BigDecimal("" + originalMap.get(label));
-            
+
             // calc new value
             // (alpha / number of tests) + p
             BigDecimal adjustedP = p.add(alphaPerTest);

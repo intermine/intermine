@@ -45,9 +45,6 @@ public class TemplateResultService extends QueryResultService
     /** Name of name parameter **/
     public static final String NAME_PARAMETER = "name";
 
-    /**
-     * {@inheritDoc}
-     */
     public TemplateResultService(InterMineAPI im) {
         super(im);
     }

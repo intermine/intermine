@@ -168,7 +168,7 @@ public class TransferSequences
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
-                        LOG.error("gene too long in transferToLocatedSequenceFeatures() ignoring: "
+                        LOG.warn("gene too long in transferToLocatedSequenceFeatures() ignoring: "
                                   + gene);
                         continue;
                     }
@@ -230,7 +230,7 @@ public class TransferSequences
         String chromosomeSequenceString = chromosomeSequence.getResidues();
 
         if (charsToCopy > chromosomeSequenceString.length()) {
-            LOG.error("LocatedSequenceFeature too long, ignoring - Location: "
+            LOG.warn("LocatedSequenceFeature too long, ignoring - Location: "
                       + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
             return null;
         }
@@ -239,7 +239,7 @@ public class TransferSequences
         int endPos = startPos + charsToCopy;
 
         if (startPos < 0 || endPos < 0) {
-            LOG.error("LocatedSequenceFeature has negative coordinate, ignoring Location: "
+            LOG.warn("LocatedSequenceFeature has negative coordinate, ignoring Location: "
                       + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
             return null;
 
@@ -260,7 +260,7 @@ public class TransferSequences
         }
 
         if (endPos > chromosomeSequenceString.length()) {
-            LOG.error("LocatedSequenceFeature has end coordinate greater than chromsome length."
+            LOG.warn("LocatedSequenceFeature has end coordinate greater than chromsome length."
                       + "ignoring Location: "
                       + locationOnChr.getId() + "  LSF id: " + locationOnChr.getObject());
             return null;

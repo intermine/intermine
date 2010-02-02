@@ -191,7 +191,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
                                                           + ".GeneFlankingRegion"));        
         } catch (ClassNotFoundException e) {
             LOG.error(e);
-            return null;
+            throw new RuntimeException("No such class GeneFlankingRegion", e);
         }        
 
         QueryField geneStart = new QueryField(geneLocationQC, "start");

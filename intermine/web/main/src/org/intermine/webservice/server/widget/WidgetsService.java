@@ -60,10 +60,6 @@ import org.intermine.webservice.server.WebService;
  */
 public class WidgetsService extends WebService
 {
-
-    /**
-     * {@inheritDoc}
-     */
     public WidgetsService(InterMineAPI im) {
         super(im);
     }

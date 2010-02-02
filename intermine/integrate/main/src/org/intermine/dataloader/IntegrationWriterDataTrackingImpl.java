@@ -26,7 +26,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.ObjectStoreException;
@@ -457,15 +456,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         if (obj instanceof ProxyReference) {
                             ProxyReference newproxy = (ProxyReference) obj;
                             obj = ((ProxyReference) obj).getObject();
-                            if (obj == null) {
-                                LOG.error("obj is null o: " + o);
-                                LOG.error("proxyId " + newproxy.getId());
-                                LOG.error("proxy " + newproxy);
-                                ObjectStore os = newproxy.getObjectStore();
-                                os.invalidateObjectById(newproxy.getId());
-                                obj = newproxy.getObject();
-                                LOG.error("obj: " + obj);
-                            }
                         }
                         try {
                             if (model.getFieldDescriptorsForClass(obj.getClass())
@@ -564,24 +554,24 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             return newObj;
         } catch (RuntimeException e) {
             if (idMap.size() <= 100000) {
-                LOG.error("IDMAP contents: " + idMap.toString());
+                LOG.info("IDMAP contents: " + idMap.toString());
             }
             if (skeletons.size() <= 100000) {
-                LOG.error("Skeletons: " + skeletons.toString());
+                LOG.info("Skeletons: " + skeletons.toString());
             }
             if (pureObjects.size() <= 100000) {
-                LOG.error("pureObjects: " + pureObjects.toString());
+                LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;
         } catch (ObjectStoreException e) {
             if (idMap.size() <= 100000) {
-                LOG.error("IDMAP contents: " + idMap.toString());
+                LOG.info("IDMAP contents: " + idMap.toString());
             }
             if (skeletons.size() <= 100000) {
-                LOG.error("Skeletons: " + skeletons.toString());
+                LOG.info("Skeletons: " + skeletons.toString());
             }
             if (pureObjects.size() <= 100000) {
-                LOG.error("pureObjects: " + pureObjects.toString());
+                LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;
         } catch (IllegalAccessException e) {

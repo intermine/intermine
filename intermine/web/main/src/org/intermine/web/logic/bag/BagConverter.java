@@ -36,7 +36,7 @@ public interface BagConverter
      * @return a List of ResultRow elements
      * @throws ClassNotFoundException  class not found
      * @throws ObjectStoreException objectstore
-     * @throws PathException 
+     * @throws PathException
      */
     public WebResults getConvertedObjects(HttpSession session, String parameters,
             List<Integer> fromList, String type)

@@ -81,7 +81,7 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
                                                           + ".ProteinDomain"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
-            return null;
+            throw new RuntimeException("No such class ProteinDomain", e);
         }
         QueryField qfProteinId = new QueryField(qcProtein, "id");
         QueryField qfGeneId = new QueryField(qcGene, "id");

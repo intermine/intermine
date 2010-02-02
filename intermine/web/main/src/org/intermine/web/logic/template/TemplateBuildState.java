@@ -1,7 +1,5 @@
 package org.intermine.web.logic.template;
 
-import org.intermine.api.template.TemplateQuery;
-
 /*
  * Copyright (C) 2002-2010 FlyMine
  *
@@ -12,6 +10,7 @@ import org.intermine.api.template.TemplateQuery;
  *
  */
 
+import org.intermine.api.template.TemplateQuery;
 
 /**
  * An instance of this bean is kept in the session context while the query

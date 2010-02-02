@@ -90,8 +90,10 @@ public class ModifyDetails extends DispatchAction
         } catch (TemplatePopulatorException e) {
             LOG.error("Error running up template '" + template.getName() + "' from report page for"
                     + ((idForLookup == null) ? " bag " + bagName
-                        : " object " + idForLookup) + ".");
-            return null;
+                        : " object " + idForLookup) + ".", e);
+            throw new RuntimeException("Error running up template '" + template.getName()
+                    + "' from report page for" + ((idForLookup == null) ? " bag " + bagName
+                        : " object " + idForLookup) + ".", e);
         }
         String identifier = "itt." + populatedTemplate.getName() + "." + idForLookup;
 

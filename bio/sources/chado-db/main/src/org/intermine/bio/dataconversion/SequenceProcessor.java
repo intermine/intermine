@@ -670,7 +670,7 @@ public class SequenceProcessor extends ChadoProcessor
                 String msg = "srcfeature_id (" + srcFeatureId + ") from location "
                             + featureLocId + " was not found in the feature table";
 //                LOG.error(msg);
-              throw new RuntimeException(msg);
+                throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");

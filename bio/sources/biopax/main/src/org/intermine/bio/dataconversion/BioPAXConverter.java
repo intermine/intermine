@@ -386,7 +386,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         // expecting "Drosophila melanogaster.owl"
         if (bits.length != 2) {
             String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
-            + "'Drosophila melanogaster.owl'";
+                + "'Drosophila melanogaster.owl'";
             LOG.error(msg);
             return null;
         }

@@ -364,7 +364,7 @@ public class GraphWidget extends Widget
          * @param fieldPosition the field position
          * @return the format
          */
-        public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) 
+        public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
         {
             return super.format(number * magnitude, result, fieldPosition);
         }

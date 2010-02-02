@@ -101,7 +101,7 @@ public class BuildDbTask extends Task
                 c.setAutoCommit(true);
                 DatabaseUtil.removeAllTables(c);
             } catch (SQLException e) {
-                LOG.error("Failed to remove all tables from database: " + e);
+                LOG.warn("Failed to remove all tables from database: " + e);
             } finally {
                 if (c != null) {
                     try {

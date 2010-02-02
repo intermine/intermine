@@ -598,7 +598,7 @@ public class CreateIndexesTask extends Task
                 execute(conn, indexStatement.getStatementString(indexName));
             } catch (SQLException e) {
                 // ignore - we just don't create this index
-                LOG.error("failed to create index " + indexName + " for " + tableName + "("
+                LOG.info("failed to create index " + indexName + " for " + tableName + "("
                         + indexStatement.getColumnNames() + ")", e);
                 System.err .println("Failed to create index " + indexName);
             }

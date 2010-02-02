@@ -131,7 +131,9 @@ public class HomophilaPostProcess extends PostProcessor
                 osw.store(annotation);
 
             } catch (IllegalAccessException e) {
-                LOG.error("Object with ID: " + gene.getId() + " has no omimDiseases field");
+                LOG.error("Object with ID: " + gene.getId() + " has no omimDiseases field", e);
+                throw new Error("Object with ID: " + gene.getId() + " has no omimDiseases field",
+                        e);
             }
 
             count++;

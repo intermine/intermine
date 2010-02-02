@@ -62,7 +62,7 @@ public class CalculateLocationsTest extends TestCase
     }
 
     public void tearDown() throws Exception {
-        LOG.error("in tear down");
+        LOG.info("in tear down");
         if (osw.isInTransaction()) {
             osw.abortTransaction();
         }
@@ -71,18 +71,18 @@ public class CalculateLocationsTest extends TestCase
         q.addFrom(qc);
         q.addToSelect(qc);
         SingletonResults res = osw.getObjectStore().executeSingleton(q);
-        LOG.error("created results");
+        LOG.info("created results");
         Iterator resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
-            LOG.error("deleting: " +o.getId());
+            LOG.info("deleting: " +o.getId());
             osw.delete(o);
         }
         osw.commitTransaction();
-        LOG.error("committed transaction");
+        LOG.info("committed transaction");
         osw.close();
-        LOG.error("closed objectstore");
+        LOG.info("closed objectstore");
     }
 
     private void createOverlapTestData() throws Exception {

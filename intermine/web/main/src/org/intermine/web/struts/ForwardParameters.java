@@ -97,7 +97,8 @@ public class ForwardParameters
                 path += entry.getKey() + "="
                     + URLEncoder.encode((String) entry.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException err) {
-                LOG.error(err);
+                LOG.error("Shouldn't ever happen", err);
+                throw new RuntimeException("Shouldn't ever happen", err);
             }
         }
         if (path.length() > 0) {

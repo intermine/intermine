@@ -132,7 +132,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         try {
             ((ObjectStoreInterMineImpl) results.getObjectStore()).goFaster(results.getQuery());
         } catch (ObjectStoreException ex) {
-            LOG.error("Error happened during executing goFaster method.", ex);
+            LOG.warn("Error happened during executing goFaster method.", ex);
         }
     }
 
@@ -146,7 +146,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
             ((ObjectStoreInterMineImpl) results.getObjectStore()).releaseGoFaster(results
                     .getQuery());
         } catch (ObjectStoreException ex) {
-            LOG.error("Error happened during executing releaseGoFaster method.", ex);
+            LOG.warn("Error happened during executing releaseGoFaster method.", ex);
         }
     }
 

@@ -90,7 +90,7 @@ public class TemplateController extends TilesAction
             @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        
+
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
@@ -101,17 +101,17 @@ public class TemplateController extends TilesAction
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         AutoCompleter ac = SessionMethods.getAutoCompleter(session.getServletContext());
         TemplateManager templateManager = im.getTemplateManager();
-        BagManager bagManager = im.getBagManager();        
+        BagManager bagManager = im.getBagManager();
         String extraClassName = bagQueryConfig.getExtraConstraintClassName();
 
         TemplateForm tf = (TemplateForm) form;
-        
+
         String templateName = request.getParameter("name");
         String scope = request.getParameter("scope");
         String loadModifiedTemplate = request.getParameter("loadModifiedTemplate");
         String preSelectedBagName = request.getParameter("bagName");
-        String idForLookup = request.getParameter("idForLookup");        
-        InterMineObject imObj = null;        
+        String idForLookup = request.getParameter("idForLookup");
+        InterMineObject imObj = null;
         if (!StringUtils.isEmpty(idForLookup)) {
             imObj = os.getObjectById(new Integer(idForLookup));
         }
@@ -123,8 +123,8 @@ public class TemplateController extends TilesAction
         if (loadModifiedTemplate != null) {
             modifiedTemplate = getTemporaryTemplate(session, templateName);
             templateName = modifiedTemplate.getName();
-        }        
-        TemplateQuery template = null;        
+        }
+        TemplateQuery template = null;
         // we're in querybuilder with templatePreview.jsp
         if (context.getAttribute("builder") != null) {
             PathQuery query = SessionMethods.getQuery(session);
@@ -138,7 +138,7 @@ public class TemplateController extends TilesAction
                 scope = Scope.ALL;
             }
             template = templateManager.getTemplate(profile, templateName, scope);
-        }        
+        }
         // something's gone horribly wrong
         if (template == null) {
             return null;
@@ -157,12 +157,12 @@ public class TemplateController extends TilesAction
         // For each node with an editable constraint, create a DisplayConstraint bean
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
-        Map<String, PathNode> editableNodesMap = new HashMap();        
+        Map<String, PathNode> editableNodesMap = new HashMap();
         for (PathNode node : template.getEditableNodes()) {
             editableNodesMap.put(node.getPathString(), node);
         }
 
-        Map<String, PathNode> constrainedNodesMap = new HashMap();        
+        Map<String, PathNode> constrainedNodesMap = new HashMap();
         for (Map.Entry<String, PathNode> nodeEntry : template.getNodes().entrySet()) {
             PathNode node = nodeEntry.getValue();
             if (node.getConstraints().size() > 0) {
@@ -174,7 +174,7 @@ public class TemplateController extends TilesAction
             PathNode displayNode = displayTemplate.getNodes().get(node.getPathString());
             constructAutocompleteIndex(displayTemplate, ac, model, node, classDesc, fieldDesc);
             int j = 1;
-            for (Constraint c : displayTemplate.getEditableConstraints(node)) {                
+            for (Constraint c : displayTemplate.getEditableConstraints(node)) {
                 // FIXME See #2239
                 if (modifiedTemplate != null) {
                     Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
@@ -196,14 +196,14 @@ public class TemplateController extends TilesAction
                         selectedBagNames.put(c, modC.getValue());
                     }
                 }
-                displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss, 
+                displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss,
                                           summariser.getPossibleValues(template, node), classKeys));
                 PathNode parent = (PathNode) displayNode.getParent();
                 if (parent == null) {
-                    parent = displayNode; 
-                } 
+                    parent = displayNode;
+                }
                 // check if this constraint can be used with bags and if any available
-                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, parent.getType(), 
+                boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, parent.getType(),
                                                                displayNode.getFieldName());
                 if (isKeyField || !node.isAttribute()) {
                     String nodeType = (isKeyField ? parent.getType() : node.getType());
@@ -236,7 +236,7 @@ public class TemplateController extends TilesAction
                         throw new RuntimeException("Can't find class for: " + node.getType());
                     }
                     FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
-                    .get(connectFieldName);
+                        .get(connectFieldName);
                     if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
                         // An extra constraint is possible, now check if it has already been
                         // constrained elsewhere in the query:

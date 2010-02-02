@@ -53,9 +53,6 @@ import org.intermine.webservice.server.output.Output;
  **/
 public class ListsService extends WebService
 {
-    /**
-     * {@inheritDoc}
-     */
     public ListsService(InterMineAPI im) {
         super(im);
     }

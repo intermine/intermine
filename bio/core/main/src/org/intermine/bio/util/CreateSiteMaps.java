@@ -71,7 +71,7 @@ public class CreateSiteMaps
                                      String sitePrefix, String defaultContext) throws Exception {
 
         if (sitePrefix.equals("") || paths.equals("")) {
-            LOG.error("Sitemaps not created.  project.sitePrefix or sitemap.paths properties "
+            LOG.warn("Sitemaps not created.  project.sitePrefix or sitemap.paths properties "
                       + "have not been set ");
             return;
         }
@@ -91,7 +91,7 @@ public class CreateSiteMaps
         FileWriter writer = startFile(new File(newFileName));
         writeStartPages(writer, webappPages);
         closeFile(writer);
-        LOG.error("newFileName-" + newFileName);
+        LOG.debug("newFileName-" + newFileName);
 
         // generate a query for each path
         for (String path : paths.split("[, ]+")) {
@@ -101,6 +101,7 @@ public class CreateSiteMaps
             // eg, Gene.primaryIdentifier
             String[] pathSplit = path.split("\\.");
             if (pathSplit.length != 2) {
+                // This LOG.error could possibly be a LOG.warn, but the message is important.
                 LOG.error(" invalid path:" + path + ", invalid length:" + pathSplit.length);
                 break;
             }
@@ -140,7 +141,7 @@ public class CreateSiteMaps
                 }
             } else {
                 // quit if any sitemap is present
-                LOG.error("sitemap present: " + newFile.getName());
+                LOG.info("sitemap present: " + newFile.getName());
                 return;
             }
         }

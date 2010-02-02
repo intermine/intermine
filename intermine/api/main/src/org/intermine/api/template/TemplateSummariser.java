@@ -82,7 +82,7 @@ public class TemplateSummariser
                     }
                     templatePossibleValues.put(node.getPathString(), values);
                 } else {
-                    LOG.error("Editable node " + node.getPathString() + " in template "
+                    LOG.warn("Editable node " + node.getPathString() + " in template "
                             + templateQuery.getName() + " cannot be summarised as it is a LOOKUP "
                             + "constraint, although it has only " + results.size()
                             + " possible values. Consider changing the node that the constraint is "

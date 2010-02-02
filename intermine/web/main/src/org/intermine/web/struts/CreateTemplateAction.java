@@ -87,11 +87,11 @@ public class CreateTemplateAction extends InterMineAction
         boolean foundEditableConstraint = false;
         boolean foundNonEditableLookup = false;
         for (Constraint c : query.getAllConstraints()) {
-        	if (c.isEditable()) {
-        		foundEditableConstraint = true;
-        	} else if (c.getOp().equals(ConstraintOp.LOOKUP)) {
-        		foundNonEditableLookup = true;
-        	}
+            if (c.isEditable()) {
+                foundEditableConstraint = true;
+            } else if (c.getOp().equals(ConstraintOp.LOOKUP)) {
+                foundNonEditableLookup = true;
+            }
         }
 
         // template must have at least one editable constrain

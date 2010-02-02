@@ -257,7 +257,7 @@ public class SqlGenerator
                 //    + cacheEntry.getCached().keySet() + ") for query " + q + ", sql = " + sql);
             }
         } catch (ObjectStoreException e) {
-            LOG.error("Error while registering offset for query " + q + ": " + e);
+            LOG.warn("Error while registering offset for query " + q + ": " + e);
         } catch (IllegalArgumentException e) {
         }
     }

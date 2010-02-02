@@ -305,7 +305,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             bag.osb = newBag;
         } catch (ObjectStoreException e) {
             LOG.error("Clone failed.", e);
-            throw  new RuntimeException("Clone failed.", e);
+            throw new RuntimeException("Clone failed.", e);
         } finally {
             try {
                 if (osw != null) {
