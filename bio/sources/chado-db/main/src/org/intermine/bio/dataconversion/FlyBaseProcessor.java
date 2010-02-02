@@ -69,6 +69,8 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected static final String FLYBASE_SO_CV_NAME = "SO";
 
+    private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
+    
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -1403,7 +1405,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         return phenotypeAnnotation;
     }
 
-    private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
+
     
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");
@@ -1703,7 +1705,6 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("boxing")
     @Override
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
