@@ -84,13 +84,16 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGoParent = null;
 
         try {
-            qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
+            qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName() 
                                                           + ".GOAnnotation"));
             qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
-            throw new RuntimeException("Class GoAnnotation does not exist", e);
+            LOG.error("Error rendering GO enrichment widget", e);
+            // don't throw an exception, return NULL instead.  The widget will display 'no results'.
+            // the javascript that renders widgets assumes a valid widget and thus can't handle
+            // an exception thrown here.  
+            return null;            
         }
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -153,8 +156,11 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             try {
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
-                LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
-                throw e;
+                LOG.error("Error rendering go stat widget, invalid taxonIds: " + taxonIds);
+                // don't throw an exception, return NULL instead.  The widget will display 'no 
+                // results'. the javascript that renders widgets assumes a valid widget and thus 
+                // can't handle an exception thrown here.  
+                return null;
             }
         }
         cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));

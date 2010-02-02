@@ -190,8 +190,11 @@ public class OverlapsDataSetLdr implements DataSetLdr
             geneFlankingRegionQC = new QueryClass(Class.forName(model.getPackageName()
                                                           + ".GeneFlankingRegion"));        
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
-            throw new RuntimeException("No such class GeneFlankingRegion", e);
+            LOG.error("Error rendering overlaps widget", e);
+            // don't throw an exception, return NULL instead.  The widget will display 'no 
+            // results'. the javascript that renders widgets assumes a valid widget and thus 
+            // can't handle an exception thrown here.  
+            return null;
         }        
 
         QueryField geneStart = new QueryField(geneLocationQC, "start");

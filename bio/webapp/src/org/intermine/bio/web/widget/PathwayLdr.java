@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.DataSet;
@@ -35,10 +36,8 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
-import org.intermine.api.profile.InterMineBag;
 
 /**
- * {@inheritDoc}
  * @author Julie Sullivan
  */
 public class PathwayLdr extends EnrichmentWidgetLdr
@@ -68,7 +67,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String action, List<String> keys) {
+    public Query getQuery(String action, @SuppressWarnings("unused") List<String> keys) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;
@@ -77,8 +76,11 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         try {
             qcPathway = new QueryClass(Class.forName(model.getPackageName() + ".Pathway"));
         } catch (ClassNotFoundException e) {
-            LOG.error(e);
-            throw new RuntimeException("No such class Pathway", e);
+            LOG.error("Error rendering pathway enrichment widget", e);
+            // don't throw an exception, return NULL instead.  The widget will display 'no 
+            // results'. the javascript that renders widgets assumes a valid widget and thus 
+            // can't handle an exception thrown here.  
+            return null;
         }        
 
         QueryField qfPathwayIdentifier = new QueryField(qcPathway, "identifier");
@@ -99,8 +101,11 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             try {
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
-                LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
-                throw e;
+                LOG.error("Error rendering pathway widget, invalid taxonIds: " + taxonIds);
+                // don't throw an exception, return NULL instead.  The widget will display 'no 
+                // results'. the javascript that renders widgets assumes a valid widget and thus 
+                // can't handle an exception thrown here.  
+                return null;
             }
         }
         cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));
