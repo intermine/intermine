@@ -847,16 +847,6 @@
         </node>
       </query>
     </template>
-    <template name="in_relatedout" title="Submission -&gt; I/O" longDescription="All the input to a submissionand their related output" comment="">
-      <query name="in_relatedout" model="genomic" view="Submission.title Submission.inputs.name Submission.inputs.type Submission.inputs.value Submission.inputs.resultData.name Submission.inputs.resultData.type Submission.inputs.resultData.value" sortOrder="Submission.title asc">
-        <node path="Submission" type="Submission">
-        </node>
-        <node path="Submission.title" type="String">
-          <constraint op="=" value="Celniker 1182-4H" description="" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
     <template name="Insertion_GeneLocation" title="P-element insertion --&gt; Genes that overlap this insertion +  chromosomal coordinates of insertion and genes." longDescription="For a specific P-element insertion, search for overlapping genes. Show chromosomal coordinates of the insertion and the genes." comment="">
       <query name="Insertion_GeneLocation" model="genomic" view="InsertionSite.primaryIdentifier InsertionSite.chromosome.primaryIdentifier InsertionSite.chromosomeLocation.start InsertionSite.chromosomeLocation.end InsertionSite.overlappingFeatures.primaryIdentifier InsertionSite.overlappingFeatures.symbol InsertionSite.overlappingFeatures.chromosomeLocation.start InsertionSite.overlappingFeatures.chromosomeLocation.end InsertionSite.overlappingFeatures.chromosomeLocation.strand InsertionSite.dataSets.title" sortOrder="InsertionSite.primaryIdentifier asc">
         <pathDescription pathString="InsertionSite.dataSets" description="Dataset">
@@ -1273,18 +1263,6 @@
         </node>
       </query>
     </template>
-    <template name="outupt_sub" title="Results type -&gt; Submissions" longDescription="All the submission with results of a certain type" comment="">
-      <query name="outupt_sub" model="genomic" view="Submission.title Submission.design Submission.factorName Submission.factorType Submission.outputs.name Submission.outputs.type Submission.outputs.value" sortOrder="Submission.title asc">
-        <node path="Submission" type="Submission">
-        </node>
-        <node path="Submission.outputs" type="SubmissionData">
-        </node>
-        <node path="Submission.outputs.name" type="String">
-          <constraint op="=" value="transfrag file" description="" identifier="" editable="true" code="A">
-          </constraint>
-        </node>
-      </query>
-    </template>
     <template name="PointMutation_Gene_Chromosome" title="Point mutation [D. melanogaster] --&gt; Genes + chromosomal locations." longDescription="For a particular point mutation, search for overlapping genes. Show chromosome coordinates for the genes." comment="">
       <query name="PointMutation_Gene_Chromosome" model="genomic" view="PointMutation.primaryIdentifier PointMutation.overlappingFeatures.primaryIdentifier PointMutation.overlappingFeatures.symbol PointMutation.overlappingFeatures.chromosome.primaryIdentifier PointMutation.overlappingFeatures.chromosomeLocation.start PointMutation.overlappingFeatures.chromosomeLocation.end PointMutation.overlappingFeatures.chromosomeLocation.strand PointMutation.dataSets.title" sortOrder="PointMutation.primaryIdentifier asc">
         <node path="PointMutation" type="PointMutation">
@@ -1443,16 +1421,6 @@
         </node>
         <node path="SubmissionData.submission" type="Submission">
           <constraint op="LOOKUP" value="Celniker embryonic 5'RACE" description="" identifier="" editable="true" code="A" extraValue="">
-          </constraint>
-        </node>
-      </query>
-    </template>
-    <template name="sub_outfeat" title="Submission -&gt; Output Features" longDescription="All the output features of a given submission" comment="">
-      <query name="sub_outfeat" model="genomic" view="Submission.title Submission.outputs.name Submission.outputs.type Submission.outputs.value Submission.outputs.features.secondaryIdentifier Submission.outputs.features.length Submission.outputs.features.primaryIdentifier" sortOrder="Submission.title asc">
-        <node path="Submission" type="Submission">
-        </node>
-        <node path="Submission.title" type="String">
-          <constraint op="=" value="Celniker 1182-4H" description="" identifier="" editable="true" code="A">
           </constraint>
         </node>
       </query>
@@ -3492,10 +3460,6 @@
     </tag>
     <tag name="im:aspect:modENCODE" objectIdentifier="org.intermine.model.bio.Lab" type="class">
     </tag>
-    <tag name="im:aspect:modENCODE" objectIdentifier="Submission.inputs" type="collection">
-    </tag>
-    <tag name="im:aspect:modENCODE" objectIdentifier="Submission.outputs" type="collection">
-    </tag>
     <tag name="im:aspect:modENCODE" objectIdentifier="Submission.submissionData" type="collection">
     </tag>
     <tag name="im:aspect:modENCODE" objectIdentifier="AppliedProtocol.inputs" type="collection">
@@ -4697,10 +4661,6 @@
     <tag name="im:summary" objectIdentifier="AppliedProtocol.inputs" type="collection">
     </tag>
     <tag name="im:summary" objectIdentifier="AppliedProtocol.outputs" type="collection">
-    </tag>
-    <tag name="im:summary" objectIdentifier="Submission.inputs" type="collection">
-    </tag>
-    <tag name="im:summary" objectIdentifier="Submission.outputs" type="collection">
     </tag>
     <tag name="im:summary" objectIdentifier="SubmissionData.dataAttributes" type="collection">
     </tag>
