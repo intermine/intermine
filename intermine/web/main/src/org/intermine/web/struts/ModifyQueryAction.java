@@ -60,7 +60,7 @@ public class ModifyQueryAction extends InterMineAction
             return export(mapping, form, request, response);
         }
         LOG.error("Don't know what to do");
-        return null;
+        throw new RuntimeException("Don't know what to do");
     }
 
     /**

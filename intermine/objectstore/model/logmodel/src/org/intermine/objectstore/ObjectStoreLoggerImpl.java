@@ -70,7 +70,7 @@ public class ObjectStoreLoggerImpl implements InterMineLogger
             osw.store(loggable);
             osw.commitTransaction();
         } catch (ObjectStoreException ose) {
-            LOG.error("Had a problem while trying to store a loggable message", ose);
+            LOG.warn("Had a problem while trying to store a loggable message", ose);
         }
     }
 
@@ -97,7 +97,7 @@ public class ObjectStoreLoggerImpl implements InterMineLogger
             osw.store(query);
             osw.commitTransaction();
         } catch (ObjectStoreException ose) {
-            LOG.error("Had a problem while trying to store a loggable query", ose);
+            LOG.warn("Had a problem while trying to store a loggable query", ose);
         }
     }
 

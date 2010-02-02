@@ -153,7 +153,6 @@ public class InitialiserPlugin implements PlugIn
                 keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()), Boolean.TRUE);
             }
         }
-        LOG.error("Keyless classes: " + keylessClasses);
         servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
 
         setupClassSummaryInformation(servletContext, oss, os.getModel());

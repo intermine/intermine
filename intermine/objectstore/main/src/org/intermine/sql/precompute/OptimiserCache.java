@@ -193,6 +193,7 @@ public class OptimiserCache
             }
         } else {
             LOG.error("Expire called on null OptimiserCacheLine");
+            throw new NullPointerException("Expire called on null OptimiserCacheLine");
         }
     }
 

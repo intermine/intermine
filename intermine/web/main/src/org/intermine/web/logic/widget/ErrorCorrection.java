@@ -17,7 +17,8 @@ import java.util.HashMap;
  *
  * @author Julie Sullivan
  */
-public interface ErrorCorrection {
+public interface ErrorCorrection
+{
     /**
      * @param maxValue maximum value to display
      */

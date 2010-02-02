@@ -256,7 +256,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (!c.getAutoCommit()) {
                     Exception e = new Exception();
                     e.fillInStackTrace();
-                    LOG.error("releaseConnection called while in transaction - rolling back."
+                    LOG.warn("releaseConnection called while in transaction - rolling back."
                               + System.getProperty("line.separator"), e);
                     c.rollback();
                     c.setAutoCommit(true);
@@ -317,7 +317,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     versionString = MetadataManager.retrieve(database,
                             MetadataManager.OS_FORMAT_VERSION);
                 } catch (SQLException e) {
-                    LOG.error("Error retrieving database format version number", e);
+                    LOG.warn("Error retrieving database format version number", e);
                 }
                 if (versionString == null) {
                     formatVersion = 0;
@@ -421,14 +421,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         ShutdownHook.registerObject(logWriter);
                         os.setLog(logWriter);
                     } catch (IOException e) {
-                        LOG.error("Error setting up execute log in file " + logfile + ": " + e);
+                        LOG.warn("Error setting up execute log in file " + logfile + ": " + e);
                     }
                 }
                 if (logTable != null) {
                     try {
                         os.setLogTableName(logTable);
                     } catch (SQLException e) {
-                        LOG.error("Error setting up execute log in database table " + logTable + ":"
+                        LOG.warn("Error setting up execute log in database table " + logTable + ":"
                                 + e);
                     }
                 }
@@ -437,7 +437,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         int minBagTableSizeInt = Integer.parseInt(minBagTableSizeString);
                         os.setMinBagTableSize(minBagTableSizeInt);
                     } catch (NumberFormatException e) {
-                        LOG.error("Error setting minBagTableSize: " + e);
+                        LOG.warn("Error setting minBagTableSize: " + e);
                     }
                 }
                 if ("true".equals(logEverythingString)) {
@@ -612,7 +612,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             try {
                 logTableBatch.flush(logTableConnection);
             } catch (SQLException e) {
-                LOG.error("Failed to flush log entries to log table: " + e);
+                LOG.warn("Failed to flush log entries to log table: " + e);
             }
         }
     }
@@ -637,7 +637,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             new Long(estimated), new Long(execute),
                             new Long(permitted), new Long(convert), q.toString(), sql});
             } catch (SQLException e) {
-                LOG.error("Failed to write to log table: " + e);
+                LOG.warn("Failed to write to log table: " + e);
             }
         }
     }
@@ -917,14 +917,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     c.createStatement().execute(bttr.getDropSql());
                     LOG.info("Closing objectstore - dropped temporary table: " + bttr.getDropSql());
                 } catch (SQLException e) {
-                    LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
+                    LOG.warn("Failed to drop temporary bag table: " + bttr.getDropSql()
                             + ", continuing");
                 }
                 iter.remove();
             }
             flushOldTempBagTables(c);
         } catch (SQLException e) {
-            LOG.error("Failed to drop temporary bag tables: " + e);
+            LOG.warn("Failed to drop temporary bag tables: " + e);
         } finally {
             if (c != null) {
                 releaseConnection(c);
@@ -941,7 +941,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         try {
             close();
         } catch (ObjectStoreException e) {
-            LOG.error("Exception caught while shutting down ObjectStoreInterMineImpl: "
+            LOG.warn("Exception caught while shutting down ObjectStoreInterMineImpl: "
                     + e);
         }
     }
@@ -1098,7 +1098,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                                 + permittedTime + "\tconvert: " + (postConvert - postExecute) + "\t"
                                 + q + "\t" + sql + "\n");
                     } catch (IOException e) {
-                        LOG.error("Error writing to execute log " + e);
+                        LOG.warn("Error writing to execute log " + e);
                     }
                 }
                 dbLog(endOptimiseTime - startOptimiseTime, estimatedTime, postExecute - preExecute,
@@ -1398,7 +1398,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             try {
                 c.createStatement().execute(bttr.getDropSql());
             } catch (SQLException e) {
-                LOG.error("Failed to drop temporary bag table: " + bttr.getDropSql()
+                LOG.warn("Failed to drop temporary bag table: " + bttr.getDropSql()
                         + ", continuing");
             }
             bagTablesInDatabase.remove(bttr);
@@ -2052,7 +2052,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
                             for (PrecomputedTable pt : pts) {
                                 if (pt == null) {
-                                    LOG.error("Null PrecomputedTable in GoFaster Map " + pts);
+                                    LOG.warn("Null PrecomputedTable in GoFaster Map " + pts);
                                 } else {
                                     if ("goFaster".equals(pt.getCategory())) {
                                         ptm.deleteTableFromDatabase(pt.getName());

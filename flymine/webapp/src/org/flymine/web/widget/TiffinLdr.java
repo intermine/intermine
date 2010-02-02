@@ -152,7 +152,6 @@ public class TiffinLdr extends EnrichmentWidgetLdr
              }
              q.addToGroupBy(qfId);
          }
-         LOG.error("tiffin widget:" + q);
          return q;
      }
 }

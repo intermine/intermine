@@ -64,7 +64,7 @@ public class SubmissionProtocolsController extends TilesAction
 
         // submission object
         InterMineObject o = (InterMineObject) request.getAttribute("object");
-        LOG.error("SUBMISSION id: " + o.getId());
+        LOG.info("SUBMISSION id: " + o.getId());
 
         // create the query
         PathQuery q = new PathQuery(os.getModel());

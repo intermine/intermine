@@ -89,7 +89,7 @@ public class EquivalentObjectHints
             }
             databaseEmptyChecked = true;
         } catch (ObjectStoreException e) {
-            LOG.error("Error checking database", e);
+            LOG.warn("Error checking database", e);
             databaseEmptyChecked = true;
             databaseEmpty = false;
             return false;
@@ -125,7 +125,7 @@ public class EquivalentObjectHints
                 }
                 classStatus.put(clazz, status);
             } catch (ObjectStoreException e) {
-                LOG.error("Error checking database for " + clazz, e);
+                LOG.warn("Error checking database for " + clazz, e);
                 return false;
             }
         }
@@ -199,7 +199,7 @@ public class EquivalentObjectHints
                 classAndFieldNameQueried.put(cafn, new HashSet());
                 summaryToCafn.put(summaryName, cafn);
             } catch (ObjectStoreException e) {
-                LOG.error("Error checking database for " + clazz.getName() + "." + fieldName, e);
+                LOG.warn("Error checking database for " + clazz.getName() + "." + fieldName, e);
                 return false;
             }
         }

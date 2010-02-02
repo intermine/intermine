@@ -90,8 +90,8 @@ public class ChartRenderer extends InterMineAction
         }
         Method method = getClass().getMethod(request.getParameter("method"), SIG);
         if (!method.getName().equals("execute")) { // avoid infinite loop
-            return (ActionForward)
-            method.invoke(this, new Object[] {mapping, form, request, response});
+            return (ActionForward) method.invoke(this, new Object[] {mapping, form, request,
+                    response});
         }
         LOG.error("bad method parameter \"" + request.getParameter("method") + "\"");
         return null;

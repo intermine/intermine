@@ -75,7 +75,7 @@ public class NotXmlParser
         if ((xml == null) || "null".equals(xml)) {
             Exception e = new Exception();
             e.fillInStackTrace();
-            LOG.error("Parsing " + xml, e);
+            LOG.warn("Parsing " + xml, e);
         }
         long time1 = System.currentTimeMillis();
         String a[] = SPLITTER.split(xml);
@@ -159,7 +159,7 @@ public class NotXmlParser
             parseTime += time1 - time2;
             opCount++;
             if (opCount >= 100000) {
-                LOG.error("(Fast Factory) Split: " + splitTime + " ms, Class: " + classTime
+                LOG.info("(Fast Factory) Split: " + splitTime + " ms, Class: " + classTime
                         + " ms, Create: " + createTime + " ms, Parse: " + parseTime + " ms");
                 opCount = 0;
             }
@@ -172,7 +172,7 @@ public class NotXmlParser
                 parseTime += time1 - time2;
                 opCount++;
                 if (opCount >= 100000) {
-                    LOG.error("(Fast Class) Split: " + splitTime + " ms, Class: " + classTime
+                    LOG.info("(Fast Class) Split: " + splitTime + " ms, Class: " + classTime
                             + " ms, Create: " + createTime + " ms, Parse: " + parseTime + " ms");
                     opCount = 0;
                 }
@@ -232,7 +232,7 @@ public class NotXmlParser
                 parseTime += time1 - time2;
                 opCount++;
                 if (opCount >= 100000) {
-                    LOG.error("(Fallback) Split: " + splitTime + " ms, Class: " + classTime
+                    LOG.info("(Fallback) Split: " + splitTime + " ms, Class: " + classTime
                             + " ms, Create: " + createTime + " ms, Parse: " + parseTime + " ms");
                     opCount = 0;
                 }

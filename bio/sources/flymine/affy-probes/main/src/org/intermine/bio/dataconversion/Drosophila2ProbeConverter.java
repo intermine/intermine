@@ -299,7 +299,7 @@ public class Drosophila2ProbeConverter extends FileConverter
         if (holder.strand != null) {
             item.setAttribute("strand", holder.strand);
         } else {
-            LOG.error("probeset " + probeset + " has no strand");
+            LOG.warn("probeset " + probeset + " has no strand");
         }
         item.setReference("object", holder.chromosomeRefID);
         item.setReference("subject", probeset);

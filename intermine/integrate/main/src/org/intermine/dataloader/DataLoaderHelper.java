@@ -212,7 +212,7 @@ public class DataLoaderHelper
                                             conn = osimi.getConnection();
                                             conn.createStatement().execute(sql);
                                         } catch (SQLException e) {
-                                            LOG.error("Index creation failed", e);
+                                            LOG.warn("Index creation failed", e);
                                         } finally {
                                             if (conn != null) {
                                                 osimi.releaseConnection(conn);

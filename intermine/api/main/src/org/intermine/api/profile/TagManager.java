@@ -70,6 +70,7 @@ public class TagManager
             osWriter.delete(tag);
         } catch (ObjectStoreException e) {
             LOG.error("delete tag failed" + e);
+            throw new RuntimeException("Delete tag failed", e);
         }
     }
 

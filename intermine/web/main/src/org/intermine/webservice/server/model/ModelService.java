@@ -26,7 +26,6 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
  */
 public class ModelService extends WebService
 {
-
     public ModelService(InterMineAPI im) {
         super(im);
     }

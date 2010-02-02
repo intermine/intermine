@@ -80,10 +80,11 @@ public class PathUtil
      * Return true if given type (of a constraint) can be assigned to the InterMineObject - i.e.
      * if the class or any superclass of the InterMineObject are the type.  Type can be a qualified
      * or unqualified class name.
+     *
      * @param model the data model
      * @param type type that will be assigned to
      * @param obj the InterMineObject to check
-     * @return
+     * @return a boolean
      */
     public static boolean canAssignObjectToType(Model model, String type, InterMineObject obj) {
         type = TypeUtil.unqualifiedName(type);

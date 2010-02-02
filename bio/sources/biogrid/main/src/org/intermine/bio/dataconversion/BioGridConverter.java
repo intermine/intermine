@@ -113,10 +113,8 @@ public class BioGridConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
-
-
-    //10116.xref.ncbiGeneNumber = entrez gene/locuslink
-    //9606.secondaryIdentifier = shortLabel
+            //10116.xref.ncbiGeneNumber = entrez gene/locuslink
+            //9606.secondaryIdentifier = shortLabel
 
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
@@ -126,9 +124,9 @@ public class BioGridConverter extends BioFileConverter
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
                                            + key);
             }
-	    if (attributes.length == 3) {
-		LOG.error("~~~ " + attributes[2]);
-	    }
+            if (attributes.length == 3) {
+                LOG.error("~~~ " + attributes[2]);
+            }
             String taxonId = attributes[0];
             if (config.get(taxonId) == null) {
                 Map<String, String> configs = new HashMap();
@@ -137,13 +135,13 @@ public class BioGridConverter extends BioFileConverter
             if (attributes[1].equals("xref")) {
                 config.get(taxonId).put(attributes[2], value.toLowerCase());
             } else {
-		// attributes[1] is the identifierType, eg. primaryIdentifier
-		// value = 'shortLabel'
+                // attributes[1] is the identifierType, eg. primaryIdentifier
+                // value = 'shortLabel'
                 config.get(taxonId).put(attributes[1], value);
-	    }
+            }
         }
     }
-    
+
     /**
      * Handles xml file
      */
@@ -226,6 +224,7 @@ public class BioGridConverter extends BioFileConverter
                     interactorHolder.organismRefId = getOrganism(taxId);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store organism:" + taxId);
+                    throw new RuntimeException("Could not store organism " + taxId, e);
                 }
                 Map<String, String> identifierConfigs = config.get(taxId);
                 
@@ -239,6 +238,8 @@ public class BioGridConverter extends BioFileConverter
                             }
                         } catch (ObjectStoreException e) {
                             LOG.error("couldn't store gene for organism:" + taxId);
+                            throw new RuntimeException("Could not store gene for organism " + taxId,
+                                    e);
                         }
                     }
                 }
@@ -333,6 +334,7 @@ public class BioGridConverter extends BioFileConverter
                     storeExperiment(experimentHolder);
                 } catch (ObjectStoreException e) {
                     LOG.error("couldn't store experiment");
+                    throw new RuntimeException("Could not store experiment", e);
                 }
 
             /********************************* GENES ***********************************/

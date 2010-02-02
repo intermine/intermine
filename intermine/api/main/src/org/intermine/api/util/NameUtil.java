@@ -1,5 +1,15 @@
 package org.intermine.api.util;
 
+/*
+ * Copyright (C) 2002-2010 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * Utility methods for naming queries and lists.
  * @author Julie Sullivan
-  */
+ */
 public class NameUtil
 {
     private static final String QUERY_NAME_PREFIX = "query_";
@@ -21,7 +31,7 @@ public class NameUtil
     private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\s\\.\\-:]");
     // A-Z, a-z, 0-9, underscores and dashes.
     private static final Pattern NO_SPECIAL_CHARS_PATTERN = Pattern.compile("[^\\w\\-:]");
-    
+
     /*
      * Generates a map of special characters to their name, used to swap out bad characters in
      * query/list names
@@ -78,17 +88,18 @@ public class NameUtil
         if (StringUtils.isEmpty(name)) {
             return false;
         }
-        Matcher m = (specialChars ? SPECIAL_CHARS_PATTERN.matcher(name) : 
-            NO_SPECIAL_CHARS_PATTERN.matcher(name));
+        Matcher m = (specialChars ? SPECIAL_CHARS_PATTERN.matcher(name)
+                : NO_SPECIAL_CHARS_PATTERN.matcher(name));
         return !m.find();
     }
-    
+
     /**
      * Verifies names (bags, queries, etc) only contain A-Z, a-z, 0-9, underscores and
-     * dashes.  
+     * dashes.
      * if specialChars boolean is TRUE, then dot and space are allowed.  If specialChars is FALSE,
-     * it likely means the name is going to be handled by javascript, in URLS, etc and we don't 
+     * it likely means the name is going to be handled by javascript, in URLS, etc and we don't
      * want to have to encode it.  eg. template name.
+     *
      * @param name Name of bag/query/template to be validated
      * @param specialChars if true, then special characters DOT and SPACE are allowed in name
      * @return isValid Returns true if this name is correct, false if this name contains a bad char
@@ -96,7 +107,7 @@ public class NameUtil
     public static boolean isValidName(String name, boolean specialChars) {
         return validateName(name, specialChars);
     }
-    
+
     /**
      * Takes a string and replaces special characters with the text value, e.g. it would change
      * "a&amp;b" to "a_AMPERSAND_b".  This is used in the query/template imports to handle special
@@ -174,7 +185,7 @@ public class NameUtil
                 i++;
             }
         }
-        return newName;        
+        return newName;
     }
 
     /**

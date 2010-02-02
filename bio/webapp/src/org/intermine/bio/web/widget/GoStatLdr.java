@@ -90,7 +90,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
         } catch (ClassNotFoundException e) {
             LOG.error(e);
-            return null;
+            throw new RuntimeException("Class GoAnnotation does not exist", e);
         }
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -154,7 +154,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
                 LOG.error("Error running go stat widget, invalid taxonIds: " + taxonIds);
-                return null;
+                throw e;
             }
         }
         cs.addConstraint(new BagConstraint(qfTaxonId, ConstraintOp.IN, taxonIdInts));

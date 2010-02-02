@@ -67,7 +67,7 @@ public class ObjectDetailsTemplateController extends TilesAction
                 InterMineObject obj = displayObject.getObject();
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, obj);
             } else if (interMineBag != null) {
-                populatedTemplate = TemplatePopulator.populateTemplateWithBag(template, 
+                populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,
                                                                               interMineBag);
             } else {
                 // should only have been called with an object or a bag
@@ -76,8 +76,10 @@ public class ObjectDetailsTemplateController extends TilesAction
         } catch (TemplatePopulatorException e) {
             LOG.error("Error setting up template '" + template.getName() + "' on report page for"
                     + ((displayObject == null) ? " bag " + interMineBag.getName()
-                        : " object " + displayObject.getId()) + ".");
-            return null;
+                        : " object " + displayObject.getId()) + ".", e);
+            throw new RuntimeException("Error setting up template '" + template.getName()
+                    + "' on report page for" + ((displayObject == null) ? " bag "
+                        + interMineBag.getName() : " object " + displayObject.getId()) + ".", e);
         }
 
         Profile profile = SessionMethods.getProfile(session);

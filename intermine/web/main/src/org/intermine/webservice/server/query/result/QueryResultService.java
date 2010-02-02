@@ -56,9 +56,6 @@ public class QueryResultService extends WebService
 
     private static final int BATCH_SIZE = 5000;
 
-    /**
-     * {@inheritDoc}
-     */
     public QueryResultService(InterMineAPI im) {
         super(im);
     }

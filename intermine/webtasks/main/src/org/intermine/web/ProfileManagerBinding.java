@@ -217,10 +217,10 @@ class ProfileManagerHandler extends DefaultHandler
                     tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
                             profile.getUsername());
                 } catch (RuntimeException e) {
+                    LOG.error("Error during adding tag: " + tag.toString(), e);
                     if (abortOnError) {
                         throw e;
                     }
-                    LOG.error("Error during adding tag: " + tag.toString(), e);
                 }
             }
             profileHandler = null;

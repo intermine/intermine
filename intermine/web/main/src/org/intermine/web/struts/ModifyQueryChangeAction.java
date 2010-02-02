@@ -100,7 +100,8 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 
         if (sq == null) {
             LOG.error("No such query " + queryName + " type=" + request.getParameter("type"));
-            return null;
+            throw new NullPointerException("No such query " + queryName + " type="
+                    + request.getParameter("type"));
         }
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);

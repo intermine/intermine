@@ -86,7 +86,7 @@ public class DatabaseTest extends TestCase
     }
 /*
     public void manyTables(int tableCount) throws Exception {
-        LOG.error("Starting test with tableCount = " + tableCount);
+        LOG.warn("Starting test with tableCount = " + tableCount);
         Database db = DatabaseFactory.getDatabase("db.unittest");
         Connection c = db.getConnection();
         c.setAutoCommit(true);
@@ -102,7 +102,7 @@ public class DatabaseTest extends TestCase
             s.executeBatch();
             long end = System.currentTimeMillis();
             System.out.println("Took " + (end - start) + " ms to create " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
-            LOG.error("Took " + (end - start) + " ms to create " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+            LOG.warn("Took " + (end - start) + " ms to create " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
             start = System.currentTimeMillis();
             for (int i = 0; i < tableCount; i++) {
                 String tableName = "table" + i + "test";
@@ -113,7 +113,7 @@ public class DatabaseTest extends TestCase
             }
             end = System.currentTimeMillis();
             System.out.println("Took " + (end - start) + " ms to read " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
-            LOG.error("Took " + (end - start) + " ms to read " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+            LOG.warn("Took " + (end - start) + " ms to read " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
         } catch (Exception e) {
             e2 = e;
             throw e;
@@ -127,7 +127,7 @@ public class DatabaseTest extends TestCase
                 s.executeBatch();
                 long end = System.currentTimeMillis();
                 System.out.println("Took " + (end - start) + " ms to drop " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
-                LOG.error("Took " + (end - start) + " ms to drop " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
+                LOG.warn("Took " + (end - start) + " ms to drop " + tableCount + " tables - average of " + ((tableCount * 1000) / (end - start)) + " tables per second");
                 c.close();
             } catch (Exception e) {
                 if (e2 == null) {

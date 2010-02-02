@@ -161,7 +161,7 @@ public class WebConfig
                         + "." + fieldConfig.getFieldExpr();
                 } catch (ClassNotFoundException e) {
                     String msg = "Invalid web config. '" + typeName + "' doesn't exist in the "
-                    + "model.";
+                        + "model.";
                     LOG.warn(msg);
                     continue;
                 }

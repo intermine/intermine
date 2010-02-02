@@ -93,7 +93,7 @@ public class UniprotConfig
                 configEntry.addIdentifier(attributes[1], attributes[2], value);
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
-                + ".  This line has not been processed.";
+                    + ".  This line has not been processed.";
                 LOG.error(msg);
             }
         }

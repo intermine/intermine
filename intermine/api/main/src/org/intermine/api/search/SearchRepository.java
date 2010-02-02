@@ -312,6 +312,7 @@ public class SearchRepository
             } catch (IOException e) {
                 LOG.error("Failed to add webSearchable " + webSearchable.getName()
                         + " to the index", e);
+                throw new RuntimeException("Failed to write to index", e);
             }
         }
 
@@ -319,6 +320,7 @@ public class SearchRepository
             writer.close();
         } catch (IOException e) {
             LOG.error("IOException while closing IndexWriter", e);
+            throw new RuntimeException("Failed to close IndexWriter", e);
         }
 
         time = System.currentTimeMillis() - time;

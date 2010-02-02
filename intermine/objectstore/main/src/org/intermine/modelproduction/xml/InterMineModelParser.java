@@ -129,7 +129,7 @@ public class InterMineModelParser implements ModelParser
                     type = packageName + "." + type;
                 }
                 if (attrs.getValue("ordered") != null) {
-                    LOG.error("Deprecated \"ordered\" attribute on collection " + cls.name
+                    LOG.warn("Deprecated \"ordered\" attribute on collection " + cls.name
                             + "." + name);
                 }
                 String reverseReference = attrs.getValue("reverse-reference");

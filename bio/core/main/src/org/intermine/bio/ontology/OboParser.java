@@ -331,7 +331,7 @@ public class OboParser
             if (synMatcher.matches()) {
                 term.addSynonym(new OboTermSynonym(unescape(synMatcher.group(1)), type));
             } else {
-                LOG.error("Could not match synonym value from: " + line);
+                LOG.warn("Could not match synonym value from: " + line);
             }
         }
     }
