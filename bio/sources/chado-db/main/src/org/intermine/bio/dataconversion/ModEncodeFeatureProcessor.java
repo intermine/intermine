@@ -78,7 +78,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final String CHROMOSOME = "Chromosome";
 
     // the configuration for this processor, set when getConfig() is called the first time
-    private final Map<Integer, MultiKeyMap> config = new HashMap();
+    private final Map<Integer, MultiKeyMap> config = new HashMap<Integer, MultiKeyMap>();
 
     private Map<Integer, FeatureData> commonFeaturesMap = new HashMap<Integer, FeatureData>();
 
@@ -90,6 +90,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @param dataSourceIdentifier the item identifier of the DataSource,
      *                             i.e. the labItemIdentifier
      * @param dataList             the list of data ids to be used in the subquery
+     * @param title                the title           
      */
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
@@ -102,7 +103,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         this.title = title;
         
         for (String chromosomeType : getChromosomeFeatureTypes()) {
-            commonFeatureInterMineTypes.add(TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
+            commonFeatureInterMineTypes.add(
+                    TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
         }
         commonFeatureInterMineTypes.add("Gene");
         commonFeatureInterMineTypes.add("MRNA");
@@ -190,11 +192,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         List<String> types = getMatchTypes(connection);
         Iterator<String> t = types.iterator();
         while (t.hasNext()) {
-            String FEAT = t.next();
-            if (FEAT.equalsIgnoreCase("cDNA_match")) {
+            String featType = t.next();
+            if (featType.equalsIgnoreCase("cDNA_match")) {
                 continue;
             }
-            ResultSet matchTypeLocRes = getMatchLocResultSet(connection, FEAT);
+            ResultSet matchTypeLocRes = getMatchLocResultSet(connection, featType);
             processLocationTable(connection, matchTypeLocRes);
         }
                 
@@ -206,12 +208,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     /**
      * Method to set the source for gene
      * for modencode datasources it will add the title 
-     * @param connection
-     * @param fdat feature information
+     * @param imObjectId the im object id
+     * @param dataSourceName the data source
+     * @throws ObjectStoreException the exception
+     *
      */
     @Override
-    protected void setGeneSource(Integer imObjectId,
-            String dataSourceName) throws ObjectStoreException {
+    protected void setGeneSource(Integer imObjectId, String dataSourceName) 
+    throws ObjectStoreException {
         String source = dataSourceName + "-" + title;
         setAttribute(imObjectId, "source", source);
     }
@@ -260,27 +264,31 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         LOG.debug("QUERY TIME feature match types: " + (System.currentTimeMillis() - bT));
-        return res;
+        return res;  
     }
     
     
     /**
-     * Return the interesting feature (EST, UST, RST, other?)  matches from the featureloc and feature tables.
+     * Return the interesting feature (EST, UST, RST, other?) matches 
+     * from the featureloc and feature tables.
+     * 
      * feature<->featureloc<->match_feature<->featureloc<->feature
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
+     * @param featType the type of feature (EST,UST, etc)
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
-    protected ResultSet getMatchLocResultSet(Connection connection, String FEAT) throws SQLException {
-      String query =
+    protected ResultSet getMatchLocResultSet(Connection connection, String featType)
+    throws SQLException {
+        String query =
         "SELECT -1 AS featureloc_id, feat.feature_id, chrloc.fmin, "
         + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, FALSE AS is_fmin_partial, "
         + " featloc.strand "
         + " FROM feature feat, featureloc featloc, cvterm featcv, feature mf, "
         + " cvterm mfcv, featureloc chrloc, feature chr, cvterm chrcv "
         + " WHERE feat.type_id = featcv.cvterm_id "
-        + " AND featcv.name = '" + FEAT + "' "
+        + " AND featcv.name = '" + featType + "' "
         + " AND feat.feature_id = featloc.srcfeature_id "
         + " AND featloc.feature_id = mf.feature_id "
         + " AND mf.feature_id = chrloc.feature_id "
@@ -288,14 +296,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         + " AND chr.type_id = chrcv.cvterm_id "
         + " AND chrcv.name = 'chromosome' "
         + " AND mf.type_id = mfcv.cvterm_id "
-        + " AND mfcv.name = '" + FEAT + "_match' "
+        + " AND mfcv.name = '" + featType + "_match' "
         + " AND feat.feature_id IN "
         + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
       LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("QUERY TIME feature "+ FEAT + "_match: " + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME feature " + featType + "_match: " + (System.currentTimeMillis() - bT));
         return res;
     }
     
@@ -471,7 +479,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 || chadoFeatureType.equals("ultra_scaffold")) {
                 realInterMineType = "Chromosome";
 
-                if (uniqueName.startsWith("chr")){
+                if (uniqueName.startsWith("chr")) {
                     // this is to fix some data problem with sub 146 in modmine
                     // where there are duplicated chromosome_arm features, with 
                     // and without a 'chr' prefix (e.g. 3R and chr3R)
@@ -534,7 +542,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("executing: " + analyze);
         long bT2 = System.currentTimeMillis();
         stmt.execute(analyze);
-        LOG.info("TIME feature analyzing: " + (System.currentTimeMillis() - bT2));
+        LOG.debug("TIME feature analyzing: " + (System.currentTimeMillis() - bT2));
     }
 
 
@@ -582,9 +590,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         String name = fdat.getChadoFeatureName();
         String type = fdat.getInterMineType();
         
-        if (identifier.equalsIgnoreCase(uniqueName)){        
-            if (type.equalsIgnoreCase(CHROMOSOME)){
-                if (uniqueName.equalsIgnoreCase("M")){
+        if (identifier.equalsIgnoreCase(uniqueName)) {
+            if (type.equalsIgnoreCase(CHROMOSOME)) {
+                if (uniqueName.equalsIgnoreCase("M")) {
                     // this is to fix some data problem in modmine
                     // where submissions (e.g. 100) refer to M chromosome instead
                     // of dmel_mitochondrion_genome as in FlyBase
@@ -593,16 +601,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
             }
             
-            // Piano submissions have Gene: and Transcript: in front of gene and transcript identifiers
+            // Piano submissions have Gene: and Transcript: 
+            // in front of gene and transcript identifiers
             if (type.equalsIgnoreCase("Gene")) {
-            	if (uniqueName.startsWith("Gene:")) {
-            		return uniqueName.substring(5);
-            	}
+                if (uniqueName.startsWith("Gene:")) {
+                    return uniqueName.substring(5);
+                }
             }
             if (type.equalsIgnoreCase("Transcript")) {
-            	if (uniqueName.startsWith("Transcript:")) {
-            		return uniqueName.substring(11);
-            	}
+                if (uniqueName.startsWith("Transcript:")) {
+                    return uniqueName.substring(11);
+                }
             }
         }
 
