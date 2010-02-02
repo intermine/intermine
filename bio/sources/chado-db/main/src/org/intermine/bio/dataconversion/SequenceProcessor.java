@@ -394,8 +394,15 @@ public class SequenceProcessor extends ChadoProcessor
         return true;
     }
 
-    protected void setGeneSource(Integer imObjectId,
-            String dataSourceName) throws ObjectStoreException {
+    /**
+     * to set source field if in the model (modmine)
+     * @param imObjectId im object id
+     * @param dataSourceName the data source
+     * @throws ObjectStoreException exception
+     */
+    
+    protected void setGeneSource(Integer imObjectId, String dataSourceName) 
+    throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
         if (cd.getFieldDescriptorByName("source") != null) {
@@ -1622,7 +1629,7 @@ public class SequenceProcessor extends ChadoProcessor
     /**
      * Parser a pubmed id from a results string, extracted to a method so subclasses can override
      * and fix prefixed pubmed ids.
-     * @param string pubmed id fetched from databaase
+     * @param pubmedStr id fetched from database
      * @return the pubmed id
      */
     protected Integer fixPubMedId(String pubmedStr) {
