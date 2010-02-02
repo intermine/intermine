@@ -79,8 +79,8 @@ public class AttributeLinkDisplayerController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response) {
 
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession()); 
-        
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+
         ServletContext servletContext = request.getSession().getServletContext();
 
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
@@ -135,7 +135,7 @@ public class AttributeLinkDisplayerController extends TilesAction
         // map from eg. 'Gene.Drosophila.melanogaster' to map from configName (eg. "flybase")
         // to the configuration
         Map<String, ConfigMap> linkConfigs = new HashMap<String, ConfigMap>();
-        Properties webProperties = 
+        Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
             + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter|enctype)";
@@ -263,17 +263,23 @@ public class AttributeLinkDisplayerController extends TilesAction
     }
 
     private void modifyIdString(ConfigMap config) {
+
         String delim = (String) config.get("delimiter");
         String urlString = (String) config.get("url");
 
-        urlString = urlString.replace(",", delim);
-        config.put("url", urlString);
-        
         String idString = (String) config.get("attributeValue");
-        idString = idString.replace(",", delim);
+
+        if (delim.equals("NEWLINE")) {
+            urlString = urlString.replace(",", System.getProperty("line.separator"));
+            idString = idString.replace(",", System.getProperty("line.separator"));
+        } else {
+            urlString = urlString.replace(",", delim);
+            idString = idString.replace(",", delim);
+        }
+        config.put("url", urlString);
         config.put("attributeValue", idString);
     }
-    
+
     private void modifyConfigToPost(ConfigMap config) {
         String urlString = (String) config.get("url");
         AttributeLinkURL link;
