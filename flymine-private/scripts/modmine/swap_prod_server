@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# to swap server for given release.
+# e.g.
+# swap_prod_server r16 01
+#
+# will move r16 from modprod0 to modprod1
+#
+# TODO: start/stop tomcats
+#
+
+SRV=modprod
+PROXYFILE=/etc/httpd/conf.d/proxy_ajp.conf
+REL=$1
+
+if [ -z "$2" ]
+then
+echo
+echo "PLEASE enter the desired swap order {10|01}"
+echo "for example:"
+echo "./swap_prod_server r16 01"
+echo
+exit
+fi
+
+if [ "$2" = "10" ]
+then
+ FROM=1
+ TO=0
+elif [ "$2" = "01" ]
+then
+ FROM=0
+ TO=1
+else
+echo
+echo "Only accepted arguments are:"
+echo "10  when swapping a release from modprod1 to modprod0"
+echo "01  when swapping a release from modprod0 to modprod1"
+exit
+fi
+
+echo "============================================"
+echo " Changing production server for modmine-$REL"
+echo
+echo "         $SRV$FROM   ->  $SRV$TO"
+echo "============================================"
+echo
+echo "Press any key to proceed (^C to exit).."
+echo -n "->"
+read
+
+echo "Stopping webapp on $SRV$FROM..."
+# ssh $SRV$FROM cd /webapp ./stop.sh
+echo "Copying userprofile database from $SRV$FROM to $SRV$TO..."
+pg_dump -h $SRV$FROM -U modmine modmine-$REL-userprofile | psql -h $SRV$TO -U modmine modmine-$REL-userprofile
+
+echo "Copying list table from $SRV$FROM to $SRV$TO..."
+#TEST!
+pg_dump -h $SRV$FROM -U modmine -t osbag_int modmine-$REL | psql -h $SRV$TO -U modmine modmine-$REL
+
+echo "Changing properties file modmine.properties.$REL..."
+cd $HOME/.intermine
+sed "s/modprod$FROM/modprod$TO/g" modmine.properties.$REL  > modmine.properties.$REL$TO
+mv modmine.properties.$REL modmine.properties.$REL.$SRV$FROM
+mv modmine.properties.$REL$TO modmine.properties.$REL
+
+echo "Changing proxy setting..."
+RELNR=`echo $REL | tr -d r`
+sed -i.old "s/$SRV$FROM:8009\/release-$RELNR/$SRV$TO:8009\/release-$RELNR/g" $PROXYFILE
+
+echo "Starting webapp on $SRV$TO.."
+# ssh $SRV$TO cd /webapp ./stop.sh ./start.sh
+echo
+echo "modmine-$REL is now on $SRV$TO."

@@ -572,28 +572,22 @@ if [ -n "$SUB" ]
 then
 # doing only 1 sub
 LOOPVAR="$SUB"
-
-elif [ -n $INFILE ]
+elif [ -n "$INFILE" ]
 then
 # use the list provided in a file
 LOOPVAR=`cat $INFILE`
-
 else
 # get the full list from the ftp site and save it for reference
 wget -O - $FTPURL/list.txt | sort > $FTPARK/`date "+%y%m%d"`.list
-
 rm $DATADIR/ftplist
 ln -s $FTPARK/`date "+%y%m%d"`.list $DATADIR/ftplist
 # get the list of live dccid and use it as loop variable
 grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/all.live
 LOOPVAR=`cat $DATADIR/all.live`
-
 doProjectList
-
 # get also the list of deprecated entries with their replacement
 grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
-
 fi
 
 
