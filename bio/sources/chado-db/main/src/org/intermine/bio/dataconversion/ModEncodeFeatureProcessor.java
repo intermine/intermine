@@ -259,7 +259,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("QUERY TIME match types" + ":" + (System.currentTimeMillis() - bT));
+        LOG.debug("QUERY TIME feature match types: " + (System.currentTimeMillis() - bT));
         return res;
     }
     
@@ -295,7 +295,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING "+ FEAT + "MATCH " + ":" + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME feature "+ FEAT + "_match: " + (System.currentTimeMillis() - bT));
         return res;
     }
     
@@ -523,18 +523,18 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
         stmt.execute(query);
-        LOG.info("TIME CREATING TEMP FEAT TABLE " + ":" + (System.currentTimeMillis() - bT));
+        LOG.info("TIME feature creating TEMP table: " + (System.currentTimeMillis() - bT));
         String idIndexQuery = "CREATE INDEX " + SUBFEATUREID_TEMP_TABLE_NAME + "_feature_index ON "
             + SUBFEATUREID_TEMP_TABLE_NAME + "(feature_id)";
         LOG.info("executing: " + idIndexQuery);
         long bT1 = System.currentTimeMillis();
         stmt.execute(idIndexQuery);
-        LOG.info("TIME CREATING INDEX " + ":" + (System.currentTimeMillis() - bT1));
+        LOG.info("TIME feature creating INDEX: " + (System.currentTimeMillis() - bT1));
         String analyze = "ANALYZE " + SUBFEATUREID_TEMP_TABLE_NAME;
         LOG.info("executing: " + analyze);
         long bT2 = System.currentTimeMillis();
         stmt.execute(analyze);
-        LOG.info("TIME ANALYZING " + ":" + (System.currentTimeMillis() - bT2));
+        LOG.info("TIME feature analyzing: " + (System.currentTimeMillis() - bT2));
     }
 
 
@@ -653,7 +653,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         long bT = System.currentTimeMillis();
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        LOG.info("TIME QUERYING FEATURE SCORES " + ":" + (System.currentTimeMillis() - bT));
+        LOG.info("QUERY TIME feature scores: " + (System.currentTimeMillis() - bT));
         return res;
     }
 }
