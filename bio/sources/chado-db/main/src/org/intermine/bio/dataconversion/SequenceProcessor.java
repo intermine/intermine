@@ -398,7 +398,7 @@ public class SequenceProcessor extends ChadoProcessor
             String dataSourceName) throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
-        if (cd.getFieldDescriptorByName("source") != null){
+        if (cd.getFieldDescriptorByName("source") != null) {
             // if it is there (e.g. modmine) let's set it
             setAttribute(imObjectId, "source", dataSourceName);
         }
