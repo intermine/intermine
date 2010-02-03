@@ -192,7 +192,7 @@ public interface Constants
     /**
      * Current version of InterMine. This constant must changed by every new InterMine release.
      */
-    public static final int INTERMINE_VERSION = 1;
+    public static final int WEB_SERVICE_VERSION = 1;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
