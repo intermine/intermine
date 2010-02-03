@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -41,6 +42,7 @@ import org.intermine.objectstore.query.Results;
  */
 public class BagManager
 {
+    private static final Logger LOG = Logger.getLogger(BagManager.class);
     private Profile superProfile;
     private final TagManager tagManager;
     private final Model model;
@@ -53,6 +55,12 @@ public class BagManager
      */
     public BagManager(Profile superProfile, Model model) {
         this.superProfile = superProfile;
+        if (superProfile == null) {
+            String msg = "Unable to retrieve superuser profile.  Check that the superuser profile "
+                + "in the MINE.properties file matches the superuser in the userprofile database.";
+            LOG.error(msg);
+            throw new RuntimeException(msg);
+        }
         this.model = model;
         this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
         this.osProduction = superProfile.getProfileManager().getProductionObjectStore();
