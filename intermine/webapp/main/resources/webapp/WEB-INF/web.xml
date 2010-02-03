@@ -139,7 +139,7 @@
 
   <servlet-mapping>
     <servlet-name>ws-version</servlet-name>
-    <url-pattern>/service/version</url-pattern>
+    <url-pattern>/service/version/*</url-pattern>
   </servlet-mapping>
   
 <!-- ================================================================================= -->

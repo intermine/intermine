@@ -11,6 +11,7 @@ package org.intermine.webservice.server;
  */
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Returns version of the deployed InterMine application.
@@ -50,11 +52,39 @@ public class VersionServlet extends HttpServlet
 
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
+        String pathFromUrl = request.getPathInfo();
+        String version = getVersion(pathFromUrl, request);
         try {
-            response.getWriter().print(Constants.INTERMINE_VERSION);
+            response.getWriter().print(version);
         } catch (IOException e) {
             LOGGER.error("Obtaining writer to write intermine version failed.", e);
         }
     }
+    
+    private String getVersion(String versionType, HttpServletRequest request) {
+        if (versionType != null) {
+            versionType = trimSlashes(versionType);
 
+            if (versionType.equalsIgnoreCase("release")) {
+                Properties webProperties = 
+                    SessionMethods.getWebProperties(request.getSession().getServletContext());
+                return webProperties.getProperty("project.releaseVersion");
+            } else if (versionType.equalsIgnoreCase("ws")) {
+                return "" + Constants.WEB_SERVICE_VERSION;
+            }
+        }
+        // for backwards compatibility default is the web service version
+        return "" + Constants.WEB_SERVICE_VERSION;
+    }
+
+
+    private String trimSlashes(String s) {
+        if (s.startsWith("/")) {
+            s = s.substring(1);
+        }
+        if (s.endsWith("/")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
 }
