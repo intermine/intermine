@@ -96,6 +96,11 @@ public class WormBaseProcessor extends SequenceProcessor
            config.put(new MultiKey("prop", "Gene", "cds"),
                       Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
                                     CREATE_SYNONYM_ACTION));
+           // sequence names -> secondaryIdentifier.  These are synonyms, for some reason they have
+           // is_current set to false and type 'exact'
+           config.put(new MultiKey("synonym", "Gene", "exact", Boolean.FALSE),
+                   Arrays.asList(new SetFieldConfigAction("secondaryIdentifier"),
+                                 CREATE_SYNONYM_ACTION));
        }
 
        return config;
