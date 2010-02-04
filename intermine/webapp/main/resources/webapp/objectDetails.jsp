@@ -153,7 +153,7 @@
         <c:forEach items="${object.attributes}" var="entry">
           <c:if test="${object.fieldConfigMap[entry.key].sectionOnRight}">
 
-            <imutil:disclosure id="${objectType}objectDetailsRight-${entry.key}" opened="false" type="consistent">
+            <imutil:disclosure id="${objectType}objectDetailsRight-${entry.key}" opened="true" type="consistent">
               <imutil:disclosureHead>
                 <imutil:disclosureTitle>
                   ${object.fieldConfigMap[entry.key].sectionTitle}
