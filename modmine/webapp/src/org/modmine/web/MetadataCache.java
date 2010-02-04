@@ -43,6 +43,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
 
@@ -339,7 +340,7 @@ public class MetadataCache
     public static Map<String, List<DisplayExperiment>>
     getProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map<String, List<DisplayExperiment>> projectExperiments 
+        Map<String, List<DisplayExperiment>> projectExperiments
         = new TreeMap<String, List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
@@ -566,7 +567,7 @@ public class MetadataCache
             // examples of lines:
             // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
             // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
-            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782 
+            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782
                 // 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
 
             while ((line = reader.readLine()) != null) {
@@ -597,7 +598,6 @@ public class MetadataCache
         return submissionTracksCache;
     }
 
-
     /**
      * This method looks for dccId in the tokenised line
      * or the tokenised track name
@@ -613,7 +613,7 @@ public class MetadataCache
         // starting from the end, because when checking track names only
         // the last number is ok if there are 2
         for (int x = (tokens.length - 1); x > -1; x--) {
-            if (containsOnlyNumbers(tokens[x])) {
+            if (StringUtil.allDigits(tokens[x])) {
                 // this is a submission Id
                 Integer dccId = Integer.parseInt(tokens[x]);
                 // add to map sub trackname
@@ -624,7 +624,6 @@ public class MetadataCache
             }
         }
     }
-
 
     /**
      * This method adds a GBrowse track to a map with
@@ -644,24 +643,5 @@ public class MetadataCache
             gbs.add(value);
             m.put(key, gbs);
         }
-    }
-
-    /**
-     * This method checks if a String contains only numbers
-     * @param str string to test
-     * @return true if the string contains only numbers
-     */
-    static boolean containsOnlyNumbers(String str) {
-        //It can't contain only numbers if it's null or empty...
-        if (str == null || str.length() == 0) {
-            return false;
-        }
-        for (int i = 0; i < str.length(); i++) {
-            //If we find a non-digit character we return false.
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
     }
 }
