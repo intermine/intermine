@@ -54,7 +54,7 @@ public class OrthologueConverter implements BagConverter
 
     /**
      * {@inheritDoc}
-     * @throws PathException 
+     * @throws PathException
      */
     public WebResults getConvertedObjects (HttpSession session, String organism,
                                       List<Integer> fromList, String type)
@@ -69,18 +69,18 @@ public class OrthologueConverter implements BagConverter
                         "Gene.homologues.homologue", false);
         view = getFixedView(view);
         q.setViewPaths(view);
-        
+
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
 
-        // gene 
+        // gene
         q.addConstraint("Gene", Constraints.in(objectList));
-        
-        // organism 
+
+        // organism
         q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(organism));
 
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
-        
+
 
         q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
@@ -96,7 +96,7 @@ public class OrthologueConverter implements BagConverter
      * organism is joined as a inner join. Else constraint on organism doesn't work.
      * @param pathQuery
      * @param joinPath
-     * @throws PathException 
+     * @throws PathException
      */
     private List<Path> getFixedView(List<Path> view) throws PathException {
         String invalidPath = "Gene.homologues.homologue:organism";
@@ -129,7 +129,7 @@ public class OrthologueConverter implements BagConverter
 
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
-        
+
         // organism
         q.addConstraint("Gene.organism", Constraints.lookup(organism));
 

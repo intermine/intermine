@@ -51,10 +51,11 @@ import org.intermine.util.TypeUtil;
  * @author Richard Smith
  *
  */
-public class MetadataCache 
+public class MetadataCache
 {
     // GBrowse URLs
-    private static final String GBROWSE_BASE_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+    private static final String GBROWSE_BASE_URL
+    = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
 
     // SubmissionData name for files
@@ -62,13 +63,13 @@ public class MetadataCache
 
     public static class GBrowseTrack
     {
-        private String organism; // {fly,worm} 
+        private String organism; // {fly,worm}
         private String track;    // e.g. LIEB_WIG_CHIPCHIP_POL2
         public GBrowseTrack(String organism2, String trackName) {
             this.organism  = organism2;
             this.track = trackName;
         }
-        
+
         /**
          * @return the organism
          */
@@ -81,10 +82,10 @@ public class MetadataCache
          */
         public String getTrack() {
             return track;
-        } 
+        }
     }
 
-    
+
     private static Map<String, DisplayExperiment> experimentCache = null;
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
@@ -93,9 +94,9 @@ public class MetadataCache
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static long lastTrackCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
-    
+
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
-    
+
     /**
      * Fetch experiment details for display.
      * @param os the production objectstore
@@ -107,7 +108,7 @@ public class MetadataCache
         }
         return new ArrayList<DisplayExperiment>(experimentCache.values());
     }
-    
+
     /**
      * Fetch GBrowse tracks for display.
      * @return map
@@ -143,7 +144,7 @@ public class MetadataCache
             readSubmissionFiles(os);
         }
         filesPerSubmissionCache = new HashMap<Integer, Integer>();
-        
+
         Iterator<Integer> dccId = submissionFilesCache.keySet().iterator();
         while (dccId.hasNext()) {
             Integer thisSub = dccId.next();
@@ -154,24 +155,24 @@ public class MetadataCache
     }
 
     private static void readSubmissionFiles(ObjectStore os) {
-        // 
+        //
         long startTime = System.currentTimeMillis();
         try {
-            Query q = new Query();  
+            Query q = new Query();
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
             q.addToSelect(qfDCCid);
-            
+
             QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
             QueryField qfFileName = new QueryField(qcSubmissionData, "value");
             QueryField qfDataType = new QueryField(qcSubmissionData, "type");
             q.addFrom(qcSubmissionData);
             q.addToSelect(qfFileName);
             QueryValue fileType = new QueryValue(FILETYPE);
-            
+
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER, 
+            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER,
                     qfDataType), ConstraintOp.MATCHES, fileType);
             cs.addConstraint(sc);
 
@@ -180,17 +181,17 @@ public class MetadataCache
             ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
                     qcSubmission);
             cs.addConstraint(cc1);
-           
+
             q.setConstraint(cs);
             q.addToOrderBy(qfDCCid);
-            
+
             Results results = os.execute(q);
-            
+
             submissionFilesCache = new HashMap<Integer, List<String>>();
-            
-            Integer counter=0;
-            
-            Integer prevSub=-1;
+
+            Integer counter = 0;
+
+            Integer prevSub = new Integer(-1);
             List<String> subFiles = new ArrayList<String>();
             Iterator i = results.iterator();
             while (i.hasNext()) {
@@ -201,21 +202,21 @@ public class MetadataCache
                 String fileName = (String) row.get(1);
 
                 if (!dccId.equals(prevSub) || counter.equals(results.size())) {
-                    if (prevSub > 0){
-                        if (counter.equals(results.size())){
-                            prevSub=dccId;
+                    if (prevSub > 0) {
+                        if (counter.equals(results.size())) {
+                            prevSub = dccId;
                             subFiles.add(fileName);
-                        }                        
+                        }
                         List<String> subFilesIn = new ArrayList<String>();
                         subFilesIn.addAll(subFiles);
                         submissionFilesCache.put(prevSub, subFilesIn);
                         subFiles.clear();
                     }
-                    prevSub=dccId;
+                    prevSub = dccId;
                 }
                 subFiles.add(fileName);
             }
-        }catch (Exception err) {
+        } catch (Exception err) {
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
@@ -224,12 +225,12 @@ public class MetadataCache
 
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
-        
+
         Map<Integer, List<GBrowseTrack>> subTracksMap = getGBrowseTracks();
-        
+
         for (DisplayExperiment exp : getExperiments(os)) {
             List<GBrowseTrack> expTracks = new ArrayList<GBrowseTrack>();
-            tracks.put(exp.getName(), expTracks);            
+            tracks.put(exp.getName(), expTracks);
             for (Submission sub : exp.getSubmissions()) {
                 List<GBrowseTrack> subTracks = subTracksMap.get(sub.getdCCid());
                 if (subTracks != null) {
@@ -241,7 +242,7 @@ public class MetadataCache
         }
         return tracks;
     }
-    
+
     /**
      * adds the elements of a list i to a list l only if they are not yet
      * there
@@ -258,14 +259,14 @@ public class MetadataCache
         }
     }
 
-    
+
     /**
      * Fetch a list of file names for a given submission.
      * @param os the objectstore
      * @param dccId the modENCODE submission id
      * @return a list of file names
      */
-    public static synchronized List<String> getFilesByDccId(ObjectStore os, 
+    public static synchronized List<String> getFilesByDccId(ObjectStore os,
             Integer dccId) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
@@ -275,7 +276,6 @@ public class MetadataCache
 
     /**
      * Fetch a list of file names for a given submission.
-     * @param os the objectstore
      * @param dccId the modENCODE submission id
      * @return a list of file names
      */
@@ -286,21 +286,21 @@ public class MetadataCache
         return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
     }
 
-    
+
     /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectstore
      * @param dccId the modENCODE submission id
      * @return a map from feature type to count
      */
-    public static synchronized Map<String, Long> getSubmissionFeatureCounts(ObjectStore os, 
+    public static synchronized Map<String, Long> getSubmissionFeatureCounts(ObjectStore os,
             Integer dccId) {
         if (submissionFeatureCounts == null) {
             readSubmissionFeatureCounts(os);
         }
         return submissionFeatureCounts.get(dccId);
     }
-    
+
     /**
      * Fetch a submission by the modENCODE submission ids
      * @param os the objectstore
@@ -308,14 +308,14 @@ public class MetadataCache
      * @return the requested submission
      * @throws ObjectStoreException if error reading database
      */
-    public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId) 
+    public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
     throws ObjectStoreException {
         if (submissionIdCache == null) {
             readSubmissionFeatureCounts(os);
         }
         return (Submission) os.getObjectById(submissionIdCache.get(dccId));
     }
-    
+
     /**
      * Get experiment information by name
      * @param os the objectstore
@@ -323,23 +323,24 @@ public class MetadataCache
      * @return details of the experiment
      * @throws ObjectStoreException if error reading database
      */
-    public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name) 
+    public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name)
     throws ObjectStoreException {
         if (experimentCache == null) {
             readExperiments(os);
         }
         return experimentCache.get(name);
     }
-    
+
     /**
      * Fetch a map from project name to experiment.
      * @param os the production ObjectStore
      * @return a map from project name to experiment
      */
-    public static Map<String, List<DisplayExperiment>> 
+    public static Map<String, List<DisplayExperiment>>
     getProjectExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        Map<String, List<DisplayExperiment>> projectExperiments = new TreeMap<String,List<DisplayExperiment>>();
+        Map<String, List<DisplayExperiment>> projectExperiments 
+        = new TreeMap<String, List<DisplayExperiment>>();
         for (DisplayExperiment exp : getExperiments(os)) {
             List<DisplayExperiment> exps = projectExperiments.get(exp.getProjectName());
             if (exps == null) {
@@ -349,40 +350,40 @@ public class MetadataCache
             exps.add(exp);
         }
         long totalTime = System.currentTimeMillis() - startTime;
-        LOG.info("Made project map: " + projectExperiments.size() 
+        LOG.info("Made project map: " + projectExperiments.size()
                 + " took: " + totalTime + " ms.");
-        return projectExperiments;  
+        return projectExperiments;
     }
-    
+
     private static void readExperiments(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         Map <String, Map<String, Long>> featureCounts = getExperimentFeatureCounts(os);
-        
+
         try {
-            Query q = new Query();  
+            Query q = new Query();
             QueryClass qcProject = new QueryClass(Project.class);
             QueryField qcName = new QueryField(qcProject, "name");
-            
+
             q.addFrom(qcProject);
             q.addToSelect(qcProject);
-            
+
             QueryClass qcExperiment = new QueryClass(Experiment.class);
             q.addFrom(qcExperiment);
             q.addToSelect(qcExperiment);
 
-            QueryCollectionReference projExperiments = new QueryCollectionReference(qcProject, 
-                    "experiments");
-            ContainsConstraint cc = new ContainsConstraint(projExperiments, ConstraintOp.CONTAINS, 
+            QueryCollectionReference projExperiments = new QueryCollectionReference(qcProject,
+            "experiments");
+            ContainsConstraint cc = new ContainsConstraint(projExperiments, ConstraintOp.CONTAINS,
                     qcExperiment);
-            
+
             q.setConstraint(cc);
             q.addToOrderBy(qcName);
-            
-            
+
+
             Results results = os.execute(q);
-            
+
             experimentCache = new HashMap<String, DisplayExperiment>();
-            
+
             Iterator i = results.iterator();
             while (i.hasNext()) {
                 ResultsRow row = (ResultsRow) i.next();
@@ -391,7 +392,7 @@ public class MetadataCache
                 Experiment experiment = (Experiment) row.get(1);
 
                 Map<String, Long> expFeatureCounts = featureCounts.get(experiment.getName());
-                DisplayExperiment displayExp = new DisplayExperiment(experiment, project, 
+                DisplayExperiment displayExp = new DisplayExperiment(experiment, project,
                         expFeatureCounts, os);
                 experimentCache.put(displayExp.getName(), displayExp);
             }
@@ -401,8 +402,8 @@ public class MetadataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed experiment cache, took: " + timeTaken + "ms");
     }
-    
-    
+
+
     private static Map<String, Map<String, Long>> getExperimentFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         Query q = new Query();
@@ -414,7 +415,7 @@ public class MetadataCache
 
         QueryField qfName = new QueryField(qcExp, "name");
         QueryField qfClass = new QueryField(qcLsf, "class");
-        
+
         q.addFrom(qcSub);
         q.addFrom(qcLsf);
         q.addFrom(qcExp);
@@ -432,10 +433,10 @@ public class MetadataCache
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryCollectionReference submissions = new QueryCollectionReference(qcExp, "submissions");
-        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS, 
+        ContainsConstraint ccSubs = new ContainsConstraint(submissions, ConstraintOp.CONTAINS,
                 qcSub);
         cs.addConstraint(ccSubs);
-        
+
         QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
         ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
         cs.addConstraint(ccFeats);
@@ -444,7 +445,7 @@ public class MetadataCache
 
         Results results = os.execute(q);
 
-        Map<String, Map<String, Long>> featureCounts = 
+        Map<String, Map<String, Long>> featureCounts =
             new LinkedHashMap<String, Map<String, Long>>();
 
         // for each classes set the values for jsp
@@ -466,13 +467,13 @@ public class MetadataCache
 
         return featureCounts;
     }
-    
+
     private static void readSubmissionFeatureCounts(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        
+
         submissionFeatureCounts = new LinkedHashMap<Integer, Map<String, Long>>();
         submissionIdCache = new HashMap<Integer, Integer>();
-        
+
         Query q = new Query();
         q.setDistinct(false);
 
@@ -480,7 +481,7 @@ public class MetadataCache
         QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);
 
         QueryField qfClass = new QueryField(qcLsf, "class");
-        
+
         q.addFrom(qcSub);
         q.addFrom(qcLsf);
 
@@ -504,7 +505,7 @@ public class MetadataCache
 
         Results results = os.execute(q);
 
-        
+
         // for each classes set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
@@ -513,14 +514,14 @@ public class MetadataCache
             Long count = (Long) row.get(2);
 
             submissionIdCache.put(sub.getdCCid(), sub.getId());
-            
+
             Map<String, Long> featureCounts = submissionFeatureCounts.get(sub.getdCCid());
             if (featureCounts == null) {
                 featureCounts = new HashMap<String, Long>();
                 submissionFeatureCounts.put(sub.getdCCid(), featureCounts);
             }
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
-        }     
+        }
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed submission cache, took: " + timeTaken + "ms");
     }
@@ -529,7 +530,7 @@ public class MetadataCache
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
-     * 
+     *
      */
     private static void readGBrowseTracks() {
         long startTime = System.currentTimeMillis();
@@ -542,21 +543,21 @@ public class MetadataCache
             err.printStackTrace();
         }
         long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = " 
+        LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
                 + submissionTracksCache.size());
     }
 
-    
+
     /**
      * Method to read the list of GBrowse tracks for a given organism
-     * 
+     *
      * @param organism (i.e. fly or worm)
      * @return submissionTracksCache
      */
     private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
-                try {
-            URL Url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Url.openStream()));
+        try {
+            URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             // apparently the rules for parsing are:
             // fields tab separated, dccId space separated
@@ -565,28 +566,29 @@ public class MetadataCache
             // examples of lines:
             // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
             // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
-            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
-            
+            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782 
+                // 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
+
             while ((line = reader.readLine()) != null) {
                 String[] result = line.split("\\t");
                 String trackName = result[0];
-                GBrowseTrack newTrack = new GBrowseTrack(organism,trackName);
+                GBrowseTrack newTrack = new GBrowseTrack(organism, trackName);
                 // look for dccId in the line
                 String list = result[1];
                 String[] dccIds = list.split("\\s");
                 parseTokens(dccIds, newTrack, false);
-                
-                if (list.length()<2){
+
+                if (list.length() < 2) {
                     // look for dccId in the track name
                     // (only if there are no dccid in the proper field)
                     String[] nameSplit = trackName.split("_");
                     parseTokens(nameSplit, newTrack, true);
                 }
-//                
-//                
-//                // look for dccId in the track name
-//                String[] nameSplit = trackName.split("_");
-//                parseTokens(nameSplit, newTrack, true);
+                //
+                //
+                //                // look for dccId in the track name
+                //                String[] nameSplit = trackName.split("_");
+                //                parseTokens(nameSplit, newTrack, true);
             }
             reader.close();
         } catch (Exception err) {
@@ -597,30 +599,30 @@ public class MetadataCache
 
 
     /**
-     * This method looks for dccId in the tokenised line 
+     * This method looks for dccId in the tokenised line
      * or the tokenised track name
      * In the first case it uses an offset: the last token is always part of
      * the description even if it is a number (e.g. Green Lab ESTs 2008-12-02 set 1)
-     * 
+     *
      * @param tokes the array of tokens
      * @param track the GBrowse track
-     * @param isName: needed to include only last token in name parsing (see above) 
+     * @param isName: needed to include only last token in name parsing (see above)
      */
     private static void parseTokens(String[] tokens,
             GBrowseTrack track, Boolean isName) {
         // starting from the end, because when checking track names only
         // the last number is ok if there are 2
-        for (int x=(tokens.length -1); x>-1; x--) {
+        for (int x = (tokens.length - 1); x > -1; x--) {
             if (containsOnlyNumbers(tokens[x])) {
-                // this is a submission Id                        
+                // this is a submission Id
                 Integer dccId = Integer.parseInt(tokens[x]);
                 // add to map sub trackname
-                addToGBMap(submissionTracksCache,dccId, track);
-                if (isName){//track name...
+                addToGBMap(submissionTracksCache, dccId, track);
+                if (isName) { //track name
                     break;
                 }
             }
-       }
+        }
     }
 
 
@@ -632,7 +634,7 @@ public class MetadataCache
     private static void addToGBMap(
             Map<Integer, List<GBrowseTrack>> m,
             Integer key, GBrowseTrack value) {
-        // 
+        //
         List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
 
         if (m.containsKey(key)) {
@@ -644,22 +646,22 @@ public class MetadataCache
         }
     }
 
-/**
- * This method checks if a String contains only numbers
- */
-static boolean containsOnlyNumbers(String str) {
-    //It can't contain only numbers if it's null or empty...
-    if (str == null || str.length() == 0)
-        return false;
-    for (int i = 0; i < str.length(); i++) {
-        //If we find a non-digit character we return false.
-        if (!Character.isDigit(str.charAt(i)))
+    /**
+     * This method checks if a String contains only numbers
+     * @param str string to test
+     * @return true if the string contains only numbers
+     */
+    static boolean containsOnlyNumbers(String str) {
+        //It can't contain only numbers if it's null or empty...
+        if (str == null || str.length() == 0) {
             return false;
-    }    
-    return true;
-}
-
-
-
-    
+        }
+        for (int i = 0; i < str.length(); i++) {
+            //If we find a non-digit character we return false.
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
