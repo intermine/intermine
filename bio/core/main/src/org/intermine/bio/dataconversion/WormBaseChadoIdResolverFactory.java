@@ -74,6 +74,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 System.out .println("WormBaseIdResolver reading from cache file: " + cacheFileName);
                 resolver = createFromFile(soTerm, f);
             } else {
+                System.out .println("WormBaseIdResolver reading from database: " + db.getName());
                 resolver = createFromDb(db);
                 resolver.writeToFile(f);
             }
@@ -120,7 +121,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             }
             
 
-            
+
             // fetch feature name for located genes
             query = "select distinct o.abbreviation, f.uniquename, f.name"
                 + " from feature f, featureloc l, organism o"
@@ -143,6 +144,38 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             }
             LOG.info("feature query returned " + i + " rows.");
             stmt.close();
+            
+            // fetch gene synonyms
+            query = "select distinct o.abbreviation, f.uniquename, s.name, "
+                + " fs.is_current, c.name as type"
+                + " from feature f, feature_synonym fs, synonym s,"
+                + " organism o, cvterm c"
+                + " where f.organism_id = o.organism_id"
+                + " and f.is_obsolete = false"
+                + " and f.type_id = " + soTermId
+                + " and fs.feature_id = f.feature_id "
+                + " and fs.synonym_id = s.synonym_id"
+                + " and s.type_id = c.cvterm_id"
+                + orgConstraint;
+            LOG.info("QUERY: " + query);
+            stmt = conn.createStatement();
+            res = stmt.executeQuery(query);
+            i = 0;
+            while (res.next()) {
+                String uniquename = res.getString("uniquename");
+                String synonym = res.getString("name");
+                String organism = res.getString("abbreviation");
+                String taxonId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                Boolean isCurrent = res.getBoolean("is_current");
+                String type = res.getString("type");
+                if (isCurrent && type.equals("symbol")) {
+                    resolver.addMainIds(taxonId, uniquename, Collections.singleton(synonym));
+                } else {
+                    resolver.addSynonyms(taxonId, uniquename, Collections.singleton(synonym));
+                }
+            }
+            stmt.close();
+            LOG.info("synonym query returned " + i + " rows.");
             
         } catch (Exception e) {
             LOG.error(e);
