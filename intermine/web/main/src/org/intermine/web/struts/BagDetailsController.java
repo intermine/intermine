@@ -91,9 +91,7 @@ public class BagDetailsController extends TilesAction
             }
         }
 
-        if (scope.equals(Scope.GLOBAL)
-            || scope.equals(Scope.ALL)) {
-            // scope == all or global
+        if (scope.equals(Scope.GLOBAL) || scope.equals(Scope.ALL)) {
             if (bagManager.getGlobalBag(bagName) != null) {
                 imBag = bagManager.getGlobalBag(bagName);
             }
