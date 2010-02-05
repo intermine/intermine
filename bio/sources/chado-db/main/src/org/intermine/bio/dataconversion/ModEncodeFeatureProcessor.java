@@ -111,7 +111,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         commonFeatureInterMineTypes.add("CDNA");
         commonFeatureInterMineTypes.add("EST");
         commonFeatureInterMineTypes.add("CDS");
-        commonFeatureInterMineTypes.add("Transcript");
     }
 
     /**
@@ -606,11 +605,6 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             if (type.equalsIgnoreCase("Gene")) {
                 if (uniqueName.startsWith("Gene:")) {
                     return uniqueName.substring(5);
-                }
-            }
-            if (type.equalsIgnoreCase("Transcript")) {
-                if (uniqueName.startsWith("Transcript:")) {
-                    return uniqueName.substring(11);
                 }
             }
         }
