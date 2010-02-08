@@ -1627,14 +1627,18 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT feature.feature_id as deletion_feature_id, value as location_text, "
+            "SELECT f.feature_id as deletion_feature_id, value as location_text, "
             + "     feature.organism_id as deletion_organism_id"
-            + "  FROM featureprop, cvterm prop_type, feature, cvterm feature_type "
-            + "  WHERE featureprop.type_id = prop_type.cvterm_id"
-            + "    AND prop_type.name = 'derived_sequence_location' "
-            + "    AND feature.feature_id = featureprop.feature_id"
-            + "    AND feature.type_id = feature_type.cvterm_id"
-            + "    AND feature_type.name = 'chromosome_structure_variation'";
+            + "FROM feature f, feature b, feature_relationship fr, cvterm cvt1, cvterm cvt2, "
+            + "     featureloc fl "
+            + "WHERE f.feature_id = fr.object_id AND fr.type_id = cvt1.cvterm_id "
+            + "AND cvt1.name = 'break_of' "
+            + "AND fr.subject_id = b.feature_id AND b.type_id = cvt2.cvterm_id "
+            + "AND cvt2.name = 'breakpoint' "
+            + "AND b.feature_id = fl.feature_id and f.name ~ '^Df.+' and f.uniquename like 'FBab%' "
+            + "AND f.is_obsolete = false ";
+        
+        
         LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
