@@ -58,7 +58,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private static final String WT_CLASS_CVTERM = "wt_class";
 
     private static final String FLYBASE_DB_NAME = "FlyBase";
-    
+
     /**
      * The cv.name for the FlyBase miscellaneous CV.
      */
@@ -70,7 +70,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected static final String FLYBASE_SO_CV_NAME = "SO";
 
     private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
-    
+
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -137,7 +137,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     // a map from featureId to seqlen
 //    private Map<Integer, Integer> cdnaLengths = null;
-    
+
     private final Map<Integer, Integer> chromosomeStructureVariationTypes;
 
     private Map<String, String> interactionExperiments = new HashMap();
@@ -203,7 +203,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         locatedGeneIds = getLocatedGeneIds(connection);
 
         chromosomeStructureVariationTypes = getChromosomeStructureVariationTypes(connection);
-        
+
 
 //        try {
 //            cdnaLengths = makeCDNALengthMap(connection);
@@ -211,7 +211,7 @@ public class FlyBaseProcessor extends SequenceProcessor
 //            e.printStackTrace();
 //        }
     }
-    
+
     /**
      * @param connection database connection
      * @return map of feature_id to seqlen
@@ -344,7 +344,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "       AND cvterm.name = 'gene' "
             + "       AND NOT feature.is_obsolete "
             + "       AND feature.feature_id IN "
-            + "          (SELECT l.feature_id " 
+            + "          (SELECT l.feature_id "
             + "           FROM featureloc l, feature c "
             + "           WHERE l.srcfeature_id = c.feature_id and NOT c.is_obsolete)"
             + orgConstraintForQuery;
@@ -640,18 +640,18 @@ public class FlyBaseProcessor extends SequenceProcessor
             ConfigAction alleleClassConfigAction = new AlleleClassSetFieldAction("alleleClass");
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
-          
+
             // library config example: for features of class "CDNAClone", if the type name
             // of the library is "stage", set the "stage" attribute of the
             // new CDNAClone to be this property
             map.put(new MultiKey("library", "CDNAClone", "stage"),
                     Arrays.asList(new SetFieldConfigAction("stage")));
-            
-            // anatomy term config example:  for features of class "CDNAClone" if there is an 
+
+            // anatomy term config example:  for features of class "CDNAClone" if there is an
             // anatomy term, set a reference in CDNAClone.tissueSource
 //            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
 //                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
-            
+
             // feature_cvterm example for Transposition: we create a featureTerms collection in the
             // Transposition objects containing SequenceOntologyTerm objects.  For the current
             // feature we create one SequenceOntologyTerm object for each associated "SO" cvterm.
@@ -932,7 +932,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
         processAlleleProps(connection, features);
-        
+
         Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
         for (Integer alleleFeatureId: mutagenMap.keySet()) {
             FeatureData alleleDat = features.get(alleleFeatureId);
@@ -1176,7 +1176,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     private Map<String, String> developmentTermMap = new HashMap<String, String>();
     // map from FlyBase cv identifier (eg. "FBcv0001234") to Item identifier
     private Map<String, String> cvTermMap = new HashMap<String, String>();
-    
+
     private void processAlleleProps(Connection connection,
                                     Map<Integer, FeatureData> features)
         throws SQLException, ObjectStoreException {
@@ -1214,7 +1214,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             }
         }
     }
-    
+
     /**
      * Return a Map from allele feature_id to mutagen.  The mutagen is found be looking at cvterms
      * that are associated with each feature and saving those terms that have "origin of mutation"
@@ -1295,12 +1295,12 @@ public class FlyBaseProcessor extends SequenceProcessor
 
         return retMap;
     }
-    
+
     /**
      * Return a map from feature_id to seqlen
      * @throws SQLException if somethign goes wrong
      */
-//    private Map<Integer, Integer> makeCDNALengthMap(Connection connection) 
+//    private Map<Integer, Integer> makeCDNALengthMap(Connection connection)
 //    throws SQLException {
 //        Map<Integer, Integer> retMap = new HashMap();
 //
@@ -1406,7 +1406,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
 
-    
+
     private static final Pattern FLYBASE_TERM_IDENTIFIER_PATTERN =
         Pattern.compile("^FB[^\\d][^\\d]\\d+");
 
@@ -1472,7 +1472,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             newIdentifier = FLYBASE_ANATOMY_TERM_PREFIX + identifier;
             newIdentifier = addCVTermColon(newIdentifier);
         }
-            
+
         if (anatomyTermMap.containsKey(newIdentifier)) {
             return anatomyTermMap.get(newIdentifier);
         }
@@ -1628,17 +1628,20 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
         String query =
             "SELECT f.feature_id as deletion_feature_id, value as location_text, "
-            + "     feature.organism_id as deletion_organism_id"
+            + "     feature.organism_id as deletion_organism_id "
             + "FROM feature f, feature b, feature_relationship fr, cvterm cvt1, cvterm cvt2, "
             + "     featureloc fl "
-            + "WHERE f.feature_id = fr.object_id AND fr.type_id = cvt1.cvterm_id "
-            + "AND cvt1.name = 'break_of' "
-            + "AND fr.subject_id = b.feature_id AND b.type_id = cvt2.cvterm_id "
-            + "AND cvt2.name = 'breakpoint' "
-            + "AND b.feature_id = fl.feature_id and f.name ~ '^Df.+' and f.uniquename like 'FBab%' "
-            + "AND f.is_obsolete = false ";
-        
-        
+            + "WHERE f.feature_id = fr.object_id "
+            + "     AND fr.type_id = cvt1.cvterm_id "
+            + "     AND cvt1.name = 'break_of' "
+            + "     AND fr.subject_id = b.feature_id "
+            + "     AND b.type_id = cvt2.cvterm_id "
+            + "     AND cvt2.name = 'breakpoint' "
+            + "     AND b.feature_id = fl.feature_id "
+            + "     AND f.name ~ '^Df.+' "
+            + "     AND f.uniquename like 'FBab%' "
+            + "     AND f.is_obsolete = false ";
+
         LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1686,13 +1689,13 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "  AND cl.feature_id=fr.object_id "
             + "  AND fr.subject_id=fls.feature_id "
             + "  AND fls.type_id=fls_type.cvterm_id ";
-            
+
         LOG.info("executing getCDNALengthResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
-    
+
     /**
      * Convert ISO entities from FlyBase to HTML entities.
      * {@inheritDoc}
