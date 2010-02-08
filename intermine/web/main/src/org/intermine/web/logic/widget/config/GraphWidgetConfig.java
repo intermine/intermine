@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.WidgetUtil;
+import org.intermine.web.logic.widget.WidgetHelper;
 
 /**
  * Configuration object describing details of a graph displayer
@@ -152,15 +152,15 @@ public class GraphWidgetConfig extends WidgetConfig
      * {@inheritDoc}
      */
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
-        throws Exception {
+    throws Exception {
         Collection<String> extraAttributes = new ArrayList();
         Map<String, Collection<String>> returnMap = new HashMap();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
                 Constructor<?> constr = clazz.getConstructor(new Class[]{});
-                WidgetUtil widgetUtil = (WidgetUtil) constr.newInstance(new Object[] {});
-                extraAttributes = widgetUtil.getExtraAttributes(os, imBag);
+                WidgetHelper widgetHelper = (WidgetHelper) constr.newInstance(new Object[] {});
+                extraAttributes = widgetHelper.getExtraAttributes(os, imBag);
             } catch (Exception e) {
                 LOG.error(e.getMessage());
                 return returnMap;
@@ -174,8 +174,6 @@ public class GraphWidgetConfig extends WidgetConfig
         }
         return returnMap;
     }
-
-
 
     /**
      * {@inheritDoc}

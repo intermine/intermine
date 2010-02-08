@@ -11,7 +11,6 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.Collection;
-
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 
@@ -20,8 +19,7 @@ import org.intermine.objectstore.ObjectStore;
  * @author "Xavier Watkins"
  *
  */
-public interface WidgetUtil
-{
+public interface WidgetHelper {
     /**
      * Get the extra attributes needed for the DataSetLoader
      * @param os the objectstore
