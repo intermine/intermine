@@ -201,6 +201,8 @@ else
 SOURCES=modmine-static,modencode-metadata
 fi
 
+echo $SOURCES
+
 echo
 echo "================================="
 echo "Building modmine-$REL on $MINEHOST."
@@ -364,6 +366,13 @@ do
     mv $DCCID $MIRROR/$1/$sub
   	FOUND=y
     dewiggle $MIRROR/$1/$sub > $LOADDIR/$sub
+
+    if [ -n "$2" ]
+    then
+     rm $MIRROR/new/$sub
+     cp -s $MIRROR/update/$sub $MIRROR/new
+    fi
+
   fi
 done
 }
@@ -703,8 +712,12 @@ filer new
 #-------------------------------------------------
 # check if any UPDATED file
 #-------------------------------------------------
+# arg2: flag to make change the link in the
+# reference directory (new)
+# in this case it must remove link to .. and substitute
+# with ../update
 cd $MIRROR
-filer update
+filer update changelink
 
 #-------------------------------------------------
 # check if any UPDATED file from previous updates
@@ -720,7 +733,8 @@ cd $MIRROR/new/validated
 filer new
 
 cd $MIRROR/update/validated
-filer update
+filer update changelink
+# link from ../update/validated to ../update
 
 #------------------------------------------------------------------------
 # check if any update in the ERR directory, decompress, mv and rename it
