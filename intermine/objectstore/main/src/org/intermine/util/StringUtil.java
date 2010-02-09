@@ -245,14 +245,12 @@ public class StringUtil
         }
         if (str.equals("")) {
             return str;
-        } else {
-            char first = str.charAt(0);
-            if (Character.isLowerCase(first)) {
-                return Character.toUpperCase(first) + str.substring(1);
-            } else {
-                return Character.toLowerCase(first) + str.substring(1);
-            }
         }
+        char first = str.charAt(0);
+        if (Character.isLowerCase(first)) {
+            return Character.toUpperCase(first) + str.substring(1);
+        }
+        return Character.toLowerCase(first) + str.substring(1);
     }
 
     /**
