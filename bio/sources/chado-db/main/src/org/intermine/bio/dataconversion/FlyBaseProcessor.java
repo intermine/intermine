@@ -71,6 +71,9 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private static final String FLYBASE_ANATOMY_TERM_PREFIX = "FBbt";
 
+    // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
+    private static final String FLYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
+
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -91,7 +94,7 @@ public class FlyBaseProcessor extends SequenceProcessor
          */
         @Override
         public String processValue(String value) {
-            Pattern p = Pattern.compile(FYBASE_PROP_ATTRIBUTE_PATTERN);
+            Pattern p = Pattern.compile(FLYBASE_PROP_ATTRIBUTE_PATTERN);
             Matcher m = p.matcher(value);
             StringBuffer sb = new StringBuffer();
 
@@ -110,9 +113,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
 
     }
-
-    // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
-    private static final String FYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
     private static final Logger LOG = Logger.getLogger(FlyBaseProcessor.class);
 
@@ -894,12 +894,12 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript", "protein",
-            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
-            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
-            "chromosome_band", "transposable_element_insertion_site",
-            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
-            "point_mutation", "natural_transposable_element",
-            "transposable_element"
+//            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
+//            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+//            "chromosome_band", "transposable_element_insertion_site",
+            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME
+//            "point_mutation", "natural_transposable_element",
+//            "transposable_element"
     );
 
     /**
@@ -1019,50 +1019,50 @@ public class FlyBaseProcessor extends SequenceProcessor
         return experimentId;
     }
 
-
-    private static final Pattern DELETION_LOC_PATTERN =
-        Pattern.compile("^([^:]+):(\\d+)(?:-\\d+)?..(?:\\d+-)?(\\d+) \\(([^;\\)]+);?([^\\)]*)\\)$");
-
     /**
      * Create Location objects for deletions (chromosome_structure_variation) as they don't have
      * locations in the featureloc table.
      * @throws ObjectStoreException
      */
     private void createDeletionLocations(Connection connection)
-        throws SQLException, ObjectStoreException {
+    throws SQLException, ObjectStoreException {
         ResultSet res = getDeletionLocationResultSet(connection);
         while (res.next()) {
             Integer delId = new Integer(res.getInt("deletion_feature_id"));
-            String locationText = res.getString("location_text");
-            Integer organismId = new Integer(res.getInt("deletion_organism_id"));
-            FeatureData delFeatureData = getFeatureMap().get(delId);
 
-            Matcher m = DELETION_LOC_PATTERN.matcher(locationText);
-            if (m.matches()) {
-                String chromosomeName = m.group(1);
-                int start = Integer.parseInt(m.group(2));
-                int end = Integer.parseInt(m.group(3));
-                if (start > end) {
-                    int tmp = start;
-                    start = end;
-                    end = tmp;
-                }
-                if (delFeatureData == null) {
-                    LOG.info("can't find deletion " + delId + " in feature map");
-                    continue;
-                }
-                int taxonId = delFeatureData.getOrganismData().getTaxonId();
-                Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
-                makeAndStoreLocation(chrFeatureId, delFeatureData, start, end, 1, taxonId);
-            } else {
-                throw new RuntimeException("can't parse deletion location: " + locationText);
+            FeatureData delFeatureData = getFeatureMap().get(delId);
+            if (delFeatureData == null) {
+                LOG.info("can't find deletion " + delId + " in feature map");
+                continue;
             }
-         }
+            String chromosomeName = res.getString("chromosome_name");
+            String startString = res.getString("start");
+            String endString = res.getString("end");
+            String strandString = res.getString("strand");
+
+            // Df(3L)ZN47/FBab0000006 and some others don't have a strand
+            // I don't know why, but for now we'll just give them a default
+            if (StringUtils.isEmpty(strandString)) {
+                strandString = "1";
+            }
+            Integer organismId = new Integer(res.getInt("deletion_organism_id"));
+            int start = Integer.parseInt(startString);
+            int end = Integer.parseInt(endString);
+            int strand = Integer.parseInt(strandString);
+            if (start > end) {
+                int tmp = start;
+                start = end;
+                end = tmp;
+            }
+            int taxonId = delFeatureData.getOrganismData().getTaxonId();
+            Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
+            makeAndStoreLocation(chrFeatureId, delFeatureData, start, end, strand, taxonId);
+        }
     }
 
     private void makeAndStoreLocation(Integer chrFeatureId, FeatureData subjectFeatureData,
-                                      int start, int end, int strand, int taxonId)
-        throws ObjectStoreException {
+            int start, int end, int strand, int taxonId)
+    throws ObjectStoreException {
         FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
         Item location =
             getChadoDBConverter().makeLocation(chrFeatureData.getItemIdentifier(),
@@ -1319,7 +1319,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Item phenotypeAnnotation = getChadoDBConverter().createItem("PhenotypeAnnotation");
         phenotypeAnnotation.addToCollection("dataSets", dataSetItem);
 
-        Pattern p = Pattern.compile(FYBASE_PROP_ATTRIBUTE_PATTERN);
+        Pattern p = Pattern.compile(FLYBASE_PROP_ATTRIBUTE_PATTERN);
         Matcher m = p.matcher(value);
         StringBuffer sb = new StringBuffer();
 
@@ -1627,10 +1627,10 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT f.feature_id as deletion_feature_id, value as location_text, "
-            + "     feature.organism_id as deletion_organism_id "
+            "SELECT f.feature_id as deletion_feature_id, f.organism_id as deletion_organism_id, "
+            +   "c.name as chromosome_name, fl.fmin as start, fl.fmax as end, fl.strand "
             + "FROM feature f, feature b, feature_relationship fr, cvterm cvt1, cvterm cvt2, "
-            + "     featureloc fl "
+            + "     featureloc fl, feature c "
             + "WHERE f.feature_id = fr.object_id "
             + "     AND fr.type_id = cvt1.cvterm_id "
             + "     AND cvt1.name = 'break_of' "
@@ -1640,7 +1640,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "     AND b.feature_id = fl.feature_id "
             + "     AND f.name ~ '^Df.+' "
             + "     AND f.uniquename like 'FBab%' "
-            + "     AND f.is_obsolete = false ";
+            + "     AND f.is_obsolete = false "
+            + "     AND fl.srcfeature_id = c.feature_id ";
 
         LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
