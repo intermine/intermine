@@ -10,6 +10,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.web.logic.widget.Hypergeometric;
+import org.intermine.web.logic.widget.WidgetUtil;
 
 public class WidgetUtilTest extends TestCase
 {
