@@ -6,7 +6,7 @@
 #
 # will move r16 from modprod0 to modprod1
 #
-# TODO: start/stop tomcats
+# TODO: TEST!!!
 #
 
 SRV=modprod
@@ -14,6 +14,8 @@ PROXYFILE=/etc/httpd/conf.d/proxy_ajp.conf
 REL=$1
 
 DUMPDIR=/shared/data/modmine
+INTERACT=
+
 
 if [ -z "$2" ]
 then
@@ -41,40 +43,76 @@ echo "01  when swapping a release from modprod0 to modprod1"
 exit
 fi
 
+function interact {
+# if testing, wait here before continuing
+if [ -n $INTERACT ]
+then
+echo "$1"
+echo "Press return to continue (^C to exit).."
+echo -n "->"
+read
+fi
+
+}
+
+function usage () {
+	cat <<EOF
+
+Usage:
+$0 release swap_order [-i]
+	-i: interactive mode
+
+example
+$0 r16 01 -i
+
+
+EOF
+	exit 0
+}
+
+
+
+while getopts ":i" opt; do
+	case $opt in
+	i )  echo "- Interactive mode" ; INTERACT=y;;
+	h )  usage ;;
+	\?)  usage ;;
+	esac
+done
+
+shift $(($OPTIND - 1))
+
+
+
 echo "============================================"
 echo " Changing production server for modmine-$REL"
 echo
 echo "         $SRV$FROM   ->  $SRV$TO"
 echo "============================================"
-echo
-echo "Press any key to proceed (^C to exit).."
-echo -n "->"
-read
+
+interact
 
 echo "Checking if new mine exists.."
 psql -q -o /dev/null -d  modmine-$REL -h $SRV$TO -U modmine -c "\q"\
 || { printf "%b" "\nYou need to copy the mine manually!!\n\n" ; exit 1 ; }
 
-
-
 echo "Stopping webapp on $SRV$FROM..."
-echo "DO IT MANUALLY..."
-echo
-echo "Press any key to proceed (^C to exit).."
-echo -n "->"
-read
-# ssh $SRV$FROM cd /webapp ./stop.sh
+interact
+ssh $SRV$FROM /webapp/stop.sh
 
 echo "Creating back ups..."
-pg_dump -c -h $SRV$FROM -U modmine modmine-$REL-userprofile > $DUMPDIR/modmine-$REL-userprofile.dmp
-pg_dump -c -h $SRV$FROM -U modmine -t osbag_int modmine-$REL > $DUMPDIR/modmine-$REL-osbag_int.dmp
-
+interact
+# running from another machine because of different postgres version on mod2
+ssh $SRV$TO pg_dump -c -h $SRV$FROM -U modmine modmine-$REL-userprofile > $DUMPDIR/modmine-$REL-userprofile.dmp
+ssh $SRV$TO pg_dump -c -h $SRV$FROM -U modmine -t osbag_int modmine-$REL > $DUMPDIR/modmine-$REL-osbag_int.dmp
 
 echo "Copying userprofile database from $SRV$FROM to $SRV$TO..."
-pg_dump -c -h $SRV$FROM -U modmine modmine-$REL-userprofile | psql -h $SRV$TO -U modmine modmine-$REL-userprofile
+interact
+ssh $SRV$TO pg_dump -c -h $SRV$FROM -U modmine modmine-$REL-userprofile | psql -h $SRV$TO -U modmine modmine-$REL-userprofile
 
 echo "Copying list table from $SRV$FROM to $SRV$TO..."
-pg_dump -c -h $SRV$FROM -U modmine -t osbag_int modmine-$REL | psql -h $SRV$TO -U modmine modmine-$REL
+interact
+ssh $SRV$TO pg_dump -c -h $SRV$FROM -U modmine -t osbag_int modmine-$REL | psql -h $SRV$TO -U modmine modmine-$REL
 
 echo "Changing properties file modmine.properties.$REL..."
 echo
@@ -88,16 +126,16 @@ mv modmine.properties.$REL modmine.properties.$REL.$SRV$FROM
 mv modmine.properties.$REL$TO modmine.properties.$REL
 
 echo "Changing proxy setting..."
-read
+interact
 RELNR=`echo $REL | tr -d r`
-sed -i.old "s/$SRV$FROM:8009\/release-$RELNR/$SRV$TO:8009\/release-$RELNR/g" $PROXYFILE
+sed -i_backup "s/$SRV$FROM:8009\/release-$RELNR/$SRV$TO:8009\/release-$RELNR/g" $PROXYFILE
 
 echo "Starting webapp on $SRV$TO.."
-echo "DO IT MANUALLY..."
-echo
-echo "Press any key to proceed (^C to exit).."
-echo -n "->"
-read
-# ssh $SRV$TO cd /webapp ./stop.sh ./start.sh
-echo
-echo "modmine-$REL is now on $SRV$TO."
+interact
+ssh $SRV$TO /webapp/start.sh
+
+echo "Restarting httpd on mod2..."
+interact
+ssh mod2 sudo /usr/sbin/apachectl restart
+
+echo "..done."
