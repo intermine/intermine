@@ -32,7 +32,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
-import org.intermine.web.logic.WidgetUtil;
 
 /**
  * @author "Xavier Watkins"
