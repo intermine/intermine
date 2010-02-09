@@ -176,7 +176,7 @@ public class WidgetUtil
      * @param resultsMap map containing unadjusted p-values
      * @return map of all the adjusted p-values
      */
-    protected static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
+    public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
                                                  Double maxValue,
                                                  HashMap<String, BigDecimal> resultsMap) {
 
