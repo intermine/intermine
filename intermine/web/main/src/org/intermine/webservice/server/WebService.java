@@ -148,7 +148,7 @@ public abstract class WebService
      * If user name and password is specified in request, then it setups user profile in session.
      * User was authenticated.
      * It is using Http basis access authentication.
-     * {@link http://en.wikipedia.org/wiki/Basic_access_authentication}
+     * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
      * @param request request
      */
     private void authenticate(HttpServletRequest request) {
@@ -173,7 +173,7 @@ public abstract class WebService
         if (password.length() == 0) {
             throw new BadRequestException("Empty password.");
         }
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        im = SessionMethods.getInterMineAPI(request.getSession());
         ProfileManager pm = im.getProfileManager();
         if (pm.hasProfile(userName)) {
             if (!pm.validPassword(userName, password)) {
