@@ -54,7 +54,7 @@ public class TemplateConfigurator
             List<Constraint> cons = template.getEditableConstraints(node);
             List<ConstraintLoad> loads = newConstraints.get(node.getPathString());
             if (loads == null) {
-                throw new BadRequestException("There isn't specified constraint value "
+                throw new BadRequestException("There isn't a specified constraint value "
                         + "and operation for path " + node.getPathString()
                         + " in the request.");
             }
