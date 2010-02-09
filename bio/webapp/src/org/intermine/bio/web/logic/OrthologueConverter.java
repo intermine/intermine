@@ -122,10 +122,11 @@ public class OrthologueConverter implements BagConverter
 
         // add columns to the output
         q.setView("Gene.primaryIdentifier, "
-                  + "Gene.organism.shortName,"
-                  + "Gene.homologues.homologue.primaryIdentifier,"
-                  + "Gene.homologues.homologue.organism.shortName,"
-                  + "Gene.homologues.type");
+                + "Gene.organism.shortName,"
+                + "Gene.homologues.homologue.primaryIdentifier,"
+                + "Gene.homologues.homologue.organism.shortName,"
+                + "Gene.homologues.type,"
+                + "Gene.homologues.dataSets.title");
 
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
