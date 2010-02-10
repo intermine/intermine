@@ -894,12 +894,12 @@ public class FlyBaseProcessor extends SequenceProcessor
 
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript", "protein",
-//            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
-//            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
-//            "chromosome_band", "transposable_element_insertion_site",
-            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME
-//            "point_mutation", "natural_transposable_element",
-//            "transposable_element"
+            "intron", "exon", "regulatory_region", "enhancer", "EST", "cDNA_clone",
+            "miRNA", "snRNA", "ncRNA", "rRNA", "ncRNA", "snoRNA", "tRNA",
+            "chromosome_band", "transposable_element_insertion_site",
+            CHROMOSOME_STRUCTURE_VARIATION_SO_NAME,
+            "point_mutation", "natural_transposable_element",
+            "transposable_element"
     );
 
     /**
@@ -1036,14 +1036,17 @@ public class FlyBaseProcessor extends SequenceProcessor
                 continue;
             }
             String chromosomeName = res.getString("chromosome_name");
-            String startString = res.getString("start");
-            String endString = res.getString("end");
+            String startString = res.getString("fmin");
+            String endString = res.getString("fmax");
             String strandString = res.getString("strand");
 
             // Df(3L)ZN47/FBab0000006 and some others don't have a strand
             // I don't know why, but for now we'll just give them a default
             if (StringUtils.isEmpty(strandString)) {
                 strandString = "1";
+            }
+            if (StringUtils.isEmpty(startString) || StringUtils.isEmpty(endString)) {
+                continue;
             }
             Integer organismId = new Integer(res.getInt("deletion_organism_id"));
             int start = Integer.parseInt(startString);
@@ -1055,7 +1058,19 @@ public class FlyBaseProcessor extends SequenceProcessor
                 end = tmp;
             }
             int taxonId = delFeatureData.getOrganismData().getTaxonId();
+
             Integer chrFeatureId = getChromosomeFeatureMap(organismId).get(chromosomeName);
+            if (chrFeatureId == null) {
+                String msg = "Can't find chromosome " + chromosomeName + " in feature map";
+                LOG.warn(msg);
+                continue;
+            }
+            FeatureData chrFeatureData = getFeatureMap().get(chrFeatureId);
+            if (chrFeatureData == null) {
+                String msg = "chrFeatureData is null " + chrFeatureId + " for feature " + delId;
+                LOG.warn(msg);
+                continue;
+            }
             makeAndStoreLocation(chrFeatureId, delFeatureData, start, end, strand, taxonId);
         }
     }
@@ -1628,7 +1643,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
         String query =
             "SELECT f.feature_id as deletion_feature_id, f.organism_id as deletion_organism_id, "
-            +   "c.name as chromosome_name, fl.fmin as start, fl.fmax as end, fl.strand "
+            +   "c.name as chromosome_name, fl.fmin, fl.fmax, fl.strand "
             + "FROM feature f, feature b, feature_relationship fr, cvterm cvt1, cvterm cvt2, "
             + "     featureloc fl, feature c "
             + "WHERE f.feature_id = fr.object_id "
