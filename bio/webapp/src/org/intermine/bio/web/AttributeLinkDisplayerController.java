@@ -23,7 +23,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -47,9 +46,9 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.AttributeLinkURL;
 
@@ -184,7 +183,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         if (imo != null) {
                             attrValue = TypeUtil.getFieldValue(imo, attrName);
                         } else { //it's a bag!
-                            attrValue = getIdList(bag, os, dbName, attrName);
+                            attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
                                 taxIds = getTaxIds(bag, os);
 
@@ -297,55 +296,6 @@ public class AttributeLinkDisplayerController extends TilesAction
     }
 
     /**
-     * @see
-     * @param bag the bag
-     * @param os  the object store
-     * @param dbName the database to link to
-     * @param attrName the attribute name (identifier, omimId, etc)
-     * @return the string of comma separated identifiers
-     *    */
-
-    public String getIdList(InterMineBag bag, ObjectStore os, String dbName, String attrName) {
-        Results results;
-
-        Query q = new Query();
-        QueryClass queryClass;
-        try {
-            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("no type in the bag??! -> ", e);
-        }
-        q.addFrom(queryClass);
-
-        QueryField qf = new QueryField(queryClass, attrName);
-        q.addToSelect(qf);
-
-        QueryField id = new QueryField(queryClass, "id");
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        //added because sometimes identifier is null, and StringUtil.join complains
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
-
-        BagConstraint bagC = new BagConstraint(id, ConstraintOp.IN, bag.getOsb());
-
-        cs.addConstraint(sc);
-        cs.addConstraint(bagC);
-        q.setConstraint(cs);
-
-        results = os.executeSingleton(q, 10000, true, true, true);
-
-        String delim = null;
-        if (dbName.equalsIgnoreCase("flybase")) {
-            delim = "|";
-        } else if (StringUtils.isEmpty(delim)) {
-            delim = ",";
-        }
-        return StringUtil.join(results, delim);
-}
-
-    /**
-     * @see
      * @param bag the bag
      * @param os  the object store
      * @return a set of tax ids

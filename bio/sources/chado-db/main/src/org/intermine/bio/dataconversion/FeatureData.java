@@ -67,7 +67,6 @@ class FeatureData
         return intermineObjectId;
     }
 
-
     /**
      * Set the intermine objectId for this feature - found when the feature is
      * stored.
