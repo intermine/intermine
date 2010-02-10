@@ -310,7 +310,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             //
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
-            processDataFeatureTable(connection, subFeatureMap, chadoExperimentId,queryList);
+            processDataFeatureTable(connection, subFeatureMap, chadoExperimentId, queryList);
         }
         LOG.info("PROCESS TIME features: " + (System.currentTimeMillis() - bT));
     }
@@ -897,8 +897,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // (:->&)
         String s1 = StringUtils.substringBefore(StringUtils.replace(w, url, ""), ":");
         String s = s1.replace('"', ' ').trim();
-        if (s.contains("%E2%80%99")) // prime: for the Piano experiment
-        {
+        if (s.contains("%E2%80%99")) {
+            // prime: for the Piano experiment
             String s2 = s.replace("%E2%80%99", "'");
             return s2;
         }
@@ -1047,8 +1047,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             if (fieldName.equals("pubMedId")) {
                 // sometime in the form PMID:16938558
-                if (value.contains(":")){
-                    value = value.substring(value.indexOf(':')+1);
+                if (value.contains(":")) {
+                    value = value.substring(value.indexOf(':') + 1);
                 }
                 
                 Item pub = getChadoDBConverter().createItem("Publication");
@@ -1123,7 +1123,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             if (rank != prevRank || submissionId != prevSub) {
                 // this is a name
-                if (getPreferredSynonym(value) != null){
+                if (getPreferredSynonym(value) != null) {
                     value = getPreferredSynonym(value);
                 }
                 ef.efNames.add(value);
@@ -1135,7 +1135,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 name = null;
                 if (res.isLast()) {
                     submissionEFMap.put(submissionId, ef);
-                    LOG.debug("EF MAP last: " + submissionId + "|" + rank + "|" + ef.efNames );                    
+                    LOG.debug("EF MAP last: " + submissionId + "|" + rank + "|" + ef.efNames );
                 }
             }
             prevRank = rank;
@@ -1613,12 +1613,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // Currently using attValue for referenced submission DCC id, should be dbUrl but seems
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
-                if (attValue.indexOf(":" ) > 0) {
+                if (attValue.indexOf(":") > 0) {
                     attValue = attValue.substring(0, attValue.indexOf(":"));
                 }
                 Integer referencedSubId = getSubmissionIdFromDccId(attValue);
                 if (referencedSubId != null) {
-                    SubmissionReference subRef = new SubmissionReference(referencedSubId, wikiPageUrl);
+                    SubmissionReference subRef = 
+                        new SubmissionReference(referencedSubId, wikiPageUrl);
                     submissionRefs.put(submissionId, subRef);
                 }
             }
@@ -1629,7 +1630,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (props.containsKey(wikiPageUrl)) {
                     buildSubProperty = null;
                 } else {
-                    buildSubProperty = new SubmissionProperty(getPreferredSynonym(dataName), wikiPageUrl);
+                    buildSubProperty = 
+                        new SubmissionProperty(getPreferredSynonym(dataName), wikiPageUrl);
                     props.put(wikiPageUrl, buildSubProperty);
                 }
                 // submissionId -> [type -> SubmissionProperty]
@@ -1642,7 +1644,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
             lastDataId = dataId;
         }
-
         writer.flush();
         writer.close();
 
@@ -1654,8 +1655,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // of the reagents and add to referencing submission
         addSubmissionPropsFromReferencedSubmissions(subToTypes, props, submissionRefs);
             
-        
-
         // create and store properties of submission
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
@@ -1670,7 +1669,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);            
-            LOG.debug("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());                        
+            LOG.info("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());
             
             List<Item> allPropertyItems = new ArrayList<Item>();
             
@@ -1699,7 +1698,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // STRAIN
             List<Item> strainItems = new ArrayList<Item>();
-            strainItems.addAll(createFromWikiPage(dccId, "Strain", typeToProp, makeLookupList("strain")));
+            strainItems.addAll(createFromWikiPage(
+                    dccId, "Strain", typeToProp, makeLookupList("strain")));
             
             storeSubmissionCollection(storedSubmissionId, "strains", strainItems);
             if (!strainItems.isEmpty() && exFactorNames.contains("strain")) {
@@ -1711,7 +1711,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // ARRAY
             List<Item> arrayItems = new ArrayList<Item>();
-            arrayItems.addAll(createFromWikiPage(dccId, "Array", typeToProp, makeLookupList("array")));
+            arrayItems.addAll(createFromWikiPage(
+                    dccId, "Array", typeToProp, makeLookupList("array")));
             LOG.debug("ARRAY: " + typeToProp.get("array"));
             if (arrayItems.isEmpty()) {
                 arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
@@ -1776,7 +1777,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // TISSUE
             List<Item> tissueItems = new ArrayList<Item>();
-            tissueItems.addAll(createFromWikiPage(dccId, "Tissue", typeToProp, makeLookupList("tissue")));
+            tissueItems.addAll(createFromWikiPage(
+                    dccId, "Tissue", typeToProp, makeLookupList("tissue")));
             if (tissueItems.isEmpty()) {
                 tissueItems.addAll(lookForAttributesInOtherWikiPages("Tissue",
                         typeToProp, new String[] {
@@ -1975,7 +1977,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (attHeading.startsWith("Characteristic")) {
                     buildSubProperty.type = getPreferredSynonym(attName);
                     buildSubProperty.wikiPageUrl = attValue;
-                    // add detail here as some Characteristics that don't reference a wiki page                    
+                    // add detail here as some Characteristics don't reference a wiki page
                     // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
                 } else {
@@ -2193,8 +2195,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (String targetType : possibleTypes) {
             if (prop.details.containsKey(targetType)) {
                 if (prop.details.get(targetType).size() != 1) {
-                    throw new RuntimeException(source + " should only have one '" + targetType 
-                            + "' field: " + prop.details.get(targetType));
+                    
+                    // we used to complain if multiple values, now only 
+                    // if they don't have the same value
+                    checkIfSameValue(prop, source, targetType);
                 }
                 targetText = prop.details.get(targetType).get(0);
                 break;
@@ -2212,24 +2216,42 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    /**
+     * @param prop
+     * @param source
+     * @param targetType
+     * @throws RuntimeException
+     */
+    private void checkIfSameValue(SubmissionProperty prop, String source,
+            String targetType) throws RuntimeException {
+        String value = prop.details.get(targetType).get(0);                    
+        for ( int i = 1 ; i < prop.details.get(targetType).size(); i++) {
+            String newValue = prop.details.get(targetType).get(i);
+            if (!newValue.equals(value)) {
+              throw new RuntimeException(source + " should only have one value for '" + targetType 
+              + "' field: " + prop.details.get(targetType));                            
+            }
+        }
+    }
+
 
     private void setAttributeOnProp(SubmissionProperty subProp, Item item, String metadataName, 
             String attributeName) {
 
         if (subProp.details.containsKey(metadataName)) {
-            if (metadataName.equalsIgnoreCase("aliases")){
-                for (String s :subProp.details.get(metadataName)){
-                    if (s.equalsIgnoreCase("yellow cinnabar brown speck")){
+            if (metadataName.equalsIgnoreCase("aliases")) {
+                for (String s :subProp.details.get(metadataName)) {
+                    if (s.equalsIgnoreCase("yellow cinnabar brown speck")) {
                         item.setAttribute(attributeName, s);
                         break;
                     }
                 }
-            } else if (metadataName.equalsIgnoreCase("description") || 
-                    metadataName.equalsIgnoreCase("details")) {
+            } else if (metadataName.equalsIgnoreCase("description") 
+                    || metadataName.equalsIgnoreCase("details")) {
                 // description is often split in more than 1 line
                 int size = subProp.details.get(metadataName).size();
-                String all = subProp.details.get(metadataName).get(size-1);
-                for (int i = size-2; i > -1; i--){
+                String all = subProp.details.get(metadataName).get(size - 1);
+                for (int i = size - 2; i > -1; i--) {
                     all = all.concat(subProp.details.get(metadataName).get(i));
                 }
                 item.setAttribute(attributeName, all);
@@ -2424,7 +2446,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     /**
      * Unify variations on similar official names.
      * @param name the original 'official name' value
-     * @param clsName behaviour different depending class to be created
+     * @param type the treatment depends on the type
      * @return a unified official name
      */
     protected String correctOfficialName(String name, String type) {
@@ -2509,7 +2531,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     protected ResultSet getAppliedDataAll(Connection connection)
     throws SQLException {
 
-        String SRA_ACC = "SRA acc";
+        String sraAcc = "SRA acc";
         
         String query = "SELECT d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
@@ -2521,7 +2543,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " LEFT JOIN attribute a ON (da.attribute_id = a.attribute_id)"
             + " LEFT JOIN cvterm c ON (d.type_id = c.cvterm_id)"
             + " LEFT JOIN dbxref as x ON (a.dbxref_id = x.dbxref_id)"
-            + " WHERE d.name != '" + SRA_ACC + "'"
+            + " WHERE d.name != '" + sraAcc + "'"
             + " AND d.value != '' "
             + " ORDER BY d.data_id";
         return doQuery(connection, query, "getAppliedDataAll");
@@ -2668,7 +2690,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             protocolIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
             setSubmissionExperimentType(storedSubmissionId, protocolIds);
         }
-        LOG.info("TIME setting submission-protocol references: " + (System.currentTimeMillis() - bT));        
+        LOG.info("TIME setting submission-protocol references: " 
+                + (System.currentTimeMillis() - bT));
     }
 
     // store Submission.experimentType if it can be inferred from protocols
@@ -2800,7 +2823,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         submissionMap.get(thisSubId).interMineObjectId);
             }
         }
-        LOG.info("TIME setting submission-experiment references: " + (System.currentTimeMillis() - bT));                
+        LOG.info("TIME setting submission-experiment references: "
+                + (System.currentTimeMillis() - bT));
     }
 
 
@@ -2830,7 +2854,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         submissionMap.get(thisSubmissionId).interMineObjectId);
             }
         }
-        LOG.info("TIME setting submission-exFactors references: " + (System.currentTimeMillis() - bT));        
+        LOG.info("TIME setting submission-exFactors references: " 
+                + (System.currentTimeMillis() - bT));
     }
 
 
@@ -2849,7 +2874,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             getChadoDBConverter().store(reference,
                     submissionMap.get(thisSubmissionId).interMineObjectId);
             }
-        LOG.info("TIME setting submission-publication references: " + (System.currentTimeMillis() - bT));        
+        LOG.info("TIME setting submission-publication references: " 
+                + (System.currentTimeMillis() - bT));
     }
 
     
