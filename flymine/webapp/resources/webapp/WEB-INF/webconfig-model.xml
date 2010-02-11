@@ -211,6 +211,9 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
+    <bagdisplayers>
+      <displayer src="orthologueLinkDisplayer.tile"/>
+   </bagdisplayers>  
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -220,9 +223,6 @@
       <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
       <fieldconfig fieldExpr="qualifier"/>
     </fields>
-   <bagdisplayers>
-      <displayer src="/model/exportDisplayer.jsp"/>
-   </bagdisplayers>  
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
