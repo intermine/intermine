@@ -11,18 +11,17 @@
 <html:xhtml/>
 <tiles:importAttribute name="bag"/>
 <c:forEach items="${bag.classDescriptors}" var="cld">
-	<c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
-		<div id="linkOuts" class="listtoolbox" align="left">
-		<h3>Link outs</h3>
-		<p>  
-		    <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
-		      <c:set var="bag" value="${bag}" scope="request"/>
-		      <tiles:insert beanName="displayer" beanProperty="src"/><br/>
-		    </c:forEach>
-		</p>
-		</div>
-	</c:if>
+    <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
+        <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">
+            <div id="linkOuts" class="listtoolbox" align="left">
+                <h3>Orthologues</h3>
+                <p>  
+                    <c:set var="bag" value="${bag}" scope="request"/>
+                    <tiles:insert beanName="displayer" beanProperty="src"/><br/>
+                </p>
+            </div>
+        </c:forEach>
+    </c:if>
 </c:forEach>
 
 <!-- /bagDisplayers.jsp -->
-
