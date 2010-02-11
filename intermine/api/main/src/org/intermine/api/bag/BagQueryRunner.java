@@ -252,7 +252,7 @@ public class BagQueryRunner
 
                 // if matches are not issues then each entry will be a match or a duplicate
                 if (ids.size() == 1) {
-                    bqr.addMatch(input, (Integer) ids.iterator().next());
+                    bqr.addMatch(input, ids.iterator().next());
                 } else if (!areWildcards) {
                     List<Object> objs = new ArrayList<Object>();
                     for (Integer objectId : ids) {
@@ -263,8 +263,7 @@ public class BagQueryRunner
                         }
                         objs.add(obj);
                     }
-                    bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(),
-                                 (String) entry.getKey(), objs);
+                    bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), entry.getKey(), objs);
                 }
             } else {
                 List<Object> objs = new ArrayList<Object>();
