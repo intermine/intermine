@@ -25,8 +25,7 @@ import org.intermine.pathquery.PathException;
  * @author "Xavier Watkins"
  *
  */
-public interface BagConverter
-{
+public interface BagConverter {
     /**
      * Returns a List<ResultRows> of converted objects
      * @param session the session
@@ -36,17 +35,17 @@ public interface BagConverter
      * @return a List of ResultRow elements
      * @throws ClassNotFoundException  class not found
      * @throws ObjectStoreException objectstore
-     * @throws PathException
+     * @throws PathException bad path
      */
-    public WebResults getConvertedObjects(HttpSession session, String parameters,
-            List<Integer> fromList, String type)
+    public WebResults getConvertedObjects(HttpSession session, List<Integer> fromList, String type, 
+            String ... parameters)
         throws ClassNotFoundException, ObjectStoreException, PathException;
 
     /**
      * Get the ActionMessage to display in the webapp
      * @param model the model
      * @param externalids the initial ids as a comma separated list
-     * @param organism the organism to convert to
+     * @param parameters the parameters
      * @param convertedSize the converted size
      * @param type the type
      * @return an ActionMessage
@@ -54,5 +53,6 @@ public interface BagConverter
      * @throws UnsupportedEncodingException exception
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
-            String type, String organism) throws ObjectStoreException, UnsupportedEncodingException;
+            String type, String ... parameters) 
+    throws ObjectStoreException, UnsupportedEncodingException;
 }
