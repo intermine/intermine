@@ -11,8 +11,8 @@ package org.intermine.bio.web;
  */
 
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -31,21 +31,12 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.bio.web.logic.BioUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
@@ -174,7 +165,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                 }
 
                 Object attrValue = null;
-                Set<String> taxIds = null;
+                Collection<String> taxIds = null;
 
                 if (config.containsKey("attributeValue")) {
                     attrValue = config.get("attributeValue");
@@ -185,7 +176,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         } else { //it's a bag!
                             attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
-                                taxIds = getTaxIds(bag, os);
+                                taxIds = BioUtil.getOrganisms(os, bag, false);
 
                                 //don't display link if
                                 // a) not a bioentity (no reference to organism)
@@ -294,66 +285,4 @@ public class AttributeLinkDisplayerController extends TilesAction
             config.put("parameters", link.getParameters());
         }
     }
-
-    /**
-     * @param bag the bag
-     * @param os  the object store
-     * @return a set of tax ids
-     *
-     * Note: works with gene and protein QueryClass.
-     * TODO merge with similar method in BioUtil
-     **/
-
-    public Set<String> getTaxIds(InterMineBag bag, ObjectStore os) {
-        Results results;
-
-        Query q = new Query();
-        QueryClass queryClass;
-        try {
-            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
-
-            //check if you can query for organism
-            final Class<?> qc = Class.forName(bag.getQualifiedType());
-            Set<ClassDescriptor> cds = os.getModel().getClassDescriptorsForClass(qc);
-            ClassDescriptor cd = cds.iterator().next();
-
-            if (cd.getFieldDescriptorByName("organism") == null) {
-                return null;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("no type in the bag??! -> ", e);
-        }
-
-        QueryClass organism = new QueryClass(Organism.class);
-
-        q.addFrom(queryClass);
-        q.addFrom(organism);
-
-        QueryField qf = new QueryField(organism, "taxonId");
-        q.addToSelect(qf);
-
-        QueryField id = new QueryField(queryClass, "id");
-
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-        //added because sometimes identifier is null
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.IS_NOT_NULL);
-
-        BagConstraint bagC = new BagConstraint(id, ConstraintOp.IN, bag.getOsb());
-
-        QueryObjectReference r = new QueryObjectReference(queryClass, "organism");
-        ContainsConstraint cc = new ContainsConstraint(r, ConstraintOp.CONTAINS, organism);
-
-        cs.addConstraint(sc);
-        cs.addConstraint(bagC);
-        cs.addConstraint(cc);
-
-        q.setConstraint(cs);
-
-        results = os.executeSingleton(q, 10000, true, true, true);
-
-        return new HashSet(results);
-}
-
-
 }
