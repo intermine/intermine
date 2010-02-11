@@ -129,8 +129,7 @@ public class PortalQueryAction extends InterMineAction
         // Use the old way = quicksearch template in case some people used to link in
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
-            String qid = loadObjectDetails(servletContext, session, request, response,
-                                           profile.getUsername(), extId);
+            String qid = loadObjectDetails(servletContext, session, request, response, extId);
             return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid).forward();
         }
@@ -179,21 +178,23 @@ public class PortalQueryAction extends InterMineAction
             for (String converterClassName : additionalConverters.keySet()) {
                 Class clazz = Class.forName(converterClassName);
                 Constructor constructor = clazz.getConstructor();
-                String [] paramArray = additionalConverters.get(converterClassName);
-                String [] urlFields = paramArray[0].split(",");
-                String addparameter = null;
-                for (int i = 0; i < urlFields.length; i++) {
-                    if (request.getParameter(urlFields[i]) != null) {
-                        addparameter = request.getParameter(urlFields[i]);
+                String[] paramArray = additionalConverters.get(converterClassName);
+                String[] urlFields = paramArray[0].split(",");
+                String[] addparameters = new String[urlFields.length];
+                int i = 0;
+                for (String urlField : urlFields) {
+                    // if one of the request vars matches the variables listed in the bagquery 
+                    // config, add the variable to be passed to the custom converter
+                    String param = request.getParameter(urlField);
+                    if (param != null) {
                         // the spaces in organisms, eg. D.%20rerio, need to be handled
-                        URLDecoder.decode(addparameter, "UTF-8");
-                        break;
+                        addparameters[i] = URLDecoder.decode(param, "UTF-8");
                     }
                 }
-                if (addparameter != null && addparameter.length() != 0) {
+                if (addparameters.length > 0) {
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
                     WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
-                        addparameter, bagList, className);
+                            bagList, className, addparameters);
                     imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = new ArrayList<Integer>();
                     for (MultiRow<ResultsRow<MultiRowValue<ResultElement>>> resRow
@@ -207,12 +208,12 @@ public class PortalQueryAction extends InterMineAction
                     // No matches
                     if (converted.size() <= 0) {
                         actionMessages.add(Constants.PORTAL_MSG,
-                            new ActionMessage("portal.noorthologues", addparameter, extId));
+                            new ActionMessage("portal.noorthologues", addparameters, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(model,
-                        extId, converted.size(), className, addparameter));
+                        extId, converted.size(), className, addparameters));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
@@ -289,8 +290,8 @@ public class PortalQueryAction extends InterMineAction
      * @deprecated Use the BagQueryRunner instead
      */
     private String loadObjectDetails(ServletContext servletContext, HttpSession session,
-            HttpServletRequest request, HttpServletResponse response, String userName,
-            String extId) throws InterruptedException {
+            HttpServletRequest request, HttpServletResponse response, String extId)
+    throws InterruptedException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = SessionMethods.getWebProperties(servletContext);
         String templateName = properties.getProperty("begin.browse.template");

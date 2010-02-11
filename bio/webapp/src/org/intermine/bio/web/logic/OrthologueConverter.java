@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpSession;
 
@@ -44,6 +45,7 @@ public class OrthologueConverter implements BagConverter
 {
 
     private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
+    private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\.)");
 
     /**
      * The Constructor
@@ -56,13 +58,22 @@ public class OrthologueConverter implements BagConverter
      * {@inheritDoc}
      * @throws PathException
      */
-    public WebResults getConvertedObjects (HttpSession session, String organism,
-                                      List<Integer> fromList, String type)
-                                      throws ObjectStoreException, PathException {
+    public WebResults getConvertedObjects (HttpSession session, List<Integer> fromList, String type,
+            String ... parameters) throws ObjectStoreException, PathException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         ObjectStore os = im.getObjectStore();
         WebConfig webConfig = SessionMethods.getWebConfig(session.getServletContext());
+
+        String organism = null, dataset = null;
+
+        for (String param : parameters) {
+            if (ORGANISM_SHORTNAME_MATCHER.matcher(param).matches()) {
+                organism = param;
+            } else {
+                dataset = param;
+            }
+        }
 
         PathQuery q = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
@@ -81,9 +92,13 @@ public class OrthologueConverter implements BagConverter
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
+        if (dataset != null && !dataset.equals("Any")) {
+            // homologue.dataSets = dataset
+            q.addConstraint("Gene.homologues.dataSet.title", Constraints.eq(dataset));
+        }
 
-        q.setConstraintLogic("A and B and C");
         q.syncLogicExpression("and");
+
         LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
@@ -116,8 +131,19 @@ public class OrthologueConverter implements BagConverter
      * {@inheritDoc}
      */
     public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
-                                          String type, String organism)
+                                          String type, String ... parameters)
                     throws UnsupportedEncodingException {
+
+        String organism = null, dataset = null;
+
+        for (String param : parameters) {
+            if (ORGANISM_SHORTNAME_MATCHER.matcher(param).matches()) {
+                organism = param;
+            } else {
+                dataset = param;
+            }
+        }
+
         PathQuery q = new PathQuery(model);
 
         // add columns to the output
@@ -139,7 +165,11 @@ public class OrthologueConverter implements BagConverter
             q.addConstraint("Gene.homologues.homologue", Constraints.lookup(externalids));
         }
 
-        q.setConstraintLogic("A and B and C");
+        if (dataset != null && !dataset.equals("Any")) {
+            // homologue.dataSets = dataset
+            q.addConstraint("Gene.homologues.dataSet.title", Constraints.eq(dataset));
+        }
+
         q.syncLogicExpression("and");
 
         String query = q.toXml(PathQuery.USERPROFILE_VERSION);
@@ -156,5 +186,4 @@ public class OrthologueConverter implements BagConverter
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
     }
-
 }
