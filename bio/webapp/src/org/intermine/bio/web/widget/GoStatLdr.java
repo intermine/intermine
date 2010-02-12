@@ -58,7 +58,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
     public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
         namespace = extraAttribute;
-        taxonIds = BioUtil.getOrganisms(os, bag, false, true);
+        taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
     }
 
