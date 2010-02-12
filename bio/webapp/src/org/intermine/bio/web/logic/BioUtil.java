@@ -55,7 +55,7 @@ public class BioUtil implements WidgetHelper
      */
     @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
-                                                  boolean lowercase) {
+            boolean lowercase) {
         return getOrganisms(os, bag, lowercase, "name");
     }
 
@@ -69,7 +69,7 @@ public class BioUtil implements WidgetHelper
      */
     @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
-                                                  boolean lowercase, String organismFieldName) {
+            boolean lowercase, String organismFieldName) {
 
         Query q = new Query();
         Model model = os.getModel();
@@ -137,7 +137,7 @@ public class BioUtil implements WidgetHelper
      */
     @SuppressWarnings("unchecked")
     public static Collection<String> getChromosomes(ObjectStore os, Collection<String> organisms,
-                                                    boolean lowercase) {
+            boolean lowercase) {
 
 
         final String dmel = "drosophila melanogaster";
