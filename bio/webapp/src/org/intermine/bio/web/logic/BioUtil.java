@@ -56,7 +56,7 @@ public class BioUtil implements WidgetHelper
     @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
                                                   boolean lowercase) {
-        return getOrganisms(os, bag, lowercase, false);
+        return getOrganisms(os, bag, lowercase, "name");
     }
 
     /**
@@ -64,12 +64,12 @@ public class BioUtil implements WidgetHelper
      * @param os ObjectStore
      * @param lowercase if true, the organism names will be returned in lowercase
      * @param bag InterMineBag
-     * @param taxonIds if false, return organism names.  if true, return list of taxonids
+     * @param organismFieldName eg. name, shortName or taxonId
      * @return collection of organism names
      */
     @SuppressWarnings("unchecked")
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
-                                                  boolean lowercase, boolean taxonIds) {
+                                                  boolean lowercase, String organismFieldName) {
 
         Query q = new Query();
         Model model = os.getModel();
@@ -82,18 +82,22 @@ public class BioUtil implements WidgetHelper
         QueryClass qcOrganism = new QueryClass(Organism.class);
 
         QueryField qfOrganismName = new QueryField(qcOrganism, "name");
-        QueryField qfOrganismTaxonId = new QueryField(qcOrganism, "taxonId");
+
         QueryField qfGeneId = new QueryField(qcObject, "id");
 
         q.addFrom(qcObject);
         q.addFrom(qcOrganism);
 
-        if (taxonIds) {
-            q.addToSelect(qfOrganismTaxonId);
-            q.addToOrderBy(qfOrganismTaxonId);
-        } else {
+        if (organismFieldName.equals("name")) {
             q.addToSelect(qfOrganismName);
             q.addToOrderBy(qfOrganismName);
+        } else if (organismFieldName.equals("taxonId") || organismFieldName.equals("shortName")) {
+            // will either be taxonId or shortname
+            QueryField qfOrganism = new QueryField(qcOrganism, organismFieldName);
+            q.addToSelect(qfOrganism);
+            q.addToOrderBy(qfOrganism);
+        } else {
+            throw new RuntimeException(organismFieldName + " is not a valid field for Organism");
         }
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);

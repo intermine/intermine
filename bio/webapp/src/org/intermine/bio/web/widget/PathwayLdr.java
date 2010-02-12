@@ -50,7 +50,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     private String dataset;
     private static final String KEGG = "KEGG PATHWAY";
     private static final String REACTOME = "Reactome data set";
-    
+
     /**
      * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
      * or cellular_component)
@@ -59,7 +59,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
      */
     public PathwayLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-        taxonIds = BioUtil.getOrganisms(os, bag, false, true);
+        taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
         dataset = extraAttribute;
     }
@@ -72,19 +72,19 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcPathway = null;
         QueryClass qcOrganism = new QueryClass(Organism.class);
-        
+
         try {
             qcPathway = new QueryClass(Class.forName(model.getPackageName() + ".Pathway"));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering pathway enrichment widget", e);
-            // don't throw an exception, return NULL instead.  The widget will display 'no 
-            // results'. the javascript that renders widgets assumes a valid widget and thus 
-            // can't handle an exception thrown here.  
+            // don't throw an exception, return NULL instead.  The widget will display 'no
+            // results'. the javascript that renders widgets assumes a valid widget and thus
+            // can't handle an exception thrown here.
             return null;
-        }        
+        }
 
         QueryField qfPathwayIdentifier = new QueryField(qcPathway, "identifier");
-        QueryField qfPathwayName = new QueryField(qcPathway, "name");        
+        QueryField qfPathwayName = new QueryField(qcPathway, "name");
         QueryField qfTaxonId = new QueryField(qcOrganism, "taxonId");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         QueryField qfPrimaryIdentifier = new QueryField(qcGene, "primaryIdentifier");
@@ -102,9 +102,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
                 LOG.error("Error rendering pathway widget, invalid taxonIds: " + taxonIds);
-                // don't throw an exception, return NULL instead.  The widget will display 'no 
-                // results'. the javascript that renders widgets assumes a valid widget and thus 
-                // can't handle an exception thrown here.  
+                // don't throw an exception, return NULL instead.  The widget will display 'no
+                // results'. the javascript that renders widgets assumes a valid widget and thus
+                // can't handle an exception thrown here.
                 return null;
             }
         }
@@ -117,28 +117,28 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
-        
+
         Query q = new Query();
-        
+
         if (dataset.equals("KEGG") || dataset.equals("Reactome")) {
-            
+
             String datasetTitle = (dataset.equals("KEGG") ? KEGG : REACTOME);
-            
+
             QueryClass qcDataset = new QueryClass(DataSet.class);
             QueryField qfDataset = new QueryField(qcDataset, "title");
-            
+
             QueryCollectionReference c2 = new QueryCollectionReference(qcPathway, "dataSets");
             cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcDataset));
-            
+
             // dataset (if user selects)
             QueryExpression c10 = new QueryExpression(QueryExpression.LOWER, qfDataset);
             cs.addConstraint(new SimpleConstraint(c10, ConstraintOp.EQUALS,
                                                   new QueryValue(datasetTitle.toLowerCase())));
-            
+
             q.addFrom(qcDataset);
         }
 
-        
+
         q.setDistinct(true);
         q.addFrom(qcGene);
         q.addFrom(qcPathway);
