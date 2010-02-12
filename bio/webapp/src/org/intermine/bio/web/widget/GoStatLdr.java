@@ -38,7 +38,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 /**
- * 
+ *
  * @author Julie Sullivan
  */
 public class GoStatLdr extends EnrichmentWidgetLdr
@@ -84,16 +84,16 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryClass qcGoParent = null;
 
         try {
-            qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName() 
-                                                          + ".GOAnnotation"));
+            qcGoAnnotation = new QueryClass(Class.forName(model.getPackageName()
+                    + ".GOAnnotation"));
             qcGoParent = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
             qcGoChild = new QueryClass(Class.forName(model.getPackageName() + ".OntologyTerm"));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering GO enrichment widget", e);
             // don't throw an exception, return NULL instead.  The widget will display 'no results'.
             // the javascript that renders widgets assumes a valid widget and thus can't handle
-            // an exception thrown here.  
-            return null;            
+            // an exception thrown here.
+            return null;
         }
         QueryClass qcProtein = new QueryClass(Protein.class);
         QueryClass qcOrganism = new QueryClass(Organism.class);
@@ -129,7 +129,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         QueryExpression c2 = new QueryExpression(QueryExpression.LOWER, qfParentGoIdentifier);
         for (int i = 0; i < ids.length; i++) {
             cs.addConstraint(new SimpleConstraint(c2, ConstraintOp.NOT_EQUALS,
-                                                  new QueryValue(ids[i])));
+                    new QueryValue(ids[i])));
         }
 
         // GO terms selected by user = gene.goAnnotation.ontologyTerm.identifier
@@ -148,7 +148,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         // go term is of the specified namespace
         QueryExpression c7 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
         cs.addConstraint(new SimpleConstraint(c7, ConstraintOp.EQUALS,
-                                              new QueryValue(namespace.toLowerCase())));
+                new QueryValue(namespace.toLowerCase())));
 
         Collection<Integer> taxonIdInts = new ArrayList();
         // constrained only for memory reasons
@@ -157,9 +157,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                 taxonIdInts.add(new Integer(taxonId));
             } catch (NumberFormatException e) {
                 LOG.error("Error rendering go stat widget, invalid taxonIds: " + taxonIds);
-                // don't throw an exception, return NULL instead.  The widget will display 'no 
-                // results'. the javascript that renders widgets assumes a valid widget and thus 
-                // can't handle an exception thrown here.  
+                // don't throw an exception, return NULL instead.  The widget will display 'no
+                // results'. the javascript that renders widgets assumes a valid widget and thus
+                // can't handle an exception thrown here.
                 return null;
             }
         }
@@ -215,7 +215,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
 
             the first query gets all of the gene --> go term relationships unique
             the second query then counts the genes per each go term
-            */
+             */
 
             // subquery
             Query subq = q;
@@ -261,6 +261,3 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         this.namespace = namespace;
     }
 }
-
-
-
