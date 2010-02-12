@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.api.results.ResultElement;
@@ -28,6 +29,7 @@ import org.intermine.bio.util.GFF3Util;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -71,7 +73,37 @@ public class GFF3Exporter implements Exporter
         this.attributesNames = attributesNames;
         this.sourceName = sourceName;
     }
+    
+    
+    /**
+     * to read genome and modmine versions
+     * @return header further info about versions
+     */
+    
+    public String getHeaderParts()
+    {
+        String header = null;
 
+        Properties props = PropertiesUtil.getProperties();
+        String fV = props.getProperty("genomeVersion.fly");
+        String wV = props.getProperty("genomeVersion.worm");
+        String mV = props.getProperty("project.releaseVersion");
+        
+        if (fV != null && fV.length() > 0){
+            header = ", D. melanogaster genome v" + fV;
+        }
+        if (wV != null && wV.length() > 0) {
+            header = header + ", C. elegans genome v" + wV;
+        }
+        if (mV != null && mV.length() > 0) {
+            header = header + ", modMine r" + mV;
+        }
+        return header;
+    }
+
+    String HEADER = "##gff v3" + getHeaderParts();   
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -119,7 +151,7 @@ public class GFF3Exporter implements Exporter
             if (gff3Record != null) {
                 // have a chromsome ref and chromosomeLocation ref
                 if (!headerPrinted) {
-                    out.println("##gff-version 3");
+                    out.println(HEADER);
                     headerPrinted = true;
                 }
 
@@ -223,7 +255,7 @@ public class GFF3Exporter implements Exporter
         if (gff3Record != null) {
             // have a chromsome ref and chromosomeLocation ref
             if (!headerPrinted) {
-                out.println("##gff-version 3");
+                out.println(HEADER);
                 headerPrinted = true;
             }
 
