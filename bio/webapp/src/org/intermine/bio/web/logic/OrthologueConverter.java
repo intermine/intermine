@@ -15,9 +15,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
@@ -45,7 +47,8 @@ public class OrthologueConverter implements BagConverter
 {
 
     private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
-    private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\.)");
+    // D. melanogaster, C. lupus familiaris
+    private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
 
     /**
      * The Constructor
@@ -68,7 +71,11 @@ public class OrthologueConverter implements BagConverter
         String organism = null, dataset = null;
 
         for (String param : parameters) {
-            if (ORGANISM_SHORTNAME_MATCHER.matcher(param).matches()) {
+            if (StringUtils.isEmpty(param)) {
+                continue;
+            }
+            Matcher m = ORGANISM_SHORTNAME_MATCHER.matcher(param);
+            if (m.matches()) {
                 organism = param;
             } else {
                 dataset = param;
@@ -92,9 +99,9 @@ public class OrthologueConverter implements BagConverter
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
-        if (dataset != null && !dataset.equals("Any")) {
+        if (!StringUtils.isEmpty(dataset)) {
             // homologue.dataSets = dataset
-            q.addConstraint("Gene.homologues.dataSet.title", Constraints.eq(dataset));
+            q.addConstraint("Gene.homologues.dataSets.title", Constraints.eq(dataset));
         }
 
         q.syncLogicExpression("and");
@@ -137,6 +144,9 @@ public class OrthologueConverter implements BagConverter
         String organism = null, dataset = null;
 
         for (String param : parameters) {
+            if (StringUtils.isEmpty(param)) {
+                continue;
+            }
             if (ORGANISM_SHORTNAME_MATCHER.matcher(param).matches()) {
                 organism = param;
             } else {
@@ -165,7 +175,7 @@ public class OrthologueConverter implements BagConverter
             q.addConstraint("Gene.homologues.homologue", Constraints.lookup(externalids));
         }
 
-        if (dataset != null && !dataset.equals("Any")) {
+        if (!StringUtils.isEmpty(dataset)) {
             // homologue.dataSets = dataset
             q.addConstraint("Gene.homologues.dataSet.title", Constraints.eq(dataset));
         }
