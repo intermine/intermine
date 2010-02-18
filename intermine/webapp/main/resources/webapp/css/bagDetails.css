@@ -75,3 +75,7 @@ span.widgetcloser{
     margin:-5px 0;
     font-size:0.9em;
 }
+
+.selected {
+  padding: 1px 0 1px 3px; margin-left: 3px; margin-right: 3px;
+  background-color: #E7F1FB; border: 1px solid #bbb; line-height: 25px;}
