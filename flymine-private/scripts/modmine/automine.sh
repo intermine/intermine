@@ -153,7 +153,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
-	f )  INFILE=$OPTARG; echo "- Using given list of chadoxml files: "; more $INFILE;;
+	f )  INFILE=$OPTARG; echo "- Using given list of chadoxml files: "; SHOW="`cat $INFILE|tr '[\n]' '[,]'`"; echo $SHOW;;
 	g )  echo "- No checking of ftp directory (wget is not run)" ; WGET=n;;
 	i )  echo "- Interactive mode" ; INTERACT=y;;
 	r )  REL=$OPTARG; echo "- Using release $REL";;
@@ -161,7 +161,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	t )  echo "- No acceptance test run" ; TEST=n;;
 	v )  echo "- Verbose mode" ; V=-v;;
 	w )  echo "- No new webapp will be built" ; WEBAPP=n;;
-	x )  echo "- modMine will NOT be built" ; BUILD=n; STAG=n; BUP=n; WGET=n;;
+	x )  echo "- modMine will NOT be built" ; BUILD=n; BUP=n;;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
@@ -200,8 +200,7 @@ SOURCES=modmine-static,modencode-"$P"-metadata
 else
 SOURCES=modmine-static,modencode-metadata
 fi
-
-echo $SOURCES
+#echo $SOURCES
 
 echo
 echo "================================="
@@ -544,17 +543,17 @@ function doProjectList {
 
 #grep released ftplist | grep false | awk '{print $1, $(NF-2)}' | tr -d ,
 
-grep released $DATADIR/ftplist | grep false | grep -i celniker | awk '{print $1}' > $DATADIR/celniker.live
-grep released $DATADIR/ftplist | grep false | grep -i henikoff | awk '{print $1}' > $DATADIR/henikoff.live
-grep released $DATADIR/ftplist | grep false | grep -i karpen | awk '{print $1}' > $DATADIR/karpen.live
-grep released $DATADIR/ftplist | grep false | grep -i lai | awk '{print $1}' > $DATADIR/lai.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i celniker | awk '{print $1}' > $DATADIR/celniker.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i henikoff | awk '{print $1}' > $DATADIR/henikoff.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i karpen | awk '{print $1}' > $DATADIR/karpen.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lai | awk '{print $1}' > $DATADIR/lai.live
 
-grep released $DATADIR/ftplist | grep false | grep -i lieb | awk '{print $1}' > $DATADIR/lieb.live
-grep released $DATADIR/ftplist | grep false | grep -i macalpine | awk '{print $1}' > $DATADIR/macalpine.live
-grep released $DATADIR/ftplist | grep false | grep -i piano | awk '{print $1}' > $DATADIR/piano.live
-grep released $DATADIR/ftplist | grep false | grep -i snyder | awk '{print $1}' > $DATADIR/snyder.live
-grep released $DATADIR/ftplist | grep false | grep -i waterston | awk '{print $1}' > $DATADIR/waterston.live
-grep released $DATADIR/ftplist | grep false | grep -i white | awk '{print $1}' > $DATADIR/white.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lieb | awk '{print $1}' > $DATADIR/lieb.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i macalpine | awk '{print $1}' > $DATADIR/macalpine.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano | awk '{print $1}' > $DATADIR/piano.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder | awk '{print $1}' > $DATADIR/snyder.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston | awk '{print $1}' > $DATADIR/waterston.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white | awk '{print $1}' > $DATADIR/white.live
 
 }
 
@@ -591,16 +590,22 @@ wget -O - $FTPURL/list.txt | sort > $FTPARK/`date "+%y%m%d"`.list
 rm $DATADIR/ftplist
 ln -s $FTPARK/`date "+%y%m%d"`.list $DATADIR/ftplist
 # get the list of live dccid and use it as loop variable
-grep released $DATADIR/ftplist | grep false | awk '{print $1}' > $DATADIR/all.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | awk '{print $1}' > $DATADIR/all.live
 LOOPVAR=`cat $DATADIR/all.live`
 doProjectList
 # get also the list of deprecated entries with their replacement
-grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+#grep released $DATADIR/ftplist | grep true | awk '{print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $1, " -> ", $3 }' > $DATADIR/deprecation.table
+# true of superseded can be on 3 or 4 position, and the superseding sub in 4 or 5
+grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $1, " -> ", $4 }' > $DATADIR/superseded.table
+grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $1, " -> ", $5 }' >> $DATADIR/superseded.table
 awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 fi
 
 
 cd $MIRROR/new
+
+interact "START WGET NOW"
 
 for sub in $LOOPVAR
 do
