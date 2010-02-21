@@ -52,13 +52,16 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap();
     protected IdResolverFactory resolverFactory;
     private IdResolver flyResolver;
+    private static String evidenceRefId = null;
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws ObjectStoreException 
      */
-    public TreefamConverter(ItemWriter writer, Model model) {
+    public TreefamConverter(ItemWriter writer, Model model) 
+    throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         // only construct factory here so can be replaced by mock factory in tests
@@ -96,18 +99,6 @@ public class TreefamConverter extends BioFileConverter
             String identifier = bits[4];
             String symbol = bits[6];
             String taxonId = bits[8];
-
-//            `IDX` int(11) NOT NULL default '0' COMMENT 'Gene index',
-//            `ID` varchar(30) NOT NULL default '' COMMENT 'Unique sequence ID',
-//            `TID` varchar(30) NOT NULL default '' COMMENT 'Transcript ID',
-//            `TVER` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Version of TID',
-//            `GID` varchar(30) NOT NULL default '' COMMENT 'Gene ID',
-//            `GVER` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Version of GID',
-//            `SYMBOL` varchar(30) NOT NULL default '' COMMENT 'gene symbol',
-//            `DISP_ID` varchar(45) NOT NULL default '' COMMENT 'display name (obsolete)',
-//            `TAX_ID` int(10) unsigned NOT NULL default '0' COMMENT 'Taxonomy ID',
-//            `DESC` text NOT NULL COMMENT 'Description',
-
 
             try {
                 new Integer(taxonId);
@@ -194,7 +185,6 @@ public class TreefamConverter extends BioFileConverter
         } catch (IOException err) {
             throw new RuntimeException("error reading geneFile", err);
         }
-        String evidenceRefId = getEvidence();
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String bits[] = lineIter.next();
@@ -210,16 +200,15 @@ public class TreefamConverter extends BioFileConverter
             if (holder1 != null) {
                 GeneHolder holder2 = idsToGenes.get(gene2id);
                 if (holder2 != null) {
-                    processHomologues(holder1, holder2, bootstrap, evidenceRefId);
-                    processHomologues(holder2, holder1, bootstrap, evidenceRefId);
+                    processHomologues(holder1, holder2, bootstrap);
+                    processHomologues(holder2, holder1, bootstrap);
                 }
             }
 
         }
     }
 
-    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap, 
-                                   String evidenceRefId)
+    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
     throws ObjectStoreException {
 
         String gene1 = holder1.getGeneRefId();
@@ -229,7 +218,7 @@ public class TreefamConverter extends BioFileConverter
         homologue.setAttribute("bootstrapScore", bootstrap);
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
-        homologue.addToCollection("evidence", evidenceRefId);
+        homologue.addToCollection("evidence", getEvidence());
         String type = "orthologue";
         if (holder1.getTaxonId().equals(holder2.getTaxonId())) {
             type = "paralogue";
@@ -309,27 +298,32 @@ public class TreefamConverter extends BioFileConverter
 
     private String getEvidence()
     throws ObjectStoreException {
-        Item item = createItem("OrthologueEvidenceCode");
-        item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
-        item.setAttribute("name", EVIDENCE_CODE_NAME);
-        try {
-            store(item);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-        String refId = item.getIdentifier();
-        
-        item = createItem("OrthologueEvidence");
-        item.setReference("evidenceCode", refId);
-        try {
-            store(item);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-        
-        return item.getIdentifier();
+    	
+    	if (evidenceRefId == null) {
+
+    		Item item = createItem("OrthologueEvidenceCode");
+    		item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+    		item.setAttribute("name", EVIDENCE_CODE_NAME);
+    		try {
+    			store(item);
+    		} catch (ObjectStoreException e) {
+    			throw new ObjectStoreException(e);
+    		}
+    		String refId = item.getIdentifier();
+
+    		item = createItem("OrthologueEvidence");
+    		item.setReference("evidenceCode", refId);
+    		try {
+    			store(item);
+    		} catch (ObjectStoreException e) {
+    			throw new ObjectStoreException(e);
+    		}
+
+    		evidenceRefId = item.getIdentifier();
+    	}
+    	return evidenceRefId;
     }
-    
+
     /**
      * temporary object that holds the id, identifier, and gene for each record
      * @author julie
