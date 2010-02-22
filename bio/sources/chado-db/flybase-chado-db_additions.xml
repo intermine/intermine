@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <classes>
+  <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
+
   <class name="PhenotypeAnnotation" extends="Annotation" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <attribute name="annotationType" type="java.lang.String"/>
