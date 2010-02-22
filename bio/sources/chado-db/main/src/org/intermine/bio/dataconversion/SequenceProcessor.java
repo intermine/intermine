@@ -779,7 +779,7 @@ public class SequenceProcessor extends ChadoProcessor
                     } catch (ClassNotFoundException e) {
                         final String message =
                             "can't find class for " + objectFeatureType
-                            + "while processing relation: " + featRelationshipId;
+                            + " while processing relation: " + featRelationshipId;
                         throw new RuntimeException(message);
                     }
                     if (Transcript.class.isAssignableFrom(objectClass)) {
