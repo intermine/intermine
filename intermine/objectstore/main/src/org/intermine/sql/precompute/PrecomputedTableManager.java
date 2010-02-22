@@ -272,12 +272,10 @@ public class PrecomputedTableManager
             BestQuery bq = QueryOptimiser.optimise(sql, null, this, con,
                     QueryOptimiserContext.DEFAULT);
             sql = "CREATE TABLE " + pt.getName() + " AS " + bq.getBestQueryString();
-            LOG.info("Creating new precomputed table " + sql);
             stmt.execute(sql);
 
             String orderByField = pt.getOrderByField();
             if (orderByField != null) {
-                LOG.info("Creating orderby_field index on precomputed table " + pt.getName());
                 indexes.add(orderByField);
             } else {
                 List<AbstractValue> orderBy = (List<AbstractValue>) pt.getQuery().getOrderBy();
@@ -300,11 +298,9 @@ public class PrecomputedTableManager
             }
             indexes = canonicaliseIndexes(indexes);
 
-            LOG.info("Creating " + indexes.size() + " indexes for " + pt.getName());
             Iterator indexIter = indexes.iterator();
             while (indexIter.hasNext()) {
                 String indexName = (String) indexIter.next();
-                LOG.info("Creating index on " + pt.getName() + " (" + indexName + ")");
                 addIndex(pt.getName(), indexName, con);
                 // special case for string lower() indexes - add an index that can be used by
                 // LIKE constraints
@@ -315,7 +311,6 @@ public class PrecomputedTableManager
                 }
             }
 
-            LOG.info("ANALYSEing precomputed table " + pt.getName());
             con.createStatement().execute("ANALYSE " + pt.getName());
 
             if (record) {
@@ -327,8 +322,6 @@ public class PrecomputedTableManager
                 pstmt.setString(3, pt.getCategory());
                 pstmt.execute();
             }
-            LOG.info("Finished creating precomputed table " + pt.getName() + " for category "
-                    + pt.getCategory());
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
@@ -392,7 +385,6 @@ public class PrecomputedTableManager
             if (!con.getAutoCommit()) {
                 con.commit();
             }
-            LOG.info("Dropped precomputed table " + name);
         } finally {
             if ((con != null) && (conn == null)) {
                 con.close();
@@ -490,8 +482,6 @@ public class PrecomputedTableManager
                 failedCount++;
             }
         }
-        LOG.info("Loaded " + precomputedTables.size() + " precomputed table descriptions (plus "
-                + failedCount + " failed) in " + (System.currentTimeMillis() - start) + " ms");
     }
 
     /**
