@@ -263,10 +263,6 @@
     <reference name="submission"
       referenced-type="Submission"
       reverse-reference="submissionData" />
-    <collection name="initialData"
-      referenced-type="SubmissionData"/>
-    <collection name="resultData"
-      referenced-type="SubmissionData"/>
   </class>
 
   <class name="SubmissionDataAttribute"

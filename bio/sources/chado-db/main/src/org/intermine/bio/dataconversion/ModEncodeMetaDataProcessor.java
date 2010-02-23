@@ -543,7 +543,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " ON (eap.first_applied_protocol_id = ap.applied_protocol_id )"
             + " , applied_protocol_data apd"
             + " WHERE apd.applied_protocol_id = ap.applied_protocol_id"
-            + " ORDER By 3,5,6";        
+            + " ORDER By 3,5,6";
         return doQuery(connection, query, "getDAG");
     }
 
@@ -2930,20 +2930,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         for (Integer thisAP : appliedProtocolMap.keySet()) {
             AppliedProtocol ap = appliedProtocolMap.get(thisAP);
-            List<Integer> dataIds = ap.inputs;
-            if (!dataIds.isEmpty()) {
+
+            if (!ap.inputs.isEmpty()) {
                 ReferenceList collection = new ReferenceList("inputs");
-                for (Integer dataId : dataIds) {
-                    collection.addRefId(appliedDataMap.get(dataId).itemIdentifier);
+                for (Integer inputId : ap.inputs) {
+                    collection.addRefId(appliedDataMap.get(inputId).itemIdentifier);
                 }
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
 
-            List<Integer> outIds = ap.outputs;
-            if (!outIds.isEmpty()) {
+            if (!ap.outputs.isEmpty()) {
                 ReferenceList collection = new ReferenceList("outputs");
-                for (Integer dataId : dataIds) {
-                    collection.addRefId(appliedDataMap.get(dataId).itemIdentifier);
+                for (Integer outputId : ap.outputs) {
+                    collection.addRefId(appliedDataMap.get(outputId).itemIdentifier);
                 }
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
             }
