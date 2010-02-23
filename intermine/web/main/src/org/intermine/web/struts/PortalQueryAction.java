@@ -110,7 +110,7 @@ public class PortalQueryAction extends InterMineAction
         SessionMethods.recordMessage(welcomeMsg, session);
 
         if (extId == null || extId.length() == 0) {
-            recordError(new ActionMessage("errors.badportalquery"), request);
+            recordError(new ActionMessage("errors.badportalidentifiers"), request);
             return mapping.findForward("failure");
         }
 
