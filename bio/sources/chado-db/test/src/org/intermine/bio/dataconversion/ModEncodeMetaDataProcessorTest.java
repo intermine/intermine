@@ -48,34 +48,40 @@ public class ModEncodeMetaDataProcessorTest extends TestCase {
     
     public void testInferExperimentType() throws Exception {
         String[] test = new String[] {"chromatin_immunoprecipitation", "dummy"};
-        assertEquals("ChIP-seq", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("ChIP-seq", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"chromatin_immunoprecipitation", "hybridization"};
-        assertEquals("ChIP-chip", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("ChIP-chip", processor.inferExperimentType(makeProtocols(test), "anything"));
     
         test = new String[] {"nucleic_acid_extraction", "sequencing_protocol", "reverse_transcription"};
-        assertEquals("RTPCR", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RTPCR", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"RNA extraction", "sequencing_protocol"};
-        assertEquals("RNA-seq", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RNA-seq", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"RNA extraction", "sequencing"};
-        assertEquals("RNA-seq", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RNA-seq", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"reverse_transcription", "PCR"};
-        assertEquals("RTPCR", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RTPCR", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"reverse_transcription", "PCR_amplification", "RACE"};
-        assertEquals("RACE", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RACE", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"hybridization"};
-        assertEquals("RNA tiling array", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RNA tiling array", processor.inferExperimentType(makeProtocols(test), "Celniker"));
+
+        test = new String[] {"hybridization"};
+        assertEquals("Chromatin-chip", processor.inferExperimentType(makeProtocols(test), "Henikoff"));
+
+        test = new String[] {"hybridization"};
+        assertEquals("Tiling array", processor.inferExperimentType(makeProtocols(test), "anything"));
         
         test = new String[] {"annotation"};
-        assertEquals("Computational annotation", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("Computational annotation", processor.inferExperimentType(makeProtocols(test), "anything"));
     
         test = new String[] {"grow"};
-        assertEquals("RNA sample creation", processor.inferExperimentType(makeProtocols(test)));
+        assertEquals("RNA sample creation", processor.inferExperimentType(makeProtocols(test), "anything"));
     }
     
     private Set<String> makeProtocols(String[] types) {
