@@ -2711,21 +2711,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // may need protocols from referenced submissions to work out experiment type
             protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
-            setSubmissionExperimentType(storedSubmissionId, protocolChadoIds);
+            
+            String piName = submissionProjectMap.get(thisSubmissionId);
+            setSubmissionExperimentType(storedSubmissionId, protocolChadoIds, piName);
         }
-        LOG.info("TIME setting submission-protocol references: " 
+        LOG.info("TIME setting submission-protocol references: "
                 + (System.currentTimeMillis() - bT));
     }
 
     // store Submission.experimentType if it can be inferred from protocols
-    private void setSubmissionExperimentType(Integer storedSubId, List<Integer> protocolIds) 
-    throws ObjectStoreException {
+    private void setSubmissionExperimentType(Integer storedSubId, List<Integer> protocolIds,
+            String piName) throws ObjectStoreException {
         Set<String> protocolTypes = new HashSet<String>();
         for (Integer protocolId : protocolIds) {
             protocolTypes.add(protocolTypesMap.get(protocolId).trim());
         }
 
-        String experimentType = inferExperimentType(protocolTypes);
+        String experimentType = inferExperimentType(protocolTypes, piName);
         if (experimentType != null) {
             Attribute expTypeAtt = new Attribute("experimentType", experimentType);
             getChadoDBConverter().store(expTypeAtt, storedSubId);
@@ -2759,7 +2761,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @param protocolTypes the protocal types
      * @return a short experiment type
      */
-    protected String inferExperimentType(Set<String> protocolTypes) {
+    protected String inferExperimentType(Set<String> protocolTypes, String piName) {
 
         // extraction + sequencing + reverse transcription - ChIP = RTPCR
         // extraction + sequencing - reverse transcription - ChIP = RNA-seq
@@ -2794,10 +2796,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }           
         }
         
-        // hybridization - ChIP = RNA tiling array
+        // hybridization - ChIP =
+        //    Celniker:  RNA tiling array
+        //    Henikoff:  Chromatin-chip
+        //    otherwise: Tiling array
         if (containsMatch(protocolTypes, "hybridization")
                 && !containsMatch(protocolTypes, "immunoprecipitation")) {
-            return "RNA tiling array";
+            if (piName.equals("Celniker")) {
+                return "RNA tiling array";
+            } else if (piName.equals("Henikoff")) {
+                return "Chromatin-chip";
+            } else {
+                return "Tiling array";
+            }
+
         }
         
         // annotation = Computational annotation
