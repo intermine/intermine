@@ -100,11 +100,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // submission/applied_protocol/protocol maps
     // -----------------------------------------
 
-    // maps to link chado identifiers with intermineObjectId (Integer, Integer)
-    // and chado identifiers with item identifiers (Integer, String)
-    private Map<Integer, Integer> protocolIdMap = new HashMap<Integer, Integer>();
-    private Map<Integer, String> protocolIdRefMap = new HashMap<Integer, String>();
-
+    private Map<String, String> protocolsMap = new HashMap<String, String>();
+    private Map<Integer, String> protocolItemIds = new HashMap<Integer, String>();
+    private Map<String, Integer> protocolItemToObjectId = new HashMap<String, Integer>();
+    
     private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
     
@@ -1183,26 +1182,49 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ResultSet res = getProtocols(connection);
         int count = 0;
         while (res.next()) {
-            Integer protocolId = new Integer(res.getInt("protocol_id"));
+            Integer protocolChadoId = new Integer(res.getInt("protocol_id"));
             String name = res.getString("name");
             String description = res.getString("description");
+            String wikiLink = res.getString("accession");
+            Integer version = res.getInt("version");
             // needed: it breaks otherwise
             if (description.length() == 0) {
                 description = "N/A";
             }
-            Item protocol = getChadoDBConverter().createItem("Protocol");
-            protocol.setAttribute("name", name);
-            protocol.setAttribute("description", description);
-            Integer intermineObjectId = getChadoDBConverter().store(protocol);
-            storeInProtocolMaps (protocol, protocolId, intermineObjectId);
-            
+            createProtocol(protocolChadoId, name, description, wikiLink, version);
             count++;
         }
         res.close();
         LOG.info("created " + count + " protocols");
         LOG.info("PROCESS TIME protocols: " + (System.currentTimeMillis() - bT));
-}
+    }
 
+    
+    private String createProtocol(Integer chadoId, String name, String description, String wikiLink,
+            Integer version) throws ObjectStoreException {
+        String protocolItemId = protocolsMap.get(wikiLink);
+        if (protocolItemId == null) {
+            Item protocol = getChadoDBConverter().createItem("Protocol");
+            protocol.setAttribute("name", name);
+            protocol.setAttribute("description", description);
+            protocol.setAttribute("wikiLink", wikiLink);
+            protocol.setAttribute("version", "" + version);
+            Integer intermineObjectId = getChadoDBConverter().store(protocol);
+            
+            
+            protocolItemId = protocol.getIdentifier();
+            protocolItemToObjectId.put(protocolItemId, intermineObjectId);
+            protocolsMap.put(wikiLink, protocolItemId);
+        }
+        protocolItemIds.put(chadoId, protocolItemId);
+        return protocolItemId;
+    }
+
+    private Integer getProtocolInterMineId(Integer chadoId) {
+        return protocolItemToObjectId.get(protocolItemIds.get(chadoId));
+    }
+    
+    
     /**
      * Return the rows needed from the protocol table.
      * This is a protected method so that it can be overridden for testing
@@ -1213,9 +1235,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     protected ResultSet getProtocols(Connection connection) throws SQLException {
         String query =
-            "SELECT protocol_id, name, description"
-            + "  FROM protocol";
-        return doQuery(connection, query, "gatProtocols");
+            "SELECT protocol_id, name, protocol.description, accession, protocol.version"
+            + "  FROM protocol, dbxref"
+            + "  WHERE protocol.dbxref_id = dbxref.dbxref_id";
+        return doQuery(connection, query, "getProtocols");
     }
 
     /**
@@ -1242,7 +1265,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else if (fieldName == NOT_TO_BE_LOADED) {
                 continue;
             }
-            setAttribute(protocolIdMap.get(protocolId), fieldName, value);
+            setAttribute(getProtocolInterMineId(protocolId), fieldName, value);
             if (fieldName.equals("type")) {
                 protocolTypesMap.put(protocolId, value);
             }
@@ -1291,7 +1314,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             Item appliedProtocol = getChadoDBConverter().createItem("AppliedProtocol");
             // setting references to protocols
-            appliedProtocol.setReference("protocol", protocolIdRefMap.get(protocolId));
+            String protocolItemId = protocolItemIds.get(protocolId);
+            if (protocolId != null) {
+                appliedProtocol.setReference("protocol", protocolItemId);
+            }
             if (submissionId > 0) {
                 // setting reference to submission
                 // probably to rm (we do it later anyway). TODO: check
@@ -2073,8 +2099,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         items.addAll(createItemsForSubmissionProperties(dccId, clsName, props));
         return items;
     }
-    
-    
+
     private void storeSubmissionCollection(Integer storedSubmissionId, String name,
             List<Item> items) 
     throws ObjectStoreException {
@@ -2674,21 +2699,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         Iterator<Integer> subs = submissionProtocolMap.keySet().iterator();
         while (subs.hasNext()) {
             Integer thisSubmissionId = subs.next();
-            List<Integer> protocolIds = submissionProtocolMap.get(thisSubmissionId);
-            Iterator<Integer> dat = protocolIds.iterator();
+            List<Integer> protocolChadoIds = submissionProtocolMap.get(thisSubmissionId);
+            
             ReferenceList collection = new ReferenceList();
             collection.setName("protocols");
-            while (dat.hasNext()) {
-                
-                Integer currentId = dat.next();
-                collection.addRefId(protocolIdRefMap.get(currentId));
+            for (Integer protocolChadoId : protocolChadoIds) {
+                collection.addRefId(protocolItemIds.get(protocolChadoId));
             }
             Integer storedSubmissionId = submissionMap.get(thisSubmissionId).interMineObjectId;
             getChadoDBConverter().store(collection, storedSubmissionId);
             
             // may need protocols from referenced submissions to work out experiment type
-            protocolIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
-            setSubmissionExperimentType(storedSubmissionId, protocolIds);
+            protocolChadoIds.addAll(findProtocolIdsFromReferencedSubmissions(thisSubmissionId));
+            setSubmissionExperimentType(storedSubmissionId, protocolChadoIds);
         }
         LOG.info("TIME setting submission-protocol references: " 
                 + (System.currentTimeMillis() - bT));
@@ -2968,32 +2991,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("references", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Comment", NOT_TO_BE_LOADED);
-    }
-    
-    
-    /**
-     * to store identifiers in protocol maps.
-     * simply store the proper values in the maps.
-     * A check on the type is performed. Possibly can be avoided after more testing,
-     * and the old commented lines can be reinstated (note that we need 3 methods, one
-     * for each category of data.
-     *
-     * @param i
-     * @param chadoId
-     * @param intermineObjectId
-     * @throws ObjectStoreException
-     */
-    private void storeInProtocolMaps(Item i, Integer chadoId, Integer intermineObjectId)
-    throws ObjectStoreException {
-        if (i.getClassName().equals("Protocol")) {
-            protocolIdMap.put(chadoId, intermineObjectId);
-            protocolIdRefMap.put(chadoId, i.getIdentifier());
-        } else {
-            throw new IllegalArgumentException("Type mismatch: expecting Protocol, getting "
-                    + i.getClassName().substring(37) + " with intermineObjectId = "
-                    + intermineObjectId + ", chadoId = " + chadoId);
-        }
-        debugMap .put(i.getIdentifier(), i.getClassName());
     }
 
     /**
