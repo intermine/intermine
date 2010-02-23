@@ -1134,7 +1134,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 name = null;
                 if (res.isLast()) {
                     submissionEFMap.put(submissionId, ef);
-                    LOG.debug("EF MAP last: " + submissionId + "|" + rank + "|" + ef.efNames );
+                    LOG.debug("EF MAP last: " + submissionId + "|" + rank + "|" + ef.efNames);
                 }
             }
             prevRank = rank;
@@ -2250,7 +2250,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void checkIfSameValue(SubmissionProperty prop, String source,
             String targetType) throws RuntimeException {
         String value = prop.details.get(targetType).get(0);                    
-        for ( int i = 1 ; i < prop.details.get(targetType).size(); i++) {
+        for (int i = 1; i < prop.details.get(targetType).size(); i++) {
             String newValue = prop.details.get(targetType).get(i);
             if (!newValue.equals(value)) {
               throw new RuntimeException(source + " should only have one value for '" + targetType 
@@ -2979,6 +2979,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("Replicate Type", "replicate");
         FIELD_NAME_MAP.put("Date of Experiment", "experimentDate");
         FIELD_NAME_MAP.put("Public Release Date", "publicReleaseDate");
+        FIELD_NAME_MAP.put("Embargo Date", "embargoDate");
         FIELD_NAME_MAP.put("dcc_id", "DCCid");
         FIELD_NAME_MAP.put("PubMed ID", "pubMedId");
         FIELD_NAME_MAP.put("Person First Name", NOT_TO_BE_LOADED);
