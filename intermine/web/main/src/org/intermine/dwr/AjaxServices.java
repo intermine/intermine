@@ -1302,6 +1302,13 @@ public class AjaxServices
         return (query.getGroupedConstraintLogic().toString());
     }
 
+    /**
+     * @param suffix string of input before request for more results
+     * @param wholeList whether or not to show the entire list or a truncated version
+     * @param field field name from the table for the lucene search
+     * @param className class name (table in the database) for lucene search
+     * @return an array of values for this classname.field
+     */
     public String[] getContent(String suffix, boolean wholeList, String field, String className) {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
