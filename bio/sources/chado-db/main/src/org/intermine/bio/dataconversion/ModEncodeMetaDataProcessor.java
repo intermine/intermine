@@ -148,9 +148,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer interMineObjectId;
         // the identifier assigned to lab Item for this object
         private String labItemIdentifier;
-        private String organismItemIdentifier;
-
-// TODO?        private String dccId;
         private String title;
     }
 
@@ -161,8 +158,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     {
         private Integer submissionId;      // chado
         private Integer protocolId;
-        private String itemIdentifier;     // e.g. "0_12"
-        private Integer intermineObjectId;
         private Integer step;              // the level in the dag for the AP
 
         // the output data associated to this applied protocol
@@ -194,12 +189,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private static class ExperimentalFactor
     {
-        private String itemIdentifier;     // e.g. "0_12"
-        private Integer intermineObjectId;
         private Map<String, String> efTypes = new HashMap<String, String>();
         private List<String> efNames = new ArrayList<String>();
-        // the submissionId associated with a specific ef
-        private Integer submissionId;
     }
 
     
@@ -214,8 +205,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     /**
      * {@inheritDoc}
-     * Note:TODO
-     *
      */
     @Override
     public void process(Connection connection) throws Exception {
@@ -980,7 +969,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             details.interMineObjectId = intermineObjectId;
             details.itemIdentifier = submission.getIdentifier();
             details.labItemIdentifier = labItemIdentifier;
-            details.organismItemIdentifier = organismItemIdentifier;
             details.title = name;
             submissionMap.put(submissionId, details);
 
@@ -1118,7 +1106,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     submissionEFMap.put(prevSub, ef);
                 }
                 ef = new ExperimentalFactor();
-                ef.submissionId = submissionId;                
             }
             if (rank != prevRank || submissionId != prevSub) {
                 // this is a name
@@ -1904,37 +1891,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addToMap(submissionEFactorMap, current, efName);
     }
 
-    
-    private String[] lookForEFactorInOtherWikiPages(
-            Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor) 
-            throws ObjectStoreException {
-
-        List<String> itemIds = new ArrayList<String>();
-        for (String typeProp : lookFor) {
-            if (typeProp.indexOf(".") > 0) {
-                String[] bits = StringUtils.split(typeProp, '.');
-
-                String type = bits[0];
-                String propName = bits[1];
-
-                if (typeToProp.containsKey(type)) {
-                    for (SubmissionProperty subProp : typeToProp.get(type)) { 
-                        if (subProp.details.containsKey(propName)) {
-                            for (String value : subProp.details.get(propName)) {
-                                itemIds.add(value);
-                            }
-                        }
-                    }
-                    if (!itemIds.isEmpty()) {
-                        String found [] = {type, itemIds.get(0)};
-                        return found;
-                    }
-                }
-            }
-        }
-        String[] noResult = {null, null};
-        return noResult;
-    }
 
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes, 
             Integer submissionId, SubmissionProperty prop) {
@@ -3150,48 +3106,5 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             m.put(key, ids);
         }
     }
-
-
-    /**
-     * adds an element (String) to a list only if it is not there yet
-     * @param l the list
-     * @param i the element
-     */
-    private void addToList(List<String> l, String i) {
-
-        if (!l.contains(i)) {
-            l.add(i);
-        }
-    }
-
-
-    /**
-     * adds an element (Integer) to a list only if it is not there yet
-     * @param l the list
-     * @param i the element
-     */
-    private void addToList(List<Integer> l, Integer i) {
-
-        if (!l.contains(i)) {
-            l.add(i);
-        }
-    }
-
-    /**
-     * adds the elements of a list i to a list l only if they are not yet
-     * there
-     * @param l the receiving list
-     * @param i the donating list
-     */
-    private void addToList(List<Integer> l, List<Integer> i) {
-        Iterator <Integer> it  = i.iterator();
-        while (it.hasNext()) {
-            Integer thisId = it.next();
-            if (!l.contains(thisId)) {
-                l.add(thisId);
-            }
-        }
-    }
-
 
 }
