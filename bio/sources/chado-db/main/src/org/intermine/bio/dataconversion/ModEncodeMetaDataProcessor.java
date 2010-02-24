@@ -139,6 +139,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private IdResolverFactory wormResolverFactory = null;
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
     
+    private Map<DatabaseRecordKey, String> dbRecords = new HashMap<DatabaseRecordKey, String>();
+
     
     private static class SubmissionDetails
     {
@@ -177,6 +179,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private Integer dataId;
         private String value;
         private String actualValue;
+        private String type;
+        private String name;
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
         private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
@@ -228,6 +232,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         setSubmissionRefs(connection);
         setSubmissionExperimetRefs(connection);
         setDAGRefs(connection);
+        
+        // create DatabaseRecords where necessary for each submission
+        createDatabaseRecords(connection);
 
         // for high level attributes and experimental factors (EF)
         // TODO: clean up
@@ -1407,6 +1414,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.value = value;
             aData.actualValue = res.getString("value");
             aData.dataId = dataId;
+            aData.type = heading;
+            aData.name = name;
             appliedDataMap.put(dataId, aData);
 
             count++;
@@ -2591,6 +2600,46 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     
+    private class DatabaseRecordConfig 
+    {
+        private Set<Pattern> patterns = new HashSet<Pattern>();
+        private String dbName;
+        private String dbDescrition;
+        private String dbURL;
+    }
+    
+    private Set<DatabaseRecordConfig> initDatabaseRecordConfigs() {
+        Set<DatabaseRecordConfig> configs = new HashSet<DatabaseRecordConfig>();
+
+        DatabaseRecordConfig geo = new DatabaseRecordConfig();
+        geo.dbName = "GEO";
+        geo.dbDescrition = "Gene Expression Omnibus (NCBI)";
+        geo.dbURL = "http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc=";
+        Pattern p = Pattern.compile("GEO.*", Pattern.CASE_INSENSITIVE);
+        geo.patterns.add(p);
+        configs.add(geo);
+
+        DatabaseRecordConfig ae = new DatabaseRecordConfig();
+        ae.dbName = "ArrayExpress";
+        ae.dbDescrition = "ArrayExpress (EMBL-EBI)";
+        ae.dbURL = "http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=";
+        p = Pattern.compile("ae.*", Pattern.CASE_INSENSITIVE);
+        ae.patterns.add(p);
+        configs.add(ae);
+
+        DatabaseRecordConfig sra = new DatabaseRecordConfig();
+        sra.dbName = "SRA";
+        sra.dbDescrition = "Sequence Read Archive (NCBI)";
+        sra.dbURL = 
+            "http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?cmd=viewer&m=data&s=viewer&run=";
+        p = Pattern.compile("SRA.*", Pattern.CASE_INSENSITIVE);
+        sra.patterns.add(p);
+        configs.add(sra);
+
+        return configs;
+    }
+
+    
     /**
      * Query to get data attributes
      * This is a protected method so that it can be overridden for testing.
@@ -2622,30 +2671,114 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     throws ObjectStoreException {
         long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
-        Iterator<Integer> subs = submissionDataMap.keySet().iterator();
-        while (subs.hasNext()) {
-            Integer thisSubmissionId = subs.next();
-            List<Integer> dataIds = submissionDataMap.get(thisSubmissionId);
-            Iterator<Integer> dat = dataIds.iterator();
-            while (dat.hasNext()) {
-                Integer currentId = dat.next();
-                if (appliedDataMap.get(currentId).intermineObjectId == null) {
+        for (Integer submissionId : submissionDataMap.keySet()) {
+            for (Integer dataId : submissionDataMap.get(submissionId)) {
+                if (appliedDataMap.get(dataId).intermineObjectId == null) {
                     continue;
                 }
 
                 Reference reference = new Reference();
                 reference.setName("submission");
-                reference.setRefId(submissionMap.get(thisSubmissionId).itemIdentifier);
+                reference.setRefId(submissionMap.get(submissionId).itemIdentifier);
 
                 getChadoDBConverter().store(reference,
-                        appliedDataMap.get(currentId).intermineObjectId);
+                        appliedDataMap.get(dataId).intermineObjectId);
             }
         }
         LOG.info("TIME setting submission-data references: " + (System.currentTimeMillis() - bT));
     }
 
 
+    private void createDatabaseRecords(Connection connection)
+    throws ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
+        Set<DatabaseRecordConfig> configs = initDatabaseRecordConfigs();
+        
+        for (Integer submissionId : submissionDataMap.keySet()) {
+            List<String> submissionDbRecords = new ArrayList<String>();
+            for (Integer dataId : submissionDataMap.get(submissionId)) {
+                AppliedData ad = appliedDataMap.get(dataId);
+                if (ad.type.equalsIgnoreCase("Result Value")) {
+                    for (DatabaseRecordConfig conf : configs) {
+                        for (Pattern p : conf.patterns) {
+                            Matcher m = p.matcher(ad.name);
+                            if (m.matches()) {
+                                submissionDbRecords.add(createDatabaseRecord(ad, conf));
+                            }
+                        }
+                    }
+                }
+                if (!submissionDbRecords.isEmpty()) {
+                    ReferenceList col = new ReferenceList("databaseRecords", submissionDbRecords);
+                    getChadoDBConverter().store(col, 
+                            submissionMap.get(submissionId).interMineObjectId);
+                }
+            }
+        }
+        LOG.info("TIME creating DatabaseRecord objects: " + (System.currentTimeMillis() - bT));
+    }
+
+    
+    private String createDatabaseRecord(AppliedData ad, DatabaseRecordConfig config) 
+    throws ObjectStoreException {
+        DatabaseRecordKey key = new DatabaseRecordKey(config.dbName, ad.value);
+        String dbRecordId = dbRecords.get(key);
+        if (dbRecordId == null) {
+            Item dbRecord = getChadoDBConverter().createItem("DatabaseRecord");
+            dbRecord.setAttribute("database", config.dbName);
+            dbRecord.setAttribute("description", config.dbDescrition);
+            if (StringUtil.isEmpty(ad.value)) {
+                dbRecord.setAttribute("accession", "To be confirmed");
+            } else {
+                dbRecord.setAttribute("url", config.dbURL + ad.value);
+                dbRecord.setAttribute("accession", ad.value);
+            }
+            getChadoDBConverter().store(dbRecord);
+
+            dbRecordId = dbRecord.getIdentifier();
+            dbRecords.put(key, dbRecordId);
+        }
+        return dbRecordId;
+    }
+    
+    
+    private class DatabaseRecordKey 
+    {
+        private String db;
+        private String accession;
+        
+        /**
+         * Construct with the database and accession
+         * @param db database name
+         * @param accession id in database
+         */
+        public DatabaseRecordKey(String db, String accession) {
+            this.db = db;
+            this.accession = accession;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public boolean equals(Object o) {
+            if (o instanceof DatabaseRecordKey) {
+                DatabaseRecordKey otherKey = (DatabaseRecordKey) o;
+                if (!StringUtil.isEmpty(accession) && !StringUtil.isEmpty(otherKey.accession)) {
+                    return this.db.equals(otherKey.db) && this.accession.equals(otherKey.accession); 
+                }
+            }
+            return false;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        public int hashCode() {
+            return db.hashCode() + 3 * accession.hashCode();
+        }
+    }
+    
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
     throws ObjectStoreException {
