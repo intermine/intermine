@@ -19,7 +19,7 @@
 SUBDIR=/shared/data/modmine/subs
 DATADIR=$SUBDIR/chado
 
-MIRROR=$DATADIR/mirror
+MIRROR=$DATADIR/mirror 
 LOADDIR=$DATADIR/load
 LOGDIR=$DATADIR/logs
 FTPARK=$DATADIR/ark
@@ -90,6 +90,7 @@ $progname [-F] [-M] [-R] [-V] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DC
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
   -P project_name: as -M, but restricted to a project.
+  -T list of projects: as -M, but using a (comma separated) list of projects.
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -140,7 +141,7 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:T:abf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
@@ -150,6 +151,7 @@ while getopts ":FMRQVP:abf:gipr:stvwx" opt; do
 	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
 	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
 	P )  P=$OPTARG;echo "- Test build (metadata only) with project $P"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
+	T )  PLIST=$OPTARG;echo "- Test build (metadata only) with projects $PLIST"; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`";;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -197,10 +199,13 @@ LOG="$LOGDIR/$USER.$REL."`date "+%y%m%d.%H%M"`  # timestamp of stag operations +
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
+elif [ -n "$PLIST" ]
+then
+SOURCES=modmine-static,"$PLIST"
 else
 SOURCES=modmine-static,modencode-metadata
 fi
-#echo $SOURCES
+echo $SOURCES
 
 echo
 echo "================================="
@@ -423,14 +428,28 @@ DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
 echo "filling $CHADODB db with $DCCID..."
 echo "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
+EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
+
+echo "filling $CHADODB db with $DCCID, embargoed until $EDATE..."
+
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
 
 exitstatus=$?
 
 if [ "$exitstatus" = "0" ]
-then # add insertion of embargo date?
+then # insertion of embargo date: this is temporary until all subs have it
 psql -h $DBHOST -d $CHADODB -U $DBUSER -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'dcc_id', '$DCCID', 1292 from experiment_prop;"
+
+DBDATE=`psql -h modprod1 -d modchado-dev -U modmine -q -t -c "select value from experiment_prop where name = 'Embargo Date' and  experiment_id=(select max(experiment_id) from experiment_prop);"`
+
+if [ -z "$DBDATE" ]
+then
+echo "Adding Embargo Date: $EDATE.."
+psql -h  modprod1 -d modchado-dev -U modmine -c "insert into experiment_prop (experiment_id, name, value, type_id) select max(experiment_id), 'Embargo Date', '$EDATE', 1305 from experiment_prop;"
+fi
+
+
 else
 echo
 echo "$DCCID  stag-storenode FAILED. SKIPPING SUBMISSION."
@@ -543,17 +562,17 @@ function doProjectList {
 
 #grep released ftplist | grep false | awk '{print $1, $(NF-2)}' | tr -d ,
 
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i celniker | awk '{print $1}' > $DATADIR/celniker.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i henikoff | awk '{print $1}' > $DATADIR/henikoff.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i karpen | awk '{print $1}' > $DATADIR/karpen.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lai | awk '{print $1}' > $DATADIR/lai.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i celniker, | awk '{print $1}' > $DATADIR/celniker.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i henikoff, | awk '{print $1}' > $DATADIR/henikoff.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i karpen, | awk '{print $1}' > $DATADIR/karpen.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lai, | awk '{print $1}' > $DATADIR/lai.live
 
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lieb | awk '{print $1}' > $DATADIR/lieb.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i macalpine | awk '{print $1}' > $DATADIR/macalpine.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano | awk '{print $1}' > $DATADIR/piano.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder | awk '{print $1}' > $DATADIR/snyder.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston | awk '{print $1}' > $DATADIR/waterston.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white | awk '{print $1}' > $DATADIR/white.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lieb, | awk '{print $1}' > $DATADIR/lieb.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i macalpine, | awk '{print $1}' > $DATADIR/macalpine.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano, | awk '{print $1}' > $DATADIR/piano.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder, | awk '{print $1}' > $DATADIR/snyder.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston, | awk '{print $1}' > $DATADIR/waterston.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' > $DATADIR/white.live
 
 }
 
