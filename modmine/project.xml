@@ -71,6 +71,16 @@
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
     </source>
+		<source name="flybase-dpse-gene-fasta" type="fasta">
+			<property name="fasta.taxonId" value="7237"/>
+			<property name="fasta.dataSetTitle"
+								value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+			<property name="fasta.dataSourceName" value="FlyBase"/>
+			<property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+			<property name="fasta.classAttribute" value="primaryIdentifier"/>
+			<property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
+			<property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+		</source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
@@ -82,6 +92,17 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+		<source name="flybase-dpse-cds-fasta" type="fasta">
+			<property name="fasta.loaderClassName"
+								value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+			<property name="fasta.taxonId" value="7237"/>
+			<property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+			<property name="fasta.classAttribute" value="primaryIdentifier"/>
+			<property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
+			<property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+			<property name="fasta.dataSourceName" value="FlyBase"/>
+			<property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+		</source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
