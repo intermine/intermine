@@ -195,6 +195,7 @@
     <collection name="tissues" referenced-type="Tissue"/>
     <collection name="arrays" referenced-type="Array"/>
     <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
+    <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
   </class>
 
   <class name="ExperimentalFactor"
@@ -205,6 +206,14 @@
     <collection name="submissions"
       referenced-type="Submission"
       reverse-reference="experimentalFactors" />
+  </class>
+
+  <class name="DatabaseRecord" is-interface="true">
+    <attribute name="database" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="accession" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="databaseRecords"/>
   </class>
 
   <class name="Protocol"  
