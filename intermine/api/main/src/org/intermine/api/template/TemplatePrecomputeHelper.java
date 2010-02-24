@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -35,6 +36,8 @@ import org.intermine.pathquery.PathNode;
 public class TemplatePrecomputeHelper
 {
 
+    private static final Logger LOG = Logger.getLogger(TemplatePrecomputeHelper.class);
+    
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
@@ -66,9 +69,12 @@ public class TemplatePrecomputeHelper
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
+        /* don't throw exception here.  this method is called on all pages that display templates
+         * if we throw an exception here, the user will never be able to edit the template */
         if (template.getBagNames().size() != 0) {
-            throw new RuntimeException("Precomputed query can't be created "
-                                       + "for a template with a list.");
+           String msg = "Precomputed query can't be created for a template with a list.";
+           LOG.error(msg);
+           return null;
         }
 
         List<String> indexPaths = new ArrayList<String>();
