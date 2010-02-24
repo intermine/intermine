@@ -11,6 +11,7 @@
   <attribute name="featureType" type="java.lang.String" />
   <attribute name="score" type="java.lang.Double" />
   <attribute name="scoreType" type="java.lang.String" />
+  <reference name="scoreProtocol" referenced-type="Protocol" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
@@ -196,6 +197,7 @@
     <collection name="arrays" referenced-type="Array"/>
     <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
+    <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submissions"/>
   </class>
 
   <class name="ExperimentalFactor"
@@ -214,6 +216,13 @@
     <attribute name="accession" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <collection name="submissions" referenced-type="Submission" reverse-reference="databaseRecords"/>
+  </class>
+
+  <class name="ResultFile" is-interface="true">
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="url" type="java.lang.String"/>
+    <collection name="submissions" referenced-type="Submission" reverse-reference="resultFiles"/>
   </class>
 
   <class name="Protocol"  
