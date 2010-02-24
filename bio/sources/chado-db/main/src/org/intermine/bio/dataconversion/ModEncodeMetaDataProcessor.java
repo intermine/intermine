@@ -1932,9 +1932,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             currentSubId = dataSubmissionMap.get(dataId);
 
-            if (attDbxref.intValue() != lastAttDbXref.intValue()) {                
+            LOG.debug("XXX " + currentSubId + ":" + dataId + "|" + attValue + "|" +attDbxref);            
+            if (attDbxref.intValue() != lastAttDbXref.intValue() ||
+                    currentSubId != previousSubId) {                
                 // store the last build property if created, type is set only if we found an
                 // attHeading of Characteristics
+                // note: dbxref can remain the same in different subs -> or
                 if (buildSubProperty != null && buildSubProperty.type != null) {
                     createdProps.put(lastAttDbXref, buildSubProperty);    
                     addToSubToTypes(subToTypes, previousSubId, buildSubProperty);
@@ -2152,7 +2155,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     setAttributeOnProp(prop, propItem, "Description", "description");
                     setAttributeOnProp(prop, propItem, "details", "description");
                     
-                    setAttributeOnProp(prop, propItem, "aliases", "shortName");
+                    setAttributeOnProp(prop, propItem, "aliases", "name");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
                     setGeneItem(dccId, prop, propItem, "Strain");
@@ -2223,6 +2226,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (metadataName.equalsIgnoreCase("aliases")) {
                 for (String s :subProp.details.get(metadataName)) {
                     if (s.equalsIgnoreCase("yellow cinnabar brown speck")) {
+                        // swapping name with fullName
+                        String full = item.getAttribute("name").getValue();
+                        item.setAttribute("fullName", full);
+
                         item.setAttribute(attributeName, s);
                         break;
                     }
