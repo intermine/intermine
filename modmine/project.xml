@@ -43,7 +43,7 @@
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
     </source>
-    <source name="go-annotation" type="go-annotation" dump="true">
+    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/modmine/sources/go-annotation/current/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
@@ -83,7 +83,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
@@ -93,7 +93,7 @@
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
+		<source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.includes" value="*dna*.fasta"/>
@@ -107,17 +107,6 @@
 	<property name="src.data.dir.includes" value="gene2pubmed"/>
 	<property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
     </source>
-<!-- INTEREACTION: added 24/11/08
-    <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="organisms" value="7227 6239 4932"/>
-    </source>
-    <source name="biogrid" type="biogrid" dump="true">
-      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-    </source>
--->
-    
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
@@ -125,19 +114,12 @@
            objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
-    <source name="update-publications" type="update-publications" dump="true">
-      <!-- this source finds the publication ids (pubmed ids) in the
-           objectstore, retrieves the details of the publication from Entrez
-           into an InterMine format XML file, loads that file into a target
-           items DB, then into the final objectstore dump="true"-->
-      <property name="src.data.file" location="build/publications.xml"/>
-    </source>
 		<source name="modmine-static" type="intermine-items-xml-file">
 			<property name="src.data.file" location="resources/projects.xml"/>
 		</source>
 		
 		<!-- cDNA-clone -->
-		<source name="cdna-clone" type="modmine/cdna-clone">
+		<source name="cdna-clone" type="modmine/cdna-clone" dump="true">
 			<property name="gff3.seqClsName" value="Chromosome"/>
 			<property name="gff3.taxonId" value="7227"/>
 			<property name="gff3.seqDataSourceName" value="Celniker lab"/>
@@ -158,18 +140,7 @@
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
 		-->
-
-    <!-- CELNIKER -->
-    <source name="modencode-celniker-metadata" type="chado-db" dump="true">
-      <property name="organisms" value="7227"/>
-      <property name="dataSourceName" value="modENCODE"/>
-      <property name="dataSetTitle" value="modENCODE submission"/>
-      <property name="source.db.name" value="modencode-celniker-metadata"/>
-      <property name="processors"
-                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-      <property name="converter.class"
-                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-    </source>
+    <!-- the projects are ordered approx by db size -->
 		<!-- HENIKOFF -->
 		<source name="modencode-henikoff-metadata" type="chado-db">
 			<property name="organisms" value="7227 6239"/>
@@ -181,19 +152,8 @@
 			<property name="converter.class"
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
-		<!-- KARPEN -->
-		<source name="modencode-karpen-metadata" type="chado-db" dump="true">
-			<property name="organisms" value="7227"/>
-			<property name="dataSourceName" value="modENCODE"/>
-			<property name="dataSetTitle" value="modENCODE submission"/>
-			<property name="source.db.name" value="modencode-karpen-metadata"/>
-			<property name="processors"
-								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-			<property name="converter.class"
-								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-		</source>
 		<!-- LAI -->
-		<source name="modencode-lai-metadata" type="chado-db">
+		<source name="modencode-lai-metadata" type="chado-db" >
 			<property name="organisms" value="7227"/>
 			<property name="dataSourceName" value="modENCODE"/>
 			<property name="dataSetTitle" value="modENCODE submission"/>
@@ -204,7 +164,7 @@
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
 		<!-- LIEB -->
-		<source name="modencode-lieb-metadata" type="chado-db">
+		<source name="modencode-lieb-metadata" type="chado-db" dump="true">
 			<property name="organisms" value="6239"/>
 			<property name="dataSourceName" value="modENCODE"/>
 			<property name="dataSetTitle" value="modENCODE submission"/>
@@ -237,7 +197,7 @@
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
 		<!-- SNYDER -->
-		<source name="modencode-snyder-metadata" type="chado-db" dump="true">
+		<source name="modencode-snyder-metadata" type="chado-db" >
 			<property name="organisms" value="6239"/>
 			<property name="dataSourceName" value="modENCODE"/>
 			<property name="dataSetTitle" value="modENCODE submission"/>
@@ -247,12 +207,12 @@
 			<property name="converter.class"
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
-		<!-- WATERSTON -->
-		<source name="modencode-waterston-metadata" type="chado-db" dump="true">
-			<property name="organisms" value="6239"/>
+		<!-- KARPEN -->
+		<source name="modencode-karpen-metadata" type="chado-db" dump="true">
+			<property name="organisms" value="7227"/>
 			<property name="dataSourceName" value="modENCODE"/>
 			<property name="dataSetTitle" value="modENCODE submission"/>
-			<property name="source.db.name" value="modencode-waterston-metadata"/>
+			<property name="source.db.name" value="modencode-karpen-metadata"/>
 			<property name="processors"
 								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
 			<property name="converter.class"
@@ -269,8 +229,36 @@
 			<property name="converter.class"
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
+		<!-- CELNIKER -->
+		<source name="modencode-celniker-metadata" type="chado-db" dump="true">
+			<property name="organisms" value="7227"/>
+			<property name="dataSourceName" value="modENCODE"/>
+			<property name="dataSetTitle" value="modENCODE submission"/>
+			<property name="source.db.name" value="modencode-celniker-metadata"/>
+			<property name="processors"
+								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+			<property name="converter.class"
+								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+		</source>
+		<!-- WATERSTON -->
+		<source name="modencode-waterston-metadata" type="chado-db" dump="true">
+			<property name="organisms" value="6239"/>
+			<property name="dataSourceName" value="modENCODE"/>
+			<property name="dataSetTitle" value="modENCODE submission"/>
+			<property name="source.db.name" value="modencode-waterston-metadata"/>
+			<property name="processors"
+								value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+			<property name="converter.class"
+								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+		</source>
+		<source name="update-publications" type="update-publications" dump="true">
+			<!-- this source finds the publication ids (pubmed ids) in the
+					 objectstore, retrieves the details of the publication from Entrez
+					 into an InterMine format XML file, loads that file into a target
+					 items DB, then into the final objectstore dump="true"-->
+			<property name="src.data.file" location="build/publications.xml"/>
+		</source>
 
-		
 		<source name="fly-development-ontology" type="fly-development-ontology">
 			<property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
 		</source>
