@@ -296,7 +296,8 @@
     <attribute name="species" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
-    <attribute name="shortName" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="fullName" type="java.lang.String"/>
     <attribute name="reference" type="java.lang.String"/>
     <attribute name="targetName" type="java.lang.String"/>
     <reference name="target" referenced-type="Gene"/>
