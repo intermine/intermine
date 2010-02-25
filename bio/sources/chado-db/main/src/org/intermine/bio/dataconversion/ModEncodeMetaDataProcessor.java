@@ -306,6 +306,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             //
             String queryList = StringUtil.join(thisSubmissionDataIds, ",");
             processDataFeatureTable(connection, subFeatureMap, chadoExperimentId, queryList);
+            
             // read any genes that have been created so we can re-use the same item identifiers
             // when creating antibody/strain target genes later
             extractGenesFromSubFeatureMap(subFeatureMap);
@@ -320,6 +321,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
     }
+    
     /**
      * @param connection
      * @param featureMap
@@ -2714,7 +2716,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         for (Pattern p : conf.patterns) {
                             Matcher m = p.matcher(ad.name);
                             if (m.matches()) {
-                                submissionDbRecords.add(createDatabaseRecord(ad, conf));
+                                submissionDbRecords.addAll(createDatabaseRecords(ad.value, conf));
                             }
                         }
                     }
@@ -2730,19 +2732,49 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     
-    private String createDatabaseRecord(AppliedData ad, DatabaseRecordConfig config) 
+    private List<String> createDatabaseRecords(String accession, DatabaseRecordConfig config) 
     throws ObjectStoreException {
-        DatabaseRecordKey key = new DatabaseRecordKey(config.dbName, ad.value);
+        List<String> dbRecordIds = new ArrayList<String>();
+
+        Set<String> cleanAccessions = new HashSet<String>();
+        
+        // NOTE - this is a special case to deal with a very strange SRA accession format in some
+        // Celniker submissions.  The 'accession' is provided as e.g.
+        //   SRR013492.225322.1;SRR013492.462158.1;...
+        // We just want the unique SRR ids        
+        if (config.dbName.equals("SRA") && (accession.indexOf(';') != -1
+                || accession.indexOf('.') != -1)) {
+            for (String part : accession.split(";")) {
+                if (part.indexOf('.') != -1) {
+                    cleanAccessions.add(part.substring(0, part.indexOf('.')));
+                } else {
+                    cleanAccessions.add(part);
+                }
+            }
+        } else {
+            cleanAccessions.add(accession);
+        }
+        
+        for (String cleanAccession : cleanAccessions) {
+            dbRecordIds.add(createDatabaseRecord(cleanAccession, config));
+        }
+        return dbRecordIds;
+    }
+    
+    
+    private String createDatabaseRecord(String accession, DatabaseRecordConfig config) 
+    throws ObjectStoreException {
+        DatabaseRecordKey key = new DatabaseRecordKey(config.dbName, accession);
         String dbRecordId = dbRecords.get(key);
         if (dbRecordId == null) {
             Item dbRecord = getChadoDBConverter().createItem("DatabaseRecord");
             dbRecord.setAttribute("database", config.dbName);
             dbRecord.setAttribute("description", config.dbDescrition);
-            if (StringUtil.isEmpty(ad.value)) {
+            if (StringUtil.isEmpty(accession)) {
                 dbRecord.setAttribute("accession", "To be confirmed");
             } else {
-                dbRecord.setAttribute("url", config.dbURL + ad.value);
-                dbRecord.setAttribute("accession", ad.value);
+                dbRecord.setAttribute("url", config.dbURL + accession);
+                dbRecord.setAttribute("accession", accession);
             }
             getChadoDBConverter().store(dbRecord);
 
