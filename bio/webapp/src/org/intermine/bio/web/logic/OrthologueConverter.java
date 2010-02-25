@@ -14,17 +14,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -43,31 +48,33 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author "Xavier Watkins"
  *
  */
-public class OrthologueConverter implements BagConverter
+public class OrthologueConverter extends BagConverter
 {
 
     private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
     // D. melanogaster, C. lupus familiaris
     private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
+    private static InterMineAPI im;
+    private static Model model;
+    private static WebConfig webConfig;
+    private static ObjectStore os;
 
-    /**
-     * The Constructor
-     */
     public OrthologueConverter() {
         super();
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
+        HttpSession session = WebContextFactory.get().getSession();
+        im = SessionMethods.getInterMineAPI(session);
+        webConfig = SessionMethods.getWebConfig(servletContext);
+        model = im.getModel();
+        os = im.getObjectStore();
     }
-
+    
     /**
      * {@inheritDoc}
      * @throws PathException
      */
-    public WebResults getConvertedObjects (HttpSession session, List<Integer> fromList, String type,
+    public WebResults getConvertedObjects (Profile profile, List<Integer> fromList, String type,
             String ... parameters) throws ObjectStoreException, PathException {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Model model = im.getModel();
-        ObjectStore os = im.getObjectStore();
-        WebConfig webConfig = SessionMethods.getWebConfig(session.getServletContext());
-
         String organism = null, dataset = null;
 
         for (String param : parameters) {
@@ -81,17 +88,17 @@ public class OrthologueConverter implements BagConverter
                 dataset = param;
             }
         }
-
-        PathQuery q = new PathQuery(model);
-        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
-                        "Gene.homologues.homologue", false);
-        view = getFixedView(view);
-        q.setViewPaths(view);
-
         List<InterMineObject> objectList = os.getObjectsByIds(fromList);
+        PathQuery q = generateQuery(objectList, type, organism, dataset);
 
-        // gene
-        q.addConstraint("Gene", Constraints.in(objectList));
+        LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
+
+        return executor.execute(q);
+    }
+
+    private static PathQuery constructPathQuery(String organism, String dataset) {
+        PathQuery q = new PathQuery(model);
 
         // organism
         q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(organism));
@@ -99,18 +106,55 @@ public class OrthologueConverter implements BagConverter
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
-        if (!StringUtils.isEmpty(dataset)) {
+        if (StringUtils.isNotEmpty(dataset)) {
             // homologue.dataSets = dataset
             q.addConstraint("Gene.homologues.dataSets.title", Constraints.eq(dataset));
         }
+        return q;
+    }
+
+    private PathQuery generateQuery(List<InterMineObject> objectList, String type, String organism,
+            String dataset)
+    throws PathException {
+        PathQuery q = constructPathQuery(organism, dataset);
+
+        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
+                        "Gene.homologues.homologue", false);
+        view = getFixedView(view);
+        q.setViewPaths(view);
+
+        q.addConstraint(type, Constraints.in(objectList));
 
         q.syncLogicExpression("and");
+        return q;
+    }
 
-        LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
-        Profile profile = SessionMethods.getProfile(session);
-        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
-        return executor.execute(q);
+    private static PathQuery generateQuery(String bagType, String bagName, String organismName) {
+        PathQuery q = constructPathQuery(organismName, null);
+        q.setView("Gene.homologues.homologue.primaryIdentifier");
+        q.addConstraint(bagType, Constraints.in(bagName));
+        q.syncLogicExpression("and");
+        return q;
+    }
+
+    public String getFieldsFromConvertedObjects(Profile profile, String bagType,
+            String bagName, String organismName) {
+        String orthologues = "";
+        PathQuery pathQuery = generateQuery(bagType, bagName, organismName);
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(pathQuery);
+        
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            String orthologue = row.get(0).getField().toString();
+            if (StringUtils.isNotEmpty(orthologues)) {
+                orthologues += ",";
+            }
+            orthologues += orthologue;
+        }
+
+        return orthologues;
     }
 
     /**
@@ -137,8 +181,8 @@ public class OrthologueConverter implements BagConverter
     /**
      * {@inheritDoc}
      */
-    public ActionMessage getActionMessage(Model model, String externalids, int convertedSize,
-                                          String type, String ... parameters)
+    public ActionMessage getActionMessage(String externalids, int convertedSize, String type,
+            String ... parameters)
                     throws UnsupportedEncodingException {
 
         String organism = null, dataset = null;

@@ -11,6 +11,9 @@ package org.intermine.dwr;
  */
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -45,6 +48,7 @@ import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -76,6 +80,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -1322,6 +1327,47 @@ public class AjaxServices
         }
         String[] defaultList = {""};
         return defaultList;
+    }
+    
+    /**
+     * used on list analysis page to convert list contents to orthologues.  then forwarded to
+     * another intermine instance
+     * @param bagName bag of genes to convert
+     * @param selectedValue organism to convert to
+     * @return converted list of orthologues
+     * @throws UnsupportedEncodingException if we can't encode the name of the organism
+     * @throws ClassNotFoundException 
+     * @throws NoSuchMethodException 
+     * @throws SecurityException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
+     * @throws IllegalArgumentException 
+     */
+    public static String convertObjects(String bagType, String bagName, String selectedValue)
+    throws UnsupportedEncodingException, ClassNotFoundException, SecurityException, 
+    NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, 
+    InvocationTargetException {
+        
+        HttpServletRequest request = getRequest();
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        
+        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
+        // Use custom converters
+        Map<String, String []> additionalConverters =
+            bagQueryConfig.getAdditionalConverters(bagType);
+        if (additionalConverters != null) {
+            for (String converterClassName : additionalConverters.keySet()) {
+                Class clazz = Class.forName(converterClassName);
+                Constructor constructor = clazz.getConstructor();
+                BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                return bagConverter.getFieldsFromConvertedObjects(profile, bagType, bagName, 
+                        selectedValue);
+            }
+        }
+        return null;
     }
 
 }

@@ -103,9 +103,9 @@ function updateCountInColumnSummary() {
         setTimeout("updateCountInColumnSummary()", 1000);
         return;
     }
-    
+
     jQuery('#summary_row_count').html("<p>" + countString + "</p>");
-    
+
     var est = document.getElementById('resultsCountEstimate');
     if (est == null || est.style.display != 'none') {
         setTimeout("updateCountInColumnSummary()", 500);
@@ -131,14 +131,14 @@ function resultsCountCallback(size) {
 var dialog=null;
 
 function getColumnSummary(tableName, columnName, columnDisplayName) {
-	if (dialog == null) {
+    if (dialog == null) {
         dialog = new Boxy("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...",{title:"Column Summary", draggable: true});
-	} else {
-		dialog.setContent("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...");
+    } else {
+        dialog.setContent("<img src=\"images/wait18.gif\" title=\"loading icon\" style=\"margin:25px 50px;\">&nbsp;Loading...");
         if(!dialog.isVisible()) {
             dialog.show();
         }
-	}
+    }
     AjaxServices.getColumnSummary(tableName, columnName, function(str){
         var rows = str[0];
         var uniqueCountQid = str[1];
@@ -155,7 +155,7 @@ function getColumnSummary(tableName, columnName, columnDisplayName) {
         }
         var headerText;
         if (rows[0] == null) {
-        	headerText = '<tr><th>No results found in this column</th></tr>';        	
+            headerText = '<tr><th>No results found in this column</th></tr>';
         } else if(rows[0].length == 2){
             headerText = '<tr><th>Value</th><th>Count</th></tr>';
         } else {
@@ -425,9 +425,9 @@ function showDescriptions(listId, type, show) {
         // it is div with description
         if (el.id.match(prefix) != null) {
             // there are 2 descriptions: normal and highlighted
-            // Results returned from Lucene search are crazy, sometimes the highlighted 
+            // Results returned from Lucene search are crazy, sometimes the highlighted
             // description is empty after Lucene search and that's why this complicated
-            // logic is needed - normal description is hidden if the highlighted is not empty 
+            // logic is needed - normal description is hidden if the highlighted is not empty
             if (areItemsFiltered()) {
                 if (el.id.match('_highlight') != null) {
                     showElement(el, show);
@@ -536,7 +536,7 @@ function filterWebSearchables(objectId, scope, type, callId, wsListId) {
             tagList[tagList.length]=tags['aspects_' + wsListId];
         }
         if (typeof selectedUserTag != "undefined" && selectedUserTag != null) {
-            tagList[tagList.length] = selectedUserTag; 
+            tagList[tagList.length] = selectedUserTag;
         }
 
         /*  filterAction toggles favourites off and on */
@@ -591,7 +591,7 @@ function filterAspect(type, wsListId) {
 function filterByUserTag(type, wsListId, tag) {
     // it is checked in filterWebSearchablesHandler
     selectedUserTag = tag;
-    
+
     // boring stuff to reload new filtered web searchables from server
     var filterTextElement = document.getElementById(wsListId+'_'+type+'_filter_text');
     return filterWebSearchablesHandler(null, filterTextElement, type, wsListId);
@@ -641,7 +641,7 @@ function clearFilter(type, wsListId) {
     filterTextElement.value = '';
 
     showAll(wsListId, type);
-    var checkbox = document.getElementById("showCheckbox"); 
+    var checkbox = document.getElementById("showCheckbox");
     if  (checkbox) {
         checkbox.checked = 'checked';
     }
@@ -703,12 +703,12 @@ function validateBagOperations(formName, operation) {
         if (!frm.selectedBags.length) {
             selectedBags[0] = frm.selectedBags.value;
         } else {
-		    for (i = 0; i < frm.selectedBags.length; i++){
-		        if (frm.selectedBags[i].checked) {
-		            selectedBags[j] = frm.selectedBags[i].value;
-		            j++;
-		        }
-		    }
+            for (i = 0; i < frm.selectedBags.length; i++){
+                if (frm.selectedBags[i].checked) {
+                    selectedBags[j] = frm.selectedBags[i].value;
+                    j++;
+                }
+            }
         }
     }
     AjaxServices.validateBagOperations(
@@ -754,18 +754,18 @@ function validateBagName(formName) {
    var pathName = element.id.replace('join_arrow_','');
    var elementid = element.id;
    AjaxServices.setOuterJoin(pathName,function(newPathName){
-   	 // replace all children ids with the updated path
+        // replace all children ids with the updated path
      jQuery.each(jQuery('.joinLink'), function(index, item) {
        if(item.id.match("^" + elementid)) {
          item.id = item.id.replace(pathName, newPathName);
        }
      });
-   	 reDrawConstraintLogic();
+        reDrawConstraintLogic();
    });
    if(jQuery(element).attr('src').indexOf('hollow')>-1) {
-   	 jQuery(element).attr('src','images/join_full.png');
+        jQuery(element).attr('src','images/join_full.png');
    } else {
-   	 jQuery(element).attr('src','images/join_hollow.png');
+        jQuery(element).attr('src','images/join_hollow.png');
    }
 }*/
 
@@ -779,7 +779,70 @@ function setConstraintLogic(expression) {
 
 function reDrawConstraintLogic() {
   AjaxServices.getConstraintLogic(function(expression) {
-  	expression = expression.replace('[','');
-  	jQuery('#constraintLogic').text(expression.replace(']',''));
+      expression = expression.replace('[','');
+      jQuery('#constraintLogic').text(expression.replace(']',''));
   });
+}
+
+
+function submitOrthologueLinkForm(bagType, bagName, index) {
+    var myForm = document.forms["orthologueLinkForm" + index];
+    var orthologueSelect = myForm.orthologueDatasets;
+    var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
+    
+    // use remote mapping, just post the original list
+    if (myForm.orthologueMapping[0].checked) {
+        myForm.externalids.value = myForm.originalExternalids.value;
+        myForm.orthologue.disabled = false;
+        myForm.orthologue.value = selectedOrganism;
+        myForm.submit();
+        return;
+    }
+
+    // LOCAL intermine
+    // convert orthologues then post
+    if (myForm.orthologueMapping[1].checked) {
+
+        // convert orthologues
+        AjaxServices.convertObjects(bagType, bagName, selectedOrganism, function(identifiers) {
+            if (identifiers != null && identifiers != '') {
+                myForm.externalids.value = identifiers;
+                myForm.orthologue.disabled = true;
+                myForm.submit();
+            } else {
+                alert("Error.  No orthologues found.");
+                return;
+            }
+        });
+    }
+}
+
+function checkOrthologueMapping(statusCount, datasets, remoteMine, localMine) {
+    var bits = datasets.split("|");
+    var localMapping = bits[0];
+    var remoteMapping = bits[1];
+    var myForm = document.forms['orthologueLinkForm' + statusCount];
+    var orthologueSelect = myForm.orthologueDatasets;
+
+    var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
+    myForm.orthologue.value = selectedOrganism;
+
+    if (localMapping != null && localMapping != "") {
+        display('orthologueMappingLocalLabel' + statusCount, true);
+        if (remoteMapping != null && remoteMapping != "") {
+            display('orthologueMappingRemoteLabel' + statusCount, true);
+            display('orthologueMappingRemoteRadio' + statusCount, true);
+            display('orthologueMappingLocalRadio' + statusCount, true);
+        } else {
+            display('orthologueMappingRemoteLabel' + statusCount, false);
+            display('orthologueMappingRemoteRadio' + statusCount, false);
+            display('orthologueMappingLocalRadio' + statusCount, false);
+        }
+    } else {
+        // don't show radio button, there's only one option
+        display('orthologueMappingRemoteLabel' + statusCount, true);
+        display('orthologueMappingLocalLabel' + statusCount, false);
+        display('orthologueMappingRemoteRadio' + statusCount, false);
+        display('orthologueMappingLocalRadio' + statusCount, false);
+    }
 }

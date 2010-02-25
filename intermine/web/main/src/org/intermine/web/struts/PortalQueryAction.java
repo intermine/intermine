@@ -183,17 +183,17 @@ public class PortalQueryAction extends InterMineAction
                 String[] addparameters = new String[urlFields.length];
                 int i = 0;
                 for (String urlField : urlFields) {
-                    // if one of the request vars matches the variables listed in the bagquery 
+                    // if one of the request vars matches the variables listed in the bagquery
                     // config, add the variable to be passed to the custom converter
                     String param = request.getParameter(urlField);
-                    if (param != null) {
+                    if (StringUtils.isNotEmpty(param)) {
                         // the spaces in organisms, eg. D.%20rerio, need to be handled
                         addparameters[i] = URLDecoder.decode(param, "UTF-8");
                     }
                 }
                 if (addparameters.length > 0) {
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    WebResults convertedWebResult = bagConverter.getConvertedObjects(session,
+                    WebResults convertedWebResult = bagConverter.getConvertedObjects(profile,
                             bagList, className, addparameters);
                     imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = new ArrayList<Integer>();
@@ -212,8 +212,8 @@ public class PortalQueryAction extends InterMineAction
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
-                    actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(model,
-                        extId, converted.size(), className, addparameters));
+                    actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(extId,
+                            converted.size(), className, addparameters));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
