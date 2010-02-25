@@ -68,8 +68,7 @@ public class PathQueryExecutor
             List<TemplateQuery> conversionTemplates,
             BagManager bagManager) {
         this.os = os;
-        this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig,
-                conversionTemplates);
+        this.runner = new BagQueryRunner(os, classKeys, bagQueryConfig, conversionTemplates);
         this.bagManager = bagManager;
         this.profile = profile;
     }
@@ -84,11 +83,9 @@ public class PathQueryExecutor
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
             Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            return new ExportResultsIterator(os, pathQuery, allBags, runner,
-                    batchSize);
+            return new ExportResultsIterator(os, pathQuery, allBags, runner, batchSize);
         } catch (ObjectStoreException e) {
-            throw new RuntimeException(
-                    "Creating export results iterator failed", e);
+            throw new RuntimeException("Creating export results iterator failed", e);
         }
     }
 

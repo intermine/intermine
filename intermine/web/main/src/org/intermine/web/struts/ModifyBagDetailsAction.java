@@ -108,7 +108,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     Class clazz = Class.forName(converterClassName);
                     Constructor constructor = clazz.getConstructor();
                     BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                    WebResults result = bagConverter.getConvertedObjects(session, 
+                    WebResults result = bagConverter.getConvertedObjects(profile, 
                             imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
                     PagedTable pc = new PagedTable(result);
                     String identifier = "col" + index++;

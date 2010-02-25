@@ -28,65 +28,38 @@
 
     <%-- orthologue link popup --%>
     <div id="orthologue_link_${status.count}" style="display:none">
+        <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${status.count}" target="_blank">
         You are being forwarded to ${mineName}
         <br/><br/>
         <table>
         <tr>
             <td valign="top"><b>Orthologues</b></td>
-            <td valign="top"><div id="orthologue_organismName_${status.count}">${mine.defaultOrganismName}</div></td>
-            <td valign="top">[<a href="#orthologue_link_config_${status.count}" title="Orthologues" class="boxy" >edit</a>]</td>
+            <td valign="top">
+            <select name="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', this.options[this.selectedIndex].value, '${mineName}', '${WEB_PROPERTIES['project.title']}');">
+            <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
+                <c:set var="orthologue" value="${entry.key}"/>
+                <c:set var="datasets" value="${entry.value}"/>
+                <c:set var="localMapping" value="${datasets[0]}"/>
+                <c:set var="remoteMapping" value="${datasets[1]}"/>
+                <option value="${localMapping}|${remoteMapping}" <c:if test="${mine.defaultOrganismName == orthologue}">selected</c:if>>${orthologue}</option>
+            </c:forEach>
+            </select></td>
         </tr>
         <tr>
            <td valign="top"><b>Mapping</b></td>
-           <td valign="top"><div id="orthologue_mapping_${status.count}">${mine.defaultMapping}</div></td>
-           <td valign="top">[<a href="#orthologue_link_config_${status.count}" title="Orthologues" class="boxy" >edit</a>]</td>
+           <td valign="top">
+                <span id="orthologueMappingRemoteRadio${status.count}" style="float:left;"><input type="radio" name="orthologueMapping" <c:if test="${mine.defaultMapping == 'remote'}">checked</c:if> value="remote"></span><span id="orthologueMappingRemoteLabel${status.count}" style="float:left;">${mineName}</span>
+                <span id="orthologueMappingLocalRadio${status.count}" style="float:left;"><input type="radio" name="orthologueMapping" <c:if test="${mine.defaultMapping == 'local'}">checked</c:if> value="local"></span><span id="orthologueMappingLocalLabel${status.count}" style="float:left;">${WEB_PROPERTIES['project.title']}</span>
+           </td>
         </tr>
         </table>
-
         <br/><br/>
-
-        <form action="${mine.url}/portal.do" method="post" name="orthologueLinkForm${statusCount}" target="_blank">
+        <input type="hidden" name="originalExternalids" value="${identifierList}"/>
+        <input type="hidden" name="orthologue" value="${mine.defaultOrganismName}"/>
         <input type="hidden" name="externalids" value="${identifierList}"/>
         <input type="hidden" name="class" value="${bag.type}"/>
-        <input type="hidden" name="orthologue" value="${mine.defaultOrganismName}"/>
-        
-        <input type="submit" name="submit" value="GO"/>
+        <input type="button" name="submitButton" value="GO" onClick="javascript:submitOrthologueLinkForm('${bag.type}', '${bag.name}', '${status.count}');" />
         </form>
-    </div>
-
-    <%-- orthologue link config popup --%>
-    <div id="orthologue_link_config_${status.count}" style="display:none">
-
-        Select orthologues to view:
-        <br/><br/>
-        <table>
-        <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
-
-        <c:set var="orthologue" value="${entry.key}"/>
-        <c:set var="datasets" value="${entry.value}"/>
-
-        <tr>
-            <td><div id="orthologue_link_config_option_${entryStatus.count}" onclick="javascript:updateOrthologueLinks('${status.count}', '${entryStatus.count}', '${orthologue}');" <c:if test="${mine.defaultOrganismName == orthologue}">class="selected"</c:if>>${orthologue}</div></td>
-            <%--
-            this clutters up the display, disable for now.
-            <td>
-                <c:forEach var="dataset" items="${datasets}" varStatus="datasetStatus">
-                    <c:if test="${datasetStatus.count != 1}">,</c:if>&nbsp;${dataset}
-                </c:forEach>
-            </td>
-             --%>
-        </tr>
-
-        </c:forEach>
-        </table>
-        
-            <br/><br/>
-        
-            <a href="#" class="close">[done]</a>
-        
-            <c:set var="orthologueCount" value="${fn:length(orthologuesToDatasets)}"/>
-        <br/><br/>
-
     </div>
 
     </td>
@@ -95,20 +68,11 @@
 </table>
 
 <script type="text/javascript" charset="utf-8">
+<!--//<![CDATA[
     jQuery(document).ready(function(){
         jQuery(".boxy").boxy();
     });
-    function updateOrthologueLinks(statusCount, orthoStatusCount, orthologue) {
-        document.getElementById('orthologue_organismName_' + statusCount).innerHTML=orthologue;
-        document.orthologueLinkForm.orthologue.value=orthologue;
-        for (i=1;i<=${orthologueCount};i++) {
-            if (i != orthoStatusCount) {
-                document.getElementById('orthologue_link_config_option_' + i).className='';
-            } else {
-                document.getElementById('orthologue_link_config_option_' + i).className='selected';
-            }
-        }
-    }
+//]]>-->
 </script>
 
 <!-- /orthologueLinkDisplayer.jsp -->

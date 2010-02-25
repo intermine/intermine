@@ -55,8 +55,6 @@ public class OrthologueLinkManager
         + "name=im_available_homologues&size=1000&format=tab";
     private static final String WEB_SERVICE_CONSTRAINT =
         "constraint1=Gene.primaryIdentifier&op1=eq&value1=*";
-    private static final String REMOTE_MAPPING = "remote";
-    private static final String LOCAL_MAPPING = "local";
 
 /**
  * @param webProperties the web properties
@@ -121,12 +119,12 @@ public class OrthologueLinkManager
 
             if (StringUtils.isEmpty(newReleaseVersion)
                     && StringUtils.isEmpty(currentReleaseVersion)) {
-                
+
                 // FIXME remove when 0.93 is released
                 // for now we are going to ignore the fact we didn't get a release version
                 // versioning was added in 0.93, which some don't have yet
                 currentReleaseVersion = mine.getName();
-                
+
                 // didn't get a release version this time or last time
 //                String msg = "Unable to retrieve release version for " + mine.getName();
 //                LOG.error(msg);
@@ -177,6 +175,64 @@ public class OrthologueLinkManager
         // check if local mine has orthologues for genes in this remote mine
         // has to be done last so we know which genes to check for
         checkLocalOrthologues(mine);
+    }
+
+    // loop through properties and get mines' names, URLs and logos
+    private static Map<String, Mine> readConfig(Properties webProperties, String localMineName) {
+
+        mines = new HashMap();
+
+        Properties props = PropertiesUtil.getPropertiesStartingWith("intermines", webProperties);
+        Iterator<Object> propIter = props.keySet().iterator();
+        while (propIter.hasNext()) {
+
+            // intermine.flymine.url
+            String key = (String) propIter.next();
+            String[] bits = key.split("[\\.]+");
+
+            if (bits.length != 3) {
+                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
+                    + " linkouts: " + key;
+                LOG.error(msg);
+                continue;
+            }
+
+            String mineId = bits[1];
+            String mineName = webProperties.getProperty("intermines." + mineId + ".name");
+            String url = webProperties.getProperty("intermines." + mineId + ".url");
+            String logo = webProperties.getProperty("intermines." + mineId + ".logo");
+            String organism
+                = webProperties.getProperty("intermines." + mineId + ".defaultOrganism");
+            String mapping = webProperties.getProperty("intermines." + mineId + ".defaultMapping");
+
+            if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
+                    || StringUtils.isEmpty(logo)) {
+                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
+                    + " linkouts: " + key;
+                LOG.error(msg);
+                continue;
+            }
+
+            if (mineName.equals(localMineName)) {
+                localMine.setUrl(url);
+                localMine.setLogo(logo);
+//                setOrganisms(localMine);
+                setOrthologues(localMine);
+                // skip, this is the local intermine.
+                continue;
+            }
+
+            Mine mine = mines.get(mineId);
+            if (mine == null) {
+                mine = new Mine(mineName);
+                mine.setUrl(url);
+                mine.setLogo(logo);
+                mine.setDefaultOrganismName(organism);
+                mine.setDefaultMapping(mapping);
+                mines.put(mineId, mine);
+            }
+        }
+        return mines;
     }
 
     private static boolean setOrganisms(Mine mine) {
@@ -256,7 +312,6 @@ public class OrthologueLinkManager
                 Set[] datasets = homologueMapping.get(homologueOrganismName);
                 if (datasets == null) {
                     datasets = new HashSet[2];
-                    datasets[0] = new HashSet();
                     datasets[1] = new HashSet();
                     homologueMapping.put(homologueOrganismName, datasets);
                 }
@@ -272,64 +327,6 @@ public class OrthologueLinkManager
             return;
         }
         mine.setOrthologues(orthologues);
-    }
-
-    // loop through properties and get mines' names, URLs and logos
-    private static Map<String, Mine> readConfig(Properties webProperties, String localMineName) {
-
-        mines = new HashMap();
-
-        Properties props = PropertiesUtil.getPropertiesStartingWith("intermines", webProperties);
-        Iterator<Object> propIter = props.keySet().iterator();
-        while (propIter.hasNext()) {
-
-            // intermine.flymine.url
-            String key = (String) propIter.next();
-            String[] bits = key.split("[\\.]+");
-
-            if (bits.length != 3) {
-                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
-                    + " linkouts: " + key;
-                LOG.error(msg);
-                continue;
-            }
-
-            String mineId = bits[1];
-            String mineName = webProperties.getProperty("intermines." + mineId + ".name");
-            String url = webProperties.getProperty("intermines." + mineId + ".url");
-            String logo = webProperties.getProperty("intermines." + mineId + ".logo");
-            String organism
-                = webProperties.getProperty("intermines." + mineId + ".defaultOrganism");
-            String mapping = webProperties.getProperty("intermines." + mineId + ".defaultMapping");
-
-            if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
-                    || StringUtils.isEmpty(logo)) {
-                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
-                    + " linkouts: " + key;
-                LOG.error(msg);
-                continue;
-            }
-
-            if (mineName.equals(localMineName)) {
-                localMine.setUrl(url);
-                localMine.setLogo(logo);
-//                setOrganisms(localMine);
-                setOrthologues(localMine);
-                // skip, this is the local intermine.
-                continue;
-            }
-
-            Mine mine = mines.get(mineId);
-            if (mine == null) {
-                mine = new Mine(mineName);
-                mine.setUrl(url);
-                mine.setLogo(logo);
-                mine.setDefaultOrganismName(organism);
-                mine.setDefaultMapping(mapping);
-                mines.put(mineId, mine);
-            }
-        }
-        return mines;
     }
 
     /**
@@ -393,83 +390,24 @@ public class OrthologueLinkManager
                             // these orthologues have been added previously, just merge datasets
                             Set[] previousDatasets
                             = uniqueOrthologuesToDatasets.get(orthologueOrganismName);
-                            previousDatasets[0].addAll(datasets[0]);
-                            previousDatasets[1].addAll(datasets[1]);
+                            for (int i = 0; i <= 1; i++) {
+                                if (datasets[i] != null && !datasets[i].isEmpty()) {
+                                    if (previousDatasets[i] == null) {
+                                        previousDatasets[i] = new HashSet();
+                                    }
+                                    previousDatasets[i].addAll(datasets[i]);
+                                }
+                            }
                         }
                     }
                 }
             }
-            if (isValidMine(mine, uniqueOrthologuesToDatasets)) {
+            // only add to list if this mine has orthologues
+            if (!uniqueOrthologuesToDatasets.isEmpty()) {
                 filteredMines.put(mine, uniqueOrthologuesToDatasets);
             }
         }
         return filteredMines;
-    }
-
-    /* add to our list of mines to display on list analysis page.  but only if mine has
-    /* orthologues.
-     * check that defaults are valid.  if not, pick a random one
-     */
-    private static boolean isValidMine(Mine mine, Map<String, Set[]> uniqueOrthologuesToDatasets) {
-
-        boolean isValid = false;
-
-        // only add to list if this mine has orthologues
-        if (uniqueOrthologuesToDatasets.isEmpty()) {
-            return isValid;
-        }
-
-        // TODO may not need to validate mappings
-        
-        String organism = mine.getDefaultOrganismName();
-        String mapping = mine.getDefaultMapping();
-
-        Set[] mappings = uniqueOrthologuesToDatasets.get(organism);
-        if (mappings == null || mappings.length == 0) {
-            // default is invalid, choose another.
-            isValid = false;
-        } else {
-            // valid organism, does it have this mapping?
-            int index = (mapping.equals(LOCAL_MAPPING) ? 0 : 1);
-            if (mappings[index] == null || mappings[index].isEmpty()) {
-                // try the other mapping?
-                index = (mapping.equals(REMOTE_MAPPING) ? 0 : 1);
-                if (mappings[index] == null || mappings[index].isEmpty()) {
-                    // remote && local mappings are empty
-                    isValid = false;
-                } else {
-                    // default organism is valid, mapping is not
-                    String validMapping = (mapping.equals(LOCAL_MAPPING)
-                            ? REMOTE_MAPPING : LOCAL_MAPPING);
-                    mine.setDefaultMapping(validMapping);
-                    return true;
-                }
-            } else {
-                // default mapping is valid!
-                return true;
-            }
-        }
-
-        // choose another organism/mapping randomly
-        if (!isValid) {
-            for (Map.Entry<String, Set[]> entry : uniqueOrthologuesToDatasets.entrySet()) {
-                organism = entry.getKey();
-                mappings = entry.getValue();
-                if (mappings[1] != null && !mappings[1].isEmpty()) {
-                    mine.setDefaultMapping(REMOTE_MAPPING);
-                    mine.setDefaultOrganismName(organism);
-                    return true;
-                } else if (mappings[0] != null && !mappings[0].isEmpty()) {
-                    mine.setDefaultMapping(LOCAL_MAPPING);
-                    mine.setDefaultOrganismName(organism);
-                    return true;
-                }
-                // keep going until we find an organism with some data
-                continue;
-            }
-        }
-        // shouldn't reach here 
-        return isValid;
     }
 
     /* for all the genes available in the remote mine, see if the local mine has orthologues
@@ -491,6 +429,7 @@ public class OrthologueLinkManager
             return;
         }
 
+        // gene --> orthologue --> datasets
         // check each orthologue in the local mine against the list of organisms in the remote mine
         for (Map.Entry<String, Map<String, Set[]>> entry : localOrthologues.entrySet()) {
 
@@ -504,7 +443,7 @@ public class OrthologueLinkManager
             for (Map.Entry<String, Set[]> orthologueToDataset : orthologueToDatasets.entrySet()) {
 
                 String orthologueOrganismName = orthologueToDataset.getKey();
-                Set datasets = orthologueToDataset.getValue()[0];
+                Set datasets = orthologueToDataset.getValue()[1];
 
                 // do we have a corresponding gene in the remote mine?
                 if (organismNames.contains(orthologueOrganismName)) {
