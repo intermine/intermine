@@ -58,9 +58,9 @@ public class TreefamConverter extends BioFileConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException can't store dataset
      */
-    public TreefamConverter(ItemWriter writer, Model model) 
+    public TreefamConverter(ItemWriter writer, Model model)
     throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
@@ -298,30 +298,30 @@ public class TreefamConverter extends BioFileConverter
 
     private String getEvidence()
     throws ObjectStoreException {
-    	
-    	if (evidenceRefId == null) {
 
-    		Item item = createItem("OrthologueEvidenceCode");
-    		item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
-    		item.setAttribute("name", EVIDENCE_CODE_NAME);
-    		try {
-    			store(item);
-    		} catch (ObjectStoreException e) {
-    			throw new ObjectStoreException(e);
-    		}
-    		String refId = item.getIdentifier();
+        if (evidenceRefId == null) {
 
-    		item = createItem("OrthologueEvidence");
-    		item.setReference("evidenceCode", refId);
-    		try {
-    			store(item);
-    		} catch (ObjectStoreException e) {
-    			throw new ObjectStoreException(e);
-    		}
+            Item item = createItem("OrthologueEvidenceCode");
+            item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+            item.setAttribute("name", EVIDENCE_CODE_NAME);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+            String refId = item.getIdentifier();
 
-    		evidenceRefId = item.getIdentifier();
-    	}
-    	return evidenceRefId;
+            item = createItem("OrthologueEvidence");
+            item.setReference("evidenceCode", refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new ObjectStoreException(e);
+            }
+
+            evidenceRefId = item.getIdentifier();
+        }
+        return evidenceRefId;
     }
 
     /**
