@@ -278,7 +278,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String labItemIdentifier = submissionDetails.labItemIdentifier;
             String submissionTitle = submissionDetails.title;
 
-            
+
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.info("DATA IDS " + chadoExperimentId + ": " + thisSubmissionDataIds.size());
 
@@ -309,15 +309,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             
             // read any genes that have been created so we can re-use the same item identifiers
             // when creating antibody/strain target genes later
-            extractGenesFromSubFeatureMap(subFeatureMap);
+            extractGenesFromSubFeatureMap(processor, subFeatureMap);
         }
         LOG.info("PROCESS TIME features: " + (System.currentTimeMillis() - bT));
     }
 
-    private void extractGenesFromSubFeatureMap(Map<Integer, FeatureData> subFeatureMap) {
+    private void extractGenesFromSubFeatureMap(ModEncodeFeatureProcessor processor, 
+            Map<Integer, FeatureData> subFeatureMap) {
         for (FeatureData fData : subFeatureMap.values()) {
             if (fData.getInterMineType().equals("Gene")) {
-                geneToItemIdentifier.put(fData.getUniqueName(), fData.getItemIdentifier());
+                String geneIdentifier = processor.fixIdentifier(fData, fData.getUniqueName());
+                geneToItemIdentifier.put(geneIdentifier, fData.getItemIdentifier());
             }
         }
     }
