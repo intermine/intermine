@@ -1,27 +1,22 @@
-Sitemap: http://www.flymine.org/sitemap_index.xml
+Sitemap: http://intermine.modencode.org/sitemap_index.xml
 
 User-agent: *
 Disallow:
-Disallow: /release-10.0/
-Disallow: /release-9.0/
-Disallow: /release-8.2/
-Disallow: /release-8.1/
-Disallow: /release-8.0/
-Disallow: /release-7.1/
-Disallow: /release-7.0/
-Disallow: /release-6.1/
-Disallow: /release-6.0/
-Disallow: /release-5.0/
-Disallow: /release-4.0/
-Disallow: /release-3.1/
-Disallow: /release-3.0/
-Disallow: /release-2.1/
-Disallow: /release-2.0/
-Disallow: /t1dmine-preview/
-Disallow: /t1dmine/
-Disallow: /stemcell-preview/
-Disallow: /stemcell/
-Disallow: /malaria/
-Disallow: /mouse/
-Disallow: /plantmine/
-Disallow: /plantmine-preview/
+Disallow: /release-17/
+Disallow: /release-16/
+Disallow: /release-15/
+Disallow: /release-14/
+Disallow: /release-13/
+Disallow: /release-12/
+Disallow: /release-11/
+Disallow: /release-10/
+Disallow: /release-9/
+Disallow: /release-8/
+Disallow: /release-7/
+Disallow: /release-6/
+Disallow: /release-5/
+Disallow: /release-4/
+Disallow: /release-3/
+Disallow: /release-2/
+Disallow: /release-1/
+
