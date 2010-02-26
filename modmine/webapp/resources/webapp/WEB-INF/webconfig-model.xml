@@ -331,11 +331,8 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="/model/modmineGBrowse.jsp"/>
-    <displayer src="/model/proteinInteractionGraph.jsp"/>
+      <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
-    <bagdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
