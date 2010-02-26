@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -28,7 +29,6 @@ import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.results.DisplayObject;
 import org.intermine.web.logic.results.DisplayObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
@@ -53,11 +53,11 @@ public class HtmlHeadController extends TilesAction
      *
      * @exception Exception if an error occurs
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
 
         HttpSession session = request.getSession();
@@ -115,7 +115,7 @@ public class HtmlHeadController extends TilesAction
             if (object == null) {
                 return null;
             }
-            DisplayObject dobj = (DisplayObject) displayObjects.get(object);
+            DisplayObject dobj = displayObjects.get(object);
 
             String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";
@@ -132,20 +132,20 @@ public class HtmlHeadController extends TilesAction
             }
 
             // TODO use the class keys instead of hardcoding which fields should be used
-            if (StringUtil.isEmpty(idForPageTitle)
+            if (StringUtils.isEmpty(idForPageTitle)
                             && dobj.getAttributes().get("secondaryIdentifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("secondaryIdentifier").toString();
             }
-            if (StringUtil.isEmpty(idForPageTitle)
+            if (StringUtils.isEmpty(idForPageTitle)
                             && dobj.getAttributes().get("identifier") != null) {
                 idForPageTitle = dobj.getAttributes().get("identifier").toString();
             }
-            if (StringUtil.isEmpty(idForPageTitle)
+            if (StringUtils.isEmpty(idForPageTitle)
                             && dobj.getAttributes().get("symbol") != null) {
                 idForPageTitle = dobj.getAttributes().get("symbol").toString();
             }
 
-            if (!StringUtil.isEmpty(idForPageTitle)) {
+            if (StringUtils.isNotEmpty(idForPageTitle)) {
                 htmlPageTitle = className + " report for " + idForPageTitle;
             }
         }

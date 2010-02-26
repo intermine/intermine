@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.util.StringUtil;
@@ -413,7 +414,7 @@ public class Item implements Comparable
      * @param refId the item to add to the collection
      */
     public void addToCollection(String name, String refId) {
-        if (StringUtil.isEmpty(refId)) {
+        if (StringUtils.isEmpty(refId)) {
             throw new RuntimeException("empty string added to collection for: " + name);
         }
         ReferenceList list = getCollection(name);
@@ -612,7 +613,7 @@ public class Item implements Comparable
                 String [] bits = StringUtil.split(implementations, " ");
 
                 for (String clsName : bits) {
-                    if (!StringUtil.isEmpty(clsName)) {
+                    if (!StringUtils.isEmpty(clsName)) {
                         implementationClassDescriptors.add(getClassDescriptorByName(clsName));
                     }
                 }

@@ -16,11 +16,11 @@ import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -49,7 +49,7 @@ public class WormBaseProcessor extends SequenceProcessor
         Integer itemId = super.store(feature, taxonId);
         return itemId;
     }
-    
+
     /**
      * Method to add dataSets and DataSources to items before storing
      */
@@ -77,8 +77,7 @@ public class WormBaseProcessor extends SequenceProcessor
                                      converter.getDataSetItem(taxonId.intValue()).getIdentifier(),
                                      converter.getDataSourceItem().getIdentifier());
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -131,28 +130,27 @@ public class WormBaseProcessor extends SequenceProcessor
      */
     @Override
     protected String fixIdentifier(FeatureData fdat, String identifier) {
-        
+
         String uniqueName = fdat.getChadoFeatureUniqueName();
         String type = fdat.getInterMineType();
 
-        // the function is used without check for null only for uniquename and name 
+        // the function is used without check for null only for uniquename and name
         // in SequenceProcessor.
         // so we assume that uniquename is never null and that if null it is a name.
-        if (StringUtil.isEmpty(identifier)) {
+        if (StringUtils.isEmpty(identifier)) {
                 identifier = uniqueName;
                 LOG.debug("Found NULL name for feature: " + uniqueName);
-            } 
-        
+            }
+
         if (identifier.startsWith(type + ":")) {
             return identifier.substring(type.length() + 1);
-        } else {
-            return identifier;
         }
+        return identifier;
     }
-    
+
     /**
      * Wormbase chado has pmid prefixed to pubmed identifiers
-     * @param string pubmed id fetched from databaase
+     * @param pubmedStr id fetched from databaase
      * @return the pubmed id
      */
     protected Integer fixPubMedId(String pubmedStr) {
