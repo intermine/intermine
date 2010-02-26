@@ -1363,7 +1363,7 @@ public class AjaxServices
                 Class clazz = Class.forName(converterClassName);
                 Constructor constructor = clazz.getConstructor();
                 BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                return bagConverter.getFieldsFromConvertedObjects(profile, bagType, bagName, 
+                return bagConverter.getConvertedObjectFields(profile, bagType, bagName, 
                         selectedValue);
             }
         }

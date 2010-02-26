@@ -87,12 +87,6 @@ public class ObjectDetailsController extends InterMineAction
         dobj.getClass();
         request.setAttribute("object", dobj);
 
-        if (session.getAttribute(Constants.PORTAL_QUERY_FLAG) != null) {
-            session.removeAttribute(Constants.PORTAL_QUERY_FLAG);
-            // FIXME see #1911
-            // setVerboseCollections(session, dobj);
-        }
-
         Map<String, Map> placementRefsAndCollections = new TreeMap<String, Map>();
         Set<String> aspects = new HashSet<String>(SessionMethods.getCategories(servletContext));
 

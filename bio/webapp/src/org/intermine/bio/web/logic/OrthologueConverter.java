@@ -14,35 +14,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
-import org.directwebremoting.WebContextFactory;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * @author "Xavier Watkins"
@@ -51,131 +37,87 @@ import org.intermine.web.logic.session.SessionMethods;
 public class OrthologueConverter extends BagConverter
 {
 
-    private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
+    
     // D. melanogaster, C. lupus familiaris
     private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
-    private static InterMineAPI im;
-    private static Model model;
-    private static WebConfig webConfig;
-    private static ObjectStore os;
-
-    public OrthologueConverter() {
-        super();
-        ServletContext servletContext = WebContextFactory.get().getServletContext();
-        HttpSession session = WebContextFactory.get().getSession();
-        im = SessionMethods.getInterMineAPI(session);
-        webConfig = SessionMethods.getWebConfig(servletContext);
-        model = im.getModel();
-        os = im.getObjectStore();
-    }
+    private Model model;
     
+
     /**
-     * {@inheritDoc}
-     * @throws PathException
+     * @param im intermine api
+     * @param webConfig the webconfig
      */
-    public WebResults getConvertedObjects (Profile profile, List<Integer> fromList, String type,
-            String ... parameters) throws ObjectStoreException, PathException {
-        String organism = null, dataset = null;
+    public OrthologueConverter(InterMineAPI im, WebConfig webConfig) {
+        super(im, webConfig);
+        model = im.getModel();
 
-        for (String param : parameters) {
-            if (StringUtils.isEmpty(param)) {
-                continue;
-            }
-            Matcher m = ORGANISM_SHORTNAME_MATCHER.matcher(param);
-            if (m.matches()) {
-                organism = param;
-            } else {
-                dataset = param;
-            }
-        }
-        List<InterMineObject> objectList = os.getObjectsByIds(fromList);
-        PathQuery q = generateQuery(objectList, type, organism, dataset);
-
-        LOG.info("PATH QUERY:" + q.toXml(PathQuery.USERPROFILE_VERSION));
-        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-
-        return executor.execute(q);
     }
 
-    private static PathQuery constructPathQuery(String organism, String dataset) {
+    private PathQuery constructPathQuery(String bagType, String bagName, String organismName) {
         PathQuery q = new PathQuery(model);
 
         // organism
-        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(organism));
+        q.addConstraint("Gene.homologues.homologue.organism.shortName", 
+                Constraints.eq(organismName));
 
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
-        if (StringUtils.isNotEmpty(dataset)) {
-            // homologue.dataSets = dataset
-            q.addConstraint("Gene.homologues.dataSets.title", Constraints.eq(dataset));
-        }
-        return q;
-    }
-
-    private PathQuery generateQuery(List<InterMineObject> objectList, String type, String organism,
-            String dataset)
-    throws PathException {
-        PathQuery q = constructPathQuery(organism, dataset);
-
-        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
-                        "Gene.homologues.homologue", false);
-        view = getFixedView(view);
-        q.setViewPaths(view);
-
-        q.addConstraint(type, Constraints.in(objectList));
-
-        q.syncLogicExpression("and");
-        return q;
-    }
-
-
-    private static PathQuery generateQuery(String bagType, String bagName, String organismName) {
-        PathQuery q = constructPathQuery(organismName, null);
-        q.setView("Gene.homologues.homologue.primaryIdentifier");
         q.addConstraint(bagType, Constraints.in(bagName));
-        q.syncLogicExpression("and");
         return q;
-    }
-
-    public String getFieldsFromConvertedObjects(Profile profile, String bagType,
-            String bagName, String organismName) {
-        String orthologues = "";
-        PathQuery pathQuery = generateQuery(bagType, bagName, organismName);
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = executor.execute(pathQuery);
-        
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            String orthologue = row.get(0).getField().toString();
-            if (StringUtils.isNotEmpty(orthologues)) {
-                orthologues += ",";
-            }
-            orthologues += orthologue;
-        }
-
-        return orthologues;
     }
 
     /**
-     * If view contains joined organism, this will make sure, that
-     * organism is joined as a inner join. Else constraint on organism doesn't work.
-     * @param pathQuery
-     * @param joinPath
-     * @throws PathException
+     * runs the orthologue conversion pathquery and returns a comma-delimited list of identifiers
+     * @param profile the user's profile
+     * @param bagType the class of the list, has to be gene I think
+     * @param bagName name of list
+     * @param organismName name of homologue's organism
+     * @return commadelimited list of identifiers, eg. eve,zen
      */
-    private List<Path> getFixedView(List<Path> view) throws PathException {
-        String invalidPath = "Gene.homologues.homologue:organism";
-        String validPath = "Gene.homologues.homologue.organism";
-        List<Path> ret = new ArrayList<Path>();
-        for (Path path : view) {
-            if (path.toString().contains(invalidPath)) {
-                String newPathString = path.toString().replace(invalidPath, validPath);
-                path = new Path(path.getModel(), newPathString);
+    public String getConvertedObjectFields(Profile profile, String bagType,
+            String bagName, String organismName) {
+        StringBuffer orthologues = null;
+        PathQuery pathQuery = constructPathQuery(bagType, bagName, organismName);
+        pathQuery.setView("Gene.homologues.homologue.primaryIdentifier");
+        pathQuery.syncLogicExpression("and");
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(pathQuery);
+
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            String orthologue = row.get(0).getField().toString();
+            if (orthologues != null) {
+                orthologues.append(",");
             }
-            ret.add(path);
+            orthologues.append(orthologue);
         }
-        return ret;
+        if (orthologues == null) {
+            return null;
+        }
+        return orthologues.toString();
+    }
+    
+    /**
+     * runs the orthologue conversion pathquery and returns list of intermine IDs
+     * @param profile the user's profile
+     * @param bagType the class of the list, has to be gene I think
+     * @param bagName name of list
+     * @param organismName name of homologue's organism
+     * @return list of intermine IDs
+     */
+    public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
+            String bagName, String organismName) {
+        PathQuery pathQuery = constructPathQuery(bagType, bagName, organismName);
+        pathQuery.setView(bagType + ".id");
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(pathQuery);
+        List<Integer> ids = new ArrayList();
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            ids.add((Integer) row.get(0).getField());
+        }
+        return ids;
     }
 
     /**
@@ -239,5 +181,12 @@ public class OrthologueConverter extends BagConverter
             };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
+    }
+
+    @Override
+    public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
+            String... parameters) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
