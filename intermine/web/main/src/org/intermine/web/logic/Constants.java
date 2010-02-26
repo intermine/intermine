@@ -104,12 +104,6 @@ public interface Constants
     public static final String LOOKUP_MSG = "LOOKUP_MSG";
 
     /**
-     * The name of the property that is set to TRUE in the PortalQueryAction Action to indicate
-     * to the ObjectDetailsController that we have come from a portal page.
-     */
-    public static final String PORTAL_QUERY_FLAG = "PORTAL_QUERY_FLAG";
-
-    /**
      * The name of the property to look up to find the maximum size of an inline table.
      */
     public static final String INLINE_TABLE_SIZE = "inline.table.size";
