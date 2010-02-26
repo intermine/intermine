@@ -16,13 +16,13 @@
     <tr>
     <td align="right">
         <c:if test="${!empty imageName}">
-         <a href="#orthologue_link_${status.count}" title="${mineName}" class="boxy" >
+         <a href="#orthologue_link_${status.count}" onclick="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');" title="${mineName}" class="boxy" >
                <html:img src="model/images/${imageName}" title="${mineName}"/>
          </a>
         </c:if>
     </td>
     <td>
-        <a href="#orthologue_link_${status.count}" title="${mineName}" class="boxy" >
+        <a href="#orthologue_link_${status.count}" onclick="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');" title="${mineName}" class="boxy" >
             ${mineName}&nbsp;<img src="images/ext_link.png" title="${mineName}"/>
         </a>
 
@@ -35,7 +35,7 @@
         <tr>
             <td valign="top"><b>Orthologues</b></td>
             <td valign="top">
-            <select name="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', this.options[this.selectedIndex].value, '${mineName}', '${WEB_PROPERTIES['project.title']}');">
+            <select name="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
                 <c:set var="datasets" value="${entry.value}"/>

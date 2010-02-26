@@ -789,7 +789,7 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
     var myForm = document.forms["orthologueLinkForm" + index];
     var orthologueSelect = myForm.orthologueDatasets;
     var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
-    
+
     // use remote mapping, just post the original list
     if (myForm.orthologueMapping[0].checked) {
         myForm.externalids.value = myForm.originalExternalids.value;
@@ -817,13 +817,13 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
     }
 }
 
-function checkOrthologueMapping(statusCount, datasets, remoteMine, localMine) {
+function checkOrthologueMapping(statusCount, remoteMine, localMine) {
+    var myForm = document.forms['orthologueLinkForm' + statusCount];
+    var orthologueSelect = myForm.orthologueDatasets;
+    var datasets = orthologueSelect.options[orthologueSelect.selectedIndex].value;
     var bits = datasets.split("|");
     var localMapping = bits[0];
     var remoteMapping = bits[1];
-    var myForm = document.forms['orthologueLinkForm' + statusCount];
-    var orthologueSelect = myForm.orthologueDatasets;
-
     var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
     myForm.orthologue.value = selectedOrganism;
 
