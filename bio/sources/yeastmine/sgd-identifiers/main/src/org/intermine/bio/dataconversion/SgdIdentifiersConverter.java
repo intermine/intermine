@@ -20,7 +20,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
+import org.apache.commons.lang.StringUtils; 
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
@@ -84,10 +84,10 @@ public class SgdIdentifiersConverter extends BioFileConverter
                 Item gene = createItem("Gene");
                 gene.setAttribute("secondaryIdentifier", secondaryIdentifier);
                 gene.setAttribute("primaryIdentifier", primaryIdentifier);
-                if (!StringUtil.isEmpty(symbol)) {
+                if (StringUtils.isNotEmpty(symbol)) {
                     gene.setAttribute("symbol", symbol);
                 }
-                if (!StringUtil.isEmpty(name)) {
+                if (StringUtils.isNotEmpty(name)) {
                     gene.setAttribute("name", name);
                 }
                 gene.setAttribute("length", getLength(start, end));
