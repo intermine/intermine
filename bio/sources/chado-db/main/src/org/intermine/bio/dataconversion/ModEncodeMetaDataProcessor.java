@@ -520,15 +520,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
     private void setAppliedProtocolSteps(Connection connection)
     throws ObjectStoreException {
-        Iterator<Integer> ap = appliedProtocolMap.keySet().iterator();
-        while (ap.hasNext()) {
-            Integer thisAPId = ap.next();
-            Attribute attr = new Attribute();
-            attr.setName("step");
-            attr.setValue(appliedProtocolMap.get(thisAPId).step.toString());
-
-            getChadoDBConverter().store(attr,
-                    appliedProtocolIdMap.get(thisAPId));
+        for (Integer appliedProtocolId : appliedProtocolMap.keySet()) {
+            Integer step = appliedProtocolMap.get(appliedProtocolId).step;
+            if (step != null) {
+                Attribute attr = new Attribute("step", step.toString());
+                getChadoDBConverter().store(attr, appliedProtocolIdMap.get(appliedProtocolId));
+            } else {
+                AppliedProtocol ap = appliedProtocolMap.get(appliedProtocolId);
+                LOG.warn("AppliedProtocol.step not set for chado id: " + appliedProtocolId
+                        + " sub " + ap.submissionId + " inputs " + ap.inputs + " outputs " 
+                        + ap.outputs);
+            }
         }
     }
 
@@ -1645,6 +1647,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     + wikiPageUrl + comma + cvTerm + comma + attHeading + comma + attName
                     + comma + attValue + comma + attDbxref + System.getProperty("line.separator"));
 
+            if (submissionId == null) {
+                LOG.warn("Failed to find a submission id for data id " + dataId + " - this probably"
+                        + " means there is a problem with the applied_protocol DAG strucuture.");
+                continue;
+            }
+            
             // Currently using attValue for referenced submission DCC id, should be dbUrl but seems
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
@@ -1656,6 +1664,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     SubmissionReference subRef =
                         new SubmissionReference(referencedSubId, wikiPageUrl);
                     submissionRefs.put(submissionId, subRef);
+                    LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+                            + attValue + " (" + referencedSubId + ")");
+                } else {
+                    LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
                 }
             }
 
@@ -1917,6 +1929,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void addToSubToTypes(Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes,
             Integer submissionId, SubmissionProperty prop) {
      // submissionId -> [type -> SubmissionProperty]
+        if (submissionId == null) {
+            throw new RuntimeException("Called addToSubToTypes with a null sub id!");
+        }
+        
         Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
         if (typeToSubProp == null) {
             typeToSubProp = new HashMap<String, List<SubmissionProperty>>();
