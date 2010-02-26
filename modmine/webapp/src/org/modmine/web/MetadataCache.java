@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.LocatedSequenceFeature;
+import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionData;
@@ -93,6 +94,10 @@ public class MetadataCache
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
     private static Map<Integer, List<String>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
+
+//    private static Map<Integer, String> submissionLocatedFeatureTypes = null;
+    private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
+
     private static long lastTrackCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
 
@@ -153,6 +158,19 @@ public class MetadataCache
             filesPerSubmissionCache.put(thisSub, nrFiles);
         }
         return filesPerSubmissionCache;
+    }
+
+    /**
+     * Fetch input/output file names per submission.
+     * @param os the production objectstore
+     * @return map
+     */
+//    public static synchronized Map<Integer, String> getLocatedFeatureTypes(ObjectStore os) {
+        public static synchronized Map<String, List<String>> getLocatedFeatureTypes(ObjectStore os) {
+        if (submissionLocatedFeatureTypes == null) {
+            readSubmissionLocatedFeature(os);
+        }
+        return submissionLocatedFeatureTypes;
     }
 
     private static void readSubmissionFiles(ObjectStore os) {
@@ -528,6 +546,86 @@ public class MetadataCache
     }
 
 
+    
+    private static void readSubmissionLocatedFeature(ObjectStore os) {
+        long startTime = System.currentTimeMillis();
+        
+//        submissionLocatedFeatureTypes = new LinkedHashMap<Integer, String>();
+        submissionLocatedFeatureTypes = new LinkedHashMap<String, List<String>>();
+        
+        Query q = new Query();
+        q.setDistinct(true);
+
+        QueryClass qcSub = new QueryClass(Submission.class);
+        QueryClass qcLsf = new QueryClass(LocatedSequenceFeature.class);        
+        QueryClass qcLoc = new QueryClass(Location.class);
+
+        QueryField qfClass = new QueryField(qcLsf, "class");
+        
+        q.addFrom(qcSub);
+        q.addFrom(qcLsf);
+        q.addFrom(qcLoc);
+
+        q.addToSelect(qcSub);
+        q.addToSelect(qfClass);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        QueryCollectionReference features = new QueryCollectionReference(qcSub, "features");
+        ContainsConstraint ccFeats = new ContainsConstraint(features, ConstraintOp.CONTAINS, qcLsf);
+        cs.addConstraint(ccFeats);
+
+        QueryObjectReference location = new QueryObjectReference(qcLsf, "chromosomeLocation");
+        ContainsConstraint ccLocs = new ContainsConstraint(location, ConstraintOp.CONTAINS, qcLoc);
+        cs.addConstraint(ccLocs);
+
+        q.setConstraint(cs);
+
+        Results results = os.execute(q);
+       
+        // for each classes set the values for jsp
+        for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
+            ResultsRow row = iter.next();
+            Submission sub = (Submission) row.get(0);
+            Class feat = (Class) row.get(1);
+ 
+            addToMap(submissionLocatedFeatureTypes,sub.getdCCid().toString(),
+            feat.getName().replace("org.intermine.model.bio.", ""));
+            
+//            submissionLocatedFeatureTypes.put(sub.getdCCid().toString(), 
+//                    feat.getName().replace("org.intermine.model.bio.", ""));            
+        }     
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed located features cache, took: " + timeTaken + "ms");
+        
+        LOG.info("HERE THEY ARE: " + submissionLocatedFeatureTypes);
+        
+    }
+    
+   
+    
+    /**
+     * adds an element to a list which is the value of a map
+     * @param m       the map (<String, List<String>>)
+     * @param key     the key for the map
+     * @param value   the list
+     */
+    private static void addToMap(Map<String, List<String>> m, String key, String value) {
+
+        List<String> ids = new ArrayList<String>();
+
+        if (m.containsKey(key)) {
+            ids = m.get(key);
+        }
+        if (!ids.contains(value)) {
+            ids.add(value);
+            m.put(key, ids);
+        }
+    }
+ 
+    
+    
+    
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
