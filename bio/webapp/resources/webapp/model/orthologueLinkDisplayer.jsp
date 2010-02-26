@@ -35,6 +35,7 @@
         <tr>
             <td valign="top"><b>Orthologues</b></td>
             <td valign="top">
+            <span id="orthologueSelect${status.count}" style="float:left;">
             <select name="orthologueDatasets" onchange="checkOrthologueMapping('${status.count}', '${mineName}', '${WEB_PROPERTIES['project.title']}');">
             <c:forEach var="entry" items="${orthologuesToDatasets}" varStatus="entryStatus">
                 <c:set var="orthologue" value="${entry.key}"/>
@@ -43,7 +44,13 @@
                 <c:set var="remoteMapping" value="${datasets[1]}"/>
                 <option value="${localMapping}|${remoteMapping}" <c:if test="${mine.defaultOrganismName == orthologue}">selected</c:if>>${orthologue}</option>
             </c:forEach>
-            </select></td>
+            </select>
+            </span>
+            <%-- if there is only one option, just display organism instead of a dropdown select box --%>
+            <span id="orthologueSelectDisplay${status.count}" style="display:none;float:left;">
+            ${mine.defaultOrganismName}
+            </span>
+            </td>
         </tr>
         <tr>
            <td valign="top"><b>Mapping</b></td>
