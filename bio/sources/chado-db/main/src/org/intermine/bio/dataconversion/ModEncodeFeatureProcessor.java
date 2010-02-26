@@ -25,12 +25,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
@@ -49,11 +49,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
     private final String title;
-    
+
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
-
 
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
@@ -90,7 +89,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @param dataSourceIdentifier the item identifier of the DataSource,
      *                             i.e. the labItemIdentifier
      * @param dataList             the list of data ids to be used in the subquery
-     * @param title                the title           
+     * @param title                the title
      */
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
@@ -101,7 +100,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
         this.title = title;
-        
+
         for (String chromosomeType : getChromosomeFeatureTypes()) {
             commonFeatureInterMineTypes.add(
                     TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
@@ -183,7 +182,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         // TODO: check if there is already a method to get all the match types
         // (and merge the methods)
         // also: add match to query and do everything here
-        
+
         // process indirect locations via match features and featureloc feature<->match<->feature
         ResultSet matchLocRes = getMatchLocResultSet(connection);
         processLocationTable(connection, matchLocRes);
@@ -198,7 +197,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             ResultSet matchTypeLocRes = getMatchLocResultSet(connection, featType);
             processLocationTable(connection, matchTypeLocRes);
         }
-                
+
         // adding scores
         processFeatureScores(connection);
     }
@@ -206,14 +205,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     /**
      * Method to set the source for gene
-     * for modencode datasources it will add the title 
+     * for modencode datasources it will add the title
      * @param imObjectId the im object id
      * @param dataSourceName the data source
      * @throws ObjectStoreException the exception
      *
      */
     @Override
-    protected void setGeneSource(Integer imObjectId, String dataSourceName) 
+    protected void setGeneSource(Integer imObjectId, String dataSourceName)
     throws ObjectStoreException {
         String source = dataSourceName + "-" + title;
         setAttribute(imObjectId, "source", source);
@@ -235,8 +234,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         }
     }
 
-    private List<String> getMatchTypes(Connection connection) throws SQLException,
-    ObjectStoreException {
+    private List<String> getMatchTypes(Connection connection) throws SQLException {
         List<String> types = new ArrayList<String>();
         ResultSet res = getMatchTypesResultSet(connection);
         while (res.next()) {
@@ -249,7 +247,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
 
     /**
-     * Return the match types, used to determine which additional query to run 
+     * Return the match types, used to determine which additional query to run
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
      * @return the SQL result set
@@ -263,14 +261,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         LOG.debug("QUERY TIME feature match types: " + (System.currentTimeMillis() - bT));
-        return res;  
+        return res;
     }
-    
-    
+
+
     /**
-     * Return the interesting feature (EST, UST, RST, other?) matches 
+     * Return the interesting feature (EST, UST, RST, other?) matches
      * from the featureloc and feature tables.
-     * 
+     *
      * feature<->featureloc<->match_feature<->featureloc<->feature
      * This is a protected method so that it can be overriden for testing
      * @param connection the db connection
@@ -305,7 +303,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("QUERY TIME feature " + featType + "_match: " + (System.currentTimeMillis() - bT));
         return res;
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -368,12 +366,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             } finally {
                 Thread.currentThread().setContextClassLoader(currentClassLoader);
             }
-        } else {
-            DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
         }
+        DataSetStoreHook.setDataSets(getModel(), item, dataSetIdentifier, dataSourceIdentifier);
     }
 
-    
+
     /**
      * {@inheritDoc}
      *
@@ -480,7 +477,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
                 if (uniqueName.startsWith("chr")) {
                     // this is to fix some data problem with sub 146 in modmine
-                    // where there are duplicated chromosome_arm features, with 
+                    // where there are duplicated chromosome_arm features, with
                     // and without a 'chr' prefix (e.g. 3R and chr3R)
                     // The chr ones are not the location for any other feature.
                     // So we skip them.
@@ -488,7 +485,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 }
         }
         Item feature = getChadoDBConverter().createItem(realInterMineType);
-  
+
         return feature;
     }
 
@@ -588,7 +585,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         String uniqueName = fdat.getChadoFeatureUniqueName();
         String name = fdat.getChadoFeatureName();
         String type = fdat.getInterMineType();
-        
+
         if (identifier.equalsIgnoreCase(uniqueName)) {
             if (type.equalsIgnoreCase(CHROMOSOME)) {
                 if (uniqueName.equalsIgnoreCase("M")) {
@@ -599,8 +596,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     return uniqueName;
                 }
             }
-            
-            // Piano submissions have Gene: and Transcript: 
+
+            // Piano submissions have Gene: and Transcript:
             // in front of gene and transcript identifiers
             if (type.equalsIgnoreCase("Gene")) {
                 if (uniqueName.startsWith("Gene:")) {
@@ -609,17 +606,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             }
         }
 
-        if (StringUtil.isEmpty(identifier)) {
-            if (StringUtil.isEmpty(name)) {
+        if (StringUtils.isEmpty(identifier)) {
+            if (StringUtils.isEmpty(name)) {
                 String fixedName = uniqueName.substring(uniqueName.lastIndexOf('.') + 1);
                 return fixedName;
             } else {
                 return name;
             }
         }
-        return identifier;    
+        return identifier;
     }
-    
+
     private void processFeatureScores(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getFeatureScores(connection);

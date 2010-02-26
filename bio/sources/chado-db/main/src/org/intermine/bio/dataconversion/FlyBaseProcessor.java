@@ -38,7 +38,6 @@ import org.intermine.bio.chado.config.SetFieldConfigAction;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -1741,13 +1740,13 @@ public class FlyBaseProcessor extends SequenceProcessor
                 FeatureData protein = proteinFeatureDataMap.get(md5checksum);
                 // make a synonym for the protein we're about to discard
                 if (protein != null) {
-                    if (!StringUtil.isEmpty(uniqueName)
+                    if (StringUtils.isNotEmpty(uniqueName)
                                     && !protein.getExistingSynonyms().contains(uniqueName)) {
                         Item synonym = createSynonym(protein, "identifier", uniqueName, true,
                                                      null);
                         store(synonym);
                     }
-                    if (!StringUtil.isEmpty(name)
+                    if (StringUtils.isNotEmpty(name)
                                     && !protein.getExistingSynonyms().contains(name)) {
                         Item synonym = createSynonym(protein, "name", name, false, null);
                         store(synonym);

@@ -21,7 +21,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -66,7 +65,7 @@ public class FlyAtlasConverter extends BioFileConverter
             } else {
                 String probeId = line[0];
                 // there seems to be some empty lines at the end of the file
-                if (StringUtil.isEmpty(probeId)) {
+                if (StringUtils.isEmpty(probeId)) {
                     break;
                 }
                 Item probe = createProbe(probeId);

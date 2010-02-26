@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -34,7 +35,6 @@ import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.CollectionUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * Class to represent a path-based query.
@@ -819,7 +819,7 @@ public class PathQuery
             logic = "(" + logic + ")";
         }
         for (Iterator<String> iter = codes.iterator(); iter.hasNext(); ) {
-            if (!StringUtil.isEmpty(logic)) {
+            if (StringUtils.isNotEmpty(logic)) {
                 logic += " " + operator + " ";
             }
             logic += iter.next();

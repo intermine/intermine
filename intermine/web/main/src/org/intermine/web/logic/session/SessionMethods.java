@@ -445,22 +445,6 @@ public class SessionMethods
     }
 
     /**
-     * Get the COLLAPSED map from the session. If the attribute is not present then a new
-     * map will be created.
-     *
-     * @param session the curren session
-     * @return the COLLAPSED map attribute
-     */
-    public static Map getCollapsedMap(HttpSession session) {
-        Map collapsed = (Map) session.getAttribute(Constants.COLLAPSED);
-        if (collapsed == null) {
-            collapsed = new HashMap();
-            session.setAttribute(Constants.COLLAPSED, collapsed);
-        }
-        return collapsed;
-    }
-
-    /**
      * Return the displayObjects Map from the session or create and return it if it doesn't exist.
      *
      * @param session the HttpSession to get the displayObjects Map from
