@@ -69,12 +69,9 @@ public class TemplatePrecomputeHelper
         // generate query with editable constraints removed
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
-        /* don't throw exception here.  this method is called on all pages that display templates
-         * if we throw an exception here, the user will never be able to edit the template */
         if (template.getBagNames().size() != 0) {
-           String msg = "Precomputed query can't be created for a template with a list.";
-           LOG.error(msg);
-           return null;
+	    throw new RuntimeException("Precomputed query can't be created " 
+				       + "for a template with a list."); 
         }
 
         List<String> indexPaths = new ArrayList<String>();
