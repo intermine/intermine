@@ -140,7 +140,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
     }
 
     private void setGFF3Header(HttpServletResponse response) {
-        ResponseUtil.setPlainTextHeader(response, "table" + StringUtil.uniqueString() + ".gff3");
+        ResponseUtil.setTabHeader(response, "table" + StringUtil.uniqueString() + ".gff3");
     }
 
     /**
