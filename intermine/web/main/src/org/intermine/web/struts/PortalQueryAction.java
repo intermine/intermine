@@ -128,12 +128,12 @@ public class PortalQueryAction extends InterMineAction
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
 
-        // If the class is not in the model, we can't continue        
-        if (model.getClassDescriptorByName(className) == null) { 
+        // If the class is not in the model, we can't continue
+        if (model.getClassDescriptorByName(className) == null) {
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
         }
-             
+
         PathQuery pathQuery = new PathQuery(model);
         List<Path> view = PathQueryResultHelper.getDefaultView(className, model, webConfig, null,
                 true);
@@ -145,7 +145,7 @@ public class PortalQueryAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
-        
+
         String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), "link");
         InterMineBag imBag = profile.createBag(bagName, className, "");
         List<Integer> bagList = new ArrayList();
@@ -173,7 +173,7 @@ public class PortalQueryAction extends InterMineAction
                     BagConverter bagConverter = getBagConverter(im, webConfig, converterClassName);
 
                     imBag = profile.createBag(bagName, className, "");
-                    List<Integer> converted = bagConverter.getConvertedObjectIds(profile, 
+                    List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
                             className, bagName, addparameters[0]);
                     // No matches
                     if (converted.size() <= 0) {
@@ -214,7 +214,7 @@ public class PortalQueryAction extends InterMineAction
         }
     }
 
-    private BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig, 
+    private BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig,
             String converterClassName) {
 
         BagConverter bagConverter = bagConverters.get(converterClassName);
@@ -222,7 +222,7 @@ public class PortalQueryAction extends InterMineAction
         if (bagConverter == null) {
             try {
                 Class clazz = Class.forName(converterClassName);
-                Constructor constructor = clazz.getConstructor();
+                Constructor constructor = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
                 bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to construct bagconverter for "
