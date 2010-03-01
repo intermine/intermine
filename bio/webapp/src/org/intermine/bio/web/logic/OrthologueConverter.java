@@ -37,11 +37,11 @@ import org.intermine.web.logic.config.WebConfig;
 public class OrthologueConverter extends BagConverter
 {
 
-    
+
     // D. melanogaster, C. lupus familiaris
     private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
     private Model model;
-    
+
 
     /**
      * @param im intermine api
@@ -57,7 +57,7 @@ public class OrthologueConverter extends BagConverter
         PathQuery q = new PathQuery(model);
 
         // organism
-        q.addConstraint("Gene.homologues.homologue.organism.shortName", 
+        q.addConstraint("Gene.homologues.homologue.organism.shortName",
                 Constraints.eq(organismName));
 
         // homologue.type = "orthologue"
@@ -97,7 +97,7 @@ public class OrthologueConverter extends BagConverter
         }
         return orthologues.toString();
     }
-    
+
     /**
      * runs the orthologue conversion pathquery and returns list of intermine IDs
      * @param profile the user's profile

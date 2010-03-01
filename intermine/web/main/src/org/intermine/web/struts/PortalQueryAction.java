@@ -170,7 +170,7 @@ public class PortalQueryAction extends InterMineAction
 
                 if (addparameters.length > 0) {
 
-                    BagConverter bagConverter = getBagConverter(converterClassName);
+                    BagConverter bagConverter = getBagConverter(im, webConfig, converterClassName);
 
                     imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile, 
@@ -214,7 +214,8 @@ public class PortalQueryAction extends InterMineAction
         }
     }
 
-    private BagConverter getBagConverter(String converterClassName) {
+    private BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig, 
+            String converterClassName) {
 
         BagConverter bagConverter = bagConverters.get(converterClassName);
 
@@ -222,7 +223,7 @@ public class PortalQueryAction extends InterMineAction
             try {
                 Class clazz = Class.forName(converterClassName);
                 Constructor constructor = clazz.getConstructor();
-                bagConverter = (BagConverter) constructor.newInstance();
+                bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to construct bagconverter for "
                         + converterClassName, e);
