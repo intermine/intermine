@@ -291,6 +291,8 @@
 
 
   <!-- retrieve from a foreign file or database into an InterMine tgt items objectstore -->
+  <!-- NOTE -index-analyse-tgt-items must be last in the depends list so indexes are created after items are
+       stored.  It is slower to store if the indexes already exist. -->
   <target name="tgt-retrieve" depends="init,
                                        -init-deps,
                                        -init-legacy-properties,
@@ -302,8 +304,8 @@
                                        -retrieve-from-obo,
                                        -retrieve-tgt-from-xml-file,
                                        -retrieve-tgt-from-large-xml-file,
-                                       -index-analyse-tgt-items,
-                                       -retrieve-tgt-from-custom-dir" if="do.tgt.retrieve"/>
+                                       -retrieve-tgt-from-custom-dir,
+                                       -index-analyse-tgt-items" if="do.tgt.retrieve"/>
 
   <target name="retrieve" depends="tgt-retrieve"/>
 
