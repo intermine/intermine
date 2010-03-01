@@ -28,7 +28,8 @@ public class Mine
     private String releaseVersion = null;
     private Set<String> organismNames = new HashSet();
 
-    // gene.organismName --> gene.orthologue.organismName --> local/remote --> gene.orthologue.datasets
+    // gene.organismName --> gene.orthologue.organismName --> local/remote
+    // --> gene.orthologue.datasets
     private Map<String, Map<String, Set[]>> orthologues = new HashMap();
 
     /**

@@ -37,11 +37,9 @@ import org.intermine.web.logic.config.WebConfig;
 public class OrthologueConverter extends BagConverter
 {
 
-
     // D. melanogaster, C. lupus familiaris
     private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
     private Model model;
-
 
     /**
      * @param im intermine api
@@ -50,7 +48,6 @@ public class OrthologueConverter extends BagConverter
     public OrthologueConverter(InterMineAPI im, WebConfig webConfig) {
         super(im, webConfig);
         model = im.getModel();
-
     }
 
     private PathQuery constructPathQuery(String bagType, String bagName, String organismName) {
@@ -69,6 +66,7 @@ public class OrthologueConverter extends BagConverter
 
     /**
      * runs the orthologue conversion pathquery and returns a comma-delimited list of identifiers
+     * used on list analysis page for intermine linking
      * @param profile the user's profile
      * @param bagType the class of the list, has to be gene I think
      * @param bagName name of list
@@ -100,6 +98,7 @@ public class OrthologueConverter extends BagConverter
 
     /**
      * runs the orthologue conversion pathquery and returns list of intermine IDs
+     * used in the portal 
      * @param profile the user's profile
      * @param bagType the class of the list, has to be gene I think
      * @param bagName name of list
@@ -110,6 +109,7 @@ public class OrthologueConverter extends BagConverter
             String bagName, String organismName) {
         PathQuery pathQuery = constructPathQuery(bagType, bagName, organismName);
         pathQuery.setView(bagType + ".id");
+        pathQuery.syncLogicExpression("and");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
         List<Integer> ids = new ArrayList();

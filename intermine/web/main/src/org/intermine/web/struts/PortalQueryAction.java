@@ -48,6 +48,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -113,7 +114,6 @@ public class PortalQueryAction extends InterMineAction
             return mapping.findForward("failure");
         }
 
-
         String[] idList = extId.split(",");
 
         // Use the old way = quicksearch template in case some people used to link in
@@ -129,6 +129,7 @@ public class PortalQueryAction extends InterMineAction
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
 
         // If the class is not in the model, we can't continue
+        className = StringUtil.capitalise(className);
         if (model.getClassDescriptorByName(className) == null) {
             recordError(new ActionMessage("errors.badportalclass"), request);
             return goToNoResults(mapping, session);
@@ -165,25 +166,25 @@ public class PortalQueryAction extends InterMineAction
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
 
-                String[] addparameters = getAdditionalParameters(request,
+                String addparameter = getAdditionalParameter(request,
                         additionalConverters.get(converterClassName));
 
-                if (addparameters.length > 0) {
+                if (StringUtils.isNotEmpty(addparameter)) {
 
                     BagConverter bagConverter = getBagConverter(im, webConfig, converterClassName);
 
                     imBag = profile.createBag(bagName, className, "");
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
-                            className, bagName, addparameters[0]);
+                            className, bagName, addparameter);
                     // No matches
                     if (converted.size() <= 0) {
                         actionMessages.add(Constants.PORTAL_MSG,
-                            new ActionMessage("portal.noorthologues", addparameters, extId));
+                            new ActionMessage("portal.noorthologues", addparameter, extId));
                         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(extId,
-                            converted.size(), className, addparameters));
+                            converted.size(), className, addparameter));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
@@ -233,26 +234,25 @@ public class PortalQueryAction extends InterMineAction
         return bagConverter;
     }
 
-    private String[] getAdditionalParameters(HttpServletRequest request, String[] paramArray)
+    private String getAdditionalParameter(HttpServletRequest request, String[] paramArray)
     throws UnsupportedEncodingException {
 
-    String[] urlFields = paramArray[0].split(",");
-    String[] addparameters = new String[urlFields.length];
-    int i = 0;
-    for (String urlField : urlFields) {
-        // if one of the request vars matches the variables listed in the bagquery
-        // config, add the variable to be passed to the custom converter
-        String param = request.getParameter(urlField);
-        if (StringUtils.isNotEmpty(param)) {
-            // the spaces in organisms, eg. D.%20rerio, need to be handled
-            addparameters[i] = URLDecoder.decode(param, "UTF-8");
+        String[] urlFields = paramArray[0].split(",");
+        String addparameter = null;
+        for (String urlField : urlFields) {
+            // if one of the request vars matches the variables listed in the bagquery
+            // config, add the variable to be passed to the custom converter
+            String param = request.getParameter(urlField);
+            if (StringUtils.isNotEmpty(param)) {
+                // the spaces in organisms, eg. D.%20rerio, need to be handled
+                addparameter = URLDecoder.decode(param, "UTF-8");
+            }
         }
-    }
-    return addparameters;
+        return addparameter;
     }
 
-    private ActionForward goToResults(ActionMapping mapping,
-                                      HttpSession session, WebResults webResults) {
+    private ActionForward goToResults(ActionMapping mapping, HttpSession session,
+            WebResults webResults) {
         PagedTable pc = new PagedTable(webResults);
         String identifier = "col" + index++;
         SessionMethods.setResultsTable(session, identifier, pc);
@@ -284,13 +284,11 @@ public class PortalQueryAction extends InterMineAction
         // Attach messages
         if (bagListSize == 0 && bagQueryResultSize == 1) {
             ActionMessage msg = new ActionMessage("results.lookup.noresults.one",
-                    new Integer(bagQueryResultSize),
-                    className);
+                    new Integer(bagQueryResultSize), className);
             actionMessages.add(Constants.PORTAL_MSG, msg);
         } else if (bagListSize == 0 && bagQueryResultSize > 1) {
             ActionMessage msg = new ActionMessage("results.lookup.noresults.many",
-                    new Integer(bagQueryResultSize),
-                    className);
+                    new Integer(bagQueryResultSize), className);
             actionMessages.add(Constants.PORTAL_MSG, msg);
         } else if (bagListSize > 0) {
             ActionMessage msg = new ActionMessage("results.lookup.matches.many",
