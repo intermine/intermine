@@ -92,6 +92,19 @@ public class ResponseUtil
     }
 
     /**
+     * Sets response header and content type for a custom content type.
+     * @param response response
+     * @param fileName file name of downloaded file
+     * @param the content type to use
+     */
+    public static void setCustomTypeHeader(HttpServletResponse response, String fileName,
+            String contentType) {
+        setNoCache(response);
+        setCustomContentType(response, contentType);
+        setFileName(response, fileName);
+    }
+    
+    /**
      * Sets that the result must not be cached. Old implementation was set
      * Cache-Control to no-cache,no-store,max-age=0. But this caused problems
      * in IE. File couldn't be opened directly.
@@ -173,6 +186,14 @@ public class ResponseUtil
         response.setContentType("application/octet-stream");
     }
 
+    /**
+     * Sets content type to the parameter specified
+     * @param response response
+     * @param custom MIME type to set as content type specified
+     */
+    public static void setCustomContentType(HttpServletResponse response, String contentType) {
+        response.setContentType(contentType);
+    }
     /**
      * Sets the content disposition filename.
      *
