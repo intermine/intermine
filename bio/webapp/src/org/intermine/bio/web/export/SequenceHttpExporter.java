@@ -57,7 +57,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         if (doGzip) {
             ResponseUtil.setGzippedHeader(response, fileName + ".gz");
         } else {
-            ResponseUtil.setPlainTextHeader(response, fileName);
+            ResponseUtil.setCustomTypeHeader(response, fileName, "chemical/x-fasta");
         }
     }
 
