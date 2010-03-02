@@ -60,7 +60,7 @@ public class OrthologueLinkController  extends TilesAction
         request.setAttribute("identifierList", identifierList);
         
         OrthologueLinkManager orthologueLinkManager
-        = OrthologueLinkManager.getInstance(webProperties);
+        = OrthologueLinkManager.getInstance(im, webProperties);
         Collection<String> organismNamesInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, 
                 false, "shortName");
         Map<Mine, Map<String, Set[]>> mines 
