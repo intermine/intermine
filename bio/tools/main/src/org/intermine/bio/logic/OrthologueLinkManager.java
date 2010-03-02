@@ -287,7 +287,7 @@ public class OrthologueLinkManager
 
     private static void setLocalOrthologues() {
 
-            Map<String, Map<String, Set[]>> orthologues = null;
+            Map<String, Map<String, Set[]>> orthologues = new HashMap();
 
             Query q = new Query();
 
