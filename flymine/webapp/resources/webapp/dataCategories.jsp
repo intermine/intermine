@@ -362,7 +362,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcription factor binding sites</td>
-    <td> <a href="http://www.flyreg.org" target="_new">REDfly</a> - Version 2.1</td>
+    <td> <a href="http://www.flyreg.org" target="_new">REDfly</a> - 20 Febrary 2010</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15572468" target="_new">PubMed: 15572468</a></td>
     <td>  &nbsp; </td>
   </tr>
@@ -405,7 +405,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> RNAi data from in vivo experiments</td>
-    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS209 </td>
+    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS195 </td>
     <td> Bieri et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099234" target="_new">PubMed: 17099234</a></td>
     <td> &nbsp;</td>
   </tr>
