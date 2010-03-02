@@ -656,6 +656,7 @@ public class AjaxServices
             Profile profile = SessionMethods.getProfile(session);
             BagManager bagManager = im.getBagManager();
 
+            bagName = bagName.trim();
             // TODO get message text from the properties file
             if (bagName.equals("")) {
                 return "You cannot save a list with a blank name";

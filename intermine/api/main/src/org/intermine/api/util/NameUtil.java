@@ -85,7 +85,7 @@ public class NameUtil
     }
 
     private static boolean validateName(String name, boolean specialChars) {
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             return false;
         }
         Matcher m = (specialChars ? SPECIAL_CHARS_PATTERN.matcher(name)

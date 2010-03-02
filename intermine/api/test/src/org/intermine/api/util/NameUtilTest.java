@@ -14,6 +14,7 @@ public class NameUtilTest extends TestCase {
     
     public void testIsValidName() {
         assertFalse(NameUtil.isValidName(""));
+        assertFalse(NameUtil.isValidName(" "));
         assertTrue(NameUtil.isValidName("valid"));
         assertTrue(NameUtil.isValidName("1234567890"));
         assertTrue(NameUtil.isValidName("_"));
