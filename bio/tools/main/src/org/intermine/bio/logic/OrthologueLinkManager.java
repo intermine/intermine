@@ -36,10 +36,13 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -234,9 +237,11 @@ public class OrthologueLinkManager
             }
 
             if (mineName.equals(localMineName)) {
-                localMine.setUrl(url);
-                localMine.setLogo(logo);
-                setLocalOrthologues();
+                if (localMine.getUrl() == null) {
+                    localMine.setUrl(url);
+                    localMine.setLogo(logo);
+                    setLocalOrthologues();
+                }
                 // skip, this is the local intermine.
                 continue;
             }
@@ -301,7 +306,8 @@ public class OrthologueLinkManager
             QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
             QueryField qfDataset = new QueryField(qcDataset, "title");
             QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
-
+            QueryField qfType = new QueryField(qcHomologue, "type");
+            
             q.setDistinct(true);
 
             q.addToSelect(qfGeneOrganismName);
@@ -339,6 +345,13 @@ public class OrthologueLinkManager
                     qcHomologueOrganism));
             q.setConstraint(cs);
 
+            // gene.homologues.type = 'orthologue'
+            QueryExpression c6 = new QueryExpression(QueryExpression.LOWER, qfType);
+            cs.addConstraint(new SimpleConstraint(c6, ConstraintOp.EQUALS, 
+                    new QueryValue("orthologue")));
+            
+            q.addToOrderBy(qfGeneOrganismName);
+            
             Results results = im.getObjectStore().execute(q);
             Iterator it = results.iterator();
             while (it.hasNext()) {
@@ -347,7 +360,7 @@ public class OrthologueLinkManager
 
                 String geneOrganismName = (String) row.get(0);
                 String dataset = (String) row.get(1);
-                String homologueOrganismName = (String) row.get(1);
+                String homologueOrganismName = (String) row.get(2);
 
                 /**
                  * gene --> homologue --> datasets
