@@ -15,10 +15,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -94,9 +96,8 @@ public class MetadataCache
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
     private static Map<Integer, List<String>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
-
-//    private static Map<Integer, String> submissionLocatedFeatureTypes = null;
-    private static Map<String, List<String>> submissionLocatedFeatureTypes = null;
+    private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
+    private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
 
     private static long lastTrackCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
@@ -133,6 +134,21 @@ public class MetadataCache
      * @param os the production objectstore
      * @return map
      */
+    public static synchronized Map<Integer, List<String>> getUnlocatedFeatureTypes(ObjectStore os) {
+        if (submissionUnlocatedFeatureTypes == null) {
+            LOG.info("BEFORE readUNL ");
+            
+            readUnlocatedFeatureTypes(os);
+            LOG.info("AFTER readUNL ");
+        }
+        return submissionUnlocatedFeatureTypes;
+    }
+
+    /**
+     * Fetch input/output file names per submission.
+     * @param os the production objectstore
+     * @return map
+     */
     public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
@@ -161,14 +177,17 @@ public class MetadataCache
     }
 
     /**
-     * Fetch input/output file names per submission.
+     * Fetch which featureType are located for each sub
+     * TODO: the opposite (not located feature types)
      * @param os the production objectstore
      * @return map
      */
-//    public static synchronized Map<Integer, String> getLocatedFeatureTypes(ObjectStore os) {
-        public static synchronized Map<String, List<String>> getLocatedFeatureTypes(ObjectStore os) {
+    public static synchronized Map<Integer, List<String>> getLocatedFeatureTypes(ObjectStore os) {
         if (submissionLocatedFeatureTypes == null) {
+            LOG.info("BEFORE readSubmissionLocatedFeature ");
             readSubmissionLocatedFeature(os);
+            LOG.info("AFTER readSubmissionLocatedFeature ");
+            
         }
         return submissionLocatedFeatureTypes;
     }
@@ -398,7 +417,6 @@ public class MetadataCache
             q.setConstraint(cc);
             q.addToOrderBy(qcName);
 
-
             Results results = os.execute(q);
 
             experimentCache = new HashMap<String, DisplayExperiment>();
@@ -549,9 +567,7 @@ public class MetadataCache
     
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
-        
-//        submissionLocatedFeatureTypes = new LinkedHashMap<Integer, String>();
-        submissionLocatedFeatureTypes = new LinkedHashMap<String, List<String>>();
+        submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
         
         Query q = new Query();
         q.setDistinct(true);
@@ -589,8 +605,12 @@ public class MetadataCache
             Submission sub = (Submission) row.get(0);
             Class feat = (Class) row.get(1);
  
-            addToMap(submissionLocatedFeatureTypes,sub.getdCCid().toString(),
-            feat.getName().replace("org.intermine.model.bio.", ""));
+//            addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
+//            feat.getName().replace("org.intermine.model.bio.", ""));
+  
+            addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
+                    TypeUtil.unqualifiedName(feat.getName()));
+            
             
 //            submissionLocatedFeatureTypes.put(sub.getdCCid().toString(), 
 //                    feat.getName().replace("org.intermine.model.bio.", ""));            
@@ -605,12 +625,74 @@ public class MetadataCache
    
     
     /**
+     * Method to obtain the map of unlocated feature types by submission id
+     *
+     * @param os the objectStore
+     * @return submissionUnlocatedFeatureTypes
+     */
+    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
+        try {
+
+            if (submissionUnlocatedFeatureTypes != null) {
+                return submissionUnlocatedFeatureTypes;
+            }
+
+            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
+
+            
+            if (submissionLocatedFeatureTypes == null) {
+                readSubmissionLocatedFeature(os);
+            }
+
+            if (submissionFeatureCounts == null) {
+                readSubmissionFeatureCounts(os);
+            }
+
+            LOG.info("INTO readUNL " + submissionFeatureCounts.keySet());
+
+            
+            for (Integer subId : submissionFeatureCounts.keySet()) {
+
+                Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
+                LOG.info("INTO readUNL SFC keys:" + submissionFeatureCounts.keySet());
+                
+                
+                LOG.info("INTO readUNL difference 1 " + subId);
+                Set<String> difference = new HashSet<String>(allFeatures);
+                LOG.info("INTO readUNL difference 2 " + difference);
+
+                LOG.info("INTO readUNL difference ARG " + submissionLocatedFeatureTypes.get(subId));
+               
+                difference.removeAll(submissionLocatedFeatureTypes.get(subId));
+                
+                LOG.info("INTO readUNL difference 3 " + subId);
+                LOG.info("INTO readUNL difference-> " + difference);
+
+                if (!difference.isEmpty()){
+                    List <String> thisUnlocated = new ArrayList<String>();
+
+                    for (String fType : difference){
+                        LOG.info("INTO readUNL ftype: " + subId + "|" + fType);
+                        
+                        thisUnlocated.add(fType);
+                    }
+                    submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
+                }
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return submissionUnlocatedFeatureTypes;
+    }
+
+    
+    /**
      * adds an element to a list which is the value of a map
      * @param m       the map (<String, List<String>>)
      * @param key     the key for the map
      * @param value   the list
      */
-    private static void addToMap(Map<String, List<String>> m, String key, String value) {
+    private static void addToMap(Map<Integer, List<String>> m, Integer key, String value) {
 
         List<String> ids = new ArrayList<String>();
 
@@ -623,9 +705,6 @@ public class MetadataCache
         }
     }
  
-    
-    
-    
     /**
      * Method to fill the cached map of submissions (ddcId) to list of
      * GBrowse tracks
@@ -645,7 +724,6 @@ public class MetadataCache
         LOG.info("Primed GBrowse tracks cache, took: " + timeTaken + "ms  size = "
                 + submissionTracksCache.size());
     }
-
 
     /**
      * Method to read the list of GBrowse tracks for a given organism
