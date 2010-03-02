@@ -10,9 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +47,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -69,9 +67,9 @@ import org.intermine.web.logic.session.SessionMethods;
 public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
+    private PortalHelper helper = new PortalHelper();
+    
 //    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
-    private Map<String, BagConverter> bagConverters = new HashMap();
-
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -166,16 +164,15 @@ public class PortalQueryAction extends InterMineAction
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
 
-                String addparameter = getAdditionalParameter(request,
+                String addparameter = PortalHelper.getAdditionalParameter(request,
                         additionalConverters.get(converterClassName));
 
                 if (StringUtils.isNotEmpty(addparameter)) {
 
-                    BagConverter bagConverter = getBagConverter(im, webConfig, converterClassName);
-
-                    imBag = profile.createBag(bagName, className, "");
+                    BagConverter bagConverter = helper.getBagConverter(im, webConfig, 
+                            converterClassName);
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
-                            className, bagName, addparameter);
+                            className, bagList, addparameter);
                     // No matches
                     if (converted.size() <= 0) {
                         actionMessages.add(Constants.PORTAL_MSG,
@@ -213,42 +210,6 @@ public class PortalQueryAction extends InterMineAction
         } else {
             return goToResults(mapping, session, webResults);
         }
-    }
-
-    private BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig,
-            String converterClassName) {
-
-        BagConverter bagConverter = bagConverters.get(converterClassName);
-
-        if (bagConverter == null) {
-            try {
-                Class clazz = Class.forName(converterClassName);
-                Constructor constructor = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
-                bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to construct bagconverter for "
-                        + converterClassName, e);
-            }
-            bagConverters.put(converterClassName, bagConverter);
-        }
-        return bagConverter;
-    }
-
-    private String getAdditionalParameter(HttpServletRequest request, String[] paramArray)
-    throws UnsupportedEncodingException {
-
-        String[] urlFields = paramArray[0].split(",");
-        String addparameter = null;
-        for (String urlField : urlFields) {
-            // if one of the request vars matches the variables listed in the bagquery
-            // config, add the variable to be passed to the custom converter
-            String param = request.getParameter(urlField);
-            if (StringUtils.isNotEmpty(param)) {
-                // the spaces in organisms, eg. D.%20rerio, need to be handled
-                addparameter = URLDecoder.decode(param, "UTF-8");
-            }
-        }
-        return addparameter;
     }
 
     private ActionForward goToResults(ActionMapping mapping, HttpSession session,
