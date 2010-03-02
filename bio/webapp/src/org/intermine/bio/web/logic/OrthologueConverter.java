@@ -114,7 +114,7 @@ public class OrthologueConverter extends BagConverter
             return null;
         }
         pathQuery.addConstraint(bagType, Constraints.in(objectList));
-        pathQuery.setView(bagType + ".id");
+        pathQuery.setView("Gene.homologues.homologue.id");
         pathQuery.syncLogicExpression("and");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
