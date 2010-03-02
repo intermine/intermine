@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionMessage;
@@ -25,6 +24,8 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
@@ -36,9 +37,6 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class OrthologueConverter extends BagConverter
 {
-
-    // D. melanogaster, C. lupus familiaris
-    private static final Pattern ORGANISM_SHORTNAME_MATCHER = Pattern.compile("([a-zA-Z]\\..+)");
     private Model model;
 
     /**
@@ -50,7 +48,7 @@ public class OrthologueConverter extends BagConverter
         model = im.getModel();
     }
 
-    private PathQuery constructPathQuery(String bagType, String bagName, String organismName) {
+    private PathQuery constructPathQuery(String organismName) {
         PathQuery q = new PathQuery(model);
 
         // organism
@@ -60,23 +58,23 @@ public class OrthologueConverter extends BagConverter
         // homologue.type = "orthologue"
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
-        q.addConstraint(bagType, Constraints.in(bagName));
         return q;
     }
 
     /**
      * runs the orthologue conversion pathquery and returns a comma-delimited list of identifiers
-     * used on list analysis page for intermine linking
+     * used on list analysis page for intermine linking, called via Ajax
      * @param profile the user's profile
      * @param bagType the class of the list, has to be gene I think
      * @param bagName name of list
      * @param organismName name of homologue's organism
      * @return commadelimited list of identifiers, eg. eve,zen
      */
-    public String getConvertedObjectFields(Profile profile, String bagType,
-            String bagName, String organismName) {
+    public String getConvertedObjectFields(Profile profile, String bagType, String bagName,
+            String organismName) {
         StringBuffer orthologues = null;
-        PathQuery pathQuery = constructPathQuery(bagType, bagName, organismName);
+        PathQuery pathQuery = constructPathQuery(organismName);
+        pathQuery.addConstraint(bagType, Constraints.in(bagName));
         pathQuery.setView("Gene.homologues.homologue.primaryIdentifier");
         pathQuery.syncLogicExpression("and");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
@@ -98,16 +96,24 @@ public class OrthologueConverter extends BagConverter
 
     /**
      * runs the orthologue conversion pathquery and returns list of intermine IDs
-     * used in the portal 
+     * used in the portal
      * @param profile the user's profile
      * @param bagType the class of the list, has to be gene I think
-     * @param bagName name of list
+     * @param bagList list of intermine object IDs
      * @param organismName name of homologue's organism
      * @return list of intermine IDs
      */
     public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
-            String bagName, String organismName) {
-        PathQuery pathQuery = constructPathQuery(bagType, bagName, organismName);
+            List<Integer> bagList, String organismName) {
+        PathQuery pathQuery = constructPathQuery(organismName);
+        List<InterMineObject> objectList = null;
+        try {
+            objectList = im.getObjectStore().getObjectsByIds(bagList);
+        } catch (ObjectStoreException e) {
+            e.printStackTrace();
+            return null;
+        }
+        pathQuery.addConstraint(bagType, Constraints.in(objectList));
         pathQuery.setView(bagType + ".id");
         pathQuery.syncLogicExpression("and");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
@@ -124,20 +130,9 @@ public class OrthologueConverter extends BagConverter
      * {@inheritDoc}
      */
     public ActionMessage getActionMessage(String externalids, int convertedSize, String type,
-            String ... parameters)
-                    throws UnsupportedEncodingException {
-
-        String organism = null, dataset = null;
-
-        for (String param : parameters) {
-            if (StringUtils.isEmpty(param)) {
-                continue;
-            }
-            if (ORGANISM_SHORTNAME_MATCHER.matcher(param).matches()) {
-                organism = param;
-            } else {
-                dataset = param;
-            }
+            String parameter) throws UnsupportedEncodingException {
+        if (StringUtils.isEmpty(parameter)) {
+            return null;
         }
 
         PathQuery q = new PathQuery(model);
@@ -154,16 +149,11 @@ public class OrthologueConverter extends BagConverter
         q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
 
         // organism
-        q.addConstraint("Gene.organism", Constraints.lookup(organism));
+        q.addConstraint("Gene.organism", Constraints.lookup(parameter));
 
         // if the XML is too long, the link generates "HTTP Error 414 - Request URI too long"
         if (externalids.length() < 4000) {
             q.addConstraint("Gene.homologues.homologue", Constraints.lookup(externalids));
-        }
-
-        if (!StringUtils.isEmpty(dataset)) {
-            // homologue.dataSets = dataset
-            q.addConstraint("Gene.homologues.dataSet.title", Constraints.eq(dataset));
         }
 
         q.syncLogicExpression("and");
@@ -174,7 +164,7 @@ public class OrthologueConverter extends BagConverter
         String[] values = new String[]
             {
                 String.valueOf(convertedSize),
-                organism,
+                parameter,
                 String.valueOf(externalids.split(",").length),
                 type,
                 encodedurl
@@ -185,7 +175,7 @@ public class OrthologueConverter extends BagConverter
 
     @Override
     public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
-            String... parameters) {
+            String parameters) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -818,15 +818,18 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
 }
 
 function checkOrthologueMapping(statusCount, remoteMine, localMine) {
+
     var myForm = document.forms['orthologueLinkForm' + statusCount];
     var orthologueSelect = myForm.orthologueDatasets;
     var datasets = orthologueSelect.options[orthologueSelect.selectedIndex].value;
     var bits = datasets.split("|");
     var localMapping = bits[0];
     var remoteMapping = bits[1];
+
     var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
     myForm.orthologue.value = selectedOrganism;
 
+    // hide/show the radio button and name of intermine if they do/don't have orthologues
     if (localMapping != null && localMapping != "") {
         display('orthologueMappingLocalLabel' + statusCount, true);
         if (remoteMapping != null && remoteMapping != "") {
@@ -845,4 +848,16 @@ function checkOrthologueMapping(statusCount, remoteMine, localMine) {
         display('orthologueMappingRemoteRadio' + statusCount, false);
         display('orthologueMappingLocalRadio' + statusCount, false);
     }
+    // if there is only one option, don't show a dropdown
+//    if (orthologueSelect.length == 1) {
+//        display('orthologueSelectDisplay' + statusCount, true);
+//        display('orthologueSelect' + statusCount, false);
+//        // update text to be selected value
+//        document.getElementById('orthologueSelect' + statusCount).innerHtml
+//            = orthologueSelect.options[0].text;
+//    } else {
+//        // show dropdown
+//        display('orthologueSelectDisplay' + statusCount, false);
+//        display('orthologueSelect' + statusCount, true);
+//    }
 }

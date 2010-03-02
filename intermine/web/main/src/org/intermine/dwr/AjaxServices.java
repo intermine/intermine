@@ -12,8 +12,6 @@ package org.intermine.dwr;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -80,6 +78,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -120,6 +119,8 @@ public class AjaxServices
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
     private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
         + "numbers, spaces, and underscores.";
+    private PortalHelper portalHelper = new PortalHelper();
+    
     /**
      * Creates a favourite Tag for the given templateName
      *
@@ -1328,46 +1329,49 @@ public class AjaxServices
         String[] defaultList = {""};
         return defaultList;
     }
-    
+
     /**
      * used on list analysis page to convert list contents to orthologues.  then forwarded to
      * another intermine instance
-     * @param bagName bag of genes to convert
-     * @param selectedValue organism to convert to
+     * @param bagType class of bag
+     * @param bagName name of bag
+     * @param selectedValue orthologue organism
      * @return converted list of orthologues
-     * @throws UnsupportedEncodingException if we can't encode the name of the organism
-     * @throws ClassNotFoundException 
-     * @throws NoSuchMethodException 
-     * @throws SecurityException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws IllegalArgumentException 
+     * @throws UnsupportedEncodingException bad encoding
      */
-    public static String convertObjects(String bagType, String bagName, String selectedValue)
-    throws UnsupportedEncodingException, ClassNotFoundException, SecurityException, 
-    NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, 
-    InvocationTargetException {
-        
+    public String convertObjects(String bagType, String bagName, String selectedValue) 
+    throws UnsupportedEncodingException {
+        ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpServletRequest request = getRequest();
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        
+        WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
+
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
+
         // Use custom converters
         Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(bagType);
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
-                Class clazz = Class.forName(converterClassName);
-                Constructor constructor = clazz.getConstructor();
-                BagConverter bagConverter = (BagConverter) constructor.newInstance();
-                return bagConverter.getConvertedObjectFields(profile, bagType, bagName, 
+
+                String addparameter = PortalHelper.getAdditionalParameter(request,
+                        additionalConverters.get(converterClassName));
+
+                if (StringUtils.isNotEmpty(addparameter)) {
+
+                    BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig, 
+                            converterClassName);
+
+
+                return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
                         selectedValue);
+                }
             }
         }
         return null;
     }
+
 
 }
