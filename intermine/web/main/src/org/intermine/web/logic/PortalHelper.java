@@ -33,6 +33,21 @@ public class PortalHelper
 
     private static Map<String, BagConverter> bagConverters = new HashMap();
     
+    public static String getAdditionalParameter(String param, String[] paramArray) {
+
+        String[] urlFields = paramArray[0].split(",");
+        for (String urlField : urlFields) {
+            // if one of the request vars matches the variables listed in the bagquery
+            // config, add the variable to be passed to the custom converter
+            
+            if (urlField.equals(param)) {
+                // the spaces in organisms, eg. D.%20rerio, need to be handled
+                return param;
+            }
+        }
+        return null;
+    }
+    
     public static String getAdditionalParameter(HttpServletRequest request, String[] paramArray)
     throws UnsupportedEncodingException {
 
