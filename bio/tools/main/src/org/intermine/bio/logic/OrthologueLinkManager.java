@@ -25,6 +25,21 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Homologue;
+import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -55,12 +70,13 @@ public class OrthologueLinkManager
         + "name=im_available_homologues&size=1000&format=tab";
     private static final String WEB_SERVICE_CONSTRAINT =
         "constraint1=Gene.primaryIdentifier&op1=eq&value1=*";
+    private static InterMineAPI im = null;
 
 /**
  * @param webProperties the web properties
  */
-    public OrthologueLinkManager(Properties webProperties) {
-
+    public OrthologueLinkManager(InterMineAPI im, Properties webProperties) {
+        this.im = im;
         String localMineName = webProperties.getProperty("project.title");
 
         localMine = new Mine(localMineName);
@@ -73,9 +89,10 @@ public class OrthologueLinkManager
      * @param webProperties the web properties
      * @return OrthologueLinkManager the link manager
      */
-    public static synchronized OrthologueLinkManager getInstance(Properties webProperties) {
+    public static synchronized OrthologueLinkManager getInstance(InterMineAPI im,
+            Properties webProperties) {
         if (orthologueLinkManager == null) {
-            orthologueLinkManager = new OrthologueLinkManager(webProperties);
+            orthologueLinkManager = new OrthologueLinkManager(im, webProperties);
         }
         primeCache();
         return orthologueLinkManager;
@@ -86,11 +103,11 @@ public class OrthologueLinkManager
      */
     public static synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
-        // TODO hardcoded for testing.
+        // FIXME hardcoded for testing.
+        // if release version is different, update homologue mappings in cache
         if (timeSinceLastRefresh > ONE_HOUR || DEBUG) {
-            // if release version is different, update homologue mappings in cache
-            updateMaps();
             lastCacheRefresh = System.currentTimeMillis();
+            updateMaps();
         }
     }
 
@@ -174,7 +191,7 @@ public class OrthologueLinkManager
 
         // check if local mine has orthologues for genes in this remote mine
         // has to be done last so we know which genes to check for
-        checkLocalOrthologues(mine);
+        getLocalOrthologues(mine);
     }
 
     // loop through properties and get mines' names, URLs and logos
@@ -216,8 +233,7 @@ public class OrthologueLinkManager
             if (mineName.equals(localMineName)) {
                 localMine.setUrl(url);
                 localMine.setLogo(logo);
-//                setOrganisms(localMine);
-                setOrthologues(localMine);
+                setLocalOrthologues();
                 // skip, this is the local intermine.
                 continue;
             }
@@ -264,6 +280,92 @@ public class OrthologueLinkManager
 
         mine.setOrganisms(names);
         return !names.isEmpty();
+    }
+
+    private static void setLocalOrthologues() {
+
+            Map<String, Map<String, Set[]>> orthologues = null;
+
+            Query q = new Query();
+
+            QueryClass qcGene = new QueryClass(Gene.class);
+            QueryClass qcOrganism = new QueryClass(Organism.class);
+            QueryClass qcHomologue = new QueryClass(Homologue.class);
+            QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
+            QueryClass qcDataset = new QueryClass(DataSet.class);
+
+            QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
+            QueryField qfDataset = new QueryField(qcDataset, "title");
+            QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
+
+            q.setDistinct(true);
+
+            q.addToSelect(qfGeneOrganismName);
+            q.addToSelect(qfDataset);
+            q.addToOrderBy(qfHomologueOrganismName);
+
+            q.addFrom(qcGene);
+            q.addFrom(qcHomologue);
+            q.addFrom(qcOrganism);
+            q.addFrom(qcHomologueOrganism);
+            q.addFrom(qcDataset);
+
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+            // gene.organism.name
+            QueryObjectReference c1 = new QueryObjectReference(qcGene, "organism");
+            cs.addConstraint(new ContainsConstraint(c1, ConstraintOp.CONTAINS, qcOrganism));
+
+            // gene.homologues.homologue
+            QueryCollectionReference c2 = new QueryCollectionReference(qcGene, "homologues");
+            cs.addConstraint(new ContainsConstraint(c2, ConstraintOp.CONTAINS, qcHomologue));
+
+            // gene.homologues.homologue.datasets.title
+            QueryCollectionReference c3 = new QueryCollectionReference(qcHomologue, "dataSets");
+            cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcDataset));
+
+            // gene.homologues.homologue.organism.shortName
+            QueryObjectReference c4 = new QueryObjectReference(qcHomologue, "organism");
+            cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS,
+                    qcHomologueOrganism));
+
+            q.setConstraint(cs);
+
+            Results results = im.getObjectStore().execute(q);
+            Iterator it = results.iterator();
+            while (it.hasNext()) {
+
+                ResultsRow row = (ResultsRow) it.next();
+
+                String geneOrganismName = (String) row.get(0);
+                String dataset = (String) row.get(1);
+                String homologueOrganismName = (String) row.get(1);
+
+                /**
+                 * gene --> homologue --> datasets
+                 *
+                 * D. rerio | H. sapiens        |   treefam
+                 *          |                   |   inparanoid
+                 *          | C. elegans        |   treefam
+                 */
+
+                // gene --> homologue|dataset
+                Map<String, Set[]> homologueMapping = orthologues.get(geneOrganismName);
+                if (homologueMapping == null) {
+                    homologueMapping = new HashMap();
+                    orthologues.put(geneOrganismName, homologueMapping);
+                }
+
+                // homologue --> datasets
+                Set[] datasets = homologueMapping.get(homologueOrganismName);
+                if (datasets == null) {
+                    datasets = new HashSet[2];
+                    datasets[1] = new HashSet();
+                    homologueMapping.put(homologueOrganismName, datasets);
+                }
+                datasets[1].add(dataset);
+            }
+            localMine.setOrthologues(orthologues);
     }
 
     private static void setOrthologues(Mine mine) {
@@ -414,7 +516,7 @@ public class OrthologueLinkManager
     /* if so, we'll convert the genes then post the converted orthologues to the remote mine
      * NB this assumes the remote mine has its orthologues populated already
      */
-    private static void checkLocalOrthologues(Mine mine) {
+    private static void getLocalOrthologues(Mine mine) {
 
         // list of organisms for which this mine has genes.
         // does the local mine have orthologues?
