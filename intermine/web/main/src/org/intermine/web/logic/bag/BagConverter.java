@@ -55,7 +55,7 @@ public abstract class BagConverter
      * @throws PathException bad path
      */
     public abstract WebResults getConvertedObjects(Profile profile, List<Integer> fromList,
-            String type, String ... parameters)
+            String type, String parameters)
         throws ClassNotFoundException, ObjectStoreException, PathException;
 
     /**
@@ -69,7 +69,7 @@ public abstract class BagConverter
      * @throws UnsupportedEncodingException exception
      */
     public abstract ActionMessage getActionMessage(String externalids, int convertedSize,
-            String type, String ... parameters)
+            String type, String parameters)
     throws ObjectStoreException, UnsupportedEncodingException;
 
     /**
@@ -84,13 +84,13 @@ public abstract class BagConverter
             String bagName, String constraintValue);
 
     /**
-    *
+    * 
     * @param profile user's profile
     * @param bagType class of list
-    * @param bagName name of list
+    * @param bagList list of intermine object IDs
     * @param constraintValue value of constraint
     * @return list of intermine IDs
     */
     public abstract List<Integer> getConvertedObjectIds(Profile profile, String bagType,
-            String bagName, String constraintValue);
+            List<Integer> bagList, String constraintValue);
 }
