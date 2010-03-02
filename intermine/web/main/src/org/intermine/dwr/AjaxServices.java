@@ -1340,7 +1340,8 @@ public class AjaxServices
      * @return converted list of orthologues
      * @throws UnsupportedEncodingException bad encoding
      */
-    public String convertObjects(String bagType, String bagName, String selectedValue) 
+    public String convertObjects(String bagType, String bagName, String param, 
+            String selectedValue) 
     throws UnsupportedEncodingException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpServletRequest request = getRequest();
@@ -1356,16 +1357,11 @@ public class AjaxServices
             bagQueryConfig.getAdditionalConverters(bagType);
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
-
-                String addparameter = PortalHelper.getAdditionalParameter(request,
+                String addparameter = PortalHelper.getAdditionalParameter(param,
                         additionalConverters.get(converterClassName));
-
                 if (StringUtils.isNotEmpty(addparameter)) {
-
                     BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig, 
                             converterClassName);
-
-
                 return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
                         selectedValue);
                 }

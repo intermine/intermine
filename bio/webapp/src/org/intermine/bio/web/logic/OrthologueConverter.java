@@ -72,7 +72,7 @@ public class OrthologueConverter extends BagConverter
      */
     public String getConvertedObjectFields(Profile profile, String bagType, String bagName,
             String organismName) {
-        StringBuffer orthologues = null;
+        StringBuffer orthologues = new StringBuffer();
         PathQuery pathQuery = constructPathQuery(organismName);
         pathQuery.addConstraint(bagType, Constraints.in(bagName));
         pathQuery.setView("Gene.homologues.homologue.primaryIdentifier");
