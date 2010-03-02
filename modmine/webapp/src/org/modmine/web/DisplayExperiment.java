@@ -132,6 +132,17 @@ public class DisplayExperiment
     }
 
     /**
+     * @return the submissions Ids
+     */
+    public List<String> getSubmissionsDccId() {
+        List<String> subDccIds = new ArrayList<String>();
+        for (Submission sub : submissions) {
+            subDccIds.add(sub.getdCCid().toString());
+        }
+        return subDccIds;
+    }
+
+    /**
      * @return submissions and a map of feature type to count
      */
     public Map<Submission, Map<String, Long>> getSubmissionsAndFeatureCounts() {
