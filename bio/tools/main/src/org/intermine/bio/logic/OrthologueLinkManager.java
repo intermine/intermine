@@ -73,6 +73,7 @@ public class OrthologueLinkManager
     private static InterMineAPI im = null;
 
 /**
+ * @param im intermine api
  * @param webProperties the web properties
  */
     public OrthologueLinkManager(InterMineAPI im, Properties webProperties) {
@@ -86,12 +87,13 @@ public class OrthologueLinkManager
     }
 
     /**
+     * @param im intermine api
      * @param webProperties the web properties
      * @return OrthologueLinkManager the link manager
      */
     public static synchronized OrthologueLinkManager getInstance(InterMineAPI im,
             Properties webProperties) {
-        if (orthologueLinkManager == null) {
+        if (orthologueLinkManager == null || DEBUG) {
             orthologueLinkManager = new OrthologueLinkManager(im, webProperties);
         }
         primeCache();
@@ -107,6 +109,7 @@ public class OrthologueLinkManager
         // if release version is different, update homologue mappings in cache
         if (timeSinceLastRefresh > ONE_HOUR || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
+
             updateMaps();
         }
     }
@@ -293,6 +296,7 @@ public class OrthologueLinkManager
             QueryClass qcHomologue = new QueryClass(Homologue.class);
             QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
             QueryClass qcDataset = new QueryClass(DataSet.class);
+            QueryClass qcGeneHomologue = new QueryClass(Gene.class);
 
             QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
             QueryField qfDataset = new QueryField(qcDataset, "title");
@@ -302,13 +306,14 @@ public class OrthologueLinkManager
 
             q.addToSelect(qfGeneOrganismName);
             q.addToSelect(qfDataset);
-            q.addToOrderBy(qfHomologueOrganismName);
+            q.addToSelect(qfHomologueOrganismName);
 
             q.addFrom(qcGene);
             q.addFrom(qcHomologue);
             q.addFrom(qcOrganism);
             q.addFrom(qcHomologueOrganism);
             q.addFrom(qcDataset);
+            q.addFrom(qcGeneHomologue);
 
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
@@ -324,11 +329,14 @@ public class OrthologueLinkManager
             QueryCollectionReference c3 = new QueryCollectionReference(qcHomologue, "dataSets");
             cs.addConstraint(new ContainsConstraint(c3, ConstraintOp.CONTAINS, qcDataset));
 
-            // gene.homologues.homologue.organism.shortName
-            QueryObjectReference c4 = new QueryObjectReference(qcHomologue, "organism");
-            cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS,
-                    qcHomologueOrganism));
+            // gene.homologues.homologue
+            QueryObjectReference c4 = new QueryObjectReference(qcHomologue, "homologue");
+            cs.addConstraint(new ContainsConstraint(c4, ConstraintOp.CONTAINS, qcGeneHomologue));
 
+            // gene.homologues.homologue.organism.shortName
+            QueryObjectReference c5 = new QueryObjectReference(qcGeneHomologue, "organism");
+            cs.addConstraint(new ContainsConstraint(c5, ConstraintOp.CONTAINS,
+                    qcHomologueOrganism));
             q.setConstraint(cs);
 
             Results results = im.getObjectStore().execute(q);
