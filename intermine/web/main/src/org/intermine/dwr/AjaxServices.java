@@ -90,12 +90,10 @@ import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.GridWidget;
 import org.intermine.web.logic.widget.HTMLWidget;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
-import org.intermine.web.logic.widget.config.GridWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -146,6 +144,11 @@ public class AjaxServices
         } catch (RuntimeException e) {
             processException(e);
         }
+    }
+
+    private static void processWidgetException(Exception e, String widgetId) {
+        String msg = "Failed to render widget: " + widgetId;
+        LOG.error(msg, e);
     }
 
     private static void processException(Exception e) {
@@ -783,7 +786,7 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
+            processWidgetException(e, widgetId);
         }
         return null;
     }
@@ -816,7 +819,7 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
+            processWidgetException(e, widgetId);
         }
         return null;
     }
@@ -853,7 +856,7 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
+            processWidgetException(e, widgetId);
         }
         return null;
     }
@@ -899,51 +902,7 @@ public class AjaxServices
                 }
             }
         } catch (RuntimeException e) {
-            processException(e);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param widgetId unique ID for each widget
-     * @param bagName name of list
-     * @param highlight for highlighting
-     * @param pValue pValue
-     * @param numberOpt numberOpt
-     * @param externalLink link to external datasource
-     * @param externalLinkLabel name of external datasource.
-     * @return enrichment widget
-     */
-    public static GridWidget getProcessGridWidget(String widgetId, String bagName,
-            String highlight, String pValue, String numberOpt, String externalLink,
-            String externalLinkLabel) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model = os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                    + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widgetConfig : widgets) {
-                if (widgetConfig.getId().equals(widgetId)) {
-                    GridWidgetConfig gridWidgetConfig = (GridWidgetConfig) widgetConfig;
-                    gridWidgetConfig.setExternalLink(externalLink);
-                    gridWidgetConfig.setExternalLinkLabel(externalLinkLabel);
-                    GridWidget gridWidget = new GridWidget(gridWidgetConfig, imBag, os, null,
-                            highlight, pValue, numberOpt);
-                    return gridWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processException(e);
+            processWidgetException(e, widgetId);
         }
         return null;
     }
