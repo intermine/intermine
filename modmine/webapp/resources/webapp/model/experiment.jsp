@@ -103,6 +103,7 @@ div#experimentFeatures {
 <c:set var="fly" value=""/>
 <c:set var="worm" value=""/>
 <c:set var="ncbiftp" value="ftp://ftp.ncbi.nlm.nih.gov"/>
+<c:set var="isPrimer" value="primer"/>
 
   <im:boxarea title="${exp.name}" stylename="gradientbox">
 
@@ -329,7 +330,17 @@ All GBrowse tracks generated for this experiment:
     <th class="sortable">Name</th>
     <th>Date</th>
       <c:forEach items="${exp.factorTypes}" var="factor">
-        <th class="sortable"><c:out value="${factor}"></c:out></th>
+
+<%-- TEMP FIX for long list of primers --%>
+           <c:choose>
+           <c:when test="${fn:contains(factor,isPrimer)}">
+           <th ><c:out value="${factor}"></c:out></th>
+           </c:when>
+          <c:otherwise>
+      <th class="sortable"><c:out value="${factor}"></c:out></th>
+          </c:otherwise>
+          </c:choose>
+
       </c:forEach>
     <th>Features, GBrowse and Data Files</th>
   </tr>
@@ -344,6 +355,7 @@ All GBrowse tracks generated for this experiment:
 <%-- FACTORS --%>	
 	  <c:forEach items="${exp.factorTypes}" var="factorType">
 	  <c:set var="thisTypeCount" value="0"></c:set>
+
        <td class="sorting">
       		<c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
         		<c:if test="${factor.type == factorType}">
