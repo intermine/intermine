@@ -176,7 +176,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                         } else { //it's a bag!
                             attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
                             if (!taxId.equalsIgnoreCase("*")) {
-                                taxIds = BioUtil.getOrganisms(os, bag, false);
+                                taxIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
 
                                 //don't display link if
                                 // a) not a bioentity (no reference to organism)
