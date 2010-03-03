@@ -120,7 +120,7 @@ public class AjaxServices
     private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
         + "numbers, spaces, and underscores.";
     private PortalHelper portalHelper = new PortalHelper();
-    
+
     /**
      * Creates a favourite Tag for the given templateName
      *
@@ -1336,12 +1336,13 @@ public class AjaxServices
      * another intermine instance
      * @param bagType class of bag
      * @param bagName name of bag
+     * @param param name of parameter value, eg. `orthologue`
      * @param selectedValue orthologue organism
      * @return converted list of orthologues
      * @throws UnsupportedEncodingException bad encoding
      */
-    public String convertObjects(String bagType, String bagName, String param, 
-            String selectedValue) 
+    public String convertObjects(String bagType, String bagName, String param,
+            String selectedValue)
     throws UnsupportedEncodingException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpServletRequest request = getRequest();
@@ -1360,7 +1361,7 @@ public class AjaxServices
                 String addparameter = PortalHelper.getAdditionalParameter(param,
                         additionalConverters.get(converterClassName));
                 if (StringUtils.isNotEmpty(addparameter)) {
-                    BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig, 
+                    BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig,
                             converterClassName);
                 return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
                         selectedValue);
