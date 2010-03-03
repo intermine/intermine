@@ -802,13 +802,10 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
     // LOCAL intermine
     // convert orthologues then post
     if (myForm.orthologueMapping[1].checked) {
-         alert("converting!");
         // convert orthologues
         AjaxServices.convertObjects(bagType, bagName, 'orthologue', selectedOrganism, function(identifiers) {
-            alert("converted!");
             if (identifiers != null && identifiers != '') {
                 myForm.externalids.value = identifiers;
-                alert(myForm.externalids.value);
                 myForm.orthologue.disabled = true;
                 myForm.submit();
             } else {
