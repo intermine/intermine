@@ -87,13 +87,10 @@ public class OrthologueConverter extends BagConverter
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String orthologue = row.get(0).getField().toString();
-            if (orthologues != null) {
+            if (orthologues.length() > 0) {
                 orthologues.append(",");
             }
             orthologues.append(orthologue);
-        }
-        if (orthologues == null) {
-            return null;
         }
         return orthologues.toString();
     }
