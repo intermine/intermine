@@ -211,9 +211,6 @@
       <displayer src="geneMicroArrayDisplayer.tile"/>
       <displayer src="/model/proteinInteractionGraph.jsp"/>
     </longdisplayers>
-    <bagdisplayers>
-      <displayer src="orthologueLinkDisplayer.tile"/>
-   </bagdisplayers>  
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
