@@ -184,8 +184,7 @@ public class AttributeLinkDisplayerController extends TilesAction
                                     continue;
                                 }
                                 // b) organism not present
-                                Integer taxIdInt = Integer.valueOf(taxId);
-                                if (!taxIds.contains(taxIdInt)) {
+                                if (!taxIds.contains(taxId)) {
                                     continue;
                                 }
                             }
