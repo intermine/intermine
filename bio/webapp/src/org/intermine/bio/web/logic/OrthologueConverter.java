@@ -77,9 +77,11 @@ public class OrthologueConverter extends BagConverter
     public String getConvertedObjectFields(Profile profile, String bagType, String bagName,
             String organismName) {
         StringBuffer orthologues = new StringBuffer();
+        String geneIdentifier = "Gene.homologues.homologue.primaryIdentifier";
         PathQuery pathQuery = constructPathQuery(organismName);
         pathQuery.addConstraint(bagType, Constraints.in(bagName));
-        pathQuery.setView("Gene.homologues.homologue.primaryIdentifier");
+        pathQuery.addConstraint(geneIdentifier, Constraints.isNotNull());
+        pathQuery.setView(geneIdentifier);
         pathQuery.syncLogicExpression("and");
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
@@ -91,6 +93,9 @@ public class OrthologueConverter extends BagConverter
                 orthologues.append(",");
             }
             orthologues.append(orthologue);
+        }
+        if (orthologues.length() == 0) {
+            return null;
         }
         return orthologues.toString();
     }
@@ -201,7 +206,7 @@ public class OrthologueConverter extends BagConverter
 
         return executor.execute(q);
     }
-    
+
     /**
      *If view contains joined organism, this will make sure, that
      * organism is joined as a inner join. Else constraint on organism doesn't work.
