@@ -802,10 +802,13 @@ function submitOrthologueLinkForm(bagType, bagName, index) {
     // LOCAL intermine
     // convert orthologues then post
     if (myForm.orthologueMapping[1].checked) {
+         alert("converting!");
         // convert orthologues
         AjaxServices.convertObjects(bagType, bagName, 'orthologue', selectedOrganism, function(identifiers) {
+            alert("converted!");
             if (identifiers != null && identifiers != '') {
                 myForm.externalids.value = identifiers;
+                alert(myForm.externalids.value);
                 myForm.orthologue.disabled = true;
                 myForm.submit();
             } else {
@@ -827,6 +830,7 @@ function checkOrthologueMapping(statusCount, remoteMine, localMine) {
 
     var selectedOrganism = orthologueSelect.options[orthologueSelect.selectedIndex].text;
     myForm.orthologue.value = selectedOrganism;
+    var selectLocal = false;
 
     // hide/show the radio button and name of intermine if they do/don't have orthologues
     if (localMapping != null && localMapping != "") {
@@ -839,6 +843,10 @@ function checkOrthologueMapping(statusCount, remoteMine, localMine) {
             display('orthologueMappingRemoteLabel' + statusCount, false);
             display('orthologueMappingRemoteRadio' + statusCount, false);
             display('orthologueMappingLocalRadio' + statusCount, false);
+            // check hidden radio button so that `local` mine is selected
+            // radio button is hidden but script needs this value to be checked
+            myForm.orthologueMapping[0].checked = false;
+            myForm.orthologueMapping[1].checked = true;
         }
     } else {
         // don't show radio button, there's only one option
@@ -846,7 +854,12 @@ function checkOrthologueMapping(statusCount, remoteMine, localMine) {
         display('orthologueMappingLocalLabel' + statusCount, false);
         display('orthologueMappingRemoteRadio' + statusCount, false);
         display('orthologueMappingLocalRadio' + statusCount, false);
+        //check hidden radio button so that `remote` mine is selected
+        // radio button is hidden but script needs this value to be checked
+        myForm.orthologueMapping[0].checked = true;
+        myForm.orthologueMapping[1].checked = false;
     }
+
     // if there is only one option, don't show a dropdown
 //    if (orthologueSelect.length == 1) {
 //        display('orthologueSelectDisplay' + statusCount, true);
