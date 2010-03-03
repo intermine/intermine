@@ -76,13 +76,13 @@ public class GFF3Exporter implements Exporter
     
     
     /**
-     * to read genome and modmine versions
+     * to read genome and project versions
      * @return header further info about versions
      */
     
-    public String getHeaderParts()
+    private String getHeaderParts()
     {
-        String header = null;
+        StringBuffer header = new StringBuffer();
 
         Properties props = PropertiesUtil.getProperties();
         String fV = props.getProperty("genomeVersion.fly");
@@ -90,20 +90,21 @@ public class GFF3Exporter implements Exporter
         String mV = props.getProperty("project.releaseVersion");
         
         if (fV != null && fV.length() > 0){
-            header = ", D. melanogaster genome v" + fV;
+            header.append(", D. melanogaster genome v" + fV);
         }
         if (wV != null && wV.length() > 0) {
-            header = header + ", C. elegans genome v" + wV;
+            header.append(", C. elegans genome v" + wV);
         }
         if (mV != null && mV.length() > 0) {
-            header = header + ", modMine r" + mV;
+            header.append(", " + this.sourceName + " " + mV);
         }
-        return header;
+        return header.toString();
     }
 
-    String HEADER = "##gff v3" + getHeaderParts();   
-    
-    
+    private String getHeader() {
+        return "##gff v3" + getHeaderParts();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -151,7 +152,7 @@ public class GFF3Exporter implements Exporter
             if (gff3Record != null) {
                 // have a chromsome ref and chromosomeLocation ref
                 if (!headerPrinted) {
-                    out.println(HEADER);
+                    out.println(getHeader());
                     headerPrinted = true;
                 }
 
@@ -255,7 +256,7 @@ public class GFF3Exporter implements Exporter
         if (gff3Record != null) {
             // have a chromsome ref and chromosomeLocation ref
             if (!headerPrinted) {
-                out.println(HEADER);
+                out.println(getHeader());
                 headerPrinted = true;
             }
 
