@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +29,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.results.PagedTable;
@@ -42,7 +42,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ModifyBagDetailsAction extends InterMineAction
 {
     private static int index = 0;
-
+    private PortalHelper portalHelper = new PortalHelper();
 
     /**
      * Forward to the correct method based on the button pressed
@@ -105,9 +105,8 @@ public class ModifyBagDetailsAction extends InterMineAction
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
-                    Class clazz = Class.forName(converterClassName);
-                    Constructor constructor = clazz.getConstructor();
-                    BagConverter bagConverter = (BagConverter) constructor.newInstance();
+                    BagConverter bagConverter = portalHelper.getBagConverter(im, 
+                            SessionMethods.getWebConfig(request), converterClassName);
                     WebResults result = bagConverter.getConvertedObjects(profile, 
                             imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
                     PagedTable pc = new PagedTable(result);
