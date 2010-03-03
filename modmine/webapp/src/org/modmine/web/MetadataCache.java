@@ -106,7 +106,7 @@ public class MetadataCache
 
     /**
      * Fetch experiment details for display.
-     * @param os the production objectstore
+     * @param os the production objectStore
      * @return a list of experiments
      */
     public static synchronized List<DisplayExperiment> getExperiments(ObjectStore os) {
@@ -130,23 +130,20 @@ public class MetadataCache
     }
 
     /**
-     * Fetch input/output file names per submission.
-     * @param os the production objectstore
-     * @return map
+     * Fetch unlocated feature types per submission.
+     * @param os the production objectStore
+     * @return map of unlocated feature types
      */
     public static synchronized Map<Integer, List<String>> getUnlocatedFeatureTypes(ObjectStore os) {
         if (submissionUnlocatedFeatureTypes == null) {
-            LOG.info("BEFORE readUNL ");
-            
             readUnlocatedFeatureTypes(os);
-            LOG.info("AFTER readUNL ");
         }
         return submissionUnlocatedFeatureTypes;
     }
 
     /**
      * Fetch input/output file names per submission.
-     * @param os the production objectstore
+     * @param os the production objectStore
      * @return map
      */
     public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
@@ -158,7 +155,7 @@ public class MetadataCache
 
     /**
      * Fetch number of input/output file per submission.
-     * @param os the production objectstore
+     * @param os the production objectStore
      * @return map
      */
     public static synchronized Map<Integer, Integer> getFilesPerSubmission(ObjectStore os) {
@@ -177,90 +174,122 @@ public class MetadataCache
     }
 
     /**
-     * Fetch which featureType are located for each sub
-     * TODO: the opposite (not located feature types)
-     * @param os the production objectstore
-     * @return map
+     * Fetch a list of file names for a given submission.
+     * @param os the objectStore
+     * @param dccId the modENCODE submission id
+     * @return a list of file names
      */
-    public static synchronized Map<Integer, List<String>> getLocatedFeatureTypes(ObjectStore os) {
-        if (submissionLocatedFeatureTypes == null) {
-            LOG.info("BEFORE readSubmissionLocatedFeature ");
-            readSubmissionLocatedFeature(os);
-            LOG.info("AFTER readSubmissionLocatedFeature ");
-            
+    public static synchronized List<String> getFilesByDccId(ObjectStore os,
+            Integer dccId) {
+        if (submissionFilesCache == null) {
+            readSubmissionFiles(os);
         }
-        return submissionLocatedFeatureTypes;
+        return new ArrayList<String>(submissionFilesCache.get(dccId));
     }
 
-    private static void readSubmissionFiles(ObjectStore os) {
-        //
-        long startTime = System.currentTimeMillis();
+    /**
+     * Fetch a list of file names for a given submission.
+     * @param dccId the modENCODE submission id
+     * @return a list of file names
+     */
+    public static synchronized List<GBrowseTrack> getTracksByDccId(Integer dccId) {
+        if (submissionTracksCache == null) {
+            readGBrowseTracks();
+        }
+        return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
+    }
+
+    /**
+     * Fetch a map from feature type to count for a given submission.
+     * @param os the objectStore
+     * @param dccId the modENCODE submission id
+     * @return a map from feature type to count
+     */
+    public static synchronized Map<String, Long> getSubmissionFeatureCounts(ObjectStore os,
+            Integer dccId) {
+        if (submissionFeatureCounts == null) {
+            readSubmissionFeatureCounts(os);
+        }
+        return submissionFeatureCounts.get(dccId);
+    }
+
+    /**
+     * Fetch a submission by the modENCODE submission ids
+     * @param os the objectStore
+     * @param dccId the modENCODE submission id
+     * @return the requested submission
+     * @throws ObjectStoreException if error reading database
+     */
+    public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
+    throws ObjectStoreException {
+        if (submissionIdCache == null) {
+            readSubmissionFeatureCounts(os);
+        }
+        return (Submission) os.getObjectById(submissionIdCache.get(dccId));
+    }
+
+    /**
+     * Get experiment information by name
+     * @param os the objectStore
+     * @param name of the experiment to fetch
+     * @return details of the experiment
+     * @throws ObjectStoreException if error reading database
+     */
+    public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name)
+    throws ObjectStoreException {
+        if (experimentCache == null) {
+            readExperiments(os);
+        }
+        return experimentCache.get(name);
+    }
+
+   
+    /**
+     * Method to obtain the map of unlocated feature types by submission id
+     *
+     * @param os the objectStore
+     * @return submissionUnlocatedFeatureTypes
+     */
+    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
         try {
-            Query q = new Query();
-            QueryClass qcSubmission = new QueryClass(Submission.class);
-            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
-            q.addFrom(qcSubmission);
-            q.addToSelect(qfDCCid);
 
-            QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
-            QueryField qfFileName = new QueryField(qcSubmissionData, "value");
-            QueryField qfDataType = new QueryField(qcSubmissionData, "type");
-            q.addFrom(qcSubmissionData);
-            q.addToSelect(qfFileName);
-            QueryValue fileType = new QueryValue(FILETYPE);
+            if (submissionUnlocatedFeatureTypes != null) {
+                return submissionUnlocatedFeatureTypes;
+            }
 
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER,
-                    qfDataType), ConstraintOp.MATCHES, fileType);
-            cs.addConstraint(sc);
+            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
 
-            // join the tables
-            QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
-            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
-                    qcSubmission);
-            cs.addConstraint(cc1);
+            
+            if (submissionLocatedFeatureTypes == null) {
+                readSubmissionLocatedFeature(os);
+            }
 
-            q.setConstraint(cs);
-            q.addToOrderBy(qfDCCid);
+            if (submissionFeatureCounts == null) {
+                readSubmissionFeatureCounts(os);
+            }
 
-            Results results = os.execute(q);
+            for (Integer subId : submissionFeatureCounts.keySet()) {
 
-            submissionFilesCache = new HashMap<Integer, List<String>>();
+                Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
+                Set<String> difference = new HashSet<String>(allFeatures);
+                difference.removeAll(submissionLocatedFeatureTypes.get(subId));
+                
+                if (!difference.isEmpty()){
+                    List <String> thisUnlocated = new ArrayList<String>();
 
-            Integer counter = 0;
-
-            Integer prevSub = new Integer(-1);
-            List<String> subFiles = new ArrayList<String>();
-            Iterator i = results.iterator();
-            while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
-
-                counter++;
-                Integer dccId = (Integer) row.get(0);
-                String fileName = (String) row.get(1);
-
-                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
-                    if (prevSub > 0) {
-                        if (counter.equals(results.size())) {
-                            prevSub = dccId;
-                            subFiles.add(fileName);
-                        }
-                        List<String> subFilesIn = new ArrayList<String>();
-                        subFilesIn.addAll(subFiles);
-                        submissionFilesCache.put(prevSub, subFilesIn);
-                        subFiles.clear();
+                    for (String fType : difference){
+                        thisUnlocated.add(fType);
                     }
-                    prevSub = dccId;
+                    submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
                 }
-                subFiles.add(fileName);
             }
         } catch (Exception err) {
             err.printStackTrace();
         }
-        long timeTaken = System.currentTimeMillis() - startTime;
-        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+        return submissionUnlocatedFeatureTypes;
     }
 
+    
     public static Map<String, List<GBrowseTrack>> getExperimentGBrowseTracks(ObjectStore os) {
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
 
@@ -298,76 +327,8 @@ public class MetadataCache
     }
 
 
-    /**
-     * Fetch a list of file names for a given submission.
-     * @param os the objectstore
-     * @param dccId the modENCODE submission id
-     * @return a list of file names
-     */
-    public static synchronized List<String> getFilesByDccId(ObjectStore os,
-            Integer dccId) {
-        if (submissionFilesCache == null) {
-            readSubmissionFiles(os);
-        }
-        return new ArrayList<String>(submissionFilesCache.get(dccId));
-    }
-
-    /**
-     * Fetch a list of file names for a given submission.
-     * @param dccId the modENCODE submission id
-     * @return a list of file names
-     */
-    public static synchronized List<GBrowseTrack> getTracksByDccId(Integer dccId) {
-        if (submissionTracksCache == null) {
-            readGBrowseTracks();
-        }
-        return new ArrayList<GBrowseTrack>(submissionTracksCache.get(dccId));
-    }
 
 
-    /**
-     * Fetch a map from feature type to count for a given submission.
-     * @param os the objectstore
-     * @param dccId the modENCODE submission id
-     * @return a map from feature type to count
-     */
-    public static synchronized Map<String, Long> getSubmissionFeatureCounts(ObjectStore os,
-            Integer dccId) {
-        if (submissionFeatureCounts == null) {
-            readSubmissionFeatureCounts(os);
-        }
-        return submissionFeatureCounts.get(dccId);
-    }
-
-    /**
-     * Fetch a submission by the modENCODE submission ids
-     * @param os the objectstore
-     * @param dccId the modENCODE submission id
-     * @return the requested submission
-     * @throws ObjectStoreException if error reading database
-     */
-    public static synchronized Submission getSubmissionByDccId(ObjectStore os, Integer dccId)
-    throws ObjectStoreException {
-        if (submissionIdCache == null) {
-            readSubmissionFeatureCounts(os);
-        }
-        return (Submission) os.getObjectById(submissionIdCache.get(dccId));
-    }
-
-    /**
-     * Get experiment information by name
-     * @param os the objectstore
-     * @param name of the experiment to fetch
-     * @return details of the experiment
-     * @throws ObjectStoreException if error reading database
-     */
-    public static synchronized DisplayExperiment getExperimentByName(ObjectStore os, String name)
-    throws ObjectStoreException {
-        if (experimentCache == null) {
-            readExperiments(os);
-        }
-        return experimentCache.get(name);
-    }
 
     /**
      * Fetch a map from project name to experiment.
@@ -542,7 +503,6 @@ public class MetadataCache
 
         Results results = os.execute(q);
 
-
         // for each classes set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
@@ -563,8 +523,75 @@ public class MetadataCache
         LOG.info("Primed submission cache, took: " + timeTaken + "ms");
     }
 
+    private static void readSubmissionFiles(ObjectStore os) {
+        //
+        long startTime = System.currentTimeMillis();
+        try {
+            Query q = new Query();
+            QueryClass qcSubmission = new QueryClass(Submission.class);
+            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+            q.addFrom(qcSubmission);
+            q.addToSelect(qfDCCid);
 
-    
+            QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
+            QueryField qfFileName = new QueryField(qcSubmissionData, "value");
+            QueryField qfDataType = new QueryField(qcSubmissionData, "type");
+            q.addFrom(qcSubmissionData);
+            q.addToSelect(qfFileName);
+            QueryValue fileType = new QueryValue(FILETYPE);
+
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER,
+                    qfDataType), ConstraintOp.MATCHES, fileType);
+            cs.addConstraint(sc);
+
+            // join the tables
+            QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
+            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
+                    qcSubmission);
+            cs.addConstraint(cc1);
+
+            q.setConstraint(cs);
+            q.addToOrderBy(qfDCCid);
+
+            Results results = os.execute(q);
+
+            submissionFilesCache = new HashMap<Integer, List<String>>();
+
+            Integer counter = 0;
+
+            Integer prevSub = new Integer(-1);
+            List<String> subFiles = new ArrayList<String>();
+            Iterator i = results.iterator();
+            while (i.hasNext()) {
+                ResultsRow row = (ResultsRow) i.next();
+
+                counter++;
+                Integer dccId = (Integer) row.get(0);
+                String fileName = (String) row.get(1);
+
+                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
+                    if (prevSub > 0) {
+                        if (counter.equals(results.size())) {
+                            prevSub = dccId;
+                            subFiles.add(fileName);
+                        }
+                        List<String> subFilesIn = new ArrayList<String>();
+                        subFilesIn.addAll(subFiles);
+                        submissionFilesCache.put(prevSub, subFilesIn);
+                        subFiles.clear();
+                    }
+                    prevSub = dccId;
+                }
+                subFiles.add(fileName);
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed file names cache, took: " + timeTaken + "ms");
+    }
+
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
@@ -605,86 +632,12 @@ public class MetadataCache
             Submission sub = (Submission) row.get(0);
             Class feat = (Class) row.get(1);
  
-//            addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
-//            feat.getName().replace("org.intermine.model.bio.", ""));
-  
             addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
                     TypeUtil.unqualifiedName(feat.getName()));
-            
-            
-//            submissionLocatedFeatureTypes.put(sub.getdCCid().toString(), 
-//                    feat.getName().replace("org.intermine.model.bio.", ""));            
         }     
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms");
-        
-        LOG.info("HERE THEY ARE: " + submissionLocatedFeatureTypes);
-        
     }
-    
-   
-    
-    /**
-     * Method to obtain the map of unlocated feature types by submission id
-     *
-     * @param os the objectStore
-     * @return submissionUnlocatedFeatureTypes
-     */
-    private static Map<Integer, List<String>> readUnlocatedFeatureTypes(ObjectStore os) {
-        try {
-
-            if (submissionUnlocatedFeatureTypes != null) {
-                return submissionUnlocatedFeatureTypes;
-            }
-
-            submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
-
-            
-            if (submissionLocatedFeatureTypes == null) {
-                readSubmissionLocatedFeature(os);
-            }
-
-            if (submissionFeatureCounts == null) {
-                readSubmissionFeatureCounts(os);
-            }
-
-            LOG.info("INTO readUNL " + submissionFeatureCounts.keySet());
-
-            
-            for (Integer subId : submissionFeatureCounts.keySet()) {
-
-                Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
-                LOG.info("INTO readUNL SFC keys:" + submissionFeatureCounts.keySet());
-                
-                
-                LOG.info("INTO readUNL difference 1 " + subId);
-                Set<String> difference = new HashSet<String>(allFeatures);
-                LOG.info("INTO readUNL difference 2 " + difference);
-
-                LOG.info("INTO readUNL difference ARG " + submissionLocatedFeatureTypes.get(subId));
-               
-                difference.removeAll(submissionLocatedFeatureTypes.get(subId));
-                
-                LOG.info("INTO readUNL difference 3 " + subId);
-                LOG.info("INTO readUNL difference-> " + difference);
-
-                if (!difference.isEmpty()){
-                    List <String> thisUnlocated = new ArrayList<String>();
-
-                    for (String fType : difference){
-                        LOG.info("INTO readUNL ftype: " + subId + "|" + fType);
-                        
-                        thisUnlocated.add(fType);
-                    }
-                    submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
-                }
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return submissionUnlocatedFeatureTypes;
-    }
-
     
     /**
      * adds an element to a list which is the value of a map
