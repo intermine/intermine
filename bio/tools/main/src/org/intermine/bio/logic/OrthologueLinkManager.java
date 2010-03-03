@@ -58,7 +58,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class OrthologueLinkManager
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static OrthologueLinkManager orthologueLinkManager = null;
     private static long lastCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
@@ -108,11 +108,9 @@ public class OrthologueLinkManager
      */
     public static synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
-        // FIXME hardcoded for testing.
         // if release version is different, update homologue mappings in cache
         if (timeSinceLastRefresh > ONE_HOUR || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
-
             updateMaps();
         }
     }
@@ -132,7 +130,7 @@ public class OrthologueLinkManager
                     newReleaseVersion = reader.readLine();
                 } else {
                     String msg = "Unable to retrieve release version for " + mine.getName();
-                    LOG.error(msg);
+                    LOG.info(msg);
                     continue;
                 }
             } catch (IOException e) {
@@ -175,12 +173,10 @@ public class OrthologueLinkManager
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             return reader;
         } catch (MalformedURLException e) {
-            LOG.error("Unable to access " + urlString);
-            e.printStackTrace();
+            LOG.info("Unable to access " + urlString);
             return null;
         } catch (IOException e) {
-            LOG.error("Unable to access " + urlString);
-            e.printStackTrace();
+            LOG.info("Unable to access " + urlString);
             return null;
         }
     }
@@ -260,10 +256,6 @@ public class OrthologueLinkManager
     }
 
     private static boolean setOrganisms(Mine mine) {
-
-        String mineName = mine.getName();
-        LOG.error("querying " + mineName + " for genes");
-
         Set<String> names = new HashSet();
         String webserviceURL = null;
         URL url;
@@ -277,12 +269,10 @@ public class OrthologueLinkManager
                 names.add(line);
             }
         } catch (MalformedURLException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
-            e.printStackTrace();
+            LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return false;
         } catch (IOException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
-            e.printStackTrace();
+            LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return false;
         }
 
@@ -307,7 +297,7 @@ public class OrthologueLinkManager
             QueryField qfDataset = new QueryField(qcDataset, "title");
             QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
             QueryField qfType = new QueryField(qcHomologue, "type");
-            
+
             q.setDistinct(true);
 
             q.addToSelect(qfGeneOrganismName);
@@ -347,11 +337,11 @@ public class OrthologueLinkManager
 
             // gene.homologues.type = 'orthologue'
             QueryExpression c6 = new QueryExpression(QueryExpression.LOWER, qfType);
-            cs.addConstraint(new SimpleConstraint(c6, ConstraintOp.EQUALS, 
+            cs.addConstraint(new SimpleConstraint(c6, ConstraintOp.EQUALS,
                     new QueryValue("orthologue")));
-            
+
             q.addToOrderBy(qfGeneOrganismName);
-            
+
             Results results = im.getObjectStore().execute(q);
             Iterator it = results.iterator();
             while (it.hasNext()) {
@@ -390,10 +380,6 @@ public class OrthologueLinkManager
     }
 
     private static void setOrthologues(Mine mine) {
-
-        String mineName = mine.getName();
-        LOG.error("querying " + mineName + " for orthologues");
-
         Map<String, Map<String, Set[]>> orthologues = new HashMap();
         URL url;
         String webserviceURL = null;
@@ -409,7 +395,7 @@ public class OrthologueLinkManager
                     String msg = "Couldn't process orthologue links for " + mine.getName()
                     + ".  Expected three columns, found " + bits.length + " columns instead."
                     + webserviceURL;
-                    LOG.error(msg);
+                    LOG.info(msg);
                     return;
                 }
                 String geneOrganismName = bits[0];
@@ -441,12 +427,10 @@ public class OrthologueLinkManager
                 datasets[1].add(dataset);
             }
         } catch (MalformedURLException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
-            e.printStackTrace();
+            LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return;
         } catch (IOException e) {
-            LOG.error("Unable to access " + mine.getName() + " at " + webserviceURL);
-            e.printStackTrace();
+            LOG.info("Unable to access " + mine.getName() + " at " + webserviceURL);
             return;
         }
         mine.setOrthologues(orthologues);
@@ -473,10 +457,6 @@ public class OrthologueLinkManager
 
         // remote mines
         for (Mine mine : mines.values()) {
-
-            String mineName = mine.getName();
-            LOG.error("testing " + mineName + " for orthologues");
-
             /* unique list of organisms available for conversion
              * orthologue --> mine (local/remote) --> datasets
              */
@@ -486,7 +466,7 @@ public class OrthologueLinkManager
             Map<String, Map<String, Set[]>> geneToOrthologues = mine.getOrthologues();
 
             if (geneToOrthologues.isEmpty()) {
-                LOG.error(mineName + " has no orthologues");
+                LOG.info(mine.getName() + " has no orthologues");
                 continue;
             }
 
