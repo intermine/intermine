@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebResults;
@@ -27,9 +28,12 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * @author "Xavier Watkins"
@@ -175,8 +179,50 @@ public class OrthologueConverter extends BagConverter
 
     @Override
     public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
-            String parameters) {
-        // TODO Auto-generated method stub
-        return null;
+            String parameters) throws ObjectStoreException, PathException {
+
+        PathQuery q = new PathQuery(model);
+        List<Path> view = PathQueryResultHelper.getDefaultView(type, model, webConfig,
+                "Gene.homologues.homologue", false);
+        view = getFixedView(view);
+        q.setViewPaths(view);
+
+        List<InterMineObject> objectList = im.getObjectStore().getObjectsByIds(fromList);
+
+        // gene
+        q.addConstraint("Gene", Constraints.in(objectList));
+
+        // organism
+        q.addConstraint("Gene.homologues.homologue.organism", Constraints.lookup(parameters));
+
+        // homologue.type = "orthologue"
+        q.addConstraint("Gene.homologues.type", Constraints.eq("orthologue"));
+
+        q.setConstraintLogic("A and B and C");
+        q.syncLogicExpression("and");
+        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
+
+        return executor.execute(q);
+    }
+    
+    /**
+     *If view contains joined organism, this will make sure, that
+     * organism is joined as a inner join. Else constraint on organism doesn't work.
+     * @param pathQuery
+     * @param joinPath
+     * @throws PathException
+     * */
+    private List<Path> getFixedView(List<Path> view) throws PathException {
+        String invalidPath = "Gene.homologues.homologue:organism";
+        String validPath = "Gene.homologues.homologue.organism";
+        List<Path> ret = new ArrayList<Path>();
+        for (Path path : view) {
+            if (path.toString().contains(invalidPath)) {
+                String newPathString = path.toString().replace(invalidPath, validPath);
+                path = new Path(path.getModel(), newPathString);
+            }
+            ret.add(path);
+        }
+        return ret;
     }
 }
