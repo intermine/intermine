@@ -55,15 +55,15 @@ public class QueryField implements QueryEvaluable
         } else {
             Method field = TypeUtil.getGetter(qc.getType(), fieldName);
             if (field == null) {
-                throw new IllegalArgumentException("Field " + fieldName + " not found in "
+                throw new IllegalArgumentException("Field '" + fieldName + "' not found in "
                         + qc.getType());
             }
             if (Collection.class.isAssignableFrom(field.getReturnType())) {
-                throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+                throw new IllegalArgumentException("Field '" + fieldName + "' is a collection type");
             }
             if (InterMineObject.class.isAssignableFrom(field.getReturnType())) {
-                throw new IllegalArgumentException("Field " + fieldName
-                        + " is an object reference");
+                throw new IllegalArgumentException("Field '" + fieldName
+                        + "' is an object reference");
             }
             this.qc = qc;
             this.fieldName = fieldName;
@@ -89,21 +89,21 @@ public class QueryField implements QueryEvaluable
         }
         Method field = TypeUtil.getGetter(qc.getType(), fieldName);
         if (field == null) {
-            throw new IllegalArgumentException("Field " + fieldName + " not found in "
+            throw new IllegalArgumentException("Field '" + fieldName + "' not found in "
                                            + qc.getType());
         }
         if (java.util.Collection.class.isAssignableFrom(field.getReturnType())) {
-            throw new IllegalArgumentException("Field " + fieldName + " is a collection type");
+            throw new IllegalArgumentException("Field '" + fieldName + "' is a collection type");
         }
         if (!(Number.class.isAssignableFrom(field.getReturnType())
                 || String.class.isAssignableFrom(field.getReturnType())
                 || Boolean.class.isAssignableFrom(field.getReturnType())
                 || java.util.Date.class.isAssignableFrom(field.getReturnType())
                 || field.getReturnType().isPrimitive())) {
-            throw new IllegalArgumentException("Field " + fieldName + " is an object reference");
+            throw new IllegalArgumentException("Field '" + fieldName + "' is an object reference");
         }
         this.qc = q;
-        this.fieldName = (String) q.getAliases().get(qc);
+        this.fieldName = q.getAliases().get(qc);
         secondFieldName = fieldName;
         Class fieldType = field.getReturnType();
         type = fieldType.isPrimitive() ? TypeUtil.instantiate(fieldType.toString()) : fieldType;
@@ -122,7 +122,7 @@ public class QueryField implements QueryEvaluable
             throw new NullPointerException("Subquery parameter is null");
         }
         this.qc = q;
-        this.fieldName = (String) q.getAliases().get(v);
+        this.fieldName = q.getAliases().get(v);
         if (this.fieldName == null) {
             throw new NullPointerException("Field not found in subquery");
         }
@@ -207,7 +207,7 @@ public class QueryField implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(Class cls) {
+    public void youAreType(@SuppressWarnings("unused") Class cls) {
         throw new ClassCastException("youAreType called on a QueryField");
     }
 
