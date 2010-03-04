@@ -12,7 +12,6 @@ package org.intermine.web.logic.widget;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -46,8 +45,8 @@ public class BenjaminiHochberg implements ErrorCorrection
     public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap) {
         numberOfTests = originalMap.size();
         SortableMap sortedMap = new SortableMap(originalMap);
-        // sort descending
-        sortedMap.sortValues(false, false);
+        // sort ascending
+        sortedMap.sortValues(false, true);
         this.originalMap = new LinkedHashMap(sortedMap);
     }
 
@@ -57,32 +56,42 @@ public class BenjaminiHochberg implements ErrorCorrection
      */
     @SuppressWarnings("unchecked")
     public void calculate(Double max) {
-        MathContext mc = new MathContext(10, RoundingMode.HALF_EVEN);
-
         adjustedMap = new HashMap();
-        BigDecimal adjustedP = new BigDecimal(0);
+
         int index = 0;
+        BigDecimal lastValue = new BigDecimal(-1);
 
         for (Map.Entry<String, BigDecimal> entry : originalMap.entrySet()) {
 
             String label = entry.getKey();
             BigDecimal p = entry.getValue();
+            BigDecimal adjustedP = p;
+            
+            /**
+             * equivalent p-values should have the same adjusted p-value.
+             *
+             * only increase the index if this value is different from the one we saw on the
+             * previous line
+             */
+            if (!p.equals(lastValue)) {
+                // new value, so increase index
+                index++;
+            }
 
             // largest value is not adjusted
-            if (index == 0) {
-                adjustedP = p;
-            } else {
+            if (index < numberOfTests - 1) {
                 // p-value * (n/ n - index)
                 BigDecimal n = new BigDecimal(numberOfTests);
                 BigDecimal divisor = n.subtract(new BigDecimal(index));
-                BigDecimal m = n.divide(divisor, mc);
+                BigDecimal m = n.divide(divisor, MathContext.DECIMAL128);
                 adjustedP = p.multiply(m);
             }
 
             if (adjustedP.doubleValue() < max.doubleValue()) {
+                // TODO we want to put all values in the map and let the javascript display or not
                 adjustedMap.put(label, adjustedP);
             }
-            index++;
+            lastValue = p;
         }
     }
 
