@@ -115,10 +115,6 @@ public class WebConfig
         digester.addSetProperties("webconfig/widgets/bagtabledisplayer");
         digester.addSetNext("webconfig/widgets/bagtabledisplayer", "addWidget");
 
-        digester.addObjectCreate("webconfig/widgets/griddisplayer", GridWidgetConfig.class);
-        digester.addSetProperties("webconfig/widgets/griddisplayer");
-        digester.addSetNext("webconfig/widgets/griddisplayer", "addWidget");
-
         digester.addObjectCreate("webconfig/widgets/htmldisplayer", HTMLWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/htmldisplayer");
         digester.addSetNext("webconfig/widgets/htmldisplayer", "addWidget");
