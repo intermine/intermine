@@ -221,7 +221,7 @@
       <fieldconfig fieldExpr="ontologyTerm.identifier" />
       <fieldconfig fieldExpr="ontologyTerm.name" />
       <fieldconfig fieldExpr="ontologyTerm.namespace" showInSummary="false" />
-      <fieldconfig fieldExpr="qualifier"/>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
@@ -231,6 +231,16 @@
   <class className="org.intermine.model.bio.GOEvidenceCode">
     <fields>
       <fieldconfig fieldExpr="code"/>
+    </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+  </class>
+  
+    <class className="org.intermine.model.bio.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
