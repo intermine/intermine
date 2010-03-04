@@ -126,33 +126,21 @@ public class FeaturesAction extends InterMineAction
                             Constraints.eq(experimentName));                    
                 }
             } else {
+                q.addView(featureType + ".primaryIdentifier");
+                q.addView(featureType + ".score");
+                q.addView(featureType + ".chromosome.primaryIdentifier");
+                q.addView(featureType + ".chromosomeLocation.start");
+                q.addView(featureType + ".chromosomeLocation.end");
+                q.addView(featureType + ".chromosomeLocation.strand");
+                q.addView(featureType + ".submissions.DCCid");
+                q.addConstraint(featureType + ".submissions.experiment.name", 
+                        Constraints.eq(experimentName));
+                q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
+                q.addOrderBy(featureType + ".chromosomeLocation.start"); 
 
-                if (hasPrimer){
-
-                    q.addView(featureType + ".primaryIdentifier");
-                    q.addView(featureType + ".score");
-                    q.addView(featureType + ".chromosome.primaryIdentifier");
-                    q.addView(featureType + ".chromosomeLocation.start");
-                    q.addView(featureType + ".chromosomeLocation.end");
-                    q.addView(featureType + ".chromosomeLocation.strand");
-                    q.addConstraint(featureType + ".submissions.experiment.name", 
-                            Constraints.eq(experimentName));
-                    q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                    q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-                } else {
-                    q.addView(featureType + ".primaryIdentifier");
-                    q.addView(featureType + ".score");
-                    q.addView(featureType + ".chromosome.primaryIdentifier");
-                    q.addView(featureType + ".chromosomeLocation.start");
-                    q.addView(featureType + ".chromosomeLocation.end");
-                    q.addView(featureType + ".chromosomeLocation.strand");
+                if (!hasPrimer) {
                     q.addView(featureType + ".submissions:experimentalFactors.type");
                     q.addView(featureType + ".submissions:experimentalFactors.name");
-                    q.addConstraint(featureType + ".submissions.experiment.name", 
-                            Constraints.eq(experimentName));
-                    q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                    q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-
                 }
             }
 
@@ -200,31 +188,20 @@ public class FeaturesAction extends InterMineAction
                 }
 
             } else {
+                q.addView(featureType + ".primaryIdentifier");
+                q.addView(featureType + ".score");
+                q.addView(featureType + ".chromosome.primaryIdentifier");
+                q.addView(featureType + ".chromosomeLocation.start");
+                q.addView(featureType + ".chromosomeLocation.end");
+                q.addView(featureType + ".chromosomeLocation.strand");
+                q.addView(featureType + ".submissions.DCCid");
+                q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
+                q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
+                q.addOrderBy(featureType + ".chromosomeLocation.start"); 
 
-                // temporary until we remove primers from factors
-                if (hasPrimer){
-                    q.addView(featureType + ".primaryIdentifier");
-                    q.addView(featureType + ".score");
-                    q.addView(featureType + ".chromosome.primaryIdentifier");
-                    q.addView(featureType + ".chromosomeLocation.start");
-                    q.addView(featureType + ".chromosomeLocation.end");
-                    q.addView(featureType + ".chromosomeLocation.strand");
-                    q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
-                    q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                    q.addOrderBy(featureType + ".chromosomeLocation.start"); 
-                } else {
-
-                    q.addView(featureType + ".primaryIdentifier");
-                    q.addView(featureType + ".score");
-                    q.addView(featureType + ".chromosome.primaryIdentifier");
-                    q.addView(featureType + ".chromosomeLocation.start");
-                    q.addView(featureType + ".chromosomeLocation.end");
-                    q.addView(featureType + ".chromosomeLocation.strand");
+                if (!hasPrimer) {
                     q.addView(featureType + ".submissions:experimentalFactors.type");
                     q.addView(featureType + ".submissions:experimentalFactors.name");
-                    q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
-                    q.addOrderBy(featureType + ".chromosome.primaryIdentifier"); 
-                    q.addOrderBy(featureType + ".chromosomeLocation.start"); 
                 }
             }
         }
