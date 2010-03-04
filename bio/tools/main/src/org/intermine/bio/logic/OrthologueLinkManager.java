@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
-import org.intermine.model.bio.Homologue;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -288,11 +287,19 @@ public class OrthologueLinkManager
 
             QueryClass qcGene = new QueryClass(Gene.class);
             QueryClass qcOrganism = new QueryClass(Organism.class);
-            QueryClass qcHomologue = new QueryClass(Homologue.class);
+            QueryClass qcHomologue = null;
             QueryClass qcHomologueOrganism = new QueryClass(Organism.class);
             QueryClass qcDataset = new QueryClass(DataSet.class);
             QueryClass qcGeneHomologue = new QueryClass(Gene.class);
 
+            try {
+                qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName() 
+                        + ".Homologue"));
+            } catch (ClassNotFoundException e) {
+                LOG.info("No orthologues found.", e);
+                return;
+            }
+            
             QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
             QueryField qfDataset = new QueryField(qcDataset, "title");
             QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
