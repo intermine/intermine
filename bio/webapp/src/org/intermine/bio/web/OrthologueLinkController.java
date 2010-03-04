@@ -28,9 +28,9 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.logic.Mine;
 import org.intermine.bio.logic.OrthologueLinkManager;
 import org.intermine.bio.web.logic.BioUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
-
 
 
 /**
@@ -39,8 +39,9 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class OrthologueLinkController  extends TilesAction
 {
-    private static final String IDENTIFIER_FIELD = "primaryIdentifier";
-    
+    private String identifierField = "primaryIdentifier";
+    private String alternativeIdentifierField = "ensemblIdentifier";
+
     /**
      * {@inheritDoc}
      */
@@ -56,17 +57,30 @@ public class OrthologueLinkController  extends TilesAction
         Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
 
-        String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", IDENTIFIER_FIELD);
+        // if gene.ensemblId is a field, use that instead
+        // FIXME this should come from config file instead
+
+        Class c = null;
+        try {
+            c = Class.forName(bag.getQualifiedType());
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (TypeUtil.getFieldInfo(c, alternativeIdentifierField) != null) {
+            identifierField = alternativeIdentifierField;
+        }
+
+
+        String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifierList", identifierList);
-        
+
         OrthologueLinkManager orthologueLinkManager
         = OrthologueLinkManager.getInstance(im, webProperties);
-        Collection<String> organismNamesInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, 
+        Collection<String> organismNamesInBag = BioUtil.getOrganisms(im.getObjectStore(), bag,
                 false, "shortName");
-        Map<Mine, Map<String, Set[]>> mines 
+        Map<Mine, Map<String, Set[]>> mines
             = orthologueLinkManager.getMines(organismNamesInBag);
-
-        // test if mine has organisms in our list
         if (!mines.isEmpty()) {
             request.setAttribute("mines", mines);
         }
