@@ -438,6 +438,7 @@
     </fields>
     <longdisplayers>
       <displayer src="pathwayLinkDisplayer.tile"/>
+      <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
 
