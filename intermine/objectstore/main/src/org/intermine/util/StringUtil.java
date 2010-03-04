@@ -470,7 +470,7 @@ public class StringUtil
      * @return a Map
      */
     public static Map<String, String> serializedSortOrderToMap(String str) {
-        Map returnMap = new LinkedHashMap<String, String>();
+        Map<String, String> returnMap = new LinkedHashMap<String, String>();
         String[] strArray = str.split("&");
         for (String path: strArray) {
             returnMap.put(StringUtils.split(path, "[]=")[0], StringUtils.split(
