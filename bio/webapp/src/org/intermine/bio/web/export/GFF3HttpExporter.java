@@ -92,7 +92,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             }
             PrintWriter writer = HttpExportUtil.getPrintWriterForClient(request, out);
             List<String> paths = new LinkedList<String>();
-            if (form != null) {
+            if (form != null && form.getPathsString() != null) {
                 for (String path : StringUtil.serializedSortOrderToMap(form.getPathsString())
                         .keySet()) {
                     paths.add(path.replace(':', '.'));
