@@ -1,0 +1,124 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="ratmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <property name="dataLoader.allowMultipleErrors" value="false"/>
+
+  <sources>
+	
+    <source name="rat-gff" type="rgd-gff">
+      <property name="gff3.taxonId" value="10116"/>
+      <property name="gff3.seqDataSourceName" value="Rat Genome Sequencing Consortium"/>
+      <property name="gff3.dataSourceName" value="RGD"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="src.data.dir" location="../ratdata/genome/gff"/>
+    </source>
+
+		<source name="rat-genes" type="rgd-gene">
+			<property name="organisms" value="10116" />
+			<property name="src.data.file" location="../ratdata/genome/genes/rgd_genes.xml" />
+		</source>
+		
+		<source name="rat-qtls" type="rgd-qtl">
+			<property name="organisms" value="10116" />
+			<property name="src.data.file" location="../ratdata/qtl/qtls/rgd_qtls.xml" />
+		</source>
+		
+		<source name="rat-qtl-gff" type="qtl-gff">
+			<property name="gff3.taxonId" value="10116" />
+      <property name="gff3.seqDataSourceName" value="Rat Genome Sequencing Consortium"/>
+      <property name="gff3.dataSourceName" value="RGD"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="src.data.dir" location="../ratdata/qtl/gff"/>
+    </source>
+
+    <source name="rat-chromosome-fasta" type="fasta" dump="true">
+      <property name="fasta.className" value="org.flymine.model.genomic.Chromosome"/>
+      <property name="fasta.synonymSource" value="RGD"/>
+      <property name="fasta.dataSetTitle" value="Rat Genome Sequencing Consortium"/>
+      <property name="fasta.taxonId" value="10116"/>
+      <property name="src.data.dir" location="../ratdata/genome/fasta"/>
+    </source>
+
+    <source name="rat-kegg-pathway" type="rgd-kegg-pathway">
+              <property name="src.data.dir" location="../ratdata/kegg"/>
+              <property name="kegg.organisms" value="10116"/>
+    </source>
+
+    <source name="uniprot-rat" type="uniprot">
+       <property name="uniprot.organisms" value="10116"/>
+       <property name="src.data.dir" location="../ratdata/uniprot/"/>
+			 <property name="createinterpro" value="true" />
+    </source>
+
+		<source name="interpro" type="interpro">
+		</source>
+
+    <source name="go" type="go">
+      <property name="src.data.file" location="../ratdata/go/gene_ontology.1_2.obo"/>
+    </source>
+
+
+    <source name="go-annotation" type="go-annotation" dump="true">
+      <property name="ontologyfile" location="../ratdata/go/gene_ontology.1_2.obo"/>
+      <property name="src.data.dir" location="../ratdata/go-annotation/"/>
+    </source>
+ 
+    <source name="rat-mp" type="rgd-mp-ont">
+      <property name="src.data.file" location="../ratdata/mp/MPheno_OBO.obo"/>
+    </source>
+
+    <source name="rat-mp-annot" type="rgd-mp-annot" dump="true">
+      <property name="ontologyfile" location="../ratdata/mp/MPheno_OBO.obo"/>
+      <property name="src.data.dir" location="../ratdata/mp-annotation/"/>
+    </source>
+
+    <source name="rat-pw" type="rgd-pw-ont">
+      <property name="src.data.file" location="../ratdata/pw/pathway.obo"/>
+    </source>
+
+    <source name="rat-pw-annot" type="rgd-pw-annot" dump="true">
+      <property name="ontologyfile" location="../ratdata/pw/pathway.obo"/>
+      <property name="src.data.dir" location="../ratdata/pw-annotation/"/>
+    </source>
+
+    <source name="rat-do" type="rgd-do-ont">
+      <property name="src.data.file" location="../ratdata/do/rgd_do.obo"/>
+    </source>
+    
+    <source name="rat-do-annot" type="rgd-do-annot" dump="true">
+      <property name="ontologyfile" location="../ratdata/do/rgd_do.obo"/>
+      <property name="src.data.dir" location="../ratdata/do-annotation/"/>
+    </source>
+   
+    <source name="update-publications" type="update-publications">
+      <property name="src.data.file" location="build/publications.xml"/>
+    </source>
+
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+
+
+    </sources>
+
+  <post-processing>
+
+  <post-process name="create-references"/>
+		<post-process name="create-chromosome-locations-and-lengths" />
+
+	  <post-process name="transfer-sequences" dump="true"/>
+		<post-process name="synonym-update" />
+		<post-process name="create-overlap-relations-flymine"/>
+
+	  <!-- this runs the postprocessing steps in all sources -->
+	  <post-process name="do-sources"/>
+
+	  <post-process name="summarise-objectstore"/>
+	  <post-process name="create-autocomplete-index"/>
+		<post-process name="create-attribute-indexes" />
+		
+  </post-processing>
+
+</project>
