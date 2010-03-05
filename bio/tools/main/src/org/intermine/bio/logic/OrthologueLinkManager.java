@@ -57,7 +57,7 @@ import org.intermine.util.PropertiesUtil;
  */
 public class OrthologueLinkManager
 {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static OrthologueLinkManager orthologueLinkManager = null;
     private static long lastCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
