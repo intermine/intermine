@@ -41,6 +41,7 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
+import org.intermine.web.struts.TableExportForm;
 
 /**
  * Generate queries for overlaps of submission features and overlaps with gene flanking regions.
@@ -79,6 +80,12 @@ public class FeaturesAction extends InterMineAction
         String dccId = null;
         String experimentName = null;
 
+        boolean doGzip = false;
+        if (request.getParameter("gzip") != null
+                && request.getParameter("gzip").equalsIgnoreCase("true")) {
+            doGzip = true;
+        }
+        
         PathQuery q = new PathQuery(model);
 
         boolean hasPrimer = false;
@@ -233,7 +240,13 @@ public class FeaturesAction extends InterMineAction
                 throw new RuntimeException("unknown export format: " + format);
             }
 
-            exporter.export(pt, request, response, null);
+            TableExportForm exportForm = null;
+            if (format.equals("gff3")) {
+                
+                exportForm = new TableExportForm();
+                exportForm.setDoGzip(doGzip);
+            }
+            exporter.export(pt, request, response, exportForm);
 
             // If null is returned then no forwarding is performed and
             // to the output is not flushed any jsp output, so user
