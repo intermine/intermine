@@ -1,0 +1,4 @@
+*.log
+.svn/
+build/main
+build/tmp

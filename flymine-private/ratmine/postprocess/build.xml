@@ -1,0 +1,7 @@
+<project name="ratmine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for ratmine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>

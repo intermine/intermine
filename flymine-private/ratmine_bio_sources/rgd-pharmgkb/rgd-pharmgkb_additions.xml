@@ -1,0 +1,5 @@
+<classes>
+	<class name="Gene" is-interface="true">
+		<attribute name="pharmGKBidentifier" type="java.lang.String" />
+	</class>
+</classes>
