@@ -97,6 +97,8 @@
       <fieldconfig fieldExpr="protocol.type"/>
       <fieldconfig fieldExpr="protocol.name"/>
       <fieldconfig fieldExpr="submission.title"/>
+      <fieldconfig fieldExpr="protocol.description" sectionOnRight="true" sectionTitle="Description" openByDefault="true"
+                   showInSummary="false" showInResults="false" showInInlineCollection="false" doNotTruncate="true"/>
     </fields>
   </class>
 
