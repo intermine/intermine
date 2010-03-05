@@ -278,6 +278,9 @@
      <fieldconfig fieldExpr="confidence"/>
      <fieldconfig fieldExpr="role"/>
     </fields>
+    <longdisplayers>
+      <displayer src="/model/cytoscapeInteractionsDisplayer.jsp"/>
+    </longdisplayers>
   </class>
   <class className="org.intermine.model.bio.InteractionExperiment">
     <fields>
