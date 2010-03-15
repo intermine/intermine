@@ -17,3 +17,5 @@ if ! test -z "$OLD_DIRS" ; then
     echo "`date`  Compressed to $ARC_NAME.tar.rz of size `ls -lh $ARC_NAME.tar.rz | sed -e "s/^.*bruiser flymine \([^ ]*\) .*$/\1/"`" 1>&2
     echo "`date`  Compressed to $ARC_NAME.tar.rz of size `ls -lh $ARC_NAME.tar.rz | sed -e "s/^.*bruiser flymine \([^ ]*\) .*$/\1/"`"
 fi
+
+rm /home/bruiser/public_html/tests/trunk/intermine/all/executeLog
