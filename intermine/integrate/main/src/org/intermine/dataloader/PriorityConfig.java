@@ -100,11 +100,12 @@ public class PriorityConfig
                 String className = key.substring(0, key.indexOf("."));
                 String fieldName = key.substring(key.indexOf(".") + 1);
                 ClassDescriptor cld = model.getClassDescriptorByName(className);
-                Class clazz = cld.getType();
                 if (cld == null) {
-                    throw new IllegalArgumentException("Class '" + key + "' not found in model, "
-                            + "check priorities configuration file.");
+                    throw new IllegalArgumentException("Class '" + className + "' not found in "
+                            + "model, check priorities configuration file - bad entry is "
+                            + key + ".");
                 }
+                Class clazz = cld.getType();
                 FieldDescriptor field = cld.getFieldDescriptorByName(fieldName);
                 if ((field != null) && (!field.isCollection())) {
                     getPriorities(clazz, fieldName);
