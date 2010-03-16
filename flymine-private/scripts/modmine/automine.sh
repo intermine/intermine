@@ -425,7 +425,9 @@ function fillChado {
 # run stag and add the dccid
 
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
-echo "filling $CHADODB db with $DCCID..."
+echo -n "filling $CHADODB db with $DCCID: "
+date "+%d%b%Y %H:%M"
+
 echo "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
 
 EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
