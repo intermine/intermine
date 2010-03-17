@@ -14,6 +14,13 @@ CSS MUST FOLLOW THE PATTERN:
     padding:0px;
     margin:0px;}
 
+.alignleft {
+float: left;
+}
+.alignright {
+float: right;
+}
+
 html, body {
   margin: 0; padding: 0;
   font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif; font-size: 100%; /* NN4 */}
@@ -55,7 +62,7 @@ table td {
 
 li {
     margin-left: 30px;}
-    
+
 
 /* =HEADER TOP
 --------------------------*/
@@ -75,7 +82,7 @@ li {
 #header h1 a:visited {
   margin: 0px; padding:0px;margin-top:5px;
   color:#FFF; font-size: 1.4em; font-weight: bold; float:left;}
-  
+
 #header p {
   margin: 20px 0 0 5px;;
   color:white; font-size: 1em; font-weight: normal;float:left;}
@@ -110,7 +117,7 @@ div#menucontainer {
 }
 
 ul#nav{
-	font-size: 12px;
+    font-size: 12px;
     clear:both;
     margin-left:10px;margin-bottom:0px;}
 
@@ -157,7 +164,7 @@ div#quicksearch {
     clear:both; float:left; width:100%; white-space:nowrap;
     padding:0px; margin:0; height:36px;
     color:#CCC; font-size: 12px;}
-    
+
 #submenufixed {
     clear:both; width:1000px; white-space:nowrap;
     padding:0px; margin:0; height:36px;
@@ -166,10 +173,10 @@ div#quicksearch {
 #submenudiv {
     width:990px;
 }
-    
+
 ul#submenulist li a {
     float:left;}
-    
+
 ul#submenulist, ul#submenulist li {
     padding: 0px; margin:0px; line-height:3;
     list-style: none;}
@@ -191,9 +198,9 @@ ul#submenulist li {
     clear:both;}
 
 #pagecontentcontainer {
-	/*background: url('../theme/blue_grad.png') repeat-x bottom #F5F0FF;*/margin:0;
-	clear:both;
-} 
+    /*background: url('../theme/blue_grad.png') repeat-x bottom #F5F0FF;*/margin:0;
+    clear:both;
+}
 
 #pagecontent {
   clear:both;
@@ -241,7 +248,7 @@ ul#submenulist li {
   padding: 5px 15px 5px 15px;
   line-height: 1.14286;
   background-color: transparent;
-  font-size: 14px; font-weight:bold; 
+  font-size: 14px; font-weight:bold;
 }
 
 div.templateLine {
@@ -287,8 +294,8 @@ div.templateDetails {
 div#navtrail{
     padding:10px 10px 0 0;
     margin:0 10px 0 10px;
-    font-size:0.7em; text-align:right}
-    
+    font-size:0.7em;}
+
 div#navtrail a:link, div#navtrail a:visited{
     border-bottom:1px dotted #049;
 }
