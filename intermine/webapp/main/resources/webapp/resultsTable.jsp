@@ -138,7 +138,7 @@
         <c:if test="${pagedResults.allSelected != -1}">
           <c:set var="selectedColumnResultElementId" value="${subRow[pagedResults.allSelected].value.id}"/>
         </c:if>
-          
+
         <c:forEach var="column" items="${pagedResults.columns}" varStatus="status2">
 
           <c:choose>
@@ -153,7 +153,7 @@
 
                   <%-- test whether already selected and highlight if needed --%>
                   <c:set var="cellClass" value="${resultElement.id}"/>
-                      
+
                   <%-- highlight cell if selected or if whole column selected and element isnt de-selected --%>
                   <c:choose>
                     <c:when test="${pagedResults.allSelected == -1}">
@@ -165,9 +165,9 @@
                       <c:if test="${resultElement.id == selectedColumnResultElementId && empty pagedResults.selectionIds[resultElement.id] && empty bagName}">
                         <c:set var="cellClass" value="${cellClass} highlightCell"/>
                       </c:if>
-                    </c:otherwise> 
+                    </c:otherwise>
                   </c:choose>
-                      
+
                   <td id="cell,${status2.index},${status.index},${subRow[column.index].value.type}"
                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
@@ -212,7 +212,7 @@
   <tr>
   <td colspan="${colcount}">
   <html:hidden property="tableid" value="${pagedResults.tableid}" />
-  <c:choose>    
+  <c:choose>
     <c:when test="${empty inlineTable}">
       <b>Selected:</b><span id="selectedIdFields">
       <c:choose>
@@ -230,7 +230,7 @@
     </c:when>
     <c:otherwise>
       <c:set var="numRows" value="${pagedResults.exactSize}"/>
-      
+
       <c:choose>
         <c:when test="${pagedResults.pageSize >= numRows}">
           <c:choose>
@@ -248,7 +248,7 @@
       </c:choose>
     </c:otherwise>
   </c:choose>
-  
+
   </td>
   </tr>
   </tfoot>
@@ -264,7 +264,7 @@
         jQuery('#addToBag').attr('disabled','');
     }
     if (jQuery('#removeFromBag')) {
-    	jQuery('#removeFromBag').attr('disabled','');
+        jQuery('#removeFromBag').attr('disabled','');
     }
     </script>
     </c:if>
