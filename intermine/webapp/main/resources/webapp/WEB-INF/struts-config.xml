@@ -388,8 +388,6 @@
     </action>
     <action path="/initWebSearchableList" type="org.intermine.web.struts.WebSearchableListController">
     </action>
-    <action path="/initObjectView" type="org.intermine.web.struts.ObjectViewController">
-    </action>
     <action path="/initObjectTrail" type="org.intermine.web.struts.ObjectTrailController">
     </action>
     <action path="/initHtmlHead" type="org.intermine.web.struts.HtmlHeadController">
