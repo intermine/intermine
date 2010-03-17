@@ -73,10 +73,18 @@
       <div id="pagecontentmax">
     </c:otherwise>
     </c:choose>
-    <fmt:message key="${pageName}.tab" var="tab" />
-  <!-- Nav trail -->
-  <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
+
   <div id="navtrail">
+
+  <!-- contact us -->
+  <p class="alignleft">
+  <a href="#" onclick="showContactForm();return false"><fmt:message key="feedback.link"/></a>
+  </p>
+
+    <!-- Nav trail -->
+  <fmt:message key="${pageName}.tab" var="tab" />
+  <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
+    <p class="alignright"> 
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
     <c:if test="${! empty tab }">
       &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
@@ -88,8 +96,11 @@
       </c:if>
     </c:if>
     <im:contextHelp/>
-  </div>
+</p>
   </c:if>
+ </div>
+
+<div style="clear: both;"></div>
 
       <%-- Render messages --%>
       <tiles:get name="errorMessagesContainers"/>
@@ -101,7 +112,7 @@
       <tiles:insert name="hints.tile">
         <tiles:put name="pageName" value="${pageName}"/>
       </tiles:insert>
-      
+
       <tiles:get name="body"/>
 
       <%-- Render messages --%>
