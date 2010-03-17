@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,7 +69,8 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap();
     private Set<String> synonyms = new HashSet();
     private Map<String, Map<String, String>> config = new HashMap();
-    
+    private Set<String> taxonIds = null;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -141,6 +143,16 @@ public class BioGridConverter extends BioFileConverter
             }
         }
     }
+
+    /**
+     * Sets the list of taxonIds that should be imported if using split input files.
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setBiogridOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
+    }
+
 
     /**
      * Handles xml file
@@ -220,30 +232,32 @@ public class BioGridConverter extends BioFileConverter
            // <interactorList><interactor id="4"><organism ncbiTaxId="7227">
             } else if (qName.equals("organism") && stack.peek().equals("interactor")) {
                 String taxId = attrs.getValue("ncbiTaxId");
-                try {
-                    interactorHolder.organismRefId = getOrganism(taxId);
-                } catch (ObjectStoreException e) {
-                    LOG.error("couldn't store organism:" + taxId);
-                    throw new RuntimeException("Could not store organism " + taxId, e);
-                }
-                Map<String, String> identifierConfigs = config.get(taxId);
-                
-                if (identifierConfigs != null) {
-                    for (Map.Entry<String, String> entry : identifierConfigs.entrySet()) {
-                        try {
-                            boolean validGene 
-                            = setGene(taxId, interactorHolder, entry.getKey(), entry.getValue());
-                            if (validGene) {
-                                break;
+
+                if ((taxonIds == null || taxonIds.isEmpty()) || taxonIds.contains(taxId))  {
+                    try {
+                        interactorHolder.organismRefId = getOrganism(taxId);
+                    } catch (ObjectStoreException e) {
+                        LOG.error("couldn't store organism:" + taxId);
+                        throw new RuntimeException("Could not store organism " + taxId, e);
+                    }
+                    Map<String, String> identifierConfigs = config.get(taxId);
+
+                    if (identifierConfigs != null) {
+                        for (Map.Entry<String, String> entry : identifierConfigs.entrySet()) {
+                            try {
+                                boolean validGene = setGene(taxId, interactorHolder, entry.getKey(),
+                                        entry.getValue());
+                                if (validGene) {
+                                    break;
+                                }
+                            } catch (ObjectStoreException e) {
+                                String msg = "couldn't store gene for organism:" + taxId;
+                                LOG.error(msg);
+                                throw new RuntimeException(msg, e);
                             }
-                        } catch (ObjectStoreException e) {
-                            LOG.error("couldn't store gene for organism:" + taxId);
-                            throw new RuntimeException("Could not store gene for organism " + taxId,
-                                    e);
                         }
                     }
                 }
-
             /*********************************** INTERACTIONS ***********************************/
 
             //<interactionList><interaction><experimentList><experimentRef>
@@ -430,7 +444,7 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        private boolean setGene(String taxonId, InteractorHolder ih, String identifierField, 
+        private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
                                 String db)
         throws ObjectStoreException, SAXException {
 
@@ -438,18 +452,18 @@ public class BioGridConverter extends BioFileConverter
 
             String identifier = null;
             String label = identifierField;
-           
+
             if (db.equals("shortLabel")) {
                 identifier = ih.shortLabel;
             } else {
                 identifier = ih.xrefs.get(db);
             }
-            
+
             if (taxonId.equals("7227") && resolver != null) {
                 identifier = resolveGene(resolver, taxonId, identifier);
                 label = "primaryIdentifier";
             }
-            
+
             // no valid identifiers
             if (identifier == null) {
                 ih.valid = false;
