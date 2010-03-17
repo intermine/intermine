@@ -127,7 +127,7 @@
     <source name="tiffin" type="tiffin">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.seqDataSourceName" value="Sanger"/>
+      <property name="gff3.seqDataSourceName" value="Sanger Institute"/>
       <property name="src.data.dir" location="/shared/data/tiffin/tiffin1.2"/>
     </source>
     <source name="tiffin-expression" type="tiffin-expression">
@@ -151,6 +151,9 @@
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/go-annotation/gene_ontology.obo"/>
+    </source>
+    <source name="uberon" type="uberon">
+      <property name="src.data.file" location="/shared/data/uberon/uberon.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/go-annotation/gene_ontology.obo"/>
@@ -509,7 +512,7 @@
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
-      <property name="gff3.seqDataSourceName" value="Sanger"/>
+      <property name="gff3.seqDataSourceName" value="Sanger Institute"/>
       <property name="src.data.dir" location="/shared/data/miRNA/miRanda/current"/>
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
