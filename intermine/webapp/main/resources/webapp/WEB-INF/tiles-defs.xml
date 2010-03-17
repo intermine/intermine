@@ -196,7 +196,7 @@
   <definition name="mymine.tile" path="/mymine.jsp" controllerUrl="/initMymine.do"/>
   <definition name="objectTrail.tile" path="/objectTrail.jsp" controllerUrl="/initObjectTrail.do"/>
   <definition name="htmlHead.tile" path="/htmlHead.jsp" controllerUrl="/initHtmlHead.do"/>  
-  <definition name="objectView.tile" path="/objectView.jsp" controllerUrl="/initObjectView.do"/>
+  <definition name="objectView.tile" path="/objectView.jsp"/>
   <definition name="objectDetailsPage.tile" path="/objectDetails.jsp" controllerUrl="/initObjectDetails.do"/>
   <definition name="tree.tile" path="/tree.jsp" controllerUrl="/initTree.do"/>
   <definition name="bag.tile" path="/bag.jsp"/>
