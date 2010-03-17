@@ -56,11 +56,10 @@
               </c:forEach>
               <c:forEach items="${LEAF_DESCRIPTORS_MAP[thisRowObject]}" var="cld2">
                 <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
-                  <c:set var="cld2" value="${cld2}" scope="request"/>
-                  <c:set var="backup" value="${object}"/>
-                  <c:set var="object" value="${thisRowObject}" scope="request"/>
-                  <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}"/>
-                  <c:set var="object" value="${backup}" scope="request"/>
+                  <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}">
+                    <tiles:put name="cld" value="${cld2}" />
+                    <tiles:put name="object" value="${thisRowObject}" />
+                 </tiles:insert>
                 </c:if>
               </c:forEach>
             </td>
@@ -103,24 +102,24 @@
 </table>
 <%-- if field isn't in webconfig, we don't know how to build the summary query --%>
 <c:choose>
-	<c:when test="${!empty collection.table.fieldConfigs}">
-		<div class="refSummary">
-		  [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-		    <c:choose>
-	    	  <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
-        		<fmt:message key="results.showallintable"/>
-		      </c:when>
-		      <c:otherwise>
-    	    	<fmt:message key="results.showintable"/>
-	    	  </c:otherwise>
-    		</c:choose>
-		  </html:link>]
-		</div>
-	</c:when>
-	<c:otherwise>
-		<!-- class not configured in webconfig-model.xml -->
-		[<fmt:message key="results.showintable"/>]
-	</c:otherwise>
+    <c:when test="${!empty collection.table.fieldConfigs}">
+        <div class="refSummary">
+          [<html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+            <c:choose>
+               <c:when test="${collection.size > WEB_PROPERTIES['inline.table.size']}">
+                <fmt:message key="results.showallintable"/>
+              </c:when>
+              <c:otherwise>
+                <fmt:message key="results.showintable"/>
+              </c:otherwise>
+            </c:choose>
+          </html:link>]
+        </div>
+    </c:when>
+    <c:otherwise>
+        <!-- class not configured in webconfig-model.xml -->
+        [<fmt:message key="results.showintable"/>]
+    </c:otherwise>
 </c:choose>
-	
+
 <!-- /objectDetailsCollectionTable -->

@@ -16,7 +16,6 @@
 
 <c:set var="detailsLink" value="/objectDetails?id=${resultElement.id}&amp;trail=${param.trail}|${resultElement.id}" scope="request"/>
 
-
   <c:choose>
     <c:when test="${empty leafClds}">
       <fmt:message key="objectDetails.nullField" var="nullFieldText"/>
@@ -87,9 +86,10 @@
         </c:forEach>
         <c:forEach items="${leafClds}" var="cld">
           <c:if test="${WEBCONFIG.types[cld.name].tableDisplayer != null}">
-            <div>
-              <c:set var="cld" value="${cld}" scope="request"/>
-              <tiles:insert page="${WEBCONFIG.types[cld.name].tableDisplayer.src}"/>
+            <div>xxx${cld}xxx
+              <tiles:insert page="${WEBCONFIG.types[cld.name].tableDisplayer.src}">
+                <tiles:put name="cld" value="${cld}" />
+              </tiles:insert>
             </div>
           </c:if>
         </c:forEach>
