@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-    <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
@@ -346,8 +346,8 @@ swapInputs('subclass');
 
 <c:if test="${(!empty bags) || (!editingNode.collection && !editingNode.reference &&
     !empty editingNode.parent && editingNode.type != 'boolean')}">
-<div id="optionstoggle" style="background-color:#1863B8;color:#FFF;padding:5px;margin:15px 0;cursor:pointer;"><img id='advanced_toggle' src="images/undisclosed.gif"/>&nbsp;<strong>Advanced Options</strong></div>
-<div id="options${editingNode.fieldName}" style="display:none; background-color:#00F3FF;padding:5px">
+<div id="optionstoggle" style="background-color:#1863B8;color:#FFF;padding:5px;margin:15px 0;cursor:pointer;"><img id='advanced_toggle' src="images/disclosed.gif"/>&nbsp;<strong>Advanced Options</strong></div>
+<div id="options${editingNode.fieldName}" style="background-color:#00F3FF;padding:5px">
 
     <c:if test="${!empty bags}">
 
@@ -377,12 +377,6 @@ swapInputs('subclass');
     </html:option>
 </c:forEach>
 </html:select>
-<tiles:insert name="tagSelect.tile">
-<tiles:put name="type" value="bag" />
-<tiles:put name="onChangeFunction" value="filterByTag" />
-<tiles:put name="selectId" value="bag3" />
-<tiles:put name="disabled" value="true" />
-</tiles:insert>
 <html:submit property="bag"  styleId="bagSubmit" disabled="true">
 <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 </html:submit>
@@ -425,7 +419,7 @@ swapInputs('subclass');
             <fmt:message key="query.innerJoin">
               <fmt:param value="${editingPath.secondLastClassDescriptor.unqualifiedName}"/>
               <fmt:param value="${editingPath.lastClassDescriptor.unqualifiedName}"/>
-            </fmt:message>                 
+            </fmt:message>
             <img border="0" src="images/join_inner.png" width="13" height="13" title="Inner join"/>
           </label>
         </li>

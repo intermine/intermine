@@ -37,7 +37,7 @@
 
     <div class="body">
       <div class="resultsTableTemplateHeader">
-      
+
       <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
 
       <%-- show the description only if we ve run a query (rather than viewing
@@ -56,10 +56,10 @@
             </c:choose>
             </span>
           </div>
-       </c:if>      
+       </c:if>
      </c:if>
-              
-     <c:if test="${!empty pathQuery.description || !empty param.templateQueryDescription}">  
+
+     <c:if test="${!empty pathQuery.description || !empty param.templateQueryDescription}">
        <div class="templateDescription">
          <c:choose>
            <c:when test="${!empty param.templateQueryDescription}">
@@ -71,14 +71,14 @@
          </c:choose>
          </div>
      </c:if>
-      
+
      <c:if test="${!empty param.bagName}">
        <div>Results for list:  <c:out value="${param.bagName}"/></div>
      </c:if>
-      
+
        </div>
      </div>
- 
+
 
 <c:choose>
   <c:when test="${resultsTable.estimatedSize == 0}">
@@ -101,7 +101,7 @@
 <script type="text/javascript" src="js/toolbar.js"></script>
 <script type="text/javascript" charset="utf-8">
     jQuery(document).ready(function () {
-        jQuery(".tb_button").click(function () { 
+        jQuery(".tb_button").click(function () {
             toggleToolBarMenu(this);
         });
     })
@@ -208,7 +208,7 @@
     <tiles:insert name="addColumn.tile">
       <tiles:put name="table" value="${param.table}" />
       <tiles:put name="trail" value="${param.trail}" />
-    </tiles:insert> 
+    </tiles:insert>
     <hr>
     <a href="javascript:hideMenu('tool_bar_item_addcolumn')" ><fmt:message key="confirm.cancel"/></a>
 </div>
