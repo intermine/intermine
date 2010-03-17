@@ -44,6 +44,7 @@ public class BioGridConverterTest extends ItemsTestCase
 
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                             .getResourceAsStream("BioGridConverterTest_src.xml"));
+        converter.setBiogridOrganisms("10116 6239 7227");
         converter.process(reader);
         converter.close();
 
