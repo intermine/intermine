@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +87,10 @@ public class QueryResultService extends WebService
 
     private void forward(PathQuery pathQuery, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
-        List<String> columnNames = pathQuery.getViewStrings();
+        List<String> columnNames = new ArrayList<String>();
+        for (String viewString : pathQuery.getViewStrings()) {
+            columnNames.add(pathQuery.getPathDescription(viewString));
+        }
         if (getFormat() == WebService.HTML_FORMAT) {
             MemoryOutput mout = (MemoryOutput) output;
             request.setAttribute("columnNames", columnNames);
