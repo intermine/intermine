@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.template.TemplateQuery;
@@ -45,6 +46,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -241,14 +243,19 @@ public class ProfileManager
         q.setConstraint(new ContainsConstraint(new QueryObjectReference(qc, "userProfile"),
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
-        Results bags;
         try {
-            bags = uosw.execute(q, 0, false, false, true);
+            // TODO ig
+            Results bags = uosw.execute(q, 0, false, false, true);
             for (Iterator i = bags.iterator(); i.hasNext();) {
-                List row = (List) i.next();
+                ResultsRow row = (ResultsRow) i.next();
                 Integer bagId = (Integer) row.get(0);
-                InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                savedBags.put(bag.getName(), bag);
+                SavedBag savedBag = (SavedBag) row.get(1);
+                if (StringUtils.isBlank(savedBag.getName())) {
+                    LOG.warn("Failed to load bag with blank name on login for user: " + username);
+                } else {
+                    InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                    savedBags.put(bag.getName(), bag);
+                }
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
