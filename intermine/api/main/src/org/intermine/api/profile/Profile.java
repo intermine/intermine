@@ -41,9 +41,9 @@ public class Profile
     protected String username;
     protected Integer userId;
     protected String password;
-    protected Map<String, SavedQuery> savedQueries = new TreeMap();
-    protected Map<String, InterMineBag> savedBags = new TreeMap();
-    protected Map<String, TemplateQuery> savedTemplates = new TreeMap();
+    protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
+    protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
 
     protected Map queryHistory = new ListOrderedMap();
     private boolean savingDisabled;
@@ -287,7 +287,7 @@ public class Profile
      * @param bag the InterMineBag object
      */
     public void saveBag(String name, InterMineBag bag) {
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             throw new RuntimeException("No name specified for the list to save.");
         }
         savedBags.put(name, bag);
@@ -345,7 +345,7 @@ public class Profile
                     + " exist: " + oldName);
         }
         if (savedBags.containsKey(newName)) {
-            throw new ProfileAlreadyExistsException("Attempting to renamte a bag to a new name that"
+            throw new ProfileAlreadyExistsException("Attempting to rename a bag to a new name that"
                     + " already exists: " + newName);
         }
 

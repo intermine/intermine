@@ -71,7 +71,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
             ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
-        this.name = name;
+        checkAndSetName(name);
         this.type = type;
         this.description = description;
         this.dateCreated = dateCreated;
@@ -100,7 +100,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.savedBagId = savedBagId;
         ObjectStore uos = uosw.getObjectStore();
         SavedBag savedBag = (SavedBag) uos.getObjectById(savedBagId, SavedBag.class);
-        this.name = savedBag.getName();
+        checkAndSetName(savedBag.getName());
         this.type = savedBag.getType();
         this.description = savedBag.getDescription();
         this.dateCreated = savedBag.getDateCreated();
@@ -220,13 +220,18 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public void setName(String name) throws ObjectStoreException {
-        if (StringUtils.isEmpty(name)) {
-            throw new RuntimeException("No name specified for the list to save.");
-        }
-        this.name = name;
+        checkAndSetName(name);
         store();
     }
 
+    // Always set the name via this method to avoid saving bags with blank names
+    private void checkAndSetName(String name) {
+        if (StringUtils.isBlank(name)) {
+            throw new RuntimeException("Attempt to create a list with a blank name.");
+        }
+        this.name = name;
+    }
+    
     /**
      * Return the description of this bag.
      * @return the description
