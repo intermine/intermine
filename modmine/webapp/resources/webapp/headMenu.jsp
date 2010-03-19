@@ -152,7 +152,7 @@
         </c:forTokens>
         <c:if test="${pageName == 'begin'}">
           <li>
-            <a href="http://blog.modencode.org/?page_id=69">What is ${WEB_PROPERTIES['project.title']}?</a>
+            <a href="http://blog.modencode.org/modmine/help">${WEB_PROPERTIES['project.title']} help</a>
           </li>
         </c:if>
         </ul>
