@@ -232,17 +232,17 @@ public class ChadoDBConverter extends BioDBConverter
                 if (returnProcessor == null) {
                     returnProcessor = processor;
                 } else {
-                    throw new RuntimeException("completed processors list contains two objects of "
+                    throw new RuntimeException("Completed processors list contains two objects of "
                                                + "type: " + cls.getName());
                 }
             }
         }
 
         if (returnProcessor == null) {
-            throw new RuntimeException("can't find a " + cls.getName() + " before "
+            throw new RuntimeException("Can't find `" + cls.getName() + "` before `"
                                        + this.getClass().getName()
-                                       + " in the list of completed processors - must run a "
-                                       + cls.getName() + " first");
+                                       + "` in the list of completed processors - must run "
+                                       + cls.getName() + " first.");
         }
         return returnProcessor;
     }

@@ -391,8 +391,8 @@ public class CalculateLocations
         osw.commitTransaction();
     }
 
-    
-    
+
+
     /**
      * For each LocatedSequenceFeature, if it has a Location on a Chromosome, set the
      * LocatedSequenceFeature.chromosomeLocation reference *if* the reference is not already set.
@@ -413,7 +413,7 @@ public class CalculateLocations
         boolean storeLastFeature = true;  // will get set to false if duplicate locations seen
         Location lastLoc = null;
         int count = 0;
-        
+
         while (resIter.hasNext()) {
             ResultsRow rr = (ResultsRow) resIter.next();
 
@@ -445,8 +445,8 @@ public class CalculateLocations
         osw.commitTransaction();
     }
 
-    
-    
+
+
     private void setChromosomeReferencesAndStore(LocatedSequenceFeature lsf, Location loc,
                                                  Integer chrId) throws Exception {
         LocatedSequenceFeature lsfClone =
@@ -668,7 +668,7 @@ public class CalculateLocations
 
         /**
          * @see Object#toString()
-         * {@inheritDoc}
+         * @return String representation of location object
          */
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start

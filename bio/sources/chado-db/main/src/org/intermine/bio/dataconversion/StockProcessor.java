@@ -112,17 +112,16 @@ public class StockProcessor extends ChadoProcessor
             String stockCenterUniqueName, Item organismItem) throws ObjectStoreException {
         if (stockItems.containsKey(uniqueName)) {
             return stockItems.get(uniqueName);
-        } else {
-            Item stock = getChadoDBConverter().createItem("Stock");
-            stock.setAttribute("primaryIdentifier", uniqueName);
-            stock.setAttribute("secondaryIdentifier", description);
-            stock.setAttribute("type", stockType);
-            stock.setAttribute("stockCenter", stockCenterUniqueName);
-            stock.setReference("organism", organismItem);
-            stockItems.put(uniqueName, stock);
-            getChadoDBConverter().store(stock);
-            return stock;
         }
+        Item stock = getChadoDBConverter().createItem("Stock");
+        stock.setAttribute("primaryIdentifier", uniqueName);
+        stock.setAttribute("secondaryIdentifier", description);
+        stock.setAttribute("type", stockType);
+        stock.setAttribute("stockCenter", stockCenterUniqueName);
+        stock.setReference("organism", organismItem);
+        stockItems.put(uniqueName, stock);
+        getChadoDBConverter().store(stock);
+        return stock;
     }
 
     private void storeStocks(Map<Integer, FeatureData> features, Integer lastFeatureId,
@@ -196,8 +195,7 @@ public class StockProcessor extends ChadoProcessor
         String organismIdsString = getOrganismIdsString();
         if (StringUtils.isEmpty(organismIdsString)) {
             return "";
-        } else {
-            return "feature.organism_id IN (" + organismIdsString + ")";
         }
+        return "feature.organism_id IN (" + organismIdsString + ")";
     }
 }
