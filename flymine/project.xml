@@ -12,8 +12,7 @@
       <property name="organisms" value="7227"/>
       <property name="dataSourceName" value="FlyBase"/>
       <property name="processors"
-                value="org.intermine.bio.dataconversion.FlyBaseProcessor
-                       org.intermine.bio.dataconversion.StockProcessor"/>
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor org.intermine.bio.dataconversion.StockProcessor"/>
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
@@ -107,6 +106,10 @@
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/shared/data/kegg/current"/>
       <property name="kegg.organisms" value="7227 9606"/>
+    </source>
+    <source name="kegg-orthologues" type="kegg-orthologues">
+      <property name="src.data.dir" location="/shared/data/kegg/orthologues"/>
+      <property name="kegg.organisms" value="7227 9606 4932 7955 10090 10116 6239"/>
     </source>
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/shared/data/flyatlas/current"/>
