@@ -200,8 +200,7 @@ public class KeggOrthologuesConverter extends BioFileConverter
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.addToCollection("evidence", getEvidence());
-        String type = "orthologue";
-        homologue.setAttribute("type", type);
+        homologue.setAttribute("type", "homologue");
         try {
             store(homologue);
         } catch (ObjectStoreException e) {
