@@ -168,7 +168,7 @@ if (&checkdir_exists($split_dir)==0) {
     open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
     while (my $newline = <F>) {
       #if a new entry is found we might want to keep it
-      if ($newline =~ /<organism key=/) {
+      if ($newline =~ /<organism/) {
         $in_organism = 1;
       } elsif ($newline =~ m!</organism>!) {
         $in_organism = 0;
