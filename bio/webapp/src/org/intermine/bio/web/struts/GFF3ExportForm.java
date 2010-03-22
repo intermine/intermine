@@ -10,6 +10,8 @@ package org.intermine.bio.web.struts;
  *
  */
 
+import java.util.Set;
+
 import org.intermine.web.struts.TableExportForm;
 
 /**
@@ -18,5 +20,26 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class GFF3ExportForm extends TableExportForm
 {
+    private Set<Integer> taxIds = null;
 
+
+    /**
+     * Set the organisms set
+     *
+     * @param set of taxon ids
+     */
+    public void setOrganisms(Set taxIds) {
+        this.taxIds = taxIds;
+    }
+
+    /**
+     * Get the organisms set
+     *
+     * @return a set of taxon ids
+     */
+    public Set<Integer> getOrganisms() {
+        return taxIds;
+    }
+
+    
 }
