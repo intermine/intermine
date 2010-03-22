@@ -11,16 +11,10 @@ package org.intermine.util;
  */
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
@@ -45,20 +39,20 @@ public class XmlBindingTest extends XMLTestCase {
         setIds(unmarshalled);
         binding.marshal(unmarshalled, sw);
 
-        BufferedReader originalReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("testmodel_data.xml")));
-        StringBuffer originalBuffer = new StringBuffer();
+        // read the original into a string
+        BufferedReader originalReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("testmodel_data.xml"), "UTF8"));
+        StringWriter originalWriter = new StringWriter();
         int c = originalReader.read();
         while (c != -1) {
-            originalBuffer.append((char) c);
+            originalWriter.write(c);
             c = originalReader.read();
         }
-        //System.out.println("Original: " + originalBuffer.toString());
+        //System.out.println("Original: " + originalWriter.toString());
         //System.out.println("Generated: " + sw.toString());
-        Diff diff = new Diff(originalBuffer.toString(), sw.toString());
+        Diff diff = new Diff(originalWriter.toString(), sw.toString());
         DetailedDiff detail = new DetailedDiff(diff);
         detail.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        assertTrue(detail.getAllDifferences().toString() + ": Original: " + originalBuffer.toString() + ", Generated: " + sw.toString(), detail.similar());
-        original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
+        assertTrue(detail.getAllDifferences().toString() + ": Original: " + originalWriter.toString() + ", Generated: " + sw.toString(), detail.similar());
     }
 
 
