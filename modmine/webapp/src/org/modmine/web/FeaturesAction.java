@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -27,6 +28,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
+import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
@@ -62,7 +64,7 @@ public class FeaturesAction extends InterMineAction
      *  an exception
      */
 
-    //    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+        private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     public ActionForward execute(ActionMapping mapping,
             ActionForm form,
@@ -79,21 +81,26 @@ public class FeaturesAction extends InterMineAction
         String action = (String) request.getParameter("action");
         String dccId = null;
         String experimentName = null;
-
+        
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
                 && request.getParameter("gzip").equalsIgnoreCase("true")) {
             doGzip = true;
         }
         
+        Set <Integer> taxIds = new HashSet<Integer>();
+        
         PathQuery q = new PathQuery(model);
-
+        
         boolean hasPrimer = false;
 
         if (type.equals("experiment")) {
             experimentName = (String) request.getParameter("experiment");
             DisplayExperiment exp = MetadataCache.getExperimentByName(os, experimentName);
 
+            Set<String> organisms = exp.getOrganisms();
+            taxIds = getTaxonIds(organisms);
+            
             List<String> expSubsIds = exp.getSubmissionsDccId();
             Set<String> allUnlocated = new HashSet<String>();
 
@@ -110,8 +117,10 @@ public class FeaturesAction extends InterMineAction
             q.setDescription(description);
 
             for (String subId : expSubsIds){
+//                LOG.info("XXXEE1" + subId + "|" + MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
                 if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(new Integer(subId))){
                     allUnlocated.addAll(MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
+//                    LOG.info("XXXEE" + subId + "|" + MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
                 }
             }
 
@@ -147,6 +156,11 @@ public class FeaturesAction extends InterMineAction
             Submission sub = MetadataCache.getSubmissionByDccId(os, new Integer(dccId));
             List<String>  unlocFeatures = MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(dccId));
 
+            Integer organism = sub.getOrganism().getTaxonId();
+            taxIds.add(organism);
+            
+//            LOG.info("XXX" + unlocFeatures);
+            
             hasPrimer = false;
 
             // to build the query description
@@ -230,8 +244,10 @@ public class FeaturesAction extends InterMineAction
             TableExportForm exportForm = null;
             if (format.equals("gff3")) {
                 
-                exportForm = new TableExportForm();
+                exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
+                ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
+            
             }
             exporter.export(pt, request, response, exportForm);
 
@@ -272,5 +288,22 @@ public class FeaturesAction extends InterMineAction
         }
         return ef;
     }
+
+
+    private Set<Integer> getTaxonIds(Set<String> organisms) {
+        Set<Integer> taxIds = new HashSet<Integer>();
+        for (String name : organisms){
+            if (name.equalsIgnoreCase("D. melanogaster")){
+                taxIds.add(7227);
+            }
+            if (name.equalsIgnoreCase("C. elegans")){
+                taxIds.add(6239);
+            }            
+        }
+        return taxIds;
+    }
+
+
+
 }
 

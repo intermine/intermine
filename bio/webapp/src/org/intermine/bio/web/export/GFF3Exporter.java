@@ -54,6 +54,7 @@ public class GFF3Exporter implements Exporter
     private IntPresentSet exportedIds = new IntPresentSet();
     private List<String> attributesNames;
     private String sourceName;
+    private Set<Integer> organisms;
 
     /**
      * Constructor.
@@ -66,12 +67,13 @@ public class GFF3Exporter implements Exporter
      * @param sourceName name of Mine to put in GFF source column
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
-            List<String> attributesNames, String sourceName) {
+            List<String> attributesNames, String sourceName, Set<Integer> organisms) {
         this.out = out;
         this.featureIndexes = indexes;
         this.soClassNames = soClassNames;
         this.attributesNames = attributesNames;
         this.sourceName = sourceName;
+        this.organisms = organisms;
     }
     
     
@@ -83,26 +85,42 @@ public class GFF3Exporter implements Exporter
     private String getHeaderParts()
     {
         StringBuffer header = new StringBuffer();
-
         Properties props = PropertiesUtil.getProperties();
-        String fV = props.getProperty("genomeVersion.fly");
-        String wV = props.getProperty("genomeVersion.worm");
-        String mV = props.getProperty("project.releaseVersion");
-        
-        if (fV != null && fV.length() > 0){
-            header.append(", D. melanogaster genome v" + fV);
+
+        if (organisms != null) {
+            for (Integer taxId : organisms){
+                if (taxId == 7227){
+                    String fV = props.getProperty("genomeVersion.fly");
+                    if (fV != null && fV.length() > 0){
+                        header.append("\n##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7227");
+                        header.append("\n##genome-build FlyBase r"+ fV + "(drosophila)");
+                    }
+                }
+            }
+            for (Integer taxId : organisms){
+                if (taxId == 6239){
+                    String wV = props.getProperty("genomeVersion.worm");
+                    if (wV != null && wV.length() > 0) {
+                        header.append("\n##species http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=6239");
+                        header.append("\n##genome-build WormBase r"+ wV + "(worm)");
+                    }
+                }
+            }
+
+            // display only if organism is set
+            String mV = props.getProperty("project.releaseVersion");
+            if (mV != null && mV.length() > 0) {
+                header.append("\n#" + this.sourceName + " " + mV);
+                header.append("\n# #index-subfeatures");
+            }
+
         }
-        if (wV != null && wV.length() > 0) {
-            header.append(", C. elegans genome v" + wV);
-        }
-        if (mV != null && mV.length() > 0) {
-            header.append(", " + this.sourceName + " " + mV);
-        }
+
         return header.toString();
     }
 
     private String getHeader() {
-        return "##gff v3" + getHeaderParts();
+        return "##gff-version 3" + getHeaderParts();
     }
 
     /**
