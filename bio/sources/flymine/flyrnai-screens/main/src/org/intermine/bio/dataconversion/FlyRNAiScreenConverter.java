@@ -43,7 +43,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
     private Map<String, Item> screenMap = new HashMap<String, Item>();
-    private Map<String, String> resultValues = new HashMap<String, String>();
     private static final String TAXON_ID = "7227";
     // access to current file for error messages
     private String fileName;
@@ -62,6 +61,16 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         resolverFactory = new FlyBaseIdResolverFactory("gene");
+    }
+    private static final Map<String, String> RESULTS_KEY = new HashMap();
+
+    static {
+        RESULTS_KEY.put("N", "Not a Hit");
+        RESULTS_KEY.put("Y", "A Hit");
+        RESULTS_KEY.put("S", "A Strong Hit");
+        RESULTS_KEY.put("M", "A Medium Hit");
+        RESULTS_KEY.put("W", "A Weak Hit");
+        RESULTS_KEY.put("NS", "Not Screened");
     }
 
     /**
@@ -110,13 +119,15 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         }
 
         if (!noHits.isEmpty() || !noDetails.isEmpty()) {
-            throw new RuntimeException("Screen names from hits file and details file did not match."
+            String msg = "Screen names from hits file and details file did not match."
                     + (noHits.isEmpty()
                        ? ""
-                       : "  No hits found for screen detail: " + noHits)
+                       : "  No hits found for screen detail: '" + noHits + "'")
                     + (noDetails.isEmpty()
                        ? ""
-                       : "  No details found for screen hit: " + noDetails));
+                       : "  No details found for screen hit: '" + noDetails + "'");
+            //throw new RuntimeException(msg);
+            LOG.error(msg);
         }
         super.close();
     }
@@ -138,16 +149,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             lineNumber++;
             String [] line = (String[]) tsvIter.next();
             if (!readingData) {
-                if (line.length == 2) {
-                    // this is the key to result symbol, put them in a map.  Strip off 'A '.
-                    if (!line[0].equals("") && !line[1].equals("")) {
-                        String value = line[1].trim();
-                        if (value.startsWith("A ")) {
-                            value = value.substring(2);
-                        }
-                        resultValues.put(line[0].trim(), value);
-                    }
-                } else if (line[0].trim().equals("Amplicon")) {
+                if (line[0].trim().equals("Amplicon")) {
                     readingData = true;
                     headerLength = line.length;
                     screens = new Item[headerLength - 2];
@@ -160,8 +162,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 }
             } else {
                 if (line.length != headerLength) {
-                    String msg = "Incorrect number of entries in line number " + lineNumber 
-                    + ": " + line.toString() 
+                    String msg = "Incorrect number of entries in line number " + lineNumber
+                    + ": " + line.toString()
                     + ".  Should be " + headerLength + " but is " + line.length + " instead."
                     + "  content:" + line[0];
                     throw new RuntimeException(msg);
@@ -194,7 +196,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 
                 // loop over screens to create results
                 for (int j = 0; j < screens.length; j++) {
-                    String resultValue = resultValues.get(line[j + 2].trim());
+                    String resultValue = RESULTS_KEY.get(line[j + 2].trim());
                     if (resultValue == null) {
                         throw new RuntimeException("Unrecogised result symbol '" + line[j + 2]
                             + "' in line: " + Arrays.asList(line));
@@ -230,7 +232,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 }
                 store(amplicon);
             }
-            
+
         }
 
         for (Item gene : genes.values()) {
@@ -255,6 +257,11 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                           + line.length + ": " + Arrays.asList(line));
             }
             String pubmedId = line[0].trim();
+
+            if (pubmedId.equals("Pubmed_ID")) {
+                // skip header
+                continue;
+            }
             Item publication = getPublication(pubmedId);
 
             String screenName = line[2].trim();
