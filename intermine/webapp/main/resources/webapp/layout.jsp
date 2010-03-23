@@ -28,13 +28,11 @@
 <!-- for microsoft -->
 <meta name="msvalidate.01" content="${WEB_PROPERTIES['searchengines.msn']}" />
 
+<html:base/>
 
+<fmt:message key="${pageName}.noFollow" var="noFollow" />
 
-    <html:base/>
-
-    <fmt:message key="${pageName}.noFollow" var="noFollow" />
-
-    <c:if test="${noFollow == 'true'}">
+  <c:if test="${noFollow == 'true'}">
       <META NAME="ROBOTS" CONTENT="NOFOLLOW"/>
   </c:if>
 
@@ -58,7 +56,6 @@
     </c:if>
   </c:forTokens>
 
-
   <!-- Page header -->
   <tiles:insert name="headMenu.tile">
     <tiles:put name="fixedLayout" value="${fixedLayout}"/>
@@ -77,14 +74,16 @@
   <div id="navtrail">
 
   <!-- contact us -->
-  <p class="alignleft">
-  <a href="#" onclick="showContactForm();return false"><fmt:message key="feedback.link"/></a>
-  </p>
+
+    <p id="contactUsLink" style="display:none;" class="alignleft">
+    <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
+    </p>
+
 
     <!-- Nav trail -->
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:if test="${tab != '???.tab???' && tab != '???tip.tab???'}">
-    <p class="alignright"> 
+    <p class="alignright">
     <html:link href="${WEB_PROPERTIES['project.sitePrefix']}"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link>
     <c:if test="${! empty tab }">
       &nbsp;&gt;&nbsp;<html:link action="${tab}"><fmt:message key="menu.${tab}" /></html:link>
@@ -145,6 +144,11 @@
             pageTracker._trackPageview();
         </script>
     </c:if>
+    <script type="text/javascript">
+    jQuery(document).ready(function() {
+        display("contactUsLink", true);
+    });
+    </script>
     <c:if test="${!empty fixedLayout}">
       </div>
     </c:if>
