@@ -179,9 +179,7 @@ public class WidgetUtil
     public static Map<String, BigDecimal> calcErrorCorrection(String errorCorrection,
                                                  Double maxValue,
                                                  HashMap<String, BigDecimal> resultsMap) {
-
         ErrorCorrection e = null;
-
         if (errorCorrection != null && errorCorrection.equals("Bonferroni")) {
             e = new Bonferroni(resultsMap);
         } else {

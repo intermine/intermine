@@ -29,8 +29,8 @@ public class Bonferroni implements ErrorCorrection
     private HashMap<String, BigDecimal> originalMap = new HashMap<String, BigDecimal>();
     private HashMap<String, BigDecimal> adjustedMap = new HashMap<String, BigDecimal>();
     private BigDecimal numberOfTests, alphaPerTest;
-    private BigDecimal alpha = new BigDecimal(0.05);
-
+    private static final BigDecimal ALPHA = new BigDecimal(0.05);
+    private static final BigDecimal ONE = new BigDecimal(1);
 
     /**
      * @param originalMap HashMap of go terms and their p-value
@@ -38,7 +38,7 @@ public class Bonferroni implements ErrorCorrection
     public Bonferroni(HashMap<String, BigDecimal> originalMap) {
         this.originalMap = originalMap;
         numberOfTests = new BigDecimal(originalMap.size());
-        alphaPerTest = alpha.divide(numberOfTests);
+        alphaPerTest = ALPHA.divide(numberOfTests);
     }
 
     /**
@@ -56,8 +56,13 @@ public class Bonferroni implements ErrorCorrection
             // calc new value - p * n
             BigDecimal adjustedP = p.add(alphaPerTest);
 
+            // p is never over 1
+            if (adjustedP.compareTo(ONE) >= 0) {
+                adjustedP = ONE;
+            }
+
             // don't store values >= maxValue
-            if (adjustedP.doubleValue() < max.doubleValue()) {
+            if (adjustedP.compareTo(new BigDecimal(max.doubleValue())) <= 0) {
                 adjustedMap.put(label, adjustedP);
             }
         }
