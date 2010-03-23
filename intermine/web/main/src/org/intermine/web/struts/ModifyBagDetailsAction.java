@@ -42,7 +42,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class ModifyBagDetailsAction extends InterMineAction
 {
     private static int index = 0;
-    private PortalHelper portalHelper = new PortalHelper();
 
     /**
      * Forward to the correct method based on the button pressed
@@ -105,7 +104,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
-                    BagConverter bagConverter = portalHelper.getBagConverter(im,
+                    BagConverter bagConverter = PortalHelper.getBagConverter(im,
                             SessionMethods.getWebConfig(request), converterClassName);
                     WebResults result = bagConverter.getConvertedObjects(profile,
                             imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());

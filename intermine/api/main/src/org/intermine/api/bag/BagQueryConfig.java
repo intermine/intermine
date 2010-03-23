@@ -31,7 +31,7 @@ public class BagQueryConfig
      * Create a new BagQueryConfig object.
      * @param bagQueries a Map from class name to bag query
      * @param preDefaultBagQueries a separate map of queries to run before the default
-     * @param additionalConverters extra converters configured
+     * @param additionalConverters extra converters configured - see getAdditionalConverters
      */
     public BagQueryConfig(Map<String, List<BagQuery>> bagQueries,
                           Map<String, List<BagQuery>> preDefaultBagQueries,
@@ -119,7 +119,11 @@ public class BagQueryConfig
     }
 
     /**
-     * Return a Map from converter Class name to field name to use in the url to get that field
+     * Return a Map from a converter Class name (such as
+     * org.intermine.bio.web.logic.OrthologueConverter) to an array containing three Strings. The
+     * first is a comma-separated list of names for the converter that may be referred to in a URL
+     * (like orthologue). The second is the class constraint, and the third is the target type.
+     *
      * @param type get converters for this type or a subtype of it
      * @return the additionalConverters
      */
