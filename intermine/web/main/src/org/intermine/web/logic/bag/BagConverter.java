@@ -70,7 +70,7 @@ public abstract class BagConverter
      */
     public abstract ActionMessage getActionMessage(String externalids, int convertedSize,
             String type, String parameters)
-    throws ObjectStoreException, UnsupportedEncodingException;
+        throws ObjectStoreException, UnsupportedEncodingException;
 
     /**
      *
@@ -84,7 +84,7 @@ public abstract class BagConverter
             String bagName, String constraintValue);
 
     /**
-    * 
+    *
     * @param profile user's profile
     * @param bagType class of list
     * @param bagList list of intermine object IDs

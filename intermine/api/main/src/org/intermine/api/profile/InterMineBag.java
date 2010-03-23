@@ -231,7 +231,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
         this.name = name;
     }
-    
+
     /**
      * Return the description of this bag.
      * @return the description

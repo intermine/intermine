@@ -78,7 +78,7 @@ public class BagHelper
         profile.saveBag(bag.getName(), bag);
         return bag;
     }
-    
+
     /**
      * @see
      * @param bag the bag
@@ -126,5 +126,5 @@ public class BagHelper
             delim = ",";
         }
         return StringUtil.join(results, delim);
-}
+    }
 }

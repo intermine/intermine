@@ -1301,8 +1301,7 @@ public class AjaxServices
      * @throws UnsupportedEncodingException bad encoding
      */
     public String convertObjects(String bagType, String bagName, String param,
-            String selectedValue)
-    throws UnsupportedEncodingException {
+            String selectedValue) throws UnsupportedEncodingException {
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         HttpServletRequest request = getRequest();
         HttpSession session = request.getSession();
@@ -1322,8 +1321,8 @@ public class AjaxServices
                 if (StringUtils.isNotEmpty(addparameter)) {
                     BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig,
                             converterClassName);
-                return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
-                        selectedValue);
+                    return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
+                            selectedValue);
                 }
             }
         }

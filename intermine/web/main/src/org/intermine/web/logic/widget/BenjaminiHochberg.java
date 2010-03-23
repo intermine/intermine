@@ -66,7 +66,7 @@ public class BenjaminiHochberg implements ErrorCorrection
             String label = entry.getKey();
             BigDecimal p = entry.getValue();
             BigDecimal adjustedP = p;
-            
+
             /**
              * equivalent p-values should have the same adjusted p-value.
              *

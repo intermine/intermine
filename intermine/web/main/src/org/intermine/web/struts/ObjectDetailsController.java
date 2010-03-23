@@ -37,7 +37,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.DisplayCollection;
 import org.intermine.web.logic.results.DisplayField;
 import org.intermine.web.logic.results.DisplayObject;

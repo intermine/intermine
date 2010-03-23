@@ -60,13 +60,13 @@ public class VersionServlet extends HttpServlet
             LOGGER.error("Obtaining writer to write intermine version failed.", e);
         }
     }
-    
+
     private String getVersion(String versionType, HttpServletRequest request) {
         if (versionType != null) {
             versionType = trimSlashes(versionType);
 
             if (versionType.equalsIgnoreCase("release")) {
-                Properties webProperties = 
+                Properties webProperties =
                     SessionMethods.getWebProperties(request.getSession().getServletContext());
                 return webProperties.getProperty("project.releaseVersion");
             } else if (versionType.equalsIgnoreCase("ws")) {

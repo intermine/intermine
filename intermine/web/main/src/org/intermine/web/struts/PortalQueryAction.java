@@ -68,7 +68,7 @@ public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
     private PortalHelper helper = new PortalHelper();
-    
+
 //    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
 
     /**
@@ -169,7 +169,7 @@ public class PortalQueryAction extends InterMineAction
 
                 if (StringUtils.isNotEmpty(addparameter)) {
 
-                    BagConverter bagConverter = helper.getBagConverter(im, webConfig, 
+                    BagConverter bagConverter = helper.getBagConverter(im, webConfig,
                             converterClassName);
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
                             className, bagList, addparameter);
@@ -266,7 +266,7 @@ public class PortalQueryAction extends InterMineAction
      */
     private String loadObjectDetails(ServletContext servletContext, HttpSession session,
             HttpServletRequest request, HttpServletResponse response, String extId)
-    throws InterruptedException {
+        throws InterruptedException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Properties properties = SessionMethods.getWebProperties(servletContext);
         String templateName = properties.getProperty("begin.browse.template");

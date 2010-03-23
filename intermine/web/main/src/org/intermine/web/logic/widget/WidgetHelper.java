@@ -19,7 +19,8 @@ import org.intermine.objectstore.ObjectStore;
  * @author "Xavier Watkins"
  *
  */
-public interface WidgetHelper {
+public interface WidgetHelper
+{
     /**
      * Get the extra attributes needed for the DataSetLoader
      * @param os the objectstore
