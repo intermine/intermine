@@ -111,7 +111,7 @@ public class GFF3Exporter implements Exporter
             String mV = props.getProperty("project.releaseVersion");
             if (mV != null && mV.length() > 0) {
                 header.append("\n#" + this.sourceName + " " + mV);
-                header.append("\n# #index-subfeatures");
+                header.append("\n# #index-subfeatures 1");
             }
 
         }
