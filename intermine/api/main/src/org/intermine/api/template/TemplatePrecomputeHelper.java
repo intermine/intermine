@@ -37,7 +37,7 @@ public class TemplatePrecomputeHelper
 {
 
     private static final Logger LOG = Logger.getLogger(TemplatePrecomputeHelper.class);
-    
+
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
      * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
@@ -70,8 +70,8 @@ public class TemplatePrecomputeHelper
         TemplateQuery templateClone = template.cloneWithoutEditableConstraints();
 
         if (template.getBagNames().size() != 0) {
-	    throw new RuntimeException("Precomputed query can't be created " 
-				       + "for a template with a list."); 
+            throw new RuntimeException("Precomputed query can't be created "
+                    + "for a template with a list.");
         }
 
         List<String> indexPaths = new ArrayList<String>();

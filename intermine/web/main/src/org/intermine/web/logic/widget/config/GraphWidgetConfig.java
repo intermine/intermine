@@ -152,7 +152,7 @@ public class GraphWidgetConfig extends WidgetConfig
      * {@inheritDoc}
      */
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
-    throws Exception {
+        throws Exception {
         Collection<String> extraAttributes = new ArrayList();
         Map<String, Collection<String>> returnMap = new HashMap();
         if (extraAttributeClass != null && extraAttributeClass.length() > 0) {

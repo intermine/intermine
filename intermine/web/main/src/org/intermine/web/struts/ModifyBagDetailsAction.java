@@ -105,9 +105,9 @@ public class ModifyBagDetailsAction extends InterMineAction
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
             if (additionalConverters != null) {
                 for (String converterClassName : additionalConverters.keySet()) {
-                    BagConverter bagConverter = portalHelper.getBagConverter(im, 
+                    BagConverter bagConverter = portalHelper.getBagConverter(im,
                             SessionMethods.getWebConfig(request), converterClassName);
-                    WebResults result = bagConverter.getConvertedObjects(profile, 
+                    WebResults result = bagConverter.getConvertedObjects(profile,
                             imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
                     PagedTable pc = new PagedTable(result);
                     String identifier = "col" + index++;
