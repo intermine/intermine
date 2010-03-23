@@ -67,7 +67,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class PortalQueryAction extends InterMineAction
 {
     private static int index = 0;
-    private PortalHelper helper = new PortalHelper();
 
 //    private static final Logger LOG = Logger.getLogger(PortalQueryAction.class);
 
@@ -169,7 +168,7 @@ public class PortalQueryAction extends InterMineAction
 
                 if (StringUtils.isNotEmpty(addparameter)) {
 
-                    BagConverter bagConverter = helper.getBagConverter(im, webConfig,
+                    BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
                             converterClassName);
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
                             className, bagList, addparameter);

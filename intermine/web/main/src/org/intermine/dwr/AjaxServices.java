@@ -117,7 +117,6 @@ public class AjaxServices
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
     private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
         + "numbers, spaces, and underscores.";
-    private PortalHelper portalHelper = new PortalHelper();
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -1319,7 +1318,7 @@ public class AjaxServices
                 String addparameter = PortalHelper.getAdditionalParameter(param,
                         additionalConverters.get(converterClassName));
                 if (StringUtils.isNotEmpty(addparameter)) {
-                    BagConverter bagConverter = portalHelper.getBagConverter(im, webConfig,
+                    BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
                             converterClassName);
                     return bagConverter.getConvertedObjectFields(profile, bagType, bagName,
                             selectedValue);
