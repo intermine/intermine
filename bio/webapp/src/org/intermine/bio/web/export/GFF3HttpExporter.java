@@ -72,15 +72,12 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
 
-        
         Set<Integer> organisms = null;
         // try to find the organism from the form
         if (form != null && form instanceof GFF3ExportForm) {
             organisms = ((GFF3ExportForm) form).getOrganisms();
         }
-
-        
-        
+               
         if (doGzip) {
             ResponseUtil.setGzippedHeader(response, "table" + StringUtil.uniqueString()
                     + ".gff3.gz");
