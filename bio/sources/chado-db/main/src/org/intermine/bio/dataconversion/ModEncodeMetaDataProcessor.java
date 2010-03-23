@@ -47,7 +47,8 @@ import org.intermine.xml.full.ReferenceList;
 public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
-    private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php/";
+//    private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php/";
+    private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
 
     // submission maps
     // ---------------
