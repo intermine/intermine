@@ -213,7 +213,7 @@
     </longdisplayers>
     <bagdisplayers>
       <displayer src="orthologueLinkDisplayer.tile"/>
-   </bagdisplayers>  
+   </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.GOAnnotation">
@@ -236,7 +236,7 @@
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
   </class>
-  
+
     <class className="org.intermine.model.bio.GOTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -258,7 +258,6 @@
   </class>
 
   <class className="org.intermine.model.bio.Image">
-    <fieldconfig fieldExpr="url"/>
     <fields>
       <fieldconfig fieldExpr="url" displayer="/model/imageDisplayer.jsp" />
     </fields>
@@ -430,6 +429,19 @@
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
     </longdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.OrthologueEvidence">
+    <fields>
+      <fieldconfig fieldExpr="evidenceCode.name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OrthologueEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="abbreviation"/>
+      <fieldconfig fieldExpr="name" />
+    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Pathway">
@@ -785,7 +797,7 @@
                       rangeLabel="Gene count"
                       typeClass="org.intermine.model.bio.Gene"
                       graphType="BarChart" />
- 
+
       <enrichmentwidgetdisplayer id="miranda_enrichment" title="MiRNA Enrichment"
                                  link="org.flymine.web.widget.MirandaURLQuery"
                                  dataSetLoader="org.flymine.web.widget.MirandaLdr"
@@ -849,7 +861,7 @@
                                  filterLabel="DataSet"
                                  description="Pathways enriched for genes in this list - data from KEGG and Reactome"
                                  typeClass="org.intermine.model.bio.Gene" />
-                                 
+
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
