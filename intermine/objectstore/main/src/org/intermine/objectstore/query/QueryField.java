@@ -59,7 +59,8 @@ public class QueryField implements QueryEvaluable
                         + qc.getType());
             }
             if (Collection.class.isAssignableFrom(field.getReturnType())) {
-                throw new IllegalArgumentException("Field '" + fieldName + "' is a collection type");
+                throw new IllegalArgumentException("Field '" + fieldName
+                        + "' is a collection type");
             }
             if (InterMineObject.class.isAssignableFrom(field.getReturnType())) {
                 throw new IllegalArgumentException("Field '" + fieldName
