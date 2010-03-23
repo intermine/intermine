@@ -2,26 +2,26 @@
 
 function addEvent( obj, type, fn )
 {
-	if (obj.addEventListener)
-		obj.addEventListener( type, fn, false );
-	else if (obj.attachEvent)
-	{
-		obj["e"+type+fn] = fn;
-		obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
-		obj.attachEvent( "on"+type, obj[type+fn] );
-	}
+    if (obj.addEventListener)
+        obj.addEventListener( type, fn, false );
+    else if (obj.attachEvent)
+    {
+        obj["e"+type+fn] = fn;
+        obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
+        obj.attachEvent( "on"+type, obj[type+fn] );
+    }
 }
 
 function removeEvent( obj, type, fn )
 {
-	if (obj.removeEventListener)
-		obj.removeEventListener( type, fn, false );
-	else if (obj.detachEvent)
-	{
-		obj.detachEvent( "on"+type, obj[type+fn] );
-		obj[type+fn] = null;
-		obj["e"+type+fn] = null;
-	}
+    if (obj.removeEventListener)
+        obj.removeEventListener( type, fn, false );
+    else if (obj.detachEvent)
+    {
+        obj.detachEvent( "on"+type, obj[type+fn] );
+        obj[type+fn] = null;
+        obj["e"+type+fn] = null;
+    }
 }
 
 function toggleDivs(source,destination){
@@ -48,60 +48,60 @@ function toggleHidden(elementId) {
     var element = document.getElementById(elementId);
     var display = element.style.display;
      if(display=='none') {
-		toggleOpen(element, elementId);
+        toggleOpen(element, elementId);
      } else {
-		toggleClose(element, elementId);
+        toggleClose(element, elementId);
      }
 }
 
 function toggleClose(element, elementId) {
-	element.style.display = 'none';
+    element.style.display = 'none';
     document.getElementById(elementId + 'Toggle').src = 'images/undisclosed.gif';
 }
 
 function toggleOpen(element, elementId) {
-	element.style.display = 'block';
-	document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
+    element.style.display = 'block';
+    document.getElementById(elementId + 'Toggle').src = 'images/disclosed.gif';
 }
 
 function toggleAll(count, prefix, display, extraField, saveState) {
-	for (i = 0; i < count; i++) {
-		var elementId = prefix + i;
-		var element = document.getElementById(elementId);
-		if (element != null) {
-			if(display=='expand') {
-				toggleOpen(element, elementId);
-			} else {
-				toggleClose(element, elementId);
-			}
-     	}
-     	if (saveState == true && element != null && window.saveToggleState /* function exists*/) {
-     		saveToggleState(elementId);
-     	}
+    for (i = 0; i < count; i++) {
+        var elementId = prefix + i;
+        var element = document.getElementById(elementId);
+        if (element != null) {
+            if(display=='expand') {
+                toggleOpen(element, elementId);
+            } else {
+                toggleClose(element, elementId);
+            }
+         }
+         if (saveState == true && element != null && window.saveToggleState /* function exists*/) {
+             saveToggleState(elementId);
+         }
      }
      if (extraField != null  && (element = document.getElementById(extraField)) != null) {
-      		if(display=='expand') {
-				toggleOpen(element, extraField);
-			} else {
-				toggleClose(element, extraField);
-			}
-			if (window.saveToggleState /* function exists*/) {
-				saveToggleState(extraField);
-			}
+              if(display=='expand') {
+                toggleOpen(element, extraField);
+            } else {
+                toggleClose(element, extraField);
+            }
+            if (window.saveToggleState /* function exists*/) {
+                saveToggleState(extraField);
+            }
      }
 }
 
 function swapStyles(elementId,style1,style2,checkbox){
-	if(document.getElementById(checkbox)!=null && !document.getElementById(checkbox).checked){
-  	  if(document.getElementById(elementId).className == style1) {
-		  document.getElementById(elementId).className = style2;
-	  } else {
-		  document.getElementById(elementId).className = style1;
-	  }
+    if(document.getElementById(checkbox)!=null && !document.getElementById(checkbox).checked){
+        if(document.getElementById(elementId).className == style1) {
+          document.getElementById(elementId).className = style2;
+      } else {
+          document.getElementById(elementId).className = style1;
+      }
     }
 }
 
-// Show or hide element with specified id 
+// Show or hide element with specified id
 function display(id, beDisplayed) {
     if (beDisplayed == true) {
         document.getElementById(id).style.display = 'block';
@@ -111,29 +111,29 @@ function display(id, beDisplayed) {
 }
 
 function showEl(elementOrId) {
-	displayElInternal(elementOrId, true);
+    displayElInternal(elementOrId, true);
 }
 
 function hideEl(el) {
-	displayElInternal(el, false);
+    displayElInternal(el, false);
 }
 
 function displayElInternal(elementOrId, display) {
-	var el = null;
-	if (elementOrId != null) {
-		if (typeof(elementOrId) == 'object') {
-			el = elementOrId;
-		} else {
-			el = document.getElementById(elementOrId);
-		}
-	}
-	if (el != null) {
-		if (display) {
-			el.style.display = '';
-		} else {
-			el.style.display = 'none';
-		}
-	}	
+    var el = null;
+    if (elementOrId != null) {
+        if (typeof(elementOrId) == 'object') {
+            el = elementOrId;
+        } else {
+            el = document.getElementById(elementOrId);
+        }
+    }
+    if (el != null) {
+        if (display) {
+            el.style.display = '';
+        } else {
+            el.style.display = 'none';
+        }
+    }
 }
 
 /* Center element with specified id to the center of window */
@@ -277,16 +277,16 @@ function trim(s) {
 }
 
 function setSelectElement(id, title, items) {
-	var select = document.getElementById(id);
+    var select = document.getElementById(id);
     for (var i = select.length - 1; i >= 0; i--) {
         select.remove(i);
     }
     if (title != null && title != '') {
-    	addSelectOption('', title, select);
+        addSelectOption('', title, select);
     }
     for (var i = 0; i < items.length; i++) {
         addSelectOption(items[i], items[i], select);
-    }    
+    }
 }
 
 function addSelectOption(value, name, select) {
@@ -302,26 +302,26 @@ function getSelectValue(id) {
 }
 
 function getSelectValues(id) {
-	var select = document.getElementById(id);
-	var ret = new Array();
-	for (var i = 0; i < select.length; i++) {
-		ret[i] = select[i].value;
-	}		
-	return ret;
+    var select = document.getElementById(id);
+    var ret = new Array();
+    for (var i = 0; i < select.length; i++) {
+        ret[i] = select[i].value;
+    }
+    return ret;
 }
 
 function findPosition(obj) {
-	var curleft = curtop = 0;
-	var offs = obj.offsetParent
-	if (obj.offsetParent) {
-		curleft = obj.offsetLeft;
-		curtop = obj.offsetTop;
-		while (obj = obj.offsetParent) {
-			curleft += obj.offsetLeft;
-			curtop += obj.offsetTop;
-		}
-	}
-	return [curleft,curtop];
+    var curleft = curtop = 0;
+    var offs = obj.offsetParent
+    if (obj.offsetParent) {
+        curleft = obj.offsetLeft;
+        curtop = obj.offsetTop;
+        while (obj = obj.offsetParent) {
+            curleft += obj.offsetLeft;
+            curtop += obj.offsetTop;
+        }
+    }
+    return [curleft,curtop];
 }
 
 function showContactForm() {
