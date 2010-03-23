@@ -46,6 +46,13 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("EmptyNorConstraintSet", NO_RESULT);
         results.put("QueryClassBagNotViaNand", NO_RESULT); // Has trouble with "1 = 1" - both are UnknownTypeValues
         results.put("QueryClassBagNotViaNor", NO_RESULT);
+        results.put("Range1", NO_RESULT);
+        results.put("SubclassCollection", NO_RESULT);
+        results.put("SubclassCollection2", NO_RESULT);
+        results.put("ObjectPathExpression5", NO_RESULT);
+        results.put("MultiColumnObjectInCollection", NO_RESULT);
+        results.put("CollectionPathExpression7", NO_RESULT);
+        results.put("CollectionPathExpression6", NO_RESULT);
     }
 
     public void executeTest(String type) throws Exception {
@@ -121,7 +128,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
             Query q = IqlQueryParser.parse(new IqlQuery("select c.Company.nonExistentField from (select Company from Company) as c", "org.intermine.model.testmodel"));
             fail("Expected: IllegalArgumentException, because that field does not exist in a Company object");
         } catch (IllegalArgumentException e) {
-            assertEquals("Field nonExistentField not found in interface org.intermine.model.testmodel.Company", e.getMessage());
+            assertEquals("Field 'nonExistentField' not found in interface org.intermine.model.testmodel.Company", e.getMessage());
         }
         try {
             Query q = IqlQueryParser.parse(new IqlQuery("select c.Company.name.something from (select Company from Company) as c", "org.intermine.model.testmodel"));
