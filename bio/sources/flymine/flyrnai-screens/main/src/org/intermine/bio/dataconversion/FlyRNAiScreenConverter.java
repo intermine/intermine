@@ -175,9 +175,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                 Item amplicon = createItem("Amplicon");
                 amplicon.setAttribute("primaryIdentifier", ampliconIdentifier);
                 amplicon.setReference("organism", organism);
-                amplicon.addCollection(new ReferenceList("rnaiScreenHits",
-                                                         new ArrayList<String>()));
-
                 newSynonym(ampliconIdentifier, amplicon);
 
                 // the amplicon may target zero or more genes, a gene can be targeted
@@ -209,8 +206,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                         screenHit.setReference("rnaiScreen", screens[j]);
                         screenHit.setAttribute("result", resultValue);
                         screenHit.setReference("amplicon", amplicon);
-                        amplicon.getCollection("rnaiScreenHits").addRefId(refId);
-                        screens[j].getCollection("rnaiScreenHits").addRefId(refId);
+                        amplicon.addToCollection("rnaiScreenHits", refId);
+                        screens[j].addToCollection("rnaiScreenHits", refId);
                         store(screenHit);
                     } else {
                         // create one hit for each gene targeted
@@ -222,24 +219,21 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                             screenHit.setAttribute("result", resultValue);
                             screenHit.setReference("amplicon", amplicon);
                             //screens[j].getCollection("genes").addRefId(gene.getIdentifier());
-                            gene.getCollection("rnaiResults").addRefId(screenHit.getIdentifier());
-                            amplicon.getCollection("rnaiScreenHits").addRefId(refId);
-                            screens[j].getCollection("rnaiScreenHits").addRefId(refId);
+                            gene.addToCollection("rnaiResults", screenHit.getIdentifier());
+                            amplicon.addToCollection("rnaiScreenHits", refId);
+                            screens[j].addToCollection("rnaiScreenHits", refId);
                             store(screenHit);
-
                         }
                     }
                 }
                 store(amplicon);
             }
-
         }
 
         for (Item gene : genes.values()) {
             store(gene);
         }
     }
-
 
     private void processScreenDetails(Reader reader) throws ObjectStoreException {
         Iterator tsvIter;
@@ -270,7 +264,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             screen.setAttribute("name", screenName);
             screen.setAttribute("cellLine", line[3].trim());
             String analysisDescr = line[4].trim();
-            if (analysisDescr != null && !analysisDescr.equals("")) {
+            if (StringUtils.isNotEmpty(analysisDescr)) {
                 screen.setAttribute("analysisDescription", line[4].trim());
             }
             screen.setReference("organism", organism);
@@ -300,8 +294,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         Item screen = screenMap.get(screenName);
         if (screen == null) {
             screen = createItem("RNAiScreen");
-            screen.addCollection((new ReferenceList("rnaiScreenHits", new ArrayList<String>())));
-            //screen.addCollection(new ReferenceList("genes", new ArrayList<String>()));
             screenMap.put(screenName, screen);
         }
         return screen;
@@ -331,7 +323,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
             item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
             item.setReference("organism", organism);
-            item.addCollection(new ReferenceList("rnaiResults", new ArrayList<String>()));
             genes.put(primaryIdentifier, item);
         }
         return item;
