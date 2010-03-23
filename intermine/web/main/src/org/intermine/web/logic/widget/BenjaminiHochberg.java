@@ -21,13 +21,13 @@ import org.intermine.web.logic.SortableMap;
 /**
  * This correction is the less stringent than the Bonferroni, and therefore tolerates more
  * false positives. There will be also less false negative genes. Here is how it works:
- *  1) The p-values of each gene are ranked from the smallest to the largest.
+ *  1) The p-values of each gene are ranked from the largest to the smallest.
  *  2) The largest p-value remains as it is.
  *  3) The second largest p-value is multiplied by the total number of genes in gene
  *      list divided by its rank. If less than 0.05, it is significant.
- *      Corrected p-value = p-value*(n/n-1) < 0.05, if so, gene is significant.
+ *      Corrected p-value = p-value*(n/n-1)
  *  4) The third p-value is multiplied as in step 3:
- *      Corrected p-value = p-value*(n/n-2) < 0.05, if so, gene is significant.
+ *      Corrected p-value = p-value*(n/n-2)
  * And so on.
  *
  * @author Julie Sullivan
@@ -36,17 +36,18 @@ public class BenjaminiHochberg implements ErrorCorrection
 {
     private LinkedHashMap<String, BigDecimal> originalMap;
     private HashMap<String, BigDecimal> adjustedMap;
-    private int numberOfTests;
+    private BigDecimal numberOfTests;
+    private static final BigDecimal ONE = new BigDecimal(1);
 
     /**
     * @param originalMap HashMap of go terms and their p-value
      */
     @SuppressWarnings("unchecked")
     public BenjaminiHochberg(HashMap<String, BigDecimal> originalMap) {
-        numberOfTests = originalMap.size();
+        numberOfTests = new BigDecimal(originalMap.size());
         SortableMap sortedMap = new SortableMap(originalMap);
-        // sort ascending
-        sortedMap.sortValues(false, true);
+        // sort descending, largest values first
+        sortedMap.sortValues(false, false);
         this.originalMap = new LinkedHashMap(sortedMap);
     }
 
@@ -57,41 +58,62 @@ public class BenjaminiHochberg implements ErrorCorrection
     @SuppressWarnings("unchecked")
     public void calculate(Double max) {
         adjustedMap = new HashMap();
+        BigDecimal index = numberOfTests;
+        BigDecimal lastValue = null;
 
-        int index = 0;
-        BigDecimal lastValue = new BigDecimal(-1);
-
+        // largest to smallest
         for (Map.Entry<String, BigDecimal> entry : originalMap.entrySet()) {
 
             String label = entry.getKey();
             BigDecimal p = entry.getValue();
             BigDecimal adjustedP = p;
 
-            /**
-             * equivalent p-values should have the same adjusted p-value.
-             *
-             * only increase the index if this value is different from the one we saw on the
-             * previous line
-             */
-            if (!p.equals(lastValue)) {
-                // new value, so increase index
-                index++;
+            if (index.equals(numberOfTests)) {
+                // p is never over 1
+                if (adjustedP.compareTo(ONE) >= 0) {
+                    adjustedP = ONE;
+                }
+
+                // add to results map
+                adjustedMap.put(label, adjustedP);
+
+                // decrease index
+                index = index.subtract(ONE);
+
+                // largest item is not updated
+                continue;
             }
 
-            // largest value is not adjusted
-            if (index < numberOfTests - 1) {
-                // p-value * (n/ n - index)
-                BigDecimal n = new BigDecimal(numberOfTests);
-                BigDecimal divisor = n.subtract(new BigDecimal(index));
-                BigDecimal m = n.divide(divisor, MathContext.DECIMAL128);
-                adjustedP = p.multiply(m);
+            // n - 1
+            BigDecimal divisor = null;
+            if (lastValue != null && p.compareTo(lastValue) == 0) {
+                // last p-value was the same as this one, use the previous index value
+                divisor = numberOfTests.subtract(index.add(ONE));
+            } else {
+                divisor = numberOfTests.subtract(index);
             }
 
-            if (adjustedP.doubleValue() < max.doubleValue()) {
-                // TODO we want to put all values in the map and let the javascript display or not
+            // n/(n-1)
+            BigDecimal m = numberOfTests.divide(divisor, MathContext.DECIMAL128);
+
+            // n/(n-1) * p
+            adjustedP = p.multiply(m, MathContext.DECIMAL128);
+
+            // p is never over 1
+            if (adjustedP.compareTo(ONE) >= 0) {
+                adjustedP = ONE;
+            }
+
+            // only report if value > maximum
+            if (adjustedP.doubleValue() <= max.doubleValue()) {
                 adjustedMap.put(label, adjustedP);
             }
+
+            // to compare if next value is the same
             lastValue = p;
+
+            // decrease i
+            index = index.subtract(ONE);
         }
     }
 
