@@ -4,7 +4,7 @@
         <attribute name="name" type="java.lang.String"/>
         <attribute name="description" type="java.lang.String"/>
         <attribute name="hostOrganism" type="java.lang.String" />
-        <reference name="interactionDetectionMethod" referenced-type="InteractionTerm"/>
+        <collection name="interactionDetectionMethod" referenced-type="InteractionTerm"/>
         <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
     </class>
     <class name="Interaction" is-interface="true">
