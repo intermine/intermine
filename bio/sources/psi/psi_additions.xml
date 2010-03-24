@@ -4,8 +4,8 @@
         <attribute name="name" type="java.lang.String"/>
         <attribute name="description" type="java.lang.String"/>
         <attribute name="hostOrganism" type="java.lang.String" />
-        <reference name="interactionDetectionMethod" referenced-type="InteractionTerm"/>
-        <reference name="participantIdentificationMethod" referenced-type="InteractionTerm"/>
+        <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
+        <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
         <collection name="comments" referenced-type="Comment"/>
         <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
     </class>

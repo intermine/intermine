@@ -126,9 +126,7 @@ public class BioGridConverter extends BioFileConverter
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
                                            + key);
             }
-            if (attributes.length == 3) {
-                LOG.error("~~~ " + attributes[2]);
-            }
+
             String taxonId = attributes[0];
             if (config.get(taxonId) == null) {
                 Map<String, String> configs = new HashMap();
@@ -578,7 +576,7 @@ public class BioGridConverter extends BioFileConverter
         private void storeExperiment(ExperimentHolder eh)
         throws ObjectStoreException {
             Item exp = createItem("InteractionExperiment");
-            exp.setReference("interactionDetectionMethod", eh.methodRefId);
+            exp.addToCollection("interactionDetectionMethods", eh.methodRefId);
             if (eh.description != null && !eh.description.equals("")) {
                 exp.setAttribute("description", eh.description);
             }

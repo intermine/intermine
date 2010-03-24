@@ -63,7 +63,7 @@
 <item id="4_1" class="InteractionExperiment">
 <attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
 <attribute name="name" value="Giot L (2003)"/>
-<reference name="interactionDetectionMethod" ref_id="3_1"/>
+<collection name="interactionDetectionMethods"><reference ref_id="3_1"/></collection>
 <reference name="publication" ref_id="2_1"/>
 </item>
 <item id="6_2" class="Gene">
