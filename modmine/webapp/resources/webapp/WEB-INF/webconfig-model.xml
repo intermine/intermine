@@ -50,6 +50,10 @@
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="name"/>
     </fields>
+    <longdisplayers>
+      <displayer src="attributeLinkDisplayer.tile"/>
+    </longdisplayers>
+    
   </class>
 
   <class className="org.intermine.model.bio.Antibody">
