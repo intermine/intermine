@@ -89,7 +89,7 @@ public class TemplateController extends TilesAction
     public ActionForward execute(ComponentContext context,
             @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
             HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
-        throws Exception {
+    throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -158,6 +158,7 @@ public class TemplateController extends TilesAction
         // and the human-readable "name" for each node (Department.company.name -> "Company name")
         TemplateQuery displayTemplate = (TemplateQuery) template.clone();
         Map<String, PathNode> editableNodesMap = new HashMap();
+
         for (PathNode node : template.getEditableNodes()) {
             editableNodesMap.put(node.getPathString(), node);
         }
@@ -175,36 +176,21 @@ public class TemplateController extends TilesAction
             constructAutocompleteIndex(displayTemplate, ac, model, node, classDesc, fieldDesc);
             int j = 1;
             for (Constraint c : displayTemplate.getEditableConstraints(node)) {
-                // FIXME See #2239
+
                 if (modifiedTemplate != null) {
-                    Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
-                    Object value;
-                    String selectedBagName = null;
-                    ConstraintOp newOp = modC.getOp();
-                    if (!newOp.equals(ConstraintOp.IN) && !newOp.equals(ConstraintOp.NOT_IN)) {
-                        value = modC.getValue();
-                    } else {
-                        // modified constraint set to a bag
-                        value = c.getValue();
-                        selectedBagName = (String) modC.getValue();
-                    }
-                    Constraint newC = new Constraint(newOp, value, true, c.getDescription(),
-                            c.getCode(), c.getIdentifier(), modC.getExtraValue());
-                    displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
-                    c = newC;
-                    if (selectedBagName != null) {
-                        selectedBagNames.put(c, modC.getValue());
-                    }
+                    // FIXME See #2239
+                    updateForModifiedTemplate(modifiedTemplate, node, c, displayNode,
+                            selectedBagNames);
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss,
-                                          summariser.getPossibleValues(template, node), classKeys));
+                        summariser.getPossibleValues(template, node), classKeys));
                 PathNode parent = (PathNode) displayNode.getParent();
                 if (parent == null) {
                     parent = displayNode;
                 }
                 // check if this constraint can be used with bags and if any available
                 boolean isKeyField = ClassKeyHelper.isKeyField(classKeys, parent.getType(),
-                                                               displayNode.getFieldName());
+                        displayNode.getFieldName());
                 if (isKeyField || !node.isAttribute()) {
                     String nodeType = (isKeyField ? parent.getType() : node.getType());
                     constraintBagTypes.put(c, nodeType);
@@ -223,7 +209,7 @@ public class TemplateController extends TilesAction
 
                     //find the key fields for a help message
                     Collection<String> keyFieldCol = ClassKeyHelper.getKeyFieldNames(classKeys,
-                                                     node.getType());
+                            node.getType());
                     String keyFieldStr = StringUtil.prettyList(keyFieldCol, true);
                     keyFields.put(c, keyFieldStr);
 
@@ -236,7 +222,7 @@ public class TemplateController extends TilesAction
                         throw new RuntimeException("Can't find class for: " + node.getType());
                     }
                     FieldDescriptor fd = model.getFieldDescriptorsForClass(nodeType)
-                        .get(connectFieldName);
+                    .get(connectFieldName);
                     if ((fd != null) && (fd instanceof ReferenceDescriptor)) {
                         // An extra constraint is possible, now check if it has already been
                         // constrained elsewhere in the query:
@@ -245,7 +231,7 @@ public class TemplateController extends TilesAction
                         PathNode extraNode = template.getNode(extraPath);
                         if (extraNode != null) {
                             for (String classKey : ClassKeyHelper.getKeyFieldNames(classKeys,
-                                                                  extraNode.getType())) {
+                                    extraNode.getType())) {
                                 alreadyConstrained = alreadyConstrained || constrainedNodesMap
                                 .containsKey(extraPath + "." + classKey);
                             }
@@ -292,11 +278,34 @@ public class TemplateController extends TilesAction
         request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
         // A List of values for the extra constraint
         request.setAttribute("extraClassFieldValues", oss.getFieldValues(extraClassName,
-                    bagQueryConfig.getConstrainField()));
+                bagQueryConfig.getConstrainField()));
         if (bagManager.getUserAndGlobalBags(profile).size() > 0) {
             request.setAttribute("bagOps", MainHelper.mapOps(BagConstraint.VALID_OPS));
         }
         return null;
+    }
+
+    private void updateForModifiedTemplate(TemplateQuery modifiedTemplate, PathNode node,
+            Constraint con, PathNode displayNode, Map<Constraint, Object> selectedBagNames) {
+        Constraint c = con;
+        Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
+        Object value;
+        String selectedBagName = null;
+        ConstraintOp newOp = modC.getOp();
+        if (!newOp.equals(ConstraintOp.IN) && !newOp.equals(ConstraintOp.NOT_IN)) {
+            value = modC.getValue();
+        } else {
+            // modified constraint set to a bag
+            value = c.getValue();
+            selectedBagName = (String) modC.getValue();
+        }
+        Constraint newC = new Constraint(newOp, value, true, c.getDescription(),
+                c.getCode(), c.getIdentifier(), modC.getExtraValue());
+        displayNode.getConstraints().set(node.getConstraints().indexOf(c), newC);
+        c = newC;
+        if (selectedBagName != null) {
+            selectedBagNames.put(c, modC.getValue());
+        }
     }
 
     private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
@@ -314,9 +323,9 @@ public class TemplateController extends TilesAction
     }
 
     private void constructAutocompleteIndex(PathQuery query, AutoCompleter ac,
-                                            Model model, PathNode node,
-                                            Map<String, String> classDesc,
-                                            Map<String, String> fieldDesc) {
+            Model model, PathNode node,
+            Map<String, String> classDesc,
+            Map<String, String> fieldDesc) {
         if (ac != null && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
             Path path;
             try {
@@ -354,20 +363,20 @@ public class TemplateController extends TilesAction
                     List<FieldDescriptor> keyFields =
                         classKeys.get(DynamicUtil.getFriendlyName(imObject.getClass()));
                     AttributeDescriptor classKey = (AttributeDescriptor) keyFields.iterator()
-                        .next();
+                    .next();
                     String value = null;
                     try {
                         value = (String) TypeUtil.getFieldValue(imObject, classKey.getName());
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException("Error while filling in Lookup template values:"
-                                                   + e.getMessage());
+                                + e.getMessage());
                     }
                     tf.setAttributeValues(attributeKey, value);
                 }
                 if (ac != null
                         && ac.hasAutocompleter(node.getParentType(), node.getFieldName())) {
                     autoMap.put(node.getParentType() + "." + node.getFieldName(),
-                            "useAutoCompleter");
+                    "useAutoCompleter");
                 }
                 j++;
             }
