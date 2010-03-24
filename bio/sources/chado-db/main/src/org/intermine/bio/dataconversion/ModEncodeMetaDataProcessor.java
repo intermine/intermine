@@ -906,7 +906,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // now: Gene Model Prediction
         // maybe? Gene Model Prediction:SC:1
         // (:->&)
-        String s1 = StringUtils.substringBefore(StringUtils.replace(w, url, ""), ":");
+        String w1 = StringUtils.replace(w, url, "");
+        String s1 = null;
+        if (w1.contains(":")){
+            s1 = StringUtils.substringBefore(w1, ":");
+        } else {
+            // for links missing the : char, e.g. 
+            // MacAlpine Early Origin of Replication Identification&oldid=10464
+            s1 = StringUtils.substringBefore(w1, "&");            
+        }
         String s = s1.replace('"', ' ').trim();
         if (s.contains("%E2%80%99")) {
             // prime: for the Piano experiment
