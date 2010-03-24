@@ -77,15 +77,16 @@ public class DisplayLookupMessageHandler
                 }
                 values.append(value);
             }
-            if (duplicates.size() == 1) {
-                ActionMessage msg = new ActionMessage("results.lookup.duplicate.one",
-                                                      values.toString());
-                actionMessages.add(Constants.LOOKUP_MSG, msg);
-            } else {
-                ActionMessage msg = new ActionMessage("results.lookup.duplicate.many",
-                                                      values.toString());
-                actionMessages.add(Constants.LOOKUP_MSG, msg);
-            }
+// temporarily remove confusing message of dubious value.  See #2270.
+//            if (duplicates.size() == 1) {
+//                ActionMessage msg = new ActionMessage("results.lookup.duplicate.one",
+//                                                      values.toString());
+//                actionMessages.add(Constants.LOOKUP_MSG, msg);
+//            } else {
+//                ActionMessage msg = new ActionMessage("results.lookup.duplicate.many",
+//                                                      values.toString());
+//                actionMessages.add(Constants.LOOKUP_MSG, msg);
+//            }
         }
         if (translated.size() > 0) {
             StringBuffer values = new StringBuffer();
