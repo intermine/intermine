@@ -86,7 +86,7 @@
         </c:forEach>
         <c:forEach items="${leafClds}" var="cld">
           <c:if test="${WEBCONFIG.types[cld.name].tableDisplayer != null}">
-            <div>xxx${cld}xxx
+            <div>${cld}
               <tiles:insert page="${WEBCONFIG.types[cld.name].tableDisplayer.src}">
                 <tiles:put name="cld" value="${cld}" />
               </tiles:insert>

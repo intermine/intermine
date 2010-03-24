@@ -27,6 +27,8 @@
           <td width="10">
             <fmt:message key="objectDetails.class"/>
           </td>
+
+          <%-- column names --%>
           <c:forEach items="${collection.table.columnNames}" var="fd"
                      varStatus="status">
             <td>
@@ -51,9 +53,13 @@
 
           <tr>
             <td width="1%" nowrap>
+
+              <%-- class name of object being displayed on this row --%>
               <c:forEach items="${collection.table.types[status.index]}" var="cld">
                 <span class="type">${cld.unqualifiedName}</span>
               </c:forEach>
+
+              <%-- table displayer --%>
               <c:forEach items="${LEAF_DESCRIPTORS_MAP[thisRowObject]}" var="cld2">
                 <c:if test="${WEBCONFIG.types[cld2.name].tableDisplayer != null}">
                   <tiles:insert page="${WEBCONFIG.types[cld2.name].tableDisplayer.src}">
@@ -63,9 +69,13 @@
                 </c:if>
               </c:forEach>
             </td>
+
+            <%-- print each field configured for this object --%>
             <c:forEach items="${collection.table.fieldConfigs}" var="fieldConfig">
               <td>
                  <c:choose>
+
+                 <%-- print each field configured for this object --%>
                   <c:when test="${!empty fieldConfig && !empty fieldConfig.displayer}">
                     <c:set var="interMineObject" value="${thisRowObject}" scope="request"/>
                     <span class="value">
@@ -87,6 +97,8 @@
                 </c:choose>
               </td>
             </c:forEach>
+
+            <%-- link to report page for this object --%>
             <c:if test="${collection.table.ids[status.index] != null}">
               <td width="10px" nowrap>
                 [<html:link action="/objectDetails?id=${collection.table.ids[status.index]}&amp;trail=${param.trail}|${collection.table.ids[status.index]}">

@@ -29,8 +29,8 @@
         <c:set var="templateTitle" value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/tmpl_arrow.png\" style=\"vertical-align:middle\">&nbsp;')}" />
         ${templateTitle}
         <tiles:insert name="setFavourite.tile">
-             <tiles:put name="name" value="${templateQuery.name}"/>
-          <tiles:put name="type" value="template"/>
+            <tiles:put name="name" value="${templateQuery.name}"/>
+            <tiles:put name="type" value="template"/>
         </tiles:insert>
     </h2>
 
