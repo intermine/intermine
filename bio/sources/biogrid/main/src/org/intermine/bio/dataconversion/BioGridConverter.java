@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -104,6 +105,7 @@ public class BioGridConverter extends BioFileConverter
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+
     }
 
     private void readConfig() {
@@ -158,7 +160,10 @@ public class BioGridConverter extends BioFileConverter
     class BioGridHandler extends DefaultHandler
     {
         private Map<String, InteractorHolder> interactors = new HashMap();
+        // id to temporary holding object
         private Map<String, ExperimentHolder> experiments = new HashMap();
+        // id to intermine object representing experiment
+        private Map<MultiKey, Item> idsToExperiments = new HashMap();
         private InteractionHolder holder;
         private ExperimentHolder experimentHolder;
         private InteractorHolder interactorHolder;
@@ -342,12 +347,9 @@ public class BioGridConverter extends BioFileConverter
                 }
 
             } else if (qName.equals("experimentDescription")) {
-                try {
-                    storeExperiment(experimentHolder);
-                } catch (ObjectStoreException e) {
-                    LOG.error("couldn't store experiment");
-                    throw new RuntimeException("Could not store experiment", e);
-                }
+                setExperiment(experimentHolder);
+            } else if (qName.equals("entrySet")) {
+                storeExperiments();
 
             /********************************* GENES ***********************************/
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
@@ -573,17 +575,37 @@ public class BioGridConverter extends BioFileConverter
             return eh;
         }
 
-        private void storeExperiment(ExperimentHolder eh)
-        throws ObjectStoreException {
-            Item exp = createItem("InteractionExperiment");
-            exp.addToCollection("interactionDetectionMethods", eh.methodRefId);
-            if (eh.description != null && !eh.description.equals("")) {
-                exp.setAttribute("description", eh.description);
+        /**
+         * Experiments are in the worm file multiple times, with the same publication and
+         * experiment name.  The only difference is the interactionDetectionMethod.
+         * @param eh temporary holder for experiment
+         */
+        private void setExperiment(ExperimentHolder eh) {
+            String pubRefId = eh.pubRefId;
+            String name = eh.shortName;
+            MultiKey key = new MultiKey(pubRefId, name);
+            Item exp = idsToExperiments.get(key);
+            if (exp == null) {
+                exp = createItem("InteractionExperiment");
+                exp.addToCollection("interactionDetectionMethods", eh.methodRefId);
+                if (eh.description != null && !eh.description.equals("")) {
+                    exp.setAttribute("description", eh.description);
+                }
+                exp.setAttribute("name", name);
+                exp.setReference("publication", pubRefId);
+                idsToExperiments.put(key, exp);
             }
-            exp.setAttribute("name", eh.shortName);
-            exp.setReference("publication", eh.pubRefId);
-            store(exp);
             eh.experimentRefId = exp.getIdentifier();
+        }
+
+        private void storeExperiments() throws SAXException {
+            for (Item experiment : idsToExperiments.values()) {
+                try {
+                    store(experiment);
+                } catch (ObjectStoreException e) {
+                    throw new SAXException(e);
+                }
+            }
         }
 
         private ArrayList<String> getInteractingObjects(InteractionHolder interactionHolder,
