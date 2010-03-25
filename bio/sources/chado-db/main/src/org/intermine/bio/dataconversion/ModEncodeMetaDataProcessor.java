@@ -1964,6 +1964,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         ResultSet res = getAppliedDataCharacteristics(connection);
 
         Integer lastAttDbXref = new Integer(-1);
+        Integer lastDataId = new Integer(-1);
+
         Map<Integer, SubmissionProperty> createdProps = new HashMap<Integer, SubmissionProperty>();
         SubmissionProperty buildSubProperty = null;
         boolean isValidCharacteristic = false;
@@ -1979,30 +1981,39 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             currentSubId = dataSubmissionMap.get(dataId);
 
-            LOG.debug("XXX " + currentSubId + ":" + dataId + "|" + attValue
+            LOG.info("XXX0 " + currentSubId + ":" + dataId + "|" + attValue
                     + "|" +attDbxref);
-            if (attDbxref.intValue() != lastAttDbXref.intValue() ||
+            if (dataId.intValue() != lastDataId.intValue() ||
+                    attDbxref.intValue() != lastAttDbXref.intValue() ||
                     currentSubId != previousSubId) {
                 // store the last build property if created, type is set only if we found an
                 // attHeading of Characteristics
                 // note: dbxref can remain the same in different subs -> or
+//                LOG.info("XXX1if changes in dbxref or subid");
                 if (buildSubProperty != null && buildSubProperty.type != null) {
+                    LOG.info("XXX11if ADD PREVIOUS" + lastAttDbXref + "|"+ buildSubProperty);
                     createdProps.put(lastAttDbXref, buildSubProperty);
+//                    createdProps.put(lastDataId, buildSubProperty);
                     addToSubToTypes(subToTypes, previousSubId, buildSubProperty);
                 }
                 // set up for next attDbxref
                 if (createdProps.containsKey(attDbxref) && isValidCharacteristic) {
+//                if (createdProps.containsKey(dataId) && isValidCharacteristic) {
+//                    LOG.info("XXX12if ADD CURRENT" + attDbxref+"|"+ createdProps.get(attDbxref));
                     // seen this property before so just add for this submission, don't build again
                     buildSubProperty = null;
                     isValidCharacteristic = false;
                     addToSubToTypes(subToTypes, currentSubId, createdProps.get(attDbxref));
+//                    addToSubToTypes(subToTypes, currentSubId, createdProps.get(dataId));
                 } else {
+//                    LOG.info("XXX12else NEW SP");
                     buildSubProperty = new SubmissionProperty();
                     isValidCharacteristic = false;
                 }
             }
 
             if (attHeading.startsWith("Characteristic")) {
+//                LOG.info("XXX2if Characteristic");
                 isValidCharacteristic = true;
             }
 
@@ -2013,16 +2024,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // add detail here as some Characteristics don't reference a wiki page
                     // but have all information on single row
                     buildSubProperty.addDetail(attName, attValue);
+//                    LOG.info("XXX3if ADD for CHAR"+ getPreferredSynonym(attName) + "|" + attValue + "|"+ attName);
                 } else {
+//                    LOG.info("XXX3else ADD for OTHER"+ attValue + "|"+ attHeading);
                     buildSubProperty.addDetail(attHeading, attValue);
                 }
             }
             previousSubId = currentSubId;
             lastAttDbXref = attDbxref;
+            lastDataId = dataId;
         }
 
         if (buildSubProperty != null && buildSubProperty.type != null) {
+//            LOG.info("XXX3end "+ lastAttDbXref + "|"+ buildSubProperty);
+//            LOG.info("XXX32end " +currentSubId+ "|"+ subToTypes);
             createdProps.put(lastAttDbXref, buildSubProperty);
+//            createdProps.put(lastDataId, buildSubProperty);
             addToSubToTypes(subToTypes, currentSubId, buildSubProperty);
         }
     }
