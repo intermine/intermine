@@ -40,7 +40,7 @@ public class SAXParser
      */
     public static void parse(InputSource is, DefaultHandler handler)
         throws SAXException, IOException, ParserConfigurationException {
-        parse(is, handler, false);
+        parse(is, handler, true);
     }
 
     /**
