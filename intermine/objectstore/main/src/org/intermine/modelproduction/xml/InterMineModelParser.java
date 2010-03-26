@@ -21,6 +21,7 @@ import org.intermine.modelproduction.ModelParser;
 import org.intermine.metadata.*;
 import org.intermine.util.SAXParser;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -77,7 +78,8 @@ public class InterMineModelParser implements ModelParser
         /**
          * {@inheritDoc}
          */
-        public void startElement(String uri, String localName, String qName, Attributes attrs) {
+        public void startElement(@SuppressWarnings("unused") String uri,
+                @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
             if (qName.equals("model")) {
                 modelName = attrs.getValue("name");
                 packageName = attrs.getValue("package");
@@ -94,11 +96,28 @@ public class InterMineModelParser implements ModelParser
             } else if (qName.equals("attribute")) {
                 String name = attrs.getValue("name");
                 String type = attrs.getValue("type");
+
+                if (StringUtils.isEmpty(name)) {
+                    throw new IllegalArgumentException("Error - `" + cls.name + "` has an attribute"
+                            + " with an empty/null name");
+                }
+                if (attrs.getType("type") == null) {
+                    throw new IllegalArgumentException("Error - type of attribute `" + name
+                            + "` not defined for `" + cls.name + "`");
+                }
                 cls.attributes.add(new AttributeDescriptor(name, type));
             } else if (qName.equals("reference")) {
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
                 String type = origType;
+                if (StringUtils.isEmpty(name)) {
+                    throw new IllegalArgumentException("Error - `" + cls.name + "` has a reference"
+                            + " with an empty/null name");
+                }
+                if (type == null) {
+                    throw new IllegalArgumentException("Error - type of reference `" + name
+                            + "` not defined for `" + cls.name + "`");
+                }
                 if (type.startsWith(packageName + ".")) {
                     type = type.substring(packageName.length() + 1);
                 }
@@ -107,6 +126,7 @@ public class InterMineModelParser implements ModelParser
                             + " in reference " + cls.name + "." + name
                             + " is not in the model package " + packageName);
                 }
+
                 if (!"".equals(packageName)) {
                     type = packageName + "." + type;
                 }
@@ -117,6 +137,14 @@ public class InterMineModelParser implements ModelParser
                 String name = attrs.getValue("name");
                 String origType = attrs.getValue("referenced-type");
                 String type = origType;
+                if (StringUtils.isEmpty(name)) {
+                    throw new IllegalArgumentException("Error - `" + cls.name + "` has a collection"
+                            + " with an empty/null name");
+                }
+                if (type == null) {
+                    throw new IllegalArgumentException("Error - `" + name
+                            + "` collection missing a type for `" + cls.name + "`");
+                }
                 if (type.startsWith(packageName + ".")) {
                     type = type.substring(packageName.length() + 1);
                 }
@@ -132,6 +160,7 @@ public class InterMineModelParser implements ModelParser
                     LOG.warn("Deprecated \"ordered\" attribute on collection " + cls.name
                             + "." + name);
                 }
+
                 String reverseReference = attrs.getValue("reverse-reference");
                 cls.collections.add(new CollectionDescriptor(name, type,
                                                              reverseReference));
@@ -141,7 +170,8 @@ public class InterMineModelParser implements ModelParser
         /**
          * {@inheritDoc}
          */
-        public void endElement(String uri, String localName, String qName) {
+        public void endElement(@SuppressWarnings("unused") String uri,
+                @SuppressWarnings("unused") String localName, String qName) {
             if (qName.equals("class")) {
                 classes.add(new ClassDescriptor(cls.name, cls.supers,
                                                 cls.isInterface, cls.attributes, cls.references,
