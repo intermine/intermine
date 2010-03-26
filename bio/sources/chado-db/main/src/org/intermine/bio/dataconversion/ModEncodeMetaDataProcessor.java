@@ -54,7 +54,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 "ArrayExpress_record",
                 "TraceArchive_record",
                 "dbEST_record",
-                "ShortReadArchive_project_ID (SRA)")));
+                "ShortReadArchive_project_ID (SRA)",
+                "ShortReadArchive_project_ID_list (SRA)")));
     
     // submission maps
     // ---------------
@@ -2702,10 +2703,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private class DatabaseRecordConfig
     {
-        private Set<Pattern> patterns = new HashSet<Pattern>();
         private String dbName;
         private String dbDescrition;
         private String dbURL;
+        private Set<String> types = new HashSet<String>();;
     }
 
     private Set<DatabaseRecordConfig> initDatabaseRecordConfigs() {
@@ -2715,16 +2716,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         geo.dbName = "GEO";
         geo.dbDescrition = "Gene Expression Omnibus (NCBI)";
         geo.dbURL = "http://www.ncbi.nlm.nih.gov/projects/geo/query/acc.cgi?acc=";
-        Pattern p = Pattern.compile("GEO.*", Pattern.CASE_INSENSITIVE);
-        geo.patterns.add(p);
+        geo.types.add("GEO_record");
         configs.add(geo);
 
         DatabaseRecordConfig ae = new DatabaseRecordConfig();
         ae.dbName = "ArrayExpress";
         ae.dbDescrition = "ArrayExpress (EMBL-EBI)";
         ae.dbURL = "http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=";
-        p = Pattern.compile("ae.*", Pattern.CASE_INSENSITIVE);
-        ae.patterns.add(p);
+        ae.types.add("ArrayExpress_record");
         configs.add(ae);
 
         DatabaseRecordConfig sra = new DatabaseRecordConfig();
@@ -2732,10 +2731,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         sra.dbDescrition = "Sequence Read Archive (NCBI)";
         sra.dbURL =
             "http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?cmd=viewer&m=data&s=viewer&run=";
-        p = Pattern.compile("SRA.*", Pattern.CASE_INSENSITIVE);
-        sra.patterns.add(p);
+        sra.types.add("ShortReadArchive_project_ID_list (SRA)");
+        sra.types.add("ShortReadArchive_project_ID (SRA)");
         configs.add(sra);
 
+        DatabaseRecordConfig ta = new DatabaseRecordConfig();
+        ta.dbName = "Trace Archive";
+        ta.dbDescrition = "Trace Archive (NCBI)";
+        ta.dbURL = "http://www.ncbi.nlm.nih.gov/Traces/trace.cgi?&cmd=retrieve&val=";
+        ta.types.add("TraceArchive_record");
+        configs.add(ta);
+
+        DatabaseRecordConfig de = new DatabaseRecordConfig();
+        de.dbName = "dbEST";
+        de.dbDescrition = "Expressed Sequence Tags database (NCBI)";
+        de.dbURL = "http://www.ncbi.nlm.nih.gov/nucest/";
+        de.types.add("dbEST_record");
+        configs.add(de);
+        
         return configs;
     }
 
@@ -2801,10 +2814,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 AppliedData ad = appliedDataMap.get(dataId);
                 if (ad.type.equalsIgnoreCase("Result Value")) {
                     for (DatabaseRecordConfig conf : configs) {
-                        for (Pattern p : conf.patterns) {
-                            Matcher m = p.matcher(ad.name);
-                            if (m.matches()) {
-                                submissionDbRecords.addAll(createDatabaseRecords(ad.value, conf));
+                        for (String type : conf.types) {
+                            if (ad.name.equals(type)) {
+                            submissionDbRecords.addAll(createDatabaseRecords(ad.value, conf));
                             }
                         }
                     }
