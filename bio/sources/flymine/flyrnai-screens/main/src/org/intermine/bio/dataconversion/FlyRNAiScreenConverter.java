@@ -126,8 +126,8 @@ public class FlyRNAiScreenConverter extends BioFileConverter
                     + (noDetails.isEmpty()
                        ? ""
                        : "  No details found for screen hit: '" + noDetails + "'");
-            //throw new RuntimeException(msg);
-            LOG.error(msg);
+            throw new RuntimeException(msg);
+            //LOG.error(msg);
         }
         super.close();
     }
