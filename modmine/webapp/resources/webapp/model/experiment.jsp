@@ -126,11 +126,23 @@ div#experimentFeatures {
   <td>experiment: <b><c:out value="${exp.name}"/></b></td>
   <td>project: <b><c:out value="${exp.projectName}"></c:out></b></td>
   <td>PI: <b><c:out value="${exp.pi}"></c:out></b></td>
+  <td>Labs: 
+<%-- Note: linking with surname only, 2 Green and Kim  --%>
+    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
+    <c:if test="${!labStatus.first}">, </c:if>
+              <b><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=*${lab}&class=Lab"
+        title="more info on ${lab}'s lab">${lab}</html:link></b>
+    </c:forEach> 
+  </td>
+    
+
+
   </tr>
   
   
   <tr>
-  <td colspan="4"><c:out value="${exp.description}"></c:out></td>
+  <td colspan="5"><c:out value="${exp.description}"></c:out></td>
   </tr>
   </table>
 

@@ -44,6 +44,7 @@ public class DisplayExperiment
     private Map<String, Long> featureCounts;
     private ObjectStore os;
     private String experimentType;
+    private Set<String> labs = new HashSet<String>();
     
     /**
      * Construct with objects from database and feature counts summary map. 
@@ -76,6 +77,8 @@ public class DisplayExperiment
                 this.description = submission.getDescription();
             }
             submissions.add(submission);
+            labs.add(submission.getLab().getSurname());
+            
             for (ExperimentalFactor factor : submission.getExperimentalFactors()) {
                 factorTypes.add(factor.getType());
             }
@@ -198,6 +201,13 @@ public class DisplayExperiment
     public String getExperimentType() {
         return experimentType;
     }
-    
+
+    /**
+     * @return the organisms
+     */
+    public Set<String> getLabs() {
+        return labs;
+    }
+
     
 }
