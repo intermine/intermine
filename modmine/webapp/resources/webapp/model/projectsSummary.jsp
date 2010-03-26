@@ -41,7 +41,24 @@
   
   <td><h4><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
+Labs: 
+<%-- Note: linking with surname only, 2 Green and Kim--%>  
+
+    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
+    <c:if test="${!labStatus.first}">, </c:if>
+              <b>${lab}</b>
+    </c:forEach> 
+
+<%-- with links
+    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
+    <c:if test="${!labStatus.first}">, </c:if>
+              <b><html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=*${lab}&class=Lab"
+        title="more info on ${lab}'s lab">${lab}</html:link></b>
+    </c:forEach> 
+    --%>
 <br>
+
   <c:choose>
     <c:when test="${exp.submissionCount == 0}">
       This experiment has <b>no data submissions yet</b>.
