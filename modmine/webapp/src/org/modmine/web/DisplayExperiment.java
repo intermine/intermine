@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.ExperimentalFactor;
@@ -44,7 +45,7 @@ public class DisplayExperiment
     private Map<String, Long> featureCounts;
     private ObjectStore os;
     private String experimentType;
-    private Set<String> labs = new HashSet<String>();
+    private Set<String> labs = new TreeSet<String>();
     
     /**
      * Construct with objects from database and feature counts summary map. 
