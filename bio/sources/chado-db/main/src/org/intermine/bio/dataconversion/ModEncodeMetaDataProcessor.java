@@ -138,6 +138,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> cvtermCache = new HashMap<String, String>();
 
     private Map<String, String> devStageTerms = new HashMap<String, String>();
+    private Map<String, String> devOntologies = new HashMap<String, String>();
     // just for debugging
     private Map<String, String> debugMap = new HashMap<String, String>(); // itemIdentifier, type
 
@@ -1779,7 +1780,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             devStageItems.addAll(createFromWikiPage(dccId, "DevelopmentalStage", typeToProp,
                     makeLookupList("developmental stage")));
             if (devStageItems.isEmpty()) {
-                devStageItems.addAll(lookForAttributesInOtherWikiPages("DevelopmentalStage",
+                devStageItems.addAll(lookForAttributesInOtherWikiPages(dccId, "DevelopmentalStage",
                         typeToProp, new String[] {
                         "developmental stage.developmental stage",
                         "tissue.developmental stage",
@@ -1816,7 +1817,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     dccId, "Array", typeToProp, makeLookupList("array")));
             LOG.debug("ARRAY: " + typeToProp.get("array"));
             if (arrayItems.isEmpty()) {
-                arrayItems.addAll(lookForAttributesInOtherWikiPages("Array",
+                arrayItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Array",
                         typeToProp, new String[] {
                         "adf.official name"
                         }));
@@ -1859,7 +1860,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     makeLookupList("antibody")));
             if (antibodyItems.isEmpty()) {
                 LOG.debug("ANTIBODY: " + typeToProp.get("antibody"));
-                antibodyItems.addAll(lookForAttributesInOtherWikiPages("Antibody",
+                antibodyItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Antibody",
                         typeToProp, new String[] {
                         "antibody.official name"
                         }));
@@ -1881,7 +1882,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             tissueItems.addAll(createFromWikiPage(
                     dccId, "Tissue", typeToProp, makeLookupList("tissue")));
             if (tissueItems.isEmpty()) {
-                tissueItems.addAll(lookForAttributesInOtherWikiPages("Tissue",
+                tissueItems.addAll(lookForAttributesInOtherWikiPages(dccId, "Tissue",
                         typeToProp, new String[] {
                         "stage.tissue"
                         , "cell line.tissue"
@@ -1907,7 +1908,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
                 List<Item> extraPropItems = new ArrayList<Item>();
-                extraPropItems.addAll(lookForAttributesInOtherWikiPages("SubmissionProperty",
+                extraPropItems.addAll(lookForAttributesInOtherWikiPages(dccId, "SubmissionProperty",
                         typeToProp, new String[] {exFactor}));
                 allPropertyItems.addAll(extraPropItems);
                 createExperimentalFactors(submissionId, exFactor, extraPropItems);
@@ -2234,7 +2235,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (devStageValues != null) {
                         for (String devStageValue : devStageValues) {
                             propItem.addToCollection("ontologyTerms",
-                                    getDevStageTerm(devStageValue));
+                                    getDevStageTerm(devStageValue, dccId));
                         }
                     } else {
                         LOG.error("METADATA FAIL: no 'developmental stage' values for wiki page: "
@@ -2378,13 +2379,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             taxonId = "6239";
         } else {
             // attempt to work out the organism from the submission
-            Integer subChadoId = getSubmissionIdFromDccId(dccId);
-            String organism = submissionOrganismMap.get(subChadoId);
-            OrganismRepository or = OrganismRepository.getOrganismRepository();
-            taxonId = "" + or.getOrganismDataByFullName(organism).getTaxonId();
+            taxonId = getTaxonIdForSubmission(dccId);
             originalId = geneTargetIdText;
-            LOG.info("RESOLVER: found organism '" + organism + "', taxon " + taxonId
-                    + " for submission " + dccId);
+            LOG.info("RESOLVER: found taxon " + taxonId + " for submission " + dccId);
         }
 
         IdResolver resolver = null;
@@ -2432,7 +2429,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    private List<Item> lookForAttributesInOtherWikiPages(String clsName,
+    private List<Item> lookForAttributesInOtherWikiPages(String dccId, String clsName,
             Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor)
             throws ObjectStoreException {
 
@@ -2448,7 +2445,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     for (SubmissionProperty subProp : typeToProp.get(type)) {
                         if (subProp.details.containsKey(propName)) {
                             for (String value : subProp.details.get(propName)) {
-                                items.add(createNonWikiSubmissionPropertyItem(clsName,
+                                items.add(createNonWikiSubmissionPropertyItem(dccId, clsName,
                                         getPreferredSynonym(propName),
                                         correctAttrValue(value)));
                             }
@@ -2472,7 +2469,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
                         }
 
-                        items.add(createNonWikiSubmissionPropertyItem(clsName, subProp.type,
+                        items.add(createNonWikiSubmissionPropertyItem(dccId, clsName, subProp.type,
                                 correctAttrValue(value)));
                     }
                 }
@@ -2490,7 +2487,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
 
-    private Item createNonWikiSubmissionPropertyItem(String clsName, String type, String name)
+    private Item createNonWikiSubmissionPropertyItem(String dccId, String clsName, String type,
+            String name)
     throws ObjectStoreException {
         if (clsName.equals("DevelopmentalStage")) {
             name = correctDevStageTerm(name);
@@ -2502,7 +2500,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             item.setAttribute("type", getPreferredSynonym(type));
 
             if (clsName.equals("DevelopmentalStage")) {
-                String ontologyTermId = getDevStageTerm(name);
+                String ontologyTermId = getDevStageTerm(name, dccId);
                 item.addToCollection("ontologyTerms", ontologyTermId);
             }
             getChadoDBConverter().store(item);
@@ -2586,15 +2584,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
 
-    private String getDevStageTerm(String value) throws ObjectStoreException {
+    private String getDevStageTerm(String value, String dccId) throws ObjectStoreException {
         value = correctDevStageTerm(value);
 
-        String identifier = devStageTerms.get(value);
+        // there may be duplicate terms for fly and worm, include taxon in key
+        String taxonId = getTaxonIdForSubmission(dccId);
+        String key = value + "_" + taxonId;
+        String identifier = devStageTerms.get(key);
         if (identifier == null) {
             Item term = getChadoDBConverter().createItem("OntologyTerm");
             term.setAttribute("name", value);
+            String ontologyRef = getDevelopmentOntologyByTaxon(taxonId);
+            if (ontologyRef != null) {
+                term.setReference("ontology", ontologyRef);
+            }
             getChadoDBConverter().store(term);
-            devStageTerms.put(value, term.getIdentifier());
+            devStageTerms.put(key, term.getIdentifier());
             identifier = term.getIdentifier();
         }
         return identifier;
@@ -2609,7 +2614,36 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return value;
     }
 
-
+    private String getTaxonIdForSubmission(String dccId) {
+        Integer subChadoId = getSubmissionIdFromDccId(dccId);
+        String organism = submissionOrganismMap.get(subChadoId);
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        return "" + or.getOrganismDataByFullName(organism).getTaxonId();
+    }
+    
+    private String getDevelopmentOntologyByTaxon(String taxonId) throws ObjectStoreException {
+        if (taxonId == null) {
+            return null;
+        }
+        String ontologyId = devOntologies.get(taxonId);
+        if (ontologyId == null) {
+            String ontologyName = null;
+            OrganismRepository or = OrganismRepository.getOrganismRepository();
+            String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+            if (genus.equals("Drosophila")) {
+                ontologyName = "Fly Development";
+            } else {
+                ontologyName = "Worm Development";
+            }
+            Item ontology = getChadoDBConverter().createItem("Ontology");
+            ontology.setAttribute("title", ontologyName);
+            getChadoDBConverter().store(ontology);
+            ontologyId = ontology.getIdentifier();
+            devOntologies.put(taxonId, ontologyId);
+        }
+        return ontologyId;
+    }
+    
     private Integer getSubmissionIdFromDccId(String dccId) {
         for (Map.Entry<Integer, String> entry : dccIdMap.entrySet()) {
             if (entry.getValue().equals(dccId)) {
