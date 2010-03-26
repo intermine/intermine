@@ -62,6 +62,10 @@ public class PsiConverter extends BioFileConverter
     private Set<String> regionPrimaryIdentifiers = new HashSet();
     private Set<String> synonyms = new HashSet();
     private Map<String, String> genes = new HashMap();
+    // list of interaction.shortNames.  IntAct has duplicate interaction information in
+    // different files.  if a duplicate interaction is found, just skip it, we already have the
+    // info. See #2136
+    private Set<String> interactions = new HashSet();
 
 
 
@@ -443,6 +447,7 @@ public class PsiConverter extends BioFileConverter
                 if (holder.isValid) {
                     try {
                         storeAll(holder);
+                        interactions.add(holder.shortName);
                     } catch (ObjectStoreException e) {
                         throw new SAXException(e);
                     }
@@ -453,6 +458,13 @@ public class PsiConverter extends BioFileConverter
         }
 
         private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException {
+
+            if (interactions.contains(interactionHolder.shortName)) {
+                // we've already processed this interaction in another file
+                // see #2136
+                return;
+            }
+
             Set<InteractorHolder> interactors = interactionHolder.interactors;
             for (Iterator iter = interactors.iterator(); iter.hasNext();) {
                 InteractorHolder ih =  (InteractorHolder) iter.next();
