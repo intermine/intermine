@@ -138,6 +138,14 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.DatabaseRecord">
+    <fields>
+      <fieldconfig fieldExpr="database"/>
+      <fieldconfig fieldExpr="accession"/>
+      <fieldconfig fieldExpr="url"/>
+    </fields>
+  </class>
+
 
 <!-- =================================================================== -->
 <!-- THIS SHOULD BE THE SAME AS FLYMINE MINUS STUFF MODMINE DOESN'T NEED -->
