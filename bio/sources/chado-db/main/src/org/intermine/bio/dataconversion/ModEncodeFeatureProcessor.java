@@ -34,6 +34,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.Reference;
 
 /**
  * A processor that loads feature referred to by the modENCODE metadata.  This class is designed
@@ -49,7 +50,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String dataSourceIdentifier;
     private final List<Integer> dataList;
     private final String title;
-
+    private final String scoreProtocolItemId;
+    
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
 
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
@@ -94,12 +96,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            List <Integer> dataList, String title) {
+            List <Integer> dataList, String title, String scoreProtocolItemId) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.dataSourceIdentifier = dataSourceIdentifier;
         this.dataList = dataList;
         this.title = title;
+        this.scoreProtocolItemId = scoreProtocolItemId;
 
         for (String chromosomeType : getChromosomeFeatureTypes()) {
             commonFeatureInterMineTypes.add(
@@ -636,6 +639,12 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
                 Attribute scoreTypeAttribute = new Attribute("scoreType", program);
                 getChadoDBConverter().store(scoreTypeAttribute, storedFeatureId);
+                
+                if (scoreProtocolItemId != null) {
+                    Reference scoreProtocolRef =
+                        new Reference("scoreProtocol", scoreProtocolItemId);
+                    getChadoDBConverter().store(scoreProtocolRef, storedFeatureId);
+                }
             }
         }
         res.close();

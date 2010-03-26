@@ -47,9 +47,15 @@ import org.intermine.xml.full.ReferenceList;
 public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
-//    private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php/";
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
-
+    private static final Set<String> DB_RECORD_TYPES =
+        Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                "GEO_record",
+                "ArrayExpress_record",
+                "TraceArchive_record",
+                "dbEST_record",
+                "ShortReadArchive_project_ID (SRA)")));
+    
     // submission maps
     // ---------------
 
@@ -103,7 +109,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, String> protocolsMap = new HashMap<String, String>();
     private Map<Integer, String> protocolItemIds = new HashMap<Integer, String>();
     private Map<String, Integer> protocolItemToObjectId = new HashMap<String, Integer>();
-
+    // submission chado id to item identifier of Protocol used to generate GFF
+    private Map<Integer, String> scoreProtocols = new HashMap<Integer, String>();
+    
     private Map<Integer, Integer> publicationIdMap = new HashMap<Integer, Integer>();
     private Map<Integer, String> publicationIdRefMap = new HashMap<Integer, String>();
 
@@ -226,6 +234,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processAppliedDataAttributes(connection);
         processExperiment(connection);
         processDag(connection);
+        findScoreProtocols();
         processFeatures(connection, submissionMap);
 
         // set references
@@ -284,7 +293,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             ModEncodeFeatureProcessor processor =
                 new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
-                        labItemIdentifier, thisSubmissionDataIds, submissionTitle);
+                        labItemIdentifier, thisSubmissionDataIds, submissionTitle,
+                        scoreProtocols.get(chadoExperimentId));
             processor.initialiseCommonFeatures(commonFeaturesMap);
             processor.process(connection);
 
@@ -531,6 +541,26 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.warn("AppliedProtocol.step not set for chado id: " + appliedProtocolId
                         + " sub " + ap.submissionId + " inputs " + ap.inputs + " outputs " 
                         + ap.outputs);
+            }
+        }
+    }
+
+
+    // Look for protocols that were used to generated GFF files, these are passed to the feature
+    // processor, if features have a score the protocol is set as the scoreProtocol reference.
+    // NOTE this could equally be done with data, data_feature and applied_protocol_data
+    private void findScoreProtocols() {
+        for (Map.Entry<Integer, AppliedData> entry : appliedDataMap.entrySet()) {
+            Integer dataId = entry.getKey();
+            AppliedData aData = entry.getValue();
+
+            if (aData.type.equals("Result File") 
+                    && (aData.value.endsWith(".gff") || aData.value.endsWith("gff3"))) {
+                for (Integer papId : aData.previousAppliedProtocols) {
+                    AppliedProtocol aProtocol = appliedProtocolMap.get(papId);
+                    String protocolItemId = protocolItemIds.get(aProtocol.protocolId);
+                    scoreProtocols.put(dataSubmissionMap.get(dataId), protocolItemId);
+                }
             }
         }
     }
@@ -1409,7 +1439,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             // if there is one, use it instead of the value
-            if (!StringUtils.isEmpty(officialName)) {
+            String datumType = name = getCvterm(connection, typeId);
+            if (!StringUtils.isEmpty(officialName) 
+                    && doReplaceWithOfficialName(heading, datumType)) {
                 value = officialName;
             }
 
@@ -1449,6 +1481,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("PROCESS TIME submission data: " + (System.currentTimeMillis() - bT));
     }
 
+    // For some data types we don't want to replace with official name - e.g. file names and
+    // database record ids.  It looks like the official name shouldn't actually be present.
+    private boolean doReplaceWithOfficialName(String heading, String type) {
+        if (heading.equals("Result File")) {
+            return false;
+        }
+        
+        if (heading.equals("Result Value") && DB_RECORD_TYPES.contains(type)) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Return the rows needed for data from the applied_protocol_data table.
      *
