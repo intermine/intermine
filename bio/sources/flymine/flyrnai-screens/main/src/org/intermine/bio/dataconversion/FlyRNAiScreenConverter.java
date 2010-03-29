@@ -66,10 +66,10 @@ public class FlyRNAiScreenConverter extends BioFileConverter
 
     static {
         RESULTS_KEY.put("N", "Not a Hit");
-        RESULTS_KEY.put("Y", "A Hit");
-        RESULTS_KEY.put("S", "A Strong Hit");
-        RESULTS_KEY.put("M", "A Medium Hit");
-        RESULTS_KEY.put("W", "A Weak Hit");
+        RESULTS_KEY.put("Y", "Hit");
+        RESULTS_KEY.put("S", "Strong Hit");
+        RESULTS_KEY.put("M", "Medium Hit");
+        RESULTS_KEY.put("W", "Weak Hit");
         RESULTS_KEY.put("NS", "Not Screened");
     }
 
