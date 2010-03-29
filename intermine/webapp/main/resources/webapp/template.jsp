@@ -181,6 +181,25 @@
               </c:if>
             </span>
 
+                <script type="text/javascript">
+                  /* setting options popup value to correct initial state. */
+                  if (document.templateForm["attributeOptions(${index})"] != null) {
+                        var select = document.templateForm["attributeOptions(${index})"];
+                        var value = document.templateForm["attributeValues(${index})"].value;
+                        var set = false;
+                        for (i=0 ; i<select.options.length ; i++) {
+                            if (select.options[i].value == value) {
+                                select.selectedIndex = i;
+                                set = true;
+                                break;
+                            }
+                        }
+                        updateConstraintForm(${index-1}, document.templateForm["attributeOps(${index})"],
+                                document.templateForm["attributeOptions(${index})"],
+                                document.templateForm["attributeValues(${index})"]);
+                  }
+                </script>
+
          <%-- dropdown (probably organism) --%>
           <c:if test="${haveExtraConstraint[con]}">
               <c:if test="${empty keyFields[con]}">
