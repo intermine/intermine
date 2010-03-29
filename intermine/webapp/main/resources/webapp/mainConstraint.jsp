@@ -347,7 +347,7 @@ swapInputs('subclass');
 <c:if test="${(!empty bags) || (!editingNode.collection && !editingNode.reference &&
     !empty editingNode.parent && editingNode.type != 'boolean')}">
 <div id="optionstoggle" style="background-color:#1863B8;color:#FFF;padding:5px;margin:15px 0;cursor:pointer;"><img id='advanced_toggle' src="images/disclosed.gif"/>&nbsp;<strong>Advanced Options</strong></div>
-<div id="options${editingNode.fieldName}" style="background-color:#00F3FF;padding:5px">
+<div id="options${editingNode.fieldName}" style="background-color:#EEE;padding:5px">
 
     <c:if test="${!empty bags}">
 
