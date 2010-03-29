@@ -168,7 +168,7 @@ if (&checkdir_exists($split_dir)==0) {
     open(F,"<$filename") or die "$! was expecting something like uniprot_sprot.xml or uniprot_trembl.xml";
     while (my $newline = <F>) {
       #if a new entry is found we might want to keep it
-      if ($newline =~ /<organism>/) {
+      if ($newline =~ /<organism/) {
         $in_organism = 1;
       } elsif ($newline =~ /<\/organism>/) {
         $in_organism = 0;
@@ -176,7 +176,7 @@ if (&checkdir_exists($split_dir)==0) {
         $keep = "true";
         #is this a taxon Id line?
       } elsif ($newline && $in_organism && 
-               $newline=~/dbReference type="NCBI Taxonomy".*id="(\d+)"/) {
+               $newline=~/dbReference type="NCBI Taxonomy".key="1".*id="(\d+)"/) {
         #get the taxon Id only if we are in an <organism>...</organism> to avoid <organismHost>
         $taxon = $1;
         #is this the end of the entry?
