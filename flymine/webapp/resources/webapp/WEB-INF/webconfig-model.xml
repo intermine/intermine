@@ -497,7 +497,6 @@
     </fields>
     <longdisplayers>
       <displayer src="attributeLinkDisplayer.tile"/>
-      <displayer src="/model/cytoscapeInteractionsDisplayer.jsp"/>
     </longdisplayers>
   </class>
 
