@@ -134,9 +134,7 @@ sub config_species(){
             if($f[2]){
                 chomp $f[3];
                 $data{$f[1]}{$f[2]}=$f[3];
-            }
-            #for everything else
-            else{
+            } elsif ($f[1]) {
                 chomp $f[1];
                 $data{$f[1]}=$f[1];
             }
