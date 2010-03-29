@@ -77,7 +77,7 @@ public class RNAiConverter extends BioFileConverter
                     Item gene = createGene(line[0]);
 
                     String comment = null;
-                    if (line.length == 12) {
+                    if (!StringUtils.isEmpty(line[10].trim())) {
                         comment = line[10].trim();
                     }
                     String isObserved = null;
