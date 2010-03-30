@@ -73,8 +73,8 @@ public class PdbConverter extends BioDirectoryConverter
         List<File> directoriesToProcess = new ArrayList();
 
         if (directories == null || directories.length == 0) {
-            LOG.error("no valid PDB directories found");
-            return;
+            throw new RuntimeException("no valid PDB directories found");
+            
         }
 
         for (File f : directories) {
@@ -92,8 +92,7 @@ public class PdbConverter extends BioDirectoryConverter
 
         // check that we have valid files before we start storing ANY data
         if (directoriesToProcess.isEmpty()) {
-            LOG.error("no valid PDB directories found.");
-            return;
+            throw new RuntimeException("no valid PDB directories found.");            
         }
 
         // one dir per org
