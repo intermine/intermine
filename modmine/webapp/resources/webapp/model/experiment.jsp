@@ -580,42 +580,78 @@ All GBrowse tracks generated for this experiment:
             </c:if>
           </c:forEach>
 
+<%-- REPOSITORY --%>
+          <span class="filelink">
+          <c:forEach items="${subRep}" var="rep" varStatus="rep_status">
+						<c:if test="${rep.key == sub.dCCid}">
+						<br>
+            <c:forEach items="${rep.value}" var="aRef" varStatus="ref_status">
+                 ${aRef[0]}:              
+              <c:choose>
+                 <c:when test="${fn:startsWith(aRef[1],'To ')}">
+                 ${aRef[1]}<br></br>
+                 </c:when>
+                 <c:otherwise>
+                <a href="${aRef[2]}"
+                  title="see ${aRef[1]} in ${aRef[0]} repository" class="value extlink">
+                  <c:out
+                  value="${aRef[1]}" /> </a> <br></br>
+
+                 </c:otherwise>
+              </c:choose>
+            </c:forEach>						
+            </c:if>						
+					</c:forEach>							
+					</span>
+
+
+
 <%-- FILES --%>
           <span class="filelink">
           <c:forEach items="${files}" var="subFiles" varStatus="sub_status">
-						<c:if test="${subFiles.key == sub.dCCid}">
+            <c:if test="${subFiles.key == sub.dCCid}">
             <c:forEach items="${filesPerSub}" var="filesNr" varStatus="nr_status">
               <c:if test="${filesNr.key == sub.dCCid}">
               <c:set var="nr" value="${filesNr.value}" /> 
               <c:choose>
               <c:when test="${nr > 20}">
+              <br></br>
                 <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted"
                   title="Access the submission ${nr} files" class="value extlink"> 
                 <c:out value="${nr} files" /> </a>            
               </c:when>
               <c:otherwise>
-							<c:forEach items="${subFiles.value}" var="fileName"	varStatus="file_status">
-								<br>
+              <c:forEach items="${subFiles.value}" var="fileName" varStatus="file_status">
+                <br>
                 <c:choose>
-								<c:when test="${fn:startsWith(fileName,ncbiftp)}">
+                <c:when test="${fn:startsWith(fileName,ncbiftp)}">
                 <a href="${fileName}"
                   title="Download ${fileName}" class="value extlink"> <c:out
-                  value="${fileName}" /> </a>								
-								</c:when>
-								<c:otherwise>
-								<a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${fileName}"
-									title="Download ${fileName}" class="value extlink"> <c:out
-									value="${fileName}" /> </a>
-								</c:otherwise>
-							  </c:choose>
-							</c:forEach>
+                  value="${fileName}" /> </a>               
+                </c:when>
+                <c:otherwise>
+                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${fileName}"
+                  title="Download ${fileName}" class="value extlink"> <c:out
+                  value="${fileName}" /> </a>
+                </c:otherwise>
+                </c:choose>
+              </c:forEach>
 </c:otherwise>
 </c:choose>
 </c:if>
           </c:forEach>
-						</c:if>
-					</c:forEach>
-					</span>
+            </c:if>
+          </c:forEach>
+          </span>
+
+
+
+
+
+
+
+
+
 					
 					</td>
   </tr>
@@ -623,6 +659,7 @@ All GBrowse tracks generated for this experiment:
   </table>
 </div>
 </im:boxarea>
+
 </c:forEach>
 </div>
 <!-- /experiment.jsp -->

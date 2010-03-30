@@ -20,10 +20,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
@@ -46,6 +48,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 
@@ -60,6 +63,9 @@ public class MetadataCache
     // GBrowse URLs
     private static final String GBROWSE_BASE_URL
     = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+    
+    // does not work?!
+    //    private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
 
     // SubmissionData name for files
@@ -98,7 +104,9 @@ public class MetadataCache
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
+    private static Map<Integer, List<String[]>> submissionRepositedCache = null;
 
+    
     private static long lastTrackCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
 
@@ -258,7 +266,6 @@ public class MetadataCache
             }
 
             submissionUnlocatedFeatureTypes = new HashMap<Integer, List<String>>();
-
             
             if (submissionLocatedFeatureTypes == null) {
                 readSubmissionLocatedFeature(os);
@@ -286,6 +293,7 @@ public class MetadataCache
         } catch (Exception err) {
             err.printStackTrace();
         }
+        
         return submissionUnlocatedFeatureTypes;
     }
 
@@ -637,7 +645,97 @@ public class MetadataCache
         }     
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms");
+        //**
+        LOG.info("located features: " + submissionLocatedFeatureTypes );
+        
     }
+
+    
+    /**
+     * Fetch reposited (GEO/SRA/AE..) entries per submission.
+     * @param os the production objectStore
+     * @return map
+     */
+    public static synchronized Map<Integer, List<String[]>> getRepositoryEntries(ObjectStore os) {
+        if (submissionRepositedCache == null) {
+            readSubmissionRepositoryEntries(os);
+        }
+        return submissionRepositedCache;
+    }
+    
+    
+    private static void readSubmissionRepositoryEntries(ObjectStore os) {
+        //
+        long startTime = System.currentTimeMillis();
+        try {
+            Query q = new Query();
+            QueryClass qcSubmission = new QueryClass(Submission.class);
+            QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
+            q.addFrom(qcSubmission);
+            q.addToSelect(qfDCCid);
+
+            QueryClass qcRepositoryEntry = new QueryClass(DatabaseRecord.class);
+            QueryField qfDatabase = new QueryField(qcRepositoryEntry, "database");
+            QueryField qfAccession = new QueryField(qcRepositoryEntry, "accession");
+            QueryField qfUrl = new QueryField(qcRepositoryEntry, "url");
+            q.addFrom(qcRepositoryEntry);
+            q.addToSelect(qfDatabase);
+            q.addToSelect(qfAccession);            
+            q.addToSelect(qfUrl);            
+
+            // join the tables
+            QueryCollectionReference ref1 = new QueryCollectionReference(qcSubmission, "databaseRecords");
+            ContainsConstraint cc = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
+                    qcRepositoryEntry);
+
+            q.setConstraint(cc);
+            q.addToOrderBy(qfDCCid);
+            q.addToOrderBy(qfDatabase);
+
+            Results results = os.execute(q);
+
+            submissionRepositedCache = new HashMap<Integer, List<String[]>>();
+
+            Integer counter = 0;
+
+            Integer prevSub = new Integer(-1);
+            List<String[]> subRep = new ArrayList<String[]>();
+            Iterator i = results.iterator();
+            while (i.hasNext()) {
+                ResultsRow row = (ResultsRow) i.next();
+
+                counter++;
+                Integer dccId = (Integer) row.get(0);
+                String db = (String) row.get(1);
+                String acc = (String) row.get(2);
+                String url = (String) row.get(3);
+                String[] thisRecord = { db, acc, url};
+
+                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
+                    if (prevSub > 0) {
+                        if (counter.equals(results.size())) {
+                            prevSub = dccId;
+                            subRep.add(thisRecord);
+                        }
+                        List<String[]> subRepIn = new ArrayList<String[]>();
+                        subRepIn.addAll(subRep);
+                        submissionRepositedCache.put(prevSub, subRepIn);
+                        subRep.clear();
+                    }
+                    prevSub = dccId;
+                }
+                subRep.add(thisRecord);
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        long timeTaken = System.currentTimeMillis() - startTime;
+        LOG.info("Primed Repository entries cache, took: " + timeTaken + "ms");
+    }
+
+    
+    
+    
     
     /**
      * adds an element to a list which is the value of a map
@@ -754,6 +852,7 @@ public class MetadataCache
         }
     }
 
+    
     /**
      * This method adds a GBrowse track to a map with
      * key = dccId
@@ -773,4 +872,33 @@ public class MetadataCache
             m.put(key, gbs);
         }
     }
+    
+    
+    /**
+     * This method get the GBrowse base URL from the properties
+     * or default to one
+     * @return the base URL
+     */
+    private static String getGBrowsePrefix() {
+        final String GBROWSE_DEFAULT_URL
+        = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
+
+        Properties props = PropertiesUtil.getProperties();
+        String gbURL = props.getProperty("gbrowse.prefix") + "/";    
+
+//        StringBuffer header = new StringBuffer();
+//        header.append(props.getProperty("gbrowse.prefix"));
+
+        
+        if (gbURL == null || gbURL.length() < 5){
+            LOG.info("XXX IN... " + GBROWSE_DEFAULT_URL);
+          
+            return GBROWSE_DEFAULT_URL;
+        }
+
+        LOG.info("XXX OUT... " + GBROWSE_DEFAULT_URL);
+       return gbURL;
+    }
+    
+    
 }
