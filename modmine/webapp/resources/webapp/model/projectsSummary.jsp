@@ -70,6 +70,10 @@ Labs:
       This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
     </c:otherwise>
   </c:choose>
+  It has produced <b>${exp.repositedCount} entries in public repositories</b>.
+
+
+
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
@@ -100,8 +104,25 @@ Labs:
            <c:out value="${fn:length(tracks[exp.name])}"/> GBrowse tracks
          </c:otherwise>
        </c:choose>
+<br></br>
      </c:if>
 
+     <c:if test="${exp.repositedCount > 0}">
+
+      <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
+      ${rep.value} 
+      <c:choose>
+        <c:when test="${rep.value == 1}">
+         entry
+        </c:when>
+        <c:otherwise>
+        entries 
+        </c:otherwise>
+      </c:choose>
+      in ${rep.key}
+      <br></br>
+      </c:forEach>
+     </c:if>
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
         <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">
