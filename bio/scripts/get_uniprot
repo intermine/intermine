@@ -147,8 +147,8 @@ if (&checkdir_exists($split_dir)==0) {
   #use hash to define output name for each source file
   #comment out one of them to process the other file only
   my %files = (
-               #'sprot'  => {    'filename' => "$download_dir/uniprot_sprot.xml",
-               #                 'fname_end' => '_uniprot_sprot.xml'},
+               'sprot'  => {    'filename' => "$download_dir/uniprot_sprot.xml",
+                                'fname_end' => '_uniprot_sprot.xml'},
                'trembl'  => { 'filename' => "$download_dir/uniprot_trembl.xml",
                               'fname_end' => '_uniprot_trembl.xml'},
               );
