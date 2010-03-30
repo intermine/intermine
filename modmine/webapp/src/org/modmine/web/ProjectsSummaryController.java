@@ -49,6 +49,10 @@ public class ProjectsSummaryController extends TilesAction
       
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
+
+            Map<String, List<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
+            request.setAttribute("expRep", experimentRepositoryEntries);
+        
         } catch (Exception err) {
             err.printStackTrace();
         }

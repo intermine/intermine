@@ -13,6 +13,7 @@ package org.modmine.web;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -179,7 +180,7 @@ public class DisplayExperiment
         return submissions.size();
     }
 
-
+    
     /**
      * @return the featureCounts
      */
@@ -195,6 +196,45 @@ public class DisplayExperiment
         return factorTypes.size();
     }
 
+    /**
+     * @return the number of entries submitted to a public repository 
+     * for this experiment
+     */
+    public int getRepositedCount() {
+        List<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
+        return rep.size();
+    }
+
+    /**
+     * @return the number of entries submitted to a public repository 
+     * for this experiment
+     */
+    public Map<String, Integer> getReposited() {
+        List<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
+        Map<String, Integer> dbMap = new HashMap<String, Integer>();
+        
+        for (String[] s : rep) {
+            addToCounterMap(dbMap, s[0]);
+        }
+        return dbMap;
+    }
+    
+    
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
+    private static void addToCounterMap(Map<String, Integer> m, String s) {
+
+        Integer counter = 1;
+        if (m.containsKey(s)){
+            counter = m.get(s) + 1;
+        }
+        m.put(s, counter);            
+    }
+    
 
     /**
      * @return the experimentType
@@ -204,7 +244,7 @@ public class DisplayExperiment
     }
 
     /**
-     * @return the organisms
+     * @return the labs
      */
     public Set<String> getLabs() {
         return labs;

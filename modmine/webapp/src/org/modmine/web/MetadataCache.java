@@ -318,6 +318,7 @@ public class MetadataCache
         return tracks;
     }
 
+    
     /**
      * adds the elements of a list i to a list l only if they are not yet
      * there
@@ -334,6 +335,41 @@ public class MetadataCache
         }
     }
 
+    /**
+     * adds the elements of a list i to a list l only if they are not yet
+     * there
+     * @param l the receiving list
+     * @param i the donating list
+     */
+    private static void addToStringList(List<String[]> l, List<String[]> i) {
+        Iterator <String[]> it  = i.iterator();
+        while (it.hasNext()) {
+            String[] thisId = it.next();
+            if (!l.contains(thisId)) {
+                l.add(thisId);
+            }
+        }
+    }
+
+    public static Map<String, List<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
+        Map<String, List<String[]>> reposited = new HashMap<String, List<String[]>>();
+
+        Map<Integer, List<String[]>> subRepositedMap = getRepositoryEntries(os);
+
+        for (DisplayExperiment exp : getExperiments(os)) {
+            List<String[]> expReps = new ArrayList<String[]>();
+            reposited.put(exp.getName(), expReps);
+            for (Submission sub : exp.getSubmissions()) {
+                List<String[]> subReps = subRepositedMap.get(sub.getdCCid());
+                if (subReps != null) {
+                    // check so it is unique
+                    // expTracks.addAll(subTracks);
+                    addToStringList(expReps, subReps);
+                }
+            }
+        }
+        return reposited;
+    }
 
 
 
