@@ -345,29 +345,60 @@ public class MetadataCache
         Iterator <String[]> it  = i.iterator();
         while (it.hasNext()) {
             String[] thisId = it.next();
-            if (!l.contains(thisId)) {
+           if (!l.contains(thisId)) {
+//            if (!l.contains(thisId[1])) {
+                LOG.info("DDDD: " + thisId[0] + "|" + thisId[1] 
+                        + "|" + thisId[2]);
                 l.add(thisId);
             }
         }
     }
 
-    public static Map<String, List<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
-        Map<String, List<String[]>> reposited = new HashMap<String, List<String[]>>();
+    public static Map<String, Set<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
+//        public static Map<String, List<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
+//        Map<String, List<String[]>> reposited = new HashMap<String, List<String[]>>();
+        Map<String, Set<String[]>> reposited = new HashMap<String, Set<String[]>>();
 
         Map<Integer, List<String[]>> subRepositedMap = getRepositoryEntries(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
-            List<String[]> expReps = new ArrayList<String[]>();
-            reposited.put(exp.getName(), expReps);
+//            List<String[]> expReps = new ArrayList<String[]>();
+            Set<String[]> expReps = new HashSet<String[]>();
             for (Submission sub : exp.getSubmissions()) {
                 List<String[]> subReps = subRepositedMap.get(sub.getdCCid());
                 if (subReps != null) {
                     // check so it is unique
                     // expTracks.addAll(subTracks);
-                    addToStringList(expReps, subReps);
+                    expReps.addAll(subReps);
+//                    addToStringList(expReps, subReps);
                 }
             }
+            // check for duplicates
+            Set<String> db = new HashSet<String>();
+            Set<String> acc = new HashSet<String>(); 
+            Set<String[]> dup = new HashSet<String[]>(); 
+            for (String[] s : expReps){
+                if (db.contains(s[0]) && acc.contains(s[1])){
+                    if (!s[1].startsWith("To be")){
+                        LOG.info("CCC: " + s[1] ); 
+                        dup.add(s);                        
+                    }
+                }
+                    db.add(s[0]);
+                    acc.add(s[1]);
+                LOG.info("CCC: " + s[1] );                 
+            }
+
+            Set<String[]> uniques = new HashSet<String[]>(expReps); 
+
+            uniques.removeAll(dup);
+
+            reposited.put(exp.getName(), uniques);
+            
+//            reposited.put(exp.getName(), expReps);
         }
+        LOG.info("CCC: " + reposited ); 
+        
         return reposited;
     }
 

@@ -70,8 +70,12 @@ Labs:
       This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
     </c:otherwise>
   </c:choose>
-  It has produced <b>${exp.repositedCount} entries in public repositories</b>.
-
+    <c:if test="${exp.repositedCount == 1}">
+       It has produced <b>${exp.repositedCount} entry in public repositories</b>.
+    </c:if>
+    <c:if test="${exp.repositedCount > 1}">
+       It has produced <b>${exp.repositedCount} entries in public repositories</b>.
+    </c:if>
 
 
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 

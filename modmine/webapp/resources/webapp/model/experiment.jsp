@@ -391,7 +391,7 @@ All GBrowse tracks generated for this experiment:
    </td>
 
 <%-- EXPERIMENT SUBMISSIONS TO REPOSITORIES --%>
-     <c:if test="${!empty expRep}">
+     <c:if test="${!empty subRep}">
  <tr>
      <td align="top"><b>
        <im:querylink text="All submissions to public repositories for this experiment" skipBuilder="true" title="View all submissions to public repositories (AE, GEO, SRA) for this experiment">
