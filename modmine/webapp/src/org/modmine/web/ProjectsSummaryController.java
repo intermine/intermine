@@ -12,10 +12,10 @@ package org.modmine.web;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -24,7 +24,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.MetadataCache.GBrowseTrack;
 
@@ -50,8 +49,8 @@ public class ProjectsSummaryController extends TilesAction
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
 
-            Map<String, List<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
-            request.setAttribute("expRep", experimentRepositoryEntries);
+//            Map<String, Set<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
+//            request.setAttribute("expRep", experimentRepositoryEntries);
         
         } catch (Exception err) {
             err.printStackTrace();

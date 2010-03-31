@@ -13,6 +13,7 @@ package org.modmine.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,8 +74,8 @@ public class ExperimentController extends TilesAction
         Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-        Map<String, List<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
-        request.setAttribute("expRep", experimentRepositoryEntries);
+//        Map<String, Set<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
+//        request.setAttribute("expRep", experimentRepositoryEntries);
 
         return null;
     }

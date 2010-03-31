@@ -201,7 +201,7 @@ public class DisplayExperiment
      * for this experiment
      */
     public int getRepositedCount() {
-        List<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
+        Set<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
         return rep.size();
     }
 
@@ -210,7 +210,7 @@ public class DisplayExperiment
      * for this experiment
      */
     public Map<String, Integer> getReposited() {
-        List<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
+        Set<String[]> rep = MetadataCache.getExperimentRepositoryEntries(os).get(name);
         Map<String, Integer> dbMap = new HashMap<String, Integer>();
         
         for (String[] s : rep) {
