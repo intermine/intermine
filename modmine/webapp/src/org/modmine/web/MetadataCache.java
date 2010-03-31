@@ -355,55 +355,47 @@ public class MetadataCache
     }
 
     public static Map<String, Set<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
-//        public static Map<String, List<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
-//        Map<String, List<String[]>> reposited = new HashMap<String, List<String[]>>();
         Map<String, Set<String[]>> reposited = new HashMap<String, Set<String[]>>();
 
         Map<Integer, List<String[]>> subRepositedMap = getRepositoryEntries(os);
 
         for (DisplayExperiment exp : getExperiments(os)) {
-//            List<String[]> expReps = new ArrayList<String[]>();
             Set<String[]> expReps = new HashSet<String[]>();
             for (Submission sub : exp.getSubmissions()) {
                 List<String[]> subReps = subRepositedMap.get(sub.getdCCid());
                 if (subReps != null) {
-                    // check so it is unique
-                    // expTracks.addAll(subTracks);
                     expReps.addAll(subReps);
-//                    addToStringList(expReps, subReps);
                 }
             }
-            // check for duplicates
-            Set<String> db = new HashSet<String>();
-            Set<String> acc = new HashSet<String>(); 
-            Set<String[]> dup = new HashSet<String[]>(); 
-            for (String[] s : expReps){
-                if (db.contains(s[0]) && acc.contains(s[1])){
-                    if (!s[1].startsWith("To be")){
-                        LOG.info("CCC: " + s[1] ); 
-                        dup.add(s);                        
-                    }
-                }
-                    db.add(s[0]);
-                    acc.add(s[1]);
-                LOG.info("CCC: " + s[1] );                 
-            }
-
-            Set<String[]> uniques = new HashSet<String[]>(expReps); 
-
-            uniques.removeAll(dup);
-
-            reposited.put(exp.getName(), uniques);
-            
-//            reposited.put(exp.getName(), expReps);
-        }
-        LOG.info("CCC: " + reposited ); 
-        
+            // for each experiment, we don't to count twice the same repository
+            // entry produced by 2 different submissions.
+            Set<String[]> expRepsCleaned = removeDuplications(expReps);
+            reposited.put(exp.getName(), expRepsCleaned);
+        }        
         return reposited;
     }
 
-
-
+    private static Set<String[]> removeDuplications(Set<String[]> expReps) {
+        // removing the same repository entry coming from different submissions 
+        // in the given experiment
+        Set<String> db = new HashSet<String>();
+        Set<String> acc = new HashSet<String>(); 
+        Set<String[]> dup = new HashSet<String[]>(); 
+        for (String[] s : expReps){
+            if (db.contains(s[0]) && acc.contains(s[1])){
+                // we don't remove place holders
+                if (!s[1].startsWith("To be")){
+                    dup.add(s);                        
+                }
+            }
+                db.add(s[0]);
+                acc.add(s[1]);
+        }
+        // do the difference between sets and return it
+        Set<String[]> uniques = new HashSet<String[]>(expReps); 
+        uniques.removeAll(dup);
+        return uniques;
+    }
 
     /**
      * Fetch a map from project name to experiment.

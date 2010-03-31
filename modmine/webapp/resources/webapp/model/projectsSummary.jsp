@@ -41,9 +41,10 @@
   
   <td><h4><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
-Labs: 
-<%-- Note: linking with surname only, 2 Green and Kim--%>  
 
+<%-- LABS Note: linking with surname only, 2 Green and Kim--%>  
+
+Labs: 
     <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
     <c:if test="${!labStatus.first}">, </c:if>
               <b>${lab}</b>
@@ -58,7 +59,7 @@ Labs:
     </c:forEach> 
     --%>
 <br>
-
+<%-- SUBMISSIONS --%>
   <c:choose>
     <c:when test="${exp.submissionCount == 0}">
       This experiment has <b>no data submissions yet</b>.
@@ -70,6 +71,8 @@ Labs:
       This experiment has <b><c:out value="${exp.submissionCount}"></c:out> data submissions</b>. 
     </c:otherwise>
   </c:choose>
+
+<%-- REPOSITORY ENTRIES --%>
     <c:if test="${exp.repositedCount == 1}">
        It has produced <b>${exp.repositedCount} entry in public repositories</b>.
     </c:if>
@@ -77,7 +80,7 @@ Labs:
        It has produced <b>${exp.repositedCount} entries in public repositories</b>.
     </c:if>
 
-
+<%-- EXPERIMENTAL FACTORS --%>
      <c:if test="${fn:length(exp.factorTypes) > 0 }"> 
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
@@ -92,13 +95,14 @@ Labs:
 </td>
 
 <td>
+<%-- FEATURES --%>
       <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count > 1 }"><br> </c:if> 
       ${fc.key}:&nbsp;${fc.value}
      <c:if test="${fc_status.last }"><br> </c:if> 
       </c:forEach>
 <p/>
-
+<%-- TRACKS --%>
      <c:if test="${!empty tracks[exp.name]}">
        <c:choose>
          <c:when test="${fn:length(tracks[exp.name]) == 1}">
@@ -110,7 +114,7 @@ Labs:
        </c:choose>
 <br></br>
      </c:if>
-
+<%-- REPOSITORY ENTRIES --%>
      <c:if test="${exp.repositedCount > 0}">
 
       <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
@@ -127,6 +131,8 @@ Labs:
       <br></br>
       </c:forEach>
      </c:if>
+
+<%-- GET DATA --%>
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
         <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">
