@@ -150,6 +150,20 @@ public class MetadataCache
     }
 
     /**
+     * Fetch unlocated feature types per submission.
+     * @param os the production objectStore
+     * @param the dccId
+     * @return map of unlocated feature types
+     */
+    public static synchronized Set<String> getUnlocatedFeatureTypesBySubId(ObjectStore os, Integer dccId) {
+        if (submissionUnlocatedFeatureTypes == null) {
+            readUnlocatedFeatureTypes(os);
+        }
+        Set<String> uf= new HashSet<String>(submissionUnlocatedFeatureTypes.get(dccId));
+        return uf;
+    }
+
+    /**
      * Fetch input/output file names per submission.
      * @param os the production objectStore
      * @return map
