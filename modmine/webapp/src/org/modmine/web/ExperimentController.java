@@ -74,9 +74,6 @@ public class ExperimentController extends TilesAction
         Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
         request.setAttribute("subRep", submissionRepositoryEntries);
 
-//        Map<String, Set<String[]>> experimentRepositoryEntries = MetadataCache.getExperimentRepositoryEntries(os);
-//        request.setAttribute("expRep", experimentRepositoryEntries);
-
         return null;
     }
 }
