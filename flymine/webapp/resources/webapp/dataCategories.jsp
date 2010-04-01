@@ -354,7 +354,7 @@
         <p> Transcriptional Regulation</p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcriptional cis-regulatory modules (CRMs)</td>
-    <td> <a href="http://redfly.ccr.buffalo.edu" target="_new">REDfly</a> - Version 2.1</td>
+    <td> <a href="http://redfly.ccr.buffalo.edu" target="_new">REDfly</a> - 11th August 2009</td>
     <td> Gallo et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16303794" target="_new">PubMed: 16303794</a></td>
     <td>  &nbsp;</td>
   </tr>
@@ -362,7 +362,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcription factor binding sites</td>
-    <td> <a href="http://www.flyreg.org" target="_new">REDfly</a> - 20 Febrary 2010</td>
+    <td> <a href="http://www.flyreg.org" target="_new">REDfly</a> - 11th August 2009</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15572468" target="_new">PubMed: 15572468</a></td>
     <td>  &nbsp; </td>
   </tr>
@@ -405,7 +405,7 @@
   <tr>
     <td> <i>C. elegans</i> </td>
     <td> RNAi data from in vivo experiments</td>
-    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS195 </td>
+    <td> <a href="http://www.wormbase.org" target="_new">WormBase</a> - Release WS200 </td>
     <td> Bieri et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099234" target="_new">PubMed: 17099234</a></td>
     <td> &nbsp;</td>
   </tr>
