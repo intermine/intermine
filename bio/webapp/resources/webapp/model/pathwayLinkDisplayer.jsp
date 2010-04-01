@@ -32,7 +32,7 @@
 <table class="lookupReport" cellspacing="5" cellpadding="0">
 <tr>
     <td align="right">
-            <a href="${href}" class="ext_link" target="_new"><html:img src="model/images/${imageName}" width="28" height="20" title="${text}"/><c:out value="${text}"></c:out></a>
+            <a href="${href}" class="ext_link" target="_new"><html:img src="model/images/${imageName}" width="28" height="20" title="${text}"/>${text}: ${object.identifier}</a>
     </td>
 </tr>
 </table>
