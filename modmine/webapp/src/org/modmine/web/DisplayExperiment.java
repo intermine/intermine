@@ -219,7 +219,7 @@ public class DisplayExperiment
         return dbMap;
     }
     
-
+    
     /**
      * @return a map of entries per db  submitted to a public repository 
      * for this experiment
@@ -229,8 +229,10 @@ public class DisplayExperiment
         
         Set<String> unloc = new HashSet<String>();
         for (Submission s : submissions){
-            unloc.addAll(rep.get(s.getdCCid()));
-        }
+            if (rep.get(s.getdCCid()) != null) {    
+                unloc.addAll(rep.get(s.getdCCid()));
+            }
+            }
         return unloc;
     }
 
