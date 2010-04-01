@@ -108,7 +108,7 @@ public class MetadataCache
 
     
     private static long lastTrackCacheRefresh = 0;
-    private static final long ONE_HOUR = 3600000;
+    private static final long TWO_HOUR = 7200000;
 
     private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
@@ -130,7 +130,7 @@ public class MetadataCache
      */
     public static synchronized Map<Integer, List<GBrowseTrack>> getGBrowseTracks() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastTrackCacheRefresh;
-        if (timeSinceLastRefresh > ONE_HOUR) {
+        if (timeSinceLastRefresh > TWO_HOUR) {
             readGBrowseTracks();
             lastTrackCacheRefresh = System.currentTimeMillis();
         }
