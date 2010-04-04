@@ -198,6 +198,7 @@
     <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
     <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
+    <collection name="relatedSubmissions" referenced-type="Submission"/>
   </class>
 
   <class name="ExperimentalFactor"
