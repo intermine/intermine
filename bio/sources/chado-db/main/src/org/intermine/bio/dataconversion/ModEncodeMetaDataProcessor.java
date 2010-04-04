@@ -48,6 +48,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 {
     private static final Logger LOG = Logger.getLogger(ModEncodeMetaDataProcessor.class);
     private static final String WIKI_URL = "http://wiki.modencode.org/project/index.php?title=";
+    private static final String FILE_URL = "http://submit.modencode.org/submit/public/get_file/";
     private static final Set<String> DB_RECORD_TYPES =
         Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
                 "GEO_record",
@@ -56,6 +57,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 "dbEST_record",
                 "ShortReadArchive_project_ID (SRA)",
                 "ShortReadArchive_project_ID_list (SRA)")));
+    
     
     // submission maps
     // ---------------
@@ -246,7 +248,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // create DatabaseRecords where necessary for each submission
         createDatabaseRecords(connection);
-
+        // create result files per submission
+        createResultFiles(connection);
+        
         // for high level attributes and experimental factors (EF)
         // TODO: clean up
         processEFactor(connection);
@@ -1693,7 +1697,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
             String attDbxref = res.getString("att_dbxref");
-
+            int attRank = res.getInt("att_rank");
+            
             Integer submissionId = dataSubmissionMap.get(dataId);
             LOG.debug("DCC fetch: " + submissionId + ", " + dccIdMap.get(submissionId));
             String dccId = dccIdMap.get(submissionId);
@@ -1742,7 +1747,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (buildSubProperty != null) {
                 // we are building a new submission attribute, this is the first time we have
                 // seen a data.value that points to modencodewiki
-                buildSubProperty.addDetail(attHeading, attValue);
+                buildSubProperty.addDetail(attHeading, attValue, attRank);
             }
             lastDataId = dataId;
         }
@@ -2024,7 +2029,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String attName = res.getString("att_name");
             String attValue = res.getString("att_value");
             Integer attDbxref = new Integer(res.getInt("att_dbxref"));
-
+            int attRank = res.getInt("att_rank");
+            
             currentSubId = dataSubmissionMap.get(dataId);
 
             LOG.info("XXX0 " + currentSubId + ":" + dataId + "|" + attValue
@@ -2069,11 +2075,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     buildSubProperty.wikiPageUrl = attValue;
                     // add detail here as some Characteristics don't reference a wiki page
                     // but have all information on single row
-                    buildSubProperty.addDetail(attName, attValue);
+                    buildSubProperty.addDetail(attName, attValue, attRank);
 //                    LOG.info("XXX3if ADD for CHAR"+ getPreferredSynonym(attName) + "|" + attValue + "|"+ attName);
                 } else {
 //                    LOG.info("XXX3else ADD for OTHER"+ attValue + "|"+ attHeading);
-                    buildSubProperty.addDetail(attHeading, attValue);
+                    buildSubProperty.addDetail(attHeading, attValue, attRank);
                 }
             }
             previousSubId = currentSubId;
@@ -2265,7 +2271,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // the following 2 should be mutually exclusive
                     setAttributeOnProp(prop, propItem, "Description", "description");
                     setAttributeOnProp(prop, propItem, "details", "description");
-
                     setAttributeOnProp(prop, propItem, "aliases", "name");
                     setAttributeOnProp(prop, propItem, "reference", "reference");
                     setAttributeOnProp(prop, propItem, "target name", "targetName");
@@ -2347,14 +2352,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             } else if (metadataName.equalsIgnoreCase("description")
                     || metadataName.equalsIgnoreCase("details")) {
-                // description is often split in more than 1 line
-                int size = subProp.details.get(metadataName).size();
-                String all = subProp.details.get(metadataName).get(size - 1);
-                for (int i = size - 2; i > -1; i--) {
-                    all = all.concat(subProp.details.get(metadataName).get(i));
+                // description is often split in more than 1 line, details should be correct order
+                StringBuffer sb = new StringBuffer();
+                for (String desc : subProp.details.get(metadataName)) {
+                    sb.append(desc);
                 }
-                item.setAttribute(attributeName, all);
-
+                if (sb.length() > 0) {
+                    item.setAttribute(attributeName, sb.toString());
+                }
             } else {
                 String value = subProp.details.get(metadataName).get(0);
                 item.setAttribute(attributeName, value);
@@ -2669,7 +2674,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             + " d.name as data_name, d.value as data_value,"
             + " c.name as cv_term,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id as att_dbxref"
+            + " a.dbxref_id as att_dbxref, a.rank as att_rank"
             + " FROM data d"
             + " LEFT JOIN data_attribute da ON (d.data_id = da.data_id)"
             + " LEFT JOIN attribute a ON (da.attribute_id = a.attribute_id)"
@@ -2693,7 +2698,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         String query = "select d.data_id, d.heading as data_heading,"
             + " d.name as data_name, d.value as data_value,"
             + " a.attribute_id, a.heading as att_heading, a.name as att_name, a.value as att_value,"
-            + " a.dbxref_id as att_dbxref"
+            + " a.dbxref_id as att_dbxref, a.rank as att_rank"
             + " FROM data d, data_attribute da, attribute a, dbxref ax, db"
              + " WHERE d.data_id = da.data_id"
             + " AND da.attribute_id = a.attribute_id"
@@ -2720,13 +2725,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             details = new HashMap<String, List<String>>();
         }
 
-        public void addDetail(String type, String value) {
+        public void addDetail(String type, String value, int rank) {
             List<String> values = details.get(type);
             if (values == null) {
                 values = new ArrayList<String>();
                 details.put(type, values);
             }
-            values.add(value);
+            while (values.size() <= rank) {
+                values.add(null);
+            }
+            values.set(rank, value);
         }
 
         public String toString() {
@@ -2850,7 +2858,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     for (DatabaseRecordConfig conf : configs) {
                         for (String type : conf.types) {
                             if (ad.name.equals(type)) {
-                            submissionDbRecords.addAll(createDatabaseRecords(ad.value, conf));
+                                submissionDbRecords.addAll(createDatabaseRecords(ad.value, conf));
                             }
                         }
                     }
@@ -2865,7 +2873,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("TIME creating DatabaseRecord objects: " + (System.currentTimeMillis() - bT));
     }
 
+    private void createResultFiles(Connection connection)
+    throws ObjectStoreException {
+        long bT = System.currentTimeMillis(); // to monitor time spent in the process
 
+        for (Integer submissionId : submissionDataMap.keySet()) {
+            for (Integer dataId : submissionDataMap.get(submissionId)) {
+                AppliedData ad = appliedDataMap.get(dataId);
+                if (ad.type.equalsIgnoreCase("Result File")) {
+                    createResultFile(ad.value, ad.name, submissionId);
+                }
+            }
+        }
+        LOG.info("TIME creating ResultFile objects: " + (System.currentTimeMillis() - bT));
+    }
+    
+    
     private List<String> createDatabaseRecords(String accession, DatabaseRecordConfig config)
     throws ObjectStoreException {
         List<String> dbRecordIds = new ArrayList<String>();
@@ -2956,6 +2979,25 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             return db.hashCode() + 3 * accession.hashCode();
         }
     }
+
+    
+    private void createResultFile(String fileName, String type, Integer submissionId)
+    throws ObjectStoreException {
+        Item resultFile = getChadoDBConverter().createItem("ResultFile");
+        resultFile.setAttribute("name", fileName);
+        String url = null;
+        if (fileName.startsWith("http")) {
+            url = fileName;
+        } else {
+            String dccId = dccIdMap.get(submissionId);
+            url = FILE_URL + dccId + "/extracted/" + fileName;
+        }
+        resultFile.setAttribute("url", url);
+        resultFile.setAttribute("type", type);
+        resultFile.setReference("submission", submissionMap.get(submissionId).itemIdentifier);
+        getChadoDBConverter().store(resultFile);
+    }
+
 
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
