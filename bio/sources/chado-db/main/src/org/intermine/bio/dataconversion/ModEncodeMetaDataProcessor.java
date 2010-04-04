@@ -259,6 +259,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
 
         processSubmissionProperties(connection);
+        createRelatedSubmissions(connection);
+        
         setSubmissionProtocolsRefs(connection);
         setSubmissionEFactorsRefs(connection);
         setSubmissionPublicationRefs(connection);
@@ -2998,7 +3000,30 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         getChadoDBConverter().store(resultFile);
     }
 
+    private void createRelatedSubmissions(Connection connection) throws ObjectStoreException {
+        Map<Integer, Set<String>> relatedSubs = new HashMap<Integer, Set<String>>();
+        for (Map.Entry<Integer, SubmissionReference> entry : submissionRefs.entrySet()) {
+            Integer submissionId = entry.getKey();
+            SubmissionReference ref = entry.getValue();
+            addRelatedSubmissions(relatedSubs, submissionId, ref.referencedSubmissionId);
+            addRelatedSubmissions(relatedSubs, ref.referencedSubmissionId, submissionId);
+        }
+        for (Map.Entry<Integer, Set<String>> entry : relatedSubs.entrySet()) {
+            ReferenceList related = new ReferenceList("relatedSubmissions",
+                    new ArrayList<String>(entry.getValue()));
+            getChadoDBConverter().store(related, entry.getKey());
+        }
+    }
 
+    private void addRelatedSubmissions(Map<Integer, Set<String>> relatedSubs, Integer subId,
+            Integer relatedId) {
+        Set<String> itemIds = relatedSubs.get(subId);
+        if (itemIds == null) {
+            itemIds = new HashSet<String>();
+            relatedSubs.put(submissionMap.get(subId).interMineObjectId, itemIds);
+        }
+        itemIds.add(submissionMap.get(relatedId).itemIdentifier);
+    }
     //sub -> prot
     private void setSubmissionProtocolsRefs(Connection connection)
     throws ObjectStoreException {
