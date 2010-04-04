@@ -10,10 +10,8 @@ package org.modmine.web;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -92,10 +90,11 @@ public class SubmissionOverlapsAction extends InterMineAction
 
             q.addView("GeneFlankingRegion.overlappingFeatures.secondaryIdentifier");
             q.addView("GeneFlankingRegion.gene.primaryIdentifier");
-            q.addView("GeneFlankingRegion.gene.length");
-            q.addView("GeneFlankingRegion.gene.chromosomeLocation.start");
-            q.addView("GeneFlankingRegion.gene.chromosomeLocation.end");
-            q.addView("GeneFlankingRegion.gene.secondaryIdentifier");
+            // These are removed temporarily as the query needs to match the configure precompute
+            //q.addView("GeneFlankingRegion.gene.length");
+            //q.addView("GeneFlankingRegion.gene.chromosomeLocation.start");
+            //q.addView("GeneFlankingRegion.gene.chromosomeLocation.end");
+            //q.addView("GeneFlankingRegion.gene.secondaryIdentifier");
 
             PathNode featureNode = q.addNode("GeneFlankingRegion.overlappingFeatures");
             featureNode.setType(featureType);
