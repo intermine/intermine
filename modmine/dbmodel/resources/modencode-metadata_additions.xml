@@ -197,7 +197,7 @@
     <collection name="arrays" referenced-type="Array"/>
     <collection name="features" referenced-type="LocatedSequenceFeature" reverse-reference="submissions"/>
     <collection name="databaseRecords" referenced-type="DatabaseRecord" reverse-reference="submissions"/>
-    <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submissions"/>
+    <collection name="resultFiles" referenced-type="ResultFile" reverse-reference="submission"/>
   </class>
 
   <class name="ExperimentalFactor"
@@ -222,7 +222,7 @@
     <attribute name="type" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
-    <collection name="submissions" referenced-type="Submission" reverse-reference="resultFiles"/>
+    <reference name="submission" referenced-type="Submission" reverse-reference="resultFiles"/>
   </class>
 
   <class name="Protocol"  
