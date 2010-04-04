@@ -45,10 +45,7 @@
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>  
 
 Labs: 
-    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
-    <c:if test="${!labStatus.first}">, </c:if>
-              <b>${lab}</b>
-    </c:forEach> 
+    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus"><c:if test="${!labStatus.first}">, </c:if><b>${lab}</b></c:forEach> 
 
 <%-- with links
     <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
