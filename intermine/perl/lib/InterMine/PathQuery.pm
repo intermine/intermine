@@ -286,14 +286,13 @@ sub _logic_string
 sub to_xml_string
 {
   my $self = shift;
-  my $name = shift || 'InterMine_Perl_API';
   $self->_is_valid(1);
 
   my $output = new IO::String();
   my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
 
   $writer->startTag('query', 
-		    name => $name, 
+		    name => '', 
 		    model => $self->{model}->model_name(),
                     view => (join ' ', $self->view()),
                     sortOrder => $self->sort_order(),
