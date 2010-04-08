@@ -173,7 +173,6 @@ sub add_constraint
   }
 
   my @bits = split /\s+/, $arg, 2;
-
   if (@bits < 2) {
     die "can't parse constraint: $arg\n";
   }
@@ -287,27 +286,38 @@ sub _logic_string
 sub to_xml_string
 {
   my $self = shift;
-
+  my $name = shift || 'InterMine_Perl_API';
   $self->_is_valid(1);
 
   my $output = new IO::String();
   my $writer = new XML::Writer(DATA_MODE => 1, DATA_INDENT => 3, OUTPUT => $output);
 
-  $writer->startTag('query', name => '', model => $self->{model}->model_name(),
+  $writer->startTag('query', 
+		    name => $name, 
+		    model => $self->{model}->model_name(),
                     view => (join ' ', $self->view()),
                     sortOrder => $self->sort_order(),
-                    constraintLogic => _logic_string($self->{logic}));
+                    ($self->{logic}) ? 
+		        (constraintLogic => _logic_string($self->{logic}))
+                        : '', # prevent an empty tag being set
+                    );
 
   my $current_code = 'A';
 
   my @constraint_paths = sort keys %{$self->{constraints}};
 
   for my $path_string (@constraint_paths) {
+    
     my $details = $self->{constraints}->{$path_string};
     my $path = new InterMine::Path($self->{model}, $path_string);
-    my $type = $path->end_type();
-
-    $writer->startTag('node', path => $path_string, type => $type);
+    my $type = $path->end_type;
+    
+# Write the tag
+    $writer->startTag(
+	'node', 
+	 path => $path_string, 
+	 type => $type,
+    );
 
     for my $constraint (@$details) {
       my $op = $constraint->{op};
