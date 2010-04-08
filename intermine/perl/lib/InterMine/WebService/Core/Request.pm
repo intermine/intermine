@@ -46,7 +46,8 @@ use strict;
 
 =head2 new
 
- Usage   : $req = InterMine::WebService::Core::Request($service_root,
+ Usage   : $req = InterMine::WebService::Core::Request($request_type,
+                                                       $service_root,
                                                        "AppName");
  Function: create a new QueryService object
  Args    : $request_type - should be 'GET' or 'POST'
