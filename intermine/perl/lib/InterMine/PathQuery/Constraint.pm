@@ -43,16 +43,17 @@ under the same terms as Perl itself.
 
 use strict;
 
-# value is 0 for unary operators and 1 for binary operators
+# value is 1 for unary operators and 2 for binary operators
 my %OPS = ('IS NOT NULL' => 1,
-           'IS NULL' => 1,
-           'CONTAINS' => 2,
-           '=' => 2,
-           '!=' => 2,
-           '<' => 2,
-           '>' => 2,
-	   '>=' => 2,
-	   '<=' =>2
+           'IS NULL'     => 1,
+           'CONTAINS'    => 2,
+           '='           => 2,
+           '!='          => 2,
+           '<'           => 2,
+           '>'           => 2,
+	   '>='          => 2,
+	   '<='          => 2,
+           'LOOKUP'      => 2,
 );
 
 =head2 new
@@ -131,7 +132,7 @@ sub value
  Usage   : $con->code('A')
               or
            my $code = $con->code();
- Function: get or set the code for this constraint, used to specify the logic
+ Function: get or set the identifier code for this constraint, used to specify the logic
            for a PathQuery
 
 =cut
