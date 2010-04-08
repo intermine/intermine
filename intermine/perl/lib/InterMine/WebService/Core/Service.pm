@@ -125,7 +125,8 @@ sub execute_request
     my $url = URI->new($request->get_url());
     $url->query_form($request->get_parameters());
     return $ua->get($url);
-  } else {
+  }
+  else  {
     return $ua->post($request->get_url(), {$request->get_parameters()});
   }
 }
