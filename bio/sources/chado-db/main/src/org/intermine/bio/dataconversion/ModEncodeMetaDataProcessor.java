@@ -2883,7 +2883,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
                 if (ad.type.equalsIgnoreCase("Result File")) {
-                    createResultFile(ad.value, ad.name, submissionId);
+                    if (!StringUtils.isBlank(ad.value)) {
+                        createResultFile(ad.value, ad.name, submissionId);
+                    }
                 }
             }
         }
