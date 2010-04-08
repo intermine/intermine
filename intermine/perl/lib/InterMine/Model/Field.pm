@@ -99,8 +99,15 @@ sub field_name
 =cut
 sub field_type
 {
-  my $self = shift;
-  return lc (((ref $self) =~ /.*::(.*)/)[0]);
+  my $self = shift; 
+# Get the type of the object
+  my $obj_name = ref($self);
+# Cut off the first part, keeping the subclasses
+  my ($subclasses) = ($obj_name =~ /.*::(.*)/ );
+# Convert to lower case
+  my $ret = lc($subclasses);
+ 
+  return $ret;
 }
 
 =head2 field_class
