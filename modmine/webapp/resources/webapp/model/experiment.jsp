@@ -85,6 +85,10 @@ div#experimentFeatures {
   font-size: 11px;
 }
 
+.submission_table {
+  background-color: white;
+}
+
 
 </style>
 
@@ -439,7 +443,7 @@ All GBrowse tracks generated for this experiment:
   </c:choose>
   </em>
 
-<table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow">
+<table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
 <tr>
     <th class="sortable">DCC id</th>
     <th class="sortable">Name</th>
@@ -452,7 +456,7 @@ All GBrowse tracks generated for this experiment:
            <th ><c:out value="${factor}"></c:out></th>
            </c:when>
           <c:otherwise>
-      <th class="sortable"><c:out value="${factor}"></c:out></th>
+      <th class="sortable" bgcolor="white"><c:out value="${factor}"></c:out></th>
           </c:otherwise>
           </c:choose>
 
@@ -471,7 +475,7 @@ All GBrowse tracks generated for this experiment:
 	  <c:forEach items="${exp.factorTypes}" var="factorType">
 	  <c:set var="thisTypeCount" value="0"></c:set>
 
-       <td class="sorting">
+       <td class="sorting" bgcolor="white">
       		<c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
         		<c:if test="${factor.type == factorType}">
             		<c:choose>
