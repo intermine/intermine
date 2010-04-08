@@ -134,7 +134,7 @@ sub add_field
 =head2 name
  
  Usage   : $name = $cd->name();
- Function: Return the name of this class, eg. "org.intermine.model.bio.Gene"
+ Function: Return the name of this class, eg. "Gene"
  Args    : none
 
 =cut
@@ -142,19 +142,6 @@ sub name
 {
   my $self = shift;
   return $self->{name};
-}
-
-=head2 unqualified_name
- 
- Usage   : $name = $cd->name();
- Function: Return the unqualified name of this class, eg. "Gene"
- Args    : none
-
-=cut
-sub unqualified_name
-{
-  my $self = shift;
-  return ($self->{name} =~ /.*\.(.*)/)[0];
 }
 
 =head2 extends
