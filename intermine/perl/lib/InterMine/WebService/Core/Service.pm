@@ -52,8 +52,6 @@ use LWP::UserAgent;
 
  Args    : $root_url - base url of all services, it is prefix common for all
                        services,  Example: "http://www.flymine.org/service"
-           $service_relative_url - part of url specific for this service,
-                            *      Example: "query/results"
            $app_name - application name, tells the server which application uses
                        the service
 =cut
