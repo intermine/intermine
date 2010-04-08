@@ -122,13 +122,14 @@ sub get_result
   }
 
   my $request =
-    new InterMine::WebService::Core::Request('POST', $self->get_url(), 'TAB');
+    new InterMine::WebService::Core::Request('GET', $self->get_url(), 'TAB');
 
   if ($count_only) {
     $request->add_parameters(tcount => '');
   } else {
     if (!defined $start) {
-      $start = 1;
+# Result count starts at 0
+      $start = 0;
     }
     if (!defined $max_count) {
       $max_count = 100;
