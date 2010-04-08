@@ -71,7 +71,8 @@ use InterMine::Model::Field;
 =cut
 sub referenced_type_name
 {
-  return shift->{referenced_type_name};
+  my $name = shift->{referenced_type_name};
+  return $name;
 }
 
 =head2 referenced_classdescriptor
