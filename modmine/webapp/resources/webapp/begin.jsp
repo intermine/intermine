@@ -43,7 +43,12 @@
         <li class="last_section">
             <div>
             <h3>Search for Genes</h3><br/>
-                Find modENCODE data related to a particular gene.  Search for a Gene:
+                Find modENCODE features
+                <a href="/${WEB_PROPERTIES['webapp.path']}/template.do?name=gene_overlapping_flanking_regions" alt="">
+                near a specific gene</a>.
+                <br/>
+                <br/>
+                Or look up a Gene:
                 <html:form action="/quickSearchAction">
                     <input id="quickSearchType" name="quickSearchType" type="hidden" value="ids">
                     <input style="" id="quickSearchInput" name="value" type="text" class="qs_input">
@@ -61,6 +66,9 @@
         jQuery(".frontpage_sections div").bg(['10px', '10px', '10px', '10px']);
     });
 </script>
+
+<!-- modMine seach box -->
+<%-- <tiles:insert name="modMineSearch.tile" /> --%>
 
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
