@@ -234,7 +234,7 @@ sub OR
   return _operator_implementation('or', @_);
 }
 
-=head2 set_logic
+=head2 logic
 
 =cut
 sub logic
@@ -242,7 +242,7 @@ sub logic
   my $self = shift;
 
   if (@_ != 1) {
-    die "set_logic() needs one argument\n";
+    die "logic() needs one argument\n";
   }
 
   my $logic = shift;
