@@ -150,7 +150,6 @@ sub end_type
   my $self = shift;
 
   my $end = $self->end();
-
   if (ref $end eq 'InterMine::Model::Reference' ||
       ref $end eq 'InterMine::Model::Collection') {
     return $end->referenced_type_name();
@@ -158,7 +157,7 @@ sub end_type
     if (ref $end eq 'InterMine::Model::Attribute') {
       return $end->attribute_type();
     } else {
-      return $end->unqualified_name();
+      return $end->name();
     }
   }
 }
@@ -172,6 +171,8 @@ sub _get_parts
 
   my @bits = split /[\.:]/, $path_string;
 
+# This cuts off the first part (eg Gene of Gene.name) and treats it
+# as the class. 
   my $top_class_name = shift @bits;
 
   my $top_class = $model->get_classdescriptor_by_name($top_class_name);
@@ -192,7 +193,6 @@ sub _get_parts
       my $current_class_name = $current_class->name();
       die qq[can't find field "$bit" in class $current_class_name\n];
     }
-
     push @parts, $current_field;
 
     if ($current_field->field_type() eq 'attribute') {
@@ -201,6 +201,7 @@ sub _get_parts
     } else {
       $current_class = $current_field->referenced_classdescriptor();
     }
+    
   }
 
   return @parts;
