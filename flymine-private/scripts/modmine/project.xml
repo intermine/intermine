@@ -31,6 +31,15 @@ NOT TO BE USED FOR A BUILD
       <property name="converter.class" 
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
+		<source name="chado-db-flybase-dpse" type="chado-db">
+			<property name="source.db.name" value="flybase"/>
+			<property name="organisms" value="7237"/>
+			<property name="dataSourceName" value="FlyBase"/>
+			<property name="processors"
+								value="org.intermine.bio.dataconversion.FlyBaseProcessor"/>
+			<property name="converter.class"
+								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+		</source>
     <source name="chado-db-wormbase-c_elegans" type="chado-db" dump="true">
       <property name="source.db.name" value="wormbase"/>
       <property name="organisms" value="6239"/>
@@ -55,10 +64,22 @@ NOT TO BE USED FOR A BUILD
     <source name="inparanoid-orthologue" type="orthologue">
       <property name="src.data.dir" location="/shared/data/modmine/sources/orthologues/inparanoid/current/"/>
     </source>
+		<source name="psi-mi-ontology" type="psi-mi-ontology">
+			<property name="src.data.file" location="/shared/data/psi/ontology/current/psi-mi.obo"/>
+		</source>
+		<source name="psi-intact" type="psi">
+			<property name="src.data.dir" location="/shared/data/psi/intact/current"/>
+			<property name="intact.organisms" value="7227 6239"/>
+		</source>
+		<source name="biogrid" type="biogrid">
+			<property name="src.data.dir" location="/shared/data/biogrid/current"/>
+			<property name="src.data.dir.includes" value="*psi25.xml"/>
+			<property name="biogrid.organisms" value="7227 6239"/>
+		</source>
     <source name="go" type="go">
       <property name="src.data.file" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
     </source>
-    <source name="go-annotation" type="go-annotation" dump="true">
+    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/shared/data/modmine/sources/go-annotation/gene_ontology.obo"/>
       <property name="src.data.dir" location="/shared/data/modmine/sources/go-annotation/current/"/>
       <property name="src.data.dir.includes" value="*/gene_association*"/>
@@ -77,6 +98,16 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSetTitle" value="FlyBase Drosophila melanogaster data set"/>
       <property name="fasta.dataSourceName" value="FlyBase"/>
     </source>
+		<source name="flybase-dpse-gene-fasta" type="fasta">
+			<property name="fasta.taxonId" value="7237"/>
+			<property name="fasta.dataSetTitle"
+								value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+			<property name="fasta.dataSourceName" value="FlyBase"/>
+			<property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+			<property name="fasta.classAttribute" value="primaryIdentifier"/>
+			<property name="fasta.includes" value="dpse-all-gene-*.fasta"/>
+			<property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+		</source>
     <source name="flybase-dmel-cds-fasta" type="fasta">
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
@@ -88,6 +119,17 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
+		<source name="flybase-dpse-cds-fasta" type="fasta">
+			<property name="fasta.loaderClassName"
+								value="org.intermine.bio.dataconversion.FlyBaseCDSFastaLoaderTask"/>
+			<property name="fasta.taxonId" value="7237"/>
+			<property name="fasta.className" value="org.intermine.model.bio.CDS"/>
+			<property name="fasta.classAttribute" value="primaryIdentifier"/>
+			<property name="fasta.includes" value="dpse-all-CDS-*.fasta"/>
+			<property name="fasta.dataSetTitle" value="FlyBase data set for Drosophila pseudoobscura pseudoobscura"/>
+			<property name="fasta.dataSourceName" value="FlyBase"/>
+			<property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
+		</source>
     <source name="flybase-dmel-5prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
@@ -98,7 +140,7 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="flybase-dmel-3prime-utr-fasta" type="fasta" dump="true">
+    <source name="flybase-dmel-3prime-utr-fasta" type="fasta">
       <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.FlyBaseUTRFastaLoaderTask"/>
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.intermine.model.bio.ThreePrimeUTR"/>
@@ -108,7 +150,7 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="FlyBase"/>
       <property name="src.data.dir" location="/shared/data/flybase/current/fasta"/>
     </source>
-    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta">
+    <source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.includes" value="*dna*.fasta"/>
@@ -116,36 +158,21 @@ NOT TO BE USED FOR A BUILD
       <property name="fasta.dataSourceName" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws190/fasta"/>
     </source>
+		<source name="interpro-go" type="interpro-go">
+			<property name="src.data.dir" location="/shared/data/go-annotation/interpro/current"/>
+		</source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
 	<property name="src.data.dir" location="/shared/data/modmine/sources/pubmed/current"/>
 	<property name="pubmed.organisms" value="7227 6239"/>
 	<property name="src.data.dir.includes" value="gene2pubmed"/>
 	<property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
     </source>
-<!-- INTEREACTION: added 24/11/08
-    <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
-      <property name="organisms" value="7227 6239 4932"/>
-    </source>
-    <source name="biogrid" type="biogrid" dump="true">
-      <property name="src.data.dir" location="/shared/data/biogrid/current"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-    </source>
--->
-    
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
            file, loads that file into a target items DB, then into the final
            objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
-    </source>
-    <source name="update-publications" type="update-publications" dump="true">
-      <!-- this source finds the publication ids (pubmed ids) in the
-           objectstore, retrieves the details of the publication from Entrez
-           into an InterMine format XML file, loads that file into a target
-           items DB, then into the final objectstore dump="true"-->
-      <property name="src.data.file" location="build/publications.xml"/>
     </source>
 		<source name="modmine-static" type="intermine-items-xml-file">
 			<property name="src.data.file" location="resources/projects.xml"/>
@@ -285,6 +312,13 @@ NOT TO BE USED FOR A BUILD
 								value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
 		</source>
 
+		<source name="update-publications" type="update-publications" dump="true">
+			<!-- this source finds the publication ids (pubmed ids) in the
+					 objectstore, retrieves the details of the publication from Entrez
+					 into an InterMine format XML file, loads that file into a target
+					 items DB, then into the final objectstore dump="true"-->
+			<property name="src.data.file" location="build/publications.xml"/>
+		</source>
 		
 		<source name="fly-development-ontology" type="fly-development-ontology">
 			<property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
