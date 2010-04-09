@@ -152,6 +152,14 @@
 	<property name="src.data.dir.includes" value="gene2pubmed"/>
 	<property name="infoFile" location="/shared/data/modmine/sources/pubmed/current/gene_info"/>
     </source>
+    <source name="fly-development-ontology" type="fly-development-ontology">
+	<property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
+    </source>
+    <source name="worm-development-ontology" type="worm-development-ontology">
+	<property name="src.data.file" location="/shared/data/wormbase/worm-development-ontology/current/worm_development.obo"/>
+    </source>
+
+
     <source name="entrez-organism" type="entrez-organism">
       <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
@@ -302,10 +310,6 @@
 					 into an InterMine format XML file, loads that file into a target
 					 items DB, then into the final objectstore dump="true"-->
 			<property name="src.data.file" location="build/publications.xml"/>
-		</source>
-
-		<source name="fly-development-ontology" type="fly-development-ontology">
-			<property name="src.data.file" location="/shared/data/ontologies/fly_development/current/fly_development.obo"/>
 		</source>
 
   </sources>
