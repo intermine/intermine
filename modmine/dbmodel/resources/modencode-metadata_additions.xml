@@ -13,73 +13,75 @@
   <attribute name="scoreType" type="java.lang.String" />
   <reference name="scoreProtocol" referenced-type="Protocol" />
   <collection name="submissions" referenced-type="Submission" reverse-reference="features" />
+  <collection name="featureEvidence" referenced-type="LocatedSequenceFeature" reverse-reference="supportedFeatures" />
+  <collection name="supportedFeatures" referenced-type="LocatedSequenceFeature" reverse-reference="featureEvidence" />  
 </class>
 <class name="ThreePrimeUTR" is-interface="true">
-  <reference name="CDS" referenced-type="CDS" reverse-reference="threePrimeUTR" />    
-  <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeUTR" />        
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="threePrimeUTRs" />    
 </class>
 <class name="CDS" is-interface="true">
-  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
+  <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDSs"/>
 </class>
 <class name="ExonRegion" extends="Region" is-interface="true"/>
 <class name="MRNA" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="mRNA"/>
-  <reference name="startCodon" referenced-type="StartCodon" reverse-reference="mRNA"/>
-  <reference name="stopCodon" referenced-type="StopCodon" reverse-reference="mRNA"/>
-<!--
+  <collection name="startCodons" referenced-type="StartCodon" reverse-reference="mRNA"/>
+  <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
+  <collection name="stopCodons" referenced-type="StopCodon" reverse-reference="mRNA"/>
+  <collection name="exons" referenced-type="Exon" reverse-reference="mRNA"/>
   <reference name="polyASite" referenced-type="PolyASite" reverse-reference="mRNA"/> 
- -->
+  <reference name="gene" referenced-type="Gene" reverse-reference="mRNA"/> 
 </class> 
 <class name="EST" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
+  <collection name="overlappingESTSets" referenced-type="OverlappingESTSet" reverse-reference="ESTs" />
 </class>
 <class name="Exon" is-interface="true">
   <reference name="experimentalFeature" referenced-type="ExperimentalFeature" reverse-reference="exon" />
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="exons" />
+  <collection name="ncRNAs" referenced-type="NcRNA" reverse-reference="exons" />
 </class>
+<class name="MiRNA" is-interface="true">
+  <collection name="experimentalFeatures" referenced-type="ExperimentalFeature" reverse-reference="miRNA"/>
+</class>
+
+
 <!-- these references should be checked: maybe collections? -->
 <class name="Transcript" is-interface="true">
-  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="transcript"/>
-  <reference name="SL1AcceptorSite" referenced-type="SL1AcceptorSite" reverse-reference="transcript" />
-  <reference name="SL2AcceptorSite" referenced-type="SL2AcceptorSite" reverse-reference="transcript" />
-  <reference name="TSS" referenced-type="TSS" reverse-reference="transcript" />
-  <reference name="transcriptionEndSite" referenced-type="TranscriptionEndSite" reverse-reference="transcript"/>
-  <reference name="experimentalFeature" referenced-type="ExperimentalFeature" reverse-reference="transcript" />
+  <collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts"/>
+  <collection name="polyASites" referenced-type="PolyASite" reverse-reference="transcripts"/>
+  <collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcripts" />
+  <collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcripts" />
+  <collection name="TSSs" referenced-type="TSS" reverse-reference="transcripts" />
+  <collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcripts"/>
 </class>
 <class name="TranscriptionEndSite" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptionEndSite"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="transcriptionEndSite"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="transcriptionEndSites"/>
 </class>
 <class name="Intron" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="intron"/>
+  <collection name="ncRNAs" referenced-type="NcRNA" reverse-reference="introns" />
 </class>
 <class name="Gene" is-interface="true">
   <attribute name="source" type="java.lang.String" />
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="gene"/>
+  <collection name="mRNAs" referenced-type="MRNA" reverse-reference="gene" />  
 </class>
 <!-- PolyASite is already in so_additions extending 'GenePart', not in miso -->
 <class name="PolyASite" is-interface="true">
   <reference name="threePrimeRACEClone" referenced-type="ThreePrimeRACEClone" reverse-reference="polyASite"/>        
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="polyASite"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="polyASite"/>
-  <!-- <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
-  -->
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="polyASites"/>
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="polyASite"/>
 </class>
-
-
 
 
 <!-- NEW FEATURE classes for modENCODE -->
 <class name="CDNA" extends="Region" is-interface="true"/>
 <class name="NaturalTransposableElement" extends="Region" is-interface="true"/>
 <class name="StopCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodon"/>        
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="stopCodons"/>        
 </class>
 <class name="StartCodon" extends="Codon" is-interface="true">
-  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodon"/>        
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="startCodons"/>        
 </class>
 <class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"/>
 <class name="TranscriptRegion" extends="Region" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="transcriptRegion"/>
 </class>
 <class name="CopyNumberVariation" extends="SequenceVariant" is-interface="true"/>
 <class name="ThreePrimeRACEClone" extends="Region" is-interface="true">
@@ -91,37 +93,34 @@
   <reference name="threePrimeUST" referenced-type="ThreePrimeUST" reverse-reference="threePrimeRST"/>            
 </class>
 <class name="ThreePrimeUST" extends="Region" is-interface="true">
-  <reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="threePrimeUST"/>        
-  <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>        
+ <reference name="threePrimeRST" referenced-type="ThreePrimeRST" reverse-reference="threePrimeUST"/>        
 </class>
+
 <class name="OverlappingESTSet" extends="Region" is-interface="true">
-  <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSet" />
+  <collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSets" />
+<!-- 
   <reference name="gene" referenced-type="Gene" reverse-reference="overlappingESTSet" />
   <reference name="mRNA" referenced-type="MRNA" reverse-reference="overlappingESTSet" />
-  <reference name="intron" referenced-type="Intron" reverse-reference="overlappingESTSet"/>
-  <reference name="polyASite" referenced-type="PolyASite" reverse-reference="overlappingESTSet"/>
-  <reference name="SL1AcceptorSite" referenced-type="SL1AcceptorSite" reverse-reference="overlappingESTSet"/>
-  <reference name="SL2AcceptorSite" referenced-type="SL2AcceptorSite" reverse-reference="overlappingESTSet"/>
-  <reference name="transcriptionEndSite" referenced-type="TranscriptionEndSite" reverse-reference="overlappingESTSet"/>
   <reference name="transcriptRegion" referenced-type="TranscriptRegion" reverse-reference="overlappingESTSet"/>
-  <reference name="TSS" referenced-type="TSS" reverse-reference="overlappingESTSet"/>
+-->
 </class>
 <class name="SL1AcceptorSite" extends="Region" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL1AcceptorSite"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="SL1AcceptorSite"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
 </class>
 <class name="SL2AcceptorSite" extends="Region" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="SL2AcceptorSite"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="SL2AcceptorSite"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
 </class>
 <class name="ExperimentalFeature" extends="Region" is-interface="true">
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="experimentalFeature"/>
-  <reference name="exon" referenced-type="Exon" reverse-reference="experimentalFeature"/>
+  <reference name="miRNA" referenced-type="MiRNA" reverse-reference="experimentalFeatures"/>
 </class>
+<class name="NcRNA" is-interface="true">
+  <collection name="exons" referenced-type="Exon" reverse-reference="ncRNAs"/>
+  <collection name="introns" referenced-type="Intron" reverse-reference="ncRNAs"/>
+</class>
+
 <!-- these should be actually the same class -->
 <class name="TSS" extends="TranscriptionStartSite" is-interface="true">
-  <reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="TSS"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="TSS"/>
+  <collection name="transcripts" referenced-type="Transcript" reverse-reference="TSSs"/>
 </class>
 
 <!-- OTHER modENCODE classes -->   
