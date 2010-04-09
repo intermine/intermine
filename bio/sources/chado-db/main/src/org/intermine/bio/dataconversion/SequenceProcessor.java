@@ -91,6 +91,9 @@ public class SequenceProcessor extends ChadoProcessor
     private static final List<String> DEFAULT_CHROMOSOME_FEATURES =
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
+    // Avoid explosion of log messages by only logging missing collections once
+    Set<String> loggedMissingCols= new HashSet<String>();
+
     /**
      * An action that makes a synonym.
      */
@@ -469,6 +472,7 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
+
         if (feature.checkAttribute("featureType")) {
             feature.setAttribute("featureType", chadoType);
         }
@@ -923,11 +927,14 @@ public class SequenceProcessor extends ChadoProcessor
                         continue;
                     }
                 }
-
+                
                 if (fds.size() == 0) {
-                    LOG.error("can't find collection for type " + relationType
-                              + " in " + subjectInterMineType + " while processing feature "
-                              + chadoSubjectId);
+                    if (!loggedMissingCols.contains(subjectInterMineType + relationType)) {
+                        LOG.error("can't find collection for type " + relationType
+                                + " in " + subjectInterMineType + " (was processing feature "
+                                + chadoSubjectId + ")");
+                        loggedMissingCols.add(subjectInterMineType + relationType);
+                    }
                     continue;
                 }
 
@@ -2143,4 +2150,6 @@ public class SequenceProcessor extends ChadoProcessor
     protected Map<String, Integer> getChromosomeFeatureMap(Integer organismId) {
         return chromosomeMaps.get(organismId);
     }
+    
+
 }
