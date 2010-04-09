@@ -461,6 +461,16 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                   "full_evidence_for_feature", "MRNA"),
                   Arrays.asList(new SetFieldConfigAction("supportedFeatures")));
             
+          // additional properties
+          map.put(new MultiKey("prop", "ExperimentalFeature", "dcpm"),
+                  Arrays.asList(new SetFieldConfigAction("dcpm")));
+          map.put(new MultiKey("prop", "ExperimentalFeature", "dcpm_bases"),
+                  Arrays.asList(new SetFieldConfigAction("dcpmBases")));
+          map.put(new MultiKey("prop", "ExperimentalFeature", "read_count"),
+                  Arrays.asList(new SetFieldConfigAction("readCount")));
+          map.put(new MultiKey("prop", "LocatedSequenceFeature", "prediction_status"),
+                  Arrays.asList(new SetFieldConfigAction("predictionStatus")));
+
         }
         return map;
     }
