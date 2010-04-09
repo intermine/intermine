@@ -49,4 +49,10 @@ public class OrganismRepositoryTest extends TestCase
         assertNotNull(or.getOrganismDataByGenusSpecies("Drosophila", "melanogaster"));
         assertNull(or.getOrganismDataByGenusSpecies("Sphenodon", "punctatus"));
     }
+    
+    public void testGetOrganismDataByFullName() {
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        assertNotNull(or.getOrganismDataByFullName("Drosophila melanogaster"));
+        assertNotNull(or.getOrganismDataByFullName("Drosophila pseudoobscura pseudoobscura"));
+    }
 }

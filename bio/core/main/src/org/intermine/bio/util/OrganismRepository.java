@@ -176,8 +176,8 @@ public class OrganismRepository
         if (fullName.indexOf(" ") == -1) {
             return null;
         }
-        String genus = fullName.split(" ")[0];
-        String species = fullName.split(" ")[1];
+        String genus = fullName.split(" ", 2)[0];
+        String species = fullName.split(" ", 2)[1];
         return getOrganismDataByGenusSpecies(genus, species);
     }
 }
