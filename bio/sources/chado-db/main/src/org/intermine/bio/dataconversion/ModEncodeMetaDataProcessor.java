@@ -2632,21 +2632,22 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if (taxonId == null) {
             return null;
         }
-        String ontologyId = devOntologies.get(taxonId);
+        String ontologyName = null;
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+        if (genus.equals("Drosophila")) {
+            ontologyName = "Fly Development";
+        } else {
+            ontologyName = "Worm Development";
+        }
+        
+        String ontologyId = devOntologies.get(ontologyName);
         if (ontologyId == null) {
-            String ontologyName = null;
-            OrganismRepository or = OrganismRepository.getOrganismRepository();
-            String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
-            if (genus.equals("Drosophila")) {
-                ontologyName = "Fly Development";
-            } else {
-                ontologyName = "Worm Development";
-            }
             Item ontology = getChadoDBConverter().createItem("Ontology");
             ontology.setAttribute("title", ontologyName);
             getChadoDBConverter().store(ontology);
             ontologyId = ontology.getIdentifier();
-            devOntologies.put(taxonId, ontologyId);
+            devOntologies.put(ontologyName, ontologyId);
         }
         return ontologyId;
     }
