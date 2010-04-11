@@ -663,11 +663,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
 
     private ResultSet getFeatureScores(Connection connection) throws SQLException {
         String query =
-            "SELECT f.feature_id as feature_id, af.rawscore as score, a.program as program"
-            + " FROM feature f, analysisfeature af, analysis a "
-            + " WHERE f.feature_id = af.feature_id "
-            + " AND af.analysis_id = a.analysis_id "
-            + " AND f.feature_id IN "
+            "SELECT af.feature_id as feature_id, af.rawscore as score, a.program as program"
+            + " FROM analysisfeature af, analysis a "
+            + " WHERE af.analysis_id = a.analysis_id "
+            + " AND af.feature_id IN "
             + " (select feature_id from " + SUBFEATUREID_TEMP_TABLE_NAME + " ) ";
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
