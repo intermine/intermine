@@ -23,6 +23,12 @@
 <action path="/initProjectsSummary"
   type="org.modmine.web.ProjectsSummaryController" />
 
+<action path="/initModMineSearch"
+  type="org.modmine.web.ModMineSearchController" />
+
+<action path="/initModMineSearchResults"
+  type="org.modmine.web.ModMineSearchResultsController" />
+  
 <action path="/initExperiment"
   type="org.modmine.web.ExperimentController" />
 
@@ -56,6 +62,12 @@
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
 </action>
 
+<action path="/modMineSearchAction" name="modMineSearchForm" type="org.modmine.web.ModMineSearchAction" input="begin">
+      <forward name="searchResults" redirect="true" path="/modMineSearchResults.do"/>
+ </action>
+ 
+<action path="/modMineSearchResults" forward="searchresults.page">
+</action>
 
 <!-- 
 <action path="/initLatestSubs"
