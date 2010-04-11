@@ -61,7 +61,7 @@
                 <tr>
             <c:if test="${column.selectable && empty inlineTable}">
               <c:set var="disabled" value="false"/>
-              <c:if test="${(!empty resultsTable.selectedClass) && (resultsTable.selectedClass != column.typeClsString)}">
+              <c:if test="${(!empty pagedResults.selectedClass) && (pagedResults.selectedClass != column.typeClsString)}">
                 <c:set var="disabled" value="true"/>
               </c:if>
               <td><html:multibox property="currentSelectedIdStrings" name="pagedResults" styleId="selectedObjects_${status.index}"
@@ -172,7 +172,7 @@
                       class="${highlightObjectClass} id_${resultElement.id} class_${subRow[column.index].value.type} ${cellClass}" rowspan="${subRow[column.index].rowspan}">
                     <%-- the checkbox to select this object --%>
                     <c:set var="disabled" value="false"/>
-                    <c:if test="${(!empty resultsTable.selectedClass) && ((resultsTable.selectedClass != resultElement.type)&&(resultsTable.selectedClass != column.typeClsString) && resultsTable.selectedColumn != column.index)}">
+                    <c:if test="${(!empty pagedResults.selectedClass) && ((pagedResults.selectedClass != resultElement.type)&&(pagedResults.selectedClass != column.typeClsString) && pagedResults.selectedColumn != column.index)}">
                       <c:set var="disabled" value="true"/>
                     </c:if>
                     <c:if test="${column.selectable && empty inlineTable}">
@@ -274,7 +274,7 @@
 <c:if test="${empty bagName && empty inlineTable}">
    <div style="margin-top: 10px;">
    <tiles:insert name="paging.tile">
-     <tiles:put name="resultsTable" beanName="resultsTable" />
+     <tiles:put name="resultsTable" beanName="pagedResults" />
      <tiles:put name="currentPage" value="results" />
    </tiles:insert>
    </div>
