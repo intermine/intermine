@@ -2596,7 +2596,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // there may be duplicate terms for fly and worm, include taxon in key
         String taxonId = getTaxonIdForSubmission(dccId);
-        String key = value + "_" + taxonId;
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        String genus = or.getOrganismDataByTaxon(Integer.parseInt(taxonId)).getGenus();
+        String key = value + "_" + genus;
         String identifier = devStageTerms.get(key);
         if (identifier == null) {
             Item term = getChadoDBConverter().createItem("OntologyTerm");
