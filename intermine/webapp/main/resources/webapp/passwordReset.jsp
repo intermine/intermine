@@ -11,7 +11,7 @@
 <im:boxarea stylename="plainbox" fixedWidth="60%">
   <c:choose>
     <c:when test="${IS_VALID}">
-      <html:form action="/passwordResetAction" focus="password" method="post" enctype="multipart/form-data">
+      <html:form action="/passwordResetAction" focus="newpassword" method="post" enctype="multipart/form-data">
         <html:hidden property="token"/>
         <table>
           <tr>
