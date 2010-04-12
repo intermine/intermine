@@ -3,6 +3,7 @@ package org.modmine.web;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,11 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.model.bio.Submission;
+import org.intermine.model.bio.SubmissionProperty;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
 
 public class ModMineSearch
 {
@@ -39,13 +44,14 @@ public class ModMineSearch
     
     public static void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
-            Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
+            //Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
+            Map<Integer, Set<String>> subProps = readSubmissionsFromCache(im.getObjectStore());
             indexMetadata(subProps);
         }
     }
     
     public static Map<Integer, Float> runLuceneSearch(String searchString) {
-        Map<Integer, Float> matches = new HashMap<Integer, Float>();
+        LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
         
         String queryString = searchString.replaceAll("(\\w+log\\b)", "$1ue $1");
         queryString = queryString.replaceAll("[^a-zA-Z0-9]", " ").trim();
@@ -72,7 +78,7 @@ public class ModMineSearch
 
             //QueryScorer scorer = new QueryScorer(query);
 
-            for (int i = 0; i < MAX_HITS; i++) {
+            for (int i = 0; (i < MAX_HITS && i < hits.length()); i++) {
                 Document doc = hits.doc(i);
                 String name = doc.get("name");
 
@@ -120,6 +126,62 @@ public class ModMineSearch
         return subProps;
     }
 
+    private static Map<Integer, Set<String>> readSubmissionsFromCache(ObjectStore os) {
+        Map<Integer, Set<String>> subProps = new HashMap<Integer, Set<String>>();
+        
+       
+        for (DisplayExperiment exp : MetadataCache.getExperiments(os)) {
+            for (Submission sub : exp.getSubmissions()) {
+                Integer subId = sub.getId();
+                Integer dccId = sub.getdCCid();
+                
+                // submission details
+                addMetaData(subProps, subId, sub.getdCCid().toString());
+                addMetaData(subProps, subId, sub.getTitle());
+                addMetaData(subProps, subId, sub.getDescription());
+                addMetaData(subProps, subId, sub.getExperimentType());
+                addMetaData(subProps, subId, sub.getOrganism().getName());
+                String genus = sub.getOrganism().getGenus();
+                if (genus.equals("Drosophila")) {
+                    addMetaData(subProps, subId, "fly");
+                } else if (genus.equals("Caenorhabditis")) {
+                    addMetaData(subProps, subId, "worm");
+                }
+                
+                // experiment details
+                addMetaData(subProps, subId, exp.getPi());
+                addMetaData(subProps, subId, exp.getName());
+                addMetaData(subProps, subId, exp.getDescription());
+                addMetaData(subProps, subId, exp.getProjectName());
+                for (String lab : exp.getLabs()) {
+                    addMetaData(subProps, subId, lab);
+                }
+                
+                // add submission properties
+                for (SubmissionProperty prop : sub.getProperties()) {
+                    // TODO reflection to find properties of subclasses as well
+                    addMetaData(subProps, subId, prop.getName());
+                    addMetaData(subProps, subId, prop.getType());
+                }
+                // add feature types
+                Map<String, Long> features = MetadataCache.getSubmissionFeatureCounts(os, dccId);
+                if (features != null) {
+                    for (String type: features.keySet()) {
+                        addMetaData(subProps, subId, type);
+                    }
+                }
+                
+                // add database repository types
+                for (String db : exp.getReposited().keySet()) {
+                    addMetaData(subProps, subId, db);
+                }
+            }
+        }
+        
+        return subProps;
+    }
+    
+    
     public static Map<Integer, Integer> getSubMap() {
         return submissionMap;
     }
@@ -183,5 +245,7 @@ public class ModMineSearch
         LOG.info("Indexed " + indexed + " out of " + subProps.size() + " webSearchables in "
                 + time + " milliseconds");
     }
+    
+    
     
 }

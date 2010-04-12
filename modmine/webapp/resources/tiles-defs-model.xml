@@ -26,8 +26,8 @@
 <definition name="projectsSummary.tile" path="/model/projectsSummary.jsp"
         controllerUrl="/initProjectsSummary.do"/>
 
-<definition name="modMineSearch.tile" path="/modMineSearch.jsp"
-        controllerUrl="/initModMineSearch.do"/>
+<definition name="modMineSearch.tile" path="/modMineSearch.jsp"/>
+        <!--controllerUrl="/initModMineSearch.do"/>-->
 
   <definition name="projects.page" extends="layout.template">
     <put name="body" value="projects.tile"/>

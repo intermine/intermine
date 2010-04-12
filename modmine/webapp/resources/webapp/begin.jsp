@@ -68,7 +68,7 @@
 </script>
 
 <!-- modMine seach box -->
-<%-- <tiles:insert name="modMineSearch.tile" /> --%>
+<tiles:insert name="modMineSearch.tile" />
 
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
