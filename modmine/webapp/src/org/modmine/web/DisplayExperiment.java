@@ -43,7 +43,7 @@ public class DisplayExperiment
     private String description = null;
     private Set<String> factorTypes = new HashSet<String>();
     private Set<String> organisms = new HashSet<String>();
-    private Map<String, Long> featureCounts;
+    private Map<String, Long> featureCounts = new HashMap<String, Long>();
     private ObjectStore os;
     private String experimentType;
     private Set<String> labs = new TreeSet<String>();

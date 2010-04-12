@@ -10,22 +10,36 @@ package org.modmine.web;
  *
  */
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.Submission;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.struts.QuickSearchAction;
 
 
 public class ModMineSearchResultsController extends TilesAction 
 {
+    
+    private static final Logger LOG = Logger.getLogger(ModMineSearchResultsController.class);
+    
     /**
      * {@inheritDoc}
      */
@@ -39,14 +53,44 @@ public class ModMineSearchResultsController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
         ModMineSearch.initModMineSearch(im);
+        
         String searchTerm = (String) request.getParameter("searchTerm");
+        
+        Map<Integer, Float> searchResults = ModMineSearch.runLuceneSearch(searchTerm);
+
+        Set<Integer> objectIds = searchResults.keySet();
+
+        
+        LOG.info("SEARCH HITS: " + searchResults.size());
+
+        Map<Float, Integer> scores = new TreeMap<Float, Integer>();
+        Map<Integer, Integer> subMap = ModMineSearch.getSubMap();
+        for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
+            scores.put(entry.getValue(), subMap.get(entry.getKey()));
+        }
+        request.setAttribute("scores", scores);
+
+        Map<Integer, Submission> objMap = new HashMap<Integer, Submission>();
+        for (InterMineObject obj : im.getObjectStore().getObjectsByIds(objectIds)) {
+            objMap.put(obj.getId(), (Submission) obj);
+        }
+        LOG.info("SEARCH - OBJS: " + objMap.size());
+        
+        LinkedHashMap<Submission, Float> submissions = new LinkedHashMap<Submission, Float>();
+        for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
+            submissions.put(objMap.get(entry.getKey()), entry.getValue());
+        }
+        
+        LOG.info("SEARCH SUBS: " + submissions.size());
+        request.setAttribute("submissions", submissions);
+        
+        
+
         request.setAttribute("searchTerm", "THE SEARCH TERM");
         if (searchTerm != null) {
-            String identifier = ModMineSearch.SEARCH_KEY + searchTerm;
-            PagedTable pagedResults = SessionMethods.getResultsTable(request.getSession(), identifier);
-            request.setAttribute("searchTerm", searchTerm);
-            request.setAttribute("pagedResults", pagedResults);
-            request.setAttribute("scores", request.getAttribute("scores"));
+            context.putAttribute("searchTerm", searchTerm);
+            context.putAttribute("scores", request.getAttribute("scores"));
+            context.putAttribute("submissions", request.getAttribute("submissions"));
         }
         return null;
     }

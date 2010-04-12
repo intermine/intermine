@@ -27,9 +27,9 @@
     </html:form>
     <div class="examples">
     <ul>
-    <li>Antibody names: sadf, asdf, asdf</li>
+    <li>Antibody names: PolII, H3K4me1, CP190</li>
     <li>Experiment types: ChIP-chip, RNA-seq</li>
-    <li>Use " to search for a phrase, "Chromatin binding"</li>
+    <li>Use "" to search for a phrase, "Chromatin binding"</li>
     <li>Combine terms with AND, fly AND embryo</li>
     </ul>
     </div>
