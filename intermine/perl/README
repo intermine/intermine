@@ -1,6 +1,8 @@
 INTERMINE
 
-These Perl modules allow creation of file in InterMine Item XML format.
+These Perl modules allow the creation of file in InterMine XML format, 
+as well as directly querying the web API.
+
 
 SEE ALSO
 
@@ -12,25 +14,27 @@ INSTALLATION
 
 To install this module, run the following commands:
 
-    sudo cpan -i XML::Parser::PerlSAX XML::Writer 
+To make:
+    sudo cpan -i XML::Parser::PerlSAX XML::Writer IO::String URI LWP::UserAgent
     perl Makefile.PL
     make
+
+To run the tests: (optional)
+    sudo cpan -i Test::XML Test::More Test::Exception
     make test
 
-To run the tests:
-    sudo cpan -i Test::XML Test::More IO::String
+To install:
     make install   (or: sudo make install)
 
 
 SUPPORT AND DOCUMENTATION
 
-After installing, you can find documentation for this module with the perldoc command.
-
-    perldoc InterMine::ItemFactory
+After installing, you can find documentation for these modules with 
+the perldoc command.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2006,2007 FlyMine
+Copyright (C) 2006,2007,2010 FlyMine
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
