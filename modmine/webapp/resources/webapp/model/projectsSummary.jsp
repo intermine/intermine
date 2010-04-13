@@ -9,21 +9,22 @@
 	prefix="str"%>
 
 
+
 <tiles:importAttribute />
 
 <html:xhtml />
 
 <div class="body">
 
+
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
-<tr><th>&nbsp;</th><th>Project</th><th>Experiments</th><th>&nbsp;</th></tr>
-<c:forEach items="${experiments}" var="proj">
- <c:forEach items="${proj.value}" var="exp"  varStatus="status">
+<c:forEach items="${catExp}" var="cat" varStatus="cat_status">
+<tr><th>&nbsp;</th><th>${cat.key}</th><th>&nbsp;</th></tr>
+ <c:forEach items="${cat.value}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
 
   <tr>
-<c:if test="${status.first}">
-  <td rowspan="${expCount}">
+  <td >
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}"> 
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
@@ -33,28 +34,17 @@
       </c:if>
     </c:forEach> 
   </td>
-  <td rowspan="${expCount}">
-  <b>${proj.key}</b>
-  <br></br>PI: <c:out value="${exp.pi}"></c:out>
-  </td>
-  </c:if>
+</td>
+  
   
   <td><h4><html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}</html:link></h4>
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>  
-
+Project:${exp.projectName } &nbsp;&nbsp;(${exp.pi })&nbsp;&nbsp;
 Labs: 
     <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus"><c:if test="${!labStatus.first}">, </c:if><b>${lab}</b></c:forEach> 
 
-<%-- with links
-    <c:forEach items="${exp.labs}" var="lab" varStatus="labStatus">
-    <c:if test="${!labStatus.first}">, </c:if>
-              <b><html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=*${lab}&class=Lab"
-        title="more info on ${lab}'s lab">${lab}</html:link></b>
-    </c:forEach> 
-    --%>
 <br>
 <%-- SUBMISSIONS --%>
   <c:choose>
@@ -138,11 +128,12 @@ Labs:
 </td>
 
 
-  </tr>
-  
+</tr>
 </c:forEach>
 </c:forEach>
-  </table>
+</table>
+
+
 
 
 </div>
