@@ -155,7 +155,7 @@ public class PropertiesUtil
             InputStream is = loader.getResourceAsStream(filename);
             if (is == null) {
                 LOG.error("Could not find file " + filename + " from " + loader);
-                throw new RuntimeException("Could not find file " + filename + " from " + loader);
+                return null;
             }
             props.load(is);
         } catch (IOException e) {
