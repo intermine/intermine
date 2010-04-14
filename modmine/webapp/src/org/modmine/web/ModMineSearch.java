@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,21 +21,15 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
 
 public class ModMineSearch
 {
 
     public static String SEARCH_KEY = "modminesearch";
-    public static int MAX_HITS = 100;
+    public static int MAX_HITS = 500;
     
     private static final Logger LOG = Logger.getLogger(ModMineSearch.class);
     private static RAMDirectory ram = null;
@@ -93,38 +86,7 @@ public class ModMineSearch
         return matches;
     }
     
-    
-    private static Map<Integer, Set<String>> readSubmissionProperties(InterMineAPI im) {
-        Map<Integer, Set<String>> subProps = new HashMap<Integer, Set<String>>();
-        
-        PathQuery query = new PathQuery(im.getModel());
-        query.setView("Submission.id, Submission.DCCid, Submission.title, Submission.project.title, Submission.project.name, Submission.project.surnamePI, Submission.lab.name, Submission.experiment.name, Submission.organism.genus, Submission.organism.species, Submission.properties.type, Submission.properties.name");
 
-        Profile superUser = im.getProfileManager().getSuperuserProfile();
-        PathQueryExecutor executor = im.getPathQueryExecutor(superUser);
-        ExportResultsIterator resIter = executor.execute(query);
-        while (resIter.hasNext()) {
-            List<ResultElement> row = resIter.next();
-            Integer objectId = (Integer) row.get(0).getField();
-            if (!subProps.containsKey(objectId)) {
-                for (int i = 1; i < 10; i++) {
-                    addMetaData(subProps, objectId, row.get(i).toString());
-                }
-                String genus = (String) row.get(8).getField();
-                if (genus.equals("Drosophila")) {
-                    addMetaData(subProps, objectId, "fly");
-                } else if (genus.equals("Caenorhabditis")) {
-                    addMetaData(subProps, objectId, "worm");
-                }
-                
-                submissionMap.put(objectId, (Integer) row.get(1).getField());
-            }
-            addMetaData(subProps, objectId, row.get(10).getField().toString());
-            addMetaData(subProps, objectId, row.get(11).getField().toString());
-        }
-        
-        return subProps;
-    }
 
     private static Map<Integer, Set<String>> readSubmissionsFromCache(ObjectStore os) {
         Map<Integer, Set<String>> subProps = new HashMap<Integer, Set<String>>();
@@ -195,6 +157,17 @@ public class ModMineSearch
         props.add(property);
     }
 
+    private static void addToDocument(Document doc, Integer objectId, String property) {
+        addToDocument(doc, objectId, property, 1.0F);
+    }
+    
+    private static void addToDocument(Document doc, Integer objectId, String property, float boost) {
+        Field f = new Field("content", property, Field.Store.NO,
+                              Field.Index.TOKENIZED);
+        f.setBoost(boost);
+        doc.add(f);
+    }
+    
     private static void indexMetadata(Map<Integer, Set<String>> subProps) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata.");
@@ -225,7 +198,6 @@ public class ModMineSearch
             String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
             doc.add(new Field("content", content, Field.Store.NO,
                               Field.Index.TOKENIZED));
-
             try {
                 writer.addDocument(doc);
                 indexed++;
