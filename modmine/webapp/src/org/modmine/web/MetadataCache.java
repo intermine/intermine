@@ -67,6 +67,7 @@ public class MetadataCache
     // does not work?!
     //    private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
+    private static final String GBROWSE_ST_URL_END = "/?action=scan";
 
     // SubmissionData name for files
     private static final String FILETYPE = "%file";
@@ -74,10 +75,18 @@ public class MetadataCache
     public static class GBrowseTrack
     {
         private String organism; // {fly,worm}
-        private String track;    // e.g. LIEB_WIG_CHIPCHIP_POL2
+        private String track;    // e.g. Snyder_PHA4_GFP_COMB
+        private String subTrack; // e.g. PHA4_L2_GFP
+        
         public GBrowseTrack(String organism2, String trackName) {
             this.organism  = organism2;
             this.track = trackName;
+        }
+
+        public GBrowseTrack(String organism, String track, String subTrack) {
+            this.organism  = organism;
+            this.track = track;
+            this.subTrack = subTrack;
         }
 
         /**
@@ -92,6 +101,13 @@ public class MetadataCache
          */
         public String getTrack() {
             return track;
+        }
+
+        /**
+         * @return the subTrack
+         */
+        public String getSubTrack() {
+            return subTrack;
         }
     }
 
@@ -349,24 +365,6 @@ public class MetadataCache
         }
     }
 
-    /**
-     * adds the elements of a list i to a list l only if they are not yet
-     * there
-     * @param l the receiving list
-     * @param i the donating list
-     */
-    private static void addToStringList(List<String[]> l, List<String[]> i) {
-        Iterator <String[]> it  = i.iterator();
-        while (it.hasNext()) {
-            String[] thisId = it.next();
-           if (!l.contains(thisId)) {
-//            if (!l.contains(thisId[1])) {
-                LOG.info("DDDD: " + thisId[0] + "|" + thisId[1] 
-                        + "|" + thisId[2]);
-                l.add(thisId);
-            }
-        }
-    }
 
     public static Map<String, Set<String[]>> getExperimentRepositoryEntries(ObjectStore os) {
         Map<String, Set<String[]>> reposited = new HashMap<String, Set<String[]>>();
@@ -857,46 +855,109 @@ public class MetadataCache
      */
     private static Map<Integer, List<GBrowseTrack>> readTracks(String organism) {
         try {
-            URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
+            URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
-            // apparently the rules for parsing are:
-            // fields tab separated, dccId space separated
-            // if track/dccId are in the name, the first is the track, the second is the dccId
-            // if there is only one number in the name, this is a dccId
+            
             // examples of lines:
-            // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
-            // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
-            // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782
-                // 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
-
+            //
+            // [Henikoff_Salt_H3_WIG]
+            // key      = H3.3 Chromatin fractions extracted with NaCl
+            // select   = 80mM fraction#2534 350mM fraction#2535 600mM fraction#2536
+            // citation = <h1> H3.3 NaCl Salt Extracted Chromatin ....
+            //
+            // [LIEB_WIG_CHROMNUC_ENV]
+            // key      = Chromosome-Nuclear Envelope Interaction
+            // select   = SDQ3891_LEM2_N2_MXEMB_1#2729 SDQ3897_NPP13_N2_MXEMB_1#2738
+            // citation = <h1> Chromosome-Nuclear Envelope Interaction proteins...
+            //
+            // note: subtracks have also names with spaces
+            
+            StringBuffer trackName = new StringBuffer();
+            StringBuffer toAppend = new StringBuffer();
+            
             while ((line = reader.readLine()) != null) {
-                String[] result = line.split("\\t");
-                String trackName = result[0];
-                GBrowseTrack newTrack = new GBrowseTrack(organism, trackName);
-                // look for dccId in the line
-                String list = result[1];
-                String[] dccIds = list.split("\\s");
-                parseTokens(dccIds, newTrack, false);
-
-                if (list.length() < 2) {
-                    // look for dccId in the track name
-                    // (only if there are no dccid in the proper field)
-                    String[] nameSplit = trackName.split("_");
-                    parseTokens(nameSplit, newTrack, true);
+                LOG.debug("SUBTRACK LINE: " + line);
+                if(line.startsWith("[")){
+                    // this is a track
+                    trackName.setLength(0);
+                    trackName.append(line.substring(1, line.indexOf(']')));
                 }
-                //
-                //
-                //                // look for dccId in the track name
-                //                String[] nameSplit = trackName.split("_");
-                //                parseTokens(nameSplit, newTrack, true);
+                if(line.startsWith("select")){
+                    // here subtracks are listed
+                    String data = line.replace("select   = ", "");
+                    String[] result = data.split("\\s");
+                    for (String token : result){
+                        if (token.indexOf('#') < 0){
+                            // we are dealing with a bit of name
+                            toAppend.append(token + " ");
+                        } else { 
+                            // this is a token with subId
+                            String subTrack = toAppend.toString() + token.substring(0, token.indexOf('#'));
+                            Integer dccId = Integer.parseInt(token.substring(token.indexOf('#')+1, token.length()));
+                            LOG.debug("SUBTRACK: " + subTrack);
+                            toAppend.setLength(0); // empty buffer
+                            GBrowseTrack newTrack = new GBrowseTrack(organism, trackName.toString(),subTrack);
+                            addToGBMap(submissionTracksCache, dccId, newTrack);
+                        }
+                    }
+                }                
             }
             reader.close();
         } catch (Exception err) {
             err.printStackTrace();
-        }
+        }        
         return submissionTracksCache;
     }
+    
+    
+//    TO REMOVE
+      private static Map<Integer, List<GBrowseTrack>> readTracks2(String organism) {
+          try {
+              URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
+              BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+              String line;
+              // apparently the rules for parsing are:
+              // fields tab separated, dccId space separated
+              // if track/dccId are in the name, the first is the track, the second is the dccId
+              // if there is only one number in the name, this is a dccId
+              // examples of lines:
+              // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
+              // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
+              // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782
+                  // 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
+
+              while ((line = reader.readLine()) != null) {
+                  String[] result = line.split("\\t");
+                  String trackName = result[0];
+                  GBrowseTrack newTrack = new GBrowseTrack(organism, trackName);
+                  // look for dccId in the line
+                  String list = result[1];
+                  String[] dccIds = list.split("\\s");
+                  parseTokens(dccIds, newTrack, false);
+
+                  if (list.length() < 2) {
+                      // look for dccId in the track name
+                      // (only if there are no dccid in the proper field)
+                      String[] nameSplit = trackName.split("_");
+                      parseTokens(nameSplit, newTrack, true);
+                  }
+                  //
+                  //
+                  //                // look for dccId in the track name
+                  //                String[] nameSplit = trackName.split("_");
+                  //                parseTokens(nameSplit, newTrack, true);
+              }
+              reader.close();
+          } catch (Exception err) {
+              err.printStackTrace();
+          }
+          return submissionTracksCache;
+      }
+          
+          
+          
+
 
     /**
      * This method looks for dccId in the tokenised line

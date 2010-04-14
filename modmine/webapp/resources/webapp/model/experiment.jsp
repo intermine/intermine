@@ -257,7 +257,9 @@ All GBrowse tracks generated for this experiment:
      <c:set var="wormlabels" value="${etrack.track}" /> 
   </c:when>
   <c:otherwise>
-     <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" /> 
+     <c:if test="${!fn:contains(wormlabels, etrack.track-)}">
+       <c:set var="wormlabels" value="${wormlabels}-${etrack.track}" /> 
+     </c:if>
   </c:otherwise>
   </c:choose>
 </c:when>
@@ -268,7 +270,9 @@ All GBrowse tracks generated for this experiment:
      <c:set var="flylabels" value="${etrack.track}" /> 
   </c:when>
   <c:otherwise>
-     <c:set var="flylabels" value="${flylabels}-${etrack.track}" /> 
+     <c:if test="${!fn:contains(flylabels, etrack.track-)}">
+       <c:set var="flylabels" value="${flylabels}-${etrack.track}" />
+     </c:if>
   </c:otherwise>
   </c:choose>
 </c:when>
@@ -612,17 +616,17 @@ All GBrowse tracks generated for this experiment:
          <c:forEach items="${subTracks.value}" var="track" varStatus="track_status">
 <c:choose>
 <c:when test="${track_status.first}">
-     <c:set var="urlabels" value="${track.track}" /> 
+     <c:set var="urlabels" value="${track.subTrack}" /> 
 </c:when>
 <c:otherwise>
-     <c:set var="urlabels" value="${urlabels}-${track.track}" /> 
+     <c:set var="urlabels" value="${urlabels}-${track.subTrack}" /> 
 </c:otherwise>
 </c:choose>
 
      <c:set var="organism" value="${track.organism}" /> 
 
             <html:link
-              href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${track.track}" title="View ${track.track} in GBrowse" target="_blank"><c:out value="${track.track}"/>
+              href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?label=${track.track}/${track.subTrack}" title="View ${track.subTrack} in GBrowse" target="_blank"><c:out value="${track.subTrack}"/>
             </html:link>
             <br>
               </c:forEach>
