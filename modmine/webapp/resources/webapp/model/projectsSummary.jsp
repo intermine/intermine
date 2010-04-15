@@ -9,17 +9,25 @@
 	prefix="str"%>
 
 
-
 <tiles:importAttribute />
 
 <html:xhtml />
 
 <div class="body">
 
+<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
+<tr>
+<c:forEach items="${catExp}" var="catInd" varStatus="catInd_status">
+<td><a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#${catInd_status.count}"  title="Go to category: ${catInd.key}" >${catInd.key}
+<img src="images/right-arrow.gif" /></a></td>
+</c:forEach>
+</tr>
+</table>
 
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <c:forEach items="${catExp}" var="cat" varStatus="cat_status">
-<tr><th>&nbsp;</th><th>${cat.key}</th><th>&nbsp;</th></tr>
+<tr><th>&nbsp;</th><th><a name="${cat_status.count}">${cat.key}</a></th><th>&nbsp;</th></tr>
+
  <c:forEach items="${cat.value}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>
 
