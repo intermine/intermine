@@ -11,9 +11,13 @@ package org.modmine.web;
  */
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +27,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
@@ -51,6 +57,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -60,12 +67,9 @@ import org.intermine.util.TypeUtil;
  */
 public class MetadataCache
 {
-    // GBrowse URLs
-    private static final String GBROWSE_BASE_URL
-    = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
-    
-    // does not work?!
-    //    private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
+    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+
+    private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
 
@@ -121,12 +125,12 @@ public class MetadataCache
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
     private static Map<Integer, List<String[]>> submissionRepositedCache = null;
+    private static Map<String, String> featDescriptionCache = null;
 
     
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
 
-    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     /**
      * Fetch experiment details for display.
@@ -238,6 +242,19 @@ public class MetadataCache
     }
 
     /**
+     * Fetch a list of file names for a given submission.
+     * @param dccId the modENCODE submission id
+     * @return a list of file names
+     */
+    public static synchronized Map<String,String> getFeatTypeDescription(ServletContext servletContext) {
+        if ( featDescriptionCache == null) {
+            readFeatTypeDescription(servletContext);
+        }
+        return featDescriptionCache;
+    }
+
+
+    /**
      * Fetch a map from feature type to count for a given submission.
      * @param os the objectStore
      * @param dccId the modENCODE submission id
@@ -310,6 +327,8 @@ public class MetadataCache
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
                 Set<String> difference = new HashSet<String>(allFeatures);
                 difference.removeAll(submissionLocatedFeatureTypes.get(subId));
+                LOG.info("UNLOC0: " + subId + "|" + allFeatures.size());
+
                 
                 if (!difference.isEmpty()){
                     List <String> thisUnlocated = new ArrayList<String>();
@@ -318,6 +337,8 @@ public class MetadataCache
                         thisUnlocated.add(fType);
                     }
                     submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
+                    LOG.info("UNLOC: " + subId + "|" + thisUnlocated + "|" + submissionUnlocatedFeatureTypes.size());
+                    
                 }
             }
         } catch (Exception err) {
@@ -955,7 +976,7 @@ public class MetadataCache
           return submissionTracksCache;
       }
           
-          
+     //==== END TO REMOVE     
           
 
 
@@ -1014,25 +1035,50 @@ public class MetadataCache
      * @return the base URL
      */
     private static String getGBrowsePrefix() {
-        final String GBROWSE_DEFAULT_URL
-        = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";
-
+        String GBROWSE_DEFAULT_URL = "http://modencode.oicr.on.ca/cgi-bin/gb2/gbrowse/";        
         Properties props = PropertiesUtil.getProperties();
         String gbURL = props.getProperty("gbrowse.prefix") + "/";    
-
-//        StringBuffer header = new StringBuffer();
-//        header.append(props.getProperty("gbrowse.prefix"));
-
-        
         if (gbURL == null || gbURL.length() < 5){
-            LOG.info("XXX IN... " + GBROWSE_DEFAULT_URL);
-          
             return GBROWSE_DEFAULT_URL;
         }
-
-        LOG.info("XXX OUT... " + GBROWSE_DEFAULT_URL);
        return gbURL;
     }
+
     
+    /**
+     * This method get the GBrowse base URL from the properties
+     * or default to one
+     * @return the base URL
+     */
+    private static Map<String, String> readFeatTypeDescription(ServletContext servletContext) {
+
+        featDescriptionCache = new HashMap<String, String>();
+
+        Properties props = new Properties(); 
+            
+            InputStream is = servletContext.getResourceAsStream("/WEB-INF/featureTypeDescr.properties");
+            if (is == null) {
+                LOG.info("Unable to find /WEB-INF/featureTypeDescr.properties, there will be no feature type descruptions!");
+            } else {
+
+                try {
+                    props.load(is);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+//                    throw new IllegalAccessException("Error getting featureTypeDescr.properties file", e.printStackTrace());
+                    e.printStackTrace();
+                }
+
+                Enumeration en = props.keys();
+//                while (props.keys().hasMoreElements()) {
+                while (en.hasMoreElements()) {
+                    String expFeat = (String)en.nextElement();
+                    String descr = props.getProperty(expFeat);
+                    featDescriptionCache.put(expFeat, descr);
+                }
+            }
+        return featDescriptionCache;
+    }
+
     
 }

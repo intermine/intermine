@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +46,8 @@ public class ExperimentController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+        
+        final ServletContext servletContext = servlet.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
         
@@ -76,6 +79,10 @@ public class ExperimentController extends TilesAction
 
         Map<Integer, List<String>> unlocatedFeatureTypes = MetadataCache.getUnlocatedFeatureTypes(os);
         request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
+        
+        Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
+        request.setAttribute("expFeatDescription", expFeatureDescription);
+        
 
         return null;
     }
