@@ -185,6 +185,7 @@ sub get_result_table
  
  WARNING Support for this feature this feature has been discontinued
  on the server side
+
 =cut
 sub get_count
 {
