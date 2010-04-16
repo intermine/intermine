@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# This example shows how a query can run using just an xml string. 
+# This example shows how a query can be run using just an xml string. 
 # You can write these yourself or use the website at flymine.org 
 # to create them.
 
@@ -20,7 +20,9 @@ my $query = q(
    <query name="" model="genomic" view="Organism.name Organism.taxonId" sortOrder="Organism.name"/>
 );
 
-my $res = $service->get_result($query);
+# get the results as one string, containing multiple lines and tab delimited columns
+my $res = $service->get_result($query); # This returns an HTTP::Request object 
+                                        # (see perldoc HTTP::Request
 
 print $res->content() unless $res->is_error;
 
