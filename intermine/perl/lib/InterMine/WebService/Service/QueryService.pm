@@ -180,4 +180,22 @@ sub get_result_table
   }
 }
 
+=head2 get_count (NOT IMPLEMENTED)
+ Title   : get_count
+ Usage   : my $count = $service->get_count($query);
+ Function: return the number of result rows for the query
+ 
+ WARNING Support for this feature this feature has been discontinued
+ on the server side
+=cut
+sub get_count
+{
+# WARNING suport for this feature has been discontinued
+  my $self = shift;
+  my $query = shift;
+
+  return $self->get_result($query, undef, undef, 1)->content();
+}
+
+
 1;
