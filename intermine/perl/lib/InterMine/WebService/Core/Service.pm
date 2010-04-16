@@ -87,19 +87,6 @@ sub get_url
   return $self->{_service_root} . $self->get_relative_path();
 }
 
-=head2 get_count
- Title   : get_count
- Usage   : my $count = $service->get_count($query);
- Function: return the number of result rows for the query
-=cut
-sub get_count
-{
-  my $self = shift;
-  my $query = shift;
-
-  return $self->get_result($query, undef, undef, 1)->content();
-}
-
 =head2 
  Title   : execute_request
  Usage   : my $request =
