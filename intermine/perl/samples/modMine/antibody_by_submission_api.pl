@@ -47,7 +47,7 @@ my $res = $query_service->get_result($path_query,
 				     $no_of_results_to_return,# Optional - defaults to 100
     );
 
-print "Kevin White's first 20 submissions, and the associated antibodies\n\n";
+print '-' x 70, "\n" x 2, "Kevin White's first 20 submissions, and the associated antibodies", "\n" x 2;
 
 print $res->content unless $res->is_error;
 

@@ -50,7 +50,7 @@ my $res = $query_service->get_result($path_query,
 				     $no_of_results_to_return,# Optional - defaults to 100
     );
 
-print "The first 20 Genes in Drosophila melanogaster with the domain of Cold shock protein\n\n";
+print '-' x 70, "\n" x 2, "The first 20 Cold shock protein Genes in Drosophila melanogaster", "\n" x 2;
 
 print $res->content unless $res->is_error;
 
