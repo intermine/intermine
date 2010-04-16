@@ -51,6 +51,6 @@ for ($GeneFlankingRegion, $GeneFlankingRegionDistance, $Up_Down_stream, $no_of_r
     $i++;
 }
 
-print "\nFirst $no_of_results_to_return genes (and their antibody targets) that overlap, $GeneFlankingRegionDistance $Up_Down_stream of $GeneFlankingRegion.\n\n";
+print '-' x 70, "\n" x 2, "First $no_of_results_to_return genes (and their antibody targets) that overlap, $GeneFlankingRegionDistance $Up_Down_stream of $GeneFlankingRegion.", "\n" x 2;
 
 my $res = getprint($url);                           # This gets the document, and prints it out.
