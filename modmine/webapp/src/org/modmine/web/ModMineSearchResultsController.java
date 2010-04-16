@@ -76,9 +76,9 @@ public class ModMineSearchResultsController extends TilesAction
         }
         LOG.info("SEARCH - OBJS: " + objMap.size());
         
-        LinkedHashMap<Submission, Float> submissions = new LinkedHashMap<Submission, Float>();
+        LinkedHashMap<Submission, Integer> submissions = new LinkedHashMap<Submission, Integer>();
         for (Map.Entry<Integer, Float> entry : searchResults.entrySet()) {
-            submissions.put(objMap.get(entry.getKey()), entry.getValue());
+            submissions.put(objMap.get(entry.getKey()), new Integer(Math.round(entry.getValue() * 10)));
         }
         
         LOG.info("SEARCH SUBS: " + submissions.size());

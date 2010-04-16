@@ -26,8 +26,8 @@ Search Term: <c:out value="${searchTerm}"/>
 <tr>
     <th>DCC id</th>
     <th>Organism</th>
-    <th>Name</th>
     <th>Group</th>
+    <th>Name</th>
     <th>Date</th>
     <th>Details</th>
     <th>Search score</th>
@@ -56,7 +56,8 @@ Search Term: <c:out value="${searchTerm}"/>
           <c:out value="${prop.type}: "/><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${prop.id}"><c:out value="${prop.name}"/></html:link><br/>
         </c:forEach>
       </td>
-      <td><c:out value="${subResult.value}"/></td>
+      
+      <td><img height="10" width="${subResult.value * 5}" src="images/heat${subResult.value}.gif"/></td>
 </tr>
 </c:forEach>
 </table>
