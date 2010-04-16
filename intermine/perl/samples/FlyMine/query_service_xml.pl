@@ -24,5 +24,6 @@ my $query = q(
 my $res = $service->get_result($query); # This returns an HTTP::Request object 
                                         # (see perldoc HTTP::Request
 
+print '-' x 70, "\n" x 2, "all organisms with their taxon ids sorted by the organism name", "\n" x 2;
 print $res->content() unless $res->is_error;
 
