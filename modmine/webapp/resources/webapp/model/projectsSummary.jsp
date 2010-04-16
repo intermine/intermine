@@ -26,7 +26,7 @@
 
 <table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
 <c:forEach items="${catExp}" var="cat" varStatus="cat_status">
-<tr><th>&nbsp;</th><th><a name="${cat_status.count}">${cat.key}</a></th><th>&nbsp;</th></tr>
+<tr><th>&nbsp;</th><th><h4><a name="${cat_status.count}">${cat.key}</a></h4></th><th>&nbsp;</th></tr>
 
  <c:forEach items="${cat.value}" var="exp"  varStatus="status">
 <c:set var="expCount" value="${fn:length(proj.value)}"></c:set>

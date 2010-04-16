@@ -73,6 +73,12 @@
     });
 </script>
 
+<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
+<tr><td align="center">modMine web services let you query modENCODE data directly
+from Perl scripts [<a href="http://blog.modencode.org/modmine-perl-api">more information and examples</a>]</td></tr>
+</table>
+
+
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
 </div>
