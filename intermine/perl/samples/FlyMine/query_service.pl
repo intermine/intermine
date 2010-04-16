@@ -29,8 +29,7 @@ $path_query->add_view('Organism.name Organism.taxonId');
 # set the sort order, default is the first path in the view
 $path_query->sort_order('Organism.taxonId');
 
-# get the results as one string, containing multiple lines and tab delimited
-# columns
+# get the results as one string, containing multiple lines and tab delimited columns
 # get_result takes between 1 and 3 arguments
 # The query is the first (either as an InterMine::PathQuery object or as an xml string), 
 #     this is the only mandatory argument
