@@ -97,12 +97,9 @@ sub get_relative_path
  Usage   : my $results = $service->get_result($query, $start, $max_count, $count_only);
  Function: get the results of a query
  Args    : $query - the query as an XML string or as a PathQuery object
-           $start - the start row to return, the first row is 1 which is the default
-           $max_count - the maximum number of rows to return (undef means get all)
-           $count_only - if true, ignore $start and $max_count and instead
-                         return only the number of rows as a scalar
- Returns : HTTP::Response containing the results, or a count as a scalar if
-           $count_only is true
+           $start - the start row to return, the first row is 0 which is the default
+           $max_count - the maximum number of rows to return (undef means get 100)
+ Returns : HTTP::Response containing the results.
 
 =cut
 sub get_result
@@ -111,7 +108,7 @@ sub get_result
   my $query = shift;
   my $start = shift;
   my $max_count = shift;
-  my $count_only = shift;
+  my $count_only = shift; # Support for this feature has been discontinued
 
   if (ref $query) {
     $query = $query->to_xml_string();
@@ -124,7 +121,7 @@ sub get_result
   my $request =
     new InterMine::WebService::Core::Request('GET', $self->get_url(), 'TAB');
 
-  if ($count_only) {
+  if ($count_only) { # Support for this feature has been discontinued
     $request->add_parameters(tcount => '');
   } else {
     if (!defined $start) {
@@ -181,6 +178,7 @@ sub get_result_table
 }
 
 =head2 get_count (NOT IMPLEMENTED)
+
  Title   : get_count
  Usage   : my $count = $service->get_count($query);
  Function: return the number of result rows for the query
