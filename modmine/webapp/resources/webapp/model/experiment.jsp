@@ -623,10 +623,18 @@ All GBrowse tracks generated for this experiment:
          <c:forEach items="${subTracks.value}" var="track" varStatus="track_status">
 <c:choose>
 <c:when test="${track_status.first}">
-     <c:set var="urlabels" value="${track.subTrack}" /> 
+     <c:set var="urlabels" value="${track.track}/${track.subTrack}" /> 
 </c:when>
 <c:otherwise>
+<%-- checking if coming from different tracks --%>
+<c:choose>
+<c:when test="${fn:contains(urlabels,track.track)}">
      <c:set var="urlabels" value="${urlabels}-${track.subTrack}" /> 
+</c:when>
+<c:otherwise>
+     <c:set var="urlabels" value="${urlabels}-${track.track}/${track.subTrack}" /> 
+</c:otherwise>
+</c:choose>
 </c:otherwise>
 </c:choose>
 
