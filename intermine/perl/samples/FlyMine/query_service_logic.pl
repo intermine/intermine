@@ -56,6 +56,6 @@ $path_query->logic( OR(
 
 my $drosophila_res = $query_service->get_result($path_query);  # This returns an HTTP::Request object 
                                                                # (see perldoc HTTP::Request)
-print "\n", '-' x 70, "\nOnly drosophilas:\n";
-print $drosophila_res->content() unless $res->is_error;
+print  '-' x 70, "\n" x 2, "Non melogaster Drosophilas, and organism 9606:", "\n" x 2;
+print $drosophila_res->content() unless $drosophila_res->is_error;
 

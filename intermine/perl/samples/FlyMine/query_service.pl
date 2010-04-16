@@ -38,7 +38,7 @@ $path_query->sort_order('Organism.taxonId');
 my $res = $query_service->get_result($path_query);# This returns an HTTP::Request object 
                                                   # (see perldoc HTTP::Request
 
-print "All organisms:\n";
+print '-' x 70, "\n" x 2, "All organisms:", "\n" x 2;
 print $res->content() unless $res->is_error;
 
 # now constrain the genus
@@ -47,11 +47,11 @@ $path_query->add_constraint('Organism.genus = "Drosophila"');
 # print the result table again - will be smaller
 my $drosophila_res = $query_service->get_result($path_query); # This returns an HTTP::Request object 
                                                               # (see perldoc HTTP::Request)
-print "\n", '-' x 70, "\nOnly Drosophilas:\n";
+print '-' x 70, "\n" x 2, "Only Drosophilas:", "\n" x 2;
 print $drosophila_res->content() unless $drosophila_res->is_error;
 
 # get the results as a table instead
-print "\n", '-' x 70, "\nDrosophila results as a table:\n";
+print '-' x 70, "\n" x 2, "Drosophila results as a table:", "\n" x 2;
 my @res = $query_service->get_result_table($path_query); # This returns a reference to an array of arrays
 for my $row_ref (@res) {
   my @row = @{$row_ref};
