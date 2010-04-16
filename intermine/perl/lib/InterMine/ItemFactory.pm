@@ -90,7 +90,7 @@ under the same terms as Perl itself.
 
 use strict;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use InterMine::Item;
 
