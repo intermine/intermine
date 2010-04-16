@@ -1,12 +1,15 @@
 package org.modmine.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
@@ -21,9 +24,14 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.RAMDirectory;
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 
 public class ModMineSearch
 {
@@ -38,8 +46,8 @@ public class ModMineSearch
     public static void initModMineSearch(InterMineAPI im) {
         if (ram == null) {
             //Map<Integer, Set<String>> subProps = readSubmissionProperties(im);
-            Map<Integer, Set<String>> subProps = readSubmissionsFromCache(im.getObjectStore());
-            indexMetadata(subProps);
+            Set<Document> docs = readSubmissionsFromCache(im.getObjectStore());
+            indexMetadata(docs);
         }
     }
     
@@ -85,90 +93,117 @@ public class ModMineSearch
         }
         return matches;
     }
-    
 
 
-    private static Map<Integer, Set<String>> readSubmissionsFromCache(ObjectStore os) {
-        Map<Integer, Set<String>> subProps = new HashMap<Integer, Set<String>>();
+    private static Set<Document> readSubmissionsFromCache(ObjectStore os) {
         
-       
+        Set<Document> docs = new HashSet<Document>();
+        
         for (DisplayExperiment exp : MetadataCache.getExperiments(os)) {
             for (Submission sub : exp.getSubmissions()) {
+
                 Integer subId = sub.getId();
                 Integer dccId = sub.getdCCid();
+
+                Document doc = new Document();
+                doc.add(new Field("name", subId.toString(), Field.Store.YES,
+                        Field.Index.TOKENIZED));
                 
                 // submission details
-                addMetaData(subProps, subId, sub.getdCCid().toString());
-                addMetaData(subProps, subId, sub.getTitle());
-                addMetaData(subProps, subId, sub.getDescription());
-                addMetaData(subProps, subId, sub.getExperimentType());
-                addMetaData(subProps, subId, sub.getOrganism().getName());
+                addToDocument(doc, subId, sub.getdCCid().toString());
+                addToDocument(doc, subId, sub.getTitle(), 0.8F);
+                addToDocument(doc, subId, sub.getDescription(), 0.2F);
+                //addToDocument(doc, subId, sub.getExperimentType(), 0.5F);
+                
+                if (sub.getExperimentType() != null) {
+                    Field f = new Field("content", sub.getExperimentType(), Field.Store.NO,
+                            Field.Index.UN_TOKENIZED);
+                    f.setBoost(5.0F);
+                    doc.add(f);
+                }
+                addToDocument(doc, subId, sub.getOrganism().getName());
                 String genus = sub.getOrganism().getGenus();
-                if (genus.equals("Drosophila")) {
-                    addMetaData(subProps, subId, "fly");
-                } else if (genus.equals("Caenorhabditis")) {
-                    addMetaData(subProps, subId, "worm");
+                if (genus != null && genus.equals("Drosophila")) {
+                    addToDocument(doc, subId, "fly", 2.0F);
+                } else if (genus != null && genus.equals("Caenorhabditis")) {
+                    addToDocument(doc, subId, "worm", 2.0F);
                 }
                 
                 // experiment details
-                addMetaData(subProps, subId, exp.getPi());
-                addMetaData(subProps, subId, exp.getName());
-                addMetaData(subProps, subId, exp.getDescription());
-                addMetaData(subProps, subId, exp.getProjectName());
+                addToDocument(doc, subId, exp.getPi());
+                addToDocument(doc, subId, exp.getName());
+                addToDocument(doc, subId, exp.getDescription(), 0.2F);
+                addToDocument(doc, subId, exp.getProjectName());
                 for (String lab : exp.getLabs()) {
-                    addMetaData(subProps, subId, lab);
+                    addToDocument(doc, subId, lab);
                 }
                 
                 // add submission properties
                 for (SubmissionProperty prop : sub.getProperties()) {
-                    // TODO reflection to find properties of subclasses as well
-                    addMetaData(subProps, subId, prop.getName());
-                    addMetaData(subProps, subId, prop.getType());
+                    // give higher weight to attributes of submission properties
+                    for (String attValue : getAttributeValuesForObject(os.getModel(), prop)) {
+                        addToDocument(doc, subId, attValue, 1.5F);
+                    }
+                    
                 }
                 // add feature types
                 Map<String, Long> features = MetadataCache.getSubmissionFeatureCounts(os, dccId);
                 if (features != null) {
                     for (String type: features.keySet()) {
-                        addMetaData(subProps, subId, type);
+                        addToDocument(doc, subId, type);
                     }
                 }
                 
                 // add database repository types
                 for (String db : exp.getReposited().keySet()) {
-                    addMetaData(subProps, subId, db);
+                    addToDocument(doc, subId, db);
                 }
+                docs.add(doc);
             }
         }
-        
-        return subProps;
+        return docs;
     }
     
     
     public static Map<Integer, Integer> getSubMap() {
         return submissionMap;
     }
-    
-    private static void addMetaData(Map<Integer, Set<String>> subProps, Integer objectId, String property) {
-        Set<String> props = subProps.get(objectId);
-        if (props == null) {
-            props = new HashSet<String>();
-            subProps.put(objectId, props);
-        }
-        props.add(property);
-    }
 
+
+    private static List<String> getAttributeValuesForObject(Model model, Object obj) {
+        List<String> values = new ArrayList<String>();
+        for (Class<?> cls : DynamicUtil.decomposeClass(obj.getClass())) {
+            ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
+            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+                try {
+                    Object value = TypeUtil.getFieldValue(obj, att.getName());
+                    LOG.info("INDEXING " + cld.getUnqualifiedName() + "." + att.getName() + " = " + value);
+                    if (value != null) {
+                        values.add(value.toString());
+                    }
+                } catch (IllegalAccessException e) {
+                    LOG.warn("Error introspecting a SubmissionProperty: " + obj, e);
+                }
+            }
+        }
+        return values;
+    }
+    
+    
     private static void addToDocument(Document doc, Integer objectId, String property) {
         addToDocument(doc, objectId, property, 1.0F);
     }
     
     private static void addToDocument(Document doc, Integer objectId, String property, float boost) {
-        Field f = new Field("content", property, Field.Store.NO,
-                              Field.Index.TOKENIZED);
-        f.setBoost(boost);
-        doc.add(f);
+        if (!StringUtils.isBlank(property)) {
+            Field f = new Field("content", property, Field.Store.NO,
+                    Field.Index.TOKENIZED);
+            f.setBoost(boost);
+            doc.add(f);
+        }
     }
     
-    private static void indexMetadata(Map<Integer, Set<String>> subProps) {
+    private static void indexMetadata(Set<Document> docs) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing metadata.");
 
@@ -183,26 +218,13 @@ public class ModMineSearch
         }
 
         int indexed = 0;
-
-        for (Integer objectId : subProps.keySet()) {
-            Document doc = new Document();
-            doc.add(new Field("name", objectId.toString(), Field.Store.YES,
-                              Field.Index.TOKENIZED));
-            StringBuffer contentBuffer = new StringBuffer();
-            for (String prop : subProps.get(objectId)) {
-                contentBuffer.append(' ').append(prop);
-            }
-            
-
-            // normalise the text
-            String content = contentBuffer.toString().replaceAll("[^a-zA-Z0-9]", " ");
-            doc.add(new Field("content", content, Field.Store.NO,
-                              Field.Index.TOKENIZED));
+        
+        for (Document doc : docs) {
             try {
                 writer.addDocument(doc);
                 indexed++;
             } catch (IOException e) {
-                LOG.error("Failed to submission " + objectId
+                LOG.error("Failed to submission " + doc.getFieldable("name")
                         + " to the index", e);
             }
         }
@@ -214,7 +236,7 @@ public class ModMineSearch
         }
 
         time = System.currentTimeMillis() - time;
-        LOG.info("Indexed " + indexed + " out of " + subProps.size() + " webSearchables in "
+        LOG.info("Indexed " + indexed + " out of " + docs.size() + " submissions in "
                 + time + " milliseconds");
     }
     

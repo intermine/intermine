@@ -25,6 +25,7 @@ Search Term: <c:out value="${searchTerm}"/>
 <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
 <tr>
     <th>DCC id</th>
+    <th>Organism</th>
     <th>Name</th>
     <th>Group</th>
     <th>Date</th>
@@ -35,6 +36,16 @@ Search Term: <c:out value="${searchTerm}"/>
   <c:set var="sub" value="${subResult.key}"/>
   <tr>
       <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td>
+      <c:if test="${sub.organism.genus eq 'Drosophila'}"> 
+        <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
+                        <c:set var="fly" value="1" />
+      </c:if>
+      <c:if test="${sub.organism.genus eq 'Caenorhabditis'}">  
+        <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
+                        <c:set var="worm" value="1" />
+                    </c:if>
+      </td>
       <td>PI: <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.project.id}"><c:out value="${sub.project.surnamePI}"/></html:link><br/>
           Lab: <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${sub.lab.id}"><c:out value="${sub.lab.surname}"/></html:link><br/>
       </td>
@@ -50,14 +61,6 @@ Search Term: <c:out value="${searchTerm}"/>
 </c:forEach>
 </table>
 
-<%--<c:out value="results size: ${pagedResults.exactSize}"/>--%>
-
-
-<%-- Table displaying results elements --%>
-<%--<tiles:insert name="resultsTable.tile">
-     <tiles:put name="pagedResults" beanName="pagedResults" />
-     <tiles:put name="currentPage" value="searchResults" />
-</tiles:insert>--%>
 </div>
 
 </div>
