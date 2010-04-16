@@ -118,7 +118,7 @@ public class ModMineSearch
                 if (sub.getExperimentType() != null) {
                     Field f = new Field("content", sub.getExperimentType(), Field.Store.NO,
                             Field.Index.UN_TOKENIZED);
-                    f.setBoost(5.0F);
+                    //f.setBoost(5.0F);
                     doc.add(f);
                 }
                 addToDocument(doc, subId, sub.getOrganism().getName());
@@ -198,7 +198,7 @@ public class ModMineSearch
         if (!StringUtils.isBlank(property)) {
             Field f = new Field("content", property, Field.Store.NO,
                     Field.Index.TOKENIZED);
-            f.setBoost(boost);
+            //f.setBoost(boost);
             doc.add(f);
         }
     }
