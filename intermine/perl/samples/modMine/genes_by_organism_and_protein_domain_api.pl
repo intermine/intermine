@@ -2,6 +2,7 @@
 
 # This example finds all genes in a specified organism with a particular protein domain.
 
+# Note the use of wildcards in search terms and the ability to specify the logic of the constraints
 
 use strict;
 use warnings;
@@ -41,7 +42,7 @@ my $domain_c   = $path_query->add_constraint('Gene.proteins.proteinDomains.name 
  # You can use * as a wildcard at the beginning or end of a searchterm
 my $organism_c = $path_query->add_constraint('Gene.organism.species = "melano*"');
 
-$path_query->logic(AND($organism_c,$domain_c));
+$path_query->logic(AND($organism_c,$domain_c)); # Logic can be specified as either AND or OR, with nesting
 
 my $first_result_to_return  = 0;  # We begin at 0
 my $no_of_results_to_return = 20; # Just display the first 20 results
