@@ -13,7 +13,7 @@ use InterMine::WebService::Service::QueryService;  # This module configures the 
 use InterMine::WebService::Service::ModelService;  # This module fetches the relevant data model, 
                                                    # which we use to check that our queries are legal.
 
-my ($url, $app_name) = ('http://preview.flymine.org/query/service', 'service_example');
+my ($url, $app_name) = ('http://www..flymine.org/query/service', 'service_example');
 
 my $query_service = InterMine::WebService::Service::QueryService->new($url, $app_name);
 my $model_service = InterMine::WebService::Service::ModelService->new($url, $app_name);
