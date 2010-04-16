@@ -5,8 +5,6 @@
 use strict;
 use warnings;
 
-use lib ('/home/alex/svn/dev/intermine/perl/lib');
-
 # Basic housekeeping
 use InterMine::PathQuery qw(AND OR);
 use InterMine::WebService::Service::QueryService;
