@@ -28,9 +28,9 @@
     <div class="examples">
     <ul>
     <li>Antibody names: PolII, H3K4me1, CP190</li>
-    <li>Experiment types: ChIP-chip, RNA-seq</li>
-    <li>Use "" to search for a phrase, "Chromatin binding"</li>
-    <li>Combine terms with AND, fly AND embryo</li>
+    <li>Lab names: Reinke, Snyder</li>
+    <li>Combine terms with AND: fly AND embryo</li>
+    <li>Data types: worm AND UTR, fly AND bindingsite</li>
     </ul>
     </div>
 </div>

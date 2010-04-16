@@ -28,7 +28,7 @@
           Search for modENCODE submissions by metadata
             <ul>
                 <li>Antibody names: CP190, H3K4me1</li>
-                <li>Use "" for a phrase: "Chromatin binding"</li>
+                <li>Data types: bindingsite, UTR</li>
                 <li>Use AND to combine: fly AND embryo</li>
             </ul>
          <html:form action="/modMineSearchAction" focus="searchTerm">
@@ -73,11 +73,11 @@
     });
 </script>
 
-<table cellpadding="0" cellspacing="0" border="0" class="projects" id="projects">
-<tr><td align="center">modMine web services let you query modENCODE data directly
-from Perl scripts [<a href="http://blog.modencode.org/modmine-perl-api">more information and examples</a>]</td></tr>
+<table cellpadding="0" cellspacing="0" border="0">
+<tr><td align="center"><b>modMine web services let you query modENCODE data directly
+from Perl scripts <a href="http://blog.modencode.org/modmine-perl-api">more information and examples</a></b></td></tr>
 </table>
-
+<br/>
 
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
