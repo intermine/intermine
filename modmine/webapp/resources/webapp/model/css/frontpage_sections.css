@@ -61,6 +61,16 @@
     margin-top:5px;
 }
 
+.frontpage_sections li div li {
+    margin: 0px;
+    padding: 0px;
+    text-align: left;
+    font-size: 0.8em;
+    list-style: disc;
+    margin-left: 15px;
+    width: 220px;
+}
+
 .qs_input {
    border:2px solid #192F39;
    font-size:1.2em;
