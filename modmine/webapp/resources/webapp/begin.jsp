@@ -23,13 +23,19 @@
 <div class="frontpage_sections">
     <ol>
         <li>
-            <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do#projects" alt="" class="section_link">
-            <div>
-            <h3>Get Data</h3><br/>
-                Click an experiment below to export data, view GBrowse tracks and analyse lists.<br>
-                <img src="model/images/get_data.jpg" width="63" height="62" alt="Get Data" style="align:middle">
-            </div>
-            </a>
+        <div>
+        <h3>Search modMine</h3><br/>
+          Search for modENCODE submissions by metadata
+            <ul>
+                <li>Antibody names: CP190, H3K4me1</li>
+                <li>Use "" for a phrase: "Chromatin binding"</li>
+                <li>Use AND to combine: fly AND embryo</li>
+            </ul>
+         <html:form action="/modMineSearchAction" focus="searchTerm">
+            <input name="searchTerm" type="text" class="qs_input">
+            <html:submit>Go</html:submit>
+        </html:form>
+        </div>
         </li>
         <li>
             <a href="/${WEB_PROPERTIES['webapp.path']}/templates.do" alt="" class="section_link">
@@ -66,9 +72,6 @@
         jQuery(".frontpage_sections div").bg(['10px', '10px', '10px', '10px']);
     });
 </script>
-
-<!-- modMine seach box -->
-<tiles:insert name="modMineSearch.tile" />
 
 <!-- The projects section -->
 <tiles:insert name="projectsSummary.tile" />
