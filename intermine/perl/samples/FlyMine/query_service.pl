@@ -7,7 +7,7 @@
 use strict;
 use warnings;
 
-
+# Basic Housekeeping
 use InterMine::PathQuery;                          # This module creates objects to pass to the service
 use InterMine::WebService::Service::QueryService;  # This module configures the access to the webservice
 use InterMine::WebService::Service::ModelService;  # This module fetches the relevant data model, 
@@ -21,7 +21,8 @@ my $model_service = InterMine::WebService::Service::ModelService->new($url, $app
 my $model         = $model_service->get_model;
 my $path_query    = InterMine::PathQuery->new($model);
 
-# set the output columns, argument can be a array of paths instead, 
+#### Set the output columns,
+# argument can be a array of paths instead, 
 # or equally add_view can be called multiple times
 $path_query->add_view('Organism.name Organism.taxonId');
 
@@ -46,7 +47,7 @@ $path_query->add_constraint('Organism.genus = "Drosophila"');
 
 # print the result table again - will be smaller
 my $drosophila_res = $query_service->get_result($path_query); # This returns an HTTP::Request object 
-                                                              # (see perldoc HTTP::Request
+                                                              # (see perldoc HTTP::Request)
 print "\n", '-' x 70, "\nOnly Drosophilas:\n";
 print $drosophila_res->content() unless $drosophila_res->is_error;
 
