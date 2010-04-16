@@ -44,8 +44,10 @@ Options:
     exit;
 }
 
+# Housekeeping
 my $init_dir = cwd;
-(my $svn_dir  = rel2abs($0)) =~ s[/perl/.*$][]; # assuming you are building from within svn
+(my $svn_dir  = rel2abs($0)) =~ s[/perl/.*$][]; # assuming you are building from within svn, 
+                                                # is an option so can be changed by the user
 my $zip;
 my $tar;
 my $name;
@@ -58,21 +60,33 @@ die unless GetOptions(
     'name'     => \$name,
     'help+'    => \$help,
     );
+my $src_dir = catfile($svn_dir, 'perl');
 
 # Print help and exit if the user asks for it, or if no archive format is specified
 print_help if ($help || ! ($tar || $zip)); 
 
-# Read the current version number from the reference file
-my $version; 
+# Read the current version number from the reference file, which is named in the Makefile.PL
+my ($version, $version_file);
+my $makefile = catfile($src_dir, 'Makefile.PL');
 
-open(my $vh, '<', $svn_dir.'/perl/lib/InterMine/ItemFactory.pm') or die "Can't read version holder $!";
-while (<$vh>) {
+open(my $mf, '<', $makefile) or die "Can't read from makefile $!";
+while (<$mf>) {
+    if (/VERSION_FROM\s*=>\s*'(.*)'/) {
+	$version_file = catfile($src_dir, $1);
+	last;
+    }
+}
+close ($mf) or die "Can't close makefile $!";
+die "Didn't find a good version file" unless (-f $version_file);
+
+open(my $vf, '<', $version_file) or die "Can't read from $version_file $!";
+while (<$vf>) {
     if (/our \$VERSION = '([0-9\.]+)'/) {
 	$version = $1;
 	last;
     }
 }
-close($vh) or die "couldn't close version holder";
+close($vf) or die "couldn't close version holder";
 
 # Set the root name, unless the user already did this
 unless (defined $name) {
@@ -81,7 +95,6 @@ unless (defined $name) {
 
 # Make a list of all the files we want to include in the archive,
 # along with what their corresponding archived versions would be
-my $src_dir = $svn_dir.'/perl';
 my ($newfiles, $oldfiles, $manifest);
 open(NEWFILES, '>', \$newfiles);
 open(OLDFILES, '>', \$oldfiles);
