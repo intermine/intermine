@@ -51,7 +51,9 @@
       <fieldconfig fieldExpr="name"/>
     </fields>
     <longdisplayers>
-      <displayer src="attributeLinkDisplayer.tile"/>
+      <!-- <displayer src="attributeLinkDisplayer.tile"/>
+      -->
+      <displayer src="/model/wikiLink.jsp"/>
     </longdisplayers>
     
   </class>
