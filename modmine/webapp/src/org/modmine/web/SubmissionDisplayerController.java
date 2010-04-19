@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,6 +59,8 @@ public class SubmissionDisplayerController extends TilesAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
     throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final ServletContext servletContext = servlet.getServletContext();
+
         ObjectStore os = im.getObjectStore();
         
         // submission object
@@ -111,6 +114,10 @@ public class SubmissionDisplayerController extends TilesAction
         }
 
         request.setAttribute("featureCounts", featureCounts);
+        
+        Map<String, String> expFeatureDescription = MetadataCache.getFeatTypeDescription(servletContext);
+        request.setAttribute("expFeatDescription", expFeatureDescription);
+
 
         return null;
     }
