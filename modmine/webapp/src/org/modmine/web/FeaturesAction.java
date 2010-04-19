@@ -187,7 +187,6 @@ public class FeaturesAction extends InterMineAction
 
             q.addView(featureType + ".primaryIdentifier");
             q.addView(featureType + ".score");
-            q.addView(featureType + ".scoreProtocol.name");
             q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
         
             if (unlocFeatures == null || !unlocFeatures.contains(featureType)){
