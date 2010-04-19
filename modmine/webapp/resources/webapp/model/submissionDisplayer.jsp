@@ -91,18 +91,29 @@ div#submissionDescription {
     <p>
         <table cellpadding="0" cellspacing="0" border="0" class="results">
       <tr>
-        <th>Feature type</th>
-        <th>Count</th>
+        <th colspan="2">Feature type</th>
         <th>View data</th>
         <th colspan="3">Export</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
           <tr>
-            <td>${fc.key}</td>
-            <td>${fc.value}</td>                     
+            <td>${fc.key}
+            </td>
+            <td>
+            
+            <c:forEach items="${expFeatDescription}" var="fdes" varStatus="fdes_status">
+<c:if test="${fn:substringBefore(fdes.key, '+') == object.experiment.name && fn:substringAfter(fdes.key, '+') == fc.key}">
+<img src="model/images/def_s.png" title="${fdes.value }" />
+            </c:if>
+</c:forEach>
+            
+            
+            </td>
+            
+            
             <td align="right">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}">RESULTS TABLE</html:link>
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}">${fc.value}</html:link>
             </td>
             <td align="right">
               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}">TAB DELIMITED</html:link>
