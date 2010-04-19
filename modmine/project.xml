@@ -138,8 +138,8 @@
 		<source name="wormbase-c_elegans-chromosome-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="6239"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.includes" value="*dna*.fasta"/>
-      <property name="fasta.dataSetTitle" value="WormBase C. Elegans data set"/>
+      <property name="fasta.includes" value="*dna*.fa"/>
+      <property name="fasta.dataSetTitle" value="WormBase C. elegans data set"/>
       <property name="fasta.dataSourceName" value="WormBase"/>
       <property name="src.data.dir" location="/shared/data/wormbase/ws190/fasta"/>
     </source>
