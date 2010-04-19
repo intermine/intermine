@@ -119,8 +119,8 @@ public class Model
             String cldPackage = (lastDotPos == -1 ? "" : cldName.substring(0, lastDotPos));
             if ((!"org.intermine.model.InterMineObject".equals(cldName))
                     && (!packageName.equals(cldPackage))) {
-                throw new IllegalArgumentException("Class " + cldName + " is not in model package "
-                        + packageName);
+                throw new IllegalArgumentException("Class `" + cldName + "` is not in model "
+                        + "package `" + packageName + "`");
             }
             cldMap.put(cld.getName(), cld);
 
