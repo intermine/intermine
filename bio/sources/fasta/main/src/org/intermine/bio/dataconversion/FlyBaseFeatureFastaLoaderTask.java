@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
-import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
@@ -52,23 +51,6 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
         getDirectDataLoader().store(chr);
         chrMap.put(chromosomeId, chr);
         return chr;
-    }
-
-    /**
-     * Create a Synonym.
-     * @param interMineObject the subject InterMineObject of the Synonym
-     * @param dataSource the DataSource for the Synonym
-     * @param identifier the synonym value
-     * @throws ObjectStoreException if there is a problem storing
-     */
-    @Deprecated public void createSynonym(BioEntity interMineObject, DataSource dataSource,
-                                          String identifier)
-    throws ObjectStoreException {
-        Synonym synonym = (Synonym) getDirectDataLoader().createObject(Synonym.class);
-        synonym.setValue(identifier);
-        synonym.setType("identifier");
-        synonym.setSubject(interMineObject);
-        getDirectDataLoader().store(synonym);
     }
 
     /**

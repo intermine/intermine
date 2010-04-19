@@ -25,7 +25,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public class UniProtFastaLoaderTask extends FastaLoaderTask
 {
-    private Map<Integer, Organism> organisms = new HashMap();
+    private Map<Integer, Organism> organisms = new HashMap<Integer, Organism>();
 
     /**
      * {@inheritDoc}

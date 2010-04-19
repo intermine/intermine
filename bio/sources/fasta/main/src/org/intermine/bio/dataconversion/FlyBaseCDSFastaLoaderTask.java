@@ -35,10 +35,8 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      */
     @Override
     protected void extraProcessing(Sequence bioJavaSequence,
-                                   @SuppressWarnings("unused")
-                                     org.intermine.model.bio.Sequence flymineSequence,
-                                   BioEntity interMineObject, Organism organism,
-                                   DataSet dataSet)
+            org.intermine.model.bio.Sequence flymineSequence,
+            BioEntity interMineObject, Organism organism, DataSet dataSet)
         throws ObjectStoreException {
         Annotation annotation = bioJavaSequence.getAnnotation();
         String header = (String) annotation.getProperty("description");
