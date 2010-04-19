@@ -58,7 +58,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     private String dataSourceName = null;
     private DataSource dataSource = null;
     private String fastaTaxonId = null;
-    private Map<String, Integer> taxonIds = new HashMap();
+    private Map<String, Integer> taxonIds = new HashMap<String, Integer>();
 
     /**
      * Append this suffix to the identifier of the BioEnitys that are stored.
@@ -260,7 +260,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param bioJavaSequence the Sequence object
      * @throws ObjectStoreException if store() fails
      */
-    @SuppressWarnings("unused")
     private void processSequence(Organism organism, Sequence bioJavaSequence)
         throws ObjectStoreException {
         // some fasta files are not filtered - they contain sequences from organisms not
@@ -380,25 +379,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         return dataSet;
     }
 
-    /**
-     * Do any extra processing needed for this record (extra attributes, objects, references etc.)
-     * This method is called before the new objects are stored
-     * @param bioJavaSequence the BioJava Sequence
-     * @param flymineSequence the FlyMine Sequence
-     * @param interMineObject the object that references the flymineSequence
-     * @param organism the Organism object for the new InterMineObject
-     * @param dataSrc the DataSource object
-     * @throws ObjectStoreException if a store() fails during processing
-     */
-    @SuppressWarnings("unused")
-    @Deprecated protected void extraProcessing(Sequence bioJavaSequence,
-                                   org.intermine.model.bio.Sequence flymineSequence,
-                                   BioEntity interMineObject, Organism organism,
-                                   DataSource dataSrc)
-        throws ObjectStoreException {
-        // default - no extra processing
-    }
-
 
     /**
      * Do any extra processing needed for this record (extra attributes, objects, references etc.)
@@ -410,7 +390,6 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
-    @SuppressWarnings("unused")
     protected void  extraProcessing(Sequence bioJavaSequence,
                                    org.intermine.model.bio.Sequence flymineSequence,
                                    BioEntity interMineObject, Organism organism,

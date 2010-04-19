@@ -10,11 +10,9 @@ package org.intermine.task;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
@@ -27,7 +25,7 @@ import org.apache.tools.ant.types.FileSet;
 
 public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
 {
-    protected List fileSets = new ArrayList();
+    protected List<FileSet> fileSets = new ArrayList<FileSet>();
 
     /**
      * Add a FileSet to read from.
@@ -41,16 +39,32 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
      * @see DirectDataLoaderTask#process()
      */
     public void process() {
-        for (Iterator fileSetIter = fileSets.iterator(); fileSetIter.hasNext();) {
-            FileSet fileSet = (FileSet) fileSetIter.next();
-
+        int fileCount = 0;
+        for (FileSet fileSet : fileSets) {
             DirectoryScanner ds = fileSet.getDirectoryScanner(getProject());
             String[] files = ds.getIncludedFiles();
 
             for (int i = 0; i < files.length; i++) {
                 File file = new File(ds.getBasedir(), files[i]);
                 processFile(file);
+                fileCount++;
             }
+        }
+        if (fileCount == 0) {
+            StringBuffer sb = new StringBuffer();
+            String lookedIn = null;
+            for (FileSet fileSet : fileSets) {
+                sb.append(System.getProperty("line.separator") + "\t" 
+                        + fileSet.getDir(getProject()).getAbsolutePath());
+            }
+            if (sb.length() == 0) {
+                lookedIn = "[No directories found]";
+            } else {
+                lookedIn = sb.toString();
+            }
+            
+            throw new RuntimeException("Failed to find any files to process for source: " 
+                    + sourceName + " looked in: " + lookedIn);
         }
     }
 
