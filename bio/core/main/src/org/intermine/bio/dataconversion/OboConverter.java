@@ -50,7 +50,7 @@ public class OboConverter extends DataConverter
     protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
     private boolean createRelations = true;
-    
+
     /**
      * Constructor for this class.
      *
@@ -84,7 +84,7 @@ public class OboConverter extends DataConverter
             this.createRelations = false;
         }
     }
-    
+
     /**
      * Process every DAG term and output it as a Item.
      *
@@ -148,7 +148,7 @@ public class OboConverter extends DataConverter
      */
     protected Item process(OboTerm term) throws ObjectStoreException {
         String termId = (term.getId() == null ? term.getName() : term.getId());
-        Item item = (Item) nameToTerm.get(termId);
+        Item item = nameToTerm.get(termId);
         if (item == null) {
             item = createItem(termClass);
             nameToTerm.put(termId, item);
@@ -187,7 +187,7 @@ public class OboConverter extends DataConverter
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
         for (OboTermSynonym syn : term.getSynonyms()) {
-            Item synItem = (Item) synToItem.get(syn);
+            Item synItem = synToItem.get(syn);
             if (synItem == null) {
                 synItem = createItem("OntologyTermSynonym");
                 synToItem.put(syn, synItem);
@@ -195,7 +195,7 @@ public class OboConverter extends DataConverter
             }
             item.addToCollection("synonyms", synItem);
         }
-        OboTerm oboterm = (OboTerm) term;
+        OboTerm oboterm = term;
         if (oboterm.getNamespace() != null && !oboterm.getNamespace().equals("")) {
             item.setAttribute("namespace", oboterm.getNamespace());
         }
@@ -241,7 +241,7 @@ public class OboConverter extends DataConverter
 
             if (createRelations) {
                 Item relation = createItem("OntologyRelation");
-                relation.setReference("parentTerm", (Item) nameToTerm
+                relation.setReference("parentTerm", nameToTerm
                         .get(oboRelation.getParentTermId()));
                 relation.setReference("childTerm", nameToTerm.get(oboRelation.getChildTermId()));
                 relation.setAttribute("relationship", oboRelation.getRelationship().getName());
