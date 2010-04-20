@@ -572,7 +572,7 @@ All GBrowse tracks generated for this experiment:
 				<tr><td>                 
 <c:forEach items="${expFeatDescription}" var="fdes" varStatus="fdes_status">
 <c:if test="${fn:substringBefore(fdes.key, '+') == exp.name && fn:substringAfter(fdes.key, '+') == fc.key}">
-<img src="model/images/def_s.png" title="${fdes.value }" />
+<img src="model/images/def_s.png" title="${fdes.value }" height="18" width="18" />
             </c:if>
 </c:forEach>
 
