@@ -54,6 +54,7 @@ my %OPS = ('IS NOT NULL' => 1,
 	   '>='          => 2,
 	   '<='          => 2,
            'LOOKUP'      => 2,
+           # TODO: IN and NOT IN list constraints 
 );
 
 =head2 new
