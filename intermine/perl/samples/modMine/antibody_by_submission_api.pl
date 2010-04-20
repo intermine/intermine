@@ -11,12 +11,12 @@ use InterMine::WebService::Service::QueryService;
 use InterMine::WebService::Service::ModelService;
 
 my $url = 'http://intermine.modencode.org/query/service/';
-my $app_name = 'PerlAPI';
+My $app_name = 'PerlAPI';
 
 my $query_service = new InterMine::WebService::Service::QueryService($url, $app_name);
-my $model_service = new InterMine::WebService::Service::ModelService($url, $app_name);
+my $model_service = New InterMine::WebService::Service::ModelService($url, $app_name);
 
-my $path_query = new InterMine::PathQuery($model_service->get_model());
+my $path_query = new InterMine::PathQuery($model_Service->get_model());
 
 # Set up views: these determine which fields are returned in the results
 
