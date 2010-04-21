@@ -118,9 +118,9 @@ sub extra_value {
     my $self = shift;
     my $extra_value = shift;
     if (defined $extra_value) {
-	$self->{extra_value} = $extra_value;
+	$self->{extraValue} = $extra_value;
     }
-    return $self->{extra_value};
+    return $self->{extraValue};
 }
 
 =head2 op
