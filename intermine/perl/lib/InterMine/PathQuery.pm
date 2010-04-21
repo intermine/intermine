@@ -311,7 +311,7 @@ sub to_xml_string
     my $path = new InterMine::Path($self->{model}, $path_string);
     my $type = $path->end_type;
     
-# Write the tag
+    # Write the tag
     $writer->startTag(
 	'node', 
 	 path => $path_string, 
@@ -321,13 +321,16 @@ sub to_xml_string
     for my $constraint (@$details) {
       my $op = $constraint->{op};
       my $code = $constraint->code();
-
-      if (defined $constraint->{value}) {
-        $writer->startTag('constraint', op => $op, value => $constraint->{value},
-                          code => $code);
-      } else {
-        $writer->startTag('constraint', op => $op, code => $code);
-      }
+      
+      $writer->startTag('constraint', 
+			op => $op, 
+			(defined $constraint->{value}) 
+			    ? value => $constraint->{value}
+			    : '',
+			(defined $constraint->{extra_value}) 
+			    ? extraValue => $constraint->{extra_value}
+			    : '',
+                        code => $code);
       $writer->endTag();
     }
     $writer->endTag();
