@@ -71,7 +71,7 @@ sub new
   my $constraint_string = shift;
 
   my @bits = $constraint_string =~ 
-            m/^(IS NOT NULL|IS NULL|\S+)
+            m/^(IS\sNOT\sNULL|IS\sNULL|\S+)
                (?:\s+(.*))?
              /x;
 
@@ -120,7 +120,7 @@ sub extra_value {
     if (defined $extra_value) {
 	$self->{extra_value} = $extra_value;
     }
-    return $self->extra_value;
+    return $self->{extra_value};
 }
 
 =head2 op
