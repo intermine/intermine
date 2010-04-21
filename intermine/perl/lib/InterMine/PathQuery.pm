@@ -320,18 +320,13 @@ sub to_xml_string
     );
 
     for my $constraint (@$details) {
-      my $op = $constraint->{op};
-      my $code = $constraint->code();
       
-      $writer->startTag('constraint', 
-			op => $op, 
-			(defined $constraint->{value}) 
-			    ? value => $constraint->{value}
-			    : '',
-			(defined $constraint->{extra_value}) 
-			    ? extraValue => $constraint->{extra_value}
-			    : '',
-                        code => $code);
+      my %tags = (code => $code);
+      for (qw/op value extra_value code/) {
+	  $tags{$_} = $constraint->{$_} if (defined $constraint->{$_});
+      }
+      
+      $writer->startTag('constraint', %tags);
       $writer->endTag();
     }
     $writer->endTag();
