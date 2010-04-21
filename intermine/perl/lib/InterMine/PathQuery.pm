@@ -161,6 +161,7 @@ sub sort_order
  Usage   : $path_query->add_constraint("Department.name = '$dep_name'");
  Function: add a constraint to this query
  Args    : $constraint - the constraint description
+ Returns : an InterMine::PathQuery::Constraint object.
 
 =cut
 sub add_constraint
