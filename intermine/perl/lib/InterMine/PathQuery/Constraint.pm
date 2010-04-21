@@ -129,6 +129,8 @@ sub extra_value {
            $con-op('LOOKUP');
  Function: Get or set the operation of this constraint (eg. "=", "CONTAINS",
            "IS NULL")
+           Clears the current value if you change the operator from 
+           binary to unary.
 
 =cut
 sub op
@@ -137,6 +139,9 @@ sub op
   my $op = shift;
   if (defined $op) {
       $self->{op} = $op;
+      if ($OPS{$op} == 1) {
+	  $self->{value} = undef;
+      }
   }
   return $self->{op};
 }
@@ -144,12 +149,22 @@ sub op
 =head2 value
 
  Usage   : my $val = $con->value();
- Function: return the value of this constraint if the operator is binary
+           $con->value('D. melano*');
+ Function: Get or set the value of this constraint if the operator is binary
+           Raises an exception (dies) if you set a value to a binary operator.
 
 =cut
 sub value
 {
   my $self = shift;
+  my $value = shift;
+  if (defined $value) {
+      my $op = $self->{op};
+      if ($OPS{$op} == 1) {
+	  die qq[operator "$op" should not have a value ($value)];
+      }
+      $self->{value} = $value;
+  }  
   return $self->{value};
 }
 
