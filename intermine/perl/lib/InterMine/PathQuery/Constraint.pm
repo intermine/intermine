@@ -125,14 +125,19 @@ sub extra_value {
 
 =head2 op
 
- Usage   : my $op = $con->op();
- Function: return the operation of this constraint (eg. "=", "CONTAINS",
+ Usage   : my $op = $con->op;
+           $con-op('LOOKUP');
+ Function: Get or set the operation of this constraint (eg. "=", "CONTAINS",
            "IS NULL")
 
 =cut
 sub op
 {
   my $self = shift;
+  my $op = shift;
+  if (defined $op) {
+      $self->{op} = $op;
+  }
   return $self->{op};
 }
 
