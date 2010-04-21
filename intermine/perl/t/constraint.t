@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 22;
+use Test::More tests => 29;
 use Test::Exception;
 
 use InterMine::PathQuery::Constraint;
@@ -44,3 +44,19 @@ my $contains_c = InterMine::PathQuery::Constraint->new('CONTAINS "enzyme"');
 is($contains_c->op(), 'CONTAINS', 'CONTAINS');
 ok(defined $contains_c->value());
 is($contains_c->value(), "enzyme", 'value is "enzyme"');
+
+my $LOOKUP_c =  InterMine::PathQuery::Constraint->new('LOOKUP "foo"');
+is($LOOKUP_c->op(), 'LOOKUP', 'LOOKUP');
+ok(defined $LOOKUP_c->value());
+is($LOOKUP_c->value(), 'foo', q/value is 'foo'/);
+
+my $mutable_c = InterMine::PathQuery::Constraint->new('LOOKUP "foo"');
+$mutable_c->value('bar');
+is($mutable_c->value, 'bar', "Can change value");
+$mutable_c->op('IS NULL');
+ok(! defined $mutable_c->value);
+is($mutable_c->op, 'IS NULL', "can change operator");
+
+my $extra_value_c = InterMine::PathQuery::Constraint->new('LOOKUP "foo"');
+$extra_value_c->extra_value('baz');
+is($extra_value_c->extra_value, 'baz', "Can set extra value");
