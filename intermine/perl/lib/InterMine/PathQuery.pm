@@ -321,7 +321,7 @@ sub to_xml_string
 
     for my $constraint (@$details) {
       
-      my %tags = (code => $code);
+      my %tags;
       for (qw/op value extra_value code/) {
 	  $tags{$_} = $constraint->{$_} if (defined $constraint->{$_});
       }
