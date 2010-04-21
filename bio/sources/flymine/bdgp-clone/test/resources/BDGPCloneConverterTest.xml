@@ -11,7 +11,7 @@
     <attribute name="name" value="BDGP"/>
   </item>
   <item id="4_2" class="CDNAClone">
-    <attribute name="primaryIdentifier" value="RE21586"/>
+    <attribute name="secondaryIdentifier" value="RE21586"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="dataSets">
@@ -27,7 +27,7 @@
     </collection>
   </item>
   <item id="4_1" class="CDNAClone">
-    <attribute name="primaryIdentifier" value="RE02181"/>
+    <attribute name="secondaryIdentifier" value="RE02181"/>
     <reference name="gene" ref_id="3_1"/>
     <reference name="organism" ref_id="2_1"/>
     <collection name="dataSets">
