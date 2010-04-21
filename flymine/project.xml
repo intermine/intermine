@@ -522,7 +522,7 @@
       <property name="src.data.dir.includes" value="v5.gff.drosophila_melanogaster.gff"/>
     </source>
 
-    <source name="psi-intact" type="psi">
+    <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/shared/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 4932"/>
     </source>
