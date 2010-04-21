@@ -77,7 +77,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
             String[] cloneIds = array[3].split(";");
 
             for (int i = 0; i < cloneIds.length; i++) {
-                Item clone = createBioEntity("CDNAClone", cloneIds[i], "primaryIdentifier",
+                Item clone = createBioEntity("CDNAClone", cloneIds[i], "secondaryIdentifier",
                                              organism.getIdentifier());
                 if (gene != null) {
                     clone.setReference("gene", gene.getIdentifier());
