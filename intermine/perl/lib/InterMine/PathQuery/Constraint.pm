@@ -70,7 +70,10 @@ sub new
   my $class = shift;
   my $constraint_string = shift;
 
-  my @bits = $constraint_string =~ m/^(IS NOT NULL|IS NULL|\S+)(?:\s+(.*))?/;
+  my @bits = $constraint_string =~ 
+            m/^(IS NOT NULL|IS NULL|\S+)
+               (?:\s+(.*))?
+             /x;
 
   if (@bits < 1) {
     die "can't parse constraint: $constraint_string\n";
@@ -82,8 +85,8 @@ sub new
     die qq[unknown operation "$op" in constraint: $constraint_string\n];
   }
 
-  my $value = $bits[1];
-
+  my $value       = $bits[1];
+ 
   my $self = {op => $op};
 
   if (defined $value) {
@@ -92,15 +95,32 @@ sub new
     }
     $value =~ s/^'(.*)'$/$1/;
     $value =~ s/^"(.*)"$/$1/;
-
+    
     $self->{value} = $value;
   } else {
     if ($OPS{$op} == 2) {
       die qq[operator "$op" needs a value];
     }
   }
-
+  
   return bless $self, $class;
+
+}
+=head2 extra_value
+
+ Usage   : $con->extra_value("D. melanogaster");
+           my $extra_value = $con->extra_value;
+ Function: Get or set the extra value for a constraint. Returns the new value.
+
+=cut
+
+sub extra_value {
+    my $self = shift;
+    my $extra_value = shift;
+    if (defined $extra_value) {
+	$self->{extra_value} = $extra_value;
+    }
+    return $self->extra_value;
 }
 
 =head2 op
