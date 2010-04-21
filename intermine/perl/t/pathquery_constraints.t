@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
+use Test::XML tests => 2;
 use Test::Exception;
 
 use InterMine::Model;
@@ -32,7 +32,7 @@ my $expected_xml = q[<query name="" model="testmodel" view="Department.name Depa
    </node>
 </query>];
 
-is ($path_query->to_xml_string(), $expected_xml, 'xml output');
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
 
 $path_query->logic(AND($depname_c, OR($not_null_c, $comp_name_c)));
 
@@ -46,4 +46,4 @@ $expected_xml = q[<query name="" model="testmodel" view="Department.name Departm
    </node>
 </query>];
 
-is ($path_query->to_xml_string(), $expected_xml, 'xml output');
+is_xml ($path_query->to_xml_string(), $expected_xml, 'xml output');
