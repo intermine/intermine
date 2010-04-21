@@ -16,19 +16,12 @@ use InterMine::DataDownloader;
 #Define ARGVs
 my ($logdir,$logname,$home,$tempname);
 if(@ARGV!=3){
-#    die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";
-	warn "no arguments passed, using default values\n";
-   $logdir = "/shared/data/download_logs/";
-   $tempname="temp_log.txt";
-   $home = "/shared/data";
+    die "Wrong number of ARGVs!\nget_all.sh should supply the log directory, temporary log name, and /shared/data/.\n";	
 } else {
     $logdir = $ARGV[0];
-    $tempname=$ARGV[1];    
+    $logname = $ARGV[1];    
     $home = $ARGV[2];
 }
-
-$logname= $logdir.$tempname;
-
 
 #data source
 my $flyatlas_server = "http://130.209.54.32/atlas";
@@ -46,7 +39,7 @@ my $temp_file = "$download_dir/temp.txt";
 &http_download($file_to_get,$temp_file);
 
 my $current_link = "$home/flyatlas/current";
-my $old_file = "$current_link/../orig/all.txt";
+my $old_file = "$current_link/../orig/20090519all.txt";
 my ($version_buffer,$log_buffer);
 
 #compare the files, create version directory if it is a new version or
