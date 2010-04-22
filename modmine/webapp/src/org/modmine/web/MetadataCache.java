@@ -33,9 +33,11 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
+import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
+import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionData;
 import org.intermine.objectstore.ObjectStore;
@@ -120,7 +122,7 @@ public class MetadataCache
     private static Map<Integer, Map<String, Long>> submissionFeatureCounts = null;
     private static Map<Integer, Integer> submissionIdCache = null;
     private static Map<Integer, List<GBrowseTrack>> submissionTracksCache = null;
-    private static Map<Integer, List<String>> submissionFilesCache = null;
+    private static Map<Integer, Set<ResultFile>> submissionFilesCache = null;
     private static Map<Integer, Integer> filesPerSubmissionCache = null;
     private static Map<Integer, List<String>> submissionLocatedFeatureTypes = null;
     private static Map<Integer, List<String>> submissionUnlocatedFeatureTypes = null;
@@ -188,7 +190,8 @@ public class MetadataCache
      * @param os the production objectStore
      * @return map
      */
-    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
+//    public static synchronized Map<Integer, List<String>> getSubmissionFiles(ObjectStore os) {
+        public static synchronized Map<Integer, Set<ResultFile>> getSubmissionFiles(ObjectStore os) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
@@ -221,12 +224,12 @@ public class MetadataCache
      * @param dccId the modENCODE submission id
      * @return a list of file names
      */
-    public static synchronized List<String> getFilesByDccId(ObjectStore os,
+    public static synchronized List<ResultFile> getFilesByDccId(ObjectStore os,
             Integer dccId) {
         if (submissionFilesCache == null) {
             readSubmissionFiles(os);
         }
-        return new ArrayList<String>(submissionFilesCache.get(dccId));
+        return new ArrayList<ResultFile>(submissionFilesCache.get(dccId));
     }
 
     /**
@@ -623,6 +626,7 @@ public class MetadataCache
         LOG.info("Primed submission cache, took: " + timeTaken + "ms");
     }
 
+
     private static void readSubmissionFiles(ObjectStore os) {
         //
         long startTime = System.currentTimeMillis();
@@ -631,60 +635,21 @@ public class MetadataCache
             QueryClass qcSubmission = new QueryClass(Submission.class);
             QueryField qfDCCid = new QueryField(qcSubmission, "DCCid");
             q.addFrom(qcSubmission);
-            q.addToSelect(qfDCCid);
+            q.addToSelect(qcSubmission);
 
-            QueryClass qcSubmissionData = new QueryClass(SubmissionData.class);
-            QueryField qfFileName = new QueryField(qcSubmissionData, "value");
-            QueryField qfDataType = new QueryField(qcSubmissionData, "type");
-            q.addFrom(qcSubmissionData);
-            q.addToSelect(qfFileName);
-            QueryValue fileType = new QueryValue(FILETYPE);
-
-            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-            SimpleConstraint sc = new SimpleConstraint(new QueryExpression(QueryExpression.LOWER,
-                    qfDataType), ConstraintOp.MATCHES, fileType);
-            cs.addConstraint(sc);
-
-            // join the tables
-            QueryObjectReference ref1 = new QueryObjectReference(qcSubmissionData, "submission");
-            ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS,
-                    qcSubmission);
-            cs.addConstraint(cc1);
-
-            q.setConstraint(cs);
             q.addToOrderBy(qfDCCid);
 
-            Results results = os.execute(q);
+            submissionFilesCache = new HashMap<Integer, Set<ResultFile>>();
+            Results results = os.executeSingleton(q);
 
-            submissionFilesCache = new HashMap<Integer, List<String>>();
-
-            Integer counter = 0;
-
-            Integer prevSub = new Integer(-1);
-            List<String> subFiles = new ArrayList<String>();
+            // for each project, get its labs
             Iterator i = results.iterator();
             while (i.hasNext()) {
-                ResultsRow row = (ResultsRow) i.next();
-
-                counter++;
-                Integer dccId = (Integer) row.get(0);
-                String fileName = (String) row.get(1);
-
-                if (!dccId.equals(prevSub) || counter.equals(results.size())) {
-                    if (prevSub > 0) {
-                        if (counter.equals(results.size())) {
-                            prevSub = dccId;
-                            subFiles.add(fileName);
-                        }
-                        List<String> subFilesIn = new ArrayList<String>();
-                        subFilesIn.addAll(subFiles);
-                        submissionFilesCache.put(prevSub, subFilesIn);
-                        subFiles.clear();
-                    }
-                    prevSub = dccId;
-                }
-                subFiles.add(fileName);
+                Submission sub = (Submission) i.next();
+                Set<ResultFile> files = sub.getResultFiles();
+                submissionFilesCache.put(sub.getdCCid(), files);
             }
+
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -692,6 +657,9 @@ public class MetadataCache
         LOG.info("Primed file names cache, took: " + timeTaken + "ms");
     }
 
+    
+    
+    
     private static void readSubmissionLocatedFeature(ObjectStore os) {
         long startTime = System.currentTimeMillis();
         submissionLocatedFeatureTypes = new LinkedHashMap<Integer, List<String>>();
@@ -737,9 +705,6 @@ public class MetadataCache
         }     
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms");
-        //**
-        LOG.info("located features: " + submissionLocatedFeatureTypes );
-        
     }
 
     
@@ -931,54 +896,6 @@ public class MetadataCache
         return submissionTracksCache;
     }
     
-    
-//    TO REMOVE
-      private static Map<Integer, List<GBrowseTrack>> readTracks2(String organism) {
-          try {
-              URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_URL_END);
-              BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-              String line;
-              // apparently the rules for parsing are:
-              // fields tab separated, dccId space separated
-              // if track/dccId are in the name, the first is the track, the second is the dccId
-              // if there is only one number in the name, this is a dccId
-              // examples of lines:
-              // Dm_adult_wh_read_pair_2458_712    712 574 2458    Whole Adult Fly
-              // Dm_cell_line_reads_342  Kc167 (C-tailed polyA RNA)
-              // Karpen_HISMODENZ 284 332 923 926 927 928 945 947 948 952 2330 2208 2216 2227 2782
-                  // 2786 2278 2326 2788 2299   ChIP signal for Histone Modifying Enzymes
-
-              while ((line = reader.readLine()) != null) {
-                  String[] result = line.split("\\t");
-                  String trackName = result[0];
-                  GBrowseTrack newTrack = new GBrowseTrack(organism, trackName);
-                  // look for dccId in the line
-                  String list = result[1];
-                  String[] dccIds = list.split("\\s");
-                  parseTokens(dccIds, newTrack, false);
-
-                  if (list.length() < 2) {
-                      // look for dccId in the track name
-                      // (only if there are no dccid in the proper field)
-                      String[] nameSplit = trackName.split("_");
-                      parseTokens(nameSplit, newTrack, true);
-                  }
-                  //
-                  //
-                  //                // look for dccId in the track name
-                  //                String[] nameSplit = trackName.split("_");
-                  //                parseTokens(nameSplit, newTrack, true);
-              }
-              reader.close();
-          } catch (Exception err) {
-              err.printStackTrace();
-          }
-          return submissionTracksCache;
-      }
-          
-     //==== END TO REMOVE     
-          
-
 
     /**
      * This method looks for dccId in the tokenised line

@@ -126,11 +126,11 @@ public class ProjectsController extends TilesAction
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
             
-            Map<Integer, List<String>> files = MetadataCache.getSubmissionFiles(os);
-            request.setAttribute("files", files);
-
-            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
-            request.setAttribute("filesPerSub", filesPerSub);
+//            Map<Integer, List<String>> files = MetadataCache.getSubmissionFiles(os);
+//            request.setAttribute("files", files);
+//
+//            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
+//            request.setAttribute("filesPerSub", filesPerSub);
 
             Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
             request.setAttribute("subRep", submissionRepositoryEntries);

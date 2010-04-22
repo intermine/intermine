@@ -724,20 +724,11 @@ All GBrowse tracks generated for this experiment:
                 <c:out value="${nr} files" /> </a>            
               </c:when>
               <c:otherwise>
-              <c:forEach items="${subFiles.value}" var="fileName" varStatus="file_status">
+              <c:forEach items="${subFiles.value}" var="file" varStatus="file_status">
                 <br>
-                <c:choose>
-                <c:when test="${fn:startsWith(fileName,ncbiftp)}">
-                <a href="${fileName}"
-                  title="Download ${fileName}" class="value extlink"> <c:out
-                  value="${fileName}" /> </a>               
-                </c:when>
-                <c:otherwise>
-                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${fileName}"
-                  title="Download ${fileName}" class="value extlink"> <c:out
-                  value="${fileName}" /> </a>
-                </c:otherwise>
-                </c:choose>
+                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${file.name}"
+                  title="Download ${file.type} file ${file.name}" class="value extlink"> <c:out
+                  value="${file.name}" /> </a>
               </c:forEach>
 </c:otherwise>
 </c:choose>
@@ -746,12 +737,6 @@ All GBrowse tracks generated for this experiment:
             </c:if>
           </c:forEach>
           </span>
-
-
-
-
-
-
 
 
 
