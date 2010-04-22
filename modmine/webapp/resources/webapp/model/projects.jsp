@@ -86,6 +86,11 @@ div#experimentFeatures {
 .submission_table {
   background-color: white;
 }
+
+.span feat {
+white-space:nowrap;
+}
+
 </style>
 
 
@@ -148,8 +153,15 @@ div#experimentFeatures {
 
     <c:forEach items="${expCats}" var="ecat" varStatus="ecatStatus">
       <c:if test="${ecat.key eq exp.name}">
-       <c:forEach items="${ecat.value}" var="cat">
-    ${cat}
+       <c:forEach items="${ecat.value}" var="cat" varStatus="catStatus">
+       <c:choose>
+<c:when test="${catStatus.first && catStatus.last }">
+${cat}
+ </c:when>
+<c:otherwise>
+    &middot;${cat}
+</c:otherwise>
+</c:choose>
        </c:forEach>
       </c:if>
 
@@ -204,7 +216,7 @@ div#experimentFeatures {
 <%-- FEATURES --%>
       <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
      <c:if test="${fc_status.count == 1 }"><br>Features: </c:if> 
-     
+     <nobr>
                    <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}"
         title="View all ${fc.key}s"><b>${fc.value}&nbsp;${fc.key}</b>
@@ -212,12 +224,15 @@ div#experimentFeatures {
             
                <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab"
-        title="Download in tab separated value format">TAB</html:link>
+        title="Download in tab separated value format">
+          <img border="0" class="arrow" src="model/images/tab_s.png" title="tab" height="18" width="6"/>        
+        </html:link>
             
               <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv"
-        title="Download in comma separated value format">CSV</html:link>
-           
+        title="Download in comma separated value format">
+          <img border="0" class="arrow" src="model/images/csv_s.png" title="cvs"  height="18" width="6"/>
+          </html:link>
             
        <%--     <c:if test="${!empty exp.unlocated }"> --%>
 <c:choose>
@@ -226,11 +241,15 @@ div#experimentFeatures {
 <c:otherwise>
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3"
-        title="Download in GFF3 format">GFF3</html:link>
+        title="Download in GFF3 format">
+        <img border="0" class="arrow" src="model/images/gff_s.png" title="gff3"  height="18" width="6"/>
+        </html:link>
              <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence"
-        title="Download the sequences">SEQ</html:link>
-           
+        title="Download the sequences">
+                  <img border="0" class="arrow" src="model/images/seq_s.png" title="seq"  height="18" width="6"/>
+        </html:link>
+           </nobr>
 </c:otherwise>
 </c:choose>
 &nbsp;
@@ -310,16 +329,16 @@ div#experimentFeatures {
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
      ${wormTracksCounter} GBrowse tracks
-</html:link>
         <img border="0" class="arrow" src="model/images/worm_gb.png" title="worm"/>
+</html:link>
 </c:if>
 
 <c:if test="${ wormTracksCounter== 1}">
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View the track generated for this experiment">
      ${wormTracksCounter} GBrowse track
-</html:link>
         <img border="0" class="arrow" src="model/images/worm_gb.png" title="worm"/>
+</html:link>
 </c:if>
 
 
