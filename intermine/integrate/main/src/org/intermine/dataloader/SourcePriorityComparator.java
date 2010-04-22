@@ -256,13 +256,11 @@ public class SourcePriorityComparator implements Comparator
             throw new IllegalArgumentException("Conflicting values for field "
                     + DynamicUtil.getFriendlyName(clazz) + "." + fieldName + " between "
                     + source1.getName() + " (value \""
-                    + (value1.toString().length() <= 100 ? value1
-                       : value1.toString().subSequence(0, 99) + "...") + "\", "
-                    + (o1 != defObj ? "in database with ID " + ((InterMineObject) o1).getId()
+                    +  value1
+                    + (o1 != defObj ? " in database with ID " + ((InterMineObject) o1).getId()
                         : "being stored") + ") and " + source2.getName() + " (value \""
-                    + (value2.toString().length() <= 100 ? value2
-                       : value2.toString().subSequence(0, 99) + "...") + "\", "
-                    + (o2 != defObj ? "in database with ID " + ((InterMineObject) o2).getId()
+                    + value2
+                    + (o2 != defObj ? " in database with ID " + ((InterMineObject) o2).getId()
                         : "being stored") + "). This field needs configuring in the "
                     + iw.getModel().getName() + "_priorities.properties file");
         }
