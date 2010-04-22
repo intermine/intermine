@@ -459,6 +459,8 @@ All GBrowse tracks generated for this experiment:
     <th class="sortable">DCC id</th>
     <th class="sortable">Name</th>
     <th>Date</th>
+<%--    <th>Related Submissions</th>
+--%>
       <c:forEach items="${exp.factorTypes}" var="factor">
 
 <%-- TEMP FIX for long list of primers --%>
@@ -478,10 +480,34 @@ All GBrowse tracks generated for this experiment:
 <c:forEach items="${exp.submissionsAndFeatureCounts}" var="subCounts">
 	<c:set var="sub" value="${subCounts.key}"></c:set>
     <tr>
-      <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.dCCid}"></c:out></html:link></td>
+      <td class="sorting">
+      <html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}">
+      <c:out value="${sub.dCCid}"></c:out></html:link>
+      <p>
+        <c:forEach items="${sub.relatedSubmissions}" var="relSubs" varStatus="rstatus">
+        <br>
+        <c:if test="${rstatus.first}">Related to: </c:if>
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${relSubs.dCCid}">
+<c:out value="${relSubs.dCCid}"></c:out></html:link>
+        <c:if test="${rstatus.last}"></c:if>
+        </c:forEach>
+      
+      
+      
+      </td>
+
+
+
       <td class="sorting"><html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${subCounts.key.id}"><c:out value="${sub.title}"></c:out></html:link></td>
       <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
-
+<%--
+      <td class="sorting">
+        <c:forEach items="${sub.relatedSubmissions}" var="relSubs">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${relSubs}">
+<c:out value="${relSubs}"></c:out></html:link>
+        </c:forEach>
+      </td>
+--%>
 <%-- FACTORS --%>	
 	  <c:forEach items="${exp.factorTypes}" var="factorType">
 	  <c:set var="thisTypeCount" value="0"></c:set>
