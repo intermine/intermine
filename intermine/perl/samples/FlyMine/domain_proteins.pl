@@ -38,7 +38,7 @@ $path_query->add_view("Protein.primaryIdentifier Protein.primaryAccession Protei
 $path_query->sort_order('Protein.genes.symbol');
 
 # now add constraints
-my $organism = 'Drosophila melan*';
+my $organism    = 'Drosophila melan*';
 $path_query->add_constraint(qq/Protein.organism.name = "$organism"/);
       # Other constraints are possible, including !=, CONTAINS, etc, as well as wildcards
 my $protein_domain = 'Homeobox';

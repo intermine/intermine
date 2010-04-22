@@ -39,8 +39,8 @@ $path_query->add_view("Gene.secondaryIdentifier Gene.downstreamIntergenicRegion.
 $path_query->sort_order('Gene.secondaryIdentifier');
 
 # now add constraints
-my $gene = 'CG10007';
-$path_query->add_constraint(qq/Gene LOOKUP "$gene"/); # TODO add extra value feature
+my $gene       = 'runt';
+my $constraint = $path_query->add_constraint(qq/Gene LOOKUP "$gene"/); # TODO add extra value feature
       # Other constraints are possible, including !=, CONTAINS, etc, as well as wildcards
 $path_query->add_constraint(qq/Gene.downstreamIntergenicRegion.adjacentGenes != "Gene"/);
 $path_query->add_constraint(qq/Gene.upstreamIntergenicRegion.adjacentGenes != "Gene"/);
@@ -57,4 +57,12 @@ my $res = $query_service->get_result($path_query); # This returns an HTTP::Reque
 
 print '-' x 70, "\n" x 2, "the upstream and the downstream adjacent genes for $gene:", 
     "\n" x 2;
+print $res->content() unless $res->is_error;
+
+my $organism = 'D. melanogaster';
+$constraint->extra_value($organism);
+
+print '-' x 70, "\n" x 2, "the upstream and the downstream adjacent genes for $gene, but only for D. Melanogaster:", 
+    "\n" x 2;
+$res = $query_service->get_result($path_query);
 print $res->content() unless $res->is_error;
