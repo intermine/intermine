@@ -752,7 +752,7 @@ All GBrowse tracks generated for this experiment:
               <c:otherwise>
               <c:forEach items="${subFiles.value}" var="file" varStatus="file_status">
                 <br>
-                <a href="${WEB_PROPERTIES['ftp.prefix']}/${sub.dCCid}/extracted/${file.name}"
+                <a href="${file.url}"
                   title="Download ${file.type} file ${file.name}" class="value extlink"> <c:out
                   value="${file.name}" /> </a>
               </c:forEach>
