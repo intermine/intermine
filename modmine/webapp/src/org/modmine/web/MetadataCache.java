@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,13 +32,11 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
-import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
-import org.intermine.model.bio.SubmissionData;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -48,18 +45,14 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.session.SessionMethods;
 
 
 /**
@@ -74,9 +67,6 @@ public class MetadataCache
     private static final String GBROWSE_BASE_URL = getGBrowsePrefix();
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
-
-    // SubmissionData name for files
-    private static final String FILETYPE = "%file";
 
     public static class GBrowseTrack
     {
@@ -329,9 +319,9 @@ public class MetadataCache
 
                 Set<String> allFeatures = submissionFeatureCounts.get(subId).keySet();
                 Set<String> difference = new HashSet<String>(allFeatures);
-                difference.removeAll(submissionLocatedFeatureTypes.get(subId));
-                LOG.info("UNLOC0: " + subId + "|" + allFeatures.size());
-
+                if (submissionLocatedFeatureTypes.get(subId) != null){
+                    difference.removeAll(submissionLocatedFeatureTypes.get(subId));
+                } 
                 
                 if (!difference.isEmpty()){
                     List <String> thisUnlocated = new ArrayList<String>();
@@ -340,14 +330,11 @@ public class MetadataCache
                         thisUnlocated.add(fType);
                     }
                     submissionUnlocatedFeatureTypes.put(subId, thisUnlocated);
-                    LOG.info("UNLOC: " + subId + "|" + thisUnlocated + "|" + submissionUnlocatedFeatureTypes.size());
-                    
                 }
             }
         } catch (Exception err) {
             err.printStackTrace();
         }
-        
         return submissionUnlocatedFeatureTypes;
     }
 
@@ -693,7 +680,7 @@ public class MetadataCache
         q.setConstraint(cs);
 
         Results results = os.execute(q);
-       
+        
         // for each classes set the values for jsp
         for (Iterator<ResultsRow> iter = results.iterator(); iter.hasNext(); ) {
             ResultsRow row = iter.next();
@@ -702,6 +689,7 @@ public class MetadataCache
  
             addToMap(submissionLocatedFeatureTypes,sub.getdCCid(),
                     TypeUtil.unqualifiedName(feat.getName()));
+            
         }     
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Primed located features cache, took: " + timeTaken + "ms");
