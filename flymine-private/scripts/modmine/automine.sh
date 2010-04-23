@@ -394,7 +394,11 @@ echo
 # new build. static, metadata
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build FAILED.\n" ; exit 1 ; }
+cd postprocess
+ant -v -Daction=set-missing-chromosome-locations -Drelease=$REL\
+|| { printf "%b" "\n modMine build (only metadata) FAILED while setting locations.\n" ; exit 1 ; }
 
+cd $MINEDIR
 # save factor file and run acceptance tests
 NAMESTAMP=`echo $sub | cut -d. -f1`
 cp $MINEDIR/integrate/all_subs_report.csv $REPORTS/expFactor/$NAMESTAMP.csv
@@ -425,14 +429,12 @@ function fillChado {
 # run stag and add the dccid
 
 DCCID=`echo $1 | cut -f 8 -d/ |cut -f 1 -d.`
-echo -n "filling $CHADODB db with $DCCID: "
+EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
+
+echo -n "filling $CHADODB db with $DCCID (eDate: $EDATE) -- "
 date "+%d%b%Y %H:%M"
 
 echo "`date "+%y%m%d.%H%M"` $DCCID" >> $LOG
-
-EDATE=`grep -w ^$DCCID $DATADIR/ftplist | grep -v true | sed -n 's/.*\t//;p'`
-
-echo "filling $CHADODB db with $DCCID, embargoed until $EDATE..."
 
 stag-storenode.pl -D "Pg:$CHADODB@$DBHOST" -user $DBUSER -password \
 $DBPW -noupdate cvterm,dbxref,db,cv,feature $1 
@@ -864,6 +866,9 @@ then
 # new build. static, metadata, organism
 ../bio/scripts/project_build -a $SOURCES -V $REL $V -b -t localhost /tmp/mod-meta\
 || { printf "%b" "\n modMine build (only metadata) FAILED.\n" ; exit 1 ; }
+cd postprocess
+ant -v -Daction=set-missing-chromosome-locations -Drelease=$REL\
+|| { printf "%b" "\n modMine build (only metadata) FAILED while setting locations.\n" ; exit 1 ; }
 else
 # new build, all the sources
 # get the most up to date sources ..
