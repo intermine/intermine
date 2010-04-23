@@ -125,6 +125,9 @@ public class FlyBaseProcessor extends SequenceProcessor
     // a map from the uniquename of each allele to its item identifier
     private Map<String, String> alleleIdMap = new HashMap();
 
+    // a map from the uniquename of each cdna clone to its item identifier
+    private Map<String, FeatureData> cdnaCloneMap = new HashMap();
+
     // an object representing the FlyBase miscellaneous CV
     private ChadoCV flyBaseMiscCv = null;
 
@@ -872,6 +875,8 @@ public class FlyBaseProcessor extends SequenceProcessor
             alleleIdMap.put(uniqueName, feature.getIdentifier());
         }
 
+
+
         return feature;
     }
 
@@ -929,28 +934,29 @@ public class FlyBaseProcessor extends SequenceProcessor
                              featureData.getChadoFeatureUniqueName());
             }
         }
+        if (FEATURES.contains("gene")) {
+            processAlleleProps(connection, features);
 
-        processAlleleProps(connection, features);
-
-        Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
-        for (Integer alleleFeatureId: mutagenMap.keySet()) {
-            FeatureData alleleDat = features.get(alleleFeatureId);
-            List<String> mutagenRefIds = new ArrayList<String>();
-            for (String mutagenDescription: mutagenMap.get(alleleFeatureId)) {
-                String mutagenIdentifier = getMutagen(mutagenDescription);
-                mutagenRefIds.add(mutagenIdentifier);
+            Map<Integer, List<String>> mutagenMap = makeMutagenMap(connection);
+            for (Integer alleleFeatureId: mutagenMap.keySet()) {
+                FeatureData alleleDat = features.get(alleleFeatureId);
+                List<String> mutagenRefIds = new ArrayList<String>();
+                for (String mutagenDescription: mutagenMap.get(alleleFeatureId)) {
+                    String mutagenIdentifier = getMutagen(mutagenDescription);
+                    mutagenRefIds.add(mutagenIdentifier);
+                }
+                ReferenceList referenceList = new ReferenceList();
+                referenceList.setName("mutagens");
+                referenceList.setRefIds(mutagenRefIds);
+                getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
             }
-            ReferenceList referenceList = new ReferenceList();
-            referenceList.setName("mutagens");
-            referenceList.setRefIds(mutagenRefIds);
-            getChadoDBConverter().store(referenceList, alleleDat.getIntermineObjectId());
+
+            createIndelReferences(connection);
+            createDeletionLocations(connection);
+            copyInsertionLocations(connection);
+
+            createInteractions(connection);
         }
-
-        createIndelReferences(connection);
-        createDeletionLocations(connection);
-        copyInsertionLocations(connection);
-
-        createInteractions(connection);
     }
 
     /**
@@ -1731,8 +1737,12 @@ public class FlyBaseProcessor extends SequenceProcessor
     protected FeatureData makeFeatureData(int featureId, String type, String uniqueName,
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
+
+
+        FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name,
+                md5checksum, seqlen, organismId);
+
         if (type.equals("protein")) {
-            // TODO what data are we trying to avoid with this?
             if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }
@@ -1754,13 +1764,21 @@ public class FlyBaseProcessor extends SequenceProcessor
                 }
                 return protein;
             }
-            FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name, md5checksum,
-                                                     seqlen, organismId);
             proteinFeatureDataMap.put(md5checksum, fdat);
-            return fdat;
         }
-        return super.makeFeatureData(featureId, type, uniqueName, name, md5checksum, seqlen,
-                                         organismId);
+
+        if (type.equals("CDNAClone")) {
+            // flybase has duplicates.  to merge with BDGP we need to discard duplicates and
+            // make a synonym
+            FeatureData cdnaClone = cdnaCloneMap.get(name);
+            if (cdnaClone != null) {
+                Item synonym = createSynonym(fdat, "symbol", name, false, null);
+                store(synonym);
+                return cdnaClone;
+            }
+            cdnaCloneMap.put(name, fdat);
+        }
+        return fdat;
     }
 
     /**
