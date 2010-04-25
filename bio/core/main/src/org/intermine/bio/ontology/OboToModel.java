@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -38,9 +38,10 @@ import org.intermine.util.TypeUtil;
  */
 public class OboToModel
 {
-    protected String namespace;
-    protected Map<String, Set<String>> nameToSupers = new HashMap();
-    protected Map<String, Set<String>> nameToPartofs = new HashMap();
+    protected static String packageName;
+    protected static Map<String, Set<String>> childNamesToParentNames;
+    protected static Map<String, Set<String>> namesToPartOfs;
+    protected static Map<String, String> oboTerms = new HashMap();
     protected Model model;
 
     /**
@@ -49,7 +50,7 @@ public class OboToModel
      * @param namespace the namespace to use in generating URI-based identifiers
      */
     public OboToModel(String namespace) {
-        this.namespace = namespace;
+        this.packageName = namespace;
     }
 
     /**
@@ -62,83 +63,30 @@ public class OboToModel
     }
 
     /**
-     * Perform the conversion by iterating over the root terms.
-     *
-     * @param rootTerms a collection of rootTerms
-     */
-    public void process(Collection<OboTerm> rootTerms) {
-        for (OboTerm rootTerm : rootTerms) {
-            process(rootTerm, null);
-        }
-    }
-
-    /**
-     * Convert a (root) DagTerm to a Resource, recursing through children.
-     *
-     * @param term a DagTerm
-     * @param superClassName class to set as superclass of all classes created
-     * @return true if this Term was included (part of SOFA)
-     */
-    public boolean process(OboTerm term, String superClassName) {
-        String className = generateClassName(term);
-        boolean include = false;
-        if (term.isObsolete()) {
-            return include;  
-        }
-        Map tagValues = term.getTagValues();
-        List subsets = null;
-        if (tagValues != null) {
-            subsets = (List) tagValues.get("subset");
-        } else {
-            System.err .println("No tag values for term " + term.getName());
-        }
-        include = include || ((subsets != null) && subsets.contains("SOFA"));
-        if (include) {
-            Set<String> supers = nameToSupers.get(className);
-            if (supers == null) {
-                supers = new HashSet();
-                nameToSupers.put(className, supers);
-            }
-            if (superClassName != null) {
-                supers.add(superClassName);
-            }
-            Set partofs = nameToPartofs.get(className);
-            if (partofs == null) {
-                partofs = new HashSet();
-                nameToPartofs.put(className, partofs);
-            }
-//            for (OboTerm component : term.getComponents()) {
-//                partofs.add(generateClassName(component));
-//            }
-        }
-        return include;
-    }
-    
-    /**
      * Specifies how a class name is generated.
      *
      * @param term the relevant term
      * @return the generated class name
      */
-    public String generateClassName(OboTerm term) {
-        return namespace + TypeUtil.javaiseClassName(term.getName());
+    private static String generateClassName(String className) {
+        return packageName + "." + TypeUtil.javaiseClassName(className);
     }
 
     /**
      * Run conversion from Obo to Model format.
      *
-     * @param args oboFilename, modelFilename, namespace, errorFilename
+     * @param args oboFilename, modelFilename, packageName (eg. org.intermine.model.bio)
      * @throws Exception if anthing goes wrong
      */
     public static void main(String[] args) throws Exception {
-        if ((args.length < 3) || (args.length > 4)) {
-            throw new Exception("Usage: Dag2Owl dagfile owlfile tgt_namespace errorfile");
+        if (args.length != 4) {
+            throw new Exception("Usage: newModelName oboFileName modelFileName packageName");
         }
 
-        String oboFilename = args[0];
-        String modelFilename = args[1];
-        String tgtNamespace = args[2];
-        String errorFilename = (args.length > 3) ? args[3] : null;
+        String newModelName = args[0];
+        String oboFilename = args[1];
+        String modelFilename = args[2];
+        String newPackageName = args[3];
 
         try {
             File oboFile = new File(oboFilename);
@@ -149,44 +97,101 @@ public class OboToModel
             OboParser parser = new OboParser();
             parser.processOntology(new FileReader(oboFile));
             parser.processRelations(oboFilename);
-            Set oboTerms = parser.getOboTerms();
-            
-            OboToModel owler = new OboToModel(tgtNamespace);
+
+            OboToModel owler = new OboToModel(newPackageName);
+            owler.processOboTerms(parser.getOboTerms());
+            owler.processRelations(parser.getOboRelations());
+
             PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(modelFile)));
-            owler.process(oboTerms);
             Set<ClassDescriptor> clds = new HashSet();
-            for (Map.Entry<String, Set<String>> entry : owler.nameToSupers.entrySet()) {
-                String className = entry.getKey();
-                StringBuffer supers = new StringBuffer();
+
+            // process each oboterm
+            for (String childName : owler.oboTerms.values()) {
+
+                // set parents
+                StringBuffer parents = new StringBuffer();
                 boolean needComma = false;
-                for (String superClassName : entry.getValue()) {
-                    if (needComma) {
-                        supers.append(" ");
+                Set<String> parentNames = owler.childNamesToParentNames.get(childName);
+                if (parentNames != null) {
+                    parents = new StringBuffer();
+                    for (String parentName : parentNames) {
+                        if (owler.oboTerms.containsValue(parentName)) {
+                            if (needComma) {
+                                parents.append(" ");
+                            }
+                            needComma = true;			   
+			    parents.append(parentName);			   
+                        }
                     }
-                    needComma = true;
-                    supers.append(superClassName);
                 }
                 Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
                 Set<ReferenceDescriptor> fakeReferences = Collections.emptySet();
-                Set<CollectionDescriptor> collections = new HashSet();
-                for (String partof : owler.nameToPartofs.get(className)) {
-                    if (owler.nameToSupers.containsKey(partof)) {
-                        collections.add(new CollectionDescriptor(TypeUtil.javaiseClassName(partof)
-                                    + "s", partof, null));
+                Set<CollectionDescriptor> collections = Collections.emptySet();
+                Set<String> collectionIdentifiers = owler.namesToPartOfs.get(childName);
+
+                // add collections
+                if (collectionIdentifiers != null) {
+                    collections = new HashSet();
+                    for (String partof : owler.namesToPartOfs.get(childName)) {			
+                        // only add collections in our model
+                        if (owler.oboTerms.containsValue(partof)) {
+                            String[] bits = partof.split("\\.");
+                            CollectionDescriptor cd = new CollectionDescriptor(
+                                    TypeUtil.javaiseClassName(bits[bits.length - 1])
+                                    + "s", partof, null);
+                            collections.add(cd);
+                        }
                     }
                 }
-                clds.add(new ClassDescriptor(className,
-                                             (entry.getValue().isEmpty()
-                                              ? null
-                                              : supers.toString()),
-                                             true, fakeAttributes, fakeReferences, collections));
+		clds.add(new ClassDescriptor(childName,
+                        (parentNames == null ? null : parents.toString()),
+                        true, fakeAttributes, fakeReferences, collections));
             }
-            Model model = new Model("name", tgtNamespace, clds);
+            Model model = new Model(newModelName, newPackageName, clds);
             out.println(model);
             out.flush();
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void processRelations(List<OboRelation> oboRelations) {
+        childNamesToParentNames = new HashMap();
+        namesToPartOfs = new HashMap();
+        for (OboRelation r : oboRelations) {
+            String childName = oboTerms.get(r.childTermId);
+            String parentName = oboTerms.get(r.parentTermId);
+
+            if (StringUtils.isEmpty(childName) || StringUtils.isEmpty(parentName)) {
+                continue;
+            }
+
+	    String relationshipType = r.getRelationship().getName();
+            if (relationshipType.equals("part_of") && r.direct) {
+                Set<String> partofs = namesToPartOfs.get(childName);
+                if (partofs == null) {
+                    partofs = new HashSet();
+                    namesToPartOfs.put(childName, partofs);
+                }
+                partofs.add(parentName);
+            } else if (relationshipType.equals("is_a") && r.direct) {
+                Set<String> parents = childNamesToParentNames.get(childName);
+                if (parents == null) {
+                    parents = new HashSet();
+                    childNamesToParentNames.put(childName, parents);
+                }
+                parents.add(parentName);
+    
+            }
+        }
+    }
+
+    private static void processOboTerms(Set<OboTerm> terms) {
+        for (OboTerm term : terms) {
+            if (!term.isObsolete()) {
+                oboTerms.put(term.getId(),  generateClassName(term.getName()));
+            }
         }
     }
 }

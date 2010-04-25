@@ -50,8 +50,8 @@ public class GoConverter extends FileConverter
     // configuration maps
     private Map<String, String> geneAttributes = new HashMap<String, String>();
     private Map<String, WithType> withTypes = new LinkedHashMap<String, WithType>();
-    private Map<String, String> synonymTypes = new HashMap<String, String>();    
-    
+    private Map<String, String> synonymTypes = new HashMap<String, String>();
+
     // maps retained across all files
     protected Map<String, String> goTerms = new LinkedHashMap<String, String>();
     private Map<String, String> goEvidence = new LinkedHashMap<String, String>();
@@ -59,7 +59,7 @@ public class GoConverter extends FileConverter
     private Map<String, String> dataSets = new LinkedHashMap<String, String>();
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
-    protected Map<String, String> productMap = new LinkedHashMap<String, String>();    
+    protected Map<String, String> productMap = new LinkedHashMap<String, String>();
 
     // maps renewed for each file
     private Map<GoTermToGene, AssignmentEvidence> assignmentEvidenceMap =
@@ -71,11 +71,11 @@ public class GoConverter extends FileConverter
     protected String termClassName = "GOTerm";
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
-    
+
     protected IdResolverFactory resolverFactory;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
-        
+
     /**
      * Constructor
      *
@@ -183,7 +183,7 @@ public class GoConverter extends FileConverter
             Item organism = newOrganism(array[12]);
             String productIdentifier = newProduct(productId, type, organism,
                     dataSourceCode, true, null);
-            
+
             // null if resolver could not resolve an identifier
             if (productIdentifier != null) {
                 AssignmentEvidence assignmentEvidence = assignmentEvidenceMap.get(key);
@@ -193,19 +193,19 @@ public class GoConverter extends FileConverter
                     String goTermIdentifier = newGoTerm(goId, dataSourceCode);
 
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
-                            goTermIdentifier, organism, 
+                            goTermIdentifier, organism,
                             qualifier, withText, dataSourceCode);
-                    
+
                     assignmentEvidence = new AssignmentEvidence(storedAnnotationId);
                     assignmentEvidenceMap.put(key, assignmentEvidence);
-                }       
-                
+                }
+
                 // add evidence to new or existing assignment
                 String newPublicationId = newPublication(array[5]);
                 if (newPublicationId != null) {
                     assignmentEvidence.addPublicationIdentifier(newPublicationId);
                 }
-                
+
                 if (strEvidence != null && !strEvidence.equals("")) {
                     evidenceId = newGoEvidence(strEvidence);
                 }
@@ -213,7 +213,7 @@ public class GoConverter extends FileConverter
                     assignmentEvidence.addEvidenceCodeIdentifier(evidenceId);
                 }
             }
-        }  
+        }
         storeProductCollections();
         storeAssignmentEvidence();
     }
@@ -226,8 +226,8 @@ public class GoConverter extends FileConverter
         productCollectionsMap = new LinkedHashMap<Integer, List<String>>();
         storedProductIds = new HashMap<String, Integer>();
     }
-    
-    
+
+
     private void storeProductCollections() throws ObjectStoreException {
         for (Map.Entry<Integer, List<String>> entry : productCollectionsMap.entrySet()) {
             Integer storedProductId = entry.getKey();
@@ -236,26 +236,26 @@ public class GoConverter extends FileConverter
             store(goAnnotation, storedProductId);
         }
     }
-    
-    
+
+
     private void storeAssignmentEvidence() throws ObjectStoreException {
         for (AssignmentEvidence evidence : assignmentEvidenceMap.values()) {
-            
+
             if (!evidence.publicationIdentifiers.isEmpty()) {
-                ReferenceList publications = new ReferenceList("publications", 
+                ReferenceList publications = new ReferenceList("publications",
                         new ArrayList<String>(evidence.getPublicationIdentifiers()));
                 store(publications, evidence.storedAnnotationId);
             }
-            
-            ReferenceList evidenceCodes = new ReferenceList("goEvidenceCodes", 
+
+            ReferenceList evidenceCodes = new ReferenceList("goEvidenceCodes",
                     new ArrayList<String>(evidence.getEvidenceCodeIdentifiers()));
             store(evidenceCodes, evidence.storedAnnotationId);
         }
     }
 
-    private Integer createGoAnnotation(String productIdentifier, String productType, 
-            String termIdentifier, Item organism, String qualifier, String withText, 
-            String dataSourceCode) 
+    private Integer createGoAnnotation(String productIdentifier, String productType,
+            String termIdentifier, Item organism, String qualifier, String withText,
+            String dataSourceCode)
     throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
@@ -311,7 +311,7 @@ public class GoConverter extends FileConverter
      * @throws ObjectStoreException if problem when storing
      * @return a list of Items
      */
-    protected List<String> createWithObjects(String withText, Item organism, String dataSourceCode) 
+    protected List<String> createWithObjects(String withText, Item organism, String dataSourceCode)
     throws ObjectStoreException {
 
         List<String> withProductList = new ArrayList<String>();
@@ -344,7 +344,7 @@ public class GoConverter extends FileConverter
                             productIdentifier = newProduct(value, wt.clsName,
                                                         organism, dataSourceCode, true, null);
                         }
-                        if (productIdentifier != null) {                            
+                        if (productIdentifier != null) {
                             withProductList.add(productIdentifier);
                         }
                     } else {
@@ -438,7 +438,7 @@ public class GoConverter extends FileConverter
                 accession,
                 dataSetIdentifier);
         store(synonym);
-        
+
         return product.getIdentifier();
     }
 
@@ -496,8 +496,8 @@ public class GoConverter extends FileConverter
         return dataSourceIdentifier;
     }
 
-    
-    
+
+
     private String getDataSourceName(String sourceCode) {
         String title = sourceCode;
 
@@ -523,7 +523,7 @@ public class GoConverter extends FileConverter
         }
         return title;
     }
-    
+
     private String getDataset(String code)
     throws ObjectStoreException {
 
@@ -535,11 +535,11 @@ public class GoConverter extends FileConverter
             item.setReference("dataSource", getDataSource(code));
             dataSetIdentifier = item.getIdentifier();
             dataSets.put(code, dataSetIdentifier);
-            store(item);            
+            store(item);
         }
         return dataSetIdentifier;
     }
-  
+
 
     private String newPublication(String codes) throws ObjectStoreException {
         String pubRefId = null;
@@ -590,7 +590,7 @@ public class GoConverter extends FileConverter
         return synonym;
     }
 
-    private class AssignmentEvidence 
+    private class AssignmentEvidence
     {
         private Integer storedAnnotationId;
         private Set<String> publicationIdentifiers = new HashSet<String>();
@@ -599,15 +599,15 @@ public class GoConverter extends FileConverter
         public AssignmentEvidence(Integer storedAnnotationId) {
             this.storedAnnotationId = storedAnnotationId;
         }
-        
+
         public void addEvidenceCodeIdentifier(String evidenceCodeIdentifier) {
             evidenceCodeIdentifiers.add(evidenceCodeIdentifier);
         }
-        
+
         public void addPublicationIdentifier(String publicationIdentifier) {
             publicationIdentifiers.add(publicationIdentifier);
         }
-        
+
         public Set<String> getPublicationIdentifiers() {
             return publicationIdentifiers;
         }
@@ -616,7 +616,7 @@ public class GoConverter extends FileConverter
             return evidenceCodeIdentifiers;
         }
     }
-    
+
 
     /**
      * Identify a GoTerm/geneProduct pair with qualifier
