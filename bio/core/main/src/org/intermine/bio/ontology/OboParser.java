@@ -84,7 +84,12 @@ public class OboParser
      * @throws Exception if something goes wrong
      */
     public void processRelations(String dagFileName) throws Exception {
-        File temp = File.createTempFile("obo", ".tmp", new File("build"));
+        File f = new File("build");
+        // this directory isn't present when parsing from the command line
+        if (!f.exists()) {
+            f.mkdir();
+        }
+        File temp = File.createTempFile("obo", ".tmp", f);
         // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
@@ -116,7 +121,8 @@ public class OboParser
         LOG.info("PROGRESS:" + writer.getProgressString());
         // END OF OBO2EDIT code
         readRelations(new BufferedReader(new FileReader(temp.getCanonicalPath())));
-        temp.delete();
+        System.out.println(temp.getCanonicalPath());
+        //temp.delete();
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Processed transitive closure of OBO file, took: " + timeTaken + " ms");
     }
@@ -219,7 +225,7 @@ public class OboParser
             oboType = new OboTypeDefinition(id, name, isTransitive);
             types.put(oboType.getId() , oboType);
         }
-        
+
         // Just build all the OboTerms disconnected
         for (Iterator iter = termTagValuesList.iterator(); iter.hasNext();) {
             Map tvs = (Map) iter.next();
