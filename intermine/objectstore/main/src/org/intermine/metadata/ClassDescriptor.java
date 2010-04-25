@@ -493,7 +493,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
                 if (!model.hasClassDescriptor(superName)) {
                     if (!"java.lang.Object".equals(superName)) {
                         throw new MetaDataException("No ClassDescriptor for superclass or interface"
-                                + " ( " + superName + ") found in model.");
+                                + " (" + superName + ") found in model.");
                     }
                 } else {
                     ClassDescriptor superDescriptor = model.getClassDescriptorByName(superName);
