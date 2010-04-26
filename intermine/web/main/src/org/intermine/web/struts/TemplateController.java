@@ -179,7 +179,7 @@ public class TemplateController extends TilesAction
 
                 if (modifiedTemplate != null) {
                     // FIXME See #2239
-                    updateForModifiedTemplate(modifiedTemplate, node, c, displayNode,
+                    c = updateForModifiedTemplate(modifiedTemplate, node, c, displayNode,
                             selectedBagNames);
                 }
                 displayConstraints.put(c, new DisplayConstraint(displayNode, model, oss,
@@ -285,7 +285,7 @@ public class TemplateController extends TilesAction
         return null;
     }
 
-    private void updateForModifiedTemplate(TemplateQuery modifiedTemplate, PathNode node,
+    private Constraint updateForModifiedTemplate(TemplateQuery modifiedTemplate, PathNode node,
             Constraint con, PathNode displayNode, Map<Constraint, Object> selectedBagNames) {
         Constraint c = con;
         Constraint modC = modifiedTemplate.getConstraintByCode(c.getCode());
@@ -306,6 +306,7 @@ public class TemplateController extends TilesAction
         if (selectedBagName != null) {
             selectedBagNames.put(c, modC.getValue());
         }
+        return c;
     }
 
     private TemplateQuery getTemporaryTemplate(HttpSession session, String templateName) {
