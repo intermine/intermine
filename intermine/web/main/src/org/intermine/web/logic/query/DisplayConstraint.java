@@ -205,4 +205,14 @@ public class DisplayConstraint
         }
         return displayName;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return "{DisplayConstraint: model=" + model.getName() + ", name=" + name
+            + ", validOps=" + validOps + ", fixedOps=" + fixedOps
+            + ", optionsList=" + optionsList + "}";
+    }
+
 }
