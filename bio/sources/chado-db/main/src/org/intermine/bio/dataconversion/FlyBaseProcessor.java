@@ -1662,7 +1662,6 @@ public class FlyBaseProcessor extends SequenceProcessor
             + "     AND f.uniquename like 'FBab%' "
             + "     AND f.is_obsolete = false "
             + "     AND fl.srcfeature_id = c.feature_id ";
-
         LOG.info("executing getDeletionLocationResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
