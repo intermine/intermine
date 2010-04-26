@@ -10,17 +10,14 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.intermine.bio.chado.ChadoCV;
-import org.intermine.bio.chado.ChadoCVTerm;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.intermine.bio.chado.ChadoCV;
+import org.intermine.bio.chado.ChadoCVTerm;
 
 import com.mockobjects.sql.MockMultiRowResultSet;
 
@@ -34,7 +31,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
-     * @throws SQLException
+     * @throws SQLException not used, we are using dummy results
      */
     public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter)
     throws SQLException {
@@ -739,9 +736,6 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             "deletion_feature_id", "deletion_organism_id", "chromosome_name", "fmin", "fmax",
             "strand"
         };
-
-//        "SELECT f.feature_id as deletion_feature_id, f.organism_id as deletion_organism_id, "
-//        +   "c.name as chromosome_name, fl.fmin, fl.fmax, fl.strand "
 
         Object[][] resObjects = new Object[][] {
             {

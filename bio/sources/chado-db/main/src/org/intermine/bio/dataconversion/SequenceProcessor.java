@@ -182,8 +182,11 @@ public class SequenceProcessor extends ChadoProcessor
         processDbxrefTable(connection);
         processSynonymTable(connection);
         processFeaturePropTable(connection);
-//        processLibraryFeatureTable(connection);
-//        processLibraryCVTermTable(connection);
+        /**
+          see #2173
+          processLibraryFeatureTable(connection);
+          processLibraryCVTermTable(connection);
+         */
 
         // overridden by subclasses if necessary
         extraProcessing(connection, featureMap);
@@ -453,8 +456,6 @@ public class SequenceProcessor extends ChadoProcessor
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
         OrganismData organismData =
             getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
-
-
 
         Item feature = makeFeature(new Integer(featureId), chadoType, interMineType, name,
                                    uniqueName, seqlen, organismData.getTaxonId());
