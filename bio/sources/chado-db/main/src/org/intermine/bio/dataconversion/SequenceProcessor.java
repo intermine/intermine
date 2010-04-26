@@ -56,7 +56,7 @@ public class SequenceProcessor extends ChadoProcessor
 {
     // incremented each time we make a new SequenceProcessor to make sure we have a unique
     // name for temporary tables
-    private static int TEMP_TABLE_COUNT = 0;
+    private static int tempTableCount = 0;
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
@@ -92,7 +92,7 @@ public class SequenceProcessor extends ChadoProcessor
         Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     // Avoid explosion of log messages by only logging missing collections once
-    Set<String> loggedMissingCols= new HashSet<String>();
+    Set<String> loggedMissingCols = new HashSet<String>();
 
     /**
      * An action that makes a synonym.
@@ -129,8 +129,8 @@ public class SequenceProcessor extends ChadoProcessor
     public SequenceProcessor(ChadoDBConverter chadoDBConverter) {
         super(chadoDBConverter);
         synchronized (this) {
-            TEMP_TABLE_COUNT++;
-            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + TEMP_TABLE_COUNT;
+            tempTableCount++;
+            tempFeatureTableName  = TEMP_FEATURE_TABLE_NAME_PREFIX + "_" + tempTableCount;
         }
     }
 
@@ -198,7 +198,6 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
-    @SuppressWarnings("boxing")
     private void processFeatureTable(Connection connection)
         throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
@@ -1215,6 +1214,11 @@ public class SequenceProcessor extends ChadoProcessor
         res.close();
     }
 
+    /**
+     * This method isn't used yet, it takes up too much memory.  We need to use a temporary table
+     * instead.
+     */
+    @SuppressWarnings("unused")
     private void processLibraryFeatureTable(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryFeatureResultSet(connection);
@@ -1270,6 +1274,11 @@ public class SequenceProcessor extends ChadoProcessor
         return null;
     }
 
+    /**
+     * This method isn't used yet, it takes up too much memory.  We need to use a temporary table
+     * instead.
+     */
+    @SuppressWarnings("unused")
     private void processLibraryCVTermTable(Connection connection)
     throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryCVTermResultSet(connection);
@@ -1591,7 +1600,6 @@ public class SequenceProcessor extends ChadoProcessor
         return identifier;
     }
 
-    @SuppressWarnings("boxing")
     private void processPubTable(Connection connection)
         throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
@@ -1639,6 +1647,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @param pubmedStr id fetched from database
      * @return the pubmed id
      */
+    @SuppressWarnings("boxing")
     protected Integer fixPubMedId(String pubmedStr) {
         return Integer.parseInt(pubmedStr);
     }
@@ -1928,7 +1937,8 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getMatchLocResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id, f2loc.srcfeature_id AS srcfeature_id, f2loc.fmin,"
+            "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id, f2loc.srcfeature_id AS "
+            + "     srcfeature_id, f2loc.fmin,"
             + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
             + "   FROM feature match, featureloc f1loc, featureloc f2loc,"
             + "        cvterm mt"
