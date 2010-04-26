@@ -63,7 +63,7 @@ public class CurrentQueryAction extends InterMineAction
                 SavedQuery sq = null;
                 for (Iterator iter = profile.getHistory().values().iterator(); iter.hasNext();) {
                     sq = (SavedQuery) iter.next();
-                    if (sq.getName().equals(query)) {
+                    if (sq.getPathQuery().equals(template)) {
                         return new ForwardParameters(mapping.findForward("template"))
                             .addParameter("loadModifiedTemplate", "true")
                             .addParameter("name", sq.getName()).forward();
