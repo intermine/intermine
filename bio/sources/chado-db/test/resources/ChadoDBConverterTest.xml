@@ -185,6 +185,13 @@
 <attribute name="length" value="2528"/>
 <attribute name="residues" value="tctgcctcccaactacaatcagatgaactccaaccccaccac"/>
 </item>
+<item id="5_17" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="identifier"/>
+<attribute name="value" value="FBpp99999"/>
+<reference name="subject" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
+</item>
 <item id="5_4" class="Synonym">
 <attribute name="isPrimary" value="false"/>
 <attribute name="type" value="name"/>
@@ -197,22 +204,6 @@
 <attribute name="type" value="identifier"/>
 <attribute name="value" value="FBgn0000001_dbxref3"/>
 <reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_18" class="Synonym">
-<attribute name="isPrimary" value="false"/>
-<attribute name="type" value="name"/>
-<attribute name="value" value="CG99999-RB_prot"/>
-<reference name="subject" ref_id="9_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="9_3" class="Protein">
-<attribute name="length" value="63"/>
-<attribute name="md5checksum" value="4bdcdd74743c6326f277da6fe9e07f2a"/>
-<attribute name="primaryIdentifier" value="FBpp99999"/>
-<attribute name="secondaryIdentifier" value="FBpp99999"/>
-<reference name="organism" ref_id="1_1"/>
-<reference name="sequence" ref_id="4_11"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="5_1" class="Synonym">
@@ -305,13 +296,6 @@
 <attribute name="type" value="name"/>
 <attribute name="value" value="CG10000-RC"/>
 <reference name="subject" ref_id="6_3"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="5_17" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="identifier"/>
-<attribute name="value" value="FBpp99999"/>
-<reference name="subject" ref_id="9_3"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="5_21" class="Synonym">
@@ -448,6 +432,15 @@
 <attribute name="strand" value="1"/>
 <reference name="object" ref_id="7_1"/>
 <reference name="subject" ref_id="13_1"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
+</item>
+<item id="9_2" class="Protein">
+<attribute name="length" value="63"/>
+<attribute name="md5checksum" value="4bdcdd74743c6326f277da6fe9e07f2a"/>
+<attribute name="primaryIdentifier" value="FBpp99999"/>
+<attribute name="secondaryIdentifier" value="FBpp99999"/>
+<reference name="organism" ref_id="1_1"/>
+<reference name="sequence" ref_id="4_11"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="23_2" class="Interaction">
@@ -665,6 +658,13 @@
 <reference name="subject" ref_id="12_1"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
+<item id="5_18" class="Synonym">
+<attribute name="isPrimary" value="false"/>
+<attribute name="type" value="name"/>
+<attribute name="value" value="CG99999-RB_prot"/>
+<reference name="subject" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
+</item>
 <item id="5_51" class="Synonym">
 <attribute name="isPrimary" value="true"/>
 <attribute name="type" value="identifier"/>
@@ -693,11 +693,6 @@
 <attribute name="strand" value="1"/>
 <reference name="object" ref_id="7_1"/>
 <reference name="subject" ref_id="12_6"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
-<item id="9_2" class="Protein">
-<attribute name="md5checksum" value="824c7d2cbdc711dd49892c63b71832ac"/>
-<reference name="organism" ref_id="1_1"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="15_1" class="SequenceOntologyTerm">
@@ -821,13 +816,6 @@
 <reference name="sequence" ref_id="4_5"/>
 <collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
-<item id="5_57" class="Synonym">
-<attribute name="isPrimary" value="true"/>
-<attribute name="type" value="symbol"/>
-<attribute name="value" value="dmel_GLEANR_1_synonym"/>
-<reference name="subject" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="3_1"/></collection>
-</item>
 <item id="17_3" class="Location">
 <attribute name="end" value="24577313"/>
 <attribute name="start" value="24574105"/>
@@ -838,6 +826,13 @@
 </item>
 <item id="21_1" class="DevelopmentTerm">
 <attribute name="identifier" value="FBdv:00005289"/>
+</item>
+<item id="5_57" class="Synonym">
+<attribute name="isPrimary" value="true"/>
+<attribute name="type" value="symbol"/>
+<attribute name="value" value="dmel_GLEANR_1_synonym"/>
+<reference name="subject" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="3_1"/></collection>
 </item>
 <item id="5_5" class="Synonym">
 <attribute name="isPrimary" value="true"/>

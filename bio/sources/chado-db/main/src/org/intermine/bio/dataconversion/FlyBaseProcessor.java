@@ -642,15 +642,14 @@ public class FlyBaseProcessor extends SequenceProcessor
             ConfigAction alleleClassConfigAction = new AlleleClassSetFieldAction("alleleClass");
             map.put(new MultiKey("prop", "Allele", "promoted_allele_class"),
                     Arrays.asList(alleleClassConfigAction));
-
             // library config example: for features of class "CDNAClone", if the type name
             // of the library is "stage", set the "stage" attribute of the
             // new CDNAClone to be this property
             map.put(new MultiKey("library", "CDNAClone", "stage"),
                     Arrays.asList(new SetFieldConfigAction("stage")));
-
             // anatomy term config example:  for features of class "CDNAClone" if there is an
             // anatomy term, set a reference in CDNAClone.tissueSource
+// See #2173
 //            map.put(new MultiKey("anatomyterm", "CDNAClone", null),
 //                    Arrays.asList(new SetFieldConfigAction("tissueSource")));
 
@@ -874,8 +873,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         if (realInterMineType.equals("Allele")) {
             alleleIdMap.put(uniqueName, feature.getIdentifier());
         }
-
-
 
         return feature;
     }
@@ -1737,33 +1734,30 @@ public class FlyBaseProcessor extends SequenceProcessor
                                           String name, String md5checksum, int seqlen,
                                           int organismId) throws ObjectStoreException {
 
-
-        FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name,
-                md5checksum, seqlen, organismId);
-
         if (type.equals("protein")) {
             if (!uniqueName.startsWith("FBpp")) {
                 return null;
             }
-            if (proteinFeatureDataMap.containsKey(md5checksum)) {
-                FeatureData protein = proteinFeatureDataMap.get(md5checksum);
-                // make a synonym for the protein we're about to discard
-                if (protein != null) {
-                    if (StringUtils.isNotEmpty(uniqueName)
-                                    && !protein.getExistingSynonyms().contains(uniqueName)) {
-                        Item synonym = createSynonym(protein, "identifier", uniqueName, true,
-                                                     null);
-                        store(synonym);
-                    }
-                    if (StringUtils.isNotEmpty(name)
-                                    && !protein.getExistingSynonyms().contains(name)) {
-                        Item synonym = createSynonym(protein, "name", name, false, null);
-                        store(synonym);
-                    }
+            FeatureData protein = proteinFeatureDataMap.get(md5checksum);
+            // make a synonym for the protein we're about to discard
+            if (protein != null) {
+                if (StringUtils.isNotEmpty(uniqueName)
+                        && !protein.getExistingSynonyms().contains(uniqueName)) {
+                    Item synonym = createSynonym(protein, "identifier", uniqueName, true,
+                            null);
+                    store(synonym);
+                }
+                if (StringUtils.isNotEmpty(name)
+                        && !protein.getExistingSynonyms().contains(name)) {
+                    Item synonym = createSynonym(protein, "name", name, false, null);
+                    store(synonym);
                 }
                 return protein;
             }
+            FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name,
+                    md5checksum, seqlen, organismId);
             proteinFeatureDataMap.put(md5checksum, fdat);
+            return fdat;
         }
 
         if (type.equals("CDNAClone")) {
@@ -1771,13 +1765,17 @@ public class FlyBaseProcessor extends SequenceProcessor
             // make a synonym
             FeatureData cdnaClone = cdnaCloneMap.get(name);
             if (cdnaClone != null) {
-                Item synonym = createSynonym(fdat, "symbol", name, false, null);
+                Item synonym = createSynonym(cdnaClone, "symbol", name, false, null);
                 store(synonym);
                 return cdnaClone;
             }
+            FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name,
+                    md5checksum, seqlen, organismId);
             cdnaCloneMap.put(name, fdat);
+            return fdat;
         }
-        return fdat;
+        return super.makeFeatureData(featureId, type, uniqueName, name,
+                md5checksum, seqlen, organismId);
     }
 
     /**
