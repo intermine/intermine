@@ -34,9 +34,9 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     /**
      * Create a new TestFlyBaseModuleProcessor object.
      * @param chadoDBConverter the ChadoDBConverter
-     * @throws SQLException 
+     * @throws SQLException
      */
-    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter) 
+    public TestFlyBaseProcessor(ChadoDBConverter chadoDBConverter)
     throws SQLException {
         super(chadoDBConverter);
     }
@@ -139,6 +139,11 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             },
             {
                 1000001, "CG99999-RB_prot", "FBpp99999", "protein", 63,
+                "VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW",
+                "4bdcdd74743c6326f277da6fe9e07f2a", 1
+            },
+            {
+                1000002, "", "", "protein", null,
                 "VSFAQVWCSSTTDETNLLQMEKDPHSPSQFRVIGTLSNMKEFAEVFQCKPGKRMNPTEKCEVW",
                 "4bdcdd74743c6326f277da6fe9e07f2a", 1
             },
@@ -375,7 +380,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -393,13 +398,13 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 11507367, "bar", "foo"
             }
         };
-        
+
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
         res.setupColumnNames(columnNames);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -417,13 +422,13 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
                 2340000, "00001234"
             }
         };
-        
+
         MockMultiRowResultSet res = new MockMultiRowResultSet();
         res.setupRows(resObjects);
         res.setupColumnNames(columnNames);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -444,7 +449,7 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
         res.setupColumnNames(columnNames);
         return res;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -731,14 +736,19 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
     @Override
     protected ResultSet getDeletionLocationResultSet(Connection connection) throws SQLException {
         String[] columnNames = new String[] {
-            "deletion_feature_id", "location_text", "deletion_organism_id"
+            "deletion_feature_id", "deletion_organism_id", "chromosome_name", "fmin", "fmax",
+            "strand"
         };
+
+//        "SELECT f.feature_id as deletion_feature_id, f.organism_id as deletion_organism_id, "
+//        +   "c.name as chromosome_name, fl.fmin, fl.fmax, fl.strand "
+
         Object[][] resObjects = new Object[][] {
             {
-                11488812, "3L:7423765..7576637 (27F4;28B1)", 1
+                11488812, 1, "3L", "7423765", "7576637", "1"
             },
             {
-                11488720, "3R:21629316..21657677 (39E3)", 1
+                11488720, 1, "3R", "21629316", "21657677", "1"
             }
 
         };
