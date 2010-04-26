@@ -10,6 +10,7 @@ package org.modmine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class FeaturesAction extends InterMineAction
      *  an exception
      */
 
-        private static final Logger LOG = Logger.getLogger(MetadataCache.class);
+    private static final Logger LOG = Logger.getLogger(MetadataCache.class);
 
     public ActionForward execute(ActionMapping mapping,
             ActionForm form,
@@ -88,7 +89,7 @@ public class FeaturesAction extends InterMineAction
             doGzip = true;
         }
         
-        Set <Integer> taxIds = new HashSet<Integer>();
+        Set<Integer> taxIds = new HashSet<Integer>();
         
         PathQuery q = new PathQuery(model);
         
@@ -101,7 +102,7 @@ public class FeaturesAction extends InterMineAction
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
             
-            List<String> expSubsIds = exp.getSubmissionsDccId();
+            List<String> expSubsIds = exp.getSubmissionsDccId();            
             Set<String> allUnlocated = new HashSet<String>();
 
             hasPrimer = false;
@@ -116,20 +117,21 @@ public class FeaturesAction extends InterMineAction
             + " (" + exp.getPi() + ")." + ef;
             q.setDescription(description);
 
+            
             for (String subId : expSubsIds){
-//                LOG.info("XXXEE1" + subId + "|" + MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
                 if (MetadataCache.getUnlocatedFeatureTypes(os).containsKey(new Integer(subId))){
                     allUnlocated.addAll(MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
-//                    LOG.info("XXXEE" + subId + "|" + MetadataCache.getUnlocatedFeatureTypes(os).get(new Integer(subId)));
                 }
             }
 
             q.addView(featureType + ".primaryIdentifier");
             q.addView(featureType + ".score");
+            q.addView(featureType + ":scoreProtocol.name");
             q.addConstraint(featureType + ".submissions.experiment.name", 
                     Constraints.eq(experimentName));
 
             if (allUnlocated.contains(featureType)){
+                
                 q.addView(featureType + ".submissions.DCCid");
                 if (!hasPrimer) {
                     q.addView(featureType + ".submissions:experimentalFactors.type");
@@ -159,8 +161,6 @@ public class FeaturesAction extends InterMineAction
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
             
-//            LOG.info("XXX" + unlocFeatures);
-            
             hasPrimer = false;
 
             // to build the query description
@@ -187,6 +187,7 @@ public class FeaturesAction extends InterMineAction
 
             q.addView(featureType + ".primaryIdentifier");
             q.addView(featureType + ".score");
+            q.addView(featureType + ":scoreProtocol.name");
             q.addConstraint(featureType + ".submissions.DCCid", Constraints.eq(new Integer(dccId)));
         
             if (unlocFeatures == null || !unlocFeatures.contains(featureType)){
@@ -242,12 +243,10 @@ public class FeaturesAction extends InterMineAction
             }
 
             TableExportForm exportForm = null;
-            if (format.equals("gff3")) {
-                
+            if (format.equals("gff3")) {                
                 exportForm = new GFF3ExportForm();
                 exportForm.setDoGzip(doGzip);
                 ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
-            
             }
             exporter.export(pt, request, response, exportForm);
 
