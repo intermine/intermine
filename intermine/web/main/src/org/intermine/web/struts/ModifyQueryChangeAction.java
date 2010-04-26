@@ -82,7 +82,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
      *  an exception
      */
     public ActionForward run(ActionMapping mapping,
-                             @SuppressWarnings("unused") ActionForm form,
+                             ActionForm form,
                              HttpServletRequest request,
                              HttpServletResponse response)
         throws Exception {
