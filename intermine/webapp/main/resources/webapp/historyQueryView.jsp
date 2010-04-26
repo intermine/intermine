@@ -135,8 +135,6 @@
                       <c:out value="${infoCache[savedQuery.value.pathQuery].rows}"/>
                     </c:when>
                     <c:otherwise>
-                      <c:out value="${infoCache}"/><BR/>
-                      <c:out value="${savedQuery.value.pathQuery}"/><BR/>
                       n/a
                     </c:otherwise>
                   </c:choose>
