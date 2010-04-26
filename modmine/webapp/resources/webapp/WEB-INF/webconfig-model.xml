@@ -24,6 +24,12 @@
                    showInSummary="false" showInResults="false" showInInlineCollection="false" doNotTruncate="true"/>
       <fieldconfig fieldExpr="type"/>
     </fields>
+        <longdisplayers>
+      <!-- <displayer src="attributeLinkDisplayer.tile"/>
+      -->
+      <displayer src="/model/wikiLink.jsp"/>
+    </longdisplayers>
+    
   </class>
 
   <class className="org.intermine.model.bio.Experiment">
