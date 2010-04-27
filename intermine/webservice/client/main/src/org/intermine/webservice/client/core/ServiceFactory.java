@@ -10,6 +10,7 @@ package org.intermine.webservice.client.core;
  *
  */
 
+import org.intermine.webservice.client.services.FindTemplatesService;
 import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
@@ -70,6 +71,13 @@ public class ServiceFactory
     public ModelService getModelService() {
         return new ModelService(rootUrl, applicationName);
     }    
+    
+    /**
+     * @return model service
+     */
+    public FindTemplatesService getFindTemplatesService() {
+        return new FindTemplatesService(rootUrl, applicationName);
+    } 
     
     /**
      * Creates new service for general use. 
