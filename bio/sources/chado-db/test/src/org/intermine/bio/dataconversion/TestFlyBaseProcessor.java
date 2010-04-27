@@ -209,6 +209,10 @@ public class TestFlyBaseProcessor extends FlyBaseProcessor
             {
                 11507367, "UUGC0315", "FBcl0000001",
                 "cDNA_clone", null, null, null, 1
+            },
+            {
+                11507368, "UUGC0315", "FBcl0000002",
+                "cDNA_clone", null, null, null, 1
             }
         };
         MockMultiRowResultSet res = new MockMultiRowResultSet();

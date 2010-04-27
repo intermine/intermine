@@ -1760,13 +1760,18 @@ public class FlyBaseProcessor extends SequenceProcessor
             return fdat;
         }
 
-        if (type.equals("CDNAClone")) {
+        if (type.equals("cDNA_clone")) {
+
             // flybase has duplicates.  to merge with BDGP we need to discard duplicates and
             // make a synonym
             FeatureData cdnaClone = cdnaCloneMap.get(name);
             if (cdnaClone != null) {
-                Item synonym = createSynonym(cdnaClone, "symbol", name, false, null);
-                store(synonym);
+                if (StringUtils.isNotEmpty(name)) {
+                    Item synonym = createSynonym(cdnaClone, "symbol", name, false, null);
+                    if (synonym != null) {
+                        store(synonym);
+                    }
+                }
                 return cdnaClone;
             }
             FeatureData fdat = super.makeFeatureData(featureId, type, uniqueName, name,
