@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -63,7 +64,7 @@ public class VersionServlet extends HttpServlet
 
     private String getVersion(String versionType, HttpServletRequest request) {
         if (versionType != null) {
-            versionType = trimSlashes(versionType);
+            versionType = StringUtil.trimSlashes(versionType);
 
             if (versionType.equalsIgnoreCase("release")) {
                 Properties webProperties =
@@ -75,16 +76,5 @@ public class VersionServlet extends HttpServlet
         }
         // for backwards compatibility default is the web service version
         return "" + Constants.WEB_SERVICE_VERSION;
-    }
-
-
-    private String trimSlashes(String s) {
-        if (s.startsWith("/")) {
-            s = s.substring(1);
-        }
-        if (s.endsWith("/")) {
-            s = s.substring(0, s.length() - 1);
-        }
-        return s;
     }
 }
