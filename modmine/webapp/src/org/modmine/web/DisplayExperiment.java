@@ -47,6 +47,7 @@ public class DisplayExperiment
     private ObjectStore os;
     private String experimentType;
     private Set<String> labs = new TreeSet<String>();
+    private String piSurname;
     
     /**
      * Construct with objects from database and feature counts summary map. 
@@ -70,6 +71,7 @@ public class DisplayExperiment
         }
         
         this.pi = proj.getNamePI() + " " + proj.getSurnamePI();
+        this.piSurname = proj.getSurnamePI();
         this.projectName = proj.getName();
 
         Set<String> expTypes = new HashSet<String>();
@@ -119,6 +121,13 @@ public class DisplayExperiment
      */
     public String getPi() {
         return pi;
+    }
+
+    /**
+     * @return the piSurname
+     */
+    public String getPiSurname() {
+        return piSurname;
     }
 
 

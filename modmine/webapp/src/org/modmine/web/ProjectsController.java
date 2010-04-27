@@ -66,48 +66,6 @@ public class ProjectsController extends TilesAction
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();            
             final ServletContext servletContext = servlet.getServletContext();
-
-            
-            //get the list of projects 
-            Query q = new Query();  
-            QueryClass qc = new QueryClass(Project.class);
-            QueryField qcName = new QueryField(qc, "name");
-
-            q.addFrom(qc);
-            q.addToSelect(qc);
-            q.addToOrderBy(qcName);
-            
-            Results results = os.executeSingleton(q);
-
-            Map<Project, Set<Lab>> pp =
-                new LinkedHashMap<Project, Set<Lab>>();
-            Map<Project, Integer> nr =
-                new LinkedHashMap<Project, Integer>();
-            
-            // for each project, get its labs
-            Iterator i = results.iterator();
-            while (i.hasNext()) {
-                Project project = (Project) i.next();
-                Set<Lab> labs = project.getLabs();
-                pp.put(project, labs);
-                Integer subNr = 0;
-                // for each lab, get its experiments
-                Iterator p = labs.iterator();
-                while (p.hasNext()) {
-                    Lab lab = (Lab) p.next();
-                    Set<Submission> subs = lab.getSubmissions();
-                    subNr = subNr + subs.size();
-                }
-                nr.put(project, subNr);
-            }
-            request.setAttribute("labs", pp);
-            request.setAttribute("counts", nr);
-            
-            
-            
-            
-            
-            
             
             List<DisplayExperiment> experiments;
             
@@ -125,12 +83,6 @@ public class ProjectsController extends TilesAction
             
             Map<Integer, List<GBrowseTrack>> subTracks = MetadataCache.getGBrowseTracks();
             request.setAttribute("subTracks", subTracks);
-            
-//            Map<Integer, List<String>> files = MetadataCache.getSubmissionFiles(os);
-//            request.setAttribute("files", files);
-//
-//            Map<Integer, Integer> filesPerSub = MetadataCache.getFilesPerSubmission(os);
-//            request.setAttribute("filesPerSub", filesPerSub);
 
             Map<Integer, List<String[]>> submissionRepositoryEntries = MetadataCache.getRepositoryEntries(os);
             request.setAttribute("subRep", submissionRepositoryEntries);
@@ -174,10 +126,6 @@ public class ProjectsController extends TilesAction
             
             request.setAttribute("expCats", expCat);
 
-            
-            
-            
-            
             
         } catch (Exception err) {
             err.printStackTrace();
