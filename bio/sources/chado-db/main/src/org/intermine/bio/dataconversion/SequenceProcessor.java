@@ -462,7 +462,6 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature == null) {
             return null;
         }
-
         int taxonId = organismData.getTaxonId();
         FeatureData fdat;
         fdat = new FeatureData();
@@ -471,11 +470,10 @@ public class SequenceProcessor extends ChadoProcessor
         if (feature.checkAttribute("md5checksum")) {
             feature.setAttribute("md5checksum", md5checksum);
         }
-
-        if (feature.checkAttribute("featureType")) {
-            feature.setAttribute("featureType", chadoType);
-        }
-
+        // See #2287
+//        if (feature.checkAttribute("featureType")) {
+//            feature.setAttribute("featureType", chadoType);
+//        }
         fdat.setFieldExistenceFlags(feature);
         fdat.setIntermineObjectId(store(feature, taxonId));
         fdat.setItemIdentifier(feature.getIdentifier());
@@ -962,10 +960,8 @@ public class SequenceProcessor extends ChadoProcessor
                                 Reference revReference = new Reference();
                                 revReference.setName(reverseRD.getName());
                                 revReference.setRefId(subjectData.getItemIdentifier());
-                                Integer refObjectId =
-                                    referencedFeatureData.getIntermineObjectId();
-                                getChadoDBConverter().store(revReference,
-                                                            refObjectId);
+                                Integer refObjectId = referencedFeatureData.getIntermineObjectId();
+                                getChadoDBConverter().store(revReference, refObjectId);
                             }
                         }
 
@@ -1072,7 +1068,6 @@ public class SequenceProcessor extends ChadoProcessor
                 }
                 accession  = fixIdentifier(fdat, accession);
 
-
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
                     getConfig(taxonId);
@@ -1088,9 +1083,7 @@ public class SequenceProcessor extends ChadoProcessor
                     // no actions configured for this synonym
                     continue;
                 }
-
                 Set<String> fieldsSet = new HashSet<String>();
-
                 for (ConfigAction action: actionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
@@ -1156,6 +1149,7 @@ public class SequenceProcessor extends ChadoProcessor
             String propTypeName = res.getString("type_name");
 
             if (featureMap.containsKey(featureId)) {
+
                 FeatureData fdat = featureMap.get(featureId);
                 MultiKey key = new MultiKey("prop", fdat.getInterMineType(), propTypeName);
                 int taxonId = fdat.organismData.getTaxonId();
@@ -1175,6 +1169,7 @@ public class SequenceProcessor extends ChadoProcessor
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                          newFieldValue);
                             fieldsSet.add(newFieldValue);
+
                             if (setAction.getFieldName().equals("primaryIdentifier")) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
                             }
@@ -1373,6 +1368,7 @@ public class SequenceProcessor extends ChadoProcessor
                         String newFieldValue = setAction.processValue(cvtermName);
                         setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
                                      newFieldValue);
+
                         fieldsSet.add(newFieldValue);
                         if (setAction.getFieldName().equals("primaryIdentifier")) {
                             fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
