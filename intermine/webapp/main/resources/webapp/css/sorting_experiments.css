@@ -1,6 +1,10 @@
-th {
+th2 {
   padding: 8px 12px 4px 12px;
   font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; color: #4f6b72; border: 1px solid #C1DAD7; letter-spacing: 1px; text-transform: uppercase; text-align: left; background: #fff; vertical-align:middle;}
+
+th {
+  padding: 8px 12px 4px 12px;
+  font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; color: #4f6b72; border: 1px solid #C1DAD7; letter-spacing: 1px; text-align: left; background: #fff; vertical-align:middle;}
 
 th.sortable,
 th.sortable-text,

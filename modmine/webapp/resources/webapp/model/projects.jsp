@@ -99,91 +99,115 @@ white-space:nowrap;
 
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
 	<tr>
-		<th class="sortable">Project</th>
+		<th class="sortable">PROJECTS</th>
 		<th class="sortable">PI</th>
-    <th class="sortable">Labs</th>
-    <th>Experiments</th>
-    <th>Submissions</th>
+    <th class="sortable">LABS</th>
+    <th class="sortable"></th>
+    <th class="sortable">EXPERIMENTS</th>
+    <th >GBrowse Tracks</th>
+    <th>Repositories Submissions</th>
+    <th>FEATURES &nbsp;&nbsp;&nbsp;&nbsp;export formats:
+    <img border="0" class="arrow" src="model/images/tab.png" title="tab separated value format"  height="30" width="10"/>
+    <img border="0" class="arrow" src="model/images/csv.png" title="comma separated value format"  height="30" width="10"/>
+    <img border="0" class="arrow" src="model/images/gff_s.png" title="gff3 format"  height="30" width="10"/>
+    <img border="0" class="arrow" src="model/images/seq_s.png" title="fasta format"  height="30" width="10"/>
+    </th>
 	</tr>
-	<c:forEach items="${labs}" var="project">
-		<tr>
-			<td class="sorting"><html:link
-				href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${project.key.id}" 
-				title="${project.key.title}">
- ${project.key.name}
-    </html:link>
-
-			<td class="sorting">${project.key.surnamePI} </td>
-
+	
+<c:forEach items="${experiments}" var="exp" varStatus="exp_status">
+<tr>
 <td class="sorting">
-			<c:forEach items="${project.value}" var="lab">
-				<html:link
-					href="/${WEB_PROPERTIES['webapp.path']}/objectDetails.do?id=${lab.id}">
- ${lab.surname}
-    </html:link><br></br>
-			</c:forEach>
+   <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=${exp.piSurname}&class=Project" title="more info on ${exp.projectName}">${exp.projectName}</html:link>
+</td>
+<td class="sorting">
+${exp.piSurname}<br>
+<span class="tinylink">
+<im:querylink text="[ALL submissions]" skipBuilder="true">
+<query name="" model="genomic" view="Project.submissions.DCCid Project.submissions.description Project.submissions.design Project.submissions.embargoDate Project.submissions.experimentType Project.submissions.experiment.name" sortOrder="Project.submissions.DCCid asc">
+  <node path="Project" type="Project">
+  </node>
+  <node path="Project.surnamePI" type="String">
+    <constraint op="=" value="${exp.piSurname}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+</im:querylink>
+</span>
+
 
 </td>
-      <td class="sorting">
-<table>      
-<c:forEach items="${project.key.experiments }" var="expn">
-<c:forEach items="${experiments }" var="exp" varStatus="exp_status">
-<c:if test="${expn.name eq exp.name}">
-<tr>
+<td class="sorting">
+  <c:forEach items="${exp.labs}" var="lab">
+    <html:link href="/${WEB_PROPERTIES['webapp.path']}/portal.do?externalid=*${lab}&class=Lab" title="more info on ${lab}'s lab">${lab}</html:link><br>
+<span class="tinylink">
+<im:querylink text="[ALL submissions]" skipBuilder="true">
+<query name="" model="genomic" view="Lab.submissions.DCCid Lab.submissions.description Lab.submissions.design Lab.submissions.experiment.name Lab.submissions.experimentType Lab.submissions.embargoDate" sortOrder="Lab.submissions.DCCid asc">
+  <node path="Lab" type="Lab">
+  </node>
+  <node path="Lab.name" type="String">
+    <constraint op="=" value="*${lab}" description="" identifier="" code="A">
+    </constraint>
+  </node>
+</query>
+</im:querylink>
+</span>
 
-  <td>
+</c:forEach>
+
+</td>
+
+<td class="sorting">
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
-      <c:if test="${organism eq 'D. melanogaster'}"> 
+      <c:if test="${organism eq 'D. melanogaster'}"> <font color="#fff">fly</font>
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/>
             <c:set var="fly" value="1" />
           </c:if>
-      <c:if test="${organism eq 'C. elegans'}">  
+      <c:if test="${organism eq 'C. elegans'}">  <font color="#fff">worm</font>
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/>
             <c:set var="worm" value="1" />
           </c:if>
     </c:forEach> 
-  </td>
+</td>
 
-<td>
+<td class="sorting">
+<table>
+<tr><td><b>
      <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
         title="View ${exp.name}">${exp.name}</html:link>
+</b>
 </td>
-<td>
 
-    <c:forEach items="${expCats}" var="ecat" varStatus="ecatStatus">
-      <c:if test="${ecat.key eq exp.name}">
+<td>
+  <c:forEach items="${expCats}" var="ecat" varStatus="ecatStatus">
+     <c:if test="${ecat.key eq exp.name}">
        <c:forEach items="${ecat.value}" var="cat" varStatus="catStatus">
        <c:choose>
-<c:when test="${catStatus.first && catStatus.last }">
-${cat}
- </c:when>
-<c:otherwise>
-    &middot;${cat}
-</c:otherwise>
-</c:choose>
+         <c:when test="${catStatus.first && catStatus.last }">
+           ${cat}
+         </c:when>
+         <c:otherwise> 
+           &middot;${cat}
+         </c:otherwise>
+       </c:choose>
        </c:forEach>
-      </c:if>
-
-
-    </c:forEach> 
+     </c:if>
+   </c:forEach> 
 </td>
-<td>
+
+
+
+
+
 
 <%-- SUBMISSIONS --%>
-
-
-  <%--
-    <c:when test="${exp.submissionCount == 0}">    </c:when>
-    --%>
+<td>
     <c:if test="${exp.submissionCount == 1}">
       <c:set var="submissions" value="${exp.submissionCount} Data submission."/>
     </c:if>
     <c:if test="${exp.submissionCount > 1}">
       <c:set var="submissions" value="${exp.submissionCount} Data submissions."/>
     </c:if>
-
-
 <im:querylink text="${submissions}" skipBuilder="true">
 <query name="" model="genomic" view="Submission.DCCid Submission.title Submission.experimentType Submission.description Submission.embargoDate" sortOrder="Submission.DCCid asc">
   <node path="Submission" type="Submission">
@@ -197,8 +221,8 @@ ${cat}
 </query>
 </im:querylink>
 
-
 <%-- EXPERIMENTAL FACTORS --%>
+<td>
      <c:if test="${fn:length(exp.factorTypes) > 0 }"><br></br> 
        <c:choose>
          <c:when test="${ fn:length(exp.factorTypes) == 1}">
@@ -207,62 +231,17 @@ ${cat}
          <c:otherwise>
            <c:out value="Experimental factors: "/>
          </c:otherwise>
-       </c:choose>  
-       <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status">
-       <c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if>
-       <c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b>
-       </c:forEach>.
+       </c:choose>
+       <%-- whole foreach on one line to avoid spaces before commas --%>
+       <c:forEach items="${exp.factorTypes}" var="ft" varStatus="ft_status"><c:if test="${ft_status.count > 1 && !ft_status.last }">, </c:if><c:if test="${ft_status.count > 1 && ft_status.last }"> and </c:if><b>${ft}</b></c:forEach>.
      </c:if>
-<%-- FEATURES --%>
-      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
-     <c:if test="${fc_status.count == 1 }"><br>Features: </c:if> 
-     <nobr>
-                   <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}"
-        title="View all ${fc.key}s"><b>${fc.value}&nbsp;${fc.key}</b>
-            </html:link>
-            
-               <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab"
-        title="Download in tab separated value format">
-          <img border="0" class="arrow" src="model/images/tab_s.png" title="tab" height="18" width="6"/>        
-        </html:link>
-            
-              <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv"
-        title="Download in comma separated value format">
-          <img border="0" class="arrow" src="model/images/csv_s.png" title="cvs"  height="18" width="6"/>
-          </html:link>
-            
-       <%--     <c:if test="${!empty exp.unlocated }"> --%>
-<c:choose>
-<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.key)}">
-</c:when>
-<c:otherwise>
-             <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3"
-        title="Download in GFF3 format">
-        <img border="0" class="arrow" src="model/images/gff_s.png" title="gff3"  height="18" width="6"/>
-        </html:link>
-             <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence"
-        title="Download the sequences">
-                  <img border="0" class="arrow" src="model/images/seq_s.png" title="seq"  height="18" width="6"/>
-        </html:link>
-           </nobr>
-</c:otherwise>
-</c:choose>
-&nbsp;
+</td>
+</tr>
+</table>
+</td>
 
-<c:if test="${fc_status.last }">
-<br> 
-</c:if>
-     
-
-      </c:forEach>
-<p/>
 <%-- TRACKS --%>
-
+<td class="sorting">
      <c:set var="urlabels" value=""/>
      <c:set var="flylabels" value=""/>
      <c:set var="wormlabels" value=""/>
@@ -271,7 +250,8 @@ ${cat}
 
 
      <c:forEach items="${tracks[exp.name]}" var="etrack"  varStatus="status">
-     <%-- build the url for getting all the labels in this experiment --%> 
+     <%-- build the url for getting all the labels in this experiment --%>
+     
      <c:set var="organism" value="${etrack.organism}"/>
 
 <c:choose>
@@ -306,14 +286,14 @@ ${cat}
 </c:forEach>
 
 
-<c:if test="${flyTracksCounter > 1 }">
+<c:if test="${flyTracksCounter > 0 }">
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View all the tracks for this experiment">
-     ${flyTracksCounter} GBrowse tracks
-        <img border="0" class="arrow" src="model/images/fly_gb.png" title="fly"/>
+     ${flyTracksCounter}
+        <img border="0" class="arrow" src="model/images/fly_gb.png"/>
 </html:link>    
 </c:if>
-
+<%--
 <c:if test="${ flyTracksCounter== 1}">
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/fly/?label=${flylabels}" target="_blank" title="View the track generated for this experiment">
@@ -322,17 +302,22 @@ ${cat}
 </html:link>
 </c:if>
 
+
+
+--%>
 <c:if test="${ flyTracksCounter > 0 && wormTracksCounter > 0}">
 <br></br>
 </c:if>
-<c:if test="${wormTracksCounter > 1 }">
+
+<c:if test="${wormTracksCounter > 0 }">
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View all the tracks for this experiment">
-     ${wormTracksCounter} GBrowse tracks
-        <img border="0" class="arrow" src="model/images/worm_gb.png" title="worm"/>
+     ${wormTracksCounter} 
+        <img border="0" class="arrow" src="model/images/worm_gb.png" />
 </html:link>
 </c:if>
 
+<%--
 <c:if test="${ wormTracksCounter== 1}">
 <html:link 
      href="${WEB_PROPERTIES['gbrowse.prefix']}/worm/?label=${wormlabels}" target="_blank" title="View the track generated for this experiment">
@@ -340,9 +325,13 @@ ${cat}
         <img border="0" class="arrow" src="model/images/worm_gb.png" title="worm"/>
 </html:link>
 </c:if>
+--%>
+</td>
 
 
 <%-- REPOSITORY ENTRIES --%>
+<td class="sorting">
+
      <c:if test="${exp.repositedCount > 0}">
 
       <c:forEach items="${exp.reposited}" var="rep" varStatus="rep_status">
@@ -379,64 +368,60 @@ ${cat}
       <br></br>
       </c:forEach>
      </c:if>
-
-
-<td>
-<%-- GET DATA 
-<html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
-        <img src="model/images/get_data_button.png" alt="Get Data" style="align:middle">
-        </html:link>
 </td>
---%>
+
+
+
+<%-- FEATURES --%>
+<td class="sorting">
+      <c:forEach items="${exp.featureCounts}" var="fc" varStatus="fc_status">
+     <nobr>
+       <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=results&experiment=${exp.name}&feature=${fc.key}"
+        title="View all ${fc.key}s">${fc.value}&nbsp;${fc.key}
+            </html:link>
+            
+               <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=tab"
+        title="Download in tab separated value format">
+          <img border="0" class="arrow" src="model/images/tab_s.png" title="export in tab format" height="18" width="6"/>        
+        </html:link>
+            
+              <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=csv"
+        title="Download in comma separated value format">
+          <img border="0" class="arrow" src="model/images/csv_s.png" title="export in cvs format"  height="18" width="6"/>
+          </html:link>
+            
+<c:choose>
+<c:when test="${!empty exp.unlocated && fn:contains(exp.unlocated, fc.key)}">
+</c:when>
+<c:otherwise>
+             <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=gff3"
+        title="Download in GFF3 format">
+        <img border="0" class="arrow" src="model/images/gff_s.png" title="export in gff3 format"  height="18" width="6"/>
+        </html:link>
+             <html:link
+        href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.key}&format=sequence"
+        title="Download the sequences">
+                  <img border="0" class="arrow" src="model/images/seq_s.png" title="export in fasta format"  height="18" width="6"/>
+        </html:link>
+           </nobr>
+</c:otherwise>
+</c:choose>
+&nbsp;
+     
+
+      </c:forEach>
+<p/>
+</td>
+
+
 </tr>
 
 
-
-</c:if>
 </c:forEach>
-			</c:forEach>
 </table>
-			
-			</td>
-      <td class="sorting">
-			
-			<c:forEach items="${counts}" var="nr">
-				<c:if test="${nr.key.surnamePI eq project.key.surnamePI}">
-					<c:set var="nrSubs" value="${nr.value}" />
-				</c:if>
-			</c:forEach> 
-
-			<c:choose>
-				<c:when test="${nrSubs eq 0}">
-        -
-        </c:when>
-				<c:when test="${nrSubs gt 0}">
-					<im:querylink text="${nrSubs} submissions in the project" skipBuilder="true">
-						<query name="" model="genomic"
-							view="Project.labs.submissions.title 
-							Project.labs.submissions.design 
-							Project.labs.submissions.experimentalFactors.type 
-							Project.labs.submissions.experimentalFactors.name"
-							sortOrder="Project.labs.submissions.title">
-						<node path="Project" type="Project">
-						</node>
-						<node path="Project.surnamePI" type="String">
-						<constraint op="=" value="${project.key.surnamePI}" description=""
-							identifier="" code="A">
-						</constraint>
-						</node>
-						</query>
-					</im:querylink>
-				</c:when>
-			</c:choose>
-	</c:forEach>
-	</tr>
-
-</table>
-
-
-
-
 
 </div>
