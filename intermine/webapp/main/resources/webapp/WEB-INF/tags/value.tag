@@ -8,16 +8,26 @@
   <c:when test="${fn:startsWith(fn:trim(body), 'http://')}">
     <a href="${body}" class="value extlink">
   </c:when>
-  <c:otherwise>
-    <span class="value">
-  </c:otherwise>
+  <c:when test="${!fn:startsWith(fn:trim(body), '<STYLE')}">
+    <span class="value">A
+  </c:when>
 </c:choose>
-<c:out value="${body}"/>
+
+<c:choose>
+    <%-- FIXME we should configure which fields are raw HTML instead of looking for style tag --%>
+     <c:when test="${fn:startsWith(fn:trim(body), '<STYLE')}">
+        ${body}
+    </c:when>
+    <c:otherwise>
+        <c:out value="${body}"/>
+    </c:otherwise>
+</c:choose>
+
 <c:choose>
   <c:when test="${fn:startsWith(fn:trim(body), 'http://')}">
     </a>
   </c:when>
-  <c:otherwise>
+  <c:when test="${!fn:startsWith(fn:trim(body), '<STYLE')}">
     </span>
-  </c:otherwise>
+  </c:when>
 </c:choose>
