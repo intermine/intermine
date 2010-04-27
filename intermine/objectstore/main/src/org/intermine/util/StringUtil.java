@@ -496,6 +496,24 @@ public class StringUtil
     }
 
     /**
+     * Trim starting and trailing '/' characters from a string if present.
+     * @param s the string to trim slashes from
+     * @return a string with no starting or trailing slashes, or null if input string was null
+     */
+    public static String trimSlashes(String s) {
+        if (s == null) {
+            return null;
+        }
+        if (s.startsWith("/")) {
+            s = s.substring(1);
+        }
+        if (s.endsWith("/")) {
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
+    
+    /**
      * Wraps the given String into several lines and ultimately truncates it with an ellipsis.
      *
      * @param input the String to shorten
