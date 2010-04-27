@@ -2,7 +2,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-
+<!--  geneMicroArrayDisplayer.jsp -->
 <c:forEach items="${experiments}" var="item">
   <c:if test="${item.identifier == 'E-FLYC-6'}">
   <p>
@@ -20,3 +20,4 @@
   </c:if>
 </c:forEach>
 
+<!--  /geneMicroArrayDisplayer.jsp -->

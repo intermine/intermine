@@ -75,11 +75,11 @@ public class MockItemWriter implements ItemWriter
     /**
      * {@inheritDoc}
      */
-    public void store(Attribute ref, Integer itemId) {
-        ref.setId(idCounter++);
+    public void store(Attribute att, Integer itemId) {
+        att.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
-        ref.setItem(item);
-        item.addAttributes(ref);
+        att.setItem(item);
+        item.addAttributes(att);
     }
 
     /**
