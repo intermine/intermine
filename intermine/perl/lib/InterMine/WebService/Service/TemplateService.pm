@@ -1,71 +1,4 @@
-package Template::Handler;
 
-use strict;
-use warnings;
-
-sub new {
-    my $class = shift;
-    my $self = {};
-    return bless $self, $class;
-}
-
-sub start_element {
-    my $self = shift;
-    my $args = shift;
-    
-    my $nameattr = $args->{Attributes}{name};
-    if ($args->{Name} eq 'template') {
-	$self->{template}{name}  = $nameattr;
-	$self->{template}{title} = $args->{Attributes}{title};
-	$self->{template}{longDescription} = $args->{Attributes}{longDescription};
-	$self->{template}{comment} = $args->{Attributes}{comment};
-    }
-    else {
-	my $template = $self->{template};
-	if ($args->{Name} eq 'query') {
-	    $template->{model} = $args->{Attributes}{model};
-	    my @views = ();
-	    if (exists $args->{Attributes}{view}) {
-		@views = split(/\s+/, $args->{Attributes}{view});
-	    }
-	    $template->{views} = \@views;
-	}
-	elsif ($args->{Name} eq 'node') {
-	    $self->{current_node} = $args->{Attributes}{path};
-	    print "Current node is ", $self->{current_node}, "\n";
-	    $template->{paths}{$args->{Attributes}{path}}{type} = $args->{Attributes}{type};
-	}
-	elsif ($args->{Name} eq 'constraint') {
-	    if ( (exists $args->{Attributes}{editable}) && 
-	         ($args->{Attributes}{editable} eq 'true') ) {
-		
-		my $path = $self->{current_node};
-		my $code = $args->{Attributes}{code};
-		print "Adding constraint $code to $path\n";
-		$template->{paths}{$path}{constraints}{$code}{op} =
-		        $args->{Attributes}{op};
-		if (exists $args->{Attributes}{value}) {
-		    $template->{paths}{$path}{constraints}{$code}{value} = 
-			$args->{Attributes}{value};
-		}
-		if (exists $args->{Attributes}{extraValue}) {
-		    $template->{paths}{$path}{constraints}{$code}{extraValue} = 
-			$args->{Attributes}{extraValue};
-		}
-	    }
-	}
-	elsif (! $args->{Name} eq 'pathDescription') {
-	    die "unexpected element: ", $args->{Name}, "\n";
-	}
-    }
-}
-
-sub end_document {
-    my $self = shift;
-    return($self->{template});
-}
-
-1; 
 
 package InterMine::WebService::Service::TemplateService;
 
@@ -125,11 +58,12 @@ use warnings;
 use base qw(InterMine::WebService::Core::Service);
 
 use IO::String;
-use XML::Parser::PerlSAX;
 
 use InterMine::WebService::Core::Request;
+use InterMine::Template;
+use InterMine::WebService::Service::ModelService;
 
-my $SERVICE_RELATIVE_URL = "query/results";
+my $SERVICE_RELATIVE_URL = 'templates';
 
 =head2 new
 
@@ -147,12 +81,16 @@ sub new
   my $service_root = shift;
   my $app_name = shift;
 
-  my $self = $class->SUPER::new($service_root, $app_name);
+  my $self = $class->SUPER::new($service_root, $app_name);  
+
+  my $ms = InterMine::WebService::Service::ModelService->new($service_root, $app_name);
+  $self->{model_service} = $ms;
 
   bless $self, $class;
 
   return $self;
 }
+
 
 =head2 get_relative_path
 
@@ -161,45 +99,87 @@ sub new
            webapp
 
 =cut
-sub get_relative_path
-{
-  return "template/results";
+
+sub get_relative_path {
+    return $SERVICE_RELATIVE_URL;
 }
 
-sub _parse {
-    my $input = shift;
-    
-    my $handler = 
-    my parser   = XML::Parser::PerlSAX->new(Handler => $handler);
-}
 
 =head2 search_for
 
  Usage   : my $templates = $service->search_for($keyword);
  Function: get templates that match search term.
  Args    : $keyword - any term to search by, with * as wildcards beginning and end
- Returns : an array of hashes with the template information
+ Returns : an array of InterMine::Template objects.
 
 =cut
 sub search_for
 {
-  my $self    = shift;
-  my $keyword = shift
+  my $self      = shift;
+  my $keyword   = shift;
+  my @templates = $self->get_templates;
+  return grep {$_->get_name =~ /$keyword/i} @templates;
+}
 
-  my $request =
-    new InterMine::WebService::Core::Request('GET', $self->get_url(), 'TEXT');
+sub get_templates {
+    my $self = shift;
+    
+    my $request =
+	new InterMine::WebService::Core::Request('GET', $self->get_url().'/xml', 'TEXT');
+    
+    my $resp = $self->execute_request($request);
+    if ($resp->is_error) {
+	die 'Fetching templates failed with message: ', $resp->status_line(), "\n";
+    }
+    else {
+	my $model = $self->{model_service}->get_model;
+	return $self->_make_templates_from_xml($resp->content, $model);
+    }
+}
 
-  $request->add_parameters(keyword => $keyword);
+sub _make_templates_from_xml {
+    my $self = shift;
+    my $xml_string = shift;
+    my $model = shift;
+    $xml_string =~ s[</?template-queries>][]gs;
+    my @templates;
+# Cut up the result sting into individual templates
+    while ($xml_string =~ m[(<template.*?</template>)(.*)]s) { 
+	push @templates, $1;
+	$xml_string = $2;	
+    }
+    return map {InterMine::Template->new(string => $_, model => $model)} @templates;
+}
 
-  my $resp = $self->execute_request($request);
-  if ($resp->is_error) {
-      die 'Fetching templates failed with message: ', $resp->status_line(), "\n";
-  }
-  else {
-      my $handler = new Template::Handler;
-      my $parser  = new XML::Parser::PerlSAX(Handler => $handler);
-      return $parser->parse($resp->content);
-  }
+
+
+sub get_result {
+    my $self = shift;
+    my $template = shift;
+    my $request =
+	new InterMine::WebService::Core::Request('GET', $self->get_url().'/results', 'TAB');
+    
+    $request->add_parameters(name => $template->get_name);
+
+    my $i = 1;
+    my @constraints = $template->get_editable_constraints;
+    for my $c (@constraints) {
+	$request->add_parameters('constraint'.$i => $c->get_path);
+	$request->add_parameters('op'.$i         => $c->op);
+	$request->add_parameters('value'.$i      => $c->value) if (defined $c->value);
+	$request->add_parameters('extraValue'.$i => $c->extra_value) if (defined $c->extra_value);
+	$i++;
+    }
+
+    $request->add_parameters(size => 10); # change
+
+    my $resp = $self->execute_request($request);
+    if ($resp->is_error) {
+	die 'Fetching results failed with message: ', $resp->status_line(), "\n";
+    }
+    else {
+	return $resp->content;
+    }
 }
 
 =head2 get_result_table
