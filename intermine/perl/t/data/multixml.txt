@@ -1,0 +1,58 @@
+<template name="Probe_Gene" title="Affymetrix probeset --&gt; Gene." longDescription="For specified Affymetrix probeset(s) show the corresponding gene." comment="">
+  <query name="Probe_Gene" model="genomic" view="Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" longDescription="For specified Affymetrix probeset(s) show the corresponding gene." sortOrder="Gene.probeSets.primaryIdentifier asc" constraintLogic="A and B">
+    <pathDescription pathString="Gene.probeSets.chromosome" description="Probe &gt; chromosome">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets.evidence" description="Dataset">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets.chromosomeLocation" description="Probe &gt; chromosome location">
+    </pathDescription>
+    <pathDescription pathString="Gene.probeSets" description="Probe">
+    </pathDescription>
+    <node path="Gene" type="Gene">
+    </node>
+    <node path="Gene.organism" type="Organism">
+    </node>
+    <node path="Gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="" identifier="" code="A">
+      </constraint>
+    </node>
+    <node path="Gene.probeSets" type="ProbeSet">
+    </node>
+    <node path="Gene.probeSets.primaryIdentifier" type="String">
+      <constraint op="=" value="1634044_at" description="" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+  </query>
+</template>
+<template name="GeneOrganism1_OrthologueOrganism2" title="All genes organism1 --&gt; Orthologues organism2." longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." comment="">
+  <query name="GeneOrganism1_OrthologueOrganism2" model="genomic" view="Homologue.gene.primaryIdentifier Homologue.gene.symbol Homologue.homologue.primaryIdentifier Homologue.homologue.symbol Homologue.inParanoidScore Homologue.dataSets.title" longDescription="Show all the orthologues between two specified organisms. (Data Source: Inparanoid, Drosophila Consortium)." sortOrder="Homologue.gene.primaryIdentifier asc" constraintLogic="A and B and C">
+    <pathDescription pathString="Homologue.dataSets" description="Dataset">
+    </pathDescription>
+    <pathDescription pathString="Homologue.gene" description="Organism1 &gt; gene">
+    </pathDescription>
+    <pathDescription pathString="Homologue.homologue" description="Organism2 &gt; gene">
+    </pathDescription>
+    <node path="Homologue" type="Homologue">
+    </node>
+    <node path="Homologue.gene" type="Gene">
+    </node>
+    <node path="Homologue.gene.organism" type="Organism">
+    </node>
+    <node path="Homologue.gene.organism.name" type="String">
+      <constraint op="=" value="Drosophila melanogaster" description="Show the predicted orthologues between:" identifier="" editable="true" code="A">
+      </constraint>
+    </node>
+    <node path="Homologue.homologue" type="Gene">
+    </node>
+    <node path="Homologue.homologue.organism" type="Organism">
+    </node>
+    <node path="Homologue.homologue.organism.name" type="String">
+      <constraint op="=" value="Caenorhabditis elegans" description="and:" identifier="" editable="true" code="B">
+      </constraint>
+    </node>
+    <node path="Homologue.type" type="String">
+      <constraint op="=" value="orthologue" description="" identifier="" code="C">
+      </constraint>
+    </node>
+  </query>
+</template>
