@@ -80,6 +80,7 @@ sub new
   return $self;
 }
 
+
 =head2 get_relative_path
 
  Usage   : my $rel_path = $service->get_relative_path();
@@ -87,10 +88,11 @@ sub new
            webapp
 
 =cut
-sub get_relative_path
-{
-  return "query/results";
+
+sub get_relative_path {
+    return $SERVICE_RELATIVE_URL;
 }
+
 
 =head2 get_result
 
