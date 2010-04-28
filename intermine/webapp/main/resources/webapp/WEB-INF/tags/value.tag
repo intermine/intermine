@@ -9,7 +9,7 @@
     <a href="${body}" class="value extlink">
   </c:when>
   <c:when test="${!fn:startsWith(fn:trim(body), '<STYLE')}">
-    <span class="value">A
+    <span class="value">
   </c:when>
 </c:choose>
 
