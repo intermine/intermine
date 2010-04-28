@@ -17,7 +17,7 @@ my @res = $service->get_result_table($query);
 
 ok(scalar(@res) > 1);
 
-my $dros_taxonid = -1;
+my $dros_taxonid = -1; # Set up a deliberate false value
 
 for my $row_ref (@res) {
   if ($row_ref->[0] eq 'Drosophila melanogaster') {
