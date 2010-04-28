@@ -190,4 +190,10 @@ sub as_path_query {
     }
     return $pq;
 }
+
+sub to_xml_string {
+    my $self = shift;
+    my $pq = $self->as_path_query;
+    return $pq->to_xml_string;
+}
 1;
