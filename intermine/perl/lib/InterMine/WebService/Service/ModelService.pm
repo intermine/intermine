@@ -77,32 +77,35 @@ sub new
   return $self;
 }
 
+
 =head2 get_relative_path
 
  Usage   : my $rel_path = $service->get_relative_path();
  Function: return the path of this service relative to the base url of the
            webapp
+
 =cut
-sub get_relative_path
-{
-  return "model";
+
+sub get_relative_path {
+    return $SERVICE_RELATIVE_URL;
 }
+
 
 =head2 get_model_xml
 
  Usage   : $model_resp = $service->get_model_xml();
-           if (!$model_resp->is_error) {
+           if ($model_resp->is_success) {
              $model = new InterMine::Model(string => $model_resp->content()));
            }
  Function: get the model XML for this webapp
  Returns : HTTP::Response containing the model
 =cut
+
 sub get_model_xml
 {
   my $self = shift;
-
   my $request =
-    new InterMine::WebService::Core::Request('POST', $self->get_url(), 'TEXT');
+    new InterMine::WebService::Core::Request('GET', $self->get_url(), 'TEXT');
 
   return $self->execute_request($request);
 }
