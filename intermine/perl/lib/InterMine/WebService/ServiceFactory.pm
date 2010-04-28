@@ -80,7 +80,9 @@ sub new
 =cut
 sub get_query_service
 {
-  return new InterMine::WebService::Service::QueryService($self->{_root_url},
+    use InterMine::WebService::Service::QueryService;
+    my $self = shift;
+    return new InterMine::WebService::Service::QueryService($self->{_root_url},
                                                           $self->{_app_name});
 }
 
@@ -89,9 +91,10 @@ sub get_query_service
  Function: return a TemplateService object
  Args    : none
 =cut
-sub get_template_service
-{
-  return new InterMine::WebService::Service::TemplateService($self->{_root_url},
+sub get_template_service {
+    use InterMine::WebService::Service::TemplateService;
+    my $self = shift;
+   return InterMine::WebService::Service::TemplateService->new($self->{_root_url},
                                                              $self->{_app_name});
 }
 
@@ -100,8 +103,8 @@ sub get_template_service
  Function: return a ListService object
  Args    : none
 =cut
-sub get_list_service
-{
+sub get_list_service {
+    my $self = shift;
   return new InterMine::WebService::Service::ListService($self->{_root_url},
                                                          $self->{_app_name});
 }
@@ -111,8 +114,9 @@ sub get_list_service
  Function: return a ModelService object
  Args    : none
 =cut
-sub get_model_service
-{
+sub get_model_service {
+    use InterMine::WebService::Service::ModelService;
+    my $self = shift;
   return new InterMine::WebService::Service::ModelService($self->{_root_url},
                                                           $self->{_app_name});
 }
@@ -125,8 +129,11 @@ sub get_model_service
            $app_name - application name, tells the server which application uses
                        the service
 =cut
-sub get_service
-{
+sub get_service {
+    use InterMine::WebService::Core::Service;
+    my $self = shift;
   my $service_relative_url = shift;
-  return new InterMine::Service($self->{_root_url}, $service_relative_url, $self->{_app_name});
+  return new InterMine::Core::Service($self->{_root_url}, $service_relative_url, $self->{_app_name});
 }
+
+1;
