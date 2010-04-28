@@ -82,6 +82,9 @@ sub new
   if (!defined $opts{file} && !defined $opts{string}) {
     die "$class\::new() needs a file or string argument\n";
   }
+  elsif (defined $opts{file} && !-f $opts{file}) {
+    die "A valid file must be specified: we got $opts{file}\n";
+  }
 
   $self->{class_hash} = {};
 
