@@ -51,10 +51,14 @@ my %OPS = ('IS NOT NULL' => 1,
            '!='          => 2,
            '<'           => 2,
            '>'           => 2,
-	   '>='          => 2,
-	   '<='          => 2,
+           '>='          => 2,
+           '<='          => 2,
            'LOOKUP'      => 2,
-           # TODO: IN and NOT IN list constraints 
+	   'LIKE'        => 2,
+	   'NOT LIKE'    => 2,
+	   'IN'          => 2, 
+	   'NOT IN'      => 2,
+	   # plus five more to come in branch
 );
 
 =head2 new
@@ -68,59 +72,61 @@ my %OPS = ('IS NOT NULL' => 1,
 sub new
 {
   my $class = shift;
-  my $constraint_string = shift;
-
-  my @bits = $constraint_string =~ 
-            m/^(IS\sNOT\sNULL|IS\sNULL|\S+)
-               (?:\s+(.*))?
-             /x;
-
-  if (@bits < 1) {
-    die "can't parse constraint: $constraint_string\n";
-  }
-
-  my $op = $bits[0];
-
-  if (!exists $OPS{$op}) {
-    die qq[unknown operation "$op" in constraint: $constraint_string\n];
-  }
-
-  my $value       = $bits[1];
- 
-  my $self = {op => $op};
-
-  if (defined $value) {
-    if ($OPS{$op} == 1) {
-      die qq[operator "$op" should not have a value ($value)];
-    }
-    $value =~ s/^'(.*)'$/$1/;
-    $value =~ s/^"(.*)"$/$1/;
+  my %args;
+  if (@_ == 1) {
+      my $constraint_string = shift;
     
-    $self->{value} = $value;
+      my @bits = $constraint_string =~ 
+                m/^(IS\sNOT\sNULL|IS\sNULL|\S+)
+                   (?:\s+(.*))?
+                 /x;
+    
+      if (@bits < 1) {
+        die "can't parse constraint: $constraint_string\n";
+      }
+        
+      $args{op}    = $bits[0];
+      $args{value} = $bits[1];
+  }
+  else {
+      %args = @_;
+  }
+  if (!exists $OPS{$args{op}}) {
+    die qq[unknown operation "$args{op}" in constraint\n];
+  }   
+
+  if (defined $args{value}) {
+    if ($OPS{$args{op}} == 1) {
+      die qq[operator "$args{op}" should not have a value ($args{value})];
+    }
+    $args{value} =~ s/^'(.*)'$/$1/;
+    $args{value} =~ s/^"(.*)"$/$1/;
+    
   } else {
-    if ($OPS{$op} == 2) {
-      die qq[operator "$op" needs a value];
+    if ($OPS{$args{op}} == 2) {
+      die qq[operator "$args{op}" needs a value];
     }
   }
+
+  my $self = {%args};
   
   return bless $self, $class;
 
 }
-=head2 extra_value
 
- Usage   : $con->extra_value("D. melanogaster");
-           my $extra_value = $con->extra_value;
- Function: Get or set the extra value for a constraint. Returns the new value.
-
-=cut
-
-sub extra_value {
+# Internal method used to set the path. Used by InterMine::PathQuery
+sub _set_path {
     my $self = shift;
-    my $extra_value = shift;
-    if (defined $extra_value) {
-	$self->{extraValue} = $extra_value;
-    }
-    return $self->{extraValue};
+    my $path = shift;
+    die "_set_path needs a path!\n" unless ($path);
+    $self->{path} = $path;
+    return $self->{path};
+}
+
+sub get_path {
+    my $self = shift;
+    my $path = $self->{path};
+    return $path;
 }
 
 =head2 op
@@ -139,8 +145,9 @@ sub op
   my $op = shift;
   if (defined $op) {
       $self->{op} = $op;
+      die "Unknown operation: $op" unless $OPS{$op};
       if ($OPS{$op} == 1) {
-	  $self->{value} = undef;
+      $self->{value} = undef;
       }
   }
   return $self->{op};
@@ -148,7 +155,7 @@ sub op
 
 =head2 value
 
- Usage   : my $val = $con->value();
+ Usage   : my $val = $con->value;
            $con->value('D. melano*');
  Function: Get or set the value of this constraint if the operator is binary
            Raises an exception (dies) if you set a value to a binary operator.
@@ -161,11 +168,28 @@ sub value
   if (defined $value) {
       my $op = $self->{op};
       if ($OPS{$op} == 1) {
-	  die qq[operator "$op" should not have a value ($value)];
+      die qq[operator "$op" should not have a value ($value)];
       }
       $self->{value} = $value;
   }  
   return $self->{value};
+}
+
+=head2 extra_value
+
+ Usage   : $con->extra_value("D. melanogaster");
+           my $extra_value = $con->extra_value;
+ Function: Get or set the extra value for a constraint. Returns the new value.
+
+=cut
+
+sub extra_value {
+    my $self = shift;
+    my $extra_value = shift;
+    if (defined $extra_value) {
+    $self->{extraValue} = $extra_value;
+    }
+    return $self->{extraValue};
 }
 
 =head2 code
@@ -187,5 +211,35 @@ sub code
   }
 
   return $self->{code};
+}
+
+=head2 is_editable
+
+ Usage   : $con->is_editable;
+ Function: Learn whether a constraint can be edited or not (for Templates)
+ Returns : True/False values
+
+=cut
+sub is_editable {
+    my $self = shift;
+    return $self->{editable};
+}
+
+=head2 as_string
+
+ Usage   : print $con->as_string, "\n";
+ Function: Formats the object in a readable string format (similar to the 
+           constraint strings that can be used to create new constraints)
+ Returns : A string such as 'Homologue.type = "orthologue"'
+
+=cut
+
+sub as_string {
+    my $self = shift;
+    my $ret = $self->{op};
+    $ret    = $self->{path}.' '.$ret if (defined $self->{path});
+    $ret   .= ' "'.$self->{value}.'"' if (defined $self->{value});
+    $ret   .= ' IN "'.$self->{extraValue}.'"' if (defined $self->{extraValue});
+    return $ret;
 }
 1;
