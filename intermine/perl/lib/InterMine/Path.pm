@@ -85,7 +85,7 @@ sub validate
   my $model = shift;
   my $path_string = shift;
 
-  _get_parts($model, $path_string);
+  return _get_parts($model, $path_string);
 }
 
 =head2 parts
