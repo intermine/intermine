@@ -30,13 +30,13 @@ sub start_element {
             if (exists $args->{Attributes}{view}) {
                 @views = split(/\s+/, $args->{Attributes}{view});
             }
-            $template->{views} = \@views;
+            $template->{view} = \@views;
 	    $template->{sort_order} = $args->{Attributes}{sortOrder};
-	    $template->{logic} = $args->{Attributes}{constraintLogic};
+	    $template->{constraintLogic} = $args->{Attributes}{constraintLogic};
         }
         elsif ($args->{Name} eq 'node') {
             $self->{current_node} = $args->{Attributes}{path};
-            $template->{paths}{$args->{Attributes}{path}}{type} = $args->{Attributes}{type};
+#            $template->{paths}{$args->{Attributes}{path}}{type} = $args->{Attributes}{type};
         }
         elsif ($args->{Name} eq 'constraint') {
 	    my %args;
@@ -48,7 +48,7 @@ sub start_element {
 	    $args{editable}    = $args->{Attributes}{editable};
 	    my $con = InterMine::PathQuery::Constraint->new(%args);
 	    
-	    push @{$template->{paths}{$args{path}}{constraints}}, $con;
+	    push @{$template->{constraints}{$args{path}}}, $con;
         }
         elsif ($args->{Name} ne 'pathDescription') {
             die "unexpected element: ", $args->{Name}, "\n";
