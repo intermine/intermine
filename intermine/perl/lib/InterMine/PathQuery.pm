@@ -320,7 +320,6 @@ sub to_xml_string
 
   for my $path_string (@constraint_paths) {
     
-    my $details = $self->{constraints}->{$path_string};
     my $path = new InterMine::Path($self->{model}, $path_string);
     my $type = $path->end_type;
     
@@ -331,15 +330,14 @@ sub to_xml_string
 	 type => $type,
     );
 
-    for my $constraint (@$details) {
-      
-      my %tags;
-      for (qw/op value extraValue code/) {
-	  $tags{$_} = $constraint->{$_} if (defined $constraint->{$_});
-      }
-      
-      $writer->startTag('constraint', %tags);
-      $writer->endTag();
+    for my $constraint (@{$self->{constraints}->{$path_string}}) {
+	my %tags;
+	for (qw/op value extraValue code/) {
+	    $tags{$_} = $constraint->{$_} if (defined $constraint->{$_});
+	}
+	
+	$writer->startTag('constraint', %tags);
+	$writer->endTag();
     }
     $writer->endTag();
   }
