@@ -3,10 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 29;
+use Test::More tests => 31;
 use Test::Exception;
 
-use InterMine::PathQuery::Constraint;
+BEGIN {use_ok('InterMine::PathQuery::Constraint');}
 
 dies_ok {InterMine::PathQuery::Constraint->new('FOO')} 'illegal op';
 dies_ok {InterMine::PathQuery::Constraint->new('IS NULL foo')} 'unary op with value';
@@ -56,6 +56,7 @@ is($mutable_c->value, 'bar', "Can change value");
 $mutable_c->op('IS NULL');
 ok(! defined $mutable_c->value);
 is($mutable_c->op, 'IS NULL', "can change operator");
+dies_ok {$mutable_c->value('foo')} 'Value applied to unary operator';
 
 my $extra_value_c = InterMine::PathQuery::Constraint->new('LOOKUP "foo"');
 $extra_value_c->extra_value('baz');
