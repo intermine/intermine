@@ -14,6 +14,7 @@ my $res = $service->get_model_xml();
 ok(defined $res);
 ok($res->is_success);
 
+
 my $content = $res->content();
 ok($content =~ /BioEntity/);
 
