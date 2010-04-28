@@ -119,8 +119,8 @@ public class OboToModel
                             if (needComma) {
                                 parents.append(" ");
                             }
-                            needComma = true;			   
-			    parents.append(parentName);			   
+                            needComma = true;
+                            parents.append(parentName);
                         }
                     }
                 }
@@ -132,7 +132,7 @@ public class OboToModel
                 // add collections
                 if (collectionIdentifiers != null) {
                     collections = new HashSet();
-                    for (String partof : owler.namesToPartOfs.get(childName)) {			
+                    for (String partof : owler.namesToPartOfs.get(childName)) {
                         // only add collections in our model
                         if (owler.oboTerms.containsValue(partof)) {
                             String[] bits = partof.split("\\.");
@@ -143,7 +143,7 @@ public class OboToModel
                         }
                     }
                 }
-		clds.add(new ClassDescriptor(childName,
+                clds.add(new ClassDescriptor(childName,
                         (parentNames == null ? null : parents.toString()),
                         true, fakeAttributes, fakeReferences, collections));
             }
@@ -151,6 +151,7 @@ public class OboToModel
             out.println(model);
             out.flush();
             out.close();
+            System.out .println("Wrote " + modelFile.getCanonicalPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,7 +168,7 @@ public class OboToModel
                 continue;
             }
 
-	    String relationshipType = r.getRelationship().getName();
+            String relationshipType = r.getRelationship().getName();
             if (relationshipType.equals("part_of") && r.direct) {
                 Set<String> partofs = namesToPartOfs.get(childName);
                 if (partofs == null) {
@@ -182,7 +183,7 @@ public class OboToModel
                     childNamesToParentNames.put(childName, parents);
                 }
                 parents.add(parentName);
-    
+
             }
         }
     }

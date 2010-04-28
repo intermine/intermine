@@ -3,6 +3,13 @@
 # The following environment variables need to be set
 # INTERMINE: location of local InterMine installation
 
+if [ $# -ne 3 ]
+then
+    echo "expecting: $0 mine model namespace"
+    echo "eg, flymine sofa org.intermine.bio ";
+    exit
+fi
+
 whichmine=$1
 export newModelName=$2
 namespace=$3

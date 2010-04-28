@@ -121,8 +121,7 @@ public class OboParser
         LOG.info("PROGRESS:" + writer.getProgressString());
         // END OF OBO2EDIT code
         readRelations(new BufferedReader(new FileReader(temp.getCanonicalPath())));
-        System.out.println(temp.getCanonicalPath());
-        //temp.delete();
+        temp.delete();
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Processed transitive closure of OBO file, took: " + timeTaken + " ms");
     }
