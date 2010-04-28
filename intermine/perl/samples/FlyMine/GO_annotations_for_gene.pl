@@ -10,6 +10,7 @@
 #
 # This example makes use of the Gene => GO terms Template
 # url: http://www.flymine.org/release-24.0/template.do?name=Gene_GO
+#
 
 use strict;
 use warnings;
