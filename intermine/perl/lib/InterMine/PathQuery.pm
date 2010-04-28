@@ -132,10 +132,10 @@ sub sort_order
 
   if (@_ == 0) {
     my $sort_order = $self->{sort_order};
-    if (defined $sort_order && $self->_has_view_path($sort_order)) {
+    if (defined $sort_order) {
       return $sort_order;
     } else {
-      # the sort path has gone from the view or was never set, find another
+      # the sort path was not set - default to first view
       my @view = $self->view();
       if (@view) {
         $self->{sort_order} = $view[0];
@@ -147,11 +147,11 @@ sub sort_order
   } else {
     my $sort_order = shift;
 
-    if ($self->_has_view_path($sort_order)) {
-      $self->{sort_order} = $sort_order;
-    } else {
-      die "the new sort order ($sort_order) is not in the view (",
-          $self->view(), "\n";
+    if (InterMine::Path->validate($self->{model}, $sort_order)) {
+	$self->{sort_order} = $sort_order;
+    }
+    else {
+	die qq(Sort order "$sort_order" is not a valid path for this model\n);
     }
   }
 }
@@ -173,20 +173,32 @@ sub add_constraint
     die "no constraint string specified for PathQuery->add_constraint()\n";
   }
 
-  my @bits = split /\s+/, $arg, 2;
-  if (@bits < 2) {
-    die "can't parse constraint: $arg\n";
+  my ($c, $path);
+
+  # Allow constraints to be passed straight from templates to PathQueries
+  if (ref $arg eq 'InterMine::PathQuery::Constraint') {
+      $c = $arg;
+      $path = $c->get_path;
   }
+  else {
+      my @bits = split /\s+/, $arg, 2;
+      if (@bits < 2) {
+	  die "can't parse constraint: $arg\n";
+      }
 
-  my $path = $bits[0];
+      $path = $bits[0];
+      
+      die qq("$path" is not a valid Path for this model.\n) 
+	  unless (InterMine::Path->validate($self->{model}, $path));
 
-  InterMine::Path->validate($self->{model}, $path);
-
-  my $constraint_string = $bits[1];
-
-  my $c = new InterMine::PathQuery::Constraint($constraint_string);
-
-  $c->code($self->{next_code}++);
+      my $constraint_string = $bits[1];
+      
+      $c = new InterMine::PathQuery::Constraint($constraint_string);
+      $c->_set_path($path); # So the constraint knows what it's doing, and is able
+                        # To use the as_string method nicely.
+      
+      $c->code($self->{next_code}++);
+  }
 
   push @{$self->{constraints}->{$path}}, $c;
 
