@@ -44,6 +44,8 @@ use strict;
 use URI;
 use LWP::UserAgent;
 
+my $SERVICE_RELATIVE_URL = '';
+
 =head2 new
  Title   : new
  Usage   : $item = InterMine::WebService::Core::Service($service_root,
@@ -85,6 +87,18 @@ sub get_url
   my $self = shift;
 
   return $self->{_service_root} . $self->get_relative_path();
+}
+
+=head2 get_relative_path
+
+ Usage   : my $rel_path = $service->get_relative_path();
+ Function: return the path of this service relative to the base url of the
+           webapp
+
+=cut
+
+sub get_relative_path {
+    return $SERVICE_RELATIVE_URL;
 }
 
 =head2 
