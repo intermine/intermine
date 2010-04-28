@@ -59,7 +59,7 @@ use warnings;
 
 use XML::Parser::PerlSAX;
 use InterMine::Template::Handler;
-use InterMine::PathQuery;
+use InterMine::PathQuery qw(AND OR);
 
 =head2 new
 
@@ -121,26 +121,50 @@ sub _process
   }
 
   $parser->parse(Source => $source);
-  $self->{template} = $handler->{template};
+  my $pq = $handler->{template};
+  $pq->{model} = $self->{model};
+
+  bless $pq, 'InterMine::PathQuery';
+  $self->{pq} = $pq;
+
+  return;
+}
+
+sub _parse_logic {
+    # TODO: make this translate human readable logicstrings like "A and B"
+    # to args that PQ->logic can understand
+
+# eg: Organism_interologues: (B or G) and (I or F) and J and C and D and E and H and K and L and M and A
+    my $self = shift;
+    my $logic_string = shift;
+    my $triplet = $logic_string;
+    my ($left, $op, $right) = $triplet =~ /([A-Z]+)\s(and|or)\s([A-Z]+)/;
+    my ($left_constraint) = grep {$_->code eq $left} $self->get_constraints;
+    die "$left does not refer to a real constraint" unless (ref $left_constraint);
+    my ($right_constraint) = grep {$_->code eq $right} $self->get_constraints;
+    die "$right does not refer to a real constraint" unless (ref $right_constraint);
+    if ($op eq 'and') {
+	return AND ($left_constraint, $right_constraint);
+    }
+    elsif ($op eq 'or') {
+	return OR ($left_constraint, $right_constraint);
+    }
+    else {
+	die qq(Can't understand your logic - "$logic_string": unknown operation);
+    }
 }
 
 sub get_views {
   my $self = shift;
-
-  my @views = @{$self->{template}{views}};
-  
-  return @views;
+  return $self->{pq}->view;
 }
 
 sub get_constraints {
     my $self = shift;
     my @constraints = ();
-    for my $path (keys %{$self->{template}{paths}}) {
-        if (exists $self->{template}{paths}{$path}{constraints}) {
-            for my $c (@{$self->{template}{paths}{$path}{constraints}}) {
-                push @constraints, $c;
-            }
-        }
+    my $pq = $self->{pq};
+    for my $path (keys %{$pq->{constraints}}) {
+	push @constraints, @{$pq->{constraints}{$path}};
     }
     return @constraints;
 }
@@ -153,47 +177,35 @@ sub get_editable_constraints {
 
 sub get_description {
     my $self = shift;
-    my $desc = $self->{template}{longDescription};
+    my $desc = $self->{pq}->{longDescription};
     return $desc;
 }
 
 sub get_name {
     my $self = shift;
-    my $name = $self->{template}{name};
+    my $name = $self->{pq}->{name};
     return $name;
 }
 
 sub get_sort_order {
     my $self = shift;
-    my $sort_order = $self->{sort_order};
+    my $sort_order = $self->{pq}->{sort_order};
     return $sort_order;
 }
 
 sub get_logic {
     my $self = shift;
-    my $logic = $self->{logic};
+    my $logic = $self->{pq}{constraintLogic};
     return $logic;
 }
 
 sub as_path_query {
     my $self = shift;
-    my $model = $self->{model};
-    my $pq = InterMine::PathQuery->new($model);
-    my @views = $self->get_views;
-    $pq->add_view(@views);
-    $pq->sort_order($self->get_sort_order) 
-	if (defined $self->get_sort_order);
-    $pq->{logic} = $self->get_logic 
-	if (defined $self->get_logic);;
-    for my $c ($self->get_constraints) {
-	$pq->add_constraint($c);
-    }
-    return $pq;
+    return $self->{pq};
 }
 
 sub to_xml_string {
     my $self = shift;
-    my $pq = $self->as_path_query;
-    return $pq->to_xml_string;
+    return $self->{pq}->to_xml_string;
 }
 1;
