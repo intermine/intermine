@@ -35,6 +35,7 @@
          <li><i>C. elegans</i> - GO annotations for <i>C. elegans</i> gene products assigned by <a href="http://www.wormbase.org" target="_new">WormBase</a>.</li><br/>
          <li><i>S. cerevisiae</i> - GO annotations for <i>S. cerevisiae</i> gene products assigned by <a href="http://www.yeastgenome.org/" target="_new">SGD</a>.</li><br/>
          <li><i>M. musculus</i> - GO annotations for <i>M. musculus</i> gene products assigned by <a href="http://www.informatics.jax.org" target="_new">MGI</a>.</li><br/>
+		 <li>Protein Domains - GO annotations for InterPro protein domains gene  assigned by <a href="http://www.ebi.ac.uk/interpro/" target="_new">InterPro</a>.</li><br/>
        </ul>
       </div>
 
