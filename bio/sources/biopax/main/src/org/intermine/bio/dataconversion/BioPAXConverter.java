@@ -42,7 +42,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 /**
- * 
+ *
  * @author
  */
 public class BioPAXConverter extends FileConverter implements Visitor
@@ -57,30 +57,30 @@ public class BioPAXConverter extends FileConverter implements Visitor
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
-    private List<MultiKey> synonyms = new ArrayList(); 
+    private List<MultiKey> synonyms = new ArrayList();
     private Set<String> taxonIds = new HashSet();
     private Map<String, String[]> configs = new HashMap();
     private OrganismRepository or;
     private String dbName, identifierField;
     private String dataSourceRefId = null, dataSourceName = null;
     private String curated = "false";
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param intermineModel the Model
      * @throws ObjectStoreException if something goes horribly wrong
      */
-    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel) 
+    public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel)
     throws ObjectStoreException {
-        super(writer, intermineModel);        
+        super(writer, intermineModel);
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");        
+        resolverFactory = new FlyBaseIdResolverFactory("gene");
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -93,9 +93,9 @@ public class BioPAXConverter extends FileConverter implements Visitor
             return;
         }
         setDataset();
-        setOrganism(taxonId);        
+        setOrganism(taxonId);
         setConfig(taxonId);
-        
+
         // navigate through the owl file
         JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L2);
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
@@ -111,7 +111,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
             traverser.traverse(pathwayObj, model);
         }
     }
-    
+
     /**
      * Sets the list of taxonIds that should be imported if using split input files.
      *
@@ -121,19 +121,19 @@ public class BioPAXConverter extends FileConverter implements Visitor
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + this.taxonIds);
     }
-    
+
     /**
      * @param curated true or false
      */
     public void setBiopaxCurated(String curated) {
-        this.curated = curated;       
+        this.curated = curated;
     }
 
     /**
      * @param name name of datasource
      * @throws ObjectStoreException if storing datasource fails
      */
-    public void setBiopaxDatasourcename(String name) 
+    public void setBiopaxDatasourcename(String name)
     throws ObjectStoreException {
         this.dataSourceName = name;
         Item datasource = createItem("DataSource");
@@ -145,18 +145,18 @@ public class BioPAXConverter extends FileConverter implements Visitor
         }
         dataSourceRefId = datasource.getIdentifier();
     }
-    
+
     /**
      * @param title name of dataset
      * @throws ObjectStoreException if storing datasource fails
      */
-    public void setBiopaxDatasetname(String title) 
+    public void setBiopaxDatasetname(String title)
     throws ObjectStoreException {
         dataset = createItem("DataSet");
         dataset.setAttribute("title", title);
 
     }
-    
+
     private void readConfig() {
         Properties props = new Properties();
         try {
@@ -167,7 +167,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
-            
+
             String[] attributes = key.split("\\.");
             if (attributes.length != 2) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
@@ -175,20 +175,20 @@ public class BioPAXConverter extends FileConverter implements Visitor
             }
             String taxonId = attributes[0];
             String identifier = attributes[1];
-            
+
             String[] bits = new String[2];
             bits[0] = value;
             bits[1] = identifier;
-            
+
             if (configs.get(taxonId) == null) {
                 configs.put(taxonId, bits);
             } else {
-                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "': " 
+                throw new RuntimeException("Problem loading properties '" + PROP_FILE + "': "
                                            + " duplicate entries for organism " + taxonId);
             }
         }
     }
-    
+
     // set which identifier to set for genes
     private void setConfig(String taxonId) {
         String[] bits = configs.get(taxonId);
@@ -212,7 +212,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
     public void visit(BioPAXElement bpe, Model model, PropertyEditor editor) {
         if (bpe != null) {
             if (bpe instanceof org.biopax.paxtools.model.level2.entity) {
-                org.biopax.paxtools.model.level2.entity entity 
+                org.biopax.paxtools.model.level2.entity entity
                 = (org.biopax.paxtools.model.level2.entity) bpe;
                 String className = entity.getModelInterface().getSimpleName();
                 if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
@@ -227,16 +227,16 @@ public class BioPAXConverter extends FileConverter implements Visitor
             }
         }
     }
-        
-    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity) {        
+
+    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity) {
         String identifier = entity.getRDFId();
 
         // there is only one gene
         if (identifier.contains(dbName) || identifier.contains(DEFAULT_DB_NAME)) {
             processGene(identifier, pathwayRefId);
-            
+
         // there are multiple genes
-        } else {                        
+        } else {
             Set<org.biopax.paxtools.model.level2.xref> xrefs = entity.getXREF();
             for (org.biopax.paxtools.model.level2.xref xref : xrefs) {
                 identifier = xref.getRDFId();
@@ -246,25 +246,30 @@ public class BioPAXConverter extends FileConverter implements Visitor
             }
         }
     }
-    
+
     private void processGene(String xref, String pathway) {
-        
+
         // db source for this identifier, eg. UniProt, FlyBase
         String identifierSource = (xref.contains(dbName) ? dbName : DEFAULT_DB_NAME);
-        
-        // remove prefix, eg. UniProt or ENSEMBL        
+
+        // remove prefix, eg. UniProt or ENSEMBL
         String identifier = StringUtils.substringAfter(xref, identifierSource + "_");
-        
+
         // which gene field to set
         String fieldName = identifierField;
-        
-        if (identifier.contains("_")) {            
+
+        if (identifier.contains("_")) {
             if (identifierSource.equals(DEFAULT_DB_NAME)) {
-                // eg. P38132-CDC47  
-                identifier = identifier.split("_")[1];      
-                fieldName = "symbol";
-            } else {        
-                // eg. CG1234-PA                
+                if (fieldName.equals("symbol")) {
+                    //  eg. P38132-CDC47
+                    identifier = identifier.split("_")[1];
+                } else {
+                    // uniprot uses the gene symbol, but that's not what identifier this organism
+                    // is configured to use
+                    return;
+                }
+            } else {
+                // eg. CG1234-PA
                 identifier = identifier.split("_")[0];
             }
         } else if (identifierSource.equals(DEFAULT_DB_NAME)) {
@@ -272,7 +277,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
             LOG.warn("Gene not stored:" + xref);
             return;
         }
-        
+
         if (organism.getAttribute("taxonId").getValue().equals("7227")) {
             identifier = resolveGene("7227", identifier);
             fieldName = "primaryIdentifier";
@@ -283,13 +288,13 @@ public class BioPAXConverter extends FileConverter implements Visitor
             return;
         }
 
-        Item item = getGene(fieldName, identifier); 
+        Item item = getGene(fieldName, identifier);
         item.addToCollection("pathways", pathway);
         return;
     }
-    
 
-    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway) 
+
+    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway)
     throws ObjectStoreException {
         Item item = createItem("Pathway");
         item.setAttribute("name", pathway.getNAME());
@@ -311,7 +316,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         }
         return null;
     }
-    
+
     private Item getGene(String fieldName, String identifier) {
        Item item = genes.get(identifier);
         if (item == null) {
@@ -328,7 +333,7 @@ public class BioPAXConverter extends FileConverter implements Visitor
         }
         return item;
     }
-    
+
     private void setSynonym(String subjectId, String value)
     throws ObjectStoreException {
         MultiKey key = new MultiKey(subjectId, value);
@@ -346,8 +351,8 @@ public class BioPAXConverter extends FileConverter implements Visitor
             }
         }
     }
-    
-    private void setOrganism(String taxonId) 
+
+    private void setOrganism(String taxonId)
     throws ObjectStoreException {
         organism = createItem("Organism");
         organism.setAttribute("taxonId", taxonId);
@@ -357,8 +362,8 @@ public class BioPAXConverter extends FileConverter implements Visitor
             throw new ObjectStoreException(e);
         }
     }
-    
-    private void setDataset() 
+
+    private void setDataset()
     throws ObjectStoreException {
         if (dataset.getReference("dataSource") == null) {
             dataset.setReference("dataSource", dataSourceRefId);
@@ -369,20 +374,20 @@ public class BioPAXConverter extends FileConverter implements Visitor
             }
         }
     }
-    
-    
+
+
     /**
      * Use the file name currently being processed to divine the name of the organism.  Return null
      * if this taxonId is not in our list of taxonIds to be processed.
      * @return the taxonId of current organism
      */
     private String getTaxonId() {
-        
+
         File file = getCurrentFile();
         String filename = file.getName();
         String[] bits = filename.split(" ");
 
-        // bad filename eg `Human immunodeficiency virus 1.owl`, 
+        // bad filename eg `Human immunodeficiency virus 1.owl`,
         // expecting "Drosophila melanogaster.owl"
         if (bits.length != 2) {
             String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
@@ -390,16 +395,16 @@ public class BioPAXConverter extends FileConverter implements Visitor
             LOG.error(msg);
             return null;
         }
-        
+
         String genus = bits[0];
         String species = bits[1].split("\\.")[0];
-        String organismName = genus + " " + species;        
+        String organismName = genus + " " + species;
         OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
         if (od == null) {
             LOG.error("No data for " + organismName + ".  Please add to repository.");
             return null;
         }
-        
+
         int taxonId = od.getTaxonId();
         String taxonIdString = String.valueOf(taxonId);
 
@@ -407,10 +412,10 @@ public class BioPAXConverter extends FileConverter implements Visitor
         if (!taxonIds.isEmpty() && !taxonIds.contains(taxonIdString)) {
             return null;
         }
-        
+
         return taxonIdString;
     }
-    
+
     /**
      * resolve dmel genes
      * @param taxonId id of organism for this gene
@@ -429,12 +434,12 @@ public class BioPAXConverter extends FileConverter implements Visitor
         }
         return id;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() 
+    public void close()
     throws ObjectStoreException {
         for (Item item : genes.values()) {
             try {
