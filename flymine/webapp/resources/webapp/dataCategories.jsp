@@ -60,13 +60,22 @@
           <p> Comparative Genomics </p></html:link></td>
     <td>
        <p><i>D. melanogaster</i></p>
-       <p><i>D. pseudoobscura</i></p>
        <p><i>S. cerevisiae</i></p>
        <p><i>A. gambiae</i></p>
        <p><i>A. mellifera</i></p>
-       <p><i>C. elegans</i></p>
+       <p><i>C. elegans</i></p>       
+       <p><i>C. lupus familiaris</i></p> 
+       <p><i>D. rerio</i></p> 
+       <p><i>D. discoideum</i></p> 
+       <p><i>G. gallus</i></p> 
+       <p><i>H. sapiens</i></p> 
+       <p><i>M. musculus</i></p> 
+       <p><i>P. troglodytes</i></p> 
+       <p><i>R. norvegicus</i></p> 
+       <p><i>S. cerevisiae</i></p> 
+       <p><i>S. pombe</i></p> 
     </td>
-    <td> Orthologue and paralogue relationships between these 5 organisms</td>
+    <td> Orthologue and paralogue relationships between these 15 organisms</td>
     <td> <a href="http://inparanoid.sbc.su.se/" target="_new">InParanoid</a> - Version 7</td>
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15608241" target="_new">PubMed: 15608241</a></td>
     <td><html:link action="/dataCategories" anchor="note2" title="${note2}">#2</html:link></td>
@@ -253,7 +262,7 @@
   </tr>
 
 
-  <tr><td rowspan="6"  class="leftcol">
+  <tr><td rowspan="7"  class="leftcol">
         <html:link action="/aspect?name=Gene%20Ontology">
          <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
@@ -301,6 +310,14 @@
     <td> GO annotations </td>
     <td> <a href="http://www.ebi.ac.uk/GOA/uniprot_release.html" target="_new">UniProt GOA</a> - 1st March 2010</td>
     <td> Camon et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/14681408" target="_new">PubMed: 14681408</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
+	<tr>
+    <td> <i>D. melanogaster, A. gambiae, C. elegans</i></td>
+    <td> InterPro domains to GO annotations </td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new">InterPro</a> (from <a href="http://www.geneontology.org" target="_new">Gene Ontology Site</a>) - 21st April 2010</td>
+    <td> Gene Ontology Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/10802651" target="_new">PubMed:10802651</a>, Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
 
