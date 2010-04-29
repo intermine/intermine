@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# The following environment variables need to be set
-# INTERMINE: location of local InterMine installation
-
 if [ $# -ne 3 ]
 then
-    echo "expecting: $0 mine model namespace"
-    echo "eg, flymine sofa org.intermine.bio ";
+    echo "expecting: $0 mine model namespace filename"
+    echo "eg, flymine sofa org.intermine.bio so_terms ";
     exit
 fi
 
@@ -24,29 +21,10 @@ CP=$CP:$INTERMINE/objectstore/main/dist/intermine-objectstore.jar
 for i in $INTERMINE/objectstore/main/lib/*.jar ; do
     CP=$CP:$i
 done
-for i in $INTERMINE/api/main/lib/*.jar ; do
-    CP=$CP:$i
-done
-CP=$CP:$INTERMINE/api/main/dist/intermine-api.jar
-#CP=$CP:$INTERMINE/api/main/lib/lucene-core-2.3.2.jar
-CP=$CP:$INTERMINE/web/main/dist/intermine-web.jar
-CP=$CP:$INTERMINE/webtasks/main/dist/intermine-web.jar
-CP=$CP:$INTERMINE/webtasks/main/dist/intermine-webapp-tasks.jar
-CP=$CP:$INTERMINE/pathquery/main/dist/intermine-pathquery.jar
-CP=$CP:$INTERMINE/api/model/userprofile/dist/userprofile.jar
-for i in $INTERMINE/web/main/lib/*.jar ; do
-    CP=$CP:$i
-done
-CP=$CP:$BIO/webapp/resources
 CP=$CP:$BIO/core/main/dist/genomic-tasks.jar
 for i in $BIO/core/main/lib/*.jar ; do
     CP=$CP:$i
 done
-CP=$CP:~
-CP=$CP:$MINE/webapp/build/main
-CP=$CP:$MINE/dbmodel/build/model
-CP=$CP:$MINE/dbmodel/build/classes
-CP=$CP:$MINE/dbmodel/resources
 
 if test -z "$LD_LIBRARY_PATH" ; then
     export LD_LIBRARY_PATH=/usr/lib:/lib:/usr/lib/jni
@@ -57,8 +35,6 @@ fi
 #echo "Using classpath: $CP"
 #echo "Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
-
-# oboFileName modelFileName namespace
 oboFileName=$BIO/sources/so/$newModelName.obo 
 modelFileName=~/svn/dev/$whichmine/dbmodel/build/model/${newModelName}_model.xml
 
