@@ -58,6 +58,7 @@ import org.intermine.util.PropertiesUtil;
 public class OrthologueLinkManager
 {
     private static final boolean DEBUG = false;
+    private static boolean cached = false;
     private static OrthologueLinkManager orthologueLinkManager = null;
     private static long lastCacheRefresh = 0;
     private static final long ONE_HOUR = 3600000;
@@ -107,9 +108,9 @@ public class OrthologueLinkManager
      */
     public static synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
-        // if release version is different, update homologue mappings in cache
-        if (timeSinceLastRefresh > ONE_HOUR || DEBUG) {
+        if (timeSinceLastRefresh > ONE_HOUR && !cached) {
             lastCacheRefresh = System.currentTimeMillis();
+            cached = true;
             updateMaps();
         }
     }
@@ -293,13 +294,13 @@ public class OrthologueLinkManager
             QueryClass qcGeneHomologue = new QueryClass(Gene.class);
 
             try {
-                qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName() 
+                qcHomologue = new QueryClass(Class.forName(im.getModel().getPackageName()
                         + ".Homologue"));
             } catch (ClassNotFoundException e) {
                 LOG.info("No orthologues found.", e);
                 return;
             }
-            
+
             QueryField qfGeneOrganismName = new QueryField(qcOrganism, "shortName");
             QueryField qfDataset = new QueryField(qcDataset, "title");
             QueryField qfHomologueOrganismName = new QueryField(qcHomologueOrganism, "shortName");
