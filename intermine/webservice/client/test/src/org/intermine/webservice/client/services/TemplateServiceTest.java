@@ -23,35 +23,36 @@ import org.intermine.webservice.client.util.TestUtil;
  * Tests functionality of TemplateService - client class, implementing easy
  * access to InterMine web service. That's why it tests the web service itself
  * as well.
- * 
+ *
  * @author Jakub Kulaviak
  **/
 public class TemplateServiceTest extends TestCase
 {
 
     /**
-     * Checks Java client and that default parameters of template are replaced with 
+     * Checks Java client and that default parameters of template are replaced with
      * parameters provided by client.
      */
     public void testNonDefaultParameters() {
         DummyTemplateService service = TestUtil.getTemplateService();
         service.setFakeResponse("EmployeeA1\t10\t1\ttrue\nEmployeeA2\t20\t2\ttrue");
-        service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?value3=60&value4=true&value1=EmployeeA&size=10&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
+        //service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?value3=60&value4=true&value1=EmployeeA&size=10&value2=10&op1=contains&constraint2=Employee.age&constraint1=Employee.name&op2=gt&constraint4=Employee.fullTime&op3=lt&op4=eq&constraint3=Employee.age&name=fourConstraints&code2=B&code3=C");
+        service.setExpectedRequest("http://localhost:8080/intermine-test/service/template/results?op1=contains&code2=B&constraint4=Employee.fullTime&constraint1=Employee.name&value2=10&op2=gt&constraint3=Employee.age&op3=lt&value1=EmployeeA&constraint2=Employee.age&op4=eq&value4=true&code3=C&size=10&name=fourConstraints&value3=60");
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA"));
-        
+
         TemplateParameter par1 = new TemplateParameter("Employee.age", "gt", "10");
         par1.setCode("B");
         parameters.add(par1);
-        
+
         TemplateParameter par2 = new TemplateParameter("Employee.age", "lt", "60");
         par2.setCode("C");
         parameters.add(par2);
-        
+
         parameters.add(new TemplateParameter("Employee.fullTime", "eq", "true"));
         List<List<String>> results = service.getResult("fourConstraints", parameters, 10);
         assertEquals(2, results.size());
-        // returns 2 results, notice that the logic for constraints B and C is OR -> returns Employee of age 10 
+        // returns 2 results, notice that the logic for constraints B and C is OR -> returns Employee of age 10
         TestUtil.checkRow(results.get(0), "EmployeeA1", "10", "1", "true");
         TestUtil.checkRow(results.get(1), "EmployeeA2", "20", "2", "true");
     }
