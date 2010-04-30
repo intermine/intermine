@@ -56,22 +56,16 @@ public class OrthologueLinkController  extends TilesAction
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         Properties webProperties = SessionMethods.getWebProperties(request.getSession()
                 .getServletContext());
-
-        // if gene.ensemblId is a field, use that instead
-        // FIXME this should come from config file instead
-
         Class c = null;
         try {
             c = Class.forName(bag.getQualifiedType());
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
         }
         if (TypeUtil.getFieldInfo(c, alternativeIdentifierField) != null) {
             identifierField = alternativeIdentifierField;
         }
-
-
         String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifierList", identifierList);
 
