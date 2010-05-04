@@ -260,14 +260,9 @@ public class BioPAXConverter extends FileConverter implements Visitor
 
         if (identifier.contains("_")) {
             if (identifierSource.equals(DEFAULT_DB_NAME)) {
-                if (fieldName.equals("symbol")) {
-                    //  eg. P38132-CDC47
-                    identifier = identifier.split("_")[1];
-                } else {
-                    // uniprot uses the gene symbol, but that's not what identifier this organism
-                    // is configured to use
-                    return;
-                }
+                // eg. P38132-CDC47
+                identifier = identifier.split("_")[1];
+                fieldName = "symbol";
             } else {
                 // eg. CG1234-PA
                 identifier = identifier.split("_")[0];
