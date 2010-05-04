@@ -74,8 +74,10 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
                 resolver = createFromFile(soTerm, f);
             } else {
+                System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
                 resolver = createFromDb(db);
                 resolver.writeToFile(f);
+                System.out .println("FlyBaseIdResolver caching in file: " + cacheFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
