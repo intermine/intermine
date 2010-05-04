@@ -223,23 +223,20 @@ jQuery('.date-pick').datepicker(
     <fmt:message key="query.lookupConstraintLabel"/><%--Search for:--%>
     <html:hidden property="attributeOp" styleId="attribute1" value="18" disabled="false" />
     <html:text property="attributeValue" styleId="attribute2"
-    value="${editingConstraintValue}"
-    onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
+        value="${editingConstraintValue}"
+        onkeypress="if(event.keyCode == 13) {$('attribute').click();return false;}"/>
     <c:if test="${!empty options}">
-    <html:select property="attributeOptions" styleId="attribute3" onchange="this.form.attributeValue.value=this.value;">
-    <c:forEach items="${options}" var="option">
-    <option value="${option}"
-    <c:if test="${editingConstraintValue == option}">
-    selected
-</c:if>
->
-<c:out value="${option}"/>
-</option>
-</c:forEach>
-</html:select>
-</c:if>
+        <html:select property="attributeOptions" styleId="attribute3" onchange="this.form.attributeValue.value=this.value;">
+        <c:forEach items="${options}" var="option">
+            <option value="${option}" <c:if test="${editingConstraintValue == option}"> selected </c:if>>
+                <c:out value="${option}"/>
+            </option>
+        </c:forEach>
+        </html:select>
+    </c:if>
+
 <html:submit property="attribute" styleId="attributeSubmit" disabled="false" >
-<fmt:message key="query.submitConstraint"/><%--Add to query--%>
+    <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 </html:submit>
 </p>
 <p style="text-align: left;">
@@ -249,30 +246,30 @@ jQuery('.date-pick').datepicker(
     </fmt:message>
 </span>
 </p>
+
 <c:choose>
-<c:when test="${haveExtraConstraint}">
-<p style="text-align: left;">
-    <fmt:message key="bagBuild.extraConstraint">
-    <fmt:param value="${extraBagQueryClass}"/>
-</fmt:message>
-<html:select property="extraValue" value="${editingConstraintExtraValue}">
-<html:option value="">Any</html:option>
-<c:forEach items="${extraClassFieldValues}" var="value">
-<html:option value="${value}">
-<c:out value="${value}"/>
-</html:option>
-</c:forEach>
-</html:select>
-</p>
-</c:when>
+    <c:when test="${haveExtraConstraint}">
+        <p style="text-align: left;">
+            <fmt:message key="bagBuild.extraConstraint">
+                <fmt:param value="${extraBagQueryClass}"/>
+            </fmt:message>
+            <html:select property="extraValue" value="${editingConstraintExtraValue}">
+                <html:option value="">Any</html:option>
+                <c:forEach items="${extraClassFieldValues}" var="value">
+                    <html:option value="${value}">
+                        <c:out value="${value}"/>
+                    </html:option>
+                </c:forEach>
+            </html:select>
+        </p>
+    </c:when>
 <c:otherwise>
-<html:hidden property="extraValue" value=""/>
+    <html:hidden property="extraValue" value=""/>
 </c:otherwise>
 </c:choose>
 </c:if>
 
 <c:if test="${editingNode.indentation != 0 && !empty SUBCLASSES[editingNode.type]}">
-
 
 <!-- SUBCLASS -->
 
@@ -290,24 +287,19 @@ jQuery('.date-pick').datepicker(
 <p style="text-align: left;">
     <fmt:message key="query.subclassConstraint"/><%--Constraint to be subtype:--%>
     <html:select property="subclassValue" styleId="subclass1" disabled="true">
-    <c:forEach items="${SUBCLASSES[editingNode.type]}" var="subclass">
-    <html:option value="${subclass}">
-    <c:out value="${subclass}"/>
-    </html:option>
-</c:forEach>
-</html:select>
-<html:submit property="subclass" styleId="subclassSubmit" disabled="true">
-<fmt:message key="query.submitConstraint"/><%--Add to query--%>
-</html:submit>
+        <c:forEach items="${SUBCLASSES[editingNode.type]}" var="subclass">
+            <html:option value="${subclass}">
+                <c:out value="${subclass}"/>
+            </html:option>
+        </c:forEach>
+    </html:select>
+    <html:submit property="subclass" styleId="subclassSubmit" disabled="true">
+        <fmt:message key="query.submitConstraint"/><%--Add to query--%>
+    </html:submit>
 </p>
 
-<c:if test="${empty displayConstraint.fixedOpIndices && empty keyFields}">
-<script type="text/javascript">
-swapInputs('subclass');
-</script>
 </c:if>
 
-</c:if>
 <c:if test="${!empty loopQueryPaths && !empty loopQueryOps}">
 
 <!-- QUERY LOOP -->
@@ -322,22 +314,22 @@ swapInputs('subclass');
 <p style="text-align: left;">
     <fmt:message key="query.loopQueryConstraint"/><%--Constraint to another field:--%>
     <html:select property="loopQueryOp" styleId="loopQuery1" disabled="true">
-    <c:forEach items="${loopQueryOps}" var="loopOp">
-    <html:option value="${loopOp.key}">
-    <c:out value="${loopOp.value}"/>
-    </html:option>
-</c:forEach>
-</html:select>
-<html:select property="loopQueryValue" styleId="loopQuery2" disabled="true">
-<c:forEach items="${loopQueryPaths}" var="loopPath">
-<html:option value="${loopPath}">
-<c:out value="${fn:replace(loopPath, '.', ' > ')}"/>
-</html:option>
-</c:forEach>
-</html:select>
+        <c:forEach items="${loopQueryOps}" var="loopOp">
+            <html:option value="${loopOp.key}">
+                <c:out value="${loopOp.value}"/>
+            </html:option>
+        </c:forEach>
+    </html:select>
+    <html:select property="loopQueryValue" styleId="loopQuery2" disabled="true">
+        <c:forEach items="${loopQueryPaths}" var="loopPath">
+            <html:option value="${loopPath}">
+                <c:out value="${fn:replace(loopPath, '.', ' > ')}"/>
+            </html:option>
+        </c:forEach>
+    </html:select>
 
 <html:submit property="loop" styleId="loopQuerySubmit" disabled="true">
-<fmt:message key="query.submitConstraint"/><%--Add to query--%>
+    <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 </html:submit>
 </p>
 </c:if>
@@ -364,21 +356,22 @@ swapInputs('subclass');
     <p style="text-align: left;">
         <fmt:message key="query.bagConstraint"/><%--Contained in bag:--%>
         <html:select property="bagOp" styleId="bag1" disabled="true">
-        <c:forEach items="${bagOps}" var="bagOp">
-        <html:option value="${bagOp.key}">
-        <c:out value="${bagOp.value}"/>
-        </html:option>
-    </c:forEach>
-    </html:select>
-    <html:select property="bagValue" styleId="bag2" disabled="true">
-    <c:forEach items="${bags}" var="bag">
-    <html:option value="${bag.key}">
-    <c:out value="${bag.key}"/>
-    </html:option>
-</c:forEach>
-</html:select>
+            <c:forEach items="${bagOps}" var="bagOp">
+                <html:option value="${bagOp.key}">
+                    <c:out value="${bagOp.value}"/>
+                </html:option>
+            </c:forEach>
+        </html:select>
+        <html:select property="bagValue" styleId="bag2" disabled="true">
+            <c:forEach items="${bags}" var="bag">
+                <html:option value="${bag.key}">
+                    <c:out value="${bag.key}"/>
+                </html:option>
+            </c:forEach>
+        </html:select>
+
 <html:submit property="bag"  styleId="bagSubmit" disabled="true">
-<fmt:message key="query.submitConstraint"/><%--Add to query--%>
+    <fmt:message key="query.submitConstraint"/><%--Add to query--%>
 </html:submit>
 </p>
 </c:if>
