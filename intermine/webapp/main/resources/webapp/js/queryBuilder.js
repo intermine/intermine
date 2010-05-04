@@ -12,6 +12,14 @@ function swapInputs(open) {
         if (constraints[i] == open) {
             document.getElementById(constraints[i] + 'Submit').disabled = false;
             document.getElementById(constraints[i] + 'Toggle').src = 'images/disclosed.gif';
+            // loop through other fields that may exist
+            for (var k = 1; ; k++) {
+                if(document.getElementById(constraints[i] + k) != null) {
+                    document.getElementById(constraints[i] + k).disabled = false;
+                } else {
+                    break;
+                }
+            }
         // disable everything else
         } else {
             if (document.getElementById(constraints[i] + 'Submit') != null) {
@@ -19,6 +27,13 @@ function swapInputs(open) {
             }
             if (document.getElementById(constraints[i] + 'Toggle') != null) {
                 document.getElementById(constraints[i] + 'Toggle').src = 'images/undisclosed.gif';
+            }
+            for (var k = 1; ; k++) {
+                if(document.getElementById(constraints[i] + k) != null) {
+                    document.getElementById(constraints[i] + k).disabled = true;
+                } else {
+                    break;
+                }
             }
         }
     }
