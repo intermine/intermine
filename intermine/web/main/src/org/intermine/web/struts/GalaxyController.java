@@ -44,11 +44,14 @@ public class GalaxyController extends TilesAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
         PathQuery query = SessionMethods.getQuery(session);
+        // TODO the query will be NULL if the query just ran isn't on the session, eg. a quicksearch
+        // This will not be true once we have a query registry.
+        if (query == null) {
+            return null;
+        }
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
-
         String queryXML = PathQueryBinding.marshal(query, "tmpName", model.getName(),
                                                    PathQuery.USERPROFILE_VERSION);
         String encodedQueryXML = URLEncoder.encode(queryXML, "UTF-8");
