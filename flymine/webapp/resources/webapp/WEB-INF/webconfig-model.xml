@@ -646,6 +646,14 @@
     </fields>
   </class>
 
+   <class className="org.intermine.model.bio.Stock">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="stockCenter"/>
+      <fieldconfig fieldExpr="allele.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
