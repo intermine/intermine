@@ -72,13 +72,18 @@
           <fmt:message key="menu.customQuery"/>&nbsp;
         </a>
       </li>
-
+<%--
   <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
     <a href="/${WEB_PROPERTIES['webapp.path']}/experiment.do">
       <fmt:message key="menu.experiment"/>
     </a>
   </li>
-
+--%>
+  <li id="experiments"  <c:if test="${tab == 'experiments'}">class="activelink"</c:if>>
+    <a href="/${WEB_PROPERTIES['webapp.path']}/projects.do">
+      <fmt:message key="menu.projects"/>
+    </a>
+  </li>
 
       <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">

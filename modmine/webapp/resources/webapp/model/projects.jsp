@@ -171,13 +171,13 @@ ${exp.piSurname}<br>
 
 <td class="sorting">
 <table>
-<tr><td><b>
+<tr><td colspan="3"><b>
      <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
         title="View ${exp.name}">${exp.name}</html:link>
 </b>
 </td>
-
+<tr>
 <td>
   <c:forEach items="${expCats}" var="ecat" varStatus="ecatStatus">
      <c:if test="${ecat.key eq exp.name}">
@@ -194,10 +194,6 @@ ${exp.piSurname}<br>
      </c:if>
    </c:forEach> 
 </td>
-
-
-
-
 
 
 <%-- SUBMISSIONS --%>
@@ -238,6 +234,7 @@ ${exp.piSurname}<br>
 </td>
 </tr>
 </table>
+
 </td>
 
 <%-- TRACKS --%>
