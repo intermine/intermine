@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.util.GFF3Util;
@@ -41,6 +42,8 @@ import org.intermine.web.logic.export.Exporter;
  */
 public class GFF3Exporter implements Exporter
 {
+    private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
+
     public static final Set<String> GFF_FIELDS = Collections
         .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
                         "chromosomeLocation.start", "chromosomeLocation.end",
@@ -123,9 +126,12 @@ public class GFF3Exporter implements Exporter
         return "##gff-version 3" + getHeaderParts();
     }
 
+    
     /**
      * {@inheritDoc}
      */
+    
+        
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
@@ -141,7 +147,7 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("Export failed", ex);
         }
     }
-
+    
     /* State for the exportRow method, to allow several rows to be merged. */
     private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
     private Integer lastLsfId = null;
@@ -150,70 +156,126 @@ public class GFF3Exporter implements Exporter
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
     private void exportRow(List<ResultElement> row)
-        throws ObjectStoreException,
-        IllegalAccessException {
-        ResultElement elWithObject = getResultElement(row);
-        if (elWithObject == null) {
-            return;
-        }
+    throws ObjectStoreException,
+    IllegalAccessException {
 
-        LocatedSequenceFeature lsf = (LocatedSequenceFeature) elWithObject.getObject();
-
-        if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
-            return;
-        }
-
-        if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
-            GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
-                    attributes);
-
-            if (gff3Record != null) {
-                // have a chromsome ref and chromosomeLocation ref
-                if (!headerPrinted) {
-                    out.println(getHeader());
-                    headerPrinted = true;
-                }
-
-                out.println(gff3Record.toGFF3());
-                exportedIds.add(lastLsf.getId());
-                writtenResultsCount++;
-            }
-            lastLsfId = null;
-            attributeVersions.clear();
-            seenAttributes.clear();
-        }
-
-        if (lastLsfId == null) {
-            attributes = new LinkedHashMap<String, List<String>>();
-        }
-
-        for (int i = 0; i < row.size(); i++) {
-            ResultElement el = row.get(i);
-            if (el != null) {
-                String attributeName = attributesNames.get(i);
-                if (!GFF_FIELDS.contains(attributeName)) {
-                    Set<Integer> seenAttributeValues = seenAttributes.get(attributeName);
-                    if (seenAttributeValues == null) {
-                        seenAttributeValues = new HashSet<Integer>();
-                        seenAttributes.put(attributeName, seenAttributeValues);
-                    }
-                    if (!seenAttributeValues.contains(el.getId())) {
-                        seenAttributeValues.add(el.getId());
-                        Integer version = attributeVersions.get(attributeName);
-                        if (version == null) {
-                            version = new Integer(1);
-                            attributes.put(attributeName, formatElementValue(el));
-                        } else {
-                            attributes.put(attributeName + version, formatElementValue(el));
-                        }
-                        attributeVersions.put(attributeName, new Integer(version.intValue() + 1));
-                    }
-                }
-            }
-        }
-        lastLsfId = lsf.getId();
-        lastLsf = lsf;
+        List<ResultElement> elWithObject = getResultElements(row);
+//        ResultElement elWithObject = getResultElement(row);
+    if (elWithObject == null) {
+        return;
     }
+    
+    // loop through all the objects in a row
+    for (ResultElement re : elWithObject ){
+    LocatedSequenceFeature lsf = (LocatedSequenceFeature) re.getObject();
+    // LOG.info("GFFrePath: " + re.getPath());
+
+boolean isCollection = re.getPath().containsCollections();
+
+    if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
+       continue;
+    }
+
+    if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+        makeRecord();
+    }
+
+    if (lastLsfId == null) {
+        attributes = new LinkedHashMap<String, List<String>>();
+    }
+
+    for (int i = 0; i < row.size(); i++) {
+        ResultElement el = row.get(i);
+//        LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+
+
+        // checks for assigning attributes
+        if (isCollection && !el.getPath().containsCollections()){
+            // one is collection, the other is not: do not show
+            continue;
+        }
+        if (!isCollection && el.getPath().containsCollections()){
+            continue;
+        }
+        // both are collections: show only if they concord.
+        if (isCollection && el.getPath().containsCollections() 
+                && !re.getPath().equals(el.getPath())){
+            //
+//            if (!re.getPath().equals(el.getPath())){
+                continue;
+//            }        
+        }        
+        
+        if (el != null && !attributesNames.get(i).contains("primaryIdentifier")) {
+            String attributeName = trimAttribute(attributesNames.get(i));
+            checkAttribute(el, attributeName);
+        }
+    }
+    lastLsfId = lsf.getId();
+    lastLsf = lsf;
+    }
+}
+
+
+    private String trimAttribute(String attribute){
+        if (!attribute.contains(".")){
+            return attribute;
+        }
+        String plainAttribute = attribute.substring(attribute.lastIndexOf('.')+1);
+        return plainAttribute;
+    }
+    
+    /**
+     * 
+     */
+    private void makeRecord() {
+
+        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
+                attributes);
+
+        if (gff3Record != null) {
+            // have a chromosome ref and chromosomeLocation ref
+            if (!headerPrinted) {
+                out.println(getHeader());
+                headerPrinted = true;
+            }
+
+            out.println(gff3Record.toGFF3());
+            exportedIds.add(lastLsf.getId());
+            writtenResultsCount++;
+        }
+        lastLsfId = null;
+        attributeVersions.clear();
+        seenAttributes.clear();
+    }
+
+
+    /**
+     * @param el
+     * @param attributeName
+     */
+    private void checkAttribute(ResultElement el, String attributeName) {
+        if (!GFF_FIELDS.contains(attributeName)) {
+            Set<Integer> seenAttributeValues = seenAttributes.get(attributeName);
+            if (seenAttributeValues == null) {
+                seenAttributeValues = new HashSet<Integer>();
+                seenAttributes.put(attributeName, seenAttributeValues);
+            }
+            if (!seenAttributeValues.contains(el.getId())) {
+                seenAttributeValues.add(el.getId());
+                Integer version = attributeVersions.get(attributeName);
+                if (version == null) {
+                    version = new Integer(1);
+                    attributes.put(attributeName, formatElementValue(el));
+                } else {
+                    attributes.put(attributeName + version, formatElementValue(el));
+                }
+                attributeVersions.put(attributeName, new Integer(version.intValue() + 1));
+            }
+        }
+    }
+ 
+
 
     private List<String> formatElementValue(ResultElement el) {
         List<String> ret = new ArrayList<String>();
@@ -243,6 +305,18 @@ public class GFF3Exporter implements Exporter
         return el;
     }
 
+    
+    private List<ResultElement> getResultElements(List<ResultElement> row) {
+        List<ResultElement> els = new ArrayList<ResultElement>();
+        for (Integer index : featureIndexes) {
+        if (row.get(index) != null) {
+                els.add(row.get(index));                    
+            }
+        }
+        return els;
+    }
+    
+    
     /**
      * {@inheritDoc}
      */
