@@ -11,17 +11,16 @@ package org.intermine.bio.util;
  */
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
-import org.intermine.model.bio.SymmetricalRelation;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -54,12 +53,13 @@ public abstract class GFF3Util
         String strand = ".";
 
         if (lsf instanceof Chromosome) {
-            sequenceID = lsf.getPrimaryIdentifier();
-            type = "chromosome";
-            start = 1;
-            if (lsf.getLength() != null){
-            end = lsf.getLength().intValue();
-            }
+            return null;
+//            sequenceID = lsf.getPrimaryIdentifier();
+//            type = "chromosome";
+//            start = 1;
+//            if (lsf.getLength() != null){
+//            end = lsf.getLength().intValue();
+//            }
         } else {
             Chromosome chr = lsf.getChromosome();
             if (chr == null) {
@@ -73,12 +73,12 @@ public abstract class GFF3Util
             }
 
             sequenceID = chr.getPrimaryIdentifier();
-            LOG.debug("mGFFseq: " + sequenceID + "|len: " + lsf.getLength());
+//            LOG.info("mGFFseq: " + sequenceID + "|len: " + lsf.getLength());
 
             for (Class c : classes) {
                 if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
-                    LOG.debug("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
+                    // LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
                     if (soClassNameMap.containsKey(className)) {
                         type = soClassNameMap.get(className);
                     } else {
@@ -107,15 +107,22 @@ public abstract class GFF3Util
         }
 
         Map<String, List<String>> recordAttribute =
-            new LinkedHashMap<String, List<String>>(extraAttributes);
+            new TreeMap<String, List<String>>(extraAttributes);
 
         if (lsf.getPrimaryIdentifier() != null) {
             List<String> idList = new ArrayList<String>();
             idList.add(lsf.getPrimaryIdentifier());
             recordAttribute.put("ID", idList);
-            //*********
         }
 
+//        Map<String, List<String>> recordAttribute =
+//            new LinkedHashMap<String, List<String>>(extraAttributes);
+//
+//        if (lsf.getPrimaryIdentifier() != null) {
+//            List<String> idList = new ArrayList<String>();
+//            idList.add(lsf.getPrimaryIdentifier());
+//            recordAttribute.put("ID", idList);
+//        }
 
         Double score = null;
         try {
