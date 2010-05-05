@@ -1,15 +1,16 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]
+if [ $# -ne 4 ]
 then
     echo "expecting: $0 mine model namespace filename"
-    echo "eg, flymine sofa org.intermine.bio so_terms ";
+    echo "eg. flymine sofa org.intermine.bio so_terms ";
     exit
 fi
 
 whichmine=$1
 export newModelName=$2
 namespace=$3
+filename=$4
 
 export INTERMINE=~/svn/dev/intermine
 export MINE=~/svn/dev/$whichmine
@@ -38,5 +39,5 @@ fi
 oboFileName=$BIO/sources/so/$newModelName.obo 
 modelFileName=~/svn/dev/$whichmine/dbmodel/build/model/${newModelName}_model.xml
 
-java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $newModelName $oboFileName $modelFileName $namespace
+java -cp $CP -Xmx1000M org.intermine.bio.ontology.OboToModel $newModelName $oboFileName $modelFileName $namespace $filename
 
