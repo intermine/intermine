@@ -87,8 +87,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         this.className = name.intern();
 
         if (supers != null && (supers.equals("") || (!supers.equals(supers.trim())))) {
-            throw new IllegalArgumentException("'supers' parameter must be null or a valid"
-                    + " list of interface or superclass names");
+            throw new IllegalArgumentException("'supers' parameter for `" + name + "` must be "
+                    + "null or a valid  list of interface or superclass names");
         }
 
         if (supers == null) {
