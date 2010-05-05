@@ -725,7 +725,23 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 invalidateObjectById(((InterMineObject) o).getId());
             }
         } catch (SQLException e) {
-            throw new ObjectStoreException("Error while storing", e);
+            if (e.getNextException() == null) {
+                throw new ObjectStoreException("Error while storing", e);
+            } else {
+                StringBuilder message = new StringBuilder();
+                SQLException e2 = e;
+                int messageNo = 1;
+                while (e2 != null) {
+                    if (messageNo > 1) {
+                        message.append(", ");
+                    }
+                    message.append("Error " + messageNo + ": \"")
+                        .append(e2.getMessage())
+                        .append("\"");
+                    messageNo++;
+                }
+                throw new ObjectStoreException("Error while storing. " + message, e);
+            }
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException("Illegal access to value while storing", e);
         } finally {
