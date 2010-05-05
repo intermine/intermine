@@ -1,7 +1,0 @@
-<project name="fishmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for fishmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>
