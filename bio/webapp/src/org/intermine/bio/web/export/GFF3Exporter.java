@@ -187,37 +187,49 @@ boolean isCollection = re.getPath().containsCollections();
         attributes = new LinkedHashMap<String, List<String>>();
     }
 
+    
+    String parent = null;
     for (int i = 0; i < row.size(); i++) {
         ResultElement el = row.get(i);
+
+        if (i==0 ){ // this is the beginning of the path
+            parent = (String) el.getField();
+        }
 
 
         // checks for assigning attributes
         if (isCollection && !el.getPath().containsCollections()){
-            // LOG.info("P1: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//             LOG.info("P1: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
             // one is collection, the other is not: do not show
             continue;
         }
         if (!isCollection && el.getPath().containsCollections() 
                 && soClassNames.containsKey(el.getType())){
             // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
-            // LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//             LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
             continue;
         }
         // both are collections: show only if they concord.
         if (isCollection && el.getPath().containsCollections() 
                 && !re.getPath().equals(el.getPath())){
-            // LOG.info("P3: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//             LOG.info("P3: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
                 continue;
         }        
 
-        // LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//         LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
 
-        // usa gff list
-//        if (el != null && !attributesNames.get(i).contains("primaryIdentifier")) {
         if (el != null) {
             String attributeName = trimAttribute(attributesNames.get(i));
             checkAttribute(el, attributeName);
         }
+       
+        // add the parent
+        if (i>=1 && !el.getType().equalsIgnoreCase(el.getPath().getLastClassDescriptor().getUnqualifiedName())){ 
+            List<String> addPar = new ArrayList<String>();
+            addPar.add(parent);
+            attributes.put("Parent", addPar);
+        }
+
     }
     lastLsfId = lsf.getId();
     lastLsf = lsf;
