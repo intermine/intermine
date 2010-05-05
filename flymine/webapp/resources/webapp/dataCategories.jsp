@@ -40,7 +40,7 @@
 
   <tr>
     <td> <i>A. gambiae</i></td>
-    <td> Genome annotation - Release AgamP3.4</td>
+    <td> Genome annotation - Release AgamP3.5</td>
     <td> <a href="http://www.ensembl.org" target="_new">Ensembl</a> - Release 56.3l</td>
     <td> Hubbard et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17148474 " target="_new">PubMed: 17148474</a></td>
     <td> &nbsp;</td>
