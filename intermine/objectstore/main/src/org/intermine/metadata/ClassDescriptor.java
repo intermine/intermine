@@ -80,15 +80,15 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         for (int i = 0; i < unqualified.length(); i++) {
             if (!Character.isJavaIdentifierPart(unqualified.charAt(i))) {
                 throw new IllegalArgumentException("Java field names may not contain character: "
-                                                   + unqualified.charAt(i)
-                                                   + " but class name was: " + unqualified);
+                            + unqualified.charAt(i) + " but class name was: " + unqualified);
             }
         }
         this.className = name.intern();
 
         if (supers != null && (supers.equals("") || (!supers.equals(supers.trim())))) {
             throw new IllegalArgumentException("'supers' parameter for `" + name + "` must be "
-                    + "null or a valid  list of interface or superclass names");
+                    + "null or a valid list of interface or superclass names but was :'" + supers
+                    + "'");
         }
 
         if (supers == null) {

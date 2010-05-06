@@ -133,7 +133,8 @@ public class OboParser
      * @return a map from ontology term identifier to name
      * @throws IOException if anything goes wrong
      */
-    public Map<String, String> getTermIdNameMap(Reader in) throws IOException {
+    public Map<String, String> getTermIdNameMap(Reader in)
+    throws IOException {
         readTerms(new BufferedReader(in));
         Map<String, String> idNames = new HashMap<String, String>();
         for (OboTerm ot : terms.values()) {
