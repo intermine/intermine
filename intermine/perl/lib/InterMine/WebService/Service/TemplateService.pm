@@ -55,7 +55,7 @@ under the same terms as Perl itself.
 use strict;
 use warnings;
 
-use base qw(InterMine::WebService::Core::Service);
+use base (qw/InterMine::WebService::Core::Service/);
 
 use IO::String;
 
@@ -85,25 +85,11 @@ sub new
 
   my $ms = InterMine::WebService::Service::ModelService->new($service_root, $app_name);
   $self->{model_service} = $ms;
-
+  $self->{_SERVICE_RELATIVE_URL} = $SERVICE_RELATIVE_URL;
   bless $self, $class;
 
   return $self;
 }
-
-
-=head2 get_relative_path
-
- Usage   : my $rel_path = $service->get_relative_path();
- Function: return the path of this service relative to the base url of the
-           webapp
-
-=cut
-
-sub get_relative_path {
-    return $SERVICE_RELATIVE_URL;
-}
-
 
 =head2 search_for
 
@@ -117,6 +103,8 @@ sub search_for
 {
   my $self      = shift;
   my $keyword   = shift;
+  die "You need a keyword to search for (try using 'get_templates' if you want them all)\n" 
+      unless $keyword;
   my @templates = $self->get_templates;
   return grep {$_->get_name =~ /$keyword/i} @templates;
 }

@@ -71,25 +71,11 @@ sub new
   my $app_name = shift;
 
   my $self = $class->SUPER::new($root_url, $app_name);
-
+  $self->{_SERVICE_RELATIVE_URL} = $SERVICE_RELATIVE_URL;
   bless $self, $class;
 
   return $self;
 }
-
-
-=head2 get_relative_path
-
- Usage   : my $rel_path = $service->get_relative_path();
- Function: return the path of this service relative to the base url of the
-           webapp
-
-=cut
-
-sub get_relative_path {
-    return $SERVICE_RELATIVE_URL;
-}
-
 
 =head2 get_model_xml
 
