@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 18;
+use Test::More tests => 19;
 use Test::Exception;
 
 BEGIN {
@@ -11,13 +11,14 @@ BEGIN {
 }
 
 my $module = 'InterMine::Template';
-
+my $model = '../objectstore/model/testmodel/testmodel_model.xml';
 my @methods = qw(new get_views get_constraints get_description
                  get_name);
 can_ok($module, @methods);
 
 dies_ok {my $t = $module->new()} "Building Template without args";
-dies_ok {my $t = $module->new(file => 'fake_file')} "Building Template with an invalid file";
+dies_ok {my $t = $module->new(file => 'fake_file')} "Building Template without model";
+dies_ok {my $t = $module->new(file => 'fake_file', model => $model)} "Building Template with an invalid file";
 
 my $bad_file     = 't/data/bad_xml.txt';
 my $bad_string   = <<END
@@ -28,8 +29,8 @@ my $bad_string   = <<END
 </template>
 END
     ;
-dies_ok {my $t = $module->new(file => $bad_file)} "Building Template with a bad file";
-dies_ok {my $t = $module->new(string => $bad_string)} "Building Template with a bad string";
+dies_ok {my $t = $module->new(file => $bad_file, model => $model)} "Building Template with a bad file";
+dies_ok {my $t = $module->new(string => $bad_string, model => $model)} "Building Template with a bad string";
 
 my $multi_file   = 't/data/multixml.txt';
 my $multi_string = <<END
@@ -93,8 +94,8 @@ my $multi_string = <<END
 </template>
 END
     ;
-dies_ok {my $t = $module->new(file => $multi_file)} "Building Template with a multi template file";
-dies_ok {my $t = $module->new(string => $multi_string)} "Building Template with a multi template string";
+dies_ok {my $t = $module->new(file => $multi_file, model => $model)} "Building Template with a multi template file";
+dies_ok {my $t = $module->new(string => $multi_string, model => $model)} "Building Template with a multi template string";
 
 my $good_file   =  't/data/good_xml.txt';
 my $good_string =  <<END
@@ -126,8 +127,8 @@ my $good_string =  <<END
 </template>
 END
     ;
-my @f_args = (file => $good_file);
-my @s_args = (string => $good_string);
+my @f_args = (file => $good_file, model => $model);
+my @s_args = (string => $good_string, model => $model);
 my $t_from_file   = new_ok($module => \@f_args, 'Template');
 can_ok($t_from_file, @methods);
 my $t_from_string = new_ok($module => \@s_args, 'Template');
@@ -138,7 +139,7 @@ my $exp_desc = 'For specified Affymetrix probeset(s) show the corresponding gene
 my @views    = qw(Gene.probeSets.primaryIdentifier Gene.primaryIdentifier Gene.symbol Gene.chromosomeLocation.object.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end);
 my $exp_con  = 'Gene.probeSets.primaryIdentifier = "1634044_at"';
 
-my $t = $module->new(file => $good_file);
+my $t = $module->new(file => $good_file, model => $model);
 
 is($t->get_name, $exp_name, "Template name");
 is($t->get_description, $exp_desc, 'Template description');
