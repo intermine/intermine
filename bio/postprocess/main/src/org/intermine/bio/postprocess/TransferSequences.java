@@ -20,6 +20,7 @@ import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
 import org.biojava.bio.symbol.SymbolList;
+import org.intermine.bio.util.Constants;
 import org.intermine.model.bio.Assembly;
 import org.intermine.model.bio.CDS;
 import org.intermine.model.bio.Chromosome;
@@ -30,7 +31,6 @@ import org.intermine.model.bio.LocatedSequenceFeature;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.Transcript;
-import org.intermine.bio.util.Constants;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -45,8 +45,11 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
 
 /**
@@ -93,15 +96,56 @@ public class TransferSequences
     public void transferToLocatedSequenceFeatures()
         throws Exception {
         long startTime = System.currentTimeMillis();
+        
         ObjectStore os = osw.getObjectStore();
-        osw.beginTransaction();
+        Query q = new Query();
+        QueryClass qcChr = new QueryClass(Chromosome.class);
+        q.addFrom(qcChr);
+        q.addToSelect(qcChr);
+        QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");
+        ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
+        q.setConstraint(cc);
+        
+        SingletonResults res = os.executeSingleton(q);
+        Iterator chrIter = res.iterator();
+
+        Set<Chromosome> chromosomes = new HashSet<Chromosome>();
+        while (chrIter.hasNext()) {
+            Chromosome chr = (Chromosome) chrIter.next();
+            chromosomes.add(chr);
+        }
+        
+        LOG.info("Found " + chromosomes.size() + " chromosomes with sequence, took " 
+                + (System.currentTimeMillis() - startTime) + " ms.");
+        
+        for (Chromosome chr : chromosomes) {
+            String organism = "";
+            if (chr.getOrganism() != null) {
+                organism = chr.getOrganism().getShortName();
+            }
+            LOG.info("Starting transfer for " + organism + " chromosome "
+                    + chr.getPrimaryIdentifier());
+            transferForChromosome(chr);
+        }
+    }
+        
+        
+    private void transferForChromosome(Chromosome chr) throws Exception {
+
+        long startTime = System.currentTimeMillis();
+        
+        ObjectStore os = osw.getObjectStore();
         Query q = new Query();
         q.setDistinct(false);
-        QueryClass qcObj = new QueryClass(Chromosome.class);
-        QueryField qfObj = new QueryField(qcObj, "id");
-        q.addFrom(qcObj);
-        q.addToSelect(qfObj);
+        QueryClass qcChr = new QueryClass(Chromosome.class);
+        QueryField qfChrId = new QueryField(qcChr, "id");
+        q.addFrom(qcChr);
 
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        SimpleConstraint sc = new SimpleConstraint(qfChrId, ConstraintOp.EQUALS,
+                new QueryValue(chr.getId()));
+        cs.addConstraint(sc);
+        
         QueryClass qcSub = new QueryClass(LocatedSequenceFeature.class);
         q.addFrom(qcSub);
         q.addToSelect(qcSub);
@@ -111,9 +155,8 @@ public class TransferSequences
         QueryClass qcLoc = new QueryClass(Location.class);
         q.addFrom(qcLoc);
         q.addToSelect(qcLoc);
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         QueryObjectReference ref1 = new QueryObjectReference(qcLoc, "object");
-        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcObj);
+        ContainsConstraint cc1 = new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcChr);
         cs.addConstraint(cc1);
         QueryObjectReference ref2 = new QueryObjectReference(qcLoc, "subject");
         ContainsConstraint cc2 = new ContainsConstraint(ref2, ConstraintOp.CONTAINS, qcSub);
@@ -126,8 +169,9 @@ public class TransferSequences
 
         q.setConstraint(cs);
 
+        osw.beginTransaction();
+        
         Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
-        indexesToCreate.add(qfObj);
         indexesToCreate.add(qcLoc);
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
@@ -136,17 +180,13 @@ public class TransferSequences
 
         Iterator<ResultsRow> resIter = results.iterator();
 
-        // keep a set of chromosomes without sequence - for logging only
-        Set<Integer> chrsNoSequence = new HashSet<Integer>();
-        
         long start = System.currentTimeMillis();
         int i = 0;
         while (resIter.hasNext()) {
             ResultsRow rr = resIter.next();
 
-            Integer chrId = (Integer) rr.get(0);
-            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(1);
-            Location locationOnChr = (Location) rr.get(2);
+            LocatedSequenceFeature feature = (LocatedSequenceFeature) rr.get(0);
+            Location locationOnChr = (Location) rr.get(1);
 
             try {
                 if (feature instanceof Assembly) {
@@ -174,19 +214,7 @@ public class TransferSequences
                     }
                 }
 
-                Chromosome chr = (Chromosome) os.getObjectById(chrId);
-                Sequence chromosomeSequence = chr.getSequence();
-
-                if (chromosomeSequence == null) {
-                    if (!chrsNoSequence.contains(chr.getId())) {
-                        LOG.warn("no sequence found for: " + chr.getPrimaryIdentifier() + "  id: "
-                                + chr.getId());
-                        chrsNoSequence.add(chr.getId());
-                    }
-                    continue;
-                }
-
-                String featureSeq = getSubSequence(chromosomeSequence, locationOnChr);
+                String featureSeq = getSubSequence(chr.getSequence(), locationOnChr);
 
                 if (featureSeq == null) {
                     // probably the locationOnChr is out of range
@@ -219,8 +247,13 @@ public class TransferSequences
 
         osw.commitTransaction();
 
-        LOG.info("Finished setting " + i + " feature sequences - took "
-                 + (System.currentTimeMillis() - startTime) + " ms.");
+        String organism = "";
+        if (chr.getOrganism() != null) {
+            organism = chr.getOrganism().getShortName();
+        }
+        LOG.info("Finished setting " + i + " feature sequences for " + organism + " chromosome "
+                + chr.getPrimaryIdentifier() + " - took "
+                + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
     private String getSubSequence(Sequence chromosomeSequence, Location locationOnChr)
