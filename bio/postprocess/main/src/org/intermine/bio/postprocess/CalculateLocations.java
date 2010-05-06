@@ -441,8 +441,8 @@ public class CalculateLocations
         if (storeLastFeature && lastFeature != null) {
             setChromosomeReferencesAndStore(lastFeature, lastLoc, lastChrId);
         }
-        LOG.info("Set missing chromosomeLocation references for " + count + " features.");
         osw.commitTransaction();
+        LOG.info("Set missing chromosomeLocation references for " + count + " features.");
     }
 
 
