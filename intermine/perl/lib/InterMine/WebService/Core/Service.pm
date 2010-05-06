@@ -44,8 +44,6 @@ use strict;
 use URI;
 use LWP::UserAgent;
 
-my $SERVICE_RELATIVE_URL = '';
-
 =head2 new
  Title   : new
  Usage   : $item = InterMine::WebService::Core::Service($service_root,
@@ -98,7 +96,8 @@ sub get_url
 =cut
 
 sub get_relative_path {
-    return $SERVICE_RELATIVE_URL;
+    my $self = shift;
+    return $self->{_SERVICE_RELATIVE_URL};
 }
 
 =head2 
