@@ -201,27 +201,34 @@ public class GFF3Exporter implements Exporter
             for (int i = 0; i < row.size(); i++) {
                 ResultElement el = row.get(i);
 
+                if (el == null){
+                    continue;
+                }
+                
                 if (i==0 ){ // this is the beginning of the path
                     parent = (String) el.getField();
                 }
-
-
+//                LOG.info("AA1: " + i);
+//                LOG.info("AA1 el.getType(): " + el.getType());
+//                LOG.info("AA1 el.getPath(): " + el.getPath());
+                
+                
                 // checks for assigning attributes
                 if (isCollection && !el.getPath().containsCollections()){
-                    //             LOG.info("P1: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//                                 LOG.info("P1: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
                     // one is collection, the other is not: do not show
                     continue;
                 }
                 if (!isCollection && el.getPath().containsCollections() 
                         && soClassNames.containsKey(el.getType())){
                     // show attributes only if they are not linked to features (they will be displayed with the relevant one, see below)
-                    //             LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//                                 LOG.info("P2: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
                     continue;
                 }
                 // both are collections: show only if they concord.
                 if (isCollection && el.getPath().containsCollections() 
                         && !re.getPath().equals(el.getPath())){
-                    //             LOG.info("P3: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//                                 LOG.info("P3: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
                     continue;
                 }        
 
