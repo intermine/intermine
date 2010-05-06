@@ -78,7 +78,7 @@ public abstract class GFF3Util
             for (Class c : classes) {
                 if (LocatedSequenceFeature.class.isAssignableFrom(c)) {
                     String className = TypeUtil.unqualifiedName(c.getName());
-                    // LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
+//                     LOG.info("mGFF: " + className + "|" + lsf.getPrimaryIdentifier());
                     if (soClassNameMap.containsKey(className)) {
                         type = soClassNameMap.get(className);
                     } else {
@@ -107,6 +107,7 @@ public abstract class GFF3Util
         }
 
         Map<String, List<String>> recordAttribute =
+//          new LinkedHashMap<String, List<String>>(extraAttributes);
             new TreeMap<String, List<String>>(extraAttributes);
 
         if (lsf.getPrimaryIdentifier() != null) {
@@ -115,14 +116,6 @@ public abstract class GFF3Util
             recordAttribute.put("ID", idList);
         }
 
-//        Map<String, List<String>> recordAttribute =
-//            new LinkedHashMap<String, List<String>>(extraAttributes);
-//
-//        if (lsf.getPrimaryIdentifier() != null) {
-//            List<String> idList = new ArrayList<String>();
-//            idList.add(lsf.getPrimaryIdentifier());
-//            recordAttribute.put("ID", idList);
-//        }
 
         Double score = null;
         try {
