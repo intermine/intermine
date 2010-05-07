@@ -232,9 +232,11 @@ public class GFF3Exporter implements Exporter
                     continue;
                 }        
 
-                LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
+//                LOG.info("PP: "+ el.getType() + "|"+ el.getPath().getLastClassDescriptor().getUnqualifiedName()+"<>"+isCollection +"|"+ el.getPath().containsCollections());
 
-                if (el != null) {
+                if (el.getField() != null) {
+//                    if (el != null) {
+//                    LOG.info("AA?: " + attributesNames.get(i) + "||"+ el.getField()+"<-");
                     String attributeName = trimAttribute(attributesNames.get(i));
                     checkAttribute(el, attributeName);
                 }
